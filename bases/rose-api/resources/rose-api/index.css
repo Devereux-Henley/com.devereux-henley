@@ -1,0 +1,15 @@
+#collection-browser-controls {
+    visibility: hidden;
+}
+
+#collection-browser-controls:has(+ #collection-browser > .collection) {
+    visibility: visible;
+}
+
+#resource-browser {
+    visibility: hidden;
+}
+
+#resource-browser:has(> .resource) {
+    visibility: visible;
+}

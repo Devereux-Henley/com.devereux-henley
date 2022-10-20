@@ -1,0 +1,19 @@
+<div class="collection" id="flower-collection-content">
+    <div id="flower-collection-id">Collection Location: {{_links.self}}</div>
+    <div id="flower-collection-table">
+        <table>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Location</th>
+            </tr>
+            {% for item in _embedded.results %}
+            <tr hx-get="/api/flower/{{item.id}}" hx-target="#resource-browser">
+                <td>{{item.id}}</td>
+                <td>{{item.name}}</td>
+                <td>{{item._links.self}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>

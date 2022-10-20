@@ -1,0 +1,11 @@
+{:paths ["src" "resources"]
+ :deps {metosin/reitit {:mvn/version "0.5.18"}
+        metosin/malli {:mvn/version "0.9.2"}
+        metosin/muuntaja {:mvn/version "0.6.8"}
+        metosin/muuntaja-form {:mvn/version "0.6.8"}
+        ring/ring-jetty-adapter {:mvn/version "1.7.1"}
+        selmer/selmer {:mvn/version "1.12.55"}}
+ :aliases {:build {:main-opts ["-m" "com.devereux-henley.rose-api.core"]}
+           :dev {:extra-paths ["dev"]}
+           :test {:extra-paths ["test"]
+                  :extra-deps {}}}}

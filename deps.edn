@@ -1,7 +1,10 @@
 {:aliases  {:dev {:extra-paths ["development/src"]
-                  :extra-deps {org.clojure/clojure {:mvn/version "1.11.1"}}}
+                  :extra-deps {org.clojure/clojure {:mvn/version "1.11.1"}
+                               mono/rose-api {:local/root "bases/rose-api"}}}
 
-            :test {:extra-paths []}
+            :test {:extra-paths [
+                                 "bases/rose-api"
+                                 ]}
 
             :poly {:main-opts ["-m" "polylith.clj.core.poly-cli.core"]
                    :extra-deps {polyfy/polylith
