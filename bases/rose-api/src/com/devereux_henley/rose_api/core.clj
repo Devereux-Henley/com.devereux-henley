@@ -38,7 +38,7 @@
      ["/index.html"
       {:get {:no-doc true
              :produces ["text/html"]
-             :handler (fn [_request] {:status 200 :body {:type :view/index}})}}]
+             :handler (fn [_request] {:status 200 :body (selmer.parser/render-file "rose-api/index.html" {})})}}]
      ["/index.css"
       {:get {:no-doc true
              :produces ["application/css"]
@@ -58,7 +58,7 @@
 
        ["/:id"
         {:get {:summary    "Fetches a flower by id."
-               :swagger    {:produces     ["text/html" "application/json"]
+               :swagger    {:produces     ["application/htmx+html" "application/json"]
                             :operation-id "get-flower"}
                :parameters {:path schema/get-by-id-request}
                :responses  {200 {:body schema/flower-resource}}
@@ -69,7 +69,7 @@
        ["/collection"
         ["/mine"
          {:get {:summary   "Fetches a flower by id."
-                :swagger   {:produces     ["text/html" "application/json"]
+                :swagger   {:produces     ["application/htmx+html" "application/json"]
                             :operation-id "get-flower-collection-mine"}
                 :responses {200 {:body schema/flower-collection-resource}}
                 :handler   (fn [{{{:keys [_id]} :path} :parameters}]
@@ -78,7 +78,7 @@
                                        schema/flower-collection-resource)})}}]
         ["/recent"
          {:get {:summary   "Fetches a flower by id."
-                :swagger   {:produces     ["text/html" "application/json"]
+                :swagger   {:produces     ["application/htmx+html" "application/json"]
                             :operation-id "get-flower-collection-recent"}
                 :responses {200 {:body schema/flower-collection-resource}}
                 :handler   (fn [{{{:keys [_id]} :path} :parameters}]
@@ -90,7 +90,7 @@
        ["/flower/:id"
         {:swagger {:tags ["flowers" "collections"]}
          :get     {:summary    "Fetches a collection of flowers."
-                   :swagger    {:produces     ["text/html" "application/json"]
+                   :swagger    {:produces     ["application/htmx+html" "application/json"]
                                 :operation-id "get-flower-collection"}
                    :parameters {:path schema/get-by-id-request}
                    :responses  {200 {:body nil?}}
@@ -98,7 +98,7 @@
                                  {:status 200
                                   :body   nil})}
          :post    {:summary    "Create a collection of flowers with input specification."
-                   :swagger    {:produces     ["text/html" "application/json"]
+                   :swagger    {:produces     ["application/htmx+html" "application/json"]
                                 :operation-id "create-flower-collection"}
                    :parameters {:body schema/create-flower-collection-request}
                    :responses  {200 {:body schema/flower-collection-resource}}
@@ -137,7 +137,9 @@
                                    muuntaja.format.form/format)
                                   (assoc-in [:formats "text/html"]
                                             format.html/html-format)
-                                  (assoc-in [:formats "text/html" :encoder-opts] {:view-fn view-by-type})))
+                                  (assoc-in [:formats "application/htmx+html"]
+                                            format.html/html-htmx-format)
+                                  (assoc-in [:formats "application/htmx+html" :encoder-opts] {:view-fn view-by-type})))
                  :middleware [;; swagger feature
                               swagger/swagger-feature
                               ;; query-params & form-params

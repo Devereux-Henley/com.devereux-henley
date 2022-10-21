@@ -3,7 +3,7 @@
         <script src="https://unpkg.com/htmx.org@1.8.2" integrity="sha384-+8ISc/waZcRdXCLxVgbsLzay31nCdyZXQxnsUy++HJzJliTzxKWr0m1cIEMyUzQu" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="index.css">
     </head>
-    <body hx-headers='{"Accept": "text/html"}'>
+    <body hx-headers='{"Accept": "application/htmx+html"}'>
         <a hx-get="/api/flower/collection/mine" hx-target="#collection-browser">My flowers</a>
         <a hx-get="/api/flower/collection/recent" hx-target="#collection-browser">Recent flowers</a>
         <div id="collection-browser-controls">
