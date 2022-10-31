@@ -12,12 +12,12 @@
   []
   (let [conn (jdbc/get-connection db)]
     (jdbc/execute! conn ["create table flower (
-                           eid text,
-                           name text,
-                           version int,
-                           created_at text,
-                           updated_at text,
-                           deleted_at text
+                           eid text NOT NULL,
+                           name TEXT NOT NULL,
+                           version INT NOT NULL,
+                           created_at TEXT NOT NULL,
+                           updated_at TEXT NOT NULL,
+                           deleted_at TEXT
                          )"])))
 
 (defmethod integrant.core/init-key ::connection

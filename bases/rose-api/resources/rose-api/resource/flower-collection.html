@@ -1,5 +1,5 @@
 <div class="collection" id="flower-collection-content">
-    <div id="flower-collection-id">Collection Location: {{_links.self}}</div>
+    <div id="flower-collection-id">Collection Location: {{data._links.self}}</div>
     <div id="flower-collection-table">
         <table>
             <tr>
@@ -7,7 +7,7 @@
                 <th>Name</th>
                 <th>Location</th>
             </tr>
-            {% for item in _embedded.results %}
+            {% for item in data._embedded.results %}
             <tr hx-get="/api/flower/{{item.id}}" hx-target="#resource-browser">
                 <td>{{item.id}}</td>
                 <td>{{item.name}}</td>

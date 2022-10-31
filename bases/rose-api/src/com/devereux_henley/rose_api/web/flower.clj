@@ -1,6 +1,7 @@
 (ns com.devereux-henley.rose-api.web.flower
   (:require
    [com.devereux-henley.rose-api.schema :as schema]
+   [integrant.core]
    [malli.generator]))
 
 (defmethod integrant.core/init-key ::get-flower

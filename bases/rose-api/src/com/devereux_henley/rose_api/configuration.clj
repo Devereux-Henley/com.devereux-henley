@@ -25,11 +25,11 @@
     ["/index.html"
      {:get {:no-doc   true
             :produces ["text/html"]
-            :handler  (fn [_request] {:status 200 :body (slurp (io/resource "rose-api/index.html"))})}}]
+            :handler  (fn [_request] {:status 200 :body (slurp (io/resource "rose-api/asset/index.html"))})}}]
     ["/index.css"
      {:get {:no-doc   true
             :produces ["application/css"]
-            :handler  (fn [_request] {:status 200 :body (slurp (io/resource "rose-api/index.css"))})}}]
+            :handler  (fn [_request] {:status 200 :body (slurp (io/resource "rose-api/asset/index.css"))})}}]
 
     ["/api"
      ["/swagger.json"

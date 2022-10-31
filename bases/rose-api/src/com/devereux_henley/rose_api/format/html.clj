@@ -8,11 +8,11 @@
   (reify
     muuntaja.format.core/EncodeToBytes
     (encode-to-bytes [_ data charset]
-      (.getBytes ^String (selmer.parser/render-file (view-fn (:type data)) data) ^String charset))
+      (.getBytes ^String (selmer.parser/render-file (view-fn (:type data)) {:data data}) ^String charset))
     muuntaja.format.core/EncodeToOutputStream
     (encode-to-output-stream [_ data charset]
       (fn [^java.io.OutputStream output-stream]
-        (let [encoded (selmer.parser/render-file (view-fn (:type data)) data)
+        (let [encoded (selmer.parser/render-file (view-fn (:type data)) {:data data})
               bytes   (.getBytes ^String encoded ^String charset)]
           (.write output-stream bytes))))))
 

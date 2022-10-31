@@ -22,7 +22,8 @@
   (get
    {:view/index "rose-api/index.html"
     :flower/flower "rose-api/resource/flower.html"
-    :collection/flower "rose-api/resource/flower-collection.html"}
+    :collection/flower "rose-api/resource/flower-collection.html"
+    "exception" "rose-api/resource/error.html"}
    type
    "rose-api/resource/unknown.html"))
 
