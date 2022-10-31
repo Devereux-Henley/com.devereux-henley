@@ -1,11 +1,11 @@
 (ns com.devereux-henley.rose-api.db
   (:require
+   [integrant.core]
    [next.jdbc :as jdbc]))
 
 (def db
   {:dbtype      "sqlite"
-   :dbname      "db/database.db"
-   })
+   :dbname      "db/database.db"})
 
 (defn create-db
   "create db and table"
