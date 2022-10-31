@@ -1,0 +1,13 @@
+#+TITLE: Rose API DDL
+#+AUTHOR: devereux.henley@gmail.com
+* Tables
+** Entity
+*** Garden
+*** Flower
+**** Properties
+***** Name
+** Link
+*** FlowersOfGarden
+** Structure
+*** Collection
+** History
