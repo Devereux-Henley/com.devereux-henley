@@ -19,3 +19,7 @@
                            updated_at text,
                            deleted_at text
                          )"])))
+
+(defmethod integrant.core/init-key ::connection
+  [_init-key _dependencies]
+  (jdbc/get-connection db))

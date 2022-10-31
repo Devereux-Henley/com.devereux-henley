@@ -1,5 +1,6 @@
 (ns com.devereux-henley.rose-api.configuration
   (:require
+   [com.devereux-henley.rose-api.db :as db]
    [com.devereux-henley.rose-api.schema :as schema]
    [com.devereux-henley.rose-api.web :as web]
    [com.devereux-henley.rose-api.web.collection :as web.collection]
@@ -8,7 +9,8 @@
    [clojure.java.io :as io]))
 
 (def core-configuration
-  {::web/swagger-handler {}
+  {::db/connection {}
+   ::web/swagger-handler {}
    ::web.flower/get-flower {}
    ::web.flower/create-flower {}
    ::web.flower/get-my-flower-collection {}
