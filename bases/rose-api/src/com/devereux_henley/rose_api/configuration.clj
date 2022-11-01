@@ -8,10 +8,11 @@
    [integrant.core]
    [clojure.java.io :as io]))
 
+(def hostname (or (System/getenv "ROSE_API_HOSTNAME") "http://localhost:3000"))
 (def core-configuration
   {::db/connection {}
    ::web/swagger-handler {}
-   ::web.flower/get-flower {}
+   ::web.flower/get-flower {:connection (integrant.core/ref ::db/connection)}
    ::web.flower/create-flower {}
    ::web.flower/get-my-flower-collection {}
    ::web.flower/get-recent-flower-collection {}

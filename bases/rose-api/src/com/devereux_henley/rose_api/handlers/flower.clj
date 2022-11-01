@@ -3,7 +3,7 @@
    [com.devereux-henley.rose-api.db.flower :as db.flower]
    [integrant.core]))
 
-(defn get-flower
+(defn get-flower-by-id
   [dependencies id]
   (db.flower/get-flower-by-id (:connection dependencies) id))
 

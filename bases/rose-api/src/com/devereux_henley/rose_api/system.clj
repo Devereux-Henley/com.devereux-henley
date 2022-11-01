@@ -5,6 +5,9 @@
 
 (defonce ^:private system (atom {}))
 
+@system
+
+
 (defn go! []
   (reset! system (-> configuration/core-configuration
                      integrant.core/prep
@@ -19,3 +22,8 @@
   (go!))
 
 (defn get-system [] @system)
+
+(comment
+  (go!)
+  (halt!)
+  (restart!))
