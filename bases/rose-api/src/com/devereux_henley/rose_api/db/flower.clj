@@ -31,3 +31,10 @@
   {:malli/schema (schema/to-schema [:=> [:cat [:instance Connection] create-flower-entity-specification] flower-entity])}
   [connection create-specification]
   (jdbc.sql/insert! connection :flower create-specification))
+
+(defn get-flowers-by-user-id
+  {:malli/schema (schema/to-schema [:=> [:cat [:instance Connection] :uuid] [:sequential flower-entity]])}
+  [connection user_eid]
+  (if-let [user (jdbc.sql/get-by-id connection :user user_eid :eid {})]
+    (jdbc.sql/find-by-keys connection :flower {:created-by-id (:id user)})
+    []))

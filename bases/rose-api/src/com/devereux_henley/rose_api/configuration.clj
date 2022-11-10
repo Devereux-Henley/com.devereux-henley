@@ -13,11 +13,11 @@
   {::db/connection {}
    ::web/swagger-handler {}
    ::web.flower/get-flower {:connection (integrant.core/ref ::db/connection)}
-   ::web.flower/create-flower {}
-   ::web.flower/get-my-flower-collection {}
-   ::web.flower/get-recent-flower-collection {}
-   ::web.collection/get-flower-collection {}
-   ::web.collection/create-flower-collection {}
+   ::web.flower/create-flower {:connection (integrant.core/ref ::db/connection)}
+   ::web.flower/get-my-flower-collection {:connection (integrant.core/ref ::db/connection)}
+   ::web.flower/get-recent-flower-collection {:connection (integrant.core/ref ::db/connection)}
+   ::web.collection/get-flower-collection {:connection (integrant.core/ref ::db/connection)}
+   ::web.collection/create-flower-collection {:connection (integrant.core/ref ::db/connection)}
    ::web/routes
    [["/"
      {:get {:no-doc   true
@@ -31,6 +31,14 @@
      {:get {:no-doc   true
             :produces ["application/css"]
             :handler  (fn [_request] {:status 200 :body (slurp (io/resource "rose-api/asset/index.css"))})}}]
+    ["/flower.html"
+     {:get {:no-doc   true
+            :produces ["text/html"]
+            :handler  (fn [_request] {:status 200 :body (slurp (io/resource "rose-api/asset/flower.html"))})}}]
+    ["/flower.css"
+     {:get {:no-doc   true
+            :produces ["application/css"]
+            :handler  (fn [_request] {:status 200 :body (slurp (io/resource "rose-api/asset/flower.css"))})}}]
 
     ["/api"
      ["/swagger.json"

@@ -11,9 +11,9 @@
   [dependencies create-specification]
   (db.flower/create-flower (:connection dependencies) create-specification))
 
-(defn get-my-flower-collection
-  [dependencies]
-  [])
+(defn get-flowers-by-user-id
+  [dependencies user_id]
+  (db.flower/get-flowers-by-user-id (:connection dependencies) user_id))
 
 (defn get-recent-flower-collection
   [dependencies]

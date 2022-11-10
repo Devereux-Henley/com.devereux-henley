@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <script src="https://unpkg.com/htmx.org@1.8.2" integrity="sha384-+8ISc/waZcRdXCLxVgbsLzay31nCdyZXQxnsUy++HJzJliTzxKWr0m1cIEMyUzQu" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="flower.css">
+    </head>
+    <body hx-headers='{"Accept": "application/htmx+html"}'>
+        <a href="/index.html">Dashboard</a>
+        <div id="create-flower-form">
+            <div class="resource flower-resource">
+                <form hx-post="/api/flower">
+                    <label for="flower-name">Flower name:</label>
+                    <input type="text" id="flower-name" value="">
+                    <input type="submit" value="Create Flower">
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

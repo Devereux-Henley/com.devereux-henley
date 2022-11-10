@@ -97,10 +97,10 @@
    [:_links
     [:map
      [:self url]
-     [:next url]
-     [:previous url]
-     [:first url]
-     [:last url]]]])
+     [:next {:optional true} url]
+     [:previous {:optional true} url]
+     [:first {:optional true} url]
+     [:last {:optional true} url]]]])
 
 (defn make-embedded-schema
   [schema]
