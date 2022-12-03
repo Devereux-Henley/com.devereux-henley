@@ -7,7 +7,7 @@
         <a href="/index.html">Dashboard</a>
         <div id="create-flower-form">
             <div class="resource flower-resource">
-                <form hx-post="/api/flower">
+                <form hx-put="/api/flower/{{data.id}}?version=1">
                     <label for="flower-name">Flower name:</label>
                     <input type="text" id="flower-name" value="">
                     <input type="submit" value="Create Flower">

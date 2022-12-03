@@ -63,7 +63,9 @@
    {:url        url
     :local-date local-date
     :instant    instant
-    :instance   instance}))
+    :instance   instance
+    :neg-int    (malli.core/-simple-schema {:type :neg-int, :pred neg-int?})
+    :pos-int    (malli.core/-simple-schema {:type :pos-int, :pred pos-int?})}))
 
 (defn to-schema
   [input-schema]
@@ -157,10 +159,20 @@
       :json-schema/example "*Rose"}
      :string]]))
 
-(def get-by-id-request
+(def create-flower-request
+  (to-schema
+   [:map
+    [:name {:min 0} :string]]))
+
+(def id-path-parameter
   (to-schema
    [:map
     [:id :uuid]]))
+
+(def version-query-parameter
+  (to-schema
+   [:map
+    [:version {:optional true} :pos-int]]))
 
 (def flower-resource
   (to-schema

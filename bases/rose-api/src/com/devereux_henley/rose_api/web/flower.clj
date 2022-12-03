@@ -30,6 +30,40 @@
     {:status 200
      :body   (decode-flower value)}))
 
+(defn to-create-response
+  [resource-schema value]
+  (condp instance? value
+    clojure.lang.ExceptionInfo
+    (case (:error/kind (ex-data value))
+      :error/conflict {:status 409
+                       :body   (select-keys [:error/kind :model/id :error/message] (ex-data value))}
+      :error/unknown  {:status 500
+                       :body   (select-keys [:error/kind :model/id :error/message] (ex-data value))}
+      {:status 500
+       :body   (select-keys [:error/kind :model/id :error/message] (ex-data value))})
+    Throwable
+    {:status 500
+     :body   {}}
+    {:status 201
+     :body   (decode-flower value)}))
+
+(defn to-update-response
+  [resource-schema value]
+  (condp instance? value
+    clojure.lang.ExceptionInfo
+    (case (:error/kind (ex-data value))
+      :error/conflict {:status 409
+                       :body   (select-keys [:error/kind :model/id :error/message] (ex-data value))}
+      :error/unknown  {:status 500
+                       :body   (select-keys [:error/kind :model/id :error/message] (ex-data value))}
+      {:status 500
+       :body   (select-keys [:error/kind :model/id :error/message] (ex-data value))})
+    Throwable
+    {:status 500
+     :body   {}}
+    {:status 200
+     :body   (decode-flower value)}))
+
 (defn to-collection-resource
   [resource-schema since user_id value]
   (condp instance? value
@@ -67,6 +101,19 @@
                      :model/type :flower/flower}
                     exc)))))
 
+(defn create-flower
+  [dependencies create-specification]
+  (try
+    (either/right (handler.flower/create-flower dependencies create-specification))
+    (catch Exception exc
+      (either/left (ex-info
+                    "Failed to create flower with input specification."
+                    {:error/kind :error/unknown
+                     :model/id (:id create-specification)
+                     :model/version (:version create-specification)
+                     :model/type :flower/flower}
+                    exc)))))
+
 (defn get-flowers-by-user-id
   [dependencies user_id]
   (try
@@ -90,14 +137,18 @@
        (partial get-flower-by-id dependencies))))))
 
 (defmethod integrant.core/init-key ::create-flower
-  [_init-key _dependencies]
-  (fn [_request-map]
-    {:status 201
-     :body   nil}))
+  [_init-key dependencies]
+  (fn [{{:keys [path body query]} :parameters}]
+    (to-create-response
+     schema/flower-resource
+     (cats/extract
+      (cats/>>=
+       (either/right (merge {:version 1} path body query))
+       (partial create-flower dependencies))))))
 
 (defmethod integrant.core/init-key ::get-my-flower-collection
   [_init-key dependencies]
-  (fn [{{{:keys [_id]} :path} :parameters}]
+  (fn [_request-map]
     (to-collection-resource
      schema/flower-resource
      (java.time.LocalDate/now)

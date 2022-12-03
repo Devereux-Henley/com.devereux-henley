@@ -6,7 +6,8 @@
    [com.devereux-henley.rose-api.web.collection :as web.collection]
    [com.devereux-henley.rose-api.web.flower :as web.flower]
    [integrant.core]
-   [clojure.java.io :as io]))
+   [clojure.java.io :as io]
+   [selmer.parser]))
 
 (def hostname (or (System/getenv "ROSE_API_HOSTNAME") "http://localhost:3000"))
 (def core-configuration
@@ -34,7 +35,7 @@
     ["/flower.html"
      {:get {:no-doc   true
             :produces ["text/html"]
-            :handler  (fn [_request] {:status 200 :body (slurp (io/resource "rose-api/asset/flower.html"))})}}]
+            :handler  (fn [_request] {:status 200 :body (selmer.parser/render-file (io/resource "rose-api/asset/flower.html") {:data {:id (random-uuid)}})})}}]
     ["/flower.css"
      {:get {:no-doc   true
             :produces ["application/css"]
@@ -56,9 +57,16 @@
        {:get {:summary    "Fetches a flower by id."
               :swagger    {:produces     ["application/htmx+html" "application/json"]
                            :operation-id "get-flower"}
-              :parameters {:path schema/get-by-id-request}
+              :parameters {:path schema/id-path-parameter
+                           :query schema/version-query-parameter}
               :responses  {200 {:body schema/flower-resource}}
-              :handler    (integrant.core/ref ::web.flower/get-flower)}}]
+              :handler    (integrant.core/ref ::web.flower/get-flower)}
+        :put {:summary "Creates a flower. This flower becomes the latest version of this resource."
+              :parameters {:path schema/id-path-parameter
+                           :query schema/version-query-parameter
+                           :body schema/create-flower-request}
+              :responses {201 {:body schema/flower-resource}}
+              :handler (integrant.core/ref ::web.flower/create-flower))}}]
       ["/collection"
        ["/mine"
         {:get {:summary   "Fetches a flower by id."

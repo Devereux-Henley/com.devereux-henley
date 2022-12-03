@@ -1,5 +1,5 @@
 <div class="resource flower-resource">
-    <form hx-patch="/api/flower/{{data.id}}">
+    <form hx-put="/api/flower/{{data.id}}?version={{data.version + 1}}">
         <label for="flower-name">Flower name:</label>
         <input type="text" id="flower-name" value="{{data.name}}">
         <input type="submit" value="Update Flower">
