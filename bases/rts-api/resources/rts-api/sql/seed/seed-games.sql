@@ -2,7 +2,7 @@ INSERT OR IGNORE INTO game(eid,
                            name,
                            description,
                            version,
-                           created_by_id,
+                           created_by_eid,
                            created_at,
                            updated_at,
                            deleted_at)

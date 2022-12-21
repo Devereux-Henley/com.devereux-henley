@@ -24,4 +24,4 @@
   (go!)
   (halt!)
   (restart!)
-  )
+  (get-system))

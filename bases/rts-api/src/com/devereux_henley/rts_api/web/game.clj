@@ -11,16 +11,13 @@
   (:import
    [java.time LocalDate]))
 
-(defn encode-game
-  [router game]
-  (malli.core/encode schema/game-resource game (schema.contract/model-transformer router)))
-
-(comment
-  (encode-game {:description "The single most poggers warhammer game.", :created_by_id "f0ce7395-a57f-41e9-ade0-fd13bafc058f", :deleted_at nil, :name "Total War: Warhammer III", :type :game/game, :updated_at "2022-12-18 17:38:15", :id 1, :eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1", :version 1, :created_at "2022-12-18 17:38:15"})
-  )
+(defn encode-value
+  [router resource-schema value]
+  (malli.core/encode resource-schema value (schema.contract/model-transformer router)))
 
 (defn to-fetch-response
   [resource-schema router value]
+  (println value)
   (condp instance? value
     clojure.lang.ExceptionInfo
     (case (:error/kind (ex-data value))
@@ -34,7 +31,7 @@
     {:status 500
      :body   {}}
     {:status 200
-     :body   (encode-game router value)}))
+     :body   (encode-value router resource-schema value)}))
 
 ;; TODO :reitit.core/router from request
 (defn get-game-by-id
@@ -57,14 +54,17 @@
                     exc)))))
 
 (defn get-games
-  [dependencies]
+  [dependencies router]
   (try
-    (either/right (handlers.game/get-games dependencies))
+    (either/right {:type      :collection/game
+                   :_embedded {:results (handlers.game/get-games dependencies)}
+                   :_links    {:self (-> router (reitit.core/match-by-name! :collection/game) :path)}})
     (catch Exception exc
+      (println exc)
       (either/left (ex-info
                     "Failed to fetch games."
                     {:error/kind :error/unknown
-                     :model/type :game/game}
+                     :model/type :collection/game}
                     exc)))))
 
 (defmethod integrant.core/init-key ::get-game
@@ -86,4 +86,4 @@
     (to-fetch-response
      schema/game-collection-resource
      router
-     (cats/extract (get-games dependencies)))))
+     (cats/extract (get-games dependencies router)))))

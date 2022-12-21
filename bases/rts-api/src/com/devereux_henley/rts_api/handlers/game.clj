@@ -8,5 +8,5 @@
   (assoc (db.game/get-game-by-id (:connection dependencies) id) :type :game/game))
 
 (defn get-games
-  [dependencies user_id]
-  (db.game/get-games (:connection dependencies)))
+  [dependencies]
+  (mapv (fn [game] (assoc game :type :game/game)) (db.game/get-games (:connection dependencies))))

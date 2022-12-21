@@ -28,5 +28,5 @@
 
 (defn get-games
   {:malli/schema (schema/to-schema [:=> [:cat [:instance Connection]] [:sequential game-entity]])}
-  [connection user_eid]
+  [connection]
   (jdbc.sql/query connection [game-query] {:builder-fn db.result-set/default-builder}))

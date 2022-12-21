@@ -11,9 +11,10 @@
 
 (def hostname (or (System/getenv "RTS_API_HOSTNAME") "http://localhost:3001"))
 (def core-configuration
-  {::db/connection {}
+  {::db/connection       {}
    ::web/swagger-handler {}
-   ::web.game/get-game {:connection (integrant.core/ref ::db/connection)}
+   ::web.game/get-game   {:connection (integrant.core/ref ::db/connection)}
+   ::web.game/get-games  {:connection (integrant.core/ref ::db/connection)}
    ::web/routes
    [["/"
      {:get {:no-doc   true
@@ -36,17 +37,24 @@
              :handler (integrant.core/ref ::web/swagger-handler)}}]
 
      ["/game"
-      {:swagger {:tags ["games"]}}
+      {:name :collection/game
+       :get  {:summary   "Fetches a list of games."
+              :swagger   {:tags         ["games"]
+                          :produces     ["application/htmx+html" "application/json"]
+                          :operation-id "get-games"}
+              :responses {200 {:body schema/game-collection-resource}}
+              :handler   (integrant.core/ref ::web.game/get-games)}}]
 
-      ["/:eid"
-       {:name :game/by-id
-        :get  {:summary    "Fetches a game by id."
-               :swagger    {:produces     ["application/htmx+html" "application/json"]
-                            :operation-id "get-game"}
-               :parameters {:path  schema.contract/id-path-parameter
-                            :query schema.contract/version-query-parameter}
-               :responses  {200 {:body schema/game-resource}}
-               :handler    (integrant.core/ref ::web.game/get-game)}}]]]]
+     ["/game/:eid"
+      {:name :game/by-id
+       :get  {:summary    "Fetches a game by id."
+              :swagger    {:tags         ["games"]
+                           :produces     ["application/htmx+html" "application/json"]
+                           :operation-id "get-game"}
+              :parameters {:path  schema.contract/id-path-parameter
+                           :query schema.contract/version-query-parameter}
+              :responses  {200 {:body schema/game-resource}}
+              :handler    (integrant.core/ref ::web.game/get-game)}}]]]
    ::web/app     {:routes (integrant.core/ref ::web/routes)}
    ::web/service {:handler       (integrant.core/ref ::web/app)
                   :configuration {:port 3001, :join? false}}
