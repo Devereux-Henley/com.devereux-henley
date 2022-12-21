@@ -8,7 +8,7 @@
    (malli.util/merge
     schema.contract/base-resource
     [:map
-     [:eid {:model/link "/api/game"} :uuid]
+     [:eid {:model/link :game/by-id} :uuid]
      [:type [:= :game/game]]
      [:name :string]
      [:description :string]])))

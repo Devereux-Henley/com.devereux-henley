@@ -4,7 +4,8 @@
    [malli.core]
    [malli.transform]
    [malli.util]
-   [reitit.coercion.malli])
+   [reitit.coercion.malli]
+   [reitit.core])
   (:import
    [java.net URL]
    [java.time Instant LocalDate]))
@@ -162,7 +163,8 @@
           {}
           (malli.core/children schema)))
 
-(def nav-transformer
+(defn nav-transformer
+  [router]
   (malli.transform/transformer
    {:name     :nav
     :decoders {:map (fn [value] (vary-meta value dissoc `clojure.core.protocols/nav))}
@@ -173,15 +175,18 @@
                            (vary-meta value assoc `clojure.core.protocols/nav
                                       (fn [coll k v]
                                         (if-let [link (k mapping)]
-                                          (URL. (str link "/" v))
+                                          (URL. (-> router
+                                                    (reitit.core/match-by-name! link {:eid v})
+                                                    :path))
                                           v))))))}}}))
 
 ;; Walk the input value.
 ;; For each key in the model, add that key to a links array.
 ;; Do this for every map in the model.
-(def model-transformer
+(defn model-transformer
+  [router]
   (malli.transform/transformer
-   nav-transformer
+   (nav-transformer router)
    {:name     :model
     :decoders {}
     :encoders {:map {:compile (fn [schema _]
@@ -196,7 +201,9 @@
                                                         (if (= k :eid)
                                                           :self
                                                           k)]
-                                                       (str link "/" v)))
+                                                       (-> router
+                                                           (reitit.core/match-by-name! link {:eid v})
+                                                           :path)))
                                          (assoc acc k v)))
                                      {}
                                      value))))}}}))

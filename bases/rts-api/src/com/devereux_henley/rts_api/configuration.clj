@@ -39,13 +39,14 @@
       {:swagger {:tags ["games"]}}
 
       ["/:eid"
-       {:get {:summary    "Fetches a game by id."
-              :swagger    {:produces     ["application/htmx+html" "application/json"]
-                           :operation-id "get-game"}
-              :parameters {:path schema.contract/id-path-parameter
-                           :query schema.contract/version-query-parameter}
-              :responses  {200 {:body schema/game-resource}}
-              :handler    (integrant.core/ref ::web.game/get-game)}}]]]]
+       {:name :game/by-id
+        :get  {:summary    "Fetches a game by id."
+               :swagger    {:produces     ["application/htmx+html" "application/json"]
+                            :operation-id "get-game"}
+               :parameters {:path  schema.contract/id-path-parameter
+                            :query schema.contract/version-query-parameter}
+               :responses  {200 {:body schema/game-resource}}
+               :handler    (integrant.core/ref ::web.game/get-game)}}]]]]
    ::web/app     {:routes (integrant.core/ref ::web/routes)}
    ::web/service {:handler       (integrant.core/ref ::web/app)
                   :configuration {:port 3001, :join? false}}
