@@ -32,6 +32,14 @@
      {:get {:no-doc   true
             :produces ["text/html"]
             :handler  (fn [_request] {:status 200 :body (slurp (io/resource "rts-api/asset/game.html"))})}}]
+    ["/about.html"
+     {:get {:no-doc   true
+            :produces ["text/html"]
+            :handler  (fn [_request] {:status 200 :body (slurp (io/resource "rts-api/asset/about.html"))})}}]
+    ["/contact.html"
+     {:get {:no-doc   true
+            :produces ["text/html"]
+            :handler  (fn [_request] {:status 200 :body (slurp (io/resource "rts-api/asset/contact.html"))})}}]
     ["/api"
      ["/swagger.json"
       {:get {:no-doc  true

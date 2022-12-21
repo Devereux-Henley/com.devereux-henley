@@ -1,0 +1,33 @@
+INSERT OR IGNORE INTO game_social_link(id,
+                                       eid,
+                                       url,
+                                       game_id,
+                                       social_media_platform_id,
+                                       version,
+                                       created_by_eid,
+                                       created_at,
+                                       updated_at,
+                                       deleted_at)
+VALUES
+         (1,
+         'cc00f338-89ce-43f0-8536-0b70224915c8',
+         'https://www.twitch.tv/directory/game/Total%20War:%20Warhammer%20III'
+         1,
+         1,
+         1,
+         'f0ce7395-a57f-41e9-ade0-fd13bafc058f',
+         DATETIME('now'),
+         DATETIME('now'),
+         null
+         ),
+         (2,
+         '4f6275e3-8deb-4736-8a41-8f5e27a939ed',
+         'https://www.youtube.com/channel/UCuuLj4XVng1E-198OkOjtRw'
+         1,
+         2,
+         1,
+         'f0ce7395-a57f-41e9-ade0-fd13bafc058f',
+         DATETIME('now'),
+         DATETIME('now'),
+         null
+         );
