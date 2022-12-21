@@ -1,9 +1,15 @@
 {:aliases  {:dev {:extra-paths ["development/src"]
                   :extra-deps {org.clojure/clojure {:mvn/version "1.11.1"}
-                               mono/rose-api {:local/root "bases/rose-api"}}}
+                               mono/schema {:local/root "components/schema"}
+                               mono/content-negotiation {:local/root "components/content-negotiation"}
+                               mono/rose-api {:local/root "bases/rose-api"}
+                               mono/rts-api {:local/root "bases/rts-api"}}}
 
             :test {:extra-paths [
+                                 "components/schema"
+                                 "components/content-negotiation"
                                  "bases/rose-api"
+                                 "bases/rts-api"
                                  ]}
 
             :poly {:main-opts ["-m" "polylith.clj.core.poly-cli.core"]

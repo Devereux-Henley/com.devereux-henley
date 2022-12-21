@@ -1,6 +1,6 @@
 (ns com.devereux-henley.rose-api.db.flower
   (:require
-   [com.devereux-henley.rose-api.schema :as schema]
+   [com.devereux-henley.schema.contract :as schema]
    [next.jdbc :as jdbc]
    [next.jdbc.sql :as jdbc.sql])
   (:import
@@ -22,7 +22,7 @@
    [:name {:min 1} :string]
    [:created-at :instant]])
 
-(defn get-flower-by-id
+(defn get-flower-by-eid
   [connection eid]
   {:malli/schema (schema/to-schema [:=> [:cat [:instance Connection] :uuid] flower-entity])}
   (jdbc.sql/get-by-id connection :flower eid :eid {}))
@@ -32,9 +32,9 @@
   [connection create-specification]
   (jdbc.sql/insert! connection :flower create-specification))
 
-(defn get-flowers-by-user-id
+(defn get-flowers-by-user-eid
   {:malli/schema (schema/to-schema [:=> [:cat [:instance Connection] :uuid] [:sequential flower-entity]])}
   [connection user_eid]
   (if-let [user (jdbc.sql/get-by-id connection :user user_eid :eid {})]
-    (jdbc.sql/find-by-keys connection :flower {:created-by-id (:id user)})
+    (jdbc.sql/find-by-keys connection :flower {:created-by-id (:eid user)})
     []))

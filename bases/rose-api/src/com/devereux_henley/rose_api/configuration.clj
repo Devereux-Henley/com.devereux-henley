@@ -1,5 +1,6 @@
 (ns com.devereux-henley.rose-api.configuration
   (:require
+   [com.devereux-henley.schema.contract :as schema.contract]
    [com.devereux-henley.rose-api.db :as db]
    [com.devereux-henley.rose-api.schema :as schema]
    [com.devereux-henley.rose-api.web :as web]
@@ -35,7 +36,7 @@
     ["/flower.html"
      {:get {:no-doc   true
             :produces ["text/html"]
-            :handler  (fn [_request] {:status 200 :body (selmer.parser/render-file (io/resource "rose-api/asset/flower.html") {:data {:id (random-uuid)}})})}}]
+            :handler  (fn [_request] {:status 200 :body (selmer.parser/render-file (io/resource "rose-api/asset/flower.html") {:data {:eid (random-uuid)}})})}}]
     ["/flower.css"
      {:get {:no-doc   true
             :produces ["application/css"]
@@ -53,17 +54,17 @@
      ["/flower"
       {:swagger {:tags ["flowers"]}}
 
-      ["/:id"
+      ["/:eid"
        {:get {:summary    "Fetches a flower by id."
               :swagger    {:produces     ["application/htmx+html" "application/json"]
                            :operation-id "get-flower"}
-              :parameters {:path schema/id-path-parameter
-                           :query schema/version-query-parameter}
+              :parameters {:path schema.contract/id-path-parameter
+                           :query schema.contract/version-query-parameter}
               :responses  {200 {:body schema/flower-resource}}
               :handler    (integrant.core/ref ::web.flower/get-flower)}
         :put {:summary "Creates a flower. This flower becomes the latest version of this resource."
-              :parameters {:path schema/id-path-parameter
-                           :query schema/version-query-parameter
+              :parameters {:path schema.contract/id-path-parameter
+                           :query schema.contract/version-query-parameter
                            :body schema/create-flower-request}
               :responses {201 {:body schema/flower-resource}}
               :handler (integrant.core/ref ::web.flower/create-flower))}}]
@@ -82,12 +83,12 @@
                :handler   (integrant.core/ref ::web.flower/get-recent-flower-collection)}}]]]
 
      ["/collection"
-      ["/flower/:id"
+      ["/flower/:eid"
        {:swagger {:tags ["flowers" "collections"]}
         :get     {:summary    "Fetches a collection of flowers."
                   :swagger    {:produces     ["application/htmx+html" "application/json"]
                                :operation-id "get-flower-collection"}
-                  :parameters {:path schema/get-by-id-request}
+                  :parameters {:path schema.contract/get-by-id-request}
                   :responses  {200 {:body schema/flower-collection-resource}}
                   :handler    (integrant.core/ref ::web.collection/get-flower-collection)}
         :post    {:summary    "Create a collection of flowers with input specification."

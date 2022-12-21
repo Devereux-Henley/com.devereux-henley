@@ -1,0 +1,5 @@
+{:paths ["src" "resources"]
+ :deps {metosin/muuntaja {:mvn/version "0.6.8"}
+        selmer/selmer {:mvn/version "1.12.55"}}
+ :aliases {:test {:extra-paths ["test"]
+                  :extra-deps {}}}}

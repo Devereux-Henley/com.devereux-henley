@@ -6,7 +6,7 @@
 
 (defmethod integrant.core/init-key ::get-flower-collection
   [_init-key _dependencies]
-  (fn [{{{:keys [_id]} :path} :parameters}]
+  (fn [{{{:keys [_eid]} :path} :parameters}]
     {:status 200
      :body   (malli.generator/generate
               schema/flower-collection-resource)}))

@@ -1,4 +1,4 @@
-(ns com.devereux-henley.rose-api.web
+(ns com.devereux-henley.rts-api.web
   (:require
    [com.devereux-henley.content-negotiation.contract :as content-negotiation]
    [integrant.core]
@@ -20,12 +20,12 @@
 (defn view-by-type
   [type]
   (get
-   {:view/index "rose-api/index.html"
-    :flower/flower "rose-api/resource/flower.html"
-    :collection/flower "rose-api/resource/flower-collection.html"
-    "exception" "rose-api/resource/error.html"}
+   {:view/index "rts-api/index.html"
+    :game/game "rts-api/resource/game.html"
+    :collection/game "rts-api/resource/game-collection.html"
+    "exception" "rts-api/resource/error.html"}
    type
-   "rose-api/resource/unknown.html"))
+   "rts-api/resource/unknown.html"))
 
 (defmethod integrant.core/init-key ::swagger-handler
   [_init-key _dependencies]

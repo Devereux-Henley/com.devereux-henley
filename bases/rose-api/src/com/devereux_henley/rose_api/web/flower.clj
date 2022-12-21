@@ -19,11 +19,11 @@
     clojure.lang.ExceptionInfo
     (case (:error/kind (ex-data value))
       :error/missing {:status 404
-                      :body   (select-keys [:error/kind :model/id :error/message] (ex-data value))}
+                      :body   (select-keys [:error/kind :model/eid :error/message] (ex-data value))}
       :error/unknown {:status 500
-                      :body   (select-keys [:error/kind :model/id :error/message] (ex-data value))}
+                      :body   (select-keys [:error/kind :model/eid :error/message] (ex-data value))}
       {:status 500
-       :body   (select-keys [:error/kind :model/id :error/message] (ex-data value))})
+       :body   (select-keys [:error/kind :model/eid :error/message] (ex-data value))})
     Throwable
     {:status 500
      :body   {}}
@@ -36,11 +36,11 @@
     clojure.lang.ExceptionInfo
     (case (:error/kind (ex-data value))
       :error/conflict {:status 409
-                       :body   (select-keys [:error/kind :model/id :error/message] (ex-data value))}
+                       :body   (select-keys [:error/kind :model/eid :error/message] (ex-data value))}
       :error/unknown  {:status 500
-                       :body   (select-keys [:error/kind :model/id :error/message] (ex-data value))}
+                       :body   (select-keys [:error/kind :model/eid :error/message] (ex-data value))}
       {:status 500
-       :body   (select-keys [:error/kind :model/id :error/message] (ex-data value))})
+       :body   (select-keys [:error/kind :model/eid :error/message] (ex-data value))})
     Throwable
     {:status 500
      :body   {}}
@@ -53,11 +53,11 @@
     clojure.lang.ExceptionInfo
     (case (:error/kind (ex-data value))
       :error/conflict {:status 409
-                       :body   (select-keys [:error/kind :model/id :error/message] (ex-data value))}
+                       :body   (select-keys [:error/kind :model/eid :error/message] (ex-data value))}
       :error/unknown  {:status 500
-                       :body   (select-keys [:error/kind :model/id :error/message] (ex-data value))}
+                       :body   (select-keys [:error/kind :model/eid :error/message] (ex-data value))}
       {:status 500
-       :body   (select-keys [:error/kind :model/id :error/message] (ex-data value))})
+       :body   (select-keys [:error/kind :model/eid :error/message] (ex-data value))})
     Throwable
     {:status 500
      :body   {}}
@@ -65,39 +65,39 @@
      :body   (decode-flower value)}))
 
 (defn to-collection-resource
-  [resource-schema since user_id value]
+  [resource-schema since user_eid value]
   (condp instance? value
     clojure.lang.ExceptionInfo
     (case (:error/kind (ex-data value))
       :error/unknown {:status 500
-                      :body (select-keys [:error/kind :model/id :error/message])}
+                      :body (select-keys [:error/kind :model/eid :error/message])}
       {:status 500
-       :body (select-keys [:error/kind :model/id :error/message] (ex-data value))})
+       :body (select-keys [:error/kind :model/eid :error/message] (ex-data value))})
     Throwable
     {:status 500
      :body {}}
     {:status 200
      :body {:type :collection/flower
-            :_links {:self (str "/api/flower?since=" since "&for=" user_id)}
+            :_links {:self (str "/api/flower?since=" since "&for=" user_eid)}
             :_embedded {:results (mapv decode-flower value)}}}))
 
 ;; TODO :reitit.core/router from request
-(defn get-flower-by-id
-  [dependencies id]
+(defn get-flower-by-eid
+  [dependencies eid]
   (try
-    (if-let [flower (handlers.flower/get-flower-by-id dependencies id)]
+    (if-let [flower (handlers.flower/get-flower-by-eid dependencies eid)]
       (either/right flower)
       (either/left (ex-info
                     "No flower with given id."
                     {:error/kind :error/missing
-                     :model/id   id
+                     :model/eid   eid
                      :model/type :flower/flower})))
     (catch Exception exc
       (println exc)
       (either/left (ex-info
                     "Failed to fetch flower."
                     {:error/kind :error/unknown
-                     :model/id   id
+                     :model/eid   eid
                      :model/type :flower/flower}
                     exc)))))
 
@@ -109,32 +109,32 @@
       (either/left (ex-info
                     "Failed to create flower with input specification."
                     {:error/kind :error/unknown
-                     :model/id (:id create-specification)
+                     :model/eid (:eid create-specification)
                      :model/version (:version create-specification)
                      :model/type :flower/flower}
                     exc)))))
 
-(defn get-flowers-by-user-id
-  [dependencies user_id]
+(defn get-flowers-by-user-eid
+  [dependencies user_eid]
   (try
-    (either/right (handlers.flower/get-flowers-by-user-id dependencies user_id))
+    (either/right (handlers.flower/get-flowers-by-user-eid dependencies user_eid))
     (catch Exception exc
       (either/left (ex-info
                     "Failed to fetch flowers for user."
                     {:error/kind :error/unknown
-                     :model/id   user_id
+                     :model/eid   user_eid
                      :model/type :identity/user}
                     exc)))))
 
 (defmethod integrant.core/init-key ::get-flower
   [_init-key dependencies]
-  (fn [{{{:keys [id]} :path} :parameters :as request}]
+  (fn [{{{:keys [eid]} :path} :parameters :as request}]
     (to-fetch-response
      schema/flower-resource
      (cats/extract
       (cats/>>=
-       (either/right id)
-       (partial get-flower-by-id dependencies))))))
+       (either/right eid)
+       (partial get-flower-by-eid dependencies))))))
 
 (defmethod integrant.core/init-key ::create-flower
   [_init-key dependencies]
@@ -156,11 +156,11 @@
      (cats/extract
       (cats/>>=
        (either/right #uuid "acee55c5-a491-470e-a558-7bc4c79e7c21")
-       (partial get-flowers-by-user-id dependencies))))))
+       (partial get-flowers-by-user-eid dependencies))))))
 
 (defmethod integrant.core/init-key ::get-recent-flower-collection
   [_init-key _dependencies]
-  (fn [{{{:keys [_id]} :path} :parameters}]
+  (fn [{{{:keys [_eid]} :path} :parameters}]
     {:status 200
      :body   (malli.generator/generate
               schema/flower-collection-resource)}))
