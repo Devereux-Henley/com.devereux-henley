@@ -28,6 +28,10 @@
      {:get {:no-doc   true
             :produces ["application/css"]
             :handler  (fn [_request] {:status 200 :body (slurp (io/resource "rts-api/asset/dashboard.css"))})}}]
+    ["/game.html"
+     {:get {:no-doc   true
+            :produces ["text/html"]
+            :handler  (fn [_request] {:status 200 :body (slurp (io/resource "rts-api/asset/game.html"))})}}]
     ["/api"
      ["/swagger.json"
       {:get {:no-doc  true
