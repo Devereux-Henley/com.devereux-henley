@@ -7,8 +7,9 @@
             </pre>
         </p>
         <nav>
-            <a href="https://www.twitch.tv/directory/game/Total%20War:%20Warhammer%20III">Twitch</a>
-            <a href="https://www.youtube.com/channel/UCuuLj4XVng1E-198OkOjtRw">YouTube</a>
+            {% for social in data._embedded.socials %}
+            <a href="{{social.url}}"><img height="20px" width="20px" src="https://upload.wikimedia.org/wikipedia/commons/2/20/Twitch_icon_2012.svg" /></a>
+            {% endfor %}
         </nav>
     </div>
 </div>

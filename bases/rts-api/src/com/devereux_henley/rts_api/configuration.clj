@@ -13,8 +13,10 @@
 (def core-configuration
   {::db/connection       {}
    ::web/swagger-handler {}
-   ::web.game/get-game   {:connection (integrant.core/ref ::db/connection)}
-   ::web.game/get-games  {:connection (integrant.core/ref ::db/connection)}
+   ::web.game/get-game   {:hostname hostname
+                          :connection (integrant.core/ref ::db/connection)}
+   ::web.game/get-games  {:hostname hostname
+                          :connection (integrant.core/ref ::db/connection)}
    ::web/routes
    [["/"
      {:get {:no-doc   true

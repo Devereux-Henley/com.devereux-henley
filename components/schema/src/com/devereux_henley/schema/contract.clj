@@ -163,8 +163,14 @@
           {}
           (malli.core/children schema)))
 
+(defn to-resource-link
+  [{:keys [hostname router] :as _route-data} route-name parameters]
+  (str hostname "/" (-> router
+                        (reitit.core/match-by-name! route-name parameters)
+                        :path)))
+
 (defn nav-transformer
-  [router]
+  [route-data]
   (malli.transform/transformer
    {:name     :nav
     :decoders {:map (fn [value] (vary-meta value dissoc `clojure.core.protocols/nav))}
@@ -175,18 +181,16 @@
                            (vary-meta value assoc `clojure.core.protocols/nav
                                       (fn [coll k v]
                                         (if-let [link (k mapping)]
-                                          (URL. (-> router
-                                                    (reitit.core/match-by-name! link {:eid v})
-                                                    :path))
+                                          (URL. (to-resource-link route-data link {:eid v}))
                                           v))))))}}}))
 
 ;; Walk the input value.
 ;; For each key in the model, add that key to a links array.
 ;; Do this for every map in the model.
 (defn model-transformer
-  [router]
+  [route-data]
   (malli.transform/transformer
-   (nav-transformer router)
+   (nav-transformer route-data)
    {:name     :model
     :decoders {}
     :encoders {:map {:compile (fn [schema _]
@@ -201,9 +205,14 @@
                                                         (if (= k :eid)
                                                           :self
                                                           k)]
-                                                       (-> router
-                                                           (reitit.core/match-by-name! link {:eid v})
-                                                           :path)))
+                                                       (to-resource-link
+                                                        route-data
+                                                        link
+                                                        {:eid v})))
                                          (assoc acc k v)))
-                                     {}
+                                     (vary-meta {}
+                                                assoc
+                                                `clojure.core.protocols/nav
+                                                (get (meta value)
+                                                     `clojure.core.protocols/nav))
                                      value))))}}}))

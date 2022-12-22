@@ -19,7 +19,17 @@
    [:updated-at :instant]
    [:deleted-at [:maybe :instant]]])
 
-(defn get-game-by-id
+(def game-social-link-entity
+  [:map
+   [:id :int]
+   [:eid :uuid]
+   [:url :url]
+   [:version :int]
+   [:created-at :instant]
+   [:updated-at :instant]
+   [:deleted-at [:maybe :instant]]])
+
+(defn get-game-by-eid
   [connection eid]
   {:malli/schema (schema/to-schema [:=> [:cat [:instance Connection] :uuid] game-entity])}
   (jdbc.sql/get-by-id connection :game eid :eid {:builder-fn db.result-set/default-builder}))
@@ -30,3 +40,16 @@
   {:malli/schema (schema/to-schema [:=> [:cat [:instance Connection]] [:sequential game-entity]])}
   [connection]
   (jdbc.sql/query connection [game-query] {:builder-fn db.result-set/default-builder}))
+
+(defn get-socials-for-game
+  {:malli/schema (schema/to-schema [:=>
+                                    [:cat [:instance Connection]]
+                                    [:sequential game-social-link-entity]])}
+  [connection game-eid]
+  (if-let [game (get-game-by-eid connection game-eid)]
+    (jdbc.sql/find-by-keys
+     connection
+     :game_social_link
+     {:game_id (:id game)}
+     {:builder-fn db.result-set/default-builder})
+    []))

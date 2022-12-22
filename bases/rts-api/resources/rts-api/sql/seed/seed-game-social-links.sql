@@ -11,7 +11,7 @@ INSERT OR IGNORE INTO game_social_link(id,
 VALUES
          (1,
          'cc00f338-89ce-43f0-8536-0b70224915c8',
-         'https://www.twitch.tv/directory/game/Total%20War:%20Warhammer%20III'
+         'https://www.twitch.tv/directory/game/Total%20War:%20Warhammer%20III',
          1,
          1,
          1,
@@ -22,7 +22,7 @@ VALUES
          ),
          (2,
          '4f6275e3-8deb-4736-8a41-8f5e27a939ed',
-         'https://www.youtube.com/channel/UCuuLj4XVng1E-198OkOjtRw'
+         'https://www.youtube.com/channel/UCuuLj4XVng1E-198OkOjtRw',
          1,
          2,
          1,
