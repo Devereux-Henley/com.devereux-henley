@@ -11,7 +11,8 @@
 
 (defn is-eid?
   [^String column-name]
-  (= "eid" column-name))
+  (or (= column-name "eid")
+      (clojure.string/includes? column-name "_eid")))
 
 (def default-builder
   (jdbc.result-set/builder-adapter
@@ -29,3 +30,6 @@
           :else (.getObject result-set index))
         result-set-metadata
         index)))))
+
+(def default-options
+  {:builder-fn default-builder})

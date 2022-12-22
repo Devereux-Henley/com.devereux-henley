@@ -32,14 +32,14 @@
 (defn get-game-by-eid
   [connection eid]
   {:malli/schema (schema/to-schema [:=> [:cat [:instance Connection] :uuid] game-entity])}
-  (jdbc.sql/get-by-id connection :game eid :eid {:builder-fn db.result-set/default-builder}))
+  (jdbc.sql/get-by-id connection :game eid :eid db.result-set/default-options))
 
 (def game-query (slurp (io/resource "rts-api/sql/game/get-games.sql")))
 
 (defn get-games
   {:malli/schema (schema/to-schema [:=> [:cat [:instance Connection]] [:sequential game-entity]])}
   [connection]
-  (jdbc.sql/query connection [game-query] {:builder-fn db.result-set/default-builder}))
+  (jdbc.sql/query connection [game-query] db.result-set/default-options))
 
 (defn get-socials-for-game
   {:malli/schema (schema/to-schema [:=>
@@ -51,7 +51,7 @@
      connection
      :game_social_link
      {:game_id (:id game)}
-     {:builder-fn db.result-set/default-builder})
+     db.result-set/default-options)
     []))
 
 (defn get-game-social-link-by-eid
@@ -64,4 +64,4 @@
    :game_social_link
    eid
    :eid
-   {:builder-fn db.result-set/default-builder}))
+   db.result-set/default-options))

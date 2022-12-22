@@ -23,4 +23,4 @@
 (defn get-platform-by-eid
   [connection eid]
   {:malli/schema (schema/to-schema [:=> [:cat [:instance Connection] :uuid] platform-entity])}
-  (jdbc.sql/get-by-id connection :social_media_platform eid :eid {:builder-fn db.result-set/default-builder}))
+  (jdbc.sql/get-by-id connection :social_media_platform eid :eid db.result-set/default-options))
