@@ -1,4 +1,4 @@
-(ns com.devereux-henley.rts-api.db.platform
+(ns com.devereux-henley.rts-api.db.social-media
   (:require
    [com.devereux-henley.rts-api.db.result-set :as db.result-set]
    [com.devereux-henley.schema.contract :as schema]
@@ -23,4 +23,4 @@
 (defn get-platform-by-eid
   [connection eid]
   {:malli/schema (schema/to-schema [:=> [:cat [:instance Connection] :uuid] platform-entity])}
-  (jdbc.sql/get-by-id connection :platform eid :eid {:builder-fn db.result-set/default-builder}))
+  (jdbc.sql/get-by-id connection :social_media_platform eid :eid {:builder-fn db.result-set/default-builder}))

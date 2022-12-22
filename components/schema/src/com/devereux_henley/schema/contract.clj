@@ -165,9 +165,9 @@
 
 (defn to-resource-link
   [{:keys [hostname router] :as _route-data} route-name parameters]
-  (str hostname "/" (-> router
-                        (reitit.core/match-by-name! route-name parameters)
-                        :path)))
+  (str hostname (-> router
+                    (reitit.core/match-by-name! route-name parameters)
+                    :path)))
 
 (defn nav-transformer
   [route-data]

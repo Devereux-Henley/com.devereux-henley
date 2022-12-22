@@ -1,5 +1,6 @@
 (ns com.devereux-henley.rts-api.web.core
   (:require
+   [cats.monad.either :as either]
    [com.devereux-henley.schema.contract :as schema.contract]
    [malli.core]))
 
@@ -24,3 +25,26 @@
      :body   {}}
     {:status 200
      :body   (encode-value route-data resource-schema value)}))
+
+(defn standard-fetch
+  [fetch-fn resource-type]
+  (fn [dependencies eid]
+    (try
+      (if-let [resource (fetch-fn dependencies eid)]
+        (either/right resource)
+        (either/left (ex-info
+                      (str
+                       "No "
+                       (name resource-type)
+                       " with given eid.")
+                      {:error/kind :error/missing
+                       :model/id   eid
+                       :model/type resource-type})))
+      (catch Exception exc
+        (println exc)
+        (either/left (ex-info
+                      (str "Failed to fetch " (name resource-type))
+                      {:error/kind :error/unknown
+                       :model/id   eid
+                       :model/type resource-type}
+                      exc))))))

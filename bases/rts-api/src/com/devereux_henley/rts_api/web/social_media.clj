@@ -19,14 +19,14 @@
                     "No social media platform with given eid."
                     {:error/kind :error/missing
                      :model/id   eid
-                     :model/type :platform/platform})))
+                     :model/type :social-media/platform})))
     (catch Exception exc
       (println exc)
       (either/left (ex-info
                     "Failed to fetch social media platform."
                     {:error/kind :error/unknown
                      :model/id   eid
-                     :model/type :platform/platform}
+                     :model/type :social-media/platform}
                     exc)))))
 
 (defmethod integrant.core/init-key ::get-platform
@@ -35,8 +35,8 @@
        router                :reitit.core/router
        :as                   _request}]
     (web.core/to-fetch-response
-     schema/platform-resource
-     router
+     schema/social-media-platform-resource
+     {:router router :hostname (:hostname dependencies)}
      (cats/extract
       (cats/>>=
        (either/right eid)

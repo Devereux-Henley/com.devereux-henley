@@ -3,20 +3,28 @@
    [com.devereux-henley.schema.contract :as schema.contract]
    [malli.util]))
 
-(def game-social-link-resource
-  (schema.contract/to-schema
-   [:map
-    [:eid :uuid]
-    [:type [:= :game/social]]
-    [:url :url]]))
-
 (def social-media-platform-resource
   (malli.util/merge
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
-     [:eid :uuid]
+     [:eid {:model/link :social-media/by-id} :uuid]
+     [:name :string]
+     [:description :string]
+     [:platform-url :url]
      [:type [:= :social-media/platform]]])))
+
+(def game-social-link-resource
+  (malli.util/merge
+   schema.contract/base-resource
+   (schema.contract/to-schema
+    [:map
+     [:eid {:model/link :game/social-by-id} :uuid]
+     [:type [:= :game/social]]
+     [:url :url]
+     [:_embedded {:optional true}
+      [:map
+       [:platform {:optional true} social-media-platform-resource]]]])))
 
 (def game-resource
   (malli.util/merge

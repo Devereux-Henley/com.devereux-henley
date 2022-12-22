@@ -43,7 +43,7 @@
 
 (defn get-socials-for-game
   {:malli/schema (schema/to-schema [:=>
-                                    [:cat [:instance Connection]]
+                                    [:cat [:instance Connection] :uuid]
                                     [:sequential game-social-link-entity]])}
   [connection game-eid]
   (if-let [game (get-game-by-eid connection game-eid)]
@@ -53,3 +53,15 @@
      {:game_id (:id game)}
      {:builder-fn db.result-set/default-builder})
     []))
+
+(defn get-game-social-link-by-eid
+  {:malli/schema (schema/to-schema [:=>
+                                    [:cat [:instance Connection] :uuid]
+                                    [:sequential game-social-link-entity]])}
+  [connection eid]
+  (jdbc.sql/get-by-id
+   connection
+   :game_social_link
+   eid
+   :eid
+   {:builder-fn db.result-set/default-builder}))

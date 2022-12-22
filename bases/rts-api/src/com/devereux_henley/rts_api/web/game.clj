@@ -10,25 +10,8 @@
   (:import
    [java.time LocalDate]))
 
-;; TODO :reitit.core/router from request
-(defn get-game-by-eid
-  [dependencies eid]
-  (try
-    (if-let [game (handlers.game/get-game-by-eid dependencies eid)]
-      (either/right game)
-      (either/left (ex-info
-                    "No game with given eid."
-                    {:error/kind :error/missing
-                     :model/id   eid
-                     :model/type :game/game})))
-    (catch Exception exc
-      (println exc)
-      (either/left (ex-info
-                    "Failed to fetch game."
-                    {:error/kind :error/unknown
-                     :model/id   eid
-                     :model/type :game/game}
-                    exc)))))
+(def get-game-by-eid
+  (web.core/standard-fetch handlers.game/get-game-by-eid :game/game))
 
 (defn get-socials-for-game
   [dependencies game]
@@ -43,6 +26,9 @@
                      :model/id   (:eid game)
                      :model/type :game/game}
                     exc)))))
+
+(def get-game-social-link-by-eid
+  (web.core/standard-fetch handlers.game/get-game-social-link-by-eid :game/social))
 
 (defn get-games
   [dependencies {:keys [hostname router]}]
@@ -61,12 +47,24 @@
                      :model/type :collection/game}
                     exc)))))
 
+(defmethod integrant.core/init-key ::get-game-social-link
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+        router                :reitit.core/router
+        :as                   _request}]
+    (web.core/to-fetch-response
+     schema/game-social-link-resource
+     {:hostname (:hostname dependencies) :router router}
+     (cats/extract
+      (cats/>>=
+       (either/right eid)
+       (partial get-game-social-link-by-eid dependencies))))))
+
 (defmethod integrant.core/init-key ::get-game
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
        router                :reitit.core/router
        :as                   _request}]
-    (println _request)
     (web.core/to-fetch-response
      schema/game-resource
      {:hostname (:hostname dependencies) :router router}

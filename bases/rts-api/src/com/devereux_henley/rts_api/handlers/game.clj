@@ -15,3 +15,7 @@
   [dependencies game_eid]
   (mapv (fn [social] (assoc social :type :game/social))
         (db.game/get-socials-for-game (:connection dependencies) game_eid)))
+
+(defn get-game-social-link-by-eid
+  [dependencies eid]
+  (assoc (db.game/get-game-social-link-by-eid (:connection dependencies) eid) :type :game/social))

@@ -15,7 +15,7 @@
 
 (def default-builder
   (jdbc.result-set/builder-adapter
-   jdbc.result-set/as-unqualified-lower-maps
+   jdbc.result-set/as-unqualified-kebab-maps
    (fn [builder ^ResultSet result-set ^Integer index]
      (let [result-set-metadata ^ResultSetMetaData (:rsmeta builder)]
        (jdbc.result-set/read-column-by-index
