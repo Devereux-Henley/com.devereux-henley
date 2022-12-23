@@ -24,6 +24,8 @@
    [:id :int]
    [:eid :uuid]
    [:url :url]
+   [:game-eid :uuid]
+   [:social-media-platform-eid :uuid]
    [:version :int]
    [:created-at :instant]
    [:updated-at :instant]
@@ -41,27 +43,22 @@
   [connection]
   (jdbc.sql/query connection [game-query] db.result-set/default-options))
 
+(def get-socials-for-game-query (slurp (io/resource "rts-api/sql/game/get-socials-for-game.sql")))
+
 (defn get-socials-for-game
   {:malli/schema (schema/to-schema [:=>
                                     [:cat [:instance Connection] :uuid]
                                     [:sequential game-social-link-entity]])}
   [connection game-eid]
-  (if-let [game (get-game-by-eid connection game-eid)]
-    (jdbc.sql/find-by-keys
-     connection
-     :game_social_link
-     {:game_id (:id game)}
-     db.result-set/default-options)
-    []))
+  (jdbc.sql/query connection [get-socials-for-game-query game-eid] db.result-set/default-options))
+
+(def get-game-social-link-by-eid-query (slurp
+                                        (io/resource
+                                         "rts-api/sql/game/get-game-social-link-by-eid.sql")))
 
 (defn get-game-social-link-by-eid
   {:malli/schema (schema/to-schema [:=>
                                     [:cat [:instance Connection] :uuid]
                                     [:sequential game-social-link-entity]])}
   [connection eid]
-  (jdbc.sql/get-by-id
-   connection
-   :game_social_link
-   eid
-   :eid
-   db.result-set/default-options))
+  (jdbc.sql/query connection [get-game-social-link-by-eid-query eid] db.result-set/default-options))

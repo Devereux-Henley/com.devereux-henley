@@ -20,8 +20,15 @@
    (schema.contract/to-schema
     [:map
      [:eid {:model/link :game/social-by-id} :uuid]
+     [:game-eid {:model/link :game/by-id} :uuid]
+     [:social-media-platform-eid {:model/link :social-media/by-id} :uuid]
      [:type [:= :game/social]]
      [:url :url]
+     [:_links
+      [:map
+       [:self :url]
+       [:game :url]
+       [:social-media-platform :url]]]
      [:_embedded {:optional true}
       [:map
        [:platform {:optional true} social-media-platform-resource]]]])))

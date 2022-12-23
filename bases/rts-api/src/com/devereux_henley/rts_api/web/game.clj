@@ -91,5 +91,9 @@
    schema/game-resource
    {:hostname "http://localhost:3001" :router router}
    (cats/extract
-    (get-game-by-eid {:connection connection} "eea787d7-1065-45eb-a3f6-e26f32c294a1")))
+    (cats/>>=
+     (either/right "eea787d7-1065-45eb-a3f6-e26f32c294a1")
+     (partial get-game-by-eid {:connection connection})
+     (partial get-socials-for-game {:connection connection}))))
+
   )

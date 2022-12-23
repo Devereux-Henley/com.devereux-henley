@@ -180,7 +180,7 @@
                          (fn [value]
                            (vary-meta value assoc `clojure.core.protocols/nav
                                       (fn [coll k v]
-                                        (if-let [link (k mapping)]
+                                        (if-let [link (get mapping k)]
                                           (URL. (to-resource-link route-data link {:eid v}))
                                           v))))))}}}))
 
@@ -198,13 +198,14 @@
                                   (fn [value]
                                     (reduce-kv
                                      (fn [acc k v]
-                                       (if-let [link (k mapping)]
+                                       (if-let [link (get mapping k)]
                                          (-> acc
                                              (assoc k v)
                                              (assoc-in [:_links
                                                         (if (= k :eid)
                                                           :self
-                                                          k)]
+                                                          (keyword
+                                                           (clojure.string/replace (name k) #"-eid" "")))]
                                                        (to-resource-link
                                                         route-data
                                                         link
