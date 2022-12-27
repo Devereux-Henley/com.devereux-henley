@@ -20,9 +20,7 @@
 (defn view-by-type
   [type]
   (get
-   {:view/index "rts-api/index.html"
-    :game/game "rts-api/resource/game.html"
-    :collection/game "rts-api/resource/game-collection.html"
+   {:game/game "rts-api/resource/game.html"
     "exception" "rts-api/resource/error.html"}
    type
    "rts-api/resource/unknown.html"))
@@ -96,6 +94,9 @@
       :url    "/api/swagger.json"
       :config {:validatorUrl     nil
                :operationsSorter "alpha"}})
+    (ring/create-resource-handler {:root "rts-api/asset"
+                                   :path "/"
+                                   :not-found-handler (fn [_] {:status 404 :body "<div>Nothing here boss.</div>"})})
     (ring/create-default-handler))))
 
 (defmethod integrant.core/init-key ::service

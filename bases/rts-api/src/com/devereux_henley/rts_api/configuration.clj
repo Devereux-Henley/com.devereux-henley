@@ -4,6 +4,7 @@
    [com.devereux-henley.rts-api.db :as db]
    [com.devereux-henley.rts-api.schema :as schema]
    [com.devereux-henley.rts-api.web :as web]
+   [com.devereux-henley.rts-api.web.asset :as web.asset]
    [com.devereux-henley.rts-api.web.game :as web.game]
    [com.devereux-henley.rts-api.web.social-media :as web.social-media]
    [integrant.core]
@@ -27,26 +28,11 @@
      {:get {:no-doc   true
             :produces ["text/html"]
             :handler  (fn [_request] {:status 301 :headers {"Location" "/dashboard.html"}})}}]
-    ["/dashboard.html"
-     {:get {:no-doc   true
-            :produces ["text/html"]
-            :handler  (fn [_request] {:status 200 :body (slurp (io/resource "rts-api/asset/dashboard.html"))})}}]
-    ["/dashboard.css"
-     {:get {:no-doc   true
-            :produces ["application/css"]
-            :handler  (fn [_request] {:status 200 :body (slurp (io/resource "rts-api/asset/dashboard.css"))})}}]
-    ["/game.html"
-     {:get {:no-doc   true
-            :produces ["text/html"]
-            :handler  (fn [_request] {:status 200 :body (slurp (io/resource "rts-api/asset/game.html"))})}}]
-    ["/about.html"
-     {:get {:no-doc   true
-            :produces ["text/html"]
-            :handler  (fn [_request] {:status 200 :body (slurp (io/resource "rts-api/asset/about.html"))})}}]
-    ["/contact.html"
-     {:get {:no-doc   true
-            :produces ["text/html"]
-            :handler  (fn [_request] {:status 200 :body (slurp (io/resource "rts-api/asset/contact.html"))})}}]
+    ["/icon/social-media/:eid"
+     {:get {:no-doc true
+            :parameters {:path schema.contract/id-path-parameter}
+            :produces ["image/svg+xml"]
+            :handler web.asset/icon-handler}}]
     ["/api"
      ["/swagger.json"
       {:get {:no-doc  true

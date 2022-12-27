@@ -1,14 +1,15 @@
 (ns com.devereux-henley.content-negotiation.html
   (:require
    [muuntaja.format.core]
-   [selmer.parser]))
+   [selmer.parser]
+   [taoensso.timbre :as log]))
 
 (defn html-htmx-encoder
   [{:keys [view-fn]}]
   (reify
     muuntaja.format.core/EncodeToBytes
     (encode-to-bytes [_ data charset]
-      (println data)
+      (log/debug data)
       (.getBytes ^String (selmer.parser/render-file (view-fn (:type data)) {:data data}) ^String charset))
     muuntaja.format.core/EncodeToOutputStream
     (encode-to-output-stream [_ data charset]
@@ -29,7 +30,7 @@
   (reify
     muuntaja.format.core/EncodeToBytes
     (encode-to-bytes [_ data charset]
-      (println data)
+      (log/debug data)
       (.getBytes ^String data ^String charset))
     muuntaja.format.core/EncodeToOutputStream
     (encode-to-output-stream [_ data charset]

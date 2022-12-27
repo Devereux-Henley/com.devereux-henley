@@ -6,9 +6,8 @@
    [com.devereux-henley.rts-api.schema :as schema]
    [com.devereux-henley.rts-api.handlers.game :as handlers.game]
    [com.devereux-henley.rts-api.web.core :as web.core]
-   [integrant.core])
-  (:import
-   [java.time LocalDate]))
+   [integrant.core]
+   [taoensso.timbre :as log]))
 
 (def get-game-by-eid
   (web.core/standard-fetch handlers.game/get-game-by-eid :game/game))
@@ -19,7 +18,7 @@
     (let [socials (handlers.game/get-socials-for-game dependencies (:eid game))]
       (either/right (assoc-in game [:_embedded :socials] socials)))
     (catch Exception exc
-      (println exc)
+      (log/error exc)
       (either/left (ex-info
                     "Failed to fetch socials for specified game."
                     {:error/kind :error/unknown
@@ -40,7 +39,7 @@
                                               (reitit.core/match-by-name! :collection/game)
                                               :path))}})
     (catch Exception exc
-      (println exc)
+      (log/error exc)
       (either/left (ex-info
                     "Failed to fetch games."
                     {:error/kind :error/unknown

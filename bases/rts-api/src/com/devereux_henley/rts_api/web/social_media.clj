@@ -5,29 +5,10 @@
    [com.devereux-henley.rts-api.schema :as schema]
    [com.devereux-henley.rts-api.handlers.social-media :as handlers.social-media]
    [com.devereux-henley.rts-api.web.core :as web.core]
-   [integrant.core])
-  (:import
-   [java.time LocalDate]))
+   [integrant.core]))
 
-;; TODO :reitit.core/router from request
-(defn get-platform-by-eid
-  [dependencies eid]
-  (try
-    (if-let [platform (handlers.social-media/get-platform-by-eid dependencies eid)]
-      (either/right platform)
-      (either/left (ex-info
-                    "No social media platform with given eid."
-                    {:error/kind :error/missing
-                     :model/id   eid
-                     :model/type :social-media/platform})))
-    (catch Exception exc
-      (println exc)
-      (either/left (ex-info
-                    "Failed to fetch social media platform."
-                    {:error/kind :error/unknown
-                     :model/id   eid
-                     :model/type :social-media/platform}
-                    exc)))))
+(def get-platform-by-eid
+  (web.core/standard-fetch handlers.social-media/get-platform-by-eid :social-media/platform))
 
 (defmethod integrant.core/init-key ::get-platform
   [_init-key dependencies]

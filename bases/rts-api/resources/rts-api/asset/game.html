@@ -4,26 +4,24 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yegor256/tacit@gh-pages/tacit-css.min.css"/>
     </head>
     <body hx-headers='{"Accept": "application/htmx+html"}'>
-        <section>
-            <header>
-                <nav>
-                    <ul>
-                        <li><a href="/dashboard.html">Dashboard</a></li>
-                        <li><a href="/game.html">Games</a></li>
-                        <li><a href="/about.html">About</a></li>
-                        <li><a href="/contact.html">Contact</a></li>
-                    </ul>
-                </nav>
-            </header>
-            <article>
-                <nav id="game-browser-selector">
-                    <a hx-get="/api/game/eea787d7-1065-45eb-a3f6-e26f32c294a1" hx-target="#game-browser">
-                        Total War: Warhammer III
-                    </a>
-                </nav>
-                <div id="game-browser">
-                </div>
-            </article>
+        <header>
+            <nav>
+                <ul>
+                    <li><a href="/dashboard.html">Dashboard</a></li>
+                    <li><a href="/game.html">Games</a></li>
+                    <li><a href="/about.html">About</a></li>
+                    <li><a href="/contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+        <nav id="game-browser-selector">
+            <a hx-get="/api/game/eea787d7-1065-45eb-a3f6-e26f32c294a1"
+               hx-target="#game-browser"
+               hx-swap="outerHTML">
+                Total War: Warhammer III
+            </a>
+        </nav>
+        <section id="game-browser">
         </section>
     </body>
 </html>

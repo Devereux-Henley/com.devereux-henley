@@ -2,7 +2,8 @@
   (:require
    [cats.monad.either :as either]
    [com.devereux-henley.schema.contract :as schema.contract]
-   [malli.core]))
+   [malli.core]
+   [taoensso.timbre :as log]))
 
 (defn encode-value
   [route-data resource-schema value]
@@ -10,7 +11,7 @@
 
 (defn to-fetch-response
   [resource-schema route-data value]
-  (println value)
+  (log/debug value)
   (condp instance? value
     clojure.lang.ExceptionInfo
     (case (:error/kind (ex-data value))
@@ -41,7 +42,7 @@
                        :model/id   eid
                        :model/type resource-type})))
       (catch Exception exc
-        (println exc)
+        (log/error exc)
         (either/left (ex-info
                       (str "Failed to fetch " (name resource-type))
                       {:error/kind :error/unknown
