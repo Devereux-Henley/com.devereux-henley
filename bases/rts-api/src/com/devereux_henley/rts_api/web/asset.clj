@@ -18,7 +18,6 @@
 (defn icon-handler
   [{{{:keys [eid]} :path} :parameters
     :as                   _request}]
-  (log/debug eid)
   (if-let [matching-icon (match-icon eid)]
     {:status 200
      :headers {"Content-Type" "image/svg+xml"}
