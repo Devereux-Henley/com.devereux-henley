@@ -30,8 +30,13 @@
   (reify
     muuntaja.format.core/EncodeToBytes
     (encode-to-bytes [_ data charset]
-      (log/debug data)
-      (.getBytes ^String data ^String charset))
+      (if (map? data) ;; Handle exception maps
+        (do
+          (log/error data)
+          (.getBytes "<div>Something went wrong.</div>" ^String charset))
+        (do
+          (log/trace data)
+          (.getBytes ^String data ^String charset))))
     muuntaja.format.core/EncodeToOutputStream
     (encode-to-output-stream [_ data charset]
       (fn [^java.io.OutputStream output-stream]

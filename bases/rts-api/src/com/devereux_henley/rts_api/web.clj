@@ -15,7 +15,8 @@
    [reitit.ring.middleware.parameters :as parameters]
    [reitit.swagger :as swagger]
    [reitit.swagger-ui :as swagger-ui]
-   [ring.adapter.jetty :as jetty]))
+   [ring.adapter.jetty :as jetty]
+   [ring.middleware.cookies]))
 
 (defn view-by-type
   [type]
@@ -34,7 +35,7 @@
   routes)
 
 (defmethod integrant.core/init-key ::app
-  [_init-key {:keys [routes]}]
+  [_init-key {:keys [routes session-name]}]
   (ring/ring-handler
    (ring/router
     routes
@@ -96,8 +97,11 @@
                :operationsSorter "alpha"}})
     (ring/create-resource-handler {:root "rts-api/asset"
                                    :path "/"
-                                   :not-found-handler (fn [_] {:status 404 :body "<div>Nothing here boss.</div>"})})
-    (ring/create-default-handler))))
+                                   :not-found-handler
+                                   (fn [_] {:status  301
+                                           :headers {"Location" "/view/dashboard.html"}})})
+    (ring/create-default-handler))
+   {:middleware [ring.middleware.cookies/wrap-cookies]}))
 
 (defmethod integrant.core/init-key ::service
   [_init-key {:keys [handler configuration] :as dependencies}]
