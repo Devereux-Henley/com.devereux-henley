@@ -1,3 +1,23 @@
+img.logo-image#aoe-logo-image {
+    background-color:#262626;
+    height:60px;
+    padding-right:10px;
+    padding-left:10px;
+    padding-bottom:5px;
+    padding-top:5px;
+    border-radius:30px;
+    justify-content:center;
+    margin-bottom:13px;
+}
+
+img.logo-image#tww3-logo-image {
+    height:100px;
+}
+
+img.logo-image {
+    width:160px;
+}
+
 section#game-section-about,section#game-section-factions,section#game-section-drafts {
     display:none;
 }
