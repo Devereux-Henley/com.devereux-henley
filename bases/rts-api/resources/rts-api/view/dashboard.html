@@ -1,1 +1,21 @@
 {% extends "rts-api/template/entrypoint.html" %}
+
+{% block styles %}
+<link rel="stylesheet" href="/style/dashboard.css"/>
+{% endblock %}
+
+{% block header %}
+<header>
+    <nav id="game-browser-selector">
+        <a hx-get="/api/game/eea787d7-1065-45eb-a3f6-e26f32c294a1"
+           hx-target="#game-browser"
+           hx-swap="outerHTML">
+            <img style="height:100px;width:160px" src="/image/wh3_logo.webp" />
+        </a>
+    </nav>
+</header>
+{% endblock %}
+{% block content %}
+<section id="game-browser">
+</section>
+{% endblock %}

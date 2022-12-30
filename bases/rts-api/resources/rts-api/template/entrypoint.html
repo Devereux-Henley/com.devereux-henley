@@ -2,26 +2,20 @@
     <head>
         <script src="https://unpkg.com/htmx.org@1.8.2" integrity="sha384-+8ISc/waZcRdXCLxVgbsLzay31nCdyZXQxnsUy++HJzJliTzxKWr0m1cIEMyUzQu" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yegor256/tacit@gh-pages/tacit-css.min.css"/>
+        {% block styles %}
+        {% endblock %}
     </head>
     <body hx-headers='{"Accept": "application/htmx+html"}'>
         {% if session %}
         <a style="float:right"
-           href="/view/logout">logout</a>
+           href="/view/logout.html">logout</a>
         {% else %}
         <a style="float:right"
-           href="/view/login"
+           href="/view/login.html"
            target="_blank">login</a>
         {% endif %}
-        <header>
-            <nav>
-                <ul>
-                    <li><a href="/view/dashboard.html">dashboard</a></li>
-                    <li><a href="/view/game.html">games</a></li>
-                    <li><a href="/view/about.html">about</a></li>
-                    <li><a href="/view/contact.html">contact</a></li>
-                </ul>
-            </nav>
-        </header>
+        {% block header %}
+        {% endblock %}
         {% block content %}
         {% endblock %}
     </body>

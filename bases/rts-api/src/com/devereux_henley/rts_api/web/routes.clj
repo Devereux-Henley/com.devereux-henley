@@ -3,10 +3,24 @@
    [com.devereux-henley.schema.contract :as schema.contract]
    [com.devereux-henley.rts-api.schema :as schema]
    [com.devereux-henley.rts-api.web :as web]
+   [com.devereux-henley.rts-api.web.asset :as web.asset]
    [com.devereux-henley.rts-api.web.game :as web.game]
    [com.devereux-henley.rts-api.web.social-media :as web.social-media]
    [com.devereux-henley.rts-api.web.view :as web.view]
    [integrant.core]))
+
+(def root-route
+  ["/"
+   {:get {:no-doc   true
+          :produces ["text/html"]
+          :handler  (fn [_request] {:status 301 :headers {"Location" "/view/dashboard.html"}})}}])
+
+(def icon-routes
+  ["/icon/social-media/:eid"
+   {:get {:no-doc     true
+          :parameters {:path schema.contract/id-path-parameter}
+          :produces   ["image/svg+xml"]
+          :handler    web.asset/icon-handler}}])
 
 (def view-routes
   ["/view"
@@ -78,3 +92,7 @@
                          :query schema.contract/version-query-parameter}
             :responses  {200 {:body schema/social-media-platform-resource}}
             :handler    (integrant.core/ref ::web.social-media/get-platform)}}]])
+
+(defmethod integrant.core/init-key ::routes
+  [_init-key routes]
+  routes)

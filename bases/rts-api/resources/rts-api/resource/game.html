@@ -1,11 +1,34 @@
 <section id="game-browser" class="resource game-resource">
-    <article>
+    <nav>
+        <div>
+            <label for="checkbox-about">
+                About
+            </label>
+            <input type="radio" id="checkbox-about" name="game-navigation"></input>
+            <label for="checkbox-factions">
+                Factions
+            </label>
+            <input type="radio" id="checkbox-factions" name="game-navigation"></input>
+            <label for="checkbox-drafts">
+                Drafts
+            </label>
+            <input type="radio" id="checkbox-drafts" name="game-navigation"></input>
+        </div>
+    </nav>
+    <section id="game-section-about">
         <p>
-            <pre>
-              {{data.description}}
-            </pre>
+            <pre>{{data.description}}</pre>
         </p>
-    </article>
+    </section>
+    <section id="game-section-factions">
+        <nav>
+            {% for faction in data._embedded.factions %}
+            {% endfor %}
+        </nav>
+    </section>
+    <section id="game-section-drafts">
+        TODO Drafts
+    </section>
     <footer>
         <nav>
             {% for social in data._embedded.socials %}

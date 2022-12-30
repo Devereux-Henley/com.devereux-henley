@@ -30,10 +30,6 @@
   [_init-key _dependencies]
   (swagger/create-swagger-handler))
 
-(defmethod integrant.core/init-key ::routes
-  [_init-key routes]
-  routes)
-
 (defmethod integrant.core/init-key ::app
   [_init-key {:keys [routes session-name]}]
   (ring/ring-handler
