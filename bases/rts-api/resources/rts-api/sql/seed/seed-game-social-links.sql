@@ -4,7 +4,7 @@ INSERT OR IGNORE INTO game_social_link(id,
                                        game_id,
                                        social_media_platform_id,
                                        version,
-                                       created_by_eid,
+                                       created_by_sub,
                                        created_at,
                                        updated_at,
                                        deleted_at)

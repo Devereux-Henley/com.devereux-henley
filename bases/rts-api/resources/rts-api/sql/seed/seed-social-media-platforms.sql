@@ -4,7 +4,7 @@ INSERT OR IGNORE INTO social_media_platform(id,
                                             description,
                                             platform_url,
                                             version,
-                                            created_by_eid,
+                                            created_by_sub,
                                             created_at,
                                             updated_at,
                                             deleted_at)

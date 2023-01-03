@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS social_media_platform (
   description TEXT NOT NULL,
   platform_url TEXT NOT NULL,
   version INTEGER NOT NULL,
-  created_by_eid TEXT NOT NULL,
+  created_by_sub TEXT NOT NULL,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL,
   deleted_at TEXT,
