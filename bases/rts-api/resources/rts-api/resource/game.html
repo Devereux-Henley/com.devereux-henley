@@ -4,15 +4,15 @@
             <label for="checkbox-about">
                 About
             </label>
-            <input type="radio" id="checkbox-about" name="game-navigation"></input>
+            <input type="radio" id="checkbox-about" class="hidden-checkbox" name="game-navigation"></input>
             <label for="checkbox-factions">
                 Factions
             </label>
-            <input type="radio" id="checkbox-factions" name="game-navigation"></input>
+            <input type="radio" id="checkbox-factions" class="hidden-checkbox" name="game-navigation"></input>
             <label for="checkbox-drafts">
                 Drafts
             </label>
-            <input type="radio" id="checkbox-drafts" name="game-navigation"></input>
+            <input type="radio" id="checkbox-drafts" class="hidden-checkbox" name="game-navigation"></input>
         </div>
     </nav>
     <section id="game-section-about">
@@ -20,15 +20,21 @@
             <pre>{{data.description}}</pre>
         </p>
     </section>
+    {% if data._embedded.factions %}
     <section id="game-section-factions">
         <nav>
             {% for faction in data._embedded.factions %}
+            <label for="checkbox-{{faction.eid}}"><h3>{{faction.name}}</h3></label>
+            <input type="radio" id="checkbox-{{faction.eid}}" class="hidden-checkbox" name="faction-navigation"></input>
+            <div id="faction-description-{{faction.eid}}" class="faction-description">{{faction.description|linebreaks|safe}}</div>
             {% endfor %}
         </nav>
     </section>
+    {% endif %}
     <section id="game-section-drafts">
         TODO Drafts
     </section>
+    {% if data._embedded.socials %}
     <footer>
         <nav>
             {% for social in data._embedded.socials %}
@@ -40,4 +46,5 @@
             {% endfor %}
         </nav>
     </footer>
+    {% endif %}
 </section>

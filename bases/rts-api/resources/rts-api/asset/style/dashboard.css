@@ -10,6 +10,10 @@ img.logo-image#aoe-logo-image {
     margin-bottom:13px;
 }
 
+a:hover:has( img) {
+    text-decoration:none;
+}
+
 img.logo-image#tww3-logo-image {
     height:100px;
 }
@@ -22,8 +26,16 @@ section#game-section-about,section#game-section-factions,section#game-section-dr
     display:none;
 }
 
-#checkbox-about,#checkbox-factions,#checkbox-drafts {
+.hidden-checkbox {
     display:none;
+}
+
+.faction-description {
+    display:none;
+}
+
+input.hidden-checkbox:checked + div.faction-description {
+    display:block;
 }
 
 nav:has( #checkbox-about:checked) ~ section#game-section-about {

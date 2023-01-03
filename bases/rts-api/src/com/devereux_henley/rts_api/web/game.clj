@@ -12,19 +12,14 @@
 (def get-game-by-eid
   (web.core/standard-fetch handlers.game/get-game-by-eid :game/game))
 
-(defn get-socials-for-game
-  [dependencies game]
-  (try
-    (let [socials (handlers.game/get-socials-for-game dependencies (:eid game))]
-      (either/right (assoc-in game [:_embedded :socials] socials)))
-    (catch Exception exc
-      (log/error exc)
-      (either/left (ex-info
-                    "Failed to fetch socials for specified game."
-                    {:error/kind :error/unknown
-                     :model/id   (:eid game)
-                     :model/type :game/game}
-                    exc)))))
+(def get-factions-for-game
+  (web.core/standard-load-embedded handlers.game/get-factions-for-game :factions :game/game))
+
+(def get-socials-for-game
+  (web.core/standard-load-embedded handlers.game/get-socials-for-game :socials :game/game))
+
+(def get-faction-by-eid
+  (web.core/standard-fetch handlers.game/get-faction-by-eid :game/faction))
 
 (def get-game-social-link-by-eid
   (web.core/standard-fetch handlers.game/get-game-social-link-by-eid :game/social))
@@ -46,11 +41,24 @@
                      :model/type :collection/game}
                     exc)))))
 
+(defmethod integrant.core/init-key ::get-faction
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+       router                :reitit.core/router
+       :as                   _request}]
+    (web.core/to-fetch-response
+     schema/faction-resource
+     {:hostname (:hostname dependencies) :router router}
+     (cats/extract
+      (cats/>>=
+       (either/right eid)
+       (partial get-faction-by-eid dependencies))))))
+
 (defmethod integrant.core/init-key ::get-game-social-link
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
-        router                :reitit.core/router
-        :as                   _request}]
+       router                :reitit.core/router
+       :as                   _request}]
     (web.core/to-fetch-response
      schema/game-social-link-resource
      {:hostname (:hostname dependencies) :router router}
@@ -71,7 +79,8 @@
       (cats/>>=
        (either/right eid)
        (partial get-game-by-eid dependencies)
-       (partial get-socials-for-game dependencies))))))
+       (partial get-socials-for-game dependencies)
+       (partial get-factions-for-game dependencies))))))
 
 (defmethod integrant.core/init-key ::get-games
   [_init-key dependencies]
@@ -85,14 +94,4 @@
   (require '[com.devereux-henley.rts-api.system :as rts-api.system])
   (require '[reitit.core])
   (def connection (:com.devereux-henley.rts-api.db/connection (rts-api.system/get-system)))
-  (def router (reitit.core/router (:com.devereux-henley.rts-api.web/routes (rts-api.system/get-system))))
-  (web.core/to-fetch-response
-   schema/game-resource
-   {:hostname "http://localhost:3001" :router router}
-   (cats/extract
-    (cats/>>=
-     (either/right "eea787d7-1065-45eb-a3f6-e26f32c294a1")
-     (partial get-game-by-eid {:connection connection})
-     (partial get-socials-for-game {:connection connection}))))
-
-  )
+  (def router (reitit.core/router (:com.devereux-henley.rts-api.web/routes (rts-api.system/get-system)))))

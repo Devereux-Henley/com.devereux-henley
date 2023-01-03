@@ -11,10 +11,19 @@
   [dependencies]
   (mapv (fn [game] (assoc game :type :game/game)) (db.game/get-games (:connection dependencies))))
 
+(defn get-factions-for-game
+  [dependencies game-eid]
+  (mapv (fn [faction] (assoc faction :type :game/faction))
+        (db.game/get-factions-for-game (:connection dependencies) game-eid)))
+
+(defn get-faction-by-eid
+  [dependencies eid]
+  (assoc (db.game/get-faction-by-eid (:connection dependencies) eid) :type :game/faction))
+
 (defn get-socials-for-game
-  [dependencies game_eid]
+  [dependencies game-eid]
   (mapv (fn [social] (assoc social :type :game/social))
-        (db.game/get-socials-for-game (:connection dependencies) game_eid)))
+        (db.game/get-socials-for-game (:connection dependencies) game-eid)))
 
 (defn get-game-social-link-by-eid
   [dependencies eid]

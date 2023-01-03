@@ -19,6 +19,18 @@
    [:updated-at :instant]
    [:deleted-at [:maybe :instant]]])
 
+(def faction-entity
+  [:map
+   [:id :int]
+   [:eid :uuid]
+   [:name {:min 1} :string]
+   [:game-eid :uuid]
+   [:description {:min 1} :string]
+   [:version :int]
+   [:created-at :instant]
+   [:updated-at :instant]
+   [:deleted-at [:maybe :instant]]])
+
 (def game-social-link-entity
   [:map
    [:id :int]
@@ -43,6 +55,24 @@
   [connection]
   (jdbc.sql/query connection [game-query] db.result-set/default-options))
 
+(def get-faction-by-eid-query (slurp (io/resource "rts-api/sql/game/get-faction-by-eid.sql")))
+
+(defn get-faction-by-eid
+  {:malli/schema (schema/to-schema [:=>
+                                    [:cat [:instance Connection] :uuid]
+                                    faction-entity])}
+  [connection eid]
+  (jdbc.sql/query connection [get-faction-by-eid-query eid] db.result-set/default-options))
+
+(def get-factions-for-game-query (slurp (io/resource "rts-api/sql/game/get-factions-for-game.sql")))
+
+(defn get-factions-for-game
+  {:malli/schema (schema/to-schema [:=>
+                                    [:cat [:instance Connection] :uuid]
+                                    [:sequential faction-entity]])}
+  [connection game-eid]
+  (jdbc.sql/query connection [get-factions-for-game-query game-eid] db.result-set/default-options))
+
 (def get-socials-for-game-query (slurp (io/resource "rts-api/sql/game/get-socials-for-game.sql")))
 
 (defn get-socials-for-game
@@ -59,6 +89,6 @@
 (defn get-game-social-link-by-eid
   {:malli/schema (schema/to-schema [:=>
                                     [:cat [:instance Connection] :uuid]
-                                    [:sequential game-social-link-entity]])}
+                                    game-social-link-entity])}
   [connection eid]
   (jdbc.sql/query connection [get-game-social-link-by-eid-query eid] db.result-set/default-options))

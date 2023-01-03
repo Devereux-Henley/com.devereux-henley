@@ -58,36 +58,46 @@
      :get  {:summary   "Fetches a list of games."
             :swagger   {:tags         ["game"]
                         :produces     ["application/htmx+html" "application/json"]
-                        :operation-id "get-games"}
+                        :operation-id "game/all"}
             :responses {200 {:body schema/game-collection-resource}}
             :handler   (integrant.core/ref ::web.game/get-games)}}]
 
    ["/game/:eid"
-    {:name :game/by-id
+    {:name :game/by-eid
      :get  {:summary    "Fetches a game by eid."
             :swagger    {:tags         ["game"]
                          :produces     ["application/htmx+html" "application/json"]
-                         :operation-id "get-game"}
+                         :operation-id "game/by-eid"}
             :parameters {:path  schema.contract/id-path-parameter
                          :query schema.contract/version-query-parameter}
             :responses  {200 {:body schema/game-resource}}
             :handler    (integrant.core/ref ::web.game/get-game)}}]
    ["/game/social-link/:eid"
-    {:name :game/social-by-id
+    {:name :game/social-by-eid
      :get  {:summary    "Fetches a link between social media and a game by eid."
             :swagger    {:tags         ["game"]
                          :produces     ["application/htmx+html" "application/json"]
-                         :operation-id "get-game-social-link"}
+                         :operation-id "game/social-by-eid"}
             :parameters {:path  schema.contract/id-path-parameter
                          :query schema.contract/version-query-parameter}
             :responses  {200 {:body schema/game-social-link-resource}}
             :handler    (integrant.core/ref ::web.game/get-game-social-link)}}]
+   ["/game/faction/:eid"
+    {:name :game/faction-by-eid
+     :get  {:summary    "Fetches a game faction by eid."
+            :swagger    {:tags         ["game"]
+                         :produces     ["application/htmx+html" "application/json"]
+                         :operation-id "game/faction-by-eid"}
+            :parameters {:path  schema.contract/id-path-parameter
+                         :query schema.contract/version-query-parameter}
+            :responses  {200 {:body schema/faction-resource}}
+            :handler    (integrant.core/ref ::web.game/get-faction)}}]
    ["/social-media/:eid"
-    {:name :social-media/by-id
+    {:name :social-media/by-eid
      :get  {:summary    "Fetches a social media platform by eid."
             :swagger    {:tags         ["social-media"]
                          :produces     ["application/htmx+html" "application/json"]
-                         :operation-id "get-social-media-platform"}
+                         :operation-id "social-media/by-eid"}
             :parameters {:path  schema.contract/id-path-parameter
                          :query schema.contract/version-query-parameter}
             :responses  {200 {:body schema/social-media-platform-resource}}

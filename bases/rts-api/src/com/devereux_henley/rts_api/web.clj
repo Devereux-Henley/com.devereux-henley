@@ -87,7 +87,7 @@
                               multipart/multipart-middleware]}})
    (ring/routes
     (swagger-ui/create-swagger-ui-handler
-     {:path   "/api/"
+     {:path   "/api"
       :url    "/api/swagger.json"
       :config {:validatorUrl     nil
                :operationsSorter "alpha"}})

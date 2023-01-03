@@ -49,3 +49,20 @@
                        :model/id   eid
                        :model/type resource-type}
                       exc))))))
+
+(defn standard-load-embedded
+  [fetch-fn embedded-resource-key model-resource-type]
+  (fn [dependencies model]
+    (try
+      (let [embedded-resources (fetch-fn dependencies (:eid model))]
+        (either/right (assoc-in model [:_embedded embedded-resource-key] embedded-resources)))
+      (catch Exception exc
+        (log/error exc)
+        (either/left (ex-info
+                      (format "Failed to fetch %s for specified %s."
+                              embedded-resource-key
+                              (name model-resource-type))
+                      {:error/kind :error/unknown
+                       :model/id   (:eid model)
+                       :model/type model-resource-type}
+                      exc))))))
