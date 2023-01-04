@@ -16,8 +16,8 @@ VALUES
          'twitch.tv',
          1,
          'f0ce7395-a57f-41e9-ade0-fd13bafc058f',
-         DATETIME('now'),
-         DATETIME('now'),
+         STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'),
+         STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'),
          null
          ),
          (2,
@@ -27,7 +27,7 @@ VALUES
          'youtube.com',
          1,
          'f0ce7395-a57f-41e9-ade0-fd13bafc058f',
-         DATETIME('now'),
-         DATETIME('now'),
+         STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'),
+         STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'),
          null
          );

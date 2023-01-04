@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS tournament_player_match (
+  id INTEGER PRIMARY KEY ASC,
+  eid TEXT NOT NULL,
+  tournament_id INTEGER NOT NULL,
+  victor_id INTEGER NULL,
+  victor_faction_id INTEGER NULL,
+  challenger_id INTEGER NULL,
+  challenger_faction_id INTEGER NULL,
+  version INT NOT NULL,
+  created_by_sub TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  deleted_at TEXT,
+  UNIQUE(eid),
+  FOREIGN_KEY(tournament_id) REFERENCES tournament(id),
+  FOREIGN_KEY(victor_id) REFERENCES tournament_round_player_competitor(id),
+  FOREIGN_KEY(victor_faction_id) REFERENCES faction(id),
+  FOREIGN_KEY(challenger_id) REFERENCES tournament_round_player_competitor(id),
+  FOREIGN_KEY(challenger_faction_id) REFERENCES faction(id)
+);

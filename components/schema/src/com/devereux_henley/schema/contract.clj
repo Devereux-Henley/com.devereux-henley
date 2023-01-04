@@ -8,7 +8,8 @@
    [reitit.core])
   (:import
    [java.net URL]
-   [java.time Instant LocalDate]))
+   [java.time Instant LocalDate]
+   [java.util UUID]))
 
 (def milliseconds-in-a-second 1000)
 (def seconds-in-a-minute 60)
@@ -183,6 +184,16 @@
                                         (if-let [link (get mapping k)]
                                           (URL. (to-resource-link route-data link {:eid v}))
                                           v))))))}}}))
+
+(def sqlite-transformer
+  (malli.transform/transformer
+   {:name     :sqlite
+    :decoders {:uuid       (fn [uuid-string] (UUID/fromString uuid-string))
+               :bool       (fn [bit] (if bit true false))
+               :local-date (fn [date-string] (when-not (empty? date-string)
+                                              (LocalDate/parse date-string)))
+               :instant    (fn [instant-string] (when-not (empty? instant-string)
+                                              (Instant/parse instant-string)))}}))
 
 ;; Walk the input value.
 ;; For each key in the model, add that key to a links array.
