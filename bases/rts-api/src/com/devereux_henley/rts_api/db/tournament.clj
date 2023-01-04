@@ -5,10 +5,21 @@
    [malli.core]
    [next.jdbc :as jdbc]
    [next.jdbc.result-set :as jdbc.result-set]
-   [next.jdbc.sql :as jdbc.sql]
-   [clojure.java.io :as io])
+   [next.jdbc.sql :as jdbc.sql])
   (:import
    [java.sql Connection]))
+
+(def create-tournament-specification
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:game-eid :uuid]
+    [:title :string]
+    [:description :string]
+    [:tournament-start-datetime :instant]
+    [:tournament-checkin-datetime :instant]
+    [:tournament-type [:enum "elimination" "round-robin"]]
+    [:competitor-type [:enum "player"]]]))
 
 (def tournament-entity
   (schema.contract/to-schema
@@ -39,9 +50,7 @@
     [:updated-at :instant]
     [:deleted-at [:maybe :instant]]]))
 
-(defn load-tournament-query
-  [file-name]
-  (slurp (io/resource (str "rts-api/sql/tournament/" file-name))))
+(def load-tournament-query (partial db.core/load-query-resource "tournament"))
 
 (defn get-tournaments
   [connection since size])
@@ -60,10 +69,27 @@
                             tournament-entity))
 
 (defn create-tournament
-  [connection create-specification])
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection] create-tournament-specification]
+                   tournament-entity])}
+  [connection create-specification]
+  (db.core/insert! connection
+                   :tournament
+                   create-tournament-specification))
+
+(def get-tournament-snapshot-by-tournament-eid-query
+  (load-tournament-query "get-tournament-snapshot-by-tournament-eid.sql"))
 
 (defn get-tournament-snapshot-by-tournament-eid
-  [connection tournament-eid])
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection] :uuid]
+                   tournament-snapshot-entity])}
+  [connection tournament-eid]
+  (db.core/query-for-entity connection
+                            [get-tournament-snapshot-by-tournament-eid tournament-eid]
+                            tournament-snapshot-entity))
 
 (defn update-tournament-snapshot-by-tournament-eid
   [connection tournament-eid new-snapshot])
