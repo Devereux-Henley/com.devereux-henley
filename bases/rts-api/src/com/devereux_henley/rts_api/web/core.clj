@@ -3,8 +3,7 @@
    [cats.monad.either :as either]
    [com.devereux-henley.schema.contract :as schema.contract]
    [malli.core]
-   [taoensso.timbre :as log]
-   [com.devereux-henley.rts-api.schema :as schema]))
+   [taoensso.timbre :as log]))
 
 (defn encode-value
   [route-data resource-schema value]
