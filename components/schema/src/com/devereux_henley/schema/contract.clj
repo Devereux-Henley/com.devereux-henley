@@ -36,29 +36,38 @@
 (def local-date
   (malli.core/-simple-schema
    {:type            :local-date
-    :type-properties {:encode/json   str
-                      :decode/json   (fn [json-value] (when (not (empty? json-value)) (LocalDate/parse json-value)))
-                      :gen/fmap      (fn [value] (LocalDate/ofEpochDay value))
-                      :gen/schema    [:double {:min 0 :max max-local-date-in-days}]
-                      :error/message {:en "Should be a valid instant."}}
+    :type-properties {:encode/json         str
+                      :decode/json         (fn [json-value] (when (not (empty? json-value)) (LocalDate/parse json-value)))
+                      :decode/string       (fn [string-value] (when (not (empty? string-value)) (LocalDate/parse string-value)))
+                      :json-schema/type    "string"
+                      :json-schema/format  "date"
+                      :json-schema/example "2023-01-01"
+                      :gen/fmap            (fn [value] (LocalDate/ofEpochDay value))
+                      :gen/schema          [:double {:min 0 :max max-local-date-in-days}]
+                      :error/message       {:en "Should be a valid instant."}}
     :pred            (partial instance? LocalDate)}))
 
 (def instant
   (malli.core/-simple-schema
    {:type            :instant
-    :type-properties {:encode/json   str
-                      :decode/json   (fn [json-value] (when (not (empty? json-value)) (Instant/parse json-value)))
-                      :gen/fmap      (fn [value] (Instant/ofEpochMilli value))
-                      :gen/schema    [:double {:min 0 :max Long/MAX_VALUE}]
-                      :error/message {:en "Should be a valid instant."}}
+    :type-properties {:encode/json         str
+                      :decode/json         (fn [json-value] (when (not (empty? json-value)) (Instant/parse json-value)))
+                      :decode/string       (fn [string-value] (when (not (empty? string-value)) (Instant/parse string-value)))
+                      :json-schema/type    "string"
+                      :json-schema/format  "date-time"
+                      :json-schema/example "2007-03-01T13:00:00Z"
+                      :gen/fmap            (fn [value] (Instant/ofEpochMilli value))
+                      :gen/schema          [:double {:min 0 :max Long/MAX_VALUE}]
+                      :error/message       {:en "Should be a valid instant."}}
     :pred            (partial instance? Instant)}))
 
 (def url
   (malli.core/-simple-schema
    {:type            :url
-    :type-properties {:gen/fmap   (fn [[name host tld]]
-                                    (str name "@" host "." tld))
-                      :gen/schema [:tuple [:string {:min 1}] [:string {:min 1}] [:string {:min 1}]]}
+    :type-properties {:gen/fmap            (fn [[name host tld]]
+                                             (str name "@" host "." tld))
+                      :json-schema/example "https://example.com"
+                      :gen/schema          [:tuple [:string {:min 1}] [:string {:min 1}] [:string {:min 1}]]}
     :pred            (fn [value] (and (string? value) (not (clojure.string/blank? value))))}))
 
 (def registry
@@ -68,8 +77,8 @@
     :local-date local-date
     :instant    instant
     :instance   instance
-    :neg-int    (malli.core/-simple-schema {:type :neg-int, :pred neg-int?})
-    :pos-int    (malli.core/-simple-schema {:type :pos-int, :pred pos-int?})}))
+    :neg-int    (malli.core/-simple-schema {:type :neg-int :type-properties {:decode/string (fn [string-value] (Integer/parseInt string-value))} :pred neg-int?})
+    :pos-int    (malli.core/-simple-schema {:type :pos-int :type-properties {:decode/string (fn [string-value] (Integer/parseInt string-value))} :pred pos-int?})}))
 
 (defn to-schema
   [input-schema]
@@ -79,6 +88,7 @@
 
 (def base-resource
   [:map
+   {:model/type :model/model}
    [:eid
     {:json-schema/title       "Resource Id"
      :json-schema/description (str
@@ -92,14 +102,21 @@
      [:self url]]]])
 
 (def base-collection-resource
-  [:map
-   [:_links
-    [:map
-     [:self url]
-     [:next {:optional true} url]
-     [:previous {:optional true} url]
-     [:first {:optional true} url]
-     [:last {:optional true} url]]]])
+  (to-schema
+   [:map
+    {:model/type :model/collection}
+    [:specification
+     [:map
+      [:since :instant]
+      [:size :pos-int]
+      [:offset :int]]]
+    [:_links
+     [:map
+      [:self url]
+      [:next {:optional true} url]
+      [:previous {:optional true} url]
+      [:first {:optional true} url]
+      [:last {:optional true} url]]]]))
 
 (defn make-embedded-schema
   [schema]
@@ -155,6 +172,13 @@
    [:map
     [:version {:optional true} :pos-int]]))
 
+(def collection-parameters
+  (to-schema
+   [:map
+    [:since :instant]
+    [:size {:optional true :json-schema/default 10} :pos-int]
+    [:offset {:optional true :json-schema/default 0} :int]]))
+
 (defn key-to-link-mapping
   [schema]
   (reduce (fn [acc [map-key properties map-value-schema]]
@@ -193,7 +217,45 @@
                :local-date (fn [date-string] (when-not (empty? date-string)
                                               (LocalDate/parse date-string)))
                :instant    (fn [instant-string] (when-not (empty? instant-string)
-                                              (Instant/parse instant-string)))}}))
+                                                 (Instant/parse instant-string)))}}))
+
+(defn handle-model-transform
+  [route-data schema]
+  (let [mapping (key-to-link-mapping schema)]
+    (fn [value]
+      (reduce-kv
+       (fn [acc k v]
+         (if-let [link (get mapping k)]
+           (-> acc
+               (assoc k v)
+               (assoc-in [:_links
+                          (if (= k :eid)
+                            :self
+                            (keyword
+                             (clojure.string/replace (name k) #"-eid" "")))]
+                         (to-resource-link
+                          route-data
+                          link
+                          {:eid v})))
+           (assoc acc k v)))
+       (vary-meta {}
+                  assoc
+                  `clojure.core.protocols/nav
+                  (get (meta value)
+                       `clojure.core.protocols/nav))
+       value))))
+
+;; TODO Implement specification query params, additional links.
+(defn handle-collection-transform
+  [route-data schema]
+  (let [link (some (fn [[map-key properties map-value-schema]]
+                     (and
+                      (= map-key :specification)
+                      (:collection/link properties)))
+                   (malli.core/children schema))]
+    (fn [value]
+      (-> value
+          (assoc-in [:_links :self] (to-resource-link route-data link {}))))))
 
 ;; Walk the input value.
 ;; For each key in the model, add that key to a links array.
@@ -204,27 +266,10 @@
    (nav-transformer route-data)
    {:name     :model
     :decoders {}
-    :encoders {:map {:compile (fn [schema _]
-                                (let [mapping (key-to-link-mapping schema)]
-                                  (fn [value]
-                                    (reduce-kv
-                                     (fn [acc k v]
-                                       (if-let [link (get mapping k)]
-                                         (-> acc
-                                             (assoc k v)
-                                             (assoc-in [:_links
-                                                        (if (= k :eid)
-                                                          :self
-                                                          (keyword
-                                                           (clojure.string/replace (name k) #"-eid" "")))]
-                                                       (to-resource-link
-                                                        route-data
-                                                        link
-                                                        {:eid v})))
-                                         (assoc acc k v)))
-                                     (vary-meta {}
-                                                assoc
-                                                `clojure.core.protocols/nav
-                                                (get (meta value)
-                                                     `clojure.core.protocols/nav))
-                                     value))))}}}))
+    :encoders {:map {:compile
+                     (fn [schema _]
+                       (let [properties (malli.core/properties schema)]
+                         (case (:model/type properties)
+                           :model/collection (handle-collection-transform route-data schema)
+                           :model/model (handle-model-transform route-data schema)
+                           identity)))}}}))

@@ -59,8 +59,36 @@
      [:description :string]
      [:_embedded {:optional true}
       [:map
-       [:socials [:sequential game-social-link-resource]]
-       [:factions [:sequential faction-resource]]]]])))
+       [:socials {:optional true} [:sequential game-social-link-resource]]
+       [:factions {:optional true} [:sequential faction-resource]]]]])))
+
+(def tournament-snapshot-resource
+  (malli.util/merge
+   schema.contract/base-resource
+   (schema.contract/to-schema
+    [:map
+     [:eid {:model/link :tournament/snapshot-by-eid} :uuid]
+     [:type [:= :tournament/snapshot]]
+     [:tournament-eid {:model/link :tournament/by-eid} :uuid]
+     ;; TODO Proper schema for tournament state.
+     [:tournament-state :string]])))
+
+(def tournament-resource
+  (malli.util/merge
+   schema.contract/base-resource
+   (schema.contract/to-schema
+    [:map
+     [:eid {:model/link :tournament/by-eid} :uuid]
+     [:type [:= :tournament/tournament]]
+     [:title :string]
+     [:description :string]
+     [:tournament-start-datetime :instant]
+     [:tournament-checkin-datetime :instant]
+     [:tournament-type [:enum "elimination" "round-robin"]]
+     [:competitor-type [:enum "player"]]
+     [:_embedded
+      [:map
+       [:snapshot {:optional true} tournament-snapshot-resource]]]])))
 
 (def game-collection-resource
   (malli.util/merge
@@ -68,3 +96,11 @@
    (schema.contract/to-schema
     [:map
      [:type [:= :collection/game]]])))
+
+(def tournament-collection-resource
+  (malli.util/merge
+   (schema.contract/make-collection-resource tournament-resource)
+   (schema.contract/to-schema
+    [:map
+     [:type [:= :collection/tournament]]
+     [:specification {:collection/link :collection/tournament} [:map]]])))

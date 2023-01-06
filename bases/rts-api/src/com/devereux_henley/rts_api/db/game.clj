@@ -70,8 +70,8 @@
 (defn get-faction-by-eid
   {:malli/schema (schema.contract/to-schema
                   [:=>
-                                    [:cat [:instance Connection] :uuid]
-                                    faction-entity])}
+                   [:cat [:instance Connection] :uuid]
+                   faction-entity])}
   [connection eid]
   (db.core/query-for-entity connection [get-faction-by-eid-query eid] faction-entity))
 
@@ -80,8 +80,8 @@
 (defn get-factions-for-game
   {:malli/schema (schema.contract/to-schema
                   [:=>
-                                    [:cat [:instance Connection] :uuid]
-                                    [:sequential faction-entity]])}
+                   [:cat [:instance Connection] :uuid]
+                   [:sequential faction-entity]])}
   [connection game-eid]
   (db.core/query-for-entities connection [get-factions-for-game-query game-eid] faction-entity))
 
@@ -90,8 +90,8 @@
 (defn get-socials-for-game
   {:malli/schema (schema.contract/to-schema
                   [:=>
-                                    [:cat [:instance Connection] :uuid]
-                                    [:sequential game-social-link-entity]])}
+                   [:cat [:instance Connection] :uuid]
+                   [:sequential game-social-link-entity]])}
   [connection game-eid]
   (db.core/query-for-entities connection
                               [get-socials-for-game-query game-eid]
@@ -104,8 +104,8 @@
 (defn get-game-social-link-by-eid
   {:malli/schema (schema.contract/to-schema
                   [:=>
-                                    [:cat [:instance Connection] :uuid]
-                                    game-social-link-entity])}
+                   [:cat [:instance Connection] :uuid]
+                   game-social-link-entity])}
   [connection eid]
   (db.core/query-for-entity connection
                             [get-game-social-link-by-eid-query eid]
