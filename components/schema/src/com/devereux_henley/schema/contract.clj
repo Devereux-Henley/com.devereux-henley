@@ -77,8 +77,18 @@
     :local-date local-date
     :instant    instant
     :instance   instance
-    :neg-int    (malli.core/-simple-schema {:type :neg-int :type-properties {:decode/string (fn [string-value] (Integer/parseInt string-value))} :pred neg-int?})
-    :pos-int    (malli.core/-simple-schema {:type :pos-int :type-properties {:decode/string (fn [string-value] (Integer/parseInt string-value))} :pred pos-int?})}))
+    :neg-int    (malli.core/-simple-schema
+                 {:type            :neg-int
+                  :type-properties {:decode/string
+                                    (fn [string-value] (Integer/parseInt string-value))}
+                  :pred            neg-int?})
+    :pos-int    (malli.core/-simple-schema
+                 {:type            :pos-int
+                  :type-properties {:json-schema/type "integer"
+                                    :json-schema/format "int64"
+                                    :decode/string
+                                    (fn [string-value] (Integer/parseInt string-value))}
+                  :pred            pos-int?})}))
 
 (defn to-schema
   [input-schema]
@@ -189,10 +199,12 @@
           (malli.core/children schema)))
 
 (defn to-resource-link
-  [{:keys [hostname router] :as _route-data} route-name parameters]
-  (str hostname (-> router
-                    (reitit.core/match-by-name! route-name parameters)
-                    :path)))
+  ([route-data route-name path-parameters]
+   (to-resource-link route-data route-name path-parameters {}))
+  ([{:keys [hostname router] :as _route-data} route-name path-parameters query-parameters]
+   (str hostname (-> router
+                     (reitit.core/match-by-name! route-name path-parameters)
+                     (reitit.core/match->path query-parameters)))))
 
 (defn nav-transformer
   [route-data]
@@ -245,6 +257,35 @@
                        `clojure.core.protocols/nav))
        value))))
 
+(defn next-specification
+  [specification]
+  (let [{:keys [offset size]} specification]
+    (when (and (some? offset) (some? size))
+        (assoc specification
+               :offset
+               (+ offset size)))))
+
+(defn previous-specification
+  [specification]
+  (let [{:keys [offset size]} specification]
+    (when (and (some? offset) (some? size) (> (- offset size) 0))
+      (assoc specification
+             :offset
+             (- offset size)))))
+
+(defn first-specification
+  [specification]
+  (let [{:keys [offset size]} specification]
+    (when (and (some? offset) (some? size))
+      (assoc specification
+             :offset
+             0))))
+
+(defn last-specification
+  [specification]
+  ;; TODO Implement last.
+  nil)
+
 ;; TODO Implement specification query params, additional links.
 (defn handle-collection-transform
   [route-data schema]
@@ -254,8 +295,30 @@
                       (:collection/link properties)))
                    (malli.core/children schema))]
     (fn [value]
-      (-> value
-          (assoc-in [:_links :self] (to-resource-link route-data link {}))))))
+      (let [{:keys [specification total]} value
+            {:keys [offset size]} specification
+            next (next-specification specification)
+            previous (previous-specification specification)
+            first (first-specification specification)
+            last (last-specification specification)]
+        (-> value
+            (assoc-in [:_links :self] (to-resource-link route-data link {} specification))
+            (assoc-in [:_links :next] (to-resource-link route-data link {} next))
+            (as-> % (if first
+                      (assoc-in %
+                                [:_links :first]
+                                (to-resource-link route-data link {} first))
+                      %))
+            (as-> % (if previous
+                      (assoc-in %
+                                [:_links :previous]
+                                (to-resource-link route-data link {} previous))
+                      %))
+            (as-> % (if last
+                      (assoc-in %
+                                [:_links :first]
+                                (to-resource-link route-data link {} last))
+                      %)))))))
 
 ;; Walk the input value.
 ;; For each key in the model, add that key to a links array.

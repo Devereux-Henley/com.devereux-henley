@@ -59,21 +59,23 @@
 
 (defn standard-fetch-collection
   [fetch-fn resource-type]
-  (fn [dependencies {:keys [since size offset] :or {size 10 offset 0} :as specification}]
-    (try
-      (either/right {:type      resource-type
-                     :specification (-> specification (assoc :size size) (assoc :offset offset))
-                     :_embedded {:results (fetch-fn dependencies since size offset)}})
-      (catch Exception exc
-        (log/error exc)
-        (either/left (ex-info
-                      (str "Failed to fetch " (name resource-type))
-                      {:error/kind        :error/unknown
-                       :collection/since  since
-                       :collection/size   size
-                       :collection/offset offset
-                       :model/type        resource-type}
-                      exc))))))
+  (fn [dependencies {:keys [since size offset] :as specification}]
+    (let [size (or size 10)
+          offset (or offset 0)]
+      (try
+        (either/right {:type          resource-type
+                       :specification (-> specification (assoc :size size) (assoc :offset offset))
+                       :_embedded     {:results (fetch-fn dependencies since size offset)}})
+        (catch Exception exc
+          (log/error exc)
+          (either/left (ex-info
+                        (str "Failed to fetch " (name resource-type))
+                        {:error/kind        :error/unknown
+                         :collection/since  since
+                         :collection/size   size
+                         :collection/offset offset
+                         :model/type        resource-type}
+                        exc)))))))
 
 (defn standard-load-embedded
   [fetch-fn embedded-resource-key model-resource-type]
