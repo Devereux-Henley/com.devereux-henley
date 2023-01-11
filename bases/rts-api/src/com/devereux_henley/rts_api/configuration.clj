@@ -37,6 +37,7 @@
    ::web.tournament/get-tournament              default-api-dependencies
    ::web.tournament/get-tournament-snapshot     default-api-dependencies
    ::web.tournament/get-tournaments             default-api-dependencies
+   ::web.tournament/create-tournament           default-api-dependencies
    ::web.routes/routes
    [web.routes/root-route
     web.routes/icon-routes

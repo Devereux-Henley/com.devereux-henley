@@ -104,3 +104,21 @@
     [:map
      [:type [:= :collection/tournament]]
      [:specification {:collection/link :collection/tournament} [:map]]])))
+
+(def resource-identifier
+  [:map
+   [:eid :uuid]
+   [:version :int]])
+
+(def create-tournament-specification
+  (schema.contract/to-schema
+   [:map
+    [:specification
+     [:map
+      [:game-eid :uuid]
+      [:title :string]
+      [:description :string]
+      [:tournament-start-datetime :instant]
+      [:tournament-checkin-datetime :instant]
+      [:tournament-type [:enum "elimination" "round-robin"]]
+      [:competitor-type [:enum "player"]]]]]))

@@ -1,7 +1,9 @@
 (ns com.devereux-henley.rts-api.handlers.tournament
   (:require
    [com.devereux-henley.rts-api.db.tournament :as db.tournament]
-   [com.devereux-henley.rts-api.handlers.core :as handlers.core]))
+   [com.devereux-henley.rts-api.handlers.core :as handlers.core])
+  (:import
+   [java.time Instant]))
 
 (defn get-tournaments
   [dependencies since size offset]
@@ -41,11 +43,16 @@
     (:connection dependencies)
     tournament-eid)))
 
+;; TODO Handle missing game.
 (defn create-tournament
   [dependencies create-specification]
-  (handlers.core/assign-model-type
-   :tournament/tournament
-   (db.tournament/create-tournament (:connection dependencies) create-specification)))
+  (let [created-at (Instant/now)
+        updated-at created-at]
+    (handlers.core/assign-model-type
+     :tournament/tournament
+     (db.tournament/create-tournament (:connection dependencies) (-> create-specification
+                                                                     (assoc :created-at created-at)
+                                                                     (assoc :updated-at updated-at))))))
 
 (defn update-tournament-snapshot-by-tournament-eid
   [dependencies tournament-eid new-snapshot]

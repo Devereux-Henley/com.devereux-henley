@@ -5,7 +5,8 @@
    [malli.core]
    [next.jdbc :as jdbc]
    [next.jdbc.result-set :as jdbc.result-set]
-   [next.jdbc.sql :as jdbc.sql])
+   [next.jdbc.sql :as jdbc.sql]
+   [com.devereux-henley.rts-api.db.game :as db.game])
   (:import
    [java.sql Connection]))
 
@@ -19,7 +20,10 @@
     [:tournament-start-datetime :instant]
     [:tournament-checkin-datetime :instant]
     [:tournament-type [:enum "elimination" "round-robin"]]
-    [:competitor-type [:enum "player"]]]))
+    [:competitor-type [:enum "player"]]
+    [:version :int]
+    [:created-at :instant]
+    [:updated-at :instant]]))
 
 (def tournament-entity
   (schema.contract/to-schema
@@ -111,11 +115,14 @@
                   [:=>
                    [:cat [:instance Connection] create-tournament-specification]
                    tournament-entity])}
-  [connection create-specification]
-  (db.core/insert! connection
-                   :tournament
-                   create-tournament-specification)
-  (get-tournament-by-eid connection (:eid create-specification)))
+  [connection specification]
+  (let [game (db.game/get-game-by-eid connection (:game-eid specification))]
+    (db.core/insert! connection
+                     :tournament
+                     (-> specification
+                         (dissoc :game-eid)
+                         (assoc :game-id (:id game))))
+    (get-tournament-by-eid connection (:eid specification))))
 
 (def get-tournament-snapshot-by-tournament-eid-query
   (load-tournament-query "get-tournament-snapshot-by-tournament-eid.sql"))

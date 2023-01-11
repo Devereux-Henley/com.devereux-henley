@@ -16,23 +16,44 @@
                  :collection/offset
                  :error/message])
 
-(defn to-fetch-response
-  [resource-schema route-data value]
+(defn to-error-response
+  [value]
   (log/debug value)
-  (condp instance? value
-    clojure.lang.ExceptionInfo
-    (case (:error/kind (ex-data value))
-      :error/missing {:status 404
-                      :body   (select-keys error-keys (ex-data value))}
-      :error/unknown {:status 500
-                      :body   (select-keys error-keys (ex-data value))}
-      {:status 500
-       :body   (select-keys error-keys (ex-data value))})
-    Throwable
+  (case (:error/kind (ex-data value))
+    :error/invalid {:status 400
+                    :body   (select-keys error-keys (ex-data value))}
+    :error/missing {:status 404
+                    :body   (select-keys error-keys (ex-data value))}
+    :error/conflict {:status 409
+                     :body   (select-keys error-keys (ex-data value))}
+    :error/unknown {:status 500
+                    :body   (select-keys error-keys (ex-data value))}
     {:status 500
-     :body   {}}
-    {:status 200
-     :body   (encode-value route-data resource-schema value)}))
+     :body   (select-keys error-keys (ex-data value))}))
+
+(defn to-success-fetch-response
+  [resource-schema route-data value]
+  {:status 200
+   :body   (encode-value route-data resource-schema value)})
+
+(defn to-success-create-response
+  [resource-schema route-data value]
+  {:status 201
+   :body   (encode-value route-data resource-schema value)})
+
+(defn handle-fetch-response
+  [resource-schema route-data either-value]
+  (either/branch
+   either-value
+   to-error-response
+   (partial to-success-fetch-response resource-schema route-data)))
+
+(defn handle-create-response
+  [resource-schema route-data either-value]
+  (either/branch
+   either-value
+   to-error-response
+   (partial to-success-create-response resource-schema route-data)))
 
 (defn standard-fetch
   [fetch-fn resource-type]
@@ -76,6 +97,20 @@
                          :collection/offset offset
                          :model/type        resource-type}
                         exc)))))))
+
+(defn standard-create
+  [create-fn resource-type]
+  (fn [dependencies create-specification]
+    (try
+      (either/right (create-fn dependencies create-specification))
+      (catch Exception exc
+        (log/error exc)
+        (either/left (ex-info
+                      (str "Failed to create " (name resource-type))
+                      {:error/kind :error/unknown
+                       :model/eid  (:eid create-specification)
+                       :model/type resource-type}
+                      exc))))))
 
 (defn standard-load-embedded
   [fetch-fn embedded-resource-key model-resource-type]

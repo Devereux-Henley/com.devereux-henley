@@ -46,49 +46,46 @@
   (fn [{{{:keys [eid]} :path} :parameters
        router                :reitit.core/router
        :as                   _request}]
-    (web.core/to-fetch-response
+    (web.core/handle-fetch-response
      schema/faction-resource
      {:hostname (:hostname dependencies) :router router}
-     (cats/extract
-      (cats/>>=
-       (either/right eid)
-       (partial get-faction-by-eid dependencies))))))
+     (cats/>>=
+      (either/right eid)
+      (partial get-faction-by-eid dependencies)))))
 
 (defmethod integrant.core/init-key ::get-game-social-link
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
        router                :reitit.core/router
        :as                   _request}]
-    (web.core/to-fetch-response
+    (web.core/handle-fetch-response
      schema/game-social-link-resource
      {:hostname (:hostname dependencies) :router router}
-     (cats/extract
-      (cats/>>=
-       (either/right eid)
-       (partial get-game-social-link-by-eid dependencies))))))
+     (cats/>>=
+      (either/right eid)
+      (partial get-game-social-link-by-eid dependencies)))))
 
 (defmethod integrant.core/init-key ::get-game
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
        router                :reitit.core/router
        :as                   _request}]
-    (web.core/to-fetch-response
+    (web.core/handle-fetch-response
      schema/game-resource
      {:hostname (:hostname dependencies) :router router}
-     (cats/extract
-      (cats/>>=
-       (either/right eid)
-       (partial get-game-by-eid dependencies)
-       (partial get-socials-for-game dependencies)
-       (partial get-factions-for-game dependencies))))))
+     (cats/>>=
+      (either/right eid)
+      (partial get-game-by-eid dependencies)
+      (partial get-socials-for-game dependencies)
+      (partial get-factions-for-game dependencies)))))
 
 (defmethod integrant.core/init-key ::get-games
   [_init-key dependencies]
   (fn [{router :reitit.core/router :as _request}]
-    (web.core/to-fetch-response
+    (web.core/handle-fetch-response
      schema/game-collection-resource
      {:hostname (:hostname dependencies) :router router}
-     (cats/extract (get-games dependencies {:hostname (:hostname dependencies) :router router})))))
+     (get-games dependencies {:hostname (:hostname dependencies) :router router}))))
 
 (comment
   (require '[com.devereux-henley.rts-api.system :as rts-api.system])

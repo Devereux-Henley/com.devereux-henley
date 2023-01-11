@@ -1,5 +1,7 @@
 (ns com.devereux-henley.rts-api.db.core
   (:require
+   [camel-snake-kebab.core]
+   [camel-snake-kebab.extras]
    [clojure.java.io :as io]
    [com.devereux-henley.rts-api.db.result-set :as db.result-set]
    [com.devereux-henley.schema.contract :as schema.contract]
@@ -28,11 +30,22 @@
    (jdbc/execute! connection query db.result-set/default-options)
    schema.contract/sqlite-transformer))
 
-(def insert! jdbc.sql/insert!)
+(defn insert!
+  [connection table-name values]
+  (jdbc.sql/insert! connection
+                    table-name
+                    (camel-snake-kebab.extras/transform-keys
+                     camel-snake-kebab.core/->snake_case_keyword
+                     values)
+                    db.result-set/default-options))
 
-(def execute! jdbc/execute!)
+(defn execute!
+  [connection parameters]
+  (jdbc/execute! connection parameters db.result-set/default-options))
 
-(def execute-one! jdbc/execute-one!)
+(defn execute-one!
+  [connection parameters]
+  (jdbc/execute-one! connection parameters db.result-set/default-options))
 
 (defn load-query-resource
   [domain file-name]

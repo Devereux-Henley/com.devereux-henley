@@ -15,10 +15,9 @@
   (fn [{{{:keys [eid]} :path} :parameters
        router                :reitit.core/router
        :as                   _request}]
-    (web.core/to-fetch-response
+    (web.core/handle-fetch-response
      schema/social-media-platform-resource
      {:router router :hostname (:hostname dependencies)}
-     (cats/extract
-      (cats/>>=
-       (either/right eid)
-       (partial get-platform-by-eid dependencies))))))
+     (cats/>>=
+      (either/right eid)
+      (partial get-platform-by-eid dependencies)))))

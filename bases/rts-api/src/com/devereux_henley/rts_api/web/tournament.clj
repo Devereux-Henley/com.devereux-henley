@@ -24,42 +24,61 @@
 (def get-tournaments
   (web.core/standard-fetch-collection handlers.tournament/get-tournaments :collection/tournament))
 
+(def create-tournament
+  (web.core/standard-create handlers.tournament/create-tournament :tournament/tournament))
+
 (defmethod integrant.core/init-key ::get-tournament-snapshot
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
        router                :reitit.core/router
        :as                   _request}]
-    (web.core/to-fetch-response
+    (web.core/handle-fetch-response
      schema/tournament-snapshot-resource
      {:hostname (:hostname dependencies) :router router}
-     (cats/extract
-      (cats/>>=
-       (either/right eid)
-       (partial get-tournament-snapshot-by-eid dependencies))))))
+     (cats/>>=
+      (either/right eid)
+      (partial get-tournament-snapshot-by-eid dependencies)))))
 
 (defmethod integrant.core/init-key ::get-tournament
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
        router                :reitit.core/router
        :as                   _request}]
-    (web.core/to-fetch-response
+    (web.core/handle-fetch-response
      schema/tournament-resource
      {:hostname (:hostname dependencies) :router router}
-     (cats/extract
-      (cats/>>=
-       (either/right eid)
-       (partial get-tournament-by-eid dependencies)
-       (partial get-snapshot-for-tournament dependencies))))))
+     (cats/>>=
+      (either/right eid)
+      (partial get-tournament-by-eid dependencies)
+      (partial get-snapshot-for-tournament dependencies)))))
 
 (defmethod integrant.core/init-key ::get-tournaments
   [_init-key dependencies]
   (fn [{{{:keys [since size offset]} :query} :parameters
        router                               :reitit.core/router
        :as                                  _request}]
-    (web.core/to-fetch-response
+    (web.core/handle-fetch-response
      schema/tournament-collection-resource
      {:hostname (:hostname dependencies) :router router}
-     (cats/extract
-      (cats/>>=
-       (either/right {:since since :size size :offset offset})
-       (partial get-tournaments dependencies))))))
+     (cats/>>=
+      (either/right {:since since :size size :offset offset})
+      (partial get-tournaments dependencies)))))
+
+;; TODO Handle 301
+;; TODO Embeds.
+(defmethod integrant.core/init-key ::create-tournament
+  [_init-key dependencies]
+  (fn [{{{:keys [specification]} :body
+        {:keys [version]}       :query
+        {:keys [eid]}           :path} :parameters
+       router                                 :reitit.core/router
+       :as                                    _request}]
+    (web.core/handle-create-response
+     schema/tournament-resource
+     {:hostname (:hostname dependencies) :router router}
+     (cats/>>=
+      (either/right (-> specification
+                        (assoc :created-by-sub "TODO Replace Me.") ;; TODO Use sub from session.
+                        (assoc :eid eid)
+                        (assoc :version version)))
+      (partial create-tournament dependencies)))))

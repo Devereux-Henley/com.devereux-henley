@@ -111,7 +111,16 @@
             :parameters {:path  schema.contract/id-path-parameter
                          :query schema.contract/version-query-parameter}
             :responses  {200 {:body schema/tournament-resource}}
-            :handler    (integrant.core/ref ::web.tournament/get-tournament)}}]
+            :handler    (integrant.core/ref ::web.tournament/get-tournament)}
+     :put  {:summary    "Creates a tournament with the given eid and version."
+            :swagger    {:tags         ["tournament"]
+                         :produces     ["application/htmlx+html" "application/json"]
+                         :operation-id "tournament/create"}
+            :parameters {:path  schema.contract/id-path-parameter
+                         :query schema.contract/version-query-parameter
+                         :body  schema/create-tournament-specification}
+            :responses  {201 {:body schema/tournament-resource}}
+            :handler    (integrant.core/ref ::web.tournament/create-tournament)}}]
    ["/tournament/snapshot/:eid"
     {:name :tournament/snapshot-by-eid
      :get  {:summary    "Fetches a tournament snapshot by eid."

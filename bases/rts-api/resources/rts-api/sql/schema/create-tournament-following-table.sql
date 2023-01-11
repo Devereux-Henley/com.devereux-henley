@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS tournament_following (
   eid TEXT NOT NULL,
   user_sub TEXT NOT NULL,
   tournament_id INTEGER NOT NULL,
-  created_by_eid TEXT NOT NULL,
+  created_by_sub TEXT NOT NULL,
   created_at TEXT NOT NULL,
   deleted_at TEXT,
   UNIQUE(eid),

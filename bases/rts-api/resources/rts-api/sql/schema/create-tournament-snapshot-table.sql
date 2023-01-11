@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS tournament_snapshot (
   tournament_id INTEGER NOT NULL,
   tournament_state TEXT NOT NULL,
   version INT NOT NULL,
-  created_by_eid TEXT NOT NULL,
+  created_by_sub TEXT NOT NULL,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL,
   deleted_at TEXT,
