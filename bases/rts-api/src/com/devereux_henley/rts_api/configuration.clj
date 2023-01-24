@@ -43,6 +43,8 @@
     web.routes/icon-routes
     web.routes/view-routes
     web.routes/api-routes]
-   ::web/app                                    {:routes (integrant.core/ref ::web.routes/routes)}
+   ::web/app                                    {:routes (integrant.core/ref ::web.routes/routes)
+                                                 :session-name session-name
+                                                 :auth-hostname auth-hostname}
    ::web/service                                {:handler       (integrant.core/ref ::web/app)
                                                  :configuration {:port port, :join? false}}})

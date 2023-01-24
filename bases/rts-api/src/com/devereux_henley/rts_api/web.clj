@@ -1,6 +1,8 @@
 (ns com.devereux-henley.rts-api.web
   (:require
+   [clj-http.client :as client]
    [com.devereux-henley.content-negotiation.contract :as content-negotiation]
+   [com.devereux-henley.rts-api.http] ;; patch clj-http.
    [integrant.core]
    [malli.util]
    [muuntaja.core :as m]
@@ -16,7 +18,10 @@
    [reitit.swagger :as swagger]
    [reitit.swagger-ui :as swagger-ui]
    [ring.adapter.jetty :as jetty]
-   [ring.middleware.cookies]))
+   [ring.middleware.cookies]
+   [taoensso.timbre :as log])
+  (:import
+   [java.net ConnectException]))
 
 (defn view-by-type
   [type]
@@ -26,12 +31,45 @@
    type
    "rts-api/resource/unknown.html"))
 
+(def continuity-key "ory_kratos_continuity")
+
+(defn try-get-session
+  [url cookies]
+  (try
+    (let [{:keys [status body]} (client/get (str url "/sessions/whoami")
+                                            {:as      :jsonista
+                                             :cookies cookies})]
+      (case status
+        200 body
+        401 nil
+        (do
+          (log/error (str "Unexpected status code " status))
+          nil)))
+    (catch ConnectException exc
+      (log/error "Could not connect to authentication/authorization service." exc)
+      (throw exc))))
+
+;; TODO Handle exceptions more gracefully at top level with manual 500 response.
+(defn ory-session-middleware
+  [ory-base-url session-name handler]
+  (fn [request]
+    (let [{:keys [cookies]} request
+          session           (get-in cookies [session-name :value])
+          continuity        (get-in cookies [continuity-key :value])]
+      (handler
+       (if (and session continuity)
+         (assoc request :ory-session (try-get-session
+                                      ory-base-url
+                                      {session-name   {:value session}
+                                       continuity-key {:value continuity}}))
+         request)))))
+
 (defmethod integrant.core/init-key ::swagger-handler
   [_init-key _dependencies]
   (swagger/create-swagger-handler))
 
 (defmethod integrant.core/init-key ::app
-  [_init-key {:keys [routes session-name]}]
+  [_init-key {:keys [routes session-name auth-hostname]}]
   (ring/ring-handler
    (ring/router
     routes
@@ -97,7 +135,8 @@
                                    (fn [_] {:status  301
                                            :headers {"Location" "/view/dashboard.html"}})})
     (ring/create-default-handler))
-   {:middleware [ring.middleware.cookies/wrap-cookies]}))
+   {:middleware [ring.middleware.cookies/wrap-cookies
+                 (partial ory-session-middleware auth-hostname session-name)]}))
 
 (defmethod integrant.core/init-key ::service
   [_init-key {:keys [handler configuration] :as dependencies}]

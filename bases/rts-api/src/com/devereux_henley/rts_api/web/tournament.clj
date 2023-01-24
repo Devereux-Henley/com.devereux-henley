@@ -71,14 +71,15 @@
   (fn [{{{:keys [specification]} :body
         {:keys [version]}       :query
         {:keys [eid]}           :path} :parameters
-       router                                 :reitit.core/router
-       :as                                    _request}]
+       router                          :reitit.core/router
+       session                         :ory-session
+       :as                             _request}]
     (web.core/handle-create-response
      schema/tournament-resource
      {:hostname (:hostname dependencies) :router router}
      (cats/>>=
       (either/right (-> specification
-                        (assoc :created-by-sub "TODO Replace Me.") ;; TODO Use sub from session.
+                        (assoc :created-by-sub (get-in session [:identity :id]))
                         (assoc :eid eid)
                         (assoc :version version)))
       (partial create-tournament dependencies)))))
