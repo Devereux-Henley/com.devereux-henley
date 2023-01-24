@@ -51,7 +51,7 @@
     {:get {:no-doc  true
            :swagger {:info {:title       "rts-api"
                             :description "Rts API"}
-                     :tags [{:name "games" :description "game api"}]}
+                     :tags [{:name "game" :description "game api"}]}
            :handler (integrant.core/ref ::web/swagger-handler)}}]
 
    ["/game"

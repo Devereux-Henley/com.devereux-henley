@@ -65,7 +65,6 @@
       (partial get-tournaments dependencies)))))
 
 ;; TODO Handle 301
-;; TODO Embeds.
 (defmethod integrant.core/init-key ::create-tournament
   [_init-key dependencies]
   (fn [{{{:keys [specification]} :body
@@ -82,4 +81,5 @@
                         (assoc :created-by-sub (get-in session [:identity :id]))
                         (assoc :eid eid)
                         (assoc :version version)))
-      (partial create-tournament dependencies)))))
+      (partial create-tournament dependencies)
+      (partial get-snapshot-for-tournament dependencies)))))

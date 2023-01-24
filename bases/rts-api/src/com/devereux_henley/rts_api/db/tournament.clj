@@ -1,14 +1,13 @@
 (ns com.devereux-henley.rts-api.db.tournament
   (:require
    [com.devereux-henley.rts-api.db.core :as db.core]
+   [com.devereux-henley.rts-api.db.game :as db.game]
    [com.devereux-henley.schema.contract :as schema.contract]
-   [malli.core]
-   [next.jdbc :as jdbc]
-   [next.jdbc.result-set :as jdbc.result-set]
-   [next.jdbc.sql :as jdbc.sql]
-   [com.devereux-henley.rts-api.db.game :as db.game])
+   [jsonista.core :as jsonista]
+   [next.jdbc :as jdbc])
   (:import
-   [java.sql Connection]))
+   [java.sql Connection]
+   [java.time Instant]))
 
 (def create-tournament-specification
   (schema.contract/to-schema
@@ -110,6 +109,19 @@
                             [get-tournament-snapshot-by-eid-query eid]
                             tournament-snapshot-entity))
 
+(def get-tournament-snapshot-by-tournament-eid-query
+  (load-tournament-query "get-tournament-snapshot-by-tournament-eid.sql"))
+
+(defn get-tournament-snapshot-by-tournament-eid
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection] :uuid]
+                   tournament-snapshot-entity])}
+  [connection tournament-eid]
+  (db.core/query-for-entity connection
+                            [get-tournament-snapshot-by-tournament-eid-query tournament-eid]
+                            tournament-snapshot-entity))
+
 (defn create-tournament
   {:malli/schema (schema.contract/to-schema
                   [:=>
@@ -117,12 +129,25 @@
                    tournament-entity])}
   [connection specification]
   (let [game (db.game/get-game-by-eid connection (:game-eid specification))]
-    (db.core/insert! connection
-                     :tournament
-                     (-> specification
-                         (dissoc :game-eid)
-                         (assoc :game-id (:id game))))
-    (get-tournament-by-eid connection (:eid specification))))
+    (jdbc/with-transaction [tx connection]
+      (db.core/insert! tx
+                       :tournament
+                       (-> specification
+                           (dissoc :game-eid)
+                           (assoc :game-id (:id game))))
+      (let [tournament (get-tournament-by-eid connection (:eid specification))]
+        (db.core/insert! tx
+                         :tournament_snapshot
+                         {:eid              (random-uuid)
+                          :tournament-id    (:id tournament)
+                          :tournament-state (jsonista/write-value-as-string {:type (:tournament-type specification)
+                                                                             :rounds []})
+                          :version          1
+                          :created-by-sub   (:created-by-sub specification)
+                          :created-at       (Instant/now)
+                          :updated-at       (Instant/now)
+                          })
+        tournament))))
 
 (def get-tournament-snapshot-by-tournament-eid-query
   (load-tournament-query "get-tournament-snapshot-by-tournament-eid.sql"))
@@ -134,7 +159,7 @@
                    tournament-snapshot-entity])}
   [connection tournament-eid]
   (db.core/query-for-entity connection
-                            [get-tournament-snapshot-by-tournament-eid tournament-eid]
+                            [get-tournament-snapshot-by-tournament-eid-query tournament-eid]
                             tournament-snapshot-entity))
 
 (def update-tournament-snapshot-by-tournament-eid-query
