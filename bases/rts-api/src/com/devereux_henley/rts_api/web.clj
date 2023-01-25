@@ -2,7 +2,6 @@
   (:require
    [clj-http.client :as client]
    [com.devereux-henley.content-negotiation.contract :as content-negotiation]
-   [com.devereux-henley.rts-api.http] ;; patch clj-http.
    [integrant.core]
    [malli.util]
    [muuntaja.core :as m]
