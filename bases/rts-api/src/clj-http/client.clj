@@ -17,7 +17,7 @@
         (case first-char
           -1 nil
           (do (.reset br)
-              (jsonista.core/read-value br (jsonista.core/object-mapper {:decode-key-fn true})))))
+              (jsonista.core/read-value br (jsonista.core/object-mapper {:decode-key-fn keyword})))))
       (finally (.close br)))))
 
 (defn coerce-jsonista-body

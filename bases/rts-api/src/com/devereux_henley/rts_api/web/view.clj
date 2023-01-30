@@ -5,32 +5,37 @@
    [taoensso.timbre :as log]))
 
 (defn standard-view-handler
-  [session-name view-name request]
+  [view-name request]
+  (log/info (:ory-session request))
   (try
     {:status 200
      :body   (selmer.parser/render-file
               (str "rts-api/view/" view-name)
-              {:session (get-in request [:cookies session-name :value])})}
+              {:session (:ory-session request)})}
     (catch Exception exc
       (log/error exc)
       {:status 500
        :body "<div>Something went wrong</div>"})))
 
 (defmethod integrant.core/init-key ::dashboard-view
-  [_init-key {:keys [session-name]}]
-  (partial standard-view-handler session-name "dashboard.html"))
+  [_init-key _dependencies]
+  (partial standard-view-handler "dashboard.html"))
+
+(defmethod integrant.core/init-key ::tournament-view
+  [_init-key _dependencies]
+  (partial standard-view-handler "tournament.html"))
 
 (defmethod integrant.core/init-key ::game-view
-  [_init-key {:keys [session-name]}]
-  (partial standard-view-handler session-name "game.html"))
+  [_init-key _dependencies]
+  (partial standard-view-handler "game.html"))
 
 (defmethod integrant.core/init-key ::about-view
-  [_init-key {:keys [session-name]}]
-  (partial standard-view-handler session-name "about.html"))
+  [_init-key _dependencies]
+  (partial standard-view-handler "about.html"))
 
 (defmethod integrant.core/init-key ::contact-view
-  [_init-key {:keys [session-name]}]
-  (partial standard-view-handler session-name "contact.html"))
+  [_init-key _dependencies]
+  (partial standard-view-handler "contact.html"))
 
 (defmethod integrant.core/init-key ::login-view
   [_init-key {:keys [auth-hostname]}]

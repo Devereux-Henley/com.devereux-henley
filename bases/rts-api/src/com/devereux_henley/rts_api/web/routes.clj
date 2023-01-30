@@ -29,6 +29,9 @@
    ["/dashboard.html"
     {:get {:produces ["text/html"]
            :handler  (integrant.core/ref ::web.view/dashboard-view)}}]
+   ["/tournament.html"
+    {:get {:produces ["text/html"]
+           :handler  (integrant.core/ref ::web.view/tournament-view)}}]
    ["/game.html"
     {:get {:produces ["text/html"]
            :handler  (integrant.core/ref ::web.view/game-view)}}]

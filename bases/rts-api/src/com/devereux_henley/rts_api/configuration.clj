@@ -19,11 +19,12 @@
 (def session-name (str "ory_session_" (or (System/getenv "AUTH_SLUG") "eloquentyalowwhtijq6my4")))
 (def default-api-dependencies {:hostname   hostname
                                :connection (integrant.core/ref ::db/connection)})
-(def default-view-dependencies {:session-name session-name})
+(def default-view-dependencies {})
 (def core-configuration
   {::db/connection                              {}
    ::web/swagger-handler                        {}
    ::web.view/dashboard-view                    default-view-dependencies
+   ::web.view/tournament-view                   default-view-dependencies
    ::web.view/game-view                         default-view-dependencies
    ::web.view/about-view                        default-view-dependencies
    ::web.view/contact-view                      default-view-dependencies
