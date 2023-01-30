@@ -6,7 +6,6 @@
 
 (defn standard-view-handler
   [view-name request]
-  (log/info (:ory-session request))
   (try
     {:status 200
      :body   (selmer.parser/render-file
