@@ -1,3 +1,24 @@
+body {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    width: 100vw;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+div.page-content {
+    display: flex;
+    flex-direction: column;
+    width: 90vw;
+    padding-left: 10vw;
+}
+
+div.page-right-gulley {
+    display: flex;
+    width: 10vw;
+}
+
 span.icon.up-caret {
     font-size: 12px;
     font-weight: 500;
@@ -24,11 +45,19 @@ span.icon.down-caret {
 
 details.details-profile {
     width: 10vw;
-    float: right;
+}
+
+details.details-profile .details-identity {
+    margin-bottom: 6px;
 }
 
 details.details-profile summary {
     height: 32px;
+}
+
+details.details-profile summary a {
+    cursor: pointer;
+    user-select: none;
 }
 
 details.details-profile summary .summary-open {
@@ -49,6 +78,10 @@ details.details-profile[open] summary .summary-open {
 
 details.details-profile a:hover {
     text-decoration: none;
+}
+
+details.details-profile menu {
+    border-top: dotted 1px gray;
 }
 
 details.details-profile nav {

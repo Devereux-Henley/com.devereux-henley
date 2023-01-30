@@ -7,44 +7,45 @@
         {% endblock %}
     </head>
     <body hx-headers='{"Accept": "application/htmx+html"}'>
-        {% if session %}
-        <details class="details-profile" style="float:right">
-            <summary>
-                <div>
-                    <div class="summary-open">
-                        <a class="font-large">Profile</a>
-                        <span class="icon up-caret">&#x2303;</span>
+        <div class="page-content">
+            {% block header %}
+            {% endblock %}
+            {% block content %}
+            {% endblock %}
+        </div>
+        <div class="page-right-gulley">
+            {% if session %}
+            <details class="details-profile">
+                <summary class="details-profile-summary">
+                    <div class="details-profile-summary-container">
+                        <div class="summary-closed">
+                            <a class="font-large">Profile <span class="icon up-caret">&#x2303;</span></a>
+                        </div>
+                        <div class="summary-open">
+                            <a class="font-large">Profile <span class="icon down-caret">&#x2304;</span></a>
+                        </div
                     </div>
-                    <div class="summary-closed">
-                        <a class="font-large">Profile</a>
-                        <span class="icon down-caret">&#x2304;</span>
-                    </div
-                </div>
-            </summary>
-            <nav>
-                <div class="font-small">
-                    Signed in as: <wbr/>
-                    <strong>
-                        {{session.identity.traits.first_name}}
-                        <wbr/>
-                        {{session.identity.traits.last_name}}
-                    </strong>
-                </div>
-                <menu class="font-medium">
-                    <li>
-                        <a href="/view/logout.html">logout</a>
-                    </li>
-                </menu>
-            </nav>
-        </details>
-        {% else %}
-        <a style="float:right"
-           href="/view/login.html"
-           target="_blank">login</a>
-        {% endif %}
-        {% block header %}
-        {% endblock %}
-        {% block content %}
-        {% endblock %}
+                </summary>
+                <nav>
+                    <div class="details-identity font-small">
+                        Signed in as: <wbr/>
+                        <strong>
+                            {{session.identity.traits.first_name}}
+                            <wbr/>
+                            {{session.identity.traits.last_name}}
+                        </strong>
+                    </div>
+                    <menu class="font-medium">
+                        <li>
+                            <a href="/view/logout.html">Logout</a>
+                        </li>
+                    </menu>
+                </nav>
+            </details>
+            {% else %}
+            <a href="/view/login.html"
+               target="_blank">Login</a>
+            {% endif %}
+        </div>
     </body>
 </html>
