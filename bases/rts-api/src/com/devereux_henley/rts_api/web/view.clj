@@ -42,4 +42,6 @@
 
 (defmethod integrant.core/init-key ::logout-view
   [_init-key {:keys [auth-hostname]}]
-  (fn [_request] {:status 301 :headers {"Location" (str auth-hostname "/self-service/logout")}}))
+  (fn [request]
+    (log/info (:ory-session request))
+    {:status 301 :headers {"Location" (str auth-hostname "/self-service/logout?token=")}}))
