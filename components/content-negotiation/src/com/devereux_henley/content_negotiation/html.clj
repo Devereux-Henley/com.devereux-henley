@@ -9,7 +9,6 @@
   (reify
     muuntaja.format.core/EncodeToBytes
     (encode-to-bytes [_ data charset]
-      (log/debug data)
       (.getBytes ^String (selmer.parser/render-file (view-fn (:type data)) {:data data}) ^String charset))
     muuntaja.format.core/EncodeToOutputStream
     (encode-to-output-stream [_ data charset]
