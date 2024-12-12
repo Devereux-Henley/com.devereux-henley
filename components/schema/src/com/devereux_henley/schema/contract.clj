@@ -128,6 +128,28 @@
       [:first {:optional true} url]
       [:last {:optional true} url]]]]))
 
+(defn create-link-schema
+  [input-schema]
+  (->> input-schema
+       malli.core/entries
+       (filter #(not= (first %) :eid))
+       (map second)
+       (map malli.core/properties)
+       (map :model/link)
+       (filter some?)
+       (map namespace)
+       (map keyword)
+       (map (fn [x] [x url]))
+       (into [:map])))
+
+(defn to-resource-schema
+  [input-schema]
+  (let [link-schema (create-link-schema input-schema)]
+    (to-schema
+     (-> input-schema
+       (malli.util/merge base-resource)
+       (malli.util/merge [:map [:_links link-schema]])))))
+
 (defn make-embedded-schema
   [schema]
   [:map
