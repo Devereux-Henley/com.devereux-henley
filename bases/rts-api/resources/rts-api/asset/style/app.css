@@ -1,0 +1,4 @@
+:root {
+    --color-navbar-bg: var(--color-neutral-900);
+    --color-navbar-fg: var(--color-neutral-50);
+}

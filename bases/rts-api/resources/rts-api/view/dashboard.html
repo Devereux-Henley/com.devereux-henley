@@ -4,21 +4,30 @@
 <link rel="stylesheet" href="/style/dashboard.css"/>
 {% endblock %}
 
-{% block header %}
-<header>
-    <nav id="game-browser-selector">
-        <a hx-get="/api/game/eea787d7-1065-45eb-a3f6-e26f32c294a1"
+{% block nav %}
+<div class="dropdown">
+    <button class="btn btn-ghost btn-sm"
+            _="on click toggle @hidden on #game-menu
+               on click elsewhere add @hidden to #game-menu">
+        Games
+    </button>
+    <div class="dropdown-menu" id="game-menu" hidden>
+        <a class="dropdown-item"
+           hx-get="/api/game/eea787d7-1065-45eb-a3f6-e26f32c294a1"
            hx-target="#game-browser"
-           hx-swap="outerHTML">
-            <img id="tww3-logo-image" class="logo-image" src="/image/wh3_logo.webp" />
+           hx-swap="outerHTML"
+           _="on click add @hidden to #game-menu">
+            Total War: Warhammer III
         </a>
-        <a hx-get="/api/game/eea787d7-1065-45eb-a3f6-e26f32c294a1"
+        <a class="dropdown-item"
+           hx-get="/api/game/eea787d7-1065-45eb-a3f6-e26f32c294a1"
            hx-target="#game-browser"
-           hx-swap="outerHTML">
-            <img id="aoe-logo-image" class="logo-image" src="/image/age_of_empires_logo.svg" />
+           hx-swap="outerHTML"
+           _="on click add @hidden to #game-menu">
+            Age of Empires
         </a>
-    </nav>
-</header>
+    </div>
+</div>
 {% endblock %}
 {% block content %}
 <section id="game-browser">

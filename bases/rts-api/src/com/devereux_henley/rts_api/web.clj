@@ -49,20 +49,30 @@
       (log/error "Could not connect to authentication/authorization service." exc)
       (throw exc))))
 
+(defn ^:private asset-path?
+  [uri]
+  (some #(clojure.string/starts-with? uri %)
+        ["/resourcekit/assets/"
+         "/style/"
+         "/image/"
+         "/icon/"]))
+
 ;; TODO Handle exceptions more gracefully at top level with manual 500 response.
 (defn ory-session-middleware
   [ory-base-url session-name handler]
   (fn [request]
-    (let [{:keys [cookies]} request
-          session           (get-in cookies [session-name :value])
-          continuity        (get-in cookies [continuity-key :value])]
-      (handler
-       (if (and session continuity)
+    (if (asset-path? (:uri request))
+      (handler request)
+      (let [{:keys [cookies]} request
+            session           (get-in cookies [session-name :value])
+            continuity        (get-in cookies [continuity-key :value])]
+        (handler
+         (if (and session continuity)
          (assoc request :ory-session (try-get-session
                                       ory-base-url
                                       {session-name   {:value session}
                                        continuity-key {:value continuity}}))
-         request)))))
+         request))))))
 
 (defmethod integrant.core/init-key ::swagger-handler
   [_init-key _dependencies]
@@ -129,6 +139,8 @@
       :url    "/api/swagger.json"
       :config {:validatorUrl     nil
                :operationsSorter "alpha"}})
+    (ring/create-resource-handler {:root "resourcekit/assets"
+                                   :path "/resourcekit/assets"})
     (ring/create-resource-handler {:root "rts-api/asset"
                                    :path "/"
                                    :not-found-handler

@@ -1,0 +1,126 @@
+/* --- Containers --- */
+
+.container {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+}
+
+.container-sm { max-width: 40rem; }
+.container-md { max-width: 56rem; }
+.container-lg { max-width: 72rem; }
+.container-xl { max-width: 88rem; }
+
+/* --- App shell --- */
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+}
+
+.app-content {
+  flex: 1;
+  padding: var(--space-6);
+  overflow: auto;
+}
+
+/* --- Page header --- */
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.page-title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+
+.page-description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+}
+
+/* --- Stack (vertical flex) --- */
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.stack-1 { gap: var(--space-1); }
+.stack-2 { gap: var(--space-2); }
+.stack-3 { gap: var(--space-3); }
+.stack-4 { gap: var(--space-4); }
+.stack-6 { gap: var(--space-6); }
+.stack-8 { gap: var(--space-8); }
+
+/* --- Cluster (horizontal flex) --- */
+
+.cluster {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.cluster-1 { gap: var(--space-1); }
+.cluster-2 { gap: var(--space-2); }
+.cluster-3 { gap: var(--space-3); }
+.cluster-4 { gap: var(--space-4); }
+.cluster-6 { gap: var(--space-6); }
+
+/* --- Grid --- */
+
+.grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.grid-2    { grid-template-columns: repeat(2, 1fr); }
+.grid-3    { grid-template-columns: repeat(3, 1fr); }
+.grid-4    { grid-template-columns: repeat(4, 1fr); }
+.grid-auto { grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); }
+
+/* --- Utilities --- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --- htmx loading indicators --- */
+
+.htmx-indicator {
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+  opacity: 1;
+}

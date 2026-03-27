@@ -1,0 +1,103 @@
+/* --- Nav items --- */
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.nav-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.nav-item:hover {
+  color: var(--color-text);
+  background-color: var(--color-neutral-100);
+}
+
+.nav-item.active,
+.nav-item[aria-current="page"] {
+  color: var(--color-accent);
+  background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+
+/* --- Top navbar --- */
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 3.5rem;
+  padding: 0 var(--space-6);
+  box-sizing: border-box;
+  background-color: var(--color-navbar-bg);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.navbar .btn,
+.navbar button {
+  color: var(--color-navbar-fg);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--color-navbar-fg) 25%, transparent);
+}
+
+.navbar .btn:hover,
+.navbar button:hover {
+  background: color-mix(in srgb, var(--color-navbar-fg) 10%, transparent);
+  border-color: color-mix(in srgb, var(--color-navbar-fg) 50%, transparent);
+}
+
+.navbar-brand {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.navbar-end {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* --- Sidebar --- */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  width: 14rem;
+  flex-shrink: 0;
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+}
+
+.sidebar-section {
+  padding-top: var(--space-4);
+}
+
+.sidebar-section:first-child {
+  padding-top: 0;
+}
+
+.sidebar-label {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}

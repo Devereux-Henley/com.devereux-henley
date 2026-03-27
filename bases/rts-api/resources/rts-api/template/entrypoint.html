@@ -1,49 +1,46 @@
 <html>
     <head>
         <script src="https://unpkg.com/htmx.org@1.8.2" integrity="sha384-+8ISc/waZcRdXCLxVgbsLzay31nCdyZXQxnsUy++HJzJliTzxKWr0m1cIEMyUzQu" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yegor256/tacit@gh-pages/tacit-css.min.css"/>
-        <link rel="stylesheet" href="/style/base.css"/>
+        <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+        <link rel="stylesheet" href="/resourcekit/assets/tokens.css"/>
+        <link rel="stylesheet" href="/resourcekit/assets/framework.css"/>
+        <link rel="stylesheet" href="/style/app.css"/>
         {% block styles %}
         {% endblock %}
     </head>
-    <body hx-headers='{"Accept": "application/htmx+html"}'>
-        <div class="page-content">
-            {% block header %}
-            {% endblock %}
+    <body class="app-shell" hx-headers='{"Accept": "application/htmx+html"}'>
+        <nav class="navbar">
+            <div class="cluster cluster-2">
+                {% block nav %}
+                {% endblock %}
+            </div>
+            <div class="navbar-end">
+                {% if session %}
+                <div class="dropdown">
+                    <button class="btn btn-ghost btn-sm"
+                            _="on click toggle @hidden on #profile-menu
+                               on click elsewhere add @hidden to #profile-menu">
+                        {{session.identity.traits.first_name}} {{session.identity.traits.last_name}}
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end" id="profile-menu" hidden>
+                        <div class="dropdown-label">Signed in as</div>
+                        <div class="dropdown-item" style="cursor: default;">
+                            <strong>{{session.identity.traits.first_name}} {{session.identity.traits.last_name}}</strong>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/view/logout.html">Logout</a>
+                    </div>
+                </div>
+                {% else %}
+                <a class="btn btn-ghost btn-sm" href="/view/login.html">Login</a>
+                {% endif %}
+            </div>
+        </nav>
+        {% block header %}
+        {% endblock %}
+        <main class="app-content">
             {% block content %}
             {% endblock %}
-        </div>
-        <div class="page-right-gulley">
-            {% if session %}
-            <details class="details-profile">
-                <summary class="details-profile-summary">
-                    <div class="details-profile-summary-container">
-                        <div class="summary-closed">
-                            <a class="font-large">Profile <span class="icon up-caret">&#x2303;</span></a>
-                        </div>
-                        <div class="summary-open">
-                            <a class="font-large">Profile <span class="icon down-caret">&#x2304;</span></a>
-                        </div
-                    </div>
-                </summary>
-                <nav>
-                    <div class="details-identity font-small">
-                        Signed in as:
-                        <strong>
-                            {{session.identity.traits.first_name}} <wbr/>{{session.identity.traits.last_name}}
-                        </strong>
-                    </div>
-                    <menu class="font-medium">
-                        <li>
-                            <a href="/view/logout.html">Logout</a>
-                        </li>
-                    </menu>
-                </nav>
-            </details>
-            {% else %}
-            <a href="/view/login.html"
-               target="_blank">Login</a>
-            {% endif %}
-        </div>
+        </main>
     </body>
 </html>
