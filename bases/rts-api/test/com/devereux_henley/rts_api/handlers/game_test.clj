@@ -96,6 +96,22 @@
         (is (= link-eid (:eid result)))
         (is (= "https://discord.gg/test" (:url result)))))))
 
+;; --- get-unit-by-eid ---
+
+(deftest get-unit-by-eid-assigns-type
+  (let [unit-eid (UUID/fromString "c1000000-0000-0000-0000-000000000001")]
+    (with-redefs [db.game/get-unit-by-eid (fn [_ _] {:eid unit-eid :name "Karl Franz"})]
+      (let [result (handlers.game/get-unit-by-eid test-deps unit-eid)]
+        (is (= :game/unit (:type result)))))))
+
+(deftest get-unit-by-eid-preserves-fields
+  (let [unit-eid (UUID/fromString "c1000000-0000-0000-0000-000000000001")]
+    (with-redefs [db.game/get-unit-by-eid (fn [_ _] {:eid unit-eid :name "Karl Franz" :description "Emperor of the Empire"})]
+      (let [result (handlers.game/get-unit-by-eid test-deps unit-eid)]
+        (is (= unit-eid (:eid result)))
+        (is (= "Karl Franz" (:name result)))
+        (is (= "Emperor of the Empire" (:description result)))))))
+
 ;; --- get-units-for-game ---
 
 (deftest get-units-for-game-assigns-type-to-each-unit

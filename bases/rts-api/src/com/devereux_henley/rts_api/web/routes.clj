@@ -50,7 +50,11 @@
    ["/faction/:eid/index.html"
     {:get {:produces   ["text/html"]
            :parameters {:path schema.contract/id-path-parameter}
-           :handler    (integrant.core/ref ::web.view/faction-view)}}]])
+           :handler    (integrant.core/ref ::web.view/faction-view)}}]
+   ["/unit/:eid/index.html"
+    {:get {:produces   ["text/html"]
+           :parameters {:path schema.contract/id-path-parameter}
+           :handler    (integrant.core/ref ::web.view/unit-view)}}]])
 
 (def api-routes
   ["/api"

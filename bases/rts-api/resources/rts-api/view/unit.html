@@ -1,0 +1,39 @@
+{% extends "rts-api/template/entrypoint.html" %}
+
+{% block styles %}
+<link rel="stylesheet" href="/style/dashboard.css?v={{css-version}}"/>
+{% endblock %}
+
+{% block content %}
+<section id="game-browser" class="resource game-resource">
+    <h2>{{data.name}}</h2>
+    <dl class="resource-metadata">
+        <dt>Unit Type</dt>
+        <dd>{{data.unit-type-name}}</dd>
+        <dt>Unit Category</dt>
+        <dd>{{data.unit-category-name}}</dd>
+    </dl>
+    <p>{{data.description|linebreaks|safe}}</p>
+    {% if unit-statistics %}
+    <section id="unit-statistics">
+        <h4>Statistics</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Stat</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stat in unit-statistics %}
+                <tr>
+                    <td>{{stat.stat}}</td>
+                    <td>{{stat.value}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    {% endif %}
+</section>
+{% endblock %}

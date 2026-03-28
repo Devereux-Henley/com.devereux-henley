@@ -37,6 +37,9 @@
                      :model/type :game/faction}
                     exc)))))
 
+(def get-unit-by-eid
+  (web.core/standard-fetch handlers.game/get-unit-by-eid :game/unit))
+
 (def get-faction-by-eid
   (web.core/standard-fetch handlers.game/get-faction-by-eid :game/faction))
 

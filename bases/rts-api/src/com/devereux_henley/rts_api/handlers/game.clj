@@ -34,6 +34,10 @@
   (mapv (fn [unit] (assoc unit :type :game/unit))
         (db.game/get-units-for-game (:connection dependencies) game-eid)))
 
+(defn get-unit-by-eid
+  [dependencies eid]
+  (assoc (db.game/get-unit-by-eid (:connection dependencies) eid) :type :game/unit))
+
 (defn get-units-for-faction
   [dependencies faction-eid]
   (mapv (fn [unit] (assoc unit :type :game/unit))
