@@ -26,8 +26,9 @@
 (defn view-by-type
   [type]
   (get
-   {:game/game "rts-api/resource/game.html"
-    "exception" "rts-api/resource/error.html"}
+   {:game/game    "rts-api/resource/game.html"
+    :game/faction "rts-api/resource/faction.html"
+    "exception"   "rts-api/resource/error.html"}
    type
    "rts-api/resource/unknown.html"))
 

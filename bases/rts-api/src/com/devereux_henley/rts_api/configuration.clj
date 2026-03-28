@@ -30,6 +30,7 @@
    ::web.view/contact-view                      default-view-dependencies
    ::web.view/login-view                        {:auth-hostname auth-hostname}
    ::web.view/logout-view                       {:auth-hostname auth-hostname}
+   ::web.view/faction-view                      default-api-dependencies
    ::web.game/get-game                          default-api-dependencies
    ::web.game/get-games                         default-api-dependencies
    ::web.game/get-faction                       default-api-dependencies

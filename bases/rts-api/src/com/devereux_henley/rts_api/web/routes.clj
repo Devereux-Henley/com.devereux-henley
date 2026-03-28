@@ -46,7 +46,11 @@
            :handler  (integrant.core/ref ::web.view/login-view)}}]
    ["/logout.html"
     {:get {:produces ["text/html"]
-           :handler  (integrant.core/ref ::web.view/logout-view)}}]])
+           :handler  (integrant.core/ref ::web.view/logout-view)}}]
+   ["/faction/:eid/index.html"
+    {:get {:produces   ["text/html"]
+           :parameters {:path schema.contract/id-path-parameter}
+           :handler    (integrant.core/ref ::web.view/faction-view)}}]])
 
 (def api-routes
   ["/api"

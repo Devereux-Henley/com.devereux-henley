@@ -1,0 +1,64 @@
+{% extends "rts-api/template/entrypoint.html" %}
+
+{% block styles %}
+<link rel="stylesheet" href="/style/dashboard.css?v={{css-version}}"/>
+{% endblock %}
+
+{% block game-nav %}
+{% if data._embedded.factions %}
+<div class="dropdown">
+    <button class="nav-item game-nav-item"
+            id="factions-dropdown-btn"
+            _="on click toggle @hidden on #factions-menu
+               on click elsewhere add @hidden to #factions-menu">
+        Factions
+    </button>
+    <div class="dropdown-menu" id="factions-menu" hidden>
+        {% for faction in data._embedded.factions %}
+        <a class="dropdown-item {% if faction.eid == data.eid %}active{% endif %}"
+           href="/view/faction/{{faction.eid}}/index.html">
+            {{faction.name}}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<section id="game-browser" class="resource game-resource">
+    <div hidden _="on load
+                   set gameLink to #game-link-{{data.game-eid}}
+                   if gameLink
+                     set @src of #game-icon-img to gameLink's @data-icon
+                     set the style.display of #game-icon-img to 'block'
+                   end"></div>
+    <h2>{{data.name}}</h2>
+    <p>{{data.description|linebreaks|safe}}</p>
+    {% if data._embedded.units-by-category %}
+    <section id="game-section-factions">
+        {% for group in data._embedded.units-by-category %}
+        <h4>{{group.category}}</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Unit Type</th>
+                    <th>Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for unit in group.units %}
+                <tr>
+                    <td>{{unit.name}}</td>
+                    <td>{{unit.unit-type-name}}</td>
+                    <td>{{unit.cost}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endfor %}
+    </section>
+    {% endif %}
+</section>
+{% endblock %}

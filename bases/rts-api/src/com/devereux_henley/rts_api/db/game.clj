@@ -110,3 +110,118 @@
   (db.core/query-for-entity connection
                             [get-game-social-link-by-eid-query eid]
                             game-social-link-entity))
+
+(def unit-type-entity
+  (schema.contract/to-schema
+   [:map
+    [:id :int]
+    [:eid :uuid]
+    [:name {:min 1} :string]
+    [:description {:min 1} :string]
+    [:game-eid :uuid]
+    [:version :int]
+    [:created-at :instant]
+    [:updated-at :instant]
+    [:deleted-at [:maybe :instant]]]))
+
+(def unit-category-entity
+  (schema.contract/to-schema
+   [:map
+    [:id :int]
+    [:eid :uuid]
+    [:name {:min 1} :string]
+    [:description {:min 1} :string]
+    [:game-eid :uuid]
+    [:version :int]
+    [:created-at :instant]
+    [:updated-at :instant]
+    [:deleted-at [:maybe :instant]]]))
+
+(def unit-entity
+  (schema.contract/to-schema
+   [:map
+    [:id :int]
+    [:eid :uuid]
+    [:name {:min 1} :string]
+    [:description {:min 1} :string]
+    [:game-eid :uuid]
+    [:unit-type-eid :uuid]
+    [:unit-type-name :string]
+    [:unit-category-eid :uuid]
+    [:unit-category-name :string]
+    [:cost [:maybe :int]]
+    [:unit-statistics :string]
+    [:version :int]
+    [:created-at :instant]
+    [:updated-at :instant]
+    [:deleted-at [:maybe :instant]]]))
+
+(def get-unit-type-by-eid-query (slurp (io/resource "rts-api/sql/game/get-unit-type-by-eid.sql")))
+
+(defn get-unit-type-by-eid
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection] :uuid]
+                   unit-type-entity])}
+  [connection eid]
+  (db.core/query-for-entity connection [get-unit-type-by-eid-query eid] unit-type-entity))
+
+(def get-unit-types-for-game-query (slurp (io/resource "rts-api/sql/game/get-unit-types-for-game.sql")))
+
+(defn get-unit-types-for-game
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection] :uuid]
+                   [:sequential unit-type-entity]])}
+  [connection game-eid]
+  (db.core/query-for-entities connection [get-unit-types-for-game-query game-eid] unit-type-entity))
+
+(def get-unit-category-by-eid-query (slurp (io/resource "rts-api/sql/game/get-unit-category-by-eid.sql")))
+
+(defn get-unit-category-by-eid
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection] :uuid]
+                   unit-category-entity])}
+  [connection eid]
+  (db.core/query-for-entity connection [get-unit-category-by-eid-query eid] unit-category-entity))
+
+(def get-unit-categories-for-game-query (slurp (io/resource "rts-api/sql/game/get-unit-categories-for-game.sql")))
+
+(defn get-unit-categories-for-game
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection] :uuid]
+                   [:sequential unit-category-entity]])}
+  [connection game-eid]
+  (db.core/query-for-entities connection [get-unit-categories-for-game-query game-eid] unit-category-entity))
+
+(def get-unit-by-eid-query (slurp (io/resource "rts-api/sql/game/get-unit-by-eid.sql")))
+
+(defn get-unit-by-eid
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection] :uuid]
+                   unit-entity])}
+  [connection eid]
+  (db.core/query-for-entity connection [get-unit-by-eid-query eid] unit-entity))
+
+(def get-units-for-game-query (slurp (io/resource "rts-api/sql/game/get-units-for-game.sql")))
+
+(defn get-units-for-game
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection] :uuid]
+                   [:sequential unit-entity]])}
+  [connection game-eid]
+  (db.core/query-for-entities connection [get-units-for-game-query game-eid] unit-entity))
+
+(def get-units-for-faction-query (slurp (io/resource "rts-api/sql/game/get-units-for-faction.sql")))
+
+(defn get-units-for-faction
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection] :uuid]
+                   [:sequential unit-entity]])}
+  [connection faction-eid]
+  (db.core/query-for-entities connection [get-units-for-faction-query faction-eid] unit-entity))

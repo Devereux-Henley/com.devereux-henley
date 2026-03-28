@@ -2,19 +2,54 @@
     <head>
         <script src="https://unpkg.com/htmx.org@1.8.2" integrity="sha384-+8ISc/waZcRdXCLxVgbsLzay31nCdyZXQxnsUy++HJzJliTzxKWr0m1cIEMyUzQu" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
-        <link rel="stylesheet" href="/resourcekit/assets/tokens.css"/>
-        <link rel="stylesheet" href="/resourcekit/assets/framework.css"/>
-        <link rel="stylesheet" href="/style/app.css"/>
+        <link rel="stylesheet" href="/resourcekit/assets/tokens.css?v={{css-version}}"/>
+        <link rel="stylesheet" href="/resourcekit/assets/framework.css?v={{css-version}}"/>
+        <link rel="stylesheet" href="/style/app.css?v={{css-version}}"/>
         {% block styles %}
         {% endblock %}
     </head>
     <body class="app-shell" hx-headers='{"Accept": "application/htmx+html"}'>
         <nav class="navbar">
             <div class="cluster cluster-2">
-                {% block nav %}
-                {% endblock %}
+                <div id="game-icon" style="width:2rem;height:2rem;flex-shrink:0;">
+                    <img id="game-icon-img" style="width:2rem;height:2rem;object-fit:contain;display:none;" />
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-ghost btn-sm"
+                            _="on click toggle @hidden on #game-menu
+                               on click elsewhere add @hidden to #game-menu">
+                        Games
+                    </button>
+                    <div class="dropdown-menu" id="game-menu" hidden>
+                        <a class="dropdown-item"
+                           id="game-link-eea787d7-1065-45eb-a3f6-e26f32c294a1"
+                           data-icon="/image/wh3_logo.webp"
+                           hx-get="/api/game/eea787d7-1065-45eb-a3f6-e26f32c294a1"
+                           hx-target="#game-browser"
+                           hx-swap="outerHTML"
+                           _="on click
+                              set @src of #game-icon-img to my @data-icon
+                              set the style.display of #game-icon-img to 'block'
+                              add @hidden to #game-menu">
+                            Total War: Warhammer III
+                            <span id="game-tooltip-eea787d7-1065-45eb-a3f6-e26f32c294a1" class="dropdown-item-tooltip"></span>
+                        </a>
+                    </div>
+                </div>
+                <div id="game-nav" class="cluster cluster-2">
+                    {% block game-nav %}
+                    {% endblock %}
+                </div>
+                <a class="nav-item"
+                   _="on click
+                      if #game-section-drafts
+                        set the style.display of #game-section-drafts to 'block'
+                      end">
+                    Drafts
+                </a>
             </div>
             <div class="navbar-end">
+                <div id="game-socials" class="cluster cluster-2"></div>
                 {% if session %}
                 <div class="dropdown">
                     <button class="btn btn-ghost btn-sm"

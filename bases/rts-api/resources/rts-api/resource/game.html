@@ -1,50 +1,37 @@
-<section id="game-browser" class="resource game-resource">
-    <nav>
-        <div>
-            <label for="checkbox-about">
-                About
-            </label>
-            <input type="radio" id="checkbox-about" class="hidden-checkbox" name="game-navigation"></input>
-            <label for="checkbox-factions">
-                Factions
-            </label>
-            <input type="radio" id="checkbox-factions" class="hidden-checkbox" name="game-navigation"></input>
-            <label for="checkbox-drafts">
-                Drafts
-            </label>
-            <input type="radio" id="checkbox-drafts" class="hidden-checkbox" name="game-navigation"></input>
-        </div>
-    </nav>
-    <section id="game-section-about">
-        <p>
-            <pre>{{data.description}}</pre>
-        </p>
-    </section>
+<span id="game-tooltip-{{data.eid}}" hx-swap-oob="true" class="dropdown-item-tooltip">{{data.description}}</span>
+
+<div id="game-nav" hx-swap-oob="true" class="cluster cluster-2">
     {% if data._embedded.factions %}
-    <section id="game-section-factions">
-        <nav>
+    <div class="dropdown">
+        <button class="nav-item game-nav-item"
+                id="factions-dropdown-btn"
+                _="on click toggle @hidden on #factions-menu
+                   on click elsewhere add @hidden to #factions-menu">
+            Factions
+        </button>
+        <div class="dropdown-menu" id="factions-menu" hidden>
             {% for faction in data._embedded.factions %}
-            <label for="checkbox-{{faction.eid}}"><h3>{{faction.name}}</h3></label>
-            <input type="radio" id="checkbox-{{faction.eid}}" class="hidden-checkbox" name="faction-navigation"></input>
-            <div id="faction-description-{{faction.eid}}" class="faction-description">{{faction.description|linebreaks|safe}}</div>
-            {% endfor %}
-        </nav>
-    </section>
-    {% endif %}
-    <section id="game-section-drafts">
-        TODO Drafts
-    </section>
-    {% if data._embedded.socials %}
-    <footer>
-        <nav>
-            {% for social in data._embedded.socials %}
-            <a href="{{social.url}}">
-                <img
-                    style="height:20px;width:20px"
-                    src="/icon/social-media/{{social.social-media-platform-eid}}" />
+            <a class="dropdown-item" href="/view/faction/{{faction.eid}}/index.html">
+                {{faction.name}}
             </a>
             {% endfor %}
-        </nav>
-    </footer>
+        </div>
+    </div>
     {% endif %}
+</div>
+
+<div id="game-socials" hx-swap-oob="true" class="cluster cluster-2">
+    {% if data._embedded.socials %}
+    {% for social in data._embedded.socials %}
+    <a href="{{social.url}}">
+        <img style="height:20px;width:20px;" src="/icon/social-media/{{social.social-media-platform-eid}}" />
+    </a>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<section id="game-browser" class="resource game-resource">
+    <section id="game-section-drafts" style="display:none;">
+        TODO Drafts
+    </section>
 </section>

@@ -18,8 +18,41 @@
 (def get-socials-for-game
   (web.core/standard-load-embedded handlers.game/get-socials-for-game :socials :game/game))
 
+(defn load-units-by-category-for-faction
+  [dependencies model]
+  (try
+    (let [units             (handlers.game/get-units-for-faction dependencies (:eid model))
+          units-by-category (->> units
+                                 (partition-by :unit-category-name)
+                                 (mapv (fn [group]
+                                         {:category (:unit-category-name (first group))
+                                          :units    (vec group)})))]
+      (either/right (assoc-in model [:_embedded :units-by-category] units-by-category)))
+    (catch Exception exc
+      (log/error exc)
+      (either/left (ex-info
+                    "Failed to fetch units for faction."
+                    {:error/kind :error/unknown
+                     :model/eid  (:eid model)
+                     :model/type :game/faction}
+                    exc)))))
+
 (def get-faction-by-eid
   (web.core/standard-fetch handlers.game/get-faction-by-eid :game/faction))
+
+(defn load-factions-for-faction-game
+  [dependencies model]
+  (try
+    (either/right (assoc-in model [:_embedded :factions]
+                             (handlers.game/get-factions-for-game dependencies (:game-eid model))))
+    (catch Exception exc
+      (log/error exc)
+      (either/left (ex-info
+                    "Failed to fetch factions for game."
+                    {:error/kind :error/unknown
+                     :model/eid  (:eid model)
+                     :model/type :game/faction}
+                    exc)))))
 
 (def get-game-social-link-by-eid
   (web.core/standard-fetch handlers.game/get-game-social-link-by-eid :game/social))
@@ -51,7 +84,8 @@
      {:hostname (:hostname dependencies) :router router}
      (cats/>>=
       (either/right eid)
-      (partial get-faction-by-eid dependencies)))))
+      (partial get-faction-by-eid dependencies)
+      (partial load-units-by-category-for-faction dependencies)))))
 
 (defmethod integrant.core/init-key ::get-game-social-link
   [_init-key dependencies]

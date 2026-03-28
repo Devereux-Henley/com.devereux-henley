@@ -28,3 +28,13 @@
 (defn get-game-social-link-by-eid
   [dependencies eid]
   (assoc (db.game/get-game-social-link-by-eid (:connection dependencies) eid) :type :game/social))
+
+(defn get-units-for-game
+  [dependencies game-eid]
+  (mapv (fn [unit] (assoc unit :type :game/unit))
+        (db.game/get-units-for-game (:connection dependencies) game-eid)))
+
+(defn get-units-for-faction
+  [dependencies faction-eid]
+  (mapv (fn [unit] (assoc unit :type :game/unit))
+        (db.game/get-units-for-faction (:connection dependencies) faction-eid)))

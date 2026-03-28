@@ -46,7 +46,10 @@
      [:_links
       [:map
        [:self :url]
-       [:game :url]]]])))
+       [:game :url]]]
+     [:_embedded {:optional true}
+      [:map
+       [:units-by-category {:optional true} [:sequential :any]]]]])))
 
 (def game-resource
   (malli.util/merge
@@ -61,6 +64,7 @@
       [:map
        [:socials {:optional true} [:sequential game-social-link-resource]]
        [:factions {:optional true} [:sequential faction-resource]]]]])))
+
 
 (def tournament-snapshot-resource
   (malli.util/merge
