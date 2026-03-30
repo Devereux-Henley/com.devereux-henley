@@ -1,8 +1,7 @@
 # Pending Features
 - Add user permissions to application. Set these up in ory cloud independently.
 - Each entity route should have corresponding /edit-<entity>.html route that serves editable form to users with appropriate permission.
-- Add database migration strategy and move each create table script to an appropriate migration.
-- Move seed scripts to above migration strategy.
+- Move seed scripts to migrations once all existing factions have been added in latest state.
 - Create patch entity. A patch represents a changeset for each unit in the game. Create endpoints for creating a patch, updating a patch, and applying a patch.
 - Create game_mode entity. A game mode represents a method of playing the rts. These will primarily be used for drafts. This will have a name, description, draft_value, player_count, income, reinforcements_enabled. These will also be specific to the game. Initial seeded values will be Land Battle and Domination for Total War Warhammer III.
 - Create game_mode_unit_cap entity. This represents the maximum amount of a single unit that can be drafted in a game mode.

@@ -8,6 +8,7 @@
         metosin/muuntaja-form {:mvn/version "0.6.8"}
         mono/content-negotiation {:local/root "../../components/content-negotiation"}
         mono/resourcekit {:local/root "../../components/resourcekit"}
+        mono/rts-data {:local/root "../../components/rts-data"}
         mono/schema {:local/root "../../components/schema"}
         ring/ring-jetty-adapter {:mvn/version "1.7.1"}
         selmer/selmer {:mvn/version "1.12.55"}

@@ -3,8 +3,10 @@
                                mono/schema {:local/root "components/schema"}
                                mono/resourcekit {:local/root "components/resourcekit"}
                                mono/content-negotiation {:local/root "components/content-negotiation"}
+                               mono/rts-data {:local/root "components/rts-data"}
                                mono/rose-api {:local/root "bases/rose-api"}
-                               mono/rts-api {:local/root "bases/rts-api"}}}
+                               mono/rts-api {:local/root "bases/rts-api"}
+                               mono/rts-data-deploy {:local/root "bases/rts-data-deploy"}}}
 
             :test {:extra-paths ["components/schema"
                                  "components/resourcekit"
