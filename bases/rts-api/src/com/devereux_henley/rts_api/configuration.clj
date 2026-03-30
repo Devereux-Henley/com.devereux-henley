@@ -7,7 +7,7 @@
    [com.devereux-henley.rts-api.web.social-media :as web.social-media]
    [com.devereux-henley.rts-api.web.tournament :as web.tournament]
    [com.devereux-henley.rts-api.web.view :as web.view]
-   [com.devereux-henley.rts-data.migrations :as migrations]
+   [com.devereux-henley.rts-data.contract :as rts-data]
    [integrant.core]))
 
 (def port
@@ -22,9 +22,9 @@
                                :connection (integrant.core/ref ::db/connection)})
 (def default-view-dependencies {})
 (def core-configuration
-  {::migrations/migrate                         {:db-spec       db/db-spec
-                                                 :migration-dir "rts-data/migrations"}
-   ::db/connection                              {:migrations (integrant.core/ref ::migrations/migrate)}
+  {::rts-data/migrate                           {:db-spec       db/db-spec
+                                                 :migration-dir rts-data/migration-dir}
+   ::db/connection                              {:migrations (integrant.core/ref ::rts-data/migrate)}
    ::web/swagger-handler                        {}
    ::web.view/dashboard-view                    default-view-dependencies
    ::web.view/tournament-view                   default-view-dependencies

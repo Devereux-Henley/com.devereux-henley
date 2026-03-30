@@ -2,6 +2,7 @@
   (:require
    [clj-http.client :as client]
    [com.devereux-henley.content-negotiation.contract :as content-negotiation]
+   [com.devereux-henley.resourcekit.contract :as resourcekit]
    [com.devereux-henley.rts-api.extensions.clj-http] ;; Patches multimethod for clj-http
    [integrant.core]
    [malli.util]
@@ -53,7 +54,7 @@
 (defn ^:private asset-path?
   [uri]
   (some #(clojure.string/starts-with? uri %)
-        ["/resourcekit/assets/"
+        [(str resourcekit/asset-path "/")
          "/style/"
          "/image/"
          "/icon/"]))
@@ -140,8 +141,8 @@
       :url    "/api/swagger.json"
       :config {:validatorUrl     nil
                :operationsSorter "alpha"}})
-    (ring/create-resource-handler {:root "resourcekit/assets"
-                                   :path "/resourcekit/assets"})
+    (ring/create-resource-handler {:root resourcekit/asset-root
+                                   :path resourcekit/asset-path})
     (ring/create-resource-handler {:root "rts-api/asset"
                                    :path "/"
                                    :not-found-handler

@@ -1,0 +1,9 @@
+{:deps {org.clojure/clojure      {:mvn/version "1.11.1"}
+        mono/content-negotiation {:local/root "../../components/content-negotiation"}
+        mono/resourcekit         {:local/root "../../components/resourcekit"}
+        mono/rts-data            {:local/root "../../components/rts-data"}
+        mono/schema              {:local/root "../../components/schema"}
+        mono/rts-api             {:local/root "../../bases/rts-api"}}
+ :aliases {:build {:extra-paths ["."]
+                   :extra-deps  {org.clojure/tools.build {:mvn/version "0.9.4"}}
+                   :ns-default  build}}}

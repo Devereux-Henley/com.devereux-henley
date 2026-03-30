@@ -1,0 +1,6 @@
+{:deps {org.clojure/clojure  {:mvn/version "1.11.1"}
+        mono/rts-data        {:local/root "../../components/rts-data"}
+        mono/rts-data-deploy {:local/root "../../bases/rts-data-deploy"}}
+ :aliases {:build {:extra-paths ["."]
+                   :extra-deps  {org.clojure/tools.build {:mvn/version "0.9.4"}}
+                   :ns-default  build}}}

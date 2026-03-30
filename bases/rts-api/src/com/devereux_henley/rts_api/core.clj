@@ -1,7 +1,8 @@
 (ns com.devereux-henley.rts-api.core
   (:require
    [com.devereux-henley.rts-api.system :as system]
-   [taoensso.timbre :as log]))
+   [taoensso.timbre :as log])
+  (:gen-class))
 
 (defn -main [& args]
   (try

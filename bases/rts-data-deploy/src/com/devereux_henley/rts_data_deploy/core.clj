@@ -1,9 +1,8 @@
 (ns com.devereux-henley.rts-data-deploy.core
   (:require
+   [com.devereux-henley.rts-data.contract :as rts-data]
    [migratus.core :as migratus])
   (:gen-class))
-
-(def ^:private migration-dir "rts-data/migrations")
 
 (defn- db-spec []
   {:connection-uri (or (System/getenv "RTS_DB_CONNECTION_URI")
@@ -11,7 +10,7 @@
 
 (defn- config []
   {:store         :database
-   :migration-dir migration-dir
+   :migration-dir rts-data/migration-dir
    :db            (db-spec)})
 
 (defn -main [& args]
