@@ -34,7 +34,6 @@ Bases are runnable entry points. Each base wires together components and library
 |---|---|
 | [`rts-api`](bases/rts-api) | HTTP API and server-rendered UI for the RTS tournament application. Serves JSON, HAL+JSON, and htmx-powered HTML via content negotiation. Runs on Jetty with Reitit routing and Integrant lifecycle management. Applies database migrations on startup. |
 | [`rts-data-deploy`](bases/rts-data-deploy) | CLI tool for running RTS database migrations in CI, independent of the application. Accepts `migrate` or `rollback` as a command-line argument. |
-| [`rose-api`](bases/rose-api) | Minimal reference API. Models the same patterns as `rts-api` at smaller scale. |
 
 ---
 
