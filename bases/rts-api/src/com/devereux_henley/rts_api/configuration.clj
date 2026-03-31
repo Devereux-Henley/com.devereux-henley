@@ -40,6 +40,7 @@
    :com.devereux-henley.rts-web.web.tournament/get-tournament-snapshot    default-api-dependencies
    :com.devereux-henley.rts-web.web.tournament/get-tournaments            default-api-dependencies
    :com.devereux-henley.rts-web.web.tournament/create-tournament          default-api-dependencies
+   :com.devereux-henley.rts-web.web.game/create-draft                    default-api-dependencies
    :com.devereux-henley.rts-web.web.routes/routes
    [rts-web/root-route
     rts-web/icon-routes
