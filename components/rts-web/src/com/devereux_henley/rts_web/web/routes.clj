@@ -54,10 +54,18 @@
     {:get {:produces   ["text/html"]
            :parameters {:path schema.contract/id-path-parameter}
            :handler    (integrant.core/ref ::web.view/unit-view)}}]
-   ["/game/:eid/create-draft.html"
+   ["/game/:eid/draft/create.html"
     {:get {:produces   ["text/html"]
            :parameters {:path schema.contract/id-path-parameter}
            :handler    (integrant.core/ref ::web.view/create-draft-view)}}]
+   ["/draft/:eid/index.html"
+    {:get {:produces   ["text/html"]
+           :parameters {:path schema.contract/id-path-parameter}
+           :handler    (integrant.core/ref ::web.view/draft-view)}}]
+   ["/game/:eid/draft/me.html"
+    {:get {:produces   ["text/html"]
+           :parameters {:path schema.contract/id-path-parameter}
+           :handler    (integrant.core/ref ::web.view/my-drafts-view)}}]
    ["/:eid/index.html"
     {:get {:produces   ["text/html"]
            :parameters {:path schema.contract/id-path-parameter}

@@ -31,15 +31,30 @@
                 </div>
                 <div id="game-nav" class="cluster cluster-2">
                     {% block game-nav %}
+                    {% if factions %}
+                    <div class="dropdown">
+                        <button class="nav-item game-nav-item"
+                                id="factions-dropdown-btn"
+                                _="on click toggle @hidden on #factions-menu
+                                   on click elsewhere add @hidden to #factions-menu">
+                            Factions
+                        </button>
+                        <div class="dropdown-menu" id="factions-menu" hidden>
+                            {% for faction in factions %}
+                            <a class="dropdown-item" href="/view/faction/{{faction.eid}}/index.html">
+                                {{faction.name}}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
                     {% endblock %}
                 </div>
-                <a class="nav-item"
-                   _="on click
-                      if #game-section-drafts
-                        set the style.display of #game-section-drafts to 'block'
-                      end">
+                {% if all session game-eid %}
+                <a class="nav-item" href="/view/game/{{game-eid}}/draft/me.html">
                     Drafts
                 </a>
+                {% endif %}
             </div>
             <div class="navbar-end">
                 <div id="game-socials" class="cluster cluster-2"></div>
@@ -67,6 +82,14 @@
         {% block header %}
         {% endblock %}
         <main class="app-content">
+            {% if game-eid %}
+            <div hidden _="on load
+                           set gameLink to #game-link-{{game-eid}}
+                           if gameLink
+                             set @src of #game-icon-img to gameLink's @data-icon
+                             set the style.display of #game-icon-img to 'block'
+                           end"></div>
+            {% endif %}
             {% block content %}
             {% endblock %}
         </main>

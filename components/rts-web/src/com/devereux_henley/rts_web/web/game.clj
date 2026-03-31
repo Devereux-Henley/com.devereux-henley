@@ -15,6 +15,9 @@
 (def get-factions-for-game
   (web.core/standard-load-embedded domain/get-factions-for-game :factions :game/game))
 
+(def get-game-modes-for-game
+  (web.core/standard-load-embedded domain/get-game-modes-for-game :game-modes :game/game))
+
 (def get-socials-for-game
   (web.core/standard-load-embedded domain/get-socials-for-game :socials :game/game))
 
@@ -36,6 +39,9 @@
                      :model/eid  (:eid model)
                      :model/type :game/faction}
                     exc)))))
+
+(def get-draft-by-eid
+  (web.core/standard-fetch domain/get-draft-by-eid :game/draft))
 
 (def create-draft
   (web.core/standard-create domain/create-draft :game/draft))

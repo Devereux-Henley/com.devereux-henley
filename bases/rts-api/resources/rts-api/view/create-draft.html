@@ -17,8 +17,8 @@
             <label class="form-label required" for="game-mode-eid">Game Mode</label>
             <select id="game-mode-eid" class="select" required>
                 <option value="">Select a game mode</option>
-                {% for game-mode in game-modes %}
-                <option value="{{game-mode.eid}}">{{game-mode.name}}</option>
+                {% for mode in game-modes %}
+                <option value="{{mode.eid}}">{{mode.name}}</option>
                 {% endfor %}
             </select>
         </div>
@@ -44,8 +44,7 @@
                     })
                 });
                 if (response.ok) {
-                    const draft = await response.json();
-                    window.location.href = draft._links.self;
+                    window.location.href = '/view/game/{{game-eid}}/draft/me.html';
                 } else {
                     errorEl.textContent = 'Failed to create draft. Please try again.';
                     errorEl.hidden = false;

@@ -4,33 +4,7 @@
 <link rel="stylesheet" href="/style/dashboard.css?v={{css-version}}"/>
 {% endblock %}
 
-{% block game-nav %}
-{% if data._embedded.factions %}
-<div class="dropdown">
-    <button class="nav-item game-nav-item"
-            id="factions-dropdown-btn"
-            _="on click toggle @hidden on #factions-menu
-               on click elsewhere add @hidden to #factions-menu">
-        Factions
-    </button>
-    <div class="dropdown-menu" id="factions-menu" hidden>
-        {% for faction in data._embedded.factions %}
-        <a class="dropdown-item" href="/view/faction/{{faction.eid}}/index.html">
-            {{faction.name}}
-        </a>
-        {% endfor %}
-    </div>
-</div>
-{% endif %}
-{% endblock %}
-
 {% block content %}
-<div hidden _="on load
-               set gameLink to #game-link-{{data.eid}}
-               if gameLink
-                 set @src of #game-icon-img to gameLink's @data-icon
-                 set the style.display of #game-icon-img to 'block'
-               end"></div>
 <section class="resource">
     <h2>{{data.name}}</h2>
     <p>{{data.description|linebreaks|safe}}</p>

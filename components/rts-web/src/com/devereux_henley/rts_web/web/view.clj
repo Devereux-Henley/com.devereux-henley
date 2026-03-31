@@ -78,7 +78,8 @@
               (partial web.game/load-factions-for-faction-game dependencies)
               (partial web.game/load-units-by-category-for-faction dependencies)))
            "faction.html"
-           (constantly {})))
+           (fn [data] {:game-eid (:game-eid data)
+                       :factions (get-in data [:_embedded :factions])})))
 
 (defn parse-unit-statistics
   [unit-statistics-str]
@@ -98,6 +99,40 @@
            "unit.html"
            (fn [data] {:unit-statistics (parse-unit-statistics (:unit-statistics data))})))
 
+(defmethod integrant.core/init-key ::draft-view
+  [_init-key dependencies]
+  (partial standard-entity-view-handler
+           (fn [eid]
+             (cats/>>=
+              (either/right eid)
+              (partial web.game/get-draft-by-eid dependencies)))
+           "draft-index.html"
+           (fn [draft]
+             (let [faction (domain/get-faction-by-eid dependencies (:faction-eid draft))
+                   game    (domain/get-game-by-eid dependencies (:game-eid faction))]
+               {:faction  faction
+                :game     game
+                :game-eid (:eid game)}))))
+
+(defmethod integrant.core/init-key ::my-drafts-view
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+       session               :ory-session
+       :as request}]
+    (try
+      (let [player-sub (get-in session [:identity :id])]
+        {:status 200
+         :body   (selmer.parser/render-file
+                  "rts-api/view/my-drafts.html"
+                  {:drafts      (domain/get-drafts-for-player-by-game dependencies player-sub eid)
+                   :factions    (domain/get-factions-for-game dependencies eid)
+                   :game-eid    eid
+                   :session     session
+                   :css-version @css-version})})
+      (catch Exception exc
+        (log/error exc)
+        {:status 500 :body "<div>Something went wrong</div>"}))))
+
 (defmethod integrant.core/init-key ::game-index-view
   [_init-key dependencies]
   (partial standard-entity-view-handler
@@ -108,24 +143,22 @@
               (partial web.game/get-socials-for-game dependencies)
               (partial web.game/get-factions-for-game dependencies)))
            "game-index.html"
-           (constantly {})))
+           (fn [data] {:game-eid (:eid data)
+                       :factions (get-in data [:_embedded :factions])})))
 
 (defmethod integrant.core/init-key ::create-draft-view
   [_init-key dependencies]
-  (fn [{{{:keys [eid]} :path} :parameters
-       :as request}]
-    (try
-      {:status 200
-       :body   (selmer.parser/render-file
-                "rts-api/view/create-draft.html"
-                {:factions    (domain/get-factions-for-game dependencies eid)
-                 :game-modes  (domain/get-game-modes-for-game dependencies eid)
-                 :game-eid    eid
-                 :session     (:ory-session request)
-                 :css-version @css-version})}
-      (catch Exception exc
-        (log/error exc)
-        {:status 500 :body "<div>Something went wrong</div>"}))))
+  (partial standard-entity-view-handler
+           (fn [eid]
+             (cats/>>=
+              (either/right eid)
+              (partial web.game/get-game-by-eid dependencies)
+              (partial web.game/get-factions-for-game dependencies)
+              (partial web.game/get-game-modes-for-game dependencies)))
+           "create-draft.html"
+           (fn [data] {:game-eid   (:eid data)
+                       :factions   (get-in data [:_embedded :factions])
+                       :game-modes (get-in data [:_embedded :game-modes])})))
 
 (defmethod integrant.core/init-key ::logout-view
   [_init-key {:keys [auth-hostname]}]

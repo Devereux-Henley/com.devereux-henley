@@ -36,6 +36,7 @@
 
 (def get-draft-by-eid                           handlers.game/get-draft-by-eid)
 (def get-drafts-for-player                      handlers.game/get-drafts-for-player)
+(def get-drafts-for-player-by-game              handlers.game/get-drafts-for-player-by-game)
 (def create-draft                               handlers.game/create-draft)
 (def get-game-by-eid                            handlers.game/get-game-by-eid)
 (def get-games                                  handlers.game/get-games)

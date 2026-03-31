@@ -63,6 +63,11 @@
   (mapv (fn [draft] (assoc draft :type :game/draft))
         (db/get-drafts-for-player (:connection dependencies) player-sub)))
 
+(defn get-drafts-for-player-by-game
+  [dependencies player-sub game-eid]
+  (mapv (fn [draft] (assoc draft :type :game/draft))
+        (db/get-drafts-for-player-by-game (:connection dependencies) player-sub game-eid)))
+
 (defn get-game-mode-by-eid
   [dependencies eid]
   (assoc (db/get-game-mode-by-eid (:connection dependencies) eid) :type :game/game-mode))

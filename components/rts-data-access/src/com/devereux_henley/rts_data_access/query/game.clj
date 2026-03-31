@@ -12,6 +12,8 @@
 
 (def get-drafts-for-player-query (resource/load-query-resource "game" "get-drafts-for-player.sql"))
 
+(def get-drafts-for-player-by-game-query (resource/load-query-resource "game" "get-drafts-for-player-by-game.sql"))
+
 (def get-game-mode-by-eid-query (resource/load-query-resource "game" "get-game-mode-by-eid.sql"))
 
 (def get-game-modes-for-game-query (resource/load-query-resource "game" "get-game-modes-for-game.sql"))
@@ -159,6 +161,14 @@
                    [:sequential schema/draft-entity]])}
   [connection player-sub]
   (jdbc.contract/query-for-entities connection [get-drafts-for-player-query player-sub] schema/draft-entity))
+
+(defn get-drafts-for-player-by-game
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection] :string :uuid]
+                   [:sequential schema/draft-entity]])}
+  [connection player-sub game-eid]
+  (jdbc.contract/query-for-entities connection [get-drafts-for-player-by-game-query player-sub game-eid] schema/draft-entity))
 
 (defn get-game-mode-by-eid
   {:malli/schema (schema.contract/to-schema
