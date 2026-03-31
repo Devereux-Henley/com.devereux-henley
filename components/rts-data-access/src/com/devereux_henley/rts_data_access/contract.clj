@@ -7,6 +7,8 @@
 
 ;;; ─── Game DB entities ──────────────────────────────────────────────────────
 
+(def game-mode-entity schema/game-mode-entity)
+
 (def game-entity schema/game-entity)
 
 (def faction-entity schema/faction-entity)
@@ -20,6 +22,10 @@
 (def unit-entity schema/unit-entity)
 
 ;;; ─── Game DB queries ───────────────────────────────────────────────────────
+
+(def get-game-mode-by-eid query.game/get-game-mode-by-eid)
+
+(def get-game-modes-for-game query.game/get-game-modes-for-game)
 
 (def get-game-by-eid query.game/get-game-by-eid)
 

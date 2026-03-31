@@ -128,3 +128,39 @@
 (deftest get-units-for-game-empty-result
   (with-redefs [data-access.contract/get-units-for-game (fn [_ _] [])]
     (is (= [] (handlers.game/get-units-for-game test-deps test-game-eid)))))
+
+;; --- get-game-mode-by-eid ---
+
+(deftest get-game-mode-by-eid-assigns-type
+  (let [mode-eid (UUID/fromString "a1b2c3d4-0001-4000-8000-000000000001")]
+    (with-redefs [data-access.contract/get-game-mode-by-eid (fn [_ _] {:eid mode-eid :name "Land Battle"})]
+      (let [result (handlers.game/get-game-mode-by-eid test-deps mode-eid)]
+        (is (= :game/game-mode (:type result)))))))
+
+(deftest get-game-mode-by-eid-preserves-fields
+  (let [mode-eid (UUID/fromString "a1b2c3d4-0001-4000-8000-000000000001")]
+    (with-redefs [data-access.contract/get-game-mode-by-eid (fn [_ _] {:eid mode-eid :name "Land Battle" :draft-value 1 :player-count 2 :reinforcement-value 0 :reinforcements-enabled 1})]
+      (let [result (handlers.game/get-game-mode-by-eid test-deps mode-eid)]
+        (is (= mode-eid (:eid result)))
+        (is (= "Land Battle" (:name result)))
+        (is (= 1 (:draft-value result)))
+        (is (= 2 (:player-count result)))
+        (is (= 0 (:reinforcement-value result)))
+        (is (= 1 (:reinforcements-enabled result)))))))
+
+;; --- get-game-modes-for-game ---
+
+(deftest get-game-modes-for-game-assigns-type-to-each-mode
+  (with-redefs [data-access.contract/get-game-modes-for-game (fn [_ _] [{:eid (UUID/randomUUID) :name "Land Battle"}
+                                                                         {:eid (UUID/randomUUID) :name "Domination"}])]
+    (let [results (handlers.game/get-game-modes-for-game test-deps test-game-eid)]
+      (is (every? #(= :game/game-mode (:type %)) results)))))
+
+(deftest get-game-modes-for-game-returns-all-results
+  (with-redefs [data-access.contract/get-game-modes-for-game (fn [_ _] [{:eid (UUID/randomUUID) :name "Land Battle"}
+                                                                         {:eid (UUID/randomUUID) :name "Domination"}])]
+    (is (= 2 (count (handlers.game/get-game-modes-for-game test-deps test-game-eid))))))
+
+(deftest get-game-modes-for-game-empty-result
+  (with-redefs [data-access.contract/get-game-modes-for-game (fn [_ _] [])]
+    (is (= [] (handlers.game/get-game-modes-for-game test-deps test-game-eid)))))

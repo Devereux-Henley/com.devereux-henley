@@ -39,6 +39,8 @@
 (def get-units-for-game                         handlers.game/get-units-for-game)
 (def get-unit-by-eid                            handlers.game/get-unit-by-eid)
 (def get-units-for-faction                      handlers.game/get-units-for-faction)
+(def get-game-mode-by-eid                       handlers.game/get-game-mode-by-eid)
+(def get-game-modes-for-game                    handlers.game/get-game-modes-for-game)
 
 (def get-platform-by-eid                        handlers.social-media/get-platform-by-eid)
 

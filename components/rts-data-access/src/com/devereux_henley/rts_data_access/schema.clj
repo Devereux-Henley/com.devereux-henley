@@ -2,6 +2,23 @@
   (:require
    [com.devereux-henley.schema.contract :as schema.contract]))
 
+(def game-mode-entity
+  (schema.contract/to-schema
+   [:map
+    [:id :int]
+    [:eid :uuid]
+    [:name {:min 1} :string]
+    [:description {:min 1} :string]
+    [:draft-value :int]
+    [:player-count :int]
+    [:reinforcement-value :int]
+    [:reinforcements-enabled :int]
+    [:game-eid :uuid]
+    [:version :int]
+    [:created-at :instant]
+    [:updated-at :instant]
+    [:deleted-at [:maybe :instant]]]))
+
 (def game-entity
   (schema.contract/to-schema
    [:map

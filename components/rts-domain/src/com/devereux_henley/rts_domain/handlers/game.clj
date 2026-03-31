@@ -41,3 +41,12 @@
   [dependencies faction-eid]
   (mapv (fn [unit] (assoc unit :type :game/unit))
         (db/get-units-for-faction (:connection dependencies) faction-eid)))
+
+(defn get-game-mode-by-eid
+  [dependencies eid]
+  (assoc (db/get-game-mode-by-eid (:connection dependencies) eid) :type :game/game-mode))
+
+(defn get-game-modes-for-game
+  [dependencies game-eid]
+  (mapv (fn [mode] (assoc mode :type :game/game-mode))
+        (db/get-game-modes-for-game (:connection dependencies) game-eid)))

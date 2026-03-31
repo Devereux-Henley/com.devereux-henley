@@ -27,7 +27,8 @@
    (load-seed "seed-game-social-links.sql")
    (load-seed "seed-unit-types.sql")
    (load-seed "seed-unit-categories.sql")
-   (load-seed "seed-empire-units.sql")])
+   (load-seed "seed-empire-units.sql")
+   (load-seed "seed-game-modes.sql")])
 
 (defn seed-db
   "Seeds the database with baseline data."

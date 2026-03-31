@@ -7,6 +7,10 @@
   (:import
    [java.sql Connection]))
 
+(def get-game-mode-by-eid-query (resource/load-query-resource "game" "get-game-mode-by-eid.sql"))
+
+(def get-game-modes-for-game-query (resource/load-query-resource "game" "get-game-modes-for-game.sql"))
+
 (def game-query (resource/load-query-resource "game" "get-games.sql"))
 
 (def get-faction-by-eid-query (resource/load-query-resource "game" "get-faction-by-eid.sql"))
@@ -134,3 +138,19 @@
                    [:sequential schema/unit-entity]])}
   [connection faction-eid]
   (jdbc.contract/query-for-entities connection [get-units-for-faction-query faction-eid] schema/unit-entity))
+
+(defn get-game-mode-by-eid
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection] :uuid]
+                   schema/game-mode-entity])}
+  [connection eid]
+  (jdbc.contract/query-for-entity connection [get-game-mode-by-eid-query eid] schema/game-mode-entity))
+
+(defn get-game-modes-for-game
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection] :uuid]
+                   [:sequential schema/game-mode-entity]])}
+  [connection game-eid]
+  (jdbc.contract/query-for-entities connection [get-game-modes-for-game-query game-eid] schema/game-mode-entity))
