@@ -43,10 +43,40 @@ Components are shared units of behaviour consumed by one or more bases.
 
 | Component | Description |
 |---|---|
+| [`rts-web`](components/rts-web) | RTS web layer. Reitit route definitions, Integrant-managed request handlers for API endpoints and server-rendered views, and HTML templates and static assets. |
+| [`rts-domain`](components/rts-domain) | RTS domain layer. Handler-level functions that retrieve typed domain models (with `:type` keys) from the data access layer, and Malli schemas for all API resources and request specifications. |
+| [`rts-data-access`](components/rts-data-access) | RTS data access layer. SQL query functions backed by named `.sql` files, JDBC entity schemas, and all database read/write operations. |
 | [`rts-data`](components/rts-data) | RTS database schema. Owns the numbered Migratus migration SQL files and the Integrant `::migrate` key that applies them. |
+| [`http`](components/http) | HTTP response helpers used by web handlers: `Either`-based fetch and create pipelines, standard response shaping for collections, single resources, and embedded sub-resources. |
+| [`jdbc`](components/jdbc) | JDBC query helpers: camel-snake-kebab column mapping, `query-for-entity`, `query-for-entities`, `entity-by-eid`, `insert!`, and `execute-one!` wrappers over `next.jdbc`. |
 | [`schema`](components/schema) | Shared Malli schema primitives: custom types (`:instant`, `:local-date`, `:url`), base resource and collection schemas, and the model transformer that resolves `:model/link` annotations into HATEOAS `_links` URLs. |
 | [`content-negotiation`](components/content-negotiation) | Muuntaja format definitions for `text/html` and `application/htmx+html`. Shared by any base that serves server-rendered HTML alongside JSON. |
 | [`resourcekit`](components/resourcekit) | Static CSS assets (reset, tokens, layout, and UI component styles) served by bases that render HTML. |
+
+---
+
+## Development
+
+### REPL
+
+The repository root `deps.edn` contains a `:dev` alias that wires all components and bases onto the classpath. CIDER is configured via [`.dir-locals.el`](.dir-locals.el) to always jack-in from the repository root using that alias — this ensures the full component graph is available regardless of which file is open.
+
+```
+M-x cider-jack-in   ; or C-c C-x j j
+```
+
+Approve the `eval` form prompt once (or add `(setq enable-local-eval t)` to your Emacs init to suppress it permanently).
+
+### Database
+
+The SQLite development database lives at `db/database.db` (relative to the repository root, excluded from version control). Migrations run automatically on `(go!)`. To apply migrations independently:
+
+```clojure
+;; From the REPL
+(go!)      ; start system (runs migrations, starts Jetty)
+(halt!)    ; stop system
+(restart!) ; halt then go!
+```
 
 ---
 
