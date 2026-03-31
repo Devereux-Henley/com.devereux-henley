@@ -7,6 +7,10 @@
 
 ;;; ─── Game DB entities ──────────────────────────────────────────────────────
 
+(def create-draft-params schema/create-draft-params)
+
+(def draft-entity schema/draft-entity)
+
 (def game-mode-entity schema/game-mode-entity)
 
 (def game-entity schema/game-entity)
@@ -22,6 +26,12 @@
 (def unit-entity schema/unit-entity)
 
 ;;; ─── Game DB queries ───────────────────────────────────────────────────────
+
+(def get-draft-by-eid query.game/get-draft-by-eid)
+
+(def get-drafts-for-player query.game/get-drafts-for-player)
+
+(def create-draft query.game/create-draft)
 
 (def get-game-mode-by-eid query.game/get-game-mode-by-eid)
 

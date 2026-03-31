@@ -4,10 +4,12 @@
    [com.devereux-henley.rts-data-access.contract :as data-access.contract]
    [com.devereux-henley.rts-domain.handlers.game :as handlers.game])
   (:import
+   [java.time Instant]
    [java.util UUID]))
 
 (def ^:private test-game-eid (UUID/fromString "eea787d7-1065-45eb-a3f6-e26f32c294a1"))
 (def ^:private test-faction-eid (UUID/fromString "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"))
+(def ^:private test-game-mode-eid (UUID/fromString "a1b2c3d4-0001-4000-8000-000000000001"))
 (def ^:private test-deps {:connection nil})
 
 ;; --- get-game-by-eid ---
@@ -164,3 +166,75 @@
 (deftest get-game-modes-for-game-empty-result
   (with-redefs [data-access.contract/get-game-modes-for-game (fn [_ _] [])]
     (is (= [] (handlers.game/get-game-modes-for-game test-deps test-game-eid)))))
+
+;; --- get-draft-by-eid ---
+
+(def ^:private test-player-sub "auth0|test-player-sub")
+
+(deftest get-draft-by-eid-assigns-type
+  (let [draft-eid (UUID/randomUUID)]
+    (with-redefs [data-access.contract/get-draft-by-eid (fn [_ _] {:eid draft-eid :game-mode-eid test-game-mode-eid :faction-eid test-faction-eid :player-sub test-player-sub})]
+      (let [result (handlers.game/get-draft-by-eid test-deps draft-eid)]
+        (is (= :game/draft (:type result)))))))
+
+(deftest get-draft-by-eid-preserves-fields
+  (let [draft-eid (UUID/randomUUID)]
+    (with-redefs [data-access.contract/get-draft-by-eid (fn [_ _] {:eid draft-eid :game-mode-eid test-game-mode-eid :faction-eid test-faction-eid :player-sub test-player-sub})]
+      (let [result (handlers.game/get-draft-by-eid test-deps draft-eid)]
+        (is (= draft-eid (:eid result)))
+        (is (= test-game-mode-eid (:game-mode-eid result)))
+        (is (= test-faction-eid (:faction-eid result)))
+        (is (= test-player-sub (:player-sub result)))))))
+
+;; --- get-drafts-for-player ---
+
+(deftest get-drafts-for-player-assigns-type-to-each-draft
+  (with-redefs [data-access.contract/get-drafts-for-player (fn [_ _] [{:eid (UUID/randomUUID) :game-mode-eid test-game-mode-eid :faction-eid test-faction-eid :player-sub test-player-sub}
+                                                                        {:eid (UUID/randomUUID) :game-mode-eid (UUID/randomUUID) :faction-eid (UUID/randomUUID) :player-sub test-player-sub}])]
+    (let [results (handlers.game/get-drafts-for-player test-deps test-player-sub)]
+      (is (every? #(= :game/draft (:type %)) results)))))
+
+(deftest get-drafts-for-player-returns-all-results
+  (with-redefs [data-access.contract/get-drafts-for-player (fn [_ _] [{:eid (UUID/randomUUID) :game-mode-eid test-game-mode-eid :faction-eid test-faction-eid :player-sub test-player-sub}
+                                                                        {:eid (UUID/randomUUID) :game-mode-eid (UUID/randomUUID) :faction-eid (UUID/randomUUID) :player-sub test-player-sub}])]
+    (is (= 2 (count (handlers.game/get-drafts-for-player test-deps test-player-sub))))))
+
+(deftest get-drafts-for-player-empty-result
+  (with-redefs [data-access.contract/get-drafts-for-player (fn [_ _] [])]
+    (is (= [] (handlers.game/get-drafts-for-player test-deps test-player-sub)))))
+
+;; --- create-draft ---
+
+(deftest create-draft-assigns-type
+  (with-redefs [data-access.contract/create-draft (fn [_ spec] spec)]
+    (let [result (handlers.game/create-draft test-deps {:eid (UUID/randomUUID) :game-mode-eid test-game-mode-eid :faction-eid test-faction-eid :player-sub test-player-sub})]
+      (is (= :game/draft (:type result))))))
+
+(deftest create-draft-injects-created-at-timestamp
+  (let [captured (atom nil)]
+    (with-redefs [data-access.contract/create-draft (fn [_ spec] (reset! captured spec) spec)]
+      (handlers.game/create-draft test-deps {:eid (UUID/randomUUID) :game-mode-eid test-game-mode-eid :faction-eid test-faction-eid :player-sub test-player-sub})
+      (is (instance? Instant (:created-at @captured))))))
+
+(deftest create-draft-injects-updated-at-timestamp
+  (let [captured (atom nil)]
+    (with-redefs [data-access.contract/create-draft (fn [_ spec] (reset! captured spec) spec)]
+      (handlers.game/create-draft test-deps {:eid (UUID/randomUUID) :game-mode-eid test-game-mode-eid :faction-eid test-faction-eid :player-sub test-player-sub})
+      (is (instance? Instant (:updated-at @captured))))))
+
+(deftest create-draft-created-at-equals-updated-at
+  (let [captured (atom nil)]
+    (with-redefs [data-access.contract/create-draft (fn [_ spec] (reset! captured spec) spec)]
+      (handlers.game/create-draft test-deps {:eid (UUID/randomUUID) :game-mode-eid test-game-mode-eid :faction-eid test-faction-eid :player-sub test-player-sub})
+      (is (= (:created-at @captured) (:updated-at @captured))))))
+
+(deftest create-draft-preserves-specification-fields
+  (let [captured  (atom nil)
+        draft-eid (UUID/randomUUID)
+        spec      {:eid draft-eid :game-mode-eid test-game-mode-eid :faction-eid test-faction-eid :player-sub test-player-sub}]
+    (with-redefs [data-access.contract/create-draft (fn [_ s] (reset! captured s) s)]
+      (handlers.game/create-draft test-deps spec)
+      (is (= draft-eid (:eid @captured)))
+      (is (= test-game-mode-eid (:game-mode-eid @captured)))
+      (is (= test-faction-eid (:faction-eid @captured)))
+      (is (= test-player-sub (:player-sub @captured))))))

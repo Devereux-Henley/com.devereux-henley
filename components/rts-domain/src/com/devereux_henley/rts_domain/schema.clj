@@ -113,6 +113,25 @@
    [:eid :uuid]
    [:version :int]])
 
+(def draft-resource
+  (malli.util/merge
+   schema.contract/base-resource
+   (schema.contract/to-schema
+    [:map
+     [:eid {:model/link :draft/by-eid} :uuid]
+     [:type [:= :game/draft]]
+     [:game-mode-eid {:model/link :game-mode/by-eid} :uuid]
+     [:faction-eid {:model/link :game/faction-by-eid} :uuid]
+     [:player-sub :string]])))
+
+(def create-draft-specification
+  (schema.contract/to-schema
+   [:map
+    [:specification
+     [:map
+      [:game-mode-eid :uuid]
+      [:faction-eid :uuid]]]]))
+
 (def create-tournament-specification
   (schema.contract/to-schema
    [:map

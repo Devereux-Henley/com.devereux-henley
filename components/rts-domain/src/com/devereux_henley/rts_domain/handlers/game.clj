@@ -1,6 +1,8 @@
 (ns com.devereux-henley.rts-domain.handlers.game
   (:require
-   [com.devereux-henley.rts-data-access.contract :as db]))
+   [com.devereux-henley.rts-data-access.contract :as db])
+  (:import
+   [java.time Instant]))
 
 (defn get-game-by-eid
   [dependencies eid]
@@ -41,6 +43,25 @@
   [dependencies faction-eid]
   (mapv (fn [unit] (assoc unit :type :game/unit))
         (db/get-units-for-faction (:connection dependencies) faction-eid)))
+
+(defn get-draft-by-eid
+  [dependencies eid]
+  (assoc (db/get-draft-by-eid (:connection dependencies) eid) :type :game/draft))
+
+(defn create-draft
+  [dependencies create-specification]
+  (let [created-at (Instant/now)
+        updated-at created-at]
+    (assoc (db/create-draft (:connection dependencies)
+                            (-> create-specification
+                                (assoc :created-at created-at)
+                                (assoc :updated-at updated-at)))
+           :type :game/draft)))
+
+(defn get-drafts-for-player
+  [dependencies player-sub]
+  (mapv (fn [draft] (assoc draft :type :game/draft))
+        (db/get-drafts-for-player (:connection dependencies) player-sub)))
 
 (defn get-game-mode-by-eid
   [dependencies eid]

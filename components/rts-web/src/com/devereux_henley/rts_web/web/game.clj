@@ -37,6 +37,9 @@
                      :model/type :game/faction}
                     exc)))))
 
+(def create-draft
+  (web.core/standard-create domain/create-draft :game/draft))
+
 (def get-unit-by-eid
   (web.core/standard-fetch domain/get-unit-by-eid :game/unit))
 
@@ -115,6 +118,25 @@
       (partial get-game-by-eid dependencies)
       (partial get-socials-for-game dependencies)
       (partial get-factions-for-game dependencies)))))
+
+(defmethod integrant.core/init-key ::create-draft
+  [_init-key dependencies]
+  (fn [{{{:keys [specification]} :body
+        {:keys [version]}       :query
+        {:keys [eid]}           :path} :parameters
+       router                          :reitit.core/router
+       session                         :ory-session
+       :as                             _request}]
+    (web.core/handle-create-response
+     domain/draft-resource
+     {:hostname (:hostname dependencies) :router router}
+     (cats/>>=
+      (either/right (-> specification
+                        (assoc :player-sub (get-in session [:identity :id]))
+                        (assoc :created-by-sub (get-in session [:identity :id]))
+                        (assoc :eid eid)
+                        (assoc :version version)))
+      (partial create-draft dependencies)))))
 
 (defmethod integrant.core/init-key ::get-games
   [_init-key dependencies]

@@ -12,6 +12,10 @@
 
 (def game-social-link-resource schema/game-social-link-resource)
 
+(def draft-resource schema/draft-resource)
+
+(def create-draft-specification schema/create-draft-specification)
+
 (def faction-resource schema/faction-resource)
 
 (def game-resource schema/game-resource)
@@ -30,6 +34,9 @@
 
 ;;; ─── Handler-level functions (typed domain models) ─────────────────────────
 
+(def get-draft-by-eid                           handlers.game/get-draft-by-eid)
+(def get-drafts-for-player                      handlers.game/get-drafts-for-player)
+(def create-draft                               handlers.game/create-draft)
 (def get-game-by-eid                            handlers.game/get-game-by-eid)
 (def get-games                                  handlers.game/get-games)
 (def get-factions-for-game                      handlers.game/get-factions-for-game)

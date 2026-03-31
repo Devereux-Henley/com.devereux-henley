@@ -114,6 +114,15 @@
       (migratus/down cfg 8)
       (is (not (table-exists? conn "game_mode"))))))
 
+(deftest migration-000009-draft-table
+  (with-temp-db [cfg conn]
+    (testing "up creates draft table"
+      (migratus/up cfg 9)
+      (is (table-exists? conn "draft")))
+    (testing "down drops draft table"
+      (migratus/down cfg 9)
+      (is (not (table-exists? conn "draft"))))))
+
 ;; ---------------------------------------------------------------------------
 ;; Full migration cycle
 ;; ---------------------------------------------------------------------------
@@ -126,7 +135,8 @@
    "faction"
    "unit"
    "game_social_link"
-   "game_mode"])
+   "game_mode"
+   "draft"])
 
 (deftest full-migration-cycle
   (with-temp-db [cfg conn]
@@ -136,6 +146,6 @@
         (is (table-exists? conn table) (str table " should exist after migrate"))))
 
     (testing "rollback to baseline removes all tables"
-      (migratus/down cfg 8 7 6 5 4 3 2 1)
+      (migratus/down cfg 9 8 7 6 5 4 3 2 1)
       (doseq [table all-tables]
         (is (not (table-exists? conn table)) (str table " should not exist after full rollback"))))))

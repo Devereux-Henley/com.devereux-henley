@@ -3,9 +3,14 @@
    [com.devereux-henley.jdbc.contract :as jdbc.contract]
    [com.devereux-henley.rts-data-access.resource :as resource]
    [com.devereux-henley.rts-data-access.schema :as schema]
-   [com.devereux-henley.schema.contract :as schema.contract])
+   [com.devereux-henley.schema.contract :as schema.contract]
+   [next.jdbc :as jdbc])
   (:import
    [java.sql Connection]))
+
+(def get-draft-by-eid-query (resource/load-query-resource "game" "get-draft-by-eid.sql"))
+
+(def get-drafts-for-player-query (resource/load-query-resource "game" "get-drafts-for-player.sql"))
 
 (def get-game-mode-by-eid-query (resource/load-query-resource "game" "get-game-mode-by-eid.sql"))
 
@@ -139,6 +144,22 @@
   [connection faction-eid]
   (jdbc.contract/query-for-entities connection [get-units-for-faction-query faction-eid] schema/unit-entity))
 
+(defn get-draft-by-eid
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection] :uuid]
+                   schema/draft-entity])}
+  [connection eid]
+  (jdbc.contract/query-for-entity connection [get-draft-by-eid-query eid] schema/draft-entity))
+
+(defn get-drafts-for-player
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection] :string]
+                   [:sequential schema/draft-entity]])}
+  [connection player-sub]
+  (jdbc.contract/query-for-entities connection [get-drafts-for-player-query player-sub] schema/draft-entity))
+
 (defn get-game-mode-by-eid
   {:malli/schema (schema.contract/to-schema
                   [:=>
@@ -154,3 +175,20 @@
                    [:sequential schema/game-mode-entity]])}
   [connection game-eid]
   (jdbc.contract/query-for-entities connection [get-game-modes-for-game-query game-eid] schema/game-mode-entity))
+
+(defn create-draft
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection] schema/create-draft-params]
+                   schema/draft-entity])}
+  [connection specification]
+  (let [game-mode (get-game-mode-by-eid connection (:game-mode-eid specification))
+        faction   (get-faction-by-eid connection (:faction-eid specification))]
+    (jdbc/with-transaction [tx connection]
+      (jdbc.contract/insert! tx
+                             :draft
+                             (-> specification
+                                 (dissoc :game-mode-eid :faction-eid)
+                                 (assoc :game-mode-id (:id game-mode))
+                                 (assoc :faction-id (:id faction))))
+      (get-draft-by-eid connection (:eid specification)))))

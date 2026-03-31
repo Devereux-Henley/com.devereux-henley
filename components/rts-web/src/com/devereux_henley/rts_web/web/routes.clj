@@ -103,6 +103,18 @@
                          :query schema.contract/version-query-parameter}
             :responses  {200 {:body domain/faction-resource}}
             :handler    (integrant.core/ref ::web.game/get-faction)}}]
+   ["/draft/:eid"
+    {:name :draft/by-eid
+     :put  {:summary    "Creates a draft with the given eid and version."
+            :swagger    {:tags         ["draft"]
+                         :produces     ["application/json"]
+                         :operation-id "draft/create"}
+            :parameters {:path  schema.contract/id-path-parameter
+                         :query schema.contract/version-query-parameter
+                         :body  domain/create-draft-specification}
+            :responses  {201 {:body domain/draft-resource}}
+            :handler    (integrant.core/ref ::web.game/create-draft)}}]
+
    ["/tournament"
     {:name :collection/tournament
      :get  {:summary    "A collection of all tournaments."

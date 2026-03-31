@@ -19,6 +19,31 @@
     [:updated-at :instant]
     [:deleted-at [:maybe :instant]]]))
 
+(def create-draft-params
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:game-mode-eid :uuid]
+    [:faction-eid :uuid]
+    [:player-sub :string]
+    [:version :int]
+    [:created-by-sub :string]
+    [:created-at :instant]
+    [:updated-at :instant]]))
+
+(def draft-entity
+  (schema.contract/to-schema
+   [:map
+    [:id :int]
+    [:eid :uuid]
+    [:game-mode-eid :uuid]
+    [:faction-eid :uuid]
+    [:player-sub :string]
+    [:version :int]
+    [:created-at :instant]
+    [:updated-at :instant]
+    [:deleted-at [:maybe :instant]]]))
+
 (def game-entity
   (schema.contract/to-schema
    [:map
