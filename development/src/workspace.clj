@@ -5,4 +5,5 @@
 (comment
   (system/go!)
   (system/halt!)
+  (system/reload-views!)
   (system/restart!))

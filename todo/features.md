@@ -1,5 +1,4 @@
 # Pending Features
-- Add create draft view form.
 - Add draft view.
 - Add route for getting drafts for a user. Drafts page in top bar should link to page with list of existing drafts with link to their correpsonding draft view.
 - Add user permissions to application. Set these up in ory cloud independently.

@@ -2,6 +2,7 @@
   (:require
    [cats.core :as cats]
    [cats.monad.either :as either]
+   [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.web.game :as web.game]
    [integrant.core]
    [jsonista.core :as jsonista]
@@ -96,6 +97,35 @@
               (partial web.game/get-unit-by-eid dependencies)))
            "unit.html"
            (fn [data] {:unit-statistics (parse-unit-statistics (:unit-statistics data))})))
+
+(defmethod integrant.core/init-key ::game-index-view
+  [_init-key dependencies]
+  (partial standard-entity-view-handler
+           (fn [eid]
+             (cats/>>=
+              (either/right eid)
+              (partial web.game/get-game-by-eid dependencies)
+              (partial web.game/get-socials-for-game dependencies)
+              (partial web.game/get-factions-for-game dependencies)))
+           "game-index.html"
+           (constantly {})))
+
+(defmethod integrant.core/init-key ::create-draft-view
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+       :as request}]
+    (try
+      {:status 200
+       :body   (selmer.parser/render-file
+                "rts-api/view/create-draft.html"
+                {:factions    (domain/get-factions-for-game dependencies eid)
+                 :game-modes  (domain/get-game-modes-for-game dependencies eid)
+                 :game-eid    eid
+                 :session     (:ory-session request)
+                 :css-version @css-version})}
+      (catch Exception exc
+        (log/error exc)
+        {:status 500 :body "<div>Something went wrong</div>"}))))
 
 (defmethod integrant.core/init-key ::logout-view
   [_init-key {:keys [auth-hostname]}]

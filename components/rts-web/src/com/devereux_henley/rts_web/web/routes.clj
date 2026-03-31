@@ -53,7 +53,15 @@
    ["/unit/:eid/index.html"
     {:get {:produces   ["text/html"]
            :parameters {:path schema.contract/id-path-parameter}
-           :handler    (integrant.core/ref ::web.view/unit-view)}}]])
+           :handler    (integrant.core/ref ::web.view/unit-view)}}]
+   ["/game/:eid/create-draft.html"
+    {:get {:produces   ["text/html"]
+           :parameters {:path schema.contract/id-path-parameter}
+           :handler    (integrant.core/ref ::web.view/create-draft-view)}}]
+   ["/:eid/index.html"
+    {:get {:produces   ["text/html"]
+           :parameters {:path schema.contract/id-path-parameter}
+           :handler    (integrant.core/ref ::web.view/game-index-view)}}]])
 
 (def api-routes
   ["/api"
