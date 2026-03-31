@@ -1,7 +1,12 @@
 {:deps {org.clojure/clojure      {:mvn/version "1.11.1"}
         mono/content-negotiation {:local/root "../../components/content-negotiation"}
+        mono/http                {:local/root "../../components/http"}
+        mono/jdbc                {:local/root "../../components/jdbc"}
         mono/resourcekit         {:local/root "../../components/resourcekit"}
         mono/rts-data            {:local/root "../../components/rts-data"}
+        mono/rts-data-access     {:local/root "../../components/rts-data-access"}
+        mono/rts-domain          {:local/root "../../components/rts-domain"}
+        mono/rts-web             {:local/root "../../components/rts-web"}
         mono/schema              {:local/root "../../components/schema"}
         mono/rts-api             {:local/root "../../bases/rts-api"}}
  :aliases {:build {:extra-paths ["."]

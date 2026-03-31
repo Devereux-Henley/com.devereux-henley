@@ -1,7 +1,7 @@
 (ns com.devereux-henley.rts-api.system
   (:require
    [com.devereux-henley.rts-api.configuration :as configuration]
-   [com.devereux-henley.rts-api.web.view :as web.view]
+   [com.devereux-henley.rts-web.contract :as rts-web]
    [integrant.core]
    [selmer.parser]))
 
@@ -28,7 +28,7 @@
   restarting the system."
   []
   (reset! selmer.parser/templates {})
-  (reset! web.view/css-version (System/currentTimeMillis)))
+  (reset! rts-web/css-version (System/currentTimeMillis)))
 
 (comment
   (go!)
