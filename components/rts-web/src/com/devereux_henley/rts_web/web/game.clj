@@ -21,6 +21,17 @@
 (def get-socials-for-game
   (web.core/standard-load-embedded domain/get-socials-for-game :socials :game/game))
 
+(def game-embed-registry
+  {:factions   get-factions-for-game
+   :game-modes get-game-modes-for-game
+   :socials    get-socials-for-game})
+
+(def game-query-parameters
+  (schema.contract/to-schema
+   [:map
+    [:version {:optional true} :pos-int]
+    [:embed {:optional true} [:set (into [:enum] (keys game-embed-registry))]]]))
+
 (defn load-units-by-category-for-faction
   [dependencies model]
   (try
@@ -39,6 +50,15 @@
                      :model/eid  (:eid model)
                      :model/type :game/faction}
                     exc)))))
+
+(def faction-embed-registry
+  {:units-by-category load-units-by-category-for-faction})
+
+(def faction-query-parameters
+  (schema.contract/to-schema
+   [:map
+    [:version {:optional true} :pos-int]
+    [:embed {:optional true} [:set (into [:enum] (keys faction-embed-registry))]]]))
 
 (def get-draft-by-eid
   (web.core/standard-fetch domain/get-draft-by-eid :game/draft))
@@ -88,16 +108,17 @@
 
 (defmethod integrant.core/init-key ::get-faction
   [_init-key dependencies]
-  (fn [{{{:keys [eid]} :path} :parameters
-       router                :reitit.core/router
-       :as                   _request}]
+  (fn [{{{:keys [eid]}   :path
+         {:keys [embed]} :query} :parameters
+       router                    :reitit.core/router
+       :as                       _request}]
     (web.core/handle-fetch-response
      domain/faction-resource
      {:hostname (:hostname dependencies) :router router}
      (cats/>>=
       (either/right eid)
       (partial get-faction-by-eid dependencies)
-      (partial load-units-by-category-for-faction dependencies)))))
+      (partial web.core/apply-embeds faction-embed-registry dependencies embed)))))
 
 (defmethod integrant.core/init-key ::get-game-social-link
   [_init-key dependencies]
@@ -113,17 +134,17 @@
 
 (defmethod integrant.core/init-key ::get-game
   [_init-key dependencies]
-  (fn [{{{:keys [eid]} :path} :parameters
-       router                :reitit.core/router
-       :as                   _request}]
+  (fn [{{{:keys [eid]}   :path
+         {:keys [embed]} :query} :parameters
+       router                    :reitit.core/router
+       :as                       _request}]
     (web.core/handle-fetch-response
      domain/game-resource
      {:hostname (:hostname dependencies) :router router}
      (cats/>>=
       (either/right eid)
       (partial get-game-by-eid dependencies)
-      (partial get-socials-for-game dependencies)
-      (partial get-factions-for-game dependencies)))))
+      (partial web.core/apply-embeds game-embed-registry dependencies embed)))))
 
 (defmethod integrant.core/init-key ::create-draft
   [_init-key dependencies]

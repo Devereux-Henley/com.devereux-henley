@@ -1,5 +1,6 @@
 (ns com.devereux-henley.http.contract
   (:require
+   [cats.core :as cats]
    [cats.monad.either :as either]
    [com.devereux-henley.schema.contract :as schema.contract]
    [malli.core]
@@ -128,3 +129,26 @@
                        :model/eid  (:eid model)
                        :model/type model-resource-type}
                       exc))))))
+
+(defn embed-query-parameter
+  "Returns a Malli query parameter schema for the embed param whose valid values
+   are derived from the keys of the given registry map. Swagger will enumerate
+   the valid embed keys automatically."
+  [registry]
+  (schema.contract/to-schema
+   [:map
+    [:embed {:optional true} [:set (into [:enum] (keys registry))]]]))
+
+(defn apply-embeds
+  "A monadic step that threads each requested embed fn from registry through
+   the Either pipeline. Intended for use as a step in cats/>>=:
+     (cats/>>= ... (partial apply-embeds registry dependencies embed-keys))
+   All keys are guaranteed valid by Malli before the handler runs; this fn
+   simply applies them. Returns right of model unchanged when embed-keys is
+   nil or empty."
+  [registry dependencies embed-keys model]
+  (reduce
+   (fn [acc embed-key]
+     (cats/>>= acc (partial (get registry embed-key) dependencies)))
+   (either/right model)
+   (or embed-keys #{})))

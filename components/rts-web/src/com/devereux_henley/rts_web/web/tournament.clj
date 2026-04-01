@@ -4,6 +4,7 @@
    [cats.monad.either :as either]
    [com.devereux-henley.http.contract :as web.core]
    [com.devereux-henley.rts-domain.contract :as domain]
+   [com.devereux-henley.schema.contract :as schema.contract]
    [integrant.core]
    [taoensso.timbre :as log]))
 
@@ -25,6 +26,15 @@
 (def create-tournament
   (web.core/standard-create domain/create-tournament :tournament/tournament))
 
+(def tournament-embed-registry
+  {:snapshot get-snapshot-for-tournament})
+
+(def tournament-query-parameters
+  (schema.contract/to-schema
+   [:map
+    [:version {:optional true} :pos-int]
+    [:embed {:optional true} [:set (into [:enum] (keys tournament-embed-registry))]]]))
+
 (defmethod integrant.core/init-key ::get-tournament-snapshot
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
@@ -39,16 +49,17 @@
 
 (defmethod integrant.core/init-key ::get-tournament
   [_init-key dependencies]
-  (fn [{{{:keys [eid]} :path} :parameters
-       router                :reitit.core/router
-       :as                   _request}]
+  (fn [{{{:keys [eid]}   :path
+         {:keys [embed]} :query} :parameters
+       router                    :reitit.core/router
+       :as                       _request}]
     (web.core/handle-fetch-response
      domain/tournament-resource
      {:hostname (:hostname dependencies) :router router}
      (cats/>>=
       (either/right eid)
       (partial get-tournament-by-eid dependencies)
-      (partial get-snapshot-for-tournament dependencies)))))
+      (partial web.core/apply-embeds tournament-embed-registry dependencies embed)))))
 
 (defmethod integrant.core/init-key ::get-tournaments
   [_init-key dependencies]

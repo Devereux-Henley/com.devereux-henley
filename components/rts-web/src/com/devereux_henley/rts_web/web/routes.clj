@@ -96,7 +96,7 @@
                          :produces     ["application/htmx+html" "application/json"]
                          :operation-id "game/by-eid"}
             :parameters {:path  schema.contract/id-path-parameter
-                         :query schema.contract/version-query-parameter}
+                         :query web.game/game-query-parameters}
             :responses  {200 {:body domain/game-resource}}
             :handler    (integrant.core/ref ::web.game/get-game)}}]
    ["/game/social-link/:eid"
@@ -116,7 +116,7 @@
                          :produces     ["application/htmx+html" "application/json"]
                          :operation-id "game/faction-by-eid"}
             :parameters {:path  schema.contract/id-path-parameter
-                         :query schema.contract/version-query-parameter}
+                         :query web.game/faction-query-parameters}
             :responses  {200 {:body domain/faction-resource}}
             :handler    (integrant.core/ref ::web.game/get-faction)}}]
    ["/draft/:eid"
@@ -147,7 +147,7 @@
                          :produces     ["application/htmx+html" "application/json"]
                          :operation-id "tournament/by-eid"}
             :parameters {:path  schema.contract/id-path-parameter
-                         :query schema.contract/version-query-parameter}
+                         :query web.tournament/tournament-query-parameters}
             :responses  {200 {:body domain/tournament-resource}}
             :handler    (integrant.core/ref ::web.tournament/get-tournament)}
      :put  {:summary    "Creates a tournament with the given eid and version."

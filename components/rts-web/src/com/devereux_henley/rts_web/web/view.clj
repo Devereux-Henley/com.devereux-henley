@@ -108,11 +108,13 @@
               (partial web.game/get-draft-by-eid dependencies)))
            "draft-index.html"
            (fn [draft]
-             (let [faction (domain/get-faction-by-eid dependencies (:faction-eid draft))
-                   game    (domain/get-game-by-eid dependencies (:game-eid faction))]
+             (let [faction  (domain/get-faction-by-eid dependencies (:faction-eid draft))
+                   game     (domain/get-game-by-eid dependencies (:game-eid faction))
+                   factions (domain/get-factions-for-game dependencies (:eid game))]
                {:faction  faction
                 :game     game
-                :game-eid (:eid game)}))))
+                :game-eid (:eid game)
+                :factions factions}))))
 
 (defmethod integrant.core/init-key ::my-drafts-view
   [_init-key dependencies]
