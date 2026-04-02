@@ -4,7 +4,7 @@
    [taoensso.timbre :as log])
   (:gen-class))
 
-(defn -main [& args]
+(defn -main [& _args]
   (try
     (system/go!)
     (catch Exception exc

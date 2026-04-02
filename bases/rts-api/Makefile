@@ -10,5 +10,3 @@ start_docker:
 stop_docker:
 	docker container stop "rts_api_local"
 
-ory_local:
-	ory tunnel --dev --project eloquent-yalow-whtijq6my4 "http://localhost:3001"

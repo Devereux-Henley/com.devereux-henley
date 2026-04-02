@@ -1,7 +1,6 @@
 (ns com.devereux-henley.rts-web.web.asset
   (:require
-   [clojure.java.io :as io]
-   [taoensso.timbre :as log]))
+   [clojure.java.io :as io]))
 
 (defn standard-asset-handler
   [asset-name _request]

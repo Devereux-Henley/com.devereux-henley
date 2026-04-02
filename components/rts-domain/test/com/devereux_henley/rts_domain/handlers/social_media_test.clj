@@ -1,6 +1,6 @@
 (ns com.devereux-henley.rts-domain.handlers.social-media-test
   (:require
-   [clojure.test :refer :all]
+   [clojure.test :refer [deftest is]]
    [com.devereux-henley.rts-data-access.contract :as data-access.contract]
    [com.devereux-henley.rts-domain.handlers.social-media :as handlers.social-media])
   (:import

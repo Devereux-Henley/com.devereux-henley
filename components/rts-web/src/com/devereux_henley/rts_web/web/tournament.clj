@@ -5,8 +5,7 @@
    [com.devereux-henley.http.contract :as web.core]
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.schema.contract :as schema.contract]
-   [integrant.core]
-   [taoensso.timbre :as log]))
+   [integrant.core]))
 
 (def get-tournament-by-eid
   (web.core/standard-fetch domain/get-tournament-by-eid :tournament/tournament))

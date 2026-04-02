@@ -120,7 +120,7 @@
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
        session               :ory-session
-       :as request}]
+       :as _request}]
     (try
       (let [player-sub (get-in session [:identity :id])]
         {:status 200

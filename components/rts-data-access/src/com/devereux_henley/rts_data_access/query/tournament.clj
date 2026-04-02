@@ -40,7 +40,7 @@
                   [:=>
                    [:cat [:instance Connection] :uuid :instant :pos-int :pos-int]
                    [:sequential schema/tournament-entity]])}
-  [connection game-eid since size offset]
+  [_connection _game-eid _since _size _offset]
   ;; TODO Implement paged tournament list.
   [])
 

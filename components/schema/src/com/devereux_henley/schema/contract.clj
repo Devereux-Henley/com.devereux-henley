@@ -1,5 +1,6 @@
 (ns com.devereux-henley.schema.contract
   (:require
+   [clojure.core.protocols]
    [clojure.string]
    [malli.core]
    [malli.transform]
@@ -27,7 +28,7 @@
    (fn [_ [child]]
      {:type            :instance
       :type-properties {:encode/json clojure.core.protocols/datafy}
-      :pred            (fn [value] (partial instance? child))
+      :pred            (fn [_] (partial instance? child))
       :from-ast        malli.core/-from-value-ast
       :to-ast          malli.core/-to-value-ast
       :min             1
@@ -213,7 +214,7 @@
 
 (defn key-to-link-mapping
   [schema]
-  (reduce (fn [acc [map-key properties map-value-schema]]
+  (reduce (fn [acc [map-key properties _map-value-schema]]
             (if-let [link (:model/link properties)]
               (assoc acc map-key link)
               acc))
@@ -238,7 +239,7 @@
                        (let [mapping (key-to-link-mapping schema)]
                          (fn [value]
                            (vary-meta value assoc `clojure.core.protocols/nav
-                                      (fn [coll k v]
+                                      (fn [_coll k v]
                                         (if-let [link (get mapping k)]
                                           (URL. (to-resource-link route-data link {:eid v}))
                                           v))))))}}}))
@@ -304,21 +305,20 @@
              0))))
 
 (defn last-specification
-  [specification]
+  [_specification]
   ;; TODO Implement last.
   nil)
 
 ;; TODO Implement specification query params, additional links.
 (defn handle-collection-transform
   [route-data schema]
-  (let [link (some (fn [[map-key properties map-value-schema]]
+  (let [link (some (fn [[map-key properties _map-value-schema]]
                      (and
                       (= map-key :specification)
                       (:collection/link properties)))
                    (malli.core/children schema))]
     (fn [value]
-      (let [{:keys [specification total]} value
-            {:keys [offset size]} specification
+      (let [{:keys [specification]} value
             next (next-specification specification)
             previous (previous-specification specification)
             first (first-specification specification)

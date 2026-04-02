@@ -1,6 +1,6 @@
 (ns com.devereux-henley.rts-data-deploy.migrations-test
   (:require
-   [clojure.test :refer :all]
+   [clojure.test :refer [deftest is testing]]
    [migratus.core :as migratus]
    [next.jdbc :as jdbc])
   (:import

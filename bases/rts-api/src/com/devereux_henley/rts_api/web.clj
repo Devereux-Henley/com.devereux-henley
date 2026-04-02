@@ -1,6 +1,7 @@
 (ns com.devereux-henley.rts-api.web
   (:require
    [clj-http.client :as client]
+   [clojure.string :as str]
    [com.devereux-henley.content-negotiation.contract :as content-negotiation]
    [com.devereux-henley.resourcekit.contract :as resourcekit]
    [com.devereux-henley.rts-api.extensions.clj-http] ;; Patches multimethod for clj-http
@@ -53,7 +54,7 @@
 
 (defn ^:private asset-path?
   [uri]
-  (some #(clojure.string/starts-with? uri %)
+  (some #(str/starts-with? uri %)
         [(str resourcekit/asset-path "/")
          "/style/"
          "/image/"
@@ -153,7 +154,7 @@
                  (partial ory-session-middleware auth-hostname session-name)]}))
 
 (defmethod integrant.core/init-key ::service
-  [_init-key {:keys [handler configuration] :as dependencies}]
+  [_init-key {:keys [handler configuration]}]
   (jetty/run-jetty handler configuration))
 
 (defmethod integrant.core/halt-key! ::service

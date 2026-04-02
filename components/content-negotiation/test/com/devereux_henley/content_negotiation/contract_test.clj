@@ -1,6 +1,5 @@
 (ns com.devereux-henley.content-negotiation.contract-test
-  (:require [clojure.test :as test :refer :all]
-            [com.devereux-henley.content-negotiation.contract :as content-negotiation]))
+  (:require [clojure.test :refer [deftest is]]))
 
 (deftest dummy-test
   (is (= 1 1)))
