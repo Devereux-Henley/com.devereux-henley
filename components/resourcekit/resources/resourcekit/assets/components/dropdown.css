@@ -9,7 +9,7 @@
   top: calc(100% + var(--space-1));
   left: 0;
   z-index: var(--z-dropdown);
-  min-width: 12rem;
+  min-width: max-content;
   padding: var(--space-1) 0;
   display: flex;
   flex-direction: column;
@@ -50,8 +50,7 @@
   cursor: pointer;
   border: none;
   background: transparent;
-  width: max-content;
-  max-width: 14rem;
+  width: 100%;
   white-space: normal;
   text-align: left;
   transition: background-color var(--transition-fast);
