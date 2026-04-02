@@ -21,3 +21,10 @@ VALUES
   (10,'a1000000-0000-0000-0000-000000000010', 'War Beast',          'Tamed creatures of war unleashed upon the enemy.',                     1, 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
   (11,'a1000000-0000-0000-0000-000000000011', 'Monstrous Infantry', 'Large humanoid creatures that fight on foot and crush enemy ranks.',    1, 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
   (12,'a1000000-0000-0000-0000-000000000012', 'Monster',            'Enormous creatures that tower over the battlefield and inspire terror.',1, 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null);
+
+INSERT OR IGNORE INTO unit_category(id, eid, name, description, game_id, version,
+                                   created_by_sub, created_at, updated_at, deleted_at)
+VALUES
+  (13, 'a1000000-0000-0000-0000-000000000013', 'Monstrous Cavalry',
+   'Monstrous creatures ridden as cavalry that combine powerful charge with formidable bulk.',
+   1, 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null);
