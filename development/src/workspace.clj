@@ -1,9 +1,13 @@
 (ns workspace
   (:require
+   [com.devereux-henley.rts-api.configuration :as configuration]
    [com.devereux-henley.rts-api.system :as system]
    [com.devereux-henley.rts-data.contract :as rts-data]
    [com.devereux-henley.rts-api.db :as rts-db]
+   [integrant.repl :refer [go halt reset]]
    [migratus.core :as migratus]))
+
+(integrant.repl/set-prep! (fn [] configuration/core-configuration))
 
 (def migratus-config
   {:store         :database
@@ -11,10 +15,10 @@
    :db            rts-db/db-spec})
 
 (comment
-  (system/go!)
-  (system/halt!)
+  (go)
+  (halt)
+  (reset)
   (system/reload-views!)
-  (system/restart!)
   (migratus/migrate migratus-config)
   (migratus/rollback migratus-config)
   (migratus/reset migratus-config)

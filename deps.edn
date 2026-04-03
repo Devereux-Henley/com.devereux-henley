@@ -1,5 +1,6 @@
 {:aliases  {:dev {:extra-paths ["development/src"]
                   :extra-deps {org.clojure/clojure {:mvn/version "1.11.1"}
+                               integrant/repl {:mvn/version "0.5.1"}
                                mono/schema {:local/root "components/schema"}
                                mono/resourcekit {:local/root "components/resourcekit"}
                                mono/content-negotiation {:local/root "components/content-negotiation"}

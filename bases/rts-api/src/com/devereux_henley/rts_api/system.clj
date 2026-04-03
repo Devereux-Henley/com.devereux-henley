@@ -9,7 +9,6 @@
 
 (defn go! []
   (reset! system (-> configuration/core-configuration
-                     integrant.core/prep
                      integrant.core/init)))
 
 (defn halt! []
