@@ -2,6 +2,7 @@
   (:require
    [cats.core :as cats]
    [cats.monad.either :as either]
+   [clojure.string :as str]
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.web.game :as web.game]
    [integrant.core]
@@ -85,7 +86,14 @@
   [unit-statistics-str]
   (try
     (let [stats (jsonista/read-value unit-statistics-str (jsonista/object-mapper {:decode-key-fn name}))]
-      (mapv (fn [[k v]] {:stat k :value v}) stats))
+      (into []
+            (keep (fn [[k v]]
+                    (cond
+                      (and (vector? v) (empty? v)) nil
+                      (= v 0)                      nil
+                      (vector? v)                  {:stat k :value (str/join ", " v)}
+                      :else                        {:stat k :value v})))
+            stats))
     (catch Exception _
       [])))
 
