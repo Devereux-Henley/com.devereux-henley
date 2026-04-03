@@ -2,3 +2,35 @@
     --color-navbar-bg: var(--color-neutral-900);
     --color-navbar-fg: var(--color-neutral-50);
 }
+
+a:hover:has(img) {
+    text-decoration: none;
+}
+
+#game-section-factions {
+    margin-top: var(--space-8);
+}
+
+#game-section-factions p {
+    margin-bottom: var(--space-8);
+}
+
+#game-section-factions .table {
+    margin-bottom: var(--space-8);
+    table-layout: fixed;
+}
+
+#game-section-factions .table th:nth-child(1),
+#game-section-factions .table td:nth-child(1) {
+    width: 50%;
+}
+
+#game-section-factions .table th:nth-child(2),
+#game-section-factions .table td:nth-child(2) {
+    width: 35%;
+}
+
+#game-section-factions .table th:nth-child(3),
+#game-section-factions .table td:nth-child(3) {
+    width: 15%;
+}

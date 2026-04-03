@@ -10,16 +10,13 @@
    [selmer.parser]
    [taoensso.timbre :as log]))
 
-(defonce css-version (atom (System/currentTimeMillis)))
-
 (defn standard-view-handler
   [view-name request]
   (try
     {:status 200
      :body   (selmer.parser/render-file
               (str "rts-api/view/" view-name)
-              (merge {:session     (:ory-session request)
-                      :css-version @css-version}
+              (merge {:session (:ory-session request)}
                      (:game-context request)))}
     (catch Exception exc
       (log/error exc)
@@ -38,9 +35,8 @@
            {:status 200
             :body   (selmer.parser/render-file
                      (str "rts-api/view/" template-name)
-                     (merge {:data        data
-                             :session     (:ory-session request)
-                             :css-version @css-version}
+                     (merge {:data    data
+                             :session (:ory-session request)}
                             (:game-context request)
                             (extra-data-fn data request)))})))
       (catch Exception exc
@@ -141,9 +137,8 @@
         {:status 200
          :body   (selmer.parser/render-file
                   "rts-api/view/my-drafts.html"
-                  (merge {:drafts      (domain/get-drafts-for-player-by-game dependencies player-sub (:game-eid game-context))
-                          :session     session
-                          :css-version @css-version}
+                  (merge {:drafts  (domain/get-drafts-for-player-by-game dependencies player-sub (:game-eid game-context))
+                          :session session}
                          game-context))})
       (catch Exception exc
         (log/error exc)
@@ -158,9 +153,8 @@
       {:status 200
        :body   (selmer.parser/render-file
                 "rts-api/view/game-index.html"
-                (merge {:data        (:game game-context)
-                        :session     session
-                        :css-version @css-version}
+                (merge {:data    (:game game-context)
+                        :session session}
                        game-context))}
       (catch Exception exc
         (log/error exc)
@@ -176,9 +170,8 @@
         {:status 200
          :body   (selmer.parser/render-file
                   "rts-api/view/create-draft.html"
-                  (merge {:game-modes  game-modes
-                          :session     session
-                          :css-version @css-version}
+                  (merge {:game-modes game-modes
+                          :session    session}
                          game-context))})
       (catch Exception exc
         (log/error exc)
