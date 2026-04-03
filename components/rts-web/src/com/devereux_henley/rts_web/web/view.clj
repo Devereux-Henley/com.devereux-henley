@@ -103,8 +103,8 @@
                     (cond
                       (and (vector? v) (empty? v)) nil
                       (= v 0)                      nil
-                      (vector? v)                  {:stat k :value (str/join ", " v)}
-                      :else                        {:stat k :value v})))
+                      (vector? v)                  {:stat (str/replace k "_" " ") :value (str/join ", " v)}
+                      :else                        {:stat (str/replace k "_" " ") :value v})))
             stats))
     (catch Exception _
       [])))
