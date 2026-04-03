@@ -1,36 +1,76 @@
-:root {
-    --color-navbar-bg: var(--color-neutral-900);
-    --color-navbar-fg: var(--color-neutral-50);
+/* --- App shell background --- */
+
+.app-shell {
+  background-color: var(--color-bg);
+  background-image:
+    radial-gradient(ellipse at 20% 0%, color-mix(in srgb, var(--color-primary-500) 4%, transparent) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, color-mix(in srgb, var(--color-danger-500) 3%, transparent) 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
 }
+
+/* --- Heading typography --- */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-heading);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-neutral-900);
+}
+
+/* --- Navbar border treatment --- */
+
+.navbar {
+  border-bottom-color: var(--color-primary-400);
+  background-color: #090705;
+}
+
+/* --- Accent links --- */
 
 a:hover:has(img) {
-    text-decoration: none;
+  text-decoration: none;
+  opacity: 0.85;
 }
 
+/* --- Primary button — gold with shadow --- */
+
+.btn-primary {
+  box-shadow: var(--shadow-gold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-xs);
+}
+
+.btn-primary:focus-visible {
+  outline-color: var(--color-accent);
+}
+
+/* --- Faction section layout --- */
+
 #game-section-factions {
-    margin-top: var(--space-8);
+  margin-top: var(--space-8);
 }
 
 #game-section-factions p {
-    margin-bottom: var(--space-8);
+  margin-bottom: var(--space-8);
 }
 
 #game-section-factions .table {
-    margin-bottom: var(--space-8);
-    table-layout: fixed;
+  margin-bottom: var(--space-8);
+  table-layout: fixed;
 }
 
 #game-section-factions .table th:nth-child(1),
 #game-section-factions .table td:nth-child(1) {
-    width: 50%;
+  width: 50%;
 }
 
 #game-section-factions .table th:nth-child(2),
 #game-section-factions .table td:nth-child(2) {
-    width: 35%;
+  width: 35%;
 }
 
 #game-section-factions .table th:nth-child(3),
 #game-section-factions .table td:nth-child(3) {
-    width: 15%;
+  width: 15%;
 }
