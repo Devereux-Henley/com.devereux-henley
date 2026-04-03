@@ -105,7 +105,9 @@
               (either/right eid)
               (partial web.game/get-unit-by-eid dependencies)))
            "unit.html"
-           (fn [data] {:unit-statistics (parse-unit-statistics (:unit-statistics data))})))
+           (fn [data] {:unit-statistics (parse-unit-statistics (:unit-statistics data))
+                       :game-eid        (:game-eid data)
+                       :factions        (domain/get-factions-for-game dependencies (:game-eid data))})))
 
 (defmethod integrant.core/init-key ::draft-view
   [_init-key dependencies]
@@ -154,7 +156,8 @@
               (partial web.game/get-factions-for-game dependencies)))
            "game-index.html"
            (fn [data] {:game-eid (:eid data)
-                       :factions (get-in data [:_embedded :factions])})))
+                       :factions (get-in data [:_embedded :factions])
+                       :socials  (get-in data [:_embedded :socials])})))
 
 (defmethod integrant.core/init-key ::create-draft-view
   [_init-key dependencies]

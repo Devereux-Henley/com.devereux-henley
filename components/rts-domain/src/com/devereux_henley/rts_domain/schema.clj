@@ -127,10 +127,8 @@
 (def create-draft-specification
   (schema.contract/to-schema
    [:map
-    [:specification
-     [:map
-      [:game-mode-eid :uuid]
-      [:faction-eid :uuid]]]]))
+    [:game-mode-eid :uuid]
+    [:faction-eid :uuid]]))
 
 (def create-tournament-specification
   (schema.contract/to-schema

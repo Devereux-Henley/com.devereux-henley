@@ -10,8 +10,8 @@
 (defn match-icon
   [eid]
   (case eid
-    #uuid "946d4828-2fa1-409b-8c7b-1f84108fcea9" (io/file (io/resource "rts-api/asset/icon/twitch_icon.svg"))
-    #uuid "41780b82-9fcf-44a4-aa1c-6a57cc835585" (io/file (io/resource "rts-api/asset/icon/youtube_icon.svg"))
+    #uuid "946d4828-2fa1-409b-8c7b-1f84108fcea9" (io/file (io/resource "rts-web/asset/icon/twitch_icon.svg"))
+    #uuid "41780b82-9fcf-44a4-aa1c-6a57cc835585" (io/file (io/resource "rts-web/asset/icon/youtube_icon.svg"))
     nil))
 
 (defn icon-handler

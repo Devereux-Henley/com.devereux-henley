@@ -1,25 +1,29 @@
-<h3>{{data.name}}</h3>
-<p>{{data.description|linebreaks|safe}}</p>
-{% if data._embedded.units-by-category %}
-{% for group in data._embedded.units-by-category %}
-<h4>{{group.category}}</h4>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Unit Type</th>
-            <th>Cost</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for unit in group.units %}
-        <tr>
-            <td>{{unit.name}}</td>
-            <td>{{unit.unit-type-name}}</td>
-            <td>{{unit.cost}}</td>
-        </tr>
+<section id="game-browser" class="resource game-resource">
+    <h2>{{data.name}}</h2>
+    <p>{{data.description|linebreaks|safe}}</p>
+    {% if data._embedded.units-by-category %}
+    <section id="game-section-factions">
+        {% for group in data._embedded.units-by-category %}
+        <h4>{{group.category}}</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Unit Type</th>
+                    <th>Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for unit in group.units %}
+                <tr>
+                    <td><a href="/view/unit/{{unit.eid}}/index.html">{{unit.name}}</a></td>
+                    <td>{{unit.unit-type-name}}</td>
+                    <td>{{unit.cost}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         {% endfor %}
-    </tbody>
-</table>
-{% endfor %}
-{% endif %}
+    </section>
+    {% endif %}
+</section>

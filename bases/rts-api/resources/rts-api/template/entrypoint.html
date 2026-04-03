@@ -1,12 +1,12 @@
 <html>
     <head>
         <script src="https://unpkg.com/htmx.org@1.8.2" integrity="sha384-+8ISc/waZcRdXCLxVgbsLzay31nCdyZXQxnsUy++HJzJliTzxKWr0m1cIEMyUzQu" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/htmx.org@1.8.2/dist/ext/json-enc.js"></script>
         <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
         <link rel="stylesheet" href="/resourcekit/assets/tokens.css?v={{css-version}}"/>
         <link rel="stylesheet" href="/resourcekit/assets/framework.css?v={{css-version}}"/>
         <link rel="stylesheet" href="/style/app.css?v={{css-version}}"/>
-        {% block styles %}
-        {% endblock %}
+        <link rel="stylesheet" href="/style/dashboard.css?v={{css-version}}"/>
     </head>
     <body class="app-shell" hx-headers='{"Accept": "application/htmx+html"}'>
         <nav class="navbar">
@@ -24,6 +24,9 @@
                         <a class="dropdown-item"
                            id="game-link-eea787d7-1065-45eb-a3f6-e26f32c294a1"
                            data-icon="/image/wh3_logo.webp"
+                           hx-get="/api/game/eea787d7-1065-45eb-a3f6-e26f32c294a1?embed=factions&amp;embed=socials"
+                           hx-target="#content"
+                           hx-push-url="/view/eea787d7-1065-45eb-a3f6-e26f32c294a1/index.html"
                            href="/view/eea787d7-1065-45eb-a3f6-e26f32c294a1/index.html">
                             Total War: Warhammer III
                         </a>
@@ -41,7 +44,11 @@
                         </button>
                         <div class="dropdown-menu" id="factions-menu" hidden>
                             {% for faction in factions %}
-                            <a class="dropdown-item" href="/view/faction/{{faction.eid}}/index.html">
+                            <a class="dropdown-item"
+                               hx-get="/api/game/faction/{{faction.eid}}?embed=units-by-category"
+                               hx-target="#content"
+                               hx-push-url="/view/faction/{{faction.eid}}/index.html"
+                               href="/view/faction/{{faction.eid}}/index.html">
                                 {{faction.name}}
                             </a>
                             {% endfor %}
@@ -50,14 +57,22 @@
                     {% endif %}
                     {% endblock %}
                 </div>
-                {% if all session game-eid %}
-                <a class="nav-item" href="/view/game/{{game-eid}}/draft/me.html">
-                    Drafts
-                </a>
-                {% endif %}
+                <div id="game-drafts-link">
+                    {% if all session game-eid %}
+                    <a class="nav-item" href="/view/game/{{game-eid}}/draft/me.html">
+                        Drafts
+                    </a>
+                    {% endif %}
+                </div>
             </div>
             <div class="navbar-end">
-                <div id="game-socials" class="cluster cluster-2"></div>
+                <div id="game-socials" class="cluster cluster-2">
+                    {% for social in socials %}
+                    <a href="{{social.url}}" target="_blank" rel="noopener noreferrer">
+                        <img src="/icon/social-media/{{social.social-media-platform-eid}}" style="width:1.25rem;height:1.25rem;object-fit:contain;" />
+                    </a>
+                    {% endfor %}
+                </div>
                 {% if session %}
                 <div class="dropdown">
                     <button class="btn btn-ghost btn-sm"
@@ -81,7 +96,7 @@
         </nav>
         {% block header %}
         {% endblock %}
-        <main class="app-content">
+        <main class="app-content" id="content">
             {% if game-eid %}
             <div hidden _="on load
                            set gameLink to #game-link-{{game-eid}}

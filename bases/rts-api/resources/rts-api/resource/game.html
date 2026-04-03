@@ -1,3 +1,16 @@
+<div id="game-icon" hx-swap-oob="true" style="width:2rem;height:2rem;flex-shrink:0;">
+    <img id="game-icon-img"
+         style="width:2rem;height:2rem;object-fit:contain;"
+         _="on load
+            set gameLink to #game-link-{{data.eid}}
+            if gameLink
+              set my @src to gameLink's @data-icon
+              set my style.display to 'block'
+            else
+              set my style.display to 'none'
+            end" />
+</div>
+
 <div id="game-nav" hx-swap-oob="true" class="cluster cluster-2">
     {% if data._embedded.factions %}
     <div class="dropdown">
@@ -9,7 +22,11 @@
         </button>
         <div class="dropdown-menu" id="factions-menu" hidden>
             {% for faction in data._embedded.factions %}
-            <a class="dropdown-item" href="/view/faction/{{faction.eid}}/index.html">
+            <a class="dropdown-item"
+               hx-get="/api/game/faction/{{faction.eid}}?embed=units-by-category"
+               hx-target="#content"
+               hx-push-url="/view/faction/{{faction.eid}}/index.html"
+               href="/view/faction/{{faction.eid}}/index.html">
                 {{faction.name}}
             </a>
             {% endfor %}
@@ -21,15 +38,18 @@
 <div id="game-socials" hx-swap-oob="true" class="cluster cluster-2">
     {% if data._embedded.socials %}
     {% for social in data._embedded.socials %}
-    <a href="{{social.url}}">
+    <a href="{{social.url}}" target="_blank" rel="noopener noreferrer">
         <img style="height:20px;width:20px;" src="/icon/social-media/{{social.social-media-platform-eid}}" />
     </a>
     {% endfor %}
     {% endif %}
 </div>
 
+<div id="game-drafts-link" hx-swap-oob="true">
+    <a class="nav-item" href="/view/game/{{data.eid}}/draft/me.html">Drafts</a>
+</div>
+
 <section id="game-browser" class="resource game-resource">
-    <section id="game-section-drafts" style="display:none;">
-        TODO Drafts
-    </section>
+    <h2>{{data.name}}</h2>
+    <p>{{data.description|linebreaks|safe}}</p>
 </section>
