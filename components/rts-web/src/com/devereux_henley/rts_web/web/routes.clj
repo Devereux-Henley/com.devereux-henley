@@ -46,30 +46,33 @@
    ["/logout.html"
     {:get {:produces ["text/html"]
            :handler  (integrant.core/ref ::web.view/logout-view)}}]
-   ["/faction/:eid/index.html"
-    {:get {:produces   ["text/html"]
-           :parameters {:path schema.contract/id-path-parameter}
-           :handler    (integrant.core/ref ::web.view/faction-view)}}]
-   ["/unit/:eid/index.html"
-    {:get {:produces   ["text/html"]
-           :parameters {:path schema.contract/id-path-parameter}
-           :handler    (integrant.core/ref ::web.view/unit-view)}}]
-   ["/game/:eid/draft/create.html"
-    {:get {:produces   ["text/html"]
-           :parameters {:path schema.contract/id-path-parameter}
-           :handler    (integrant.core/ref ::web.view/create-draft-view)}}]
-   ["/draft/:eid/index.html"
-    {:get {:produces   ["text/html"]
-           :parameters {:path schema.contract/id-path-parameter}
-           :handler    (integrant.core/ref ::web.view/draft-view)}}]
-   ["/game/:eid/draft/me.html"
-    {:get {:produces   ["text/html"]
-           :parameters {:path schema.contract/id-path-parameter}
-           :handler    (integrant.core/ref ::web.view/my-drafts-view)}}]
-   ["/:eid/index.html"
-    {:get {:produces   ["text/html"]
-           :parameters {:path schema.contract/id-path-parameter}
-           :handler    (integrant.core/ref ::web.view/game-index-view)}}]])
+   ["/game/:game-eid"
+    {:middleware [(integrant.core/ref ::web.view/game-context-middleware)]}
+    ["/index.html"
+     {:get {:produces   ["text/html"]
+            :parameters {:path schema.contract/game-id-path-parameter}
+            :handler    (integrant.core/ref ::web.view/game-index-view)}}]
+    ["/faction/:eid/index.html"
+     {:get {:produces   ["text/html"]
+            :parameters {:path schema.contract/game-and-id-path-parameter}
+            :handler    (integrant.core/ref ::web.view/faction-view)}}]
+    ["/unit/:eid/index.html"
+     {:get {:produces   ["text/html"]
+            :parameters {:path schema.contract/game-and-id-path-parameter}
+            :handler    (integrant.core/ref ::web.view/unit-view)}}]
+    ["/draft"
+     ["/create.html"
+      {:get {:produces   ["text/html"]
+             :parameters {:path schema.contract/game-id-path-parameter}
+             :handler    (integrant.core/ref ::web.view/create-draft-view)}}]
+     ["/me.html"
+      {:get {:produces   ["text/html"]
+             :parameters {:path schema.contract/game-id-path-parameter}
+             :handler    (integrant.core/ref ::web.view/my-drafts-view)}}]
+     ["/:eid/index.html"
+      {:get {:produces   ["text/html"]
+             :parameters {:path schema.contract/game-and-id-path-parameter}
+             :handler    (integrant.core/ref ::web.view/draft-view)}}]]]])
 
 (def api-routes
   ["/api"

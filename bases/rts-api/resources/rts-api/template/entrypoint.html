@@ -26,8 +26,8 @@
                            data-icon="/image/wh3_logo.webp"
                            hx-get="/api/game/eea787d7-1065-45eb-a3f6-e26f32c294a1?embed=factions&amp;embed=socials"
                            hx-target="#content"
-                           hx-push-url="/view/eea787d7-1065-45eb-a3f6-e26f32c294a1/index.html"
-                           href="/view/eea787d7-1065-45eb-a3f6-e26f32c294a1/index.html">
+                           hx-push-url="/view/game/eea787d7-1065-45eb-a3f6-e26f32c294a1/index.html"
+                           href="/view/game/eea787d7-1065-45eb-a3f6-e26f32c294a1/index.html">
                             Total War: Warhammer III
                         </a>
                     </div>
@@ -47,8 +47,8 @@
                             <a class="dropdown-item"
                                hx-get="/api/game/faction/{{faction.eid}}?embed=units-by-category"
                                hx-target="#content"
-                               hx-push-url="/view/faction/{{faction.eid}}/index.html"
-                               href="/view/faction/{{faction.eid}}/index.html">
+                               hx-push-url="/view/game/{{game-eid}}/faction/{{faction.eid}}/index.html"
+                               href="/view/game/{{game-eid}}/faction/{{faction.eid}}/index.html">
                                 {{faction.name}}
                             </a>
                             {% endfor %}
@@ -60,7 +60,7 @@
                 <div id="game-drafts-link">
                     {% if all session game-eid %}
                     <a class="nav-item" href="/view/game/{{game-eid}}/draft/me.html">
-                        Drafts
+                        My Drafts
                     </a>
                     {% endif %}
                 </div>

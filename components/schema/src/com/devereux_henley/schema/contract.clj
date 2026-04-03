@@ -200,6 +200,17 @@
    [:map
     [:eid :uuid]]))
 
+(def game-id-path-parameter
+  (to-schema
+   [:map
+    [:game-eid :uuid]]))
+
+(def game-and-id-path-parameter
+  (to-schema
+   [:map
+    [:game-eid :uuid]
+    [:eid :uuid]]))
+
 (def version-query-parameter
   (to-schema
    [:map

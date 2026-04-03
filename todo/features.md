@@ -1,11 +1,17 @@
 # Pending Features
-- Add draft view.
-- Add route for getting drafts for a user. Drafts page in top bar should link to page with list of existing drafts with link to their correpsonding draft view.
+- Add accessibility features for each element in the application to help with screenreaders.
+- Add CORS middleware and configuration.
+- Add websocket support for generalized application notifications.
 - Add user permissions to application. Set these up in ory cloud independently.
 - Each entity route should have corresponding /edit-<entity>.html route that serves editable form to users with appropriate permission.
 - Move seed scripts to migrations once all existing factions have been added in latest state.
-- Create patch entity. A patch represents a changeset for each unit in the game. Create endpoints for creating a patch, updating a patch, and applying a patch.
 - Create game_mode_unit_cap entity. This represents the maximum amount of a single unit that can be drafted in a game mode.
 - Create drafted_unit entity. This links to a draft and a game unit. The rules for creating a drafted unit are that you cannot draft more units than the game modes unit cap allows, and you cannot draft a unit if the sum of cost of drafted units is higher than the draft_value of the game mode. Additionally you may only draft units for the faction specified by the draft entity.
 - Create tournament entity. A tournament has a specified game_mode and is specific to a game. This should have a name, description, start_date, game_id, and game_mode_id.
 - Create tournament_match entity.
+- Create ability to report match results.
+- Create match checkins, match start time, match max wait time.
+- Create pick/ban systems for matches (faction bans, grid matchup bans).
+- Create individual player leaderboards.
+- Create tournament leagues.
+- Create league seasons.

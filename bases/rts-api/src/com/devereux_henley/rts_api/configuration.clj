@@ -29,11 +29,12 @@
    :com.devereux-henley.rts-web.web.view/contact-view                     default-view-dependencies
    :com.devereux-henley.rts-web.web.view/login-view                       {:auth-hostname auth-hostname}
    :com.devereux-henley.rts-web.web.view/logout-view                      {:auth-hostname auth-hostname}
+   :com.devereux-henley.rts-web.web.view/game-context-middleware            default-api-dependencies
    :com.devereux-henley.rts-web.web.view/faction-view                     default-api-dependencies
    :com.devereux-henley.rts-web.web.view/unit-view                        default-api-dependencies
    :com.devereux-henley.rts-web.web.view/draft-view                       default-api-dependencies
    :com.devereux-henley.rts-web.web.view/my-drafts-view                   default-api-dependencies
-   :com.devereux-henley.rts-web.web.view/game-index-view                  default-api-dependencies
+   :com.devereux-henley.rts-web.web.view/game-index-view                  default-view-dependencies
    :com.devereux-henley.rts-web.web.view/create-draft-view                default-api-dependencies
    :com.devereux-henley.rts-web.web.game/get-game                         default-api-dependencies
    :com.devereux-henley.rts-web.web.game/get-games                        default-api-dependencies

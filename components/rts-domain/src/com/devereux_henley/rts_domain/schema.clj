@@ -127,6 +127,7 @@
 (def create-draft-specification
   (schema.contract/to-schema
    [:map
+    [:game-eid :uuid]
     [:game-mode-eid :uuid]
     [:faction-eid :uuid]]))
 

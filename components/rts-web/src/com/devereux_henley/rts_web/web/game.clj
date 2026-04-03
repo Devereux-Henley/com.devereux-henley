@@ -148,12 +148,12 @@
 
 (defmethod integrant.core/init-key ::create-draft
   [_init-key dependencies]
-  (fn [{{{:keys [faction-eid game-mode-eid]} :body
-        {:keys [version]}                   :query
-        {:keys [eid]}                       :path} :parameters
-       router                                       :reitit.core/router
-       session                                      :ory-session
-       :as                                          _request}]
+  (fn [{{{:keys [faction-eid game-mode-eid game-eid]} :body
+        {:keys [version]}                            :query
+        {:keys [eid]}                                :path} :parameters
+       router                                                :reitit.core/router
+       session                                               :ory-session
+       :as                                                   _request}]
     (let [response (web.core/handle-create-response
                     domain/draft-resource
                     {:hostname (:hostname dependencies) :router router}
@@ -165,7 +165,7 @@
                                     :eid            eid
                                     :version        version})
                      (partial create-draft dependencies)))]
-      (assoc-in response [:headers "HX-Redirect"] (str "/view/draft/" eid "/index.html")))))
+      (assoc-in response [:headers "HX-Redirect"] (str "/view/game/" game-eid "/draft/" eid "/index.html")))))
 
 (defmethod integrant.core/init-key ::get-games
   [_init-key dependencies]
