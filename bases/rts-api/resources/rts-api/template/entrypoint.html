@@ -96,7 +96,7 @@
         </nav>
         {% block header %}
         {% endblock %}
-        <main class="app-content" id="content">
+        <main class="app-content" id="content" hx-boost="true">
             {% if game-eid %}
             <div hidden _="on load
                            set gameLink to #game-link-{{game-eid}}
