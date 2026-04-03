@@ -18,7 +18,7 @@
 
 (defn- load-seed
   [file-name]
-  (slurp (io/resource (str "rts-data/sql/seed/" file-name))))
+  (slurp (io/resource (str "rts-data/sql/seed/" file-name)) :encoding "UTF-8"))
 
 (def seed-queries
   [(load-seed "seed-games.sql")
