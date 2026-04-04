@@ -1,19 +1,23 @@
 {% extends "rts-api/template/entrypoint.html" %}
 
+{% block title %}My Drafts | {{game.name}} | RTS-UI{% endblock %}
+
 {% block content %}
-<section class="resource">
+<section class="resource" aria-labelledby="my-drafts-heading">
     <div class="cluster cluster-2" style="justify-content: space-between; align-items: baseline;">
-        <h2>My Drafts</h2>
+        <h2 id="my-drafts-heading">My Drafts</h2>
         <a class="btn btn-primary" href="/view/game/{{game-eid}}/draft/create.html">Create Draft</a>
     </div>
     {% if drafts %}
-    <ul>
-        {% for draft in drafts %}
-        <li>
-            <a href="/view/game/{{game-eid}}/draft/{{draft.eid}}/index.html">Draft {{draft.eid}}</a>
-        </li>
-        {% endfor %}
-    </ul>
+    <nav aria-label="Your drafts">
+        <ul>
+            {% for draft in drafts %}
+            <li>
+                <a href="/view/game/{{game-eid}}/draft/{{draft.eid}}/index.html">Draft {{draft.eid}}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </nav>
     {% else %}
     <p>No drafts found.</p>
     {% endif %}

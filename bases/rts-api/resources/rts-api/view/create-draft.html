@@ -1,10 +1,13 @@
 {% extends "rts-api/template/entrypoint.html" %}
 
+{% block title %}Create Draft | {{game.name}} | RTS-UI{% endblock %}
+
 {% block content %}
-<section class="resource">
-    <h2>Create Draft</h2>
+<section class="resource" aria-labelledby="create-draft-heading">
+    <h2 id="create-draft-heading">Create Draft</h2>
     <form id="create-draft-form"
           class="form"
+          aria-labelledby="create-draft-heading"
           hx-put="/api/draft/placeholder?version=1"
           hx-ext="json-enc"
           hx-target="#content"
@@ -12,7 +15,7 @@
         <input type="hidden" name="game-eid" value="{{game-eid}}"/>
         <div class="form-group">
             <label class="form-label required" for="faction-eid">Faction</label>
-            <select id="faction-eid" name="faction-eid" class="select" required>
+            <select id="faction-eid" name="faction-eid" class="select" required aria-required="true">
                 <option value="">Select a faction</option>
                 {% for faction in factions %}
                 <option value="{{faction.eid}}">{{faction.name}}</option>
@@ -21,7 +24,7 @@
         </div>
         <div class="form-group">
             <label class="form-label required" for="game-mode-eid">Game Mode</label>
-            <select id="game-mode-eid" name="game-mode-eid" class="select" required>
+            <select id="game-mode-eid" name="game-mode-eid" class="select" required aria-required="true">
                 <option value="">Select a game mode</option>
                 {% for mode in game-modes %}
                 <option value="{{mode.eid}}">{{mode.name}}</option>
@@ -31,7 +34,7 @@
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Create Draft</button>
         </div>
-        <div id="create-draft-error" class="form-error" hidden></div>
+        <div id="create-draft-error" class="form-error" role="alert" aria-live="assertive" hidden></div>
         <script>
             document.getElementById('create-draft-form').addEventListener('htmx:configRequest', function (event) {
                 event.detail.path = '/api/draft/' + crypto.randomUUID() + '?version=1';

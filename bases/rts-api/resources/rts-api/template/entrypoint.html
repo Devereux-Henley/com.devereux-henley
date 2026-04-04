@@ -1,5 +1,8 @@
-<html>
+<html lang="en">
     <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title id="page-title">{% block title %}RTS-UI{% endblock %}</title>
         <script src="https://unpkg.com/htmx.org@1.8.2" integrity="sha384-+8ISc/waZcRdXCLxVgbsLzay31nCdyZXQxnsUy++HJzJliTzxKWr0m1cIEMyUzQu" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/htmx.org@1.8.2/dist/ext/json-enc.js"></script>
         <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
@@ -8,19 +11,30 @@
         <link rel="stylesheet" href="/style/app.css"/>
     </head>
     <body class="app-shell" hx-headers='{"Accept": "application/htmx+html"}'>
-        <nav class="navbar">
+        <a class="skip-link sr-only" href="#content">Skip to main content</a>
+        <nav class="navbar" aria-label="Main navigation">
             <div class="cluster cluster-2">
                 <div id="game-icon" style="width:2rem;height:2rem;flex-shrink:0;">
-                    <img id="game-icon-img" style="width:2rem;height:2rem;object-fit:contain;display:none;" />
+                    <img id="game-icon-img" alt="" style="width:2rem;height:2rem;object-fit:contain;display:none;" />
                 </div>
                 <div class="dropdown">
                     <button class="btn btn-ghost btn-sm"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            aria-controls="game-menu"
                             _="on click toggle @hidden on #game-menu
-                               on click elsewhere add @hidden to #game-menu">
+                               then if #game-menu does not match [hidden]
+                                 set my @aria-expanded to 'true'
+                               else
+                                 set my @aria-expanded to 'false'
+                               end
+                               on click elsewhere add @hidden to #game-menu
+                               then set my @aria-expanded to 'false'">
                         Games
                     </button>
-                    <div class="dropdown-menu" id="game-menu" hidden>
+                    <div class="dropdown-menu" id="game-menu" role="menu" hidden>
                         <a class="dropdown-item"
+                           role="menuitem"
                            id="game-link-eea787d7-1065-45eb-a3f6-e26f32c294a1"
                            data-icon="/image/wh3_logo.webp"
                            hx-get="/api/game/eea787d7-1065-45eb-a3f6-e26f32c294a1?embed=factions&amp;embed=socials"
@@ -37,13 +51,23 @@
                     <div class="dropdown">
                         <button class="nav-item game-nav-item"
                                 id="factions-dropdown-btn"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                aria-controls="factions-menu"
                                 _="on click toggle @hidden on #factions-menu
-                                   on click elsewhere add @hidden to #factions-menu">
+                                   then if #factions-menu does not match [hidden]
+                                     set my @aria-expanded to 'true'
+                                   else
+                                     set my @aria-expanded to 'false'
+                                   end
+                                   on click elsewhere add @hidden to #factions-menu
+                                   then set my @aria-expanded to 'false'">
                             Factions
                         </button>
-                        <div class="dropdown-menu" id="factions-menu" hidden>
+                        <div class="dropdown-menu" id="factions-menu" role="menu" hidden>
                             {% for faction in factions %}
                             <a class="dropdown-item"
+                               role="menuitem"
                                hx-get="/api/game/faction/{{faction.eid}}?embed=units-by-category"
                                hx-target="#content"
                                hx-push-url="/view/game/{{game-eid}}/faction/{{faction.eid}}/index.html"
@@ -67,25 +91,38 @@
             <div class="navbar-end">
                 <div id="game-socials" class="cluster cluster-2">
                     {% for social in socials %}
-                    <a href="{{social.url}}" target="_blank" rel="noopener noreferrer">
-                        <img src="/icon/social-media/{{social.social-media-platform-eid}}" style="width:1.25rem;height:1.25rem;object-fit:contain;" />
+                    <a href="{{social.url}}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       aria-label="{{social.social-media-platform-eid|title}} (opens in new tab)">
+                        <img src="/icon/social-media/{{social.social-media-platform-eid}}" alt="" style="width:1.25rem;height:1.25rem;object-fit:contain;" />
                     </a>
                     {% endfor %}
                 </div>
                 {% if session %}
                 <div class="dropdown">
                     <button class="btn btn-ghost btn-sm"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            aria-controls="profile-menu"
+                            aria-label="Account menu for {{session.identity.traits.first_name}} {{session.identity.traits.last_name}}"
                             _="on click toggle @hidden on #profile-menu
-                               on click elsewhere add @hidden to #profile-menu">
+                               then if #profile-menu does not match [hidden]
+                                 set my @aria-expanded to 'true'
+                               else
+                                 set my @aria-expanded to 'false'
+                               end
+                               on click elsewhere add @hidden to #profile-menu
+                               then set my @aria-expanded to 'false'">
                         {{session.identity.traits.first_name}} {{session.identity.traits.last_name}}
                     </button>
-                    <div class="dropdown-menu dropdown-menu-end" id="profile-menu" hidden>
-                        <div class="dropdown-label">Signed in as</div>
-                        <div class="dropdown-item" style="cursor: default;">
+                    <div class="dropdown-menu dropdown-menu-end" id="profile-menu" role="menu" hidden>
+                        <div class="dropdown-label" role="presentation">Signed in as</div>
+                        <div class="dropdown-item" role="presentation" style="cursor: default;">
                             <strong>{{session.identity.traits.first_name}} {{session.identity.traits.last_name}}</strong>
                         </div>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/view/logout.html">Logout</a>
+                        <div class="dropdown-divider" role="separator"></div>
+                        <a class="dropdown-item" role="menuitem" href="/view/logout.html">Logout</a>
                     </div>
                 </div>
                 {% else %}
@@ -97,7 +134,7 @@
         {% endblock %}
         <main class="app-content" id="content" hx-boost="true">
             {% if game-eid %}
-            <div hidden _="on load
+            <div aria-hidden="true" hidden _="on load
                            set gameLink to #game-link-{{game-eid}}
                            if gameLink
                              set @src of #game-icon-img to gameLink's @data-icon

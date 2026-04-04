@@ -1,5 +1,8 @@
+<title id="page-title" hx-swap-oob="true">{{data.name}} | RTS-UI</title>
+
 <div id="game-icon" hx-swap-oob="true" style="width:2rem;height:2rem;flex-shrink:0;">
     <img id="game-icon-img"
+         alt=""
          style="width:2rem;height:2rem;object-fit:contain;"
          _="on load
             set gameLink to #game-link-{{data.eid}}
@@ -16,13 +19,23 @@
     <div class="dropdown">
         <button class="nav-item game-nav-item"
                 id="factions-dropdown-btn"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-controls="factions-menu"
                 _="on click toggle @hidden on #factions-menu
-                   on click elsewhere add @hidden to #factions-menu">
+                   then if #factions-menu does not match [hidden]
+                     set my @aria-expanded to 'true'
+                   else
+                     set my @aria-expanded to 'false'
+                   end
+                   on click elsewhere add @hidden to #factions-menu
+                   then set my @aria-expanded to 'false'">
             Factions
         </button>
-        <div class="dropdown-menu" id="factions-menu" hidden>
+        <div class="dropdown-menu" id="factions-menu" role="menu" hidden>
             {% for faction in data._embedded.factions %}
             <a class="dropdown-item"
+               role="menuitem"
                hx-get="/api/game/faction/{{faction.eid}}?embed=units-by-category"
                hx-target="#content"
                hx-push-url="/view/game/{{data.eid}}/faction/{{faction.eid}}/index.html"
@@ -38,8 +51,11 @@
 <div id="game-socials" hx-swap-oob="true" class="cluster cluster-2">
     {% if data._embedded.socials %}
     {% for social in data._embedded.socials %}
-    <a href="{{social.url}}" target="_blank" rel="noopener noreferrer">
-        <img style="height:20px;width:20px;" src="/icon/social-media/{{social.social-media-platform-eid}}" />
+    <a href="{{social.url}}"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="{{social.social-media-platform-eid|title}} (opens in new tab)">
+        <img style="height:20px;width:20px;" alt="" src="/icon/social-media/{{social.social-media-platform-eid}}" />
     </a>
     {% endfor %}
     {% endif %}
@@ -49,7 +65,7 @@
     <a class="nav-item" href="/view/game/{{data.eid}}/draft/me.html">My Drafts</a>
 </div>
 
-<section id="game-browser" class="resource game-resource">
-    <h2>{{data.name}}</h2>
+<section id="game-browser" class="resource game-resource" aria-labelledby="game-heading">
+    <h2 id="game-heading">{{data.name}}</h2>
     <p>{{data.description|linebreaks|safe}}</p>
 </section>

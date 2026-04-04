@@ -1,3 +1,26 @@
+/* --- Skip navigation link --- */
+
+.skip-link:focus {
+  position: fixed;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: var(--z-toast);
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--color-accent);
+  color: var(--color-accent-fg);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid var(--color-primary-700);
+  clip: auto;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  white-space: nowrap;
+}
+
 /* --- App shell background --- */
 
 .app-shell {

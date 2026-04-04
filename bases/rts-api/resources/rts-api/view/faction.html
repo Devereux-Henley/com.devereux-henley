@@ -1,20 +1,22 @@
 {% extends "rts-api/template/entrypoint.html" %}
 
+{% block title %}{{data.name}} | {{game.name}} | RTS-UI{% endblock %}
 
 {% block content %}
-<section id="game-browser" class="resource game-resource">
-    <h2>{{data.name}}</h2>
+<section id="game-browser" class="resource game-resource" aria-labelledby="faction-heading">
+    <h2 id="faction-heading">{{data.name}}</h2>
     <p>{{data.description|linebreaks|safe}}</p>
     {% if data._embedded.units-by-category %}
-    <section id="game-section-factions">
+    <section id="game-section-factions" aria-label="Units by category">
         {% for group in data._embedded.units-by-category %}
-        <h4>{{group.category}}</h4>
-        <table class="table">
+        <h4 id="unit-category-{{forloop.counter}}">{{group.category}}</h4>
+        <table class="table" aria-labelledby="unit-category-{{forloop.counter}}">
+            <caption class="sr-only">{{group.category}} units for {{data.name}}</caption>
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Unit Type</th>
-                    <th>Cost</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Unit Type</th>
+                    <th scope="col">Cost</th>
                 </tr>
             </thead>
             <tbody>

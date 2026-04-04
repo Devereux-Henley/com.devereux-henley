@@ -1,5 +1,7 @@
 {% extends "rts-api/template/entrypoint.html" %}
 
+{% block title %}{{faction.name}} Draft | {{game.name}} | RTS-UI{% endblock %}
+
 {% block content %}
 <section class="resource">
     <h2>{{faction.name}} draft for {{game.name}}</h2>
