@@ -51,7 +51,10 @@
    (load-seed "seed-vampire-counts-units.sql")
    (load-seed "seed-warriors-of-chaos-units.sql")
    (load-seed "seed-wood-elves-units.sql")
-   (load-seed "seed-game-modes.sql")])
+   (load-seed "seed-game-modes.sql")
+   (load-seed "seed-attributes.sql")
+   (load-seed "seed-abilities.sql")
+   (load-seed "seed-spells.sql")])
 
 (defn seed-db
   "Seeds the database with baseline data."

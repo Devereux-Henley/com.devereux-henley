@@ -2,6 +2,21 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+# Clojure Parenthesis Repair
+
+The command `clj-paren-repair` is installed on your path.
+
+Examples:
+`clj-paren-repair <files>`
+`clj-paren-repair path/to/file1.clj path/to/file2.clj path/to/file3.clj`
+
+**IMPORTANT:** Do NOT try to manually repair parenthesis errors.
+If you encounter unbalanced delimiters, run `clj-paren-repair` on the file
+instead of attempting to fix them yourself. If the tool doesn't work,
+report to the user that they need to fix the delimiter error manually.
+
+The tool automatically formats files with cljfmt when it processes them.
+
 ## Commands
 
 ```bash
@@ -21,6 +36,8 @@ make ory_local            # create Ory Cloud tunnel for local auth
 ```
 
 **REPL (primary dev workflow):** Jack-in from the repo root with `M-x cider-jack-in`. The `:dev` alias (configured in `.dir-locals.el`) puts all components and bases on the classpath.
+
+**Claude's dev workspace:** `development/src/claude_workspace.clj` — Claude Code's own scratch namespace with system lifecycle helpers (`go!`, `halt!`, `restart!`) and migration helpers (`migrate!`, `rollback!`, `reset-db!`, `seed-db!`). Require it at the REPL with `(require 'claude-workspace)` or add evals directly to the scratch `comment` block. Keep dev helpers here rather than polluting `workspace.clj`.
 
 ```clojure
 (go!)       ; start system — runs migrations + starts Jetty on :3001
