@@ -9,6 +9,7 @@
    [malli.util]
    [muuntaja.core :as m]
    [muuntaja.format.form]
+   [reitit.coercion :as coercion-error]
    [reitit.coercion.malli]
    [reitit.dev.pretty :as pretty]
    [reitit.ring :as ring]
@@ -21,6 +22,7 @@
    [reitit.swagger-ui :as swagger-ui]
    [ring.adapter.jetty :as jetty]
    [ring.middleware.cookies]
+   [selmer.parser]
    [taoensso.timbre :as log])
   (:import
    [java.net ConnectException]))
@@ -51,7 +53,7 @@
           nil)))
     (catch ConnectException exc
       (log/error "Could not connect to authentication/authorization service." exc)
-      (throw exc))))
+      nil)))
 
 (defn ^:private asset-path?
   [uri]
@@ -61,7 +63,72 @@
          "/image/"
          "/icon/"]))
 
-;; TODO Handle exceptions more gracefully at top level with manual 500 response.
+(defn ^:private accepts-html?
+  [request]
+  (let [accept (get-in request [:headers "accept"] "")]
+    (or (str/includes? accept "text/html")
+        (str/includes? accept "htmx+html"))))
+
+(defn ^:private render-error-page
+  [status status-text message]
+  {:status  status
+   :headers {"Content-Type" "text/html; charset=utf-8"}
+   :body    (selmer.parser/render-file
+             "rts-api/view/error.html"
+             {:status-text status-text
+              :message     message})})
+
+(defn ^:private render-error-fragment
+  [status message]
+  {:status  status
+   :headers {"Content-Type" "text/html; charset=utf-8"}
+   :body    (str "<section class=\"resource\" role=\"alert\" aria-labelledby=\"error-heading\">"
+                 "<p id=\"error-heading\">" message "</p>"
+                 "</section>")})
+
+(defn ^:private html-error-response
+  [status status-text message request]
+  (if (get-in request [:headers "hx-request"])
+    (render-error-fragment status message)
+    (render-error-page status status-text message)))
+
+(defn ^:private error-response
+  [status status-text message request]
+  (if (accepts-html? request)
+    (html-error-response status status-text message request)
+    {:status status :body {:error message}}))
+
+(def ^:private exception-handlers
+  (merge
+   exception/default-handlers
+   {::coercion-error/request-coercion
+    (fn [exc request]
+      (log/warn "Request coercion failure" {:uri (:uri request) :message (ex-message exc)})
+      (error-response 400 "Bad Request"
+                      "The request could not be processed. Please check your input and try again."
+                      request))
+
+    ::coercion-error/response-coercion
+    (fn [exc request]
+      (log/error exc "Response coercion failure" {:uri (:uri request)})
+      (error-response 500 "Internal Server Error"
+                      "An unexpected error occurred while processing the response."
+                      request))
+
+    ConnectException
+    (fn [exc request]
+      (log/error exc "Service unavailable" {:uri (:uri request)})
+      (error-response 503 "Service Unavailable"
+                      "A required service is temporarily unavailable. Please try again shortly."
+                      request))
+
+    ::exception/default
+    (fn [exc request]
+      (log/error exc "Unhandled exception" {:uri (:uri request)})
+      (error-response 500 "Internal Server Error"
+                      "An unexpected error occurred."
+                      request))}))
+
 (defn ory-session-middleware
   [ory-base-url session-name handler]
   (fn [request]
@@ -72,11 +139,11 @@
             continuity        (get-in cookies [continuity-key :value])]
         (handler
          (if (and session continuity)
-         (assoc request :ory-session (try-get-session
-                                      ory-base-url
-                                      {session-name   {:value session}
-                                       continuity-key {:value continuity}}))
-         request))))))
+           (assoc request :ory-session (try-get-session
+                                        ory-base-url
+                                        {session-name   {:value session}
+                                         continuity-key {:value continuity}}))
+           request))))))
 
 (defmethod integrant.core/init-key ::swagger-handler
   [_init-key _dependencies]
@@ -128,7 +195,7 @@
                               ;; encoding response body
                               muuntaja/format-response-middleware
                               ;; exception handling
-                              exception/exception-middleware
+                              (exception/create-exception-middleware exception-handlers)
                               ;; decoding request body
                               muuntaja/format-request-middleware
                               ;; coercing response bodys

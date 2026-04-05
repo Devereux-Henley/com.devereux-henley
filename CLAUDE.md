@@ -81,7 +81,40 @@ rts-web, rts-domain, rts-data-access → http, jdbc, schema, content-negotiation
 5. Register routes in `web/routes.clj` and handler keys in `configuration.clj`
 6. HTML templates under `resources/<base>/` + view dispatch entry in `web.clj` (keyed by `"<type>"` string)
 
-## Testing approach
+## Accessibility
+
+Target: **WCAG 2.1 AA**. See `docs/frontend.md` for full patterns with examples.
+
+**Every template must have:**
+- A `{% block title %}` override — page title updates on HTMX navigation too (OOB swap for partial responses)
+- `aria-labelledby` on every `<section>`, pointing to its heading
+
+**Images:**
+- Decorative images (icons, logos set by JS): `alt=""`
+- Informative images: descriptive `alt` text
+
+**Dropdowns (Hyperscript-driven):**
+- Trigger button: `aria-haspopup="true"` `aria-expanded="false"` `aria-controls="<menu-id>"`
+- Update `aria-expanded` in the `_=` Hyperscript alongside the `hidden` toggle
+- Menu container: `role="menu"` — items: `role="menuitem"`
+- Non-interactive rows (labels, dividers): `role="presentation"` / `role="separator"`
+
+**Forms:**
+- Required fields: `required` + `aria-required="true"`
+- Error containers: `role="alert" aria-live="assertive"` (present in DOM but `hidden` until needed)
+- Form `aria-labelledby` pointing to the page heading
+
+**Tables:**
+- Column headers: `scope="col"` on every `<th>`
+- Caption: `<caption class="sr-only">` describing the table's contents
+
+**HTMX partial swaps (`hx-target="#content"`):**
+- Include `<title id="page-title" hx-swap-oob="true">…</title>` in every resource fragment
+- Full-page responses (hx-boost) pick up the `<title>` automatically
+
+**Error fragments:** `role="alert"` on the root element so screen readers announce immediately.
+
+
 
 Tests are **unit tests with stubbed database boundaries** — no live DB, no HTTP layer, no Integrant system.
 

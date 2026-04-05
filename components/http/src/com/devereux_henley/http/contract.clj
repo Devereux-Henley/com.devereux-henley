@@ -22,15 +22,15 @@
   (log/debug value)
   (case (:error/kind (ex-data value))
     :error/invalid {:status 400
-                    :body   (select-keys error-keys (ex-data value))}
+                    :body   (select-keys (ex-data value) error-keys)}
     :error/missing {:status 404
-                    :body   (select-keys error-keys (ex-data value))}
+                    :body   (select-keys (ex-data value) error-keys)}
     :error/conflict {:status 409
-                     :body   (select-keys error-keys (ex-data value))}
+                     :body   (select-keys (ex-data value) error-keys)}
     :error/unknown {:status 500
-                    :body   (select-keys error-keys (ex-data value))}
+                    :body   (select-keys (ex-data value) error-keys)}
     {:status 500
-     :body   (select-keys error-keys (ex-data value))}))
+     :body   (select-keys (ex-data value) error-keys)}))
 
 (defn to-success-fetch-response
   [resource-schema route-data value]

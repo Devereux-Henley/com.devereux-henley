@@ -1,0 +1,10 @@
+{% extends "rts-api/template/entrypoint.html" %}
+
+{% block title %}{{status-text}} | RTS-UI{% endblock %}
+
+{% block content %}
+<section class="resource" role="alert" aria-labelledby="error-heading">
+    <h2 id="error-heading">{{status-text}}</h2>
+    <p>{{message}}</p>
+</section>
+{% endblock %}

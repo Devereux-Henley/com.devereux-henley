@@ -1,5 +1,4 @@
 # Pending Features
-- Add accessibility features for each element in the application to help with screenreaders.
 - Add CORS middleware and configuration.
 - Add websocket support for generalized application notifications.
 - Add user permissions to application. Set these up in ory cloud independently.

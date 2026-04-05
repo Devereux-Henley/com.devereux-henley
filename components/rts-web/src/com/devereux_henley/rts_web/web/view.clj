@@ -10,6 +10,15 @@
    [selmer.parser]
    [taoensso.timbre :as log]))
 
+(defn ^:private error-page
+  [status status-text message]
+  {:status  status
+   :headers {"Content-Type" "text/html; charset=utf-8"}
+   :body    (selmer.parser/render-file
+             "rts-api/view/error.html"
+             {:status-text status-text
+              :message     message})})
+
 (defn standard-view-handler
   [view-name request]
   (try
@@ -20,8 +29,7 @@
                      (:game-context request)))}
     (catch Exception exc
       (log/error exc)
-      {:status 500
-       :body "<div>Something went wrong</div>"})))
+      (error-page 500 "Internal Server Error" "An unexpected error occurred."))))
 
 (defn standard-entity-view-handler
   [pipeline-fn template-name extra-data-fn request]
@@ -30,7 +38,7 @@
       (let [result (pipeline-fn eid)]
         (either/branch
          result
-         (fn [_] {:status 404 :body "<div>Not found</div>"})
+         (fn [_] (error-page 404 "Not Found" "The requested resource could not be found."))
          (fn [data]
            {:status 200
             :body   (selmer.parser/render-file
@@ -41,7 +49,7 @@
                             (extra-data-fn data request)))})))
       (catch Exception exc
         (log/error exc)
-        {:status 500 :body "<div>Something went wrong</div>"}))))
+        (error-page 500 "Internal Server Error" "An unexpected error occurred.")))))
 
 (defmethod integrant.core/init-key ::game-context-middleware
   [_init-key dependencies]
@@ -53,7 +61,7 @@
                                                  :game     game
                                                  :factions (domain/get-factions-for-game dependencies game-eid)
                                                  :socials  (domain/get-socials-for-game dependencies game-eid)}))
-          {:status 404 :body "<div>Game not found</div>"})))))
+          (error-page 404 "Not Found" "The requested game could not be found."))))))
 
 (defmethod integrant.core/init-key ::dashboard-view
   [_init-key _dependencies]
@@ -142,7 +150,7 @@
                          game-context))})
       (catch Exception exc
         (log/error exc)
-        {:status 500 :body "<div>Something went wrong</div>"}))))
+        (error-page 500 "Internal Server Error" "An unexpected error occurred.")))))
 
 (defmethod integrant.core/init-key ::game-index-view
   [_init-key _dependencies]
@@ -158,7 +166,7 @@
                        game-context))}
       (catch Exception exc
         (log/error exc)
-        {:status 500 :body "<div>Something went wrong</div>"}))))
+        (error-page 500 "Internal Server Error" "An unexpected error occurred.")))))
 
 (defmethod integrant.core/init-key ::create-draft-view
   [_init-key dependencies]
@@ -175,7 +183,7 @@
                          game-context))})
       (catch Exception exc
         (log/error exc)
-        {:status 500 :body "<div>Something went wrong</div>"}))))
+        (error-page 500 "Internal Server Error" "An unexpected error occurred.")))))
 
 (defmethod integrant.core/init-key ::logout-view
   [_init-key {:keys [auth-hostname]}]

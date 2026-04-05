@@ -309,3 +309,192 @@ Sidebar:
 ```
 
 Use `aria-current="page"` or `.active` on `.nav-item` to indicate the current route.
+
+## Accessibility
+
+Target standard: **WCAG 2.1 AA**. All Selmer view templates and HTMX resource fragments must follow these patterns.
+
+### Document structure
+
+Every full-page view template must set the document language, charset, viewport, and a page-specific title:
+
+```html
+<!-- entrypoint.html — set once -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title id="page-title">{% block title %}RTS-UI{% endblock %}</title>
+  </head>
+```
+
+```html
+<!-- each view template -->
+{% block title %}Unit Name | Game Name | RTS-UI{% endblock %}
+```
+
+The `id="page-title"` is required for HTMX OOB title swaps (see [Title updates with HTMX](#title-updates-with-htmx)).
+
+### Skip navigation
+
+The entrypoint template includes a skip link as the first element inside `<body>`. It is visually hidden until focused:
+
+```html
+<a class="skip-link sr-only" href="#content">Skip to main content</a>
+```
+
+The `.sr-only:focus` style in `app.css` brings it into view when a keyboard user tabs to it. Do not remove this link.
+
+### Landmark regions
+
+Use semantic HTML elements for landmark navigation. Every page must have a `<nav>` and a `<main>`:
+
+```html
+<nav class="navbar" aria-label="Main navigation">…</nav>
+<main class="app-content" id="content">…</main>
+```
+
+If a page has multiple `<nav>` elements, each must have a distinct `aria-label`.
+
+### Headings and section labels
+
+Every `<section>` must be labelled. Use `aria-labelledby` pointing to the section's heading:
+
+```html
+<section class="resource" aria-labelledby="faction-heading">
+  <h2 id="faction-heading">Greenskins</h2>
+  …
+</section>
+```
+
+Maintain a logical heading hierarchy: `<h1>` for the page title (if present), `<h2>` for primary sections, `<h3>`/`<h4>` for subsections. Do not skip levels.
+
+### Images
+
+| Image type | Markup |
+|---|---|
+| Decorative (icons, logos, illustrations) | `alt=""` |
+| Informative (conveys content not in surrounding text) | `alt="Descriptive text"` |
+| Links containing only an image | `aria-label` on the `<a>`, `alt=""` on the `<img>` |
+
+Social media icon links use an `aria-label` on the anchor and `alt=""` on the image:
+
+```html
+<a href="{{social.url}}"
+   target="_blank"
+   rel="noopener noreferrer"
+   aria-label="{{social.social-media-platform-eid|title}} (opens in new tab)">
+  <img src="…" alt=""/>
+</a>
+```
+
+### Dropdown menus
+
+Dropdowns are driven by Hyperscript toggling the `hidden` attribute. The trigger button must declare its relationship to the menu and keep `aria-expanded` in sync:
+
+```html
+<div class="dropdown">
+  <button class="btn btn-ghost btn-sm"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-controls="example-menu"
+          _="on click toggle @hidden on #example-menu
+             then if #example-menu does not match [hidden]
+               set my @aria-expanded to 'true'
+             else
+               set my @aria-expanded to 'false'
+             end
+             on click elsewhere add @hidden to #example-menu
+             then set my @aria-expanded to 'false'">
+    Options
+  </button>
+  <div class="dropdown-menu" id="example-menu" role="menu" hidden>
+    <div class="dropdown-label" role="presentation">Section</div>
+    <a class="dropdown-item" role="menuitem" href="#">Edit</a>
+    <div class="dropdown-divider" role="separator"></div>
+    <a class="dropdown-item danger" role="menuitem" href="#">Delete</a>
+  </div>
+</div>
+```
+
+Required attributes:
+
+| Element | Required attributes |
+|---|---|
+| Trigger `<button>` | `aria-haspopup="true"`, `aria-expanded`, `aria-controls` |
+| Menu container | `role="menu"` |
+| Interactive items (`<a>`, `<button>`) | `role="menuitem"` |
+| Labels and decorative rows | `role="presentation"` |
+| Dividers | `role="separator"` |
+
+### Forms
+
+Required fields must carry both the HTML `required` attribute and `aria-required="true"`. Labels must be associated with their control via `for`/`id`:
+
+```html
+<form class="form" aria-labelledby="form-heading">
+  <h2 id="form-heading">Create Draft</h2>
+  <div class="form-group">
+    <label class="form-label required" for="faction-eid">Faction</label>
+    <select id="faction-eid" name="faction-eid" class="select"
+            required aria-required="true">
+      <option value="">Select a faction</option>
+    </select>
+  </div>
+  <div id="form-error" class="form-error"
+       role="alert" aria-live="assertive" hidden></div>
+</form>
+```
+
+The error container must be present in the DOM from initial render (with `hidden`) so that `role="alert"` is registered before any error is injected into it. Inserting a `role="alert"` element dynamically after an error occurs does not reliably trigger screen reader announcements.
+
+### Tables
+
+Every data table requires column header scope and a visually hidden caption:
+
+```html
+<table class="table" aria-labelledby="category-heading">
+  <caption class="sr-only">Infantry units for Greenskins</caption>
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Unit Type</th>
+      <th scope="col">Cost</th>
+    </tr>
+  </thead>
+  <tbody>…</tbody>
+</table>
+```
+
+Use `aria-labelledby` on the `<table>` pointing to the nearest visible heading when one is present in the DOM. Use `<caption class="sr-only">` to provide context that is not already available from the heading alone (e.g. which faction or game the table belongs to).
+
+### Error and status regions
+
+HTMX resource error fragments and server-error responses must declare `role="alert"` so that screen readers announce them immediately on injection:
+
+```html
+<div class="resource error-resource" role="alert">
+  An error occurred.
+</div>
+```
+
+For inline form errors, use `role="alert" aria-live="assertive"` (see [Forms](#forms) above). For non-urgent status messages, prefer `aria-live="polite"`.
+
+### Title updates with HTMX
+
+HTMX navigations that swap only `#content` do not update `document.title` automatically. Resource fragments used as partial swap targets must include an OOB title element:
+
+```html
+<!-- resource/faction.html -->
+<title id="page-title" hx-swap-oob="true">{{data.name}} | RTS-UI</title>
+
+<section id="game-browser" …>…</section>
+```
+
+`hx-boost` navigations (plain `<a>` tags within `<main hx-boost="true">`) return the full page HTML; HTMX 1.x extracts `<title>` from the response automatically, so no OOB element is needed for those.
+
+| Navigation type | Title update mechanism |
+|---|---|
+| Explicit `hx-get` + `hx-target="#content"` | OOB `<title id="page-title" hx-swap-oob="true">` in the fragment |
+| `hx-boost` link (full-page response) | HTMX extracts `<title>` from the response automatically |
+| Direct URL load | `{% block title %}` in the view template |
