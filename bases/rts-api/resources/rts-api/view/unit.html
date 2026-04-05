@@ -34,5 +34,37 @@
         </table>
     </section>
     {% endif %}
+    {% if abilities %}
+    <section id="unit-abilities" aria-labelledby="unit-abilities-heading">
+        <h4 id="unit-abilities-heading">Abilities</h4>
+        <ul aria-label="Abilities for {{data.name}}">
+            {% for ability in abilities %}
+            <li>{{ability}}</li>
+            {% endfor %}
+        </ul>
+    </section>
+    {% endif %}
+    {% if draftable-spells %}
+    <section id="unit-spells" aria-labelledby="unit-spells-heading">
+        <h4 id="unit-spells-heading">Spells</h4>
+        <table class="table" aria-labelledby="unit-spells-heading">
+            <caption class="sr-only">Draftable spells for {{data.name}}</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Spell</th>
+                    <th scope="col">Cost (mp)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for spell in draftable-spells %}
+                <tr>
+                    <td>{{spell.name}}</td>
+                    <td>{{spell.mana-cost}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    {% endif %}
 </section>
 {% endblock %}

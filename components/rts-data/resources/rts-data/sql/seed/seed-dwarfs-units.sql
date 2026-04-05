@@ -293,7 +293,7 @@ VALUES
    7,
    1,
    2,
-   '{"cost":900,"is_large":false,"unit_size":1,"health":3960,"barrier":0,"armor":50,"leadership":80,"speed":4,"melee_attack":50,"melee_attack_types":[],"melee_defence":46,"weapon_strength":450,"weapon_damage":250,"weapon_ap_damage":200,"charge_bonus":25,"ammunition":30,"range":180,"missile_damage":208,"missile_base_damage":124,"missile_ap_damage":84,"missile_damage_types":[],"abilities":["Crumbling","The Dancing Blade","Horseback Prodigy","Wounds","Disintegrating","The Hunger","Skjalandir''s Fall","By Our Blood"],"draftable-spells":[]}',
+   '{"cost":900,"is_large":false,"unit_size":1,"health":3960,"barrier":0,"armor":50,"leadership":80,"speed":4,"melee_attack":50,"melee_attack_types":[],"melee_defence":46,"weapon_strength":450,"weapon_damage":250,"weapon_ap_damage":200,"charge_bonus":25,"ammunition":30,"range":180,"missile_damage":208,"missile_base_damage":124,"missile_ap_damage":84,"missile_damage_types":[],"abilities":["Crumbling","The Dancing Blade","Horseback Prodigy","Wounds","Disintegrating","The Hunger","Skjalandir''''''''s Fall","By Our Blood"],"draftable-spells":[{"key":"Melkoth''''s Mystifying Miasma","mana_cost":6},{"key":"Okkam''''s Mindrazor","mana_cost":8},{"key":"wh_dlc08_spell_shadow_pit_of_shades_kihar","mana_cost":15},{"key":"wh_dlc05_spell_shadow_the_enfeebling_foe","mana_cost":6},{"key":"wh_dlc05_spell_shadow_the_penumbral_pendulum_branchwraith","mana_cost":12},{"key":"wh_dlc05_spell_shadow_the_withering_branchwraith","mana_cost":5}]}',
    1,
    'f0ce7395-a57f-41e9-ade0-fd13bafc058f',
    STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'),

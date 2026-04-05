@@ -72,6 +72,10 @@
   [dependencies eid]
   (assoc (db/get-game-mode-by-eid (:connection dependencies) eid) :type :game/game-mode))
 
+(defn get-spells-by-keys
+  [dependencies spell-keys]
+  (db/get-spells-by-keys (:connection dependencies) spell-keys))
+
 (defn get-game-modes-for-game
   [dependencies game-eid]
   (mapv (fn [mode] (assoc mode :type :game/game-mode))

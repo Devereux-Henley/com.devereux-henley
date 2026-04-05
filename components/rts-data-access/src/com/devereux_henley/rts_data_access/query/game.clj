@@ -1,5 +1,6 @@
 (ns com.devereux-henley.rts-data-access.query.game
   (:require
+   [clojure.string :as str]
    [com.devereux-henley.jdbc.contract :as jdbc.contract]
    [com.devereux-henley.rts-data-access.resource :as resource]
    [com.devereux-henley.rts-data-access.schema :as schema]
@@ -185,6 +186,14 @@
                    [:sequential schema/game-mode-entity]])}
   [connection game-eid]
   (jdbc.contract/query-for-entities connection [get-game-modes-for-game-query game-eid] schema/game-mode-entity))
+
+(defn get-spells-by-keys
+  [connection spell-keys]
+  (when (seq spell-keys)
+    (let [placeholders (str/join "," (repeat (count spell-keys) "?"))
+          sql          (str "SELECT key, name FROM spell WHERE key IN (" placeholders ")")]
+      (into {} (map (fn [row] [(:spell/key row) (:spell/name row)])
+                    (jdbc/execute! connection (into [sql] spell-keys)))))))
 
 (defn create-draft
   {:malli/schema (schema.contract/to-schema

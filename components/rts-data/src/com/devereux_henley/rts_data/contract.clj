@@ -54,7 +54,9 @@
    (load-seed "seed-game-modes.sql")
    (load-seed "seed-attributes.sql")
    (load-seed "seed-abilities.sql")
-   (load-seed "seed-spells.sql")])
+   (load-seed "seed-spells.sql")
+   (load-seed "seed-lores.sql")
+   (load-seed "seed-spell-lores.sql")])
 
 (defn seed-db
   "Seeds the database with baseline data."

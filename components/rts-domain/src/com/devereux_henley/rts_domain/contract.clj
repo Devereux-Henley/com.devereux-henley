@@ -49,6 +49,7 @@
 (def get-units-for-faction                      handlers.game/get-units-for-faction)
 (def get-game-mode-by-eid                       handlers.game/get-game-mode-by-eid)
 (def get-game-modes-for-game                    handlers.game/get-game-modes-for-game)
+(def get-spells-by-keys                         handlers.game/get-spells-by-keys)
 
 (def get-platform-by-eid                        handlers.social-media/get-platform-by-eid)
 
