@@ -19,6 +19,8 @@ produced by the RPFM MCP decode_packed_file tool for these tables:
   unit_special_abilities_tables.json
   land_units_loc.json
   unit_abilities_loc.json
+  agent_subtypes_tables.json
+  ancillaries_included_agent_subtypes_tables.json
 
 To regenerate these files, use Claude Code with the RPFM MCP server and run
 decode_packed_file for each table from GameFiles, then save the output to
@@ -233,6 +235,41 @@ def build_special_ability_map(rows):
             for r in rows}
 
 
+def build_agent_subtype_map(rows):
+    """associated_unit_override (land_unit key) -> agent_subtype key.
+    The associated_unit_override is the campaign unit that corresponds to this
+    agent subtype. Multiple subtypes can share a unit; we keep the last-seen
+    (order in table is stable across patches so this is deterministic).
+    """
+    result = {}
+    for r in rows:
+        unit_key = r.get("associated_unit_override") or ""
+        if unit_key:
+            result[unit_key] = r["key"]
+    return result
+
+
+def build_equipment_map(rows):
+    """agent_subtype key -> [ancillary_key, ...] (non-mount ancillaries only).
+    Mount ancillaries are recognised by '_anc_mount_' in their key and are
+    excluded here since they are already captured in the 'mounts' field.
+    """
+    result = {}
+    for r in rows:
+        subtype = r["agent_subtype"]
+        ancillary = r["ancillary"]
+        if "_anc_mount_" not in ancillary:
+            result.setdefault(subtype, []).append(ancillary)
+    return result
+
+
+def build_ancillary_cost_map(rows):
+    """ancillary key -> gold_cost (uniqueness_score from ancillaries_tables).
+    The uniqueness_score field stores the MP gold cost for each item.
+    """
+    return {r["key"]: r["uniqueness_score"] for r in rows if r.get("uniqueness_score") is not None}
+
+
 # ---------------------------------------------------------------------------
 # Name → unit key index via loc
 # ---------------------------------------------------------------------------
@@ -310,11 +347,13 @@ def find_unit_key(unit_name, faction_prefixes, name_index, main_unit_map):
 # Stats extraction
 # ---------------------------------------------------------------------------
 
-def extract_stats(unit_key, main_unit_map, land_unit_stats):
+def extract_stats(unit_key, main_unit_map, land_unit_stats,
+                  agent_subtype_map=None, equipment_map=None, ancillary_cost_map=None):
     mu = main_unit_map.get(unit_key)
     if not mu:
         return None
-    lu = land_unit_stats.get(mu["land_unit"])
+    land_unit_key = mu["land_unit"]
+    lu = land_unit_stats.get(land_unit_key)
     if not lu:
         return None
 
@@ -351,6 +390,18 @@ def extract_stats(unit_key, main_unit_map, land_unit_stats):
     if lu.get("missile_ap_damage") is not None:
         stats["missile_ap_damage"] = lu["missile_ap_damage"]
 
+    # Equipment: unique items for this character from ancillaries_included_agent_subtypes.
+    # Only populated for legendary lords/heroes that have character-specific items.
+    if agent_subtype_map and equipment_map:
+        agent_subtype = agent_subtype_map.get(land_unit_key)
+        if agent_subtype:
+            items = equipment_map.get(agent_subtype)
+            if items:
+                stats["equipment"] = [
+                    {"key": k, "gold_cost": (ancillary_cost_map or {}).get(k)}
+                    for k in items
+                ]
+
     return {k: v for k, v in stats.items() if v is not None}
 
 
@@ -364,7 +415,8 @@ STATS_BLOCK_RE = re.compile(
 
 
 def update_unit_seed_file(filepath, faction_name, faction_prefixes, name_index,
-                          main_unit_map, land_unit_stats):
+                          main_unit_map, land_unit_stats,
+                          agent_subtype_map=None, equipment_map=None, ancillary_cost_map=None):
     with open(filepath, encoding="utf-8") as f:
         content = f.read()
 
@@ -384,13 +436,15 @@ def update_unit_seed_file(filepath, faction_name, faction_prefixes, name_index,
             not_found.append(raw_name)
             return m.group(0)
 
-        new_stats = extract_stats(unit_key, main_unit_map, land_unit_stats)
+        new_stats = extract_stats(unit_key, main_unit_map, land_unit_stats,
+                                  agent_subtype_map, equipment_map, ancillary_cost_map)
         if new_stats is None:
             no_game_data.append(raw_name)
             return m.group(0)
 
-        # Preserve non-stat fields from existing stats (abilities, mounts, draftable-spells)
-        # and append them in canonical order at the end.
+        # Preserve non-stat fields from existing stats (abilities, mounts, draftable-spells,
+        # equipment) and append them in canonical order at the end. Equipment from RPFM
+        # takes precedence over any previously stored value.
         try:
             old_stats = json.loads(old_stats_str)
         except Exception:
@@ -399,6 +453,10 @@ def update_unit_seed_file(filepath, faction_name, faction_prefixes, name_index,
         for preserve_key in ("abilities", "draftable-spells", "mounts"):
             if preserve_key in old_stats:
                 new_stats[preserve_key] = old_stats[preserve_key]
+        # equipment is sourced from game data — only fall back to old value if RPFM
+        # returned nothing (unit not in ancillaries_included_agent_subtypes).
+        if "equipment" not in new_stats and "equipment" in old_stats:
+            new_stats["equipment"] = old_stats["equipment"]
 
         found += 1
         return prefix_str + json.dumps(new_stats, separators=(",", ":")) + suffix
@@ -524,6 +582,18 @@ def main():
     land_units_loc = parse_loc_file(path("land_units_loc.json"))
     print(f"  land units loc: {len(land_units_loc)} entries", file=sys.stderr)
 
+    _, agent_subtype_rows = parse_rpfm_table(path("agent_subtypes_tables.json"))
+    agent_subtype_map = build_agent_subtype_map(agent_subtype_rows)
+    print(f"  agent subtypes: {len(agent_subtype_map)}", file=sys.stderr)
+
+    _, anc_subtype_rows = parse_rpfm_table(path("ancillaries_included_agent_subtypes_tables.json"))
+    equipment_map = build_equipment_map(anc_subtype_rows)
+    print(f"  equipment (agent subtypes with items): {len(equipment_map)}", file=sys.stderr)
+
+    _, ancillaries_rows = parse_rpfm_table(path("ancillaries_tables.json"))
+    ancillary_cost_map = build_ancillary_cost_map(ancillaries_rows)
+    print(f"  ancillary gold costs: {len(ancillary_cost_map)}", file=sys.stderr)
+
     print("Building name index...", file=sys.stderr)
     name_index = build_name_index(land_units_loc, main_unit_map, land_unit_stats)
     print(f"  {len(name_index)} unique unit names indexed", file=sys.stderr)
@@ -538,7 +608,8 @@ def main():
 
         new_content = update_unit_seed_file(
             filepath, faction_name, faction_prefixes,
-            name_index, main_unit_map, land_unit_stats
+            name_index, main_unit_map, land_unit_stats,
+            agent_subtype_map, equipment_map, ancillary_cost_map
         )
         if not args.dry_run:
             with open(filepath, "w", encoding="utf-8") as f:

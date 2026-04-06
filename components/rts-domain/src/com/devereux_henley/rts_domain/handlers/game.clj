@@ -6,7 +6,7 @@
   (:import
    [java.time Instant]))
 
-(def ^:private stat-exclude-keys #{"abilities" "draftable-spells" "draftable-abilities" "mounts"})
+(def ^:private stat-exclude-keys #{"abilities" "draftable-spells" "draftable-abilities" "mounts" "equipment"})
 
 (defn parse-unit-statistics
   [unit-statistics-str]
@@ -26,9 +26,10 @@
        :draftable-spells (get stats "draftable-spells" [])
        :mounts           (mapv (fn [m] {:name    (get m "name")
                                         :mp-cost (get m "mp_cost")})
-                               (get stats "mounts" []))})
+                               (get stats "mounts" []))
+       :equipment        (get stats "equipment" [])})
     (catch Exception _
-      {:stats [] :abilities [] :draftable-spells [] :mounts []})))
+      {:stats [] :abilities [] :draftable-spells [] :mounts [] :equipment []})))
 
 (defn get-game-by-eid
   [dependencies eid]

@@ -14,7 +14,7 @@ Non-numeric fields (`abilities`, `draftable-spells`, `mounts`) are preserved fro
 
 | Seed file(s) | Fields updated |
 |---|---|
-| `seed-<faction>-units.sql` | `cost`, `is_large`, `unit_size`, `health`, `barrier`, `armor`, `leadership`, `speed`, `melee_attack`, `melee_attack_types`, `melee_defence`, `weapon_strength`, `weapon_damage`, `weapon_ap_damage`, `charge_bonus`, `ammunition`, `range`, `missile_damage`, `missile_base_damage`, `missile_ap_damage`, `missile_damage_types` |
+| `seed-<faction>-units.sql` | `cost`, `is_large`, `unit_size`, `health`, `barrier`, `armor`, `leadership`, `speed`, `melee_attack`, `melee_attack_types`, `melee_defence`, `weapon_strength`, `weapon_damage`, `weapon_ap_damage`, `charge_bonus`, `ammunition`, `range`, `missile_damage`, `missile_base_damage`, `missile_ap_damage`, `missile_damage_types`, `equipment` (lords/heroes only) |
 | `seed-spells.sql` | `gold_cost` |
 
 ---
@@ -36,6 +36,9 @@ Open Claude Code with the RPFM MCP server active, set the game to `warhammer_3` 
 | `unit_special_abilities_tables.json` | `db/unit_special_abilities_tables/data__` |
 | `unit_armour_types_tables.json` | `db/unit_armour_types_tables/data__` |
 | `land_units_loc.json` | `text/db/land_units__.loc` |
+| `agent_subtypes_tables.json` | `db/agent_subtypes_tables/data__` |
+| `ancillaries_included_agent_subtypes_tables.json` | `db/ancillaries_included_agent_subtypes_tables/data__` |
+| `ancillaries_tables.json` | `db/ancillaries_tables/data__` |
 
 Each decoded file must be in the RPFM MCP output format: a JSON array with a single `{type, text}` element where `text` is the serialised `DBRFileInfo` or `LocRFileInfo` object.
 
@@ -63,4 +66,5 @@ Verify that the stat changes look plausible (costs, armor, weapon strength, etc.
 
 - **4 Lizardmen Slann variants** (`Slann Mage-Priest (Beasts/Death/Metal/Shadows)`) share the same display name in-game and are not matched; their stats must be updated manually if changed.
 - `abilities`, `draftable-spells`, and `mounts` are not sourced from game data — they must be maintained manually when CA adds or renames abilities for a unit.
+- `equipment` is populated only for legendary lords/heroes with character-specific items in `ancillaries_included_agent_subtypes_tables`. Generic lords/heroes (non-legendary) have no `equipment` field — their item pools are defined by the game's faction/category system and are not stored per-unit.
 - `seed-spells.sql` `mana_cost` and spell descriptions are not updated by this script.
