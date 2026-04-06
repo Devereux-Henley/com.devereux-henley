@@ -223,6 +223,58 @@ a:hover:has(img) {
   line-height: 1.4;
 }
 
+/* Abilities panel must not clip its tooltips */
+#unit-abilities {
+  overflow: visible;
+}
+
+#unit-abilities .unit-panel-heading {
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.unit-ability-item {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+
+.unit-ability-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-sm);
+  display: block;
+  cursor: default;
+}
+
+.unit-ability-tooltip {
+  display: none;
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  left: 0;
+  width: 16rem;
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-neutral-900);
+  color: var(--color-neutral-100);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-relaxed);
+  z-index: 100;
+  pointer-events: none;
+  white-space: normal;
+}
+
+.unit-ability-tooltip strong {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: var(--color-neutral-50);
+}
+
+.unit-ability-item:hover .unit-ability-tooltip,
+.unit-ability-item:focus-within .unit-ability-tooltip {
+  display: block;
+}
+
 /* ─── Panel table (spells, mounts) ──────────────────────────────────────── */
 
 .unit-panel-table {

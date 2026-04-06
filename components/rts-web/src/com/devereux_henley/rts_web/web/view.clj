@@ -118,8 +118,9 @@
            "unit.html"
            (fn [data _request]
              (let [{:keys [stats abilities draftable-spells mounts equipment]} (domain/parse-unit-statistics (:unit-statistics data))
-                   spell-keys   (map #(get % "key") draftable-spells)
-                   key->spell   (domain/get-spells-by-keys dependencies spell-keys)
+                   spell-keys      (map #(get % "key") draftable-spells)
+                   key->spell      (domain/get-spells-by-keys dependencies spell-keys)
+                   name->ability   (domain/get-abilities-by-names dependencies abilities)
                    resolved-spells (mapv (fn [s]
                                            (let [key   (get s "key")
                                                  spell (get key->spell key)]
@@ -127,12 +128,18 @@
                                               :mana-cost (:mana-cost spell)
                                               :gold-cost (:gold-cost spell)}))
                                          draftable-spells)
+                   resolved-abilities (mapv (fn [name]
+                                              (let [a (get name->ability name)]
+                                                {:name        name
+                                                 :eid         (:eid a)
+                                                 :description (:description a)}))
+                                            abilities)
                    resolved-equipment (mapv (fn [e]
                                               {:name      (format-equipment-key (get e "key"))
                                                :gold-cost (get e "gold_cost")})
                                             equipment)]
                {:unit-statistics  stats
-                :abilities        (not-empty abilities)
+                :abilities        (not-empty resolved-abilities)
                 :draftable-spells (not-empty resolved-spells)
                 :mounts           (not-empty mounts)
                 :equipment        (not-empty resolved-equipment)}))))

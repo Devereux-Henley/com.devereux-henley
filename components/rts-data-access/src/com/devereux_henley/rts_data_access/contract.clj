@@ -66,6 +66,7 @@
 (def get-units-for-faction query.game/get-units-for-faction)
 
 (def get-spells-by-keys query.game/get-spells-by-keys)
+(def get-abilities-by-names query.game/get-abilities-by-names)
 
 ;;; ─── Social Media DB entities ──────────────────────────────────────────────
 

@@ -19,7 +19,9 @@
     <p class="unit-description">{{data.description|linebreaks|safe}}</p>
     {% endif %}
 
-    <div class="unit-layout{% if not unit-statistics %} unit-layout-no-stats{% endif %}">
+    <div class="unit-layout{% if not unit-statistics %}{% if not abilities %} unit-layout-no-stats{% endif %}{% endif %}">
+
+        <div class="unit-panel-left stack stack-4">
 
         {% if unit-statistics %}
         <section class="unit-panel" id="unit-statistics" aria-labelledby="unit-statistics-heading">
@@ -35,18 +37,28 @@
         </section>
         {% endif %}
 
-        <div class="unit-panels-right stack stack-4">
-
             {% if abilities %}
             <section class="unit-panel" id="unit-abilities" aria-labelledby="unit-abilities-heading">
                 <h3 class="unit-panel-heading" id="unit-abilities-heading">Abilities</h3>
                 <ul class="unit-ability-list" aria-label="Abilities for {{data.name}}">
                     {% for ability in abilities %}
-                    <li class="unit-ability-tag">{{ability}}</li>
+                    <li class="unit-ability-item" data-eid="{{ability.eid}}">
+                        <img class="unit-ability-icon"
+                             src="/icon/ability/{{ability.eid}}.png"
+                             alt="{{ability.name}}">
+                        <span class="unit-ability-tooltip" role="tooltip">
+                            <strong>{{ability.name}}</strong>
+                            {{ability.description}}
+                        </span>
+                    </li>
                     {% endfor %}
                 </ul>
             </section>
             {% endif %}
+
+        </div>
+
+        <div class="unit-panels-right stack stack-4">
 
             {% if draftable-spells %}
             <section class="unit-panel" id="unit-spells" aria-labelledby="unit-spells-heading">

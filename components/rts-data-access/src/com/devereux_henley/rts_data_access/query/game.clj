@@ -199,6 +199,17 @@
                         :gold-cost (:gold-cost row)}])
                     (jdbc.contract/execute! connection (into [sql] spell-keys)))))))
 
+(defn get-abilities-by-names
+  [connection ability-names]
+  (when (seq ability-names)
+    (let [placeholders (str/join "," (repeat (count ability-names) "?"))
+          sql          (str "SELECT eid, name, description FROM ability WHERE name IN (" placeholders ")")]
+      (into {} (map (fn [row]
+                      [(:name row)
+                       {:eid         (:eid row)
+                        :description (:description row)}])
+                    (jdbc.contract/execute! connection (into [sql] ability-names)))))))
+
 (defn create-draft
   {:malli/schema (schema.contract/to-schema
                   [:=>

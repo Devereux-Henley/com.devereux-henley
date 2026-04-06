@@ -17,10 +17,12 @@ produced by the RPFM MCP decode_packed_file tool for these tables:
   missile_weapons_tables.json
   projectiles_tables.json
   unit_special_abilities_tables.json
+  unit_abilities_tables.json
   land_units_loc.json
   unit_abilities_loc.json
   agent_subtypes_tables.json
   ancillaries_included_agent_subtypes_tables.json
+  ancillaries_tables.json
 
 To regenerate these files, use Claude Code with the RPFM MCP server and run
 decode_packed_file for each table from GameFiles, then save the output to
@@ -270,6 +272,25 @@ def build_ancillary_cost_map(rows):
     return {r["key"]: r["uniqueness_score"] for r in rows if r.get("uniqueness_score") is not None}
 
 
+def build_unit_ability_map(rows):
+    """ability key -> {icon_name, type}"""
+    return {r["key"]: {"icon_name": r["icon_name"], "type": r["type"]} for r in rows}
+
+
+def build_ability_loc_maps(loc):
+    """Returns (name_map, tooltip_map): ability_key -> display name / tooltip description."""
+    name_prefix    = "unit_abilities_onscreen_name_"
+    tooltip_prefix = "unit_abilities_tooltip_"
+    names    = {}
+    tooltips = {}
+    for k, v in loc.items():
+        if k and k.startswith(name_prefix):
+            names[k[len(name_prefix):]] = v
+        elif k and k.startswith(tooltip_prefix):
+            tooltips[k[len(tooltip_prefix):]] = v
+    return names, tooltips
+
+
 # ---------------------------------------------------------------------------
 # Name → unit key index via loc
 # ---------------------------------------------------------------------------
@@ -474,6 +495,97 @@ def update_unit_seed_file(filepath, faction_name, faction_prefixes, name_index,
 
 
 # ---------------------------------------------------------------------------
+# Ability seed updating
+# ---------------------------------------------------------------------------
+
+# Matches one INSERT row in seed-abilities.sql:
+# (id, 'eid', 'key', 'name', 'description', 'ability_type', ...)
+# Captures: full_match, id, eid, key, name, description, ability_type, rest_of_row
+ABILITY_ROW_RE = re.compile(
+    r"(\(\d+,\s*'([^']+)',\s*'([^']+)',\s*'((?:[^']|'')*)',\s*'((?:[^']|'')*)',\s*'([^']+)'(,\s*[^)]+))",
+    re.DOTALL,
+)
+
+# Same pattern but with icon column already present — 7th string column is icon.
+ABILITY_ROW_WITH_ICON_RE = re.compile(
+    r"(\(\d+,\s*'([^']+)',\s*'([^']+)',\s*'((?:[^']|'')*)',\s*'((?:[^']|'')*)',\s*'([^']+)',\s*'([^']*)'(,\s*[^)]+))",
+    re.DOTALL,
+)
+
+
+def _sql_escape(s):
+    return (s or "").replace("'", "''")
+
+
+def update_ability_seed_file(filepath, ability_name_map, ability_tooltip_map):
+    """
+    Rewrites seed-abilities.sql refreshing name and description from game loc.
+    Icon is NOT stored in the DB — it is derived from the eid at render time.
+    """
+    with open(filepath, encoding="utf-8") as f:
+        content = f.read()
+
+    # Strip icon column from INSERT header if present (idempotent)
+    content = content.replace(
+        "INSERT OR IGNORE INTO ability(id, eid, key, name, description, ability_type, icon,",
+        "INSERT OR IGNORE INTO ability(id, eid, key, name, description, ability_type,",
+    ).replace(
+        "INSERT OR REPLACE INTO ability(id, eid, key, name, description, ability_type, icon,",
+        "INSERT OR REPLACE INTO ability(id, eid, key, name, description, ability_type,",
+    )
+
+    updated   = 0
+    not_found = 0
+
+    def refresh_row(m):
+        nonlocal updated, not_found
+        full         = m.group(0)
+        eid          = m.group(2)
+        key          = m.group(3)
+        _name        = m.group(4)
+        _desc        = m.group(5)
+        ability_type = m.group(6)
+        rest         = m.group(7)
+        id_part      = full.lstrip("(").split(",")[0].strip()
+        name = ability_name_map.get(key)
+        desc = ability_tooltip_map.get(key)
+        if name is None and desc is None:
+            not_found += 1
+            return full
+        name = name or _name.replace("''", "'")
+        desc = desc or _desc.replace("''", "'")
+        updated += 1
+        return (f"({id_part}, '{eid}', '{key}', '{_sql_escape(name)}', "
+                f"'{_sql_escape(desc)}', '{ability_type}'{rest}")
+
+    # Handle rows that may still have an icon column value (7 string cols)
+    def strip_icon_and_refresh(m):
+        nonlocal updated, not_found
+        full         = m.group(0)
+        eid          = m.group(2)
+        key          = m.group(3)
+        _name        = m.group(4)
+        _desc        = m.group(5)
+        ability_type = m.group(6)
+        rest         = m.group(8)   # skip icon group (7)
+        id_part      = full.lstrip("(").split(",")[0].strip()
+        name = ability_name_map.get(key) or _name.replace("''", "'")
+        desc = ability_tooltip_map.get(key) or _desc.replace("''", "'")
+        updated += 1
+        return (f"({id_part}, '{eid}', '{key}', '{_sql_escape(name)}', "
+                f"'{_sql_escape(desc)}', '{ability_type}'{rest}")
+
+    if ABILITY_ROW_WITH_ICON_RE.search(content):
+        new_content = ABILITY_ROW_WITH_ICON_RE.sub(strip_icon_and_refresh, content)
+    else:
+        new_content = ABILITY_ROW_RE.sub(refresh_row, content)
+
+    print(f"  [abilities] updated {updated} rows, {not_found} without loc entry",
+          file=sys.stderr)
+    return new_content
+
+
+# ---------------------------------------------------------------------------
 # Spell seed updating
 # ---------------------------------------------------------------------------
 
@@ -594,6 +706,15 @@ def main():
     ancillary_cost_map = build_ancillary_cost_map(ancillaries_rows)
     print(f"  ancillary gold costs: {len(ancillary_cost_map)}", file=sys.stderr)
 
+    _, ua_rows = parse_rpfm_table(path("unit_abilities_tables.json"))
+    unit_ability_map = build_unit_ability_map(ua_rows)
+    print(f"  unit abilities (icons): {len(unit_ability_map)}", file=sys.stderr)
+
+    ua_loc = parse_loc_file(path("unit_abilities_loc.json"))
+    ability_name_map, ability_tooltip_map = build_ability_loc_maps(ua_loc)
+    print(f"  ability loc: {len(ability_name_map)} names, {len(ability_tooltip_map)} tooltips",
+          file=sys.stderr)
+
     print("Building name index...", file=sys.stderr)
     name_index = build_name_index(land_units_loc, main_unit_map, land_unit_stats)
     print(f"  {len(name_index)} unique unit names indexed", file=sys.stderr)
@@ -614,6 +735,13 @@ def main():
         if not args.dry_run:
             with open(filepath, "w", encoding="utf-8") as f:
                 f.write(new_content)
+
+    print("Updating ability descriptions...", file=sys.stderr)
+    ability_file = os.path.join(SEED_DIR, "seed-abilities.sql")
+    new_abilities = update_ability_seed_file(ability_file, ability_name_map, ability_tooltip_map)
+    if not args.dry_run:
+        with open(ability_file, "w", encoding="utf-8") as f:
+            f.write(new_abilities)
 
     print("Updating spell gold costs...", file=sys.stderr)
     spell_file = os.path.join(SEED_DIR, "seed-spells.sql")

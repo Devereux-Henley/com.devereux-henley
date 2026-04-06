@@ -103,6 +103,10 @@
   [dependencies spell-keys]
   (db/get-spells-by-keys (:connection dependencies) spell-keys))
 
+(defn get-abilities-by-names
+  [dependencies ability-names]
+  (db/get-abilities-by-names (:connection dependencies) ability-names))
+
 (defn get-game-modes-for-game
   [dependencies game-eid]
   (mapv (fn [mode] (assoc mode :type :game/game-mode))
