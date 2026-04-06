@@ -33,7 +33,12 @@ clojure -M:build -A deploy-data uber  # → migrations CLI JAR
 make build_docker
 make run_docker
 make ory_local            # create Ory Cloud tunnel for local auth
+
+# Refresh game data seed files from RPFM (after a patch)
+python3 scripts/update_from_rpfm.py --data-dir scripts/rpfm_data
 ```
+
+See `docs/game-data.md` for the full RPFM data refresh workflow.
 
 **REPL (primary dev workflow):** Jack-in from the repo root with `M-x cider-jack-in`. The `:dev` alias (configured in `.dir-locals.el`) puts all components and bases on the classpath.
 
