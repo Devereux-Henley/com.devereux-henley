@@ -3,68 +3,99 @@
 {% block title %}{{data.name}} | {{game.name}} | RTS-UI{% endblock %}
 
 {% block content %}
-<section id="game-browser" class="resource game-resource" aria-labelledby="unit-heading">
-    <h2 id="unit-heading">{{data.name}}</h2>
-    <dl class="resource-metadata" aria-label="Unit details">
-        <dt>Unit Type</dt>
-        <dd>{{data.unit-type-name}}</dd>
-        <dt>Unit Category</dt>
-        <dd>{{data.unit-category-name}}</dd>
-    </dl>
-    <p>{{data.description|linebreaks|safe}}</p>
-    {% if unit-statistics %}
-    <section id="unit-statistics" aria-labelledby="unit-statistics-heading">
-        <h4 id="unit-statistics-heading">Statistics</h4>
-        <table class="table" aria-labelledby="unit-statistics-heading">
-            <caption class="sr-only">Combat statistics for {{data.name}}</caption>
-            <thead>
-                <tr>
-                    <th scope="col">Stat</th>
-                    <th scope="col">Value</th>
-                </tr>
-            </thead>
-            <tbody>
+<section id="unit-page" aria-labelledby="unit-heading">
+
+    <header class="unit-hero">
+        <div class="stack stack-2">
+            <h2 id="unit-heading" class="unit-name">{{data.name}}</h2>
+            <div class="cluster cluster-2">
+                <span class="badge badge-primary">{{data.unit-type-name}}</span>
+                <span class="badge badge-neutral">{{data.unit-category-name}}</span>
+            </div>
+        </div>
+    </header>
+
+    {% if data.description %}
+    <p class="unit-description">{{data.description|linebreaks|safe}}</p>
+    {% endif %}
+
+    <div class="unit-layout{% if not unit-statistics %} unit-layout-no-stats{% endif %}">
+
+        {% if unit-statistics %}
+        <section class="unit-panel" id="unit-statistics" aria-labelledby="unit-statistics-heading">
+            <h3 class="unit-panel-heading" id="unit-statistics-heading">Statistics</h3>
+            <dl class="unit-stat-list">
                 {% for stat in unit-statistics %}
-                <tr>
-                    <td>{{stat.stat}}</td>
-                    <td>{{stat.value}}</td>
-                </tr>
+                <div class="unit-stat-row">
+                    <dt>{{stat.stat}}</dt>
+                    <dd>{{stat.value}}</dd>
+                </div>
                 {% endfor %}
-            </tbody>
-        </table>
-    </section>
-    {% endif %}
-    {% if abilities %}
-    <section id="unit-abilities" aria-labelledby="unit-abilities-heading">
-        <h4 id="unit-abilities-heading">Abilities</h4>
-        <ul aria-label="Abilities for {{data.name}}">
-            {% for ability in abilities %}
-            <li>{{ability}}</li>
-            {% endfor %}
-        </ul>
-    </section>
-    {% endif %}
-    {% if draftable-spells %}
-    <section id="unit-spells" aria-labelledby="unit-spells-heading">
-        <h4 id="unit-spells-heading">Spells</h4>
-        <table class="table" aria-labelledby="unit-spells-heading">
-            <caption class="sr-only">Draftable spells for {{data.name}}</caption>
-            <thead>
-                <tr>
-                    <th scope="col">Spell</th>
-                    <th scope="col">Cost (mp)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for spell in draftable-spells %}
-                <tr>
-                    <td>{{spell.name}}</td>
-                    <td>{{spell.mana-cost}}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </section>
-    {% endif %}
+            </dl>
+        </section>
+        {% endif %}
+
+        <div class="unit-panels-right stack stack-4">
+
+            {% if abilities %}
+            <section class="unit-panel" id="unit-abilities" aria-labelledby="unit-abilities-heading">
+                <h3 class="unit-panel-heading" id="unit-abilities-heading">Abilities</h3>
+                <ul class="unit-ability-list" aria-label="Abilities for {{data.name}}">
+                    {% for ability in abilities %}
+                    <li class="unit-ability-tag">{{ability}}</li>
+                    {% endfor %}
+                </ul>
+            </section>
+            {% endif %}
+
+            {% if draftable-spells %}
+            <section class="unit-panel" id="unit-spells" aria-labelledby="unit-spells-heading">
+                <h3 class="unit-panel-heading" id="unit-spells-heading">Spells</h3>
+                <table class="unit-panel-table" aria-labelledby="unit-spells-heading">
+                    <caption class="sr-only">Draftable spells for {{data.name}}</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Spell</th>
+                            <th scope="col">Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for spell in draftable-spells %}
+                        <tr>
+                            <td>{{spell.name}}</td>
+                            <td><span class="badge badge-primary">{{spell.mana-cost}}&thinsp;mp</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+            {% endif %}
+
+            {% if mounts %}
+            <section class="unit-panel" id="unit-mounts" aria-labelledby="unit-mounts-heading">
+                <h3 class="unit-panel-heading" id="unit-mounts-heading">Mounts</h3>
+                <table class="unit-panel-table" aria-labelledby="unit-mounts-heading">
+                    <caption class="sr-only">Available mounts for {{data.name}}</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Mount</th>
+                            <th scope="col">Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mount in mounts %}
+                        <tr>
+                            <td>{{mount.name}}</td>
+                            <td><span class="badge badge-neutral">{{mount.mp-cost}}&thinsp;g</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+            {% endif %}
+
+        </div>
+    </div>
+
 </section>
 {% endblock %}

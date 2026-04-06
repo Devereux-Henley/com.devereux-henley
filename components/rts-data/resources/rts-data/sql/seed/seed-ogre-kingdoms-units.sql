@@ -234,7 +234,7 @@ VALUES
    16,
    1,
    2,
-   '{"cost":800,"is_large":true,"unit_size":1,"health":5500,"barrier":0,"armor":30,"leadership":75,"speed":6,"melee_attack":48,"melee_attack_types":[],"melee_defence":46,"weapon_strength":370,"weapon_damage":110,"weapon_ap_damage":260,"charge_bonus":50,"ammunition":20,"range":120,"missile_damage":320,"missile_base_damage":70,"missile_ap_damage":250,"missile_damage_types":[],"abilities":["Wounds","Crippling Throw","Loner"],"draftable-spells":[]}',
+   '{"cost":800,"is_large":true,"unit_size":1,"health":5500,"barrier":0,"armor":30,"leadership":75,"speed":6,"melee_attack":48,"melee_attack_types":[],"melee_defence":46,"weapon_strength":370,"weapon_damage":110,"weapon_ap_damage":260,"charge_bonus":50,"ammunition":20,"range":120,"missile_damage":320,"missile_base_damage":70,"missile_ap_damage":250,"missile_damage_types":[],"abilities":["Wounds","Crippling Throw","Loner"],"draftable-spells":[],"mounts":[{"name":"Stonehorn","mp_cost":2150}]}',
    1,
    'f0ce7395-a57f-41e9-ade0-fd13bafc058f',
    STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'),

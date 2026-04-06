@@ -98,7 +98,7 @@
            "faction.html"
            (fn [_data _request] {})))
 
-(def ^:private stat-exclude-keys #{"abilities" "draftable-spells" "draftable-abilities"})
+(def ^:private stat-exclude-keys #{"abilities" "draftable-spells" "draftable-abilities" "mounts"})
 
 (defn parse-unit-statistics
   [unit-statistics-str]
@@ -115,9 +115,10 @@
                          :else                        {:stat (str/replace k "_" " ") :value v}))))
              stats)
        :abilities        (get stats "abilities" [])
-       :draftable-spells (get stats "draftable-spells" [])})
+       :draftable-spells (get stats "draftable-spells" [])
+       :mounts           (get stats "mounts" [])})
     (catch Exception _
-      {:stats [] :abilities [] :draftable-spells []})))
+      {:stats [] :abilities [] :draftable-spells [] :mounts []})))
 
 (defmethod integrant.core/init-key ::unit-view
   [_init-key dependencies]
@@ -128,7 +129,7 @@
               (partial web.game/get-unit-by-eid dependencies)))
            "unit.html"
            (fn [data _request]
-             (let [{:keys [stats abilities draftable-spells]} (parse-unit-statistics (:unit-statistics data))
+             (let [{:keys [stats abilities draftable-spells mounts]} (parse-unit-statistics (:unit-statistics data))
                    spell-keys   (map #(get % "key") draftable-spells)
                    key->name    (domain/get-spells-by-keys dependencies spell-keys)
                    resolved-spells (mapv (fn [s]
@@ -137,7 +138,8 @@
                                          draftable-spells)]
                {:unit-statistics  stats
                 :abilities        abilities
-                :draftable-spells resolved-spells}))))
+                :draftable-spells resolved-spells
+                :mounts           mounts}))))
 
 (defmethod integrant.core/init-key ::draft-view
   [_init-key dependencies]

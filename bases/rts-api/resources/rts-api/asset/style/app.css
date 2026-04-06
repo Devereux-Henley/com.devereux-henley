@@ -97,3 +97,167 @@ a:hover:has(img) {
 #game-section-factions .table td:nth-child(3) {
   width: 15%;
 }
+
+/* ─── Unit page ──────────────────────────────────────────────────────────── */
+
+#unit-page {
+  padding-block: var(--space-6);
+}
+
+.unit-hero {
+  margin-bottom: var(--space-4);
+}
+
+.unit-name {
+  font-size: var(--font-size-2xl);
+  color: var(--color-neutral-900);
+  line-height: var(--line-height-tight);
+}
+
+.unit-description {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-6);
+  max-width: 64ch;
+  line-height: var(--line-height-relaxed);
+}
+
+/* Two-column: narrow stats sidebar left, panels right */
+.unit-layout {
+  display: grid;
+  grid-template-columns: 13rem 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+/* No stats: right column fills full width */
+.unit-layout.unit-layout-no-stats {
+  grid-template-columns: 1fr;
+}
+
+@media (max-width: 680px) {
+  .unit-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── Panel (card with banner header) ────────────────────────────────────── */
+
+.unit-panel {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.unit-panel-heading {
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-neutral-900);
+  background-color: color-mix(in srgb, var(--color-danger-600) 70%, var(--color-neutral-100));
+  border-bottom: 1px solid color-mix(in srgb, var(--color-danger-500) 60%, var(--color-border));
+}
+
+/* ─── Stat list ──────────────────────────────────────────────────────────── */
+
+.unit-stat-list {
+  margin: 0;
+  padding: var(--space-1) 0;
+}
+
+.unit-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-1) var(--space-4);
+}
+
+.unit-stat-row:nth-child(even) {
+  background-color: color-mix(in srgb, var(--color-neutral-300) 12%, transparent);
+}
+
+.unit-stat-row dt {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: capitalize;
+  flex: 1;
+  min-width: 0;
+}
+
+.unit-stat-row dd {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-neutral-800);
+  text-align: right;
+  margin: 0;
+  min-width: 2.5rem;
+}
+
+/* ─── Ability tag list ───────────────────────────────────────────────────── */
+
+.unit-ability-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  list-style: none;
+  margin: 0;
+}
+
+.unit-ability-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-xs);
+  color: var(--color-neutral-700);
+  background-color: var(--color-neutral-200);
+  border: 1px solid var(--color-neutral-300);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+/* ─── Panel table (spells, mounts) ──────────────────────────────────────── */
+
+.unit-panel-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.unit-panel-table thead th {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  padding: var(--space-2) var(--space-4);
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.unit-panel-table td {
+  padding: var(--space-2) var(--space-4);
+  color: var(--color-text);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent);
+  vertical-align: middle;
+}
+
+.unit-panel-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.unit-panel-table tbody tr:nth-child(even) td {
+  background-color: color-mix(in srgb, var(--color-neutral-300) 10%, transparent);
+}
+
+.unit-panel-table thead th:last-child,
+.unit-panel-table td:last-child {
+  text-align: right;
+}
