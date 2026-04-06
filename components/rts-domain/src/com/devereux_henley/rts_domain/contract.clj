@@ -50,6 +50,7 @@
 (def get-game-mode-by-eid                       handlers.game/get-game-mode-by-eid)
 (def get-game-modes-for-game                    handlers.game/get-game-modes-for-game)
 (def get-spells-by-keys                         handlers.game/get-spells-by-keys)
+(def parse-unit-statistics                      handlers.game/parse-unit-statistics)
 
 (def get-platform-by-eid                        handlers.social-media/get-platform-by-eid)
 

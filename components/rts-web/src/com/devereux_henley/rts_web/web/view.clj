@@ -2,11 +2,9 @@
   (:require
    [cats.core :as cats]
    [cats.monad.either :as either]
-   [clojure.string :as str]
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.web.game :as web.game]
    [integrant.core]
-   [jsonista.core :as jsonista]
    [selmer.parser]
    [taoensso.timbre :as log]))
 
@@ -98,28 +96,6 @@
            "faction.html"
            (fn [_data _request] {})))
 
-(def ^:private stat-exclude-keys #{"abilities" "draftable-spells" "draftable-abilities" "mounts"})
-
-(defn parse-unit-statistics
-  [unit-statistics-str]
-  (try
-    (let [stats (jsonista/read-value unit-statistics-str (jsonista/object-mapper {:decode-key-fn name}))]
-      {:stats
-       (into []
-             (keep (fn [[k v]]
-                     (when-not (stat-exclude-keys k)
-                       (cond
-                         (and (vector? v) (empty? v)) nil
-                         (= v 0)                      nil
-                         (vector? v)                  {:stat (str/replace k "_" " ") :value (str/join ", " v)}
-                         :else                        {:stat (str/replace k "_" " ") :value v}))))
-             stats)
-       :abilities        (get stats "abilities" [])
-       :draftable-spells (get stats "draftable-spells" [])
-       :mounts           (get stats "mounts" [])})
-    (catch Exception _
-      {:stats [] :abilities [] :draftable-spells [] :mounts []})))
-
 (defmethod integrant.core/init-key ::unit-view
   [_init-key dependencies]
   (partial standard-entity-view-handler
@@ -129,17 +105,20 @@
               (partial web.game/get-unit-by-eid dependencies)))
            "unit.html"
            (fn [data _request]
-             (let [{:keys [stats abilities draftable-spells mounts]} (parse-unit-statistics (:unit-statistics data))
+             (let [{:keys [stats abilities draftable-spells mounts]} (domain/parse-unit-statistics (:unit-statistics data))
                    spell-keys   (map #(get % "key") draftable-spells)
-                   key->name    (domain/get-spells-by-keys dependencies spell-keys)
+                   key->spell   (domain/get-spells-by-keys dependencies spell-keys)
                    resolved-spells (mapv (fn [s]
-                                           {:name      (get key->name (get s "key") (get s "key"))
-                                            :mana-cost (get s "mana_cost")})
+                                           (let [key   (get s "key")
+                                                 spell (get key->spell key)]
+                                             {:name      (or (:name spell) key)
+                                              :mana-cost (:mana-cost spell)
+                                              :gold-cost (:gold-cost spell)}))
                                          draftable-spells)]
                {:unit-statistics  stats
-                :abilities        abilities
-                :draftable-spells resolved-spells
-                :mounts           mounts}))))
+                :abilities        (not-empty abilities)
+                :draftable-spells (not-empty resolved-spells)
+                :mounts           (not-empty mounts)}))))
 
 (defmethod integrant.core/init-key ::draft-view
   [_init-key dependencies]

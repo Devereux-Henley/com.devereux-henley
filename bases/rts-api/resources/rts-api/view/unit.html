@@ -56,7 +56,8 @@
                     <thead>
                         <tr>
                             <th scope="col">Spell</th>
-                            <th scope="col">Cost</th>
+                            <th scope="col">Mana Cost</th>
+                            <th scope="col">Gold Cost</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -64,6 +65,7 @@
                         <tr>
                             <td>{{spell.name}}</td>
                             <td><span class="badge badge-primary">{{spell.mana-cost}}&thinsp;mp</span></td>
+                            <td><span class="badge badge-secondary">{{spell.gold-cost}}&thinsp;g</span></td>
                         </tr>
                         {% endfor %}
                     </tbody>

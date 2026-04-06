@@ -191,9 +191,13 @@
   [connection spell-keys]
   (when (seq spell-keys)
     (let [placeholders (str/join "," (repeat (count spell-keys) "?"))
-          sql          (str "SELECT key, name FROM spell WHERE key IN (" placeholders ")")]
-      (into {} (map (fn [row] [(:spell/key row) (:spell/name row)])
-                    (jdbc/execute! connection (into [sql] spell-keys)))))))
+          sql          (str "SELECT key, name, mana_cost, gold_cost FROM spell WHERE key IN (" placeholders ")")]
+      (into {} (map (fn [row]
+                      [(:key row)
+                       {:name      (:name row)
+                        :mana-cost (:mana-cost row)
+                        :gold-cost (:gold-cost row)}])
+                    (jdbc.contract/execute! connection (into [sql] spell-keys)))))))
 
 (defn create-draft
   {:malli/schema (schema.contract/to-schema

@@ -1,8 +1,34 @@
 (ns com.devereux-henley.rts-domain.handlers.game
   (:require
-   [com.devereux-henley.rts-data-access.contract :as db])
+   [clojure.string :as str]
+   [com.devereux-henley.rts-data-access.contract :as db]
+   [jsonista.core :as jsonista])
   (:import
    [java.time Instant]))
+
+(def ^:private stat-exclude-keys #{"abilities" "draftable-spells" "draftable-abilities" "mounts"})
+
+(defn parse-unit-statistics
+  [unit-statistics-str]
+  (try
+    (let [stats (jsonista/read-value unit-statistics-str (jsonista/object-mapper {:decode-key-fn name}))]
+      {:stats
+       (into []
+             (keep (fn [[k v]]
+                     (when-not (stat-exclude-keys k)
+                       (cond
+                         (and (vector? v) (empty? v)) nil
+                         (= v 0)                      nil
+                         (vector? v)                  {:stat (str/replace k "_" " ") :value (str/join ", " v)}
+                         :else                        {:stat (str/replace k "_" " ") :value v}))))
+             stats)
+       :abilities        (get stats "abilities" [])
+       :draftable-spells (get stats "draftable-spells" [])
+       :mounts           (mapv (fn [m] {:name    (get m "name")
+                                        :mp-cost (get m "mp_cost")})
+                               (get stats "mounts" []))})
+    (catch Exception _
+      {:stats [] :abilities [] :draftable-spells [] :mounts []})))
 
 (defn get-game-by-eid
   [dependencies eid]
