@@ -290,7 +290,7 @@ VALUES
    18,
    1,
    2,
-   '{"cost":1000,"is_large":false,"unit_size":1,"health":4680,"barrier":0,"armor":80,"leadership":80,"speed":4,"melee_attack":45,"melee_attack_types":[],"melee_defence":60,"weapon_strength":500,"weapon_damage":360,"weapon_ap_damage":140,"charge_bonus":20,"ammunition":0,"missile_damage_types":[],"abilities":["Wounds","Daemonic Whispers","Glorious Slaughter","Deadly Onslaught","Foe-Seeker"],"draftable-spells":[]}',
+   '{"cost":1000,"is_large":false,"unit_size":1,"health":4680,"barrier":0,"armor":80,"leadership":80,"speed":4,"melee_attack":45,"melee_attack_types":[],"melee_defence":60,"weapon_strength":500,"weapon_damage":360,"weapon_ap_damage":140,"charge_bonus":20,"ammunition":0,"missile_damage_types":[],"abilities":["Wounds","Daemonic Whispers","Glorious Slaughter","Deadly Onslaught","Foe-Seeker"],"draftable-spells":[],"mounts":[{"name":"{{tr:ancillaries_onscreen_name_wh3_dlc27_anc_mount_chs_cha_exalted_hero_msla_daemonic_steed}}","mp_cost":1450},{"name":"Steed of Slaanesh","mp_cost":1200}]}',
    1,
    'f0ce7395-a57f-41e9-ade0-fd13bafc058f',
    STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'),
