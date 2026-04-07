@@ -74,7 +74,7 @@
 ;; ─── Response builders ────────────────────────────────────────────────────────
 
 (defn ^:private render-section [ctx oob?]
-  (selmer.parser/render-file "rts-api/view/draft-army-section.html"
+  (selmer.parser/render-file "rts-web/view/draft-army-section.html"
                              (assoc ctx :oob oob?)))
 
 (def ^:private oob-clear-error
@@ -127,7 +127,7 @@
         {:status  200
          :headers {"Content-Type" "text/html; charset=utf-8"}
          :body    (selmer.parser/render-file
-                   "rts-api/view/draft-unit-panel.html"
+                   "rts-web/view/draft-unit-panel.html"
                    {:unit                   (assoc unit
                                                    :panel-stats panel-stats
                                                    :parsed-abilities abilities)

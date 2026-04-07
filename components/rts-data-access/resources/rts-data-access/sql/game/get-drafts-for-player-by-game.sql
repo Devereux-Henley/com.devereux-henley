@@ -3,6 +3,8 @@ SELECT
   d.eid,
   gm.eid AS game_mode_eid,
   f.eid AS faction_eid,
+  f.name AS faction_name,
+  strftime('%m/%d/%Y', d.created_at) AS created_at_display,
   d.player_sub,
   d.version,
   d.created_at,

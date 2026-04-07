@@ -5,7 +5,7 @@
 (defn standard-asset-handler
   [asset-name _request]
   {:status 200
-   :body (io/input-stream (io/resource (str "rts-api/asset/" asset-name)))})
+   :body (io/input-stream (io/resource (str "rts-web/asset/" asset-name)))})
 
 (defn match-icon
   [eid]

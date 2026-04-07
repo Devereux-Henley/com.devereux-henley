@@ -1,4 +1,4 @@
-{% extends "rts-api/template/entrypoint.html" %}
+{% extends "rts-web/template/entrypoint.html" %}
 
 {% block title %}My Drafts | {{game.name}} | RTS-UI{% endblock %}
 
@@ -13,7 +13,7 @@
         <ul>
             {% for draft in drafts %}
             <li>
-                <a href="/view/game/{{game-eid}}/draft/{{draft.eid}}/index.html">Draft {{draft.eid}}</a>
+                <a href="/view/game/{{game-eid}}/draft/{{draft.eid}}/index.html">{{draft.faction-name}} draft {{draft.created-at-display}}</a>
             </li>
             {% endfor %}
         </ul>

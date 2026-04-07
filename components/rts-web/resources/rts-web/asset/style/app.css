@@ -437,11 +437,9 @@ a:hover:has(img) {
 /* Unit slot row */
 .draft-slots {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-1);
   padding: var(--space-2) var(--space-4);
-  overflow-x: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #3a2010 transparent;
 }
 
 .draft-slot {

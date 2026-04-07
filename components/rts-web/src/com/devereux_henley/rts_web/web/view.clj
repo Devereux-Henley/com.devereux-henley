@@ -14,7 +14,7 @@
   {:status  status
    :headers {"Content-Type" "text/html; charset=utf-8"}
    :body    (selmer.parser/render-file
-             "rts-api/view/error.html"
+             "rts-web/view/error.html"
              {:status-text status-text
               :message     message})})
 
@@ -23,7 +23,7 @@
   (try
     {:status 200
      :body   (selmer.parser/render-file
-              (str "rts-api/view/" view-name)
+              (str "rts-web/view/" view-name)
               (merge {:session (:ory-session request)}
                      (:game-context request)))}
     (catch Exception exc
@@ -41,7 +41,7 @@
          (fn [data]
            {:status 200
             :body   (selmer.parser/render-file
-                     (str "rts-api/view/" template-name)
+                     (str "rts-web/view/" template-name)
                      (merge {:data    data
                              :session (:ory-session request)}
                             (:game-context request)
@@ -145,7 +145,7 @@
                 :mounts           (not-empty mounts)
                 :equipment        (not-empty resolved-equipment)
                 :unit-card        (when (clojure.java.io/resource
-                                         (str "rts-api/asset/card/unit/" (:eid data) ".png"))
+                                         (str "rts-web/asset/card/unit/" (:eid data) ".png"))
                                     (str "/card/unit/" (:eid data) ".png"))}))))
 
 (defn ^:private build-draft-context
@@ -193,7 +193,7 @@
       (let [player-sub (get-in session [:identity :id])]
         {:status 200
          :body   (selmer.parser/render-file
-                  "rts-api/view/my-drafts.html"
+                  "rts-web/view/my-drafts.html"
                   (merge {:drafts  (domain/get-drafts-for-player-by-game dependencies player-sub (:game-eid game-context))
                           :session session}
                          game-context))})
@@ -209,7 +209,7 @@
     (try
       {:status 200
        :body   (selmer.parser/render-file
-                "rts-api/view/game-index.html"
+                "rts-web/view/game-index.html"
                 (merge {:data    (:game game-context)
                         :session session}
                        game-context))}
@@ -226,7 +226,7 @@
       (let [game-modes (domain/get-game-modes-for-game dependencies (:game-eid game-context))]
         {:status 200
          :body   (selmer.parser/render-file
-                  "rts-api/view/create-draft.html"
+                  "rts-web/view/create-draft.html"
                   (merge {:game-modes game-modes
                           :session    session}
                          game-context))})

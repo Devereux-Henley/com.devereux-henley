@@ -30,12 +30,12 @@
 (defn view-by-type
   [type]
   (get
-   {:game/game    "rts-api/resource/game.html"
-    :game/faction "rts-api/resource/faction.html"
-    :game/draft   "rts-api/resource/draft.html"
-    "exception"   "rts-api/resource/error.html"}
+   {:game/game    "rts-web/resource/game.html"
+    :game/faction "rts-web/resource/faction.html"
+    :game/draft   "rts-web/resource/draft.html"
+    "exception"   "rts-web/resource/error.html"}
    type
-   "rts-api/resource/unknown.html"))
+   "rts-web/resource/unknown.html"))
 
 (def continuity-key "ory_kratos_continuity")
 
@@ -75,7 +75,7 @@
   {:status  status
    :headers {"Content-Type" "text/html; charset=utf-8"}
    :body    (selmer.parser/render-file
-             "rts-api/view/error.html"
+             "rts-web/view/error.html"
              {:status-text status-text
               :message     message})})
 
@@ -213,7 +213,7 @@
                :operationsSorter "alpha"}})
     (ring/create-resource-handler {:root resourcekit/asset-root
                                    :path resourcekit/asset-path})
-    (ring/create-resource-handler {:root "rts-api/asset"
+    (ring/create-resource-handler {:root "rts-web/asset"
                                    :path "/"
                                    :not-found-handler
                                    (fn [_] {:status  301
