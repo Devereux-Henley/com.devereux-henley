@@ -52,6 +52,8 @@
 (def get-spells-by-keys                         handlers.game/get-spells-by-keys)
 (def get-abilities-by-names                     handlers.game/get-abilities-by-names)
 (def parse-unit-statistics                      handlers.game/parse-unit-statistics)
+(def get-draft-state                            handlers.game/get-draft-state)
+(def set-draft-state                            handlers.game/set-draft-state)
 
 (def get-platform-by-eid                        handlers.social-media/get-platform-by-eid)
 

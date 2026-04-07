@@ -43,6 +43,8 @@
 
 (def get-units-for-faction-query (resource/load-query-resource "game" "get-units-for-faction.sql"))
 
+(def get-draft-state-by-draft-query (resource/load-query-resource "game" "get-draft-state-by-draft.sql"))
+
 (defn get-game-by-eid
   {:malli/schema (schema.contract/to-schema
                   [:=>
@@ -209,6 +211,20 @@
                        {:eid         (:eid row)
                         :description (:description row)}])
                     (jdbc.contract/execute! connection (into [sql] ability-names)))))))
+
+(defn get-draft-state-by-draft
+  [connection draft-eid]
+  (jdbc.contract/query-for-entity connection [get-draft-state-by-draft-query draft-eid] schema/draft-state-entity))
+
+(defn upsert-draft-state
+  [connection draft-eid state-json-str]
+  (let [draft (get-draft-by-eid connection draft-eid)]
+    (jdbc.contract/execute-one!
+     connection
+     ["INSERT INTO draft_state (draft_id, state, updated_at)
+       VALUES (?, ?, ?)
+       ON CONFLICT(draft_id) DO UPDATE SET state = excluded.state, updated_at = excluded.updated_at"
+      (:id draft) state-json-str (str (java.time.Instant/now))])))
 
 (defn create-draft
   {:malli/schema (schema.contract/to-schema

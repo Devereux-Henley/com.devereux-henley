@@ -1,0 +1,85 @@
+<div class="draft-section" id="{{section-id}}" aria-labelledby="{{section-id}}-heading">
+    <div class="draft-section-header">
+        <h3 class="draft-section-title" id="{{section-id}}-heading">{{section-label}}</h3>
+        <div class="draft-budget-group"
+             role="meter"
+             aria-valuenow="{{section-cost}}"
+             aria-valuemin="0"
+             aria-valuemax="{{section-max}}"
+             aria-label="{{section-label}} budget: {{section-cost}} of {{section-max}}">
+            <span class="draft-budget-icon" aria-hidden="true">&#11044;</span>
+            <span class="draft-budget-text">
+                <span class="draft-budget-used">{{section-cost}}</span>
+                <span class="draft-budget-sep">/</span>
+                <span class="draft-budget-max">{{section-max}}</span>
+            </span>
+            <div class="draft-budget-track">
+                <div class="draft-budget-fill {% if section-over-budget %}draft-budget-fill--over{% elif section-near-limit %}draft-budget-fill--near{% endif %}"
+                     style="--pct: {{section-pct}}%"></div>
+            </div>
+        </div>
+    </div>
+    <div class="draft-slots" role="list" aria-label="{{section-label}} units">
+        {% if is-main %}
+        <div class="draft-slot draft-slot--lord {% if lord-unit %}draft-slot--filled{% endif %}"
+             role="listitem"
+             aria-label="Legendary Lord slot{% if not lord-unit %} — empty{% endif %}">
+            {% if lord-unit %}
+            <img class="draft-slot-card"
+                 src="/card/unit/{{lord-unit.eid}}.png"
+                 alt="{{lord-unit.name}}"
+                 onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;">
+            <div class="draft-slot-cost" aria-hidden="true">{{lord-unit.cost}}</div>
+            <button class="draft-slot-remove"
+                    aria-label="Remove {{lord-unit.name}} from Main Army"
+                    hx-delete="/view/game/{{game-eid}}/draft/{{draft-eid}}/unit/{{lord-unit.eid}}?section=main"
+                    hx-target="#main-army-section"
+                    hx-swap="outerHTML">&#10005;</button>
+            {% else %}
+            <div class="draft-slot-empty-lord" aria-hidden="true">
+                <span class="draft-slot-lord-icon">&#9812;</span>
+                <span class="draft-slot-lord-label">Lord</span>
+            </div>
+            {% endif %}
+        </div>
+        {% for unit in non-lord-units %}
+        <div class="draft-slot draft-slot--filled"
+             role="listitem"
+             aria-label="{{unit.name}}">
+            <img class="draft-slot-card"
+                 src="/card/unit/{{unit.eid}}.png"
+                 alt="{{unit.name}}"
+                 onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;">
+            <div class="draft-slot-cost" aria-hidden="true">{{unit.cost}}</div>
+            <button class="draft-slot-remove"
+                    aria-label="Remove {{unit.name}} from Main Army"
+                    hx-delete="/view/game/{{game-eid}}/draft/{{draft-eid}}/unit/{{unit.eid}}?section=main"
+                    hx-target="#main-army-section"
+                    hx-swap="outerHTML">&#10005;</button>
+        </div>
+        {% endfor %}
+        {% else %}
+        {% for unit in section-units %}
+        <div class="draft-slot draft-slot--filled"
+             role="listitem"
+             aria-label="{{unit.name}}">
+            <img class="draft-slot-card"
+                 src="/card/unit/{{unit.eid}}.png"
+                 alt="{{unit.name}}"
+                 onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;">
+            <div class="draft-slot-cost" aria-hidden="true">{{unit.cost}}</div>
+            <button class="draft-slot-remove"
+                    aria-label="Remove {{unit.name}} from Reinforcements"
+                    hx-delete="/view/game/{{game-eid}}/draft/{{draft-eid}}/unit/{{unit.eid}}?section=reinforcements"
+                    hx-target="#reinforcements-section"
+                    hx-swap="outerHTML">&#10005;</button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
+        <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
+        <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
+        <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
+        <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
+    </div>
+</div>

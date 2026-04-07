@@ -3,7 +3,485 @@
 {% block title %}{{faction.name}} Draft | {{game.name}} | RTS-UI{% endblock %}
 
 {% block content %}
-<section class="resource">
-    <h2>{{faction.name}} draft for {{game.name}}</h2>
-</section>
+<title id="page-title" hx-swap-oob="true">{{faction.name}} Draft | {{game.name}} | RTS-UI</title>
+
+<div class="draft-page">
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- Army Builder                                               -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <div class="draft-army-builder" aria-label="Army Builder">
+
+        <!-- Main Army Section -->
+        <div class="draft-section" id="main-army-section" aria-labelledby="main-army-heading">
+            <div class="draft-section-header">
+                <h2 class="draft-section-title" id="main-army-heading">Main Army</h2>
+                <div class="draft-budget-group"
+                     role="meter"
+                     aria-valuenow="{{main-section.section-cost}}"
+                     aria-valuemin="0"
+                     aria-valuemax="{{main-section.section-max}}"
+                     aria-label="Main Army budget: {{main-section.section-cost}} of {{main-section.section-max}}">
+                    <span class="draft-budget-icon" aria-hidden="true">&#11044;</span>
+                    <span class="draft-budget-text">
+                        <span class="draft-budget-used">{{main-section.section-cost}}</span>
+                        <span class="draft-budget-sep">/</span>
+                        <span class="draft-budget-max">{{main-section.section-max}}</span>
+                    </span>
+                    <div class="draft-budget-track">
+                        <div class="draft-budget-fill {% if main-section.section-over-budget %}draft-budget-fill--over{% elif main-section.section-near-limit %}draft-budget-fill--near{% endif %}"
+                             style="--pct: {{main-section.section-pct}}%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="draft-slots" role="list" aria-label="Main Army units">
+                <!-- Lord Slot -->
+                <div class="draft-slot draft-slot--lord {% if main-section.lord-unit %}draft-slot--filled{% endif %}"
+                     role="listitem"
+                     aria-label="Legendary Lord slot{% if not main-section.lord-unit %} — empty{% endif %}">
+                    {% if main-section.lord-unit %}
+                    <img class="draft-slot-card"
+                         src="/card/unit/{{main-section.lord-unit.eid}}.png"
+                         alt="{{main-section.lord-unit.name}}"
+                         onerror="this.style.display='none'">
+                    <div class="draft-slot-cost" aria-hidden="true">{{main-section.lord-unit.cost}}</div>
+                    <button class="draft-slot-remove"
+                            aria-label="Remove {{main-section.lord-unit.name}} from Main Army"
+                            hx-delete="/view/game/{{game-eid}}/draft/{{draft-eid}}/unit/{{main-section.lord-unit.eid}}?section=main"
+                            hx-target="#main-army-section"
+                            hx-swap="outerHTML">&#10005;</button>
+                    {% else %}
+                    <div class="draft-slot-empty-lord" aria-hidden="true">
+                        <span class="draft-slot-lord-icon">&#9812;</span>
+                        <span class="draft-slot-lord-label">Lord</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <!-- Non-Lord Units -->
+                {% for unit in main-section.non-lord-units %}
+                <div class="draft-slot draft-slot--filled" role="listitem" aria-label="{{unit.name}}">
+                    <img class="draft-slot-card"
+                         src="/card/unit/{{unit.eid}}.png"
+                         alt="{{unit.name}}"
+                         onerror="this.style.display='none'">
+                    <div class="draft-slot-cost" aria-hidden="true">{{unit.cost}}</div>
+                    <button class="draft-slot-remove"
+                            aria-label="Remove {{unit.name}} from Main Army"
+                            hx-delete="/view/game/{{game-eid}}/draft/{{draft-eid}}/unit/{{unit.eid}}?section=main"
+                            hx-target="#main-army-section"
+                            hx-swap="outerHTML">&#10005;</button>
+                </div>
+                {% endfor %}
+                <!-- Empty placeholders -->
+                <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
+                <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
+                <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
+                <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
+                <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
+            </div>
+        </div>
+
+        <!-- Reinforcements Section (conditional) -->
+        {% if reinforcements-enabled %}
+        <div class="draft-section" id="reinforcements-section" aria-labelledby="reinforcements-heading">
+            <div class="draft-section-header">
+                <h2 class="draft-section-title" id="reinforcements-heading">Reinforcements</h2>
+                <div class="draft-budget-group"
+                     role="meter"
+                     aria-valuenow="{{reinf-section.section-cost}}"
+                     aria-valuemin="0"
+                     aria-valuemax="{{reinf-section.section-max}}"
+                     aria-label="Reinforcements budget: {{reinf-section.section-cost}} of {{reinf-section.section-max}}">
+                    <span class="draft-budget-icon" aria-hidden="true">&#11044;</span>
+                    <span class="draft-budget-text">
+                        <span class="draft-budget-used">{{reinf-section.section-cost}}</span>
+                        <span class="draft-budget-sep">/</span>
+                        <span class="draft-budget-max">{{reinf-section.section-max}}</span>
+                    </span>
+                    <div class="draft-budget-track">
+                        <div class="draft-budget-fill {% if reinf-section.section-over-budget %}draft-budget-fill--over{% elif reinf-section.section-near-limit %}draft-budget-fill--near{% endif %}"
+                             style="--pct: {{reinf-section.section-pct}}%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="draft-slots" role="list" aria-label="Reinforcements units">
+                {% for unit in reinf-section.section-units %}
+                <div class="draft-slot draft-slot--filled" role="listitem" aria-label="{{unit.name}}">
+                    <img class="draft-slot-card"
+                         src="/card/unit/{{unit.eid}}.png"
+                         alt="{{unit.name}}"
+                         onerror="this.style.display='none'">
+                    <div class="draft-slot-cost" aria-hidden="true">{{unit.cost}}</div>
+                    <button class="draft-slot-remove"
+                            aria-label="Remove {{unit.name}} from Reinforcements"
+                            hx-delete="/view/game/{{game-eid}}/draft/{{draft-eid}}/unit/{{unit.eid}}?section=reinforcements"
+                            hx-target="#reinforcements-section"
+                            hx-swap="outerHTML">&#10005;</button>
+                </div>
+                {% endfor %}
+                <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
+                <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
+                <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
+                <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
+                <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div id="draft-error-zone" aria-live="assertive" aria-atomic="true"></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- Roster + Stats Panel                                       -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <div class="draft-roster-area">
+
+        <!-- Unit Roster -->
+        <div class="draft-roster" role="region" aria-labelledby="roster-heading">
+            <h2 class="draft-roster-heading sr-only" id="roster-heading">{{faction.name}} Unit Roster</h2>
+
+            {% for group in units-by-category %}
+            <section class="draft-category" aria-labelledby="cat-{{forloop.counter}}">
+                <h3 class="draft-category-header unit-panel-heading" id="cat-{{forloop.counter}}">{{group.category}}</h3>
+                <div class="draft-category-units" role="list">
+                    {% for unit in group.units %}
+                    <button class="draft-unit-card"
+                            type="button"
+                            role="listitem"
+                            aria-pressed="false"
+                            aria-label="{{unit.name}}, {{unit.unit-type-name}}, cost {{unit.cost}}"
+                            data-eid="{{unit.eid}}"
+                            data-name="{{unit.name}}"
+                            data-cost="{{unit.cost}}"
+                            data-category="{{unit.unit-category-name}}"
+                            data-type="{{unit.unit-type-name}}"
+                            data-is-lord="{{unit.is-lord}}"
+                            data-card-url="/card/unit/{{unit.eid}}.png"
+                            data-stats='{{unit.parsed-stats|json}}'
+                            data-abilities='{{unit.parsed-abilities|json}}'
+                            onclick="selectUnit(this)">
+                        <img src="/card/unit/{{unit.eid}}.png"
+                             alt=""
+                             loading="lazy"
+                             onerror="this.style.display='none'">
+                        <span class="draft-unit-card-cost" aria-hidden="true">{{unit.cost}}</span>
+                    </button>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endfor %}
+        </div>
+
+        <!-- Stats Panel (sticky sidebar) -->
+        <aside class="draft-stats-panel" id="draft-stats-panel" role="complementary" aria-label="Unit statistics" hidden>
+            <div class="draft-stats-inner">
+
+                <!-- Unit Header -->
+                <div class="draft-stats-header">
+                    <img class="draft-stats-portrait" id="stats-portrait" src="" alt="" aria-hidden="true">
+                    <div class="draft-stats-meta">
+                        <h3 class="draft-stats-name" id="stats-name"></h3>
+                        <div class="draft-stats-badges">
+                            <span class="badge badge-primary" id="stats-type"></span>
+                            <span class="badge badge-neutral" id="stats-category"></span>
+                        </div>
+                        <div class="draft-stats-cost-row">
+                            <span class="draft-budget-icon" aria-hidden="true">&#11044;</span>
+                            <span class="draft-stats-cost" id="stats-cost"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="draft-stats-actions">
+                    <div class="draft-action-error" id="draft-action-error" role="alert" aria-live="polite" hidden></div>
+                    <button class="btn btn-primary draft-add-btn"
+                            id="btn-add-main"
+                            type="button"
+                            disabled>
+                        Add to Main Army
+                    </button>
+                    {% if reinforcements-enabled %}
+                    <button class="btn btn-primary draft-add-btn draft-add-btn--reinf"
+                            id="btn-add-reinf"
+                            type="button"
+                            disabled>
+                        Add to Reinforcements
+                    </button>
+                    {% endif %}
+                    <a class="draft-details-link" id="stats-details-link" href="#" aria-label="View full unit details">
+                        View full details &rarr;
+                    </a>
+                </div>
+
+                <!-- Key Statistics -->
+                <section class="draft-stats-section unit-panel" aria-labelledby="panel-stats-heading">
+                    <h4 class="unit-panel-heading" id="panel-stats-heading">Statistics</h4>
+                    <div class="draft-stat-rows" id="stats-rows"></div>
+                </section>
+
+                <!-- Abilities -->
+                <section class="draft-stats-section unit-panel" id="stats-abilities-panel" aria-labelledby="panel-abilities-heading">
+                    <h4 class="unit-panel-heading" id="panel-abilities-heading">Abilities</h4>
+                    <ul class="unit-ability-list" id="stats-abilities" aria-label="Unit abilities"></ul>
+                </section>
+
+                <!-- Future: Spells -->
+                <section class="draft-stats-section draft-future-section unit-panel" aria-labelledby="panel-spells-heading">
+                    <h4 class="unit-panel-heading" id="panel-spells-heading">
+                        Spells <span class="draft-future-badge" aria-label="Coming soon">&#128274;</span>
+                    </h4>
+                    <p class="draft-future-msg">Spell selection coming soon.</p>
+                </section>
+
+                <!-- Future: Equipment -->
+                <section class="draft-stats-section draft-future-section unit-panel" aria-labelledby="panel-equip-heading">
+                    <h4 class="unit-panel-heading" id="panel-equip-heading">
+                        Equipment <span class="draft-future-badge" aria-label="Coming soon">&#128274;</span>
+                    </h4>
+                    <p class="draft-future-msg">Equipment selection coming soon.</p>
+                </section>
+
+                <!-- Future: Level -->
+                <section class="draft-stats-section draft-future-section unit-panel" aria-labelledby="panel-level-heading">
+                    <h4 class="unit-panel-heading" id="panel-level-heading">
+                        Level <span class="draft-future-badge" aria-label="Coming soon">&#128274;</span>
+                    </h4>
+                    <p class="draft-future-msg">Unit leveling coming soon.</p>
+                </section>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<script>
+(function () {
+    var DRAFT = {
+        draftEid:              "{{draft-eid}}",
+        gameEid:               "{{game-eid}}",
+        maxMain:               {{main-section.section-max}},
+        maxReinf:              {{reinf-section.section-max|default:"0"}},
+        reinforcementsEnabled: {{reinforcements-enabled}},
+        selectedUnit:          null
+    };
+
+    var STAT_MAX = {
+        "armor":           100,
+        "armour":          100,
+        "leadership":      100,
+        "speed":            60,
+        "melee attack":     60,
+        "melee defence":    60,
+        "weapon strength": 700,
+        "charge bonus":     60,
+        "missile damage":  300,
+        "health":         1000,
+        "barrier":        1000
+    };
+
+    function statPct(name, value) {
+        var max = STAT_MAX[name.toLowerCase()] || 100;
+        return Math.min(100, Math.round((parseFloat(value) / max) * 100));
+    }
+
+    function deselectUnit() {
+        document.querySelectorAll('.draft-unit-card').forEach(function (c) {
+            c.setAttribute('aria-pressed', 'false');
+            c.classList.remove('draft-unit-card--selected');
+        });
+        DRAFT.selectedUnit = null;
+        document.getElementById('draft-stats-panel').setAttribute('hidden', '');
+        updateAddButtons();
+    }
+
+    window.selectUnit = function (btn) {
+        if (DRAFT.selectedUnit && DRAFT.selectedUnit.eid === btn.dataset.eid) {
+            deselectUnit();
+            return;
+        }
+
+        document.querySelectorAll('.draft-unit-card').forEach(function (c) {
+            c.setAttribute('aria-pressed', 'false');
+            c.classList.remove('draft-unit-card--selected');
+        });
+        btn.setAttribute('aria-pressed', 'true');
+        btn.classList.add('draft-unit-card--selected');
+
+        DRAFT.selectedUnit = {
+            eid:      btn.dataset.eid,
+            name:     btn.dataset.name,
+            cost:     parseInt(btn.dataset.cost, 10) || 0,
+            category: btn.dataset.category,
+            type:     btn.dataset.type,
+            isLord:   btn.dataset.isLord === 'true',
+            cardUrl:  btn.dataset.cardUrl,
+            stats:    JSON.parse(btn.dataset.stats || '[]'),
+            abilities: JSON.parse(btn.dataset.abilities || '[]')
+        };
+        renderStatsPanel(DRAFT.selectedUnit);
+    };
+
+    function renderStatsPanel(unit) {
+        var panel = document.getElementById('draft-stats-panel');
+        panel.removeAttribute('hidden');
+
+        document.getElementById('stats-portrait').src = unit.cardUrl;
+        document.getElementById('stats-portrait').alt = unit.name;
+        document.getElementById('stats-name').textContent = unit.name;
+        document.getElementById('stats-type').textContent = unit.type;
+        document.getElementById('stats-category').textContent = unit.category;
+        document.getElementById('stats-cost').textContent = unit.cost;
+        document.getElementById('stats-details-link').href =
+            '/view/game/' + DRAFT.gameEid + '/unit/' + unit.eid + '/index.html';
+        document.getElementById('stats-details-link').setAttribute('aria-label',
+            'View full details for ' + unit.name);
+
+        var rows = document.getElementById('stats-rows');
+        rows.innerHTML = '';
+        (unit.stats || []).forEach(function (s) {
+            var pct = statPct(s.stat, s.value);
+            var row = document.createElement('div');
+            row.className = 'draft-stat-bar-row';
+            row.innerHTML =
+                '<span class="draft-stat-label">' + s.stat + '</span>' +
+                '<span class="draft-stat-value">' + s.value + '</span>' +
+                '<div class="draft-stat-bar" aria-hidden="true">' +
+                  '<div class="draft-stat-bar-fill" style="--pct:' + pct + '%"></div>' +
+                '</div>';
+            rows.appendChild(row);
+        });
+
+        var abilitiesEl = document.getElementById('stats-abilities');
+        var abPanel = document.getElementById('stats-abilities-panel');
+        abilitiesEl.innerHTML = '';
+        if (unit.abilities && unit.abilities.length > 0) {
+            abPanel.removeAttribute('hidden');
+            unit.abilities.forEach(function (ab) {
+                var li = document.createElement('li');
+                li.className = 'unit-ability-item';
+                li.innerHTML =
+                    '<img class="unit-ability-icon" src="/icon/ability/' + ab + '.png" ' +
+                         'alt="' + ab + '" onerror="this.style.display=\'none\'">' +
+                    '<span class="unit-ability-tooltip" role="tooltip">' + ab + '</span>';
+                abilitiesEl.appendChild(li);
+            });
+        } else {
+            abPanel.setAttribute('hidden', '');
+        }
+
+        clearActionError();
+        updateAddButtons();
+    }
+
+    function getSectionInfo(sectionId) {
+        var section = document.getElementById(sectionId);
+        if (!section) return { cost: 0, lordCount: 0 };
+        var cost = 0, lordCount = 0;
+        section.querySelectorAll('.draft-slot--filled').forEach(function (slot) {
+            var costEl = slot.querySelector('.draft-slot-cost');
+            if (costEl) cost += parseInt(costEl.textContent, 10) || 0;
+        });
+        var lordSlot = section.querySelector('.draft-slot--lord.draft-slot--filled');
+        if (lordSlot) lordCount = 1;
+        return { cost: cost, lordCount: lordCount };
+    }
+
+    function canAdd(unit, sectionId, max) {
+        var info = getSectionInfo(sectionId);
+        if (info.cost + unit.cost > max) {
+            return 'Exceeds budget (' + (info.cost + unit.cost) + '\u202f/\u202f' + max + ')';
+        }
+        if (unit.isLord && info.lordCount >= 1) {
+            return 'Only one lord per army section';
+        }
+        return null;
+    }
+
+    function updateAddButtons() {
+        var unit = DRAFT.selectedUnit;
+        var btnMain  = document.getElementById('btn-add-main');
+        var btnReinf = document.getElementById('btn-add-reinf');
+        if (!unit) {
+            if (btnMain)  { btnMain.disabled = true; btnMain.title = ''; }
+            if (btnReinf) { btnReinf.disabled = true; btnReinf.title = ''; }
+            return;
+        }
+        if (btnMain) {
+            var errMain = canAdd(unit, 'main-army-section', DRAFT.maxMain);
+            btnMain.disabled = !!errMain;
+            btnMain.title = errMain || '';
+        }
+        if (btnReinf) {
+            var errReinf = canAdd(unit, 'reinforcements-section', DRAFT.maxReinf);
+            btnReinf.disabled = !!errReinf;
+            btnReinf.title = errReinf || '';
+        }
+    }
+
+    function clearActionError() {
+        var el = document.getElementById('draft-action-error');
+        if (el) { el.hidden = true; el.textContent = ''; }
+    }
+
+    function showActionError(msg) {
+        var el = document.getElementById('draft-action-error');
+        if (el) { el.hidden = false; el.textContent = msg; }
+    }
+
+    function addUnit(section) {
+        var unit = DRAFT.selectedUnit;
+        if (!unit) return;
+        var sectionId = section === 'main' ? 'main-army-section' : 'reinforcements-section';
+        var max = section === 'main' ? DRAFT.maxMain : DRAFT.maxReinf;
+        var err = canAdd(unit, sectionId, max);
+        if (err) { showActionError(err); return; }
+        clearActionError();
+
+        htmx.ajax('POST',
+            '/view/game/' + DRAFT.gameEid + '/draft/' + DRAFT.draftEid + '/unit',
+            {
+                target:  '#' + sectionId,
+                swap:    'outerHTML',
+                values:  JSON.stringify({ 'unit-eid': unit.eid, 'section': section }),
+                headers: { 'Content-Type': 'application/json', 'Accept': 'text/html' }
+            }
+        ).then(function () {
+            updateCardAvailability();
+            updateAddButtons();
+        }).catch(function () {
+            showActionError('Failed to add unit. Please try again.');
+        });
+    }
+
+    function updateCardAvailability() {
+        var mainInfo  = getSectionInfo('main-army-section');
+        var reinfInfo = getSectionInfo('reinforcements-section');
+        document.querySelectorAll('.draft-unit-card').forEach(function (card) {
+            var cost   = parseInt(card.dataset.cost, 10) || 0;
+            var isLord = card.dataset.isLord === 'true';
+            var mainOk  = (mainInfo.cost + cost <= DRAFT.maxMain) &&
+                          !(isLord && mainInfo.lordCount >= 1);
+            var reinfOk = DRAFT.reinforcementsEnabled &&
+                          (reinfInfo.cost + cost <= DRAFT.maxReinf) &&
+                          !(isLord && reinfInfo.lordCount >= 1);
+            var dim = !mainOk && !reinfOk;
+            card.classList.toggle('draft-unit-card--dimmed', dim);
+            card.setAttribute('aria-disabled', dim ? 'true' : 'false');
+        });
+    }
+
+    document.getElementById('btn-add-main')
+        .addEventListener('click', function () { addUnit('main'); });
+
+    var btnReinf = document.getElementById('btn-add-reinf');
+    if (btnReinf) btnReinf.addEventListener('click', function () { addUnit('reinforcements'); });
+
+    document.addEventListener('htmx:afterSwap', function () {
+        updateCardAvailability();
+        updateAddButtons();
+    });
+
+    updateCardAvailability();
+})();
+</script>
 {% endblock %}

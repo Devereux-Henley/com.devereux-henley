@@ -111,3 +111,21 @@
   [dependencies game-eid]
   (mapv (fn [mode] (assoc mode :type :game/game-mode))
         (db/get-game-modes-for-game (:connection dependencies) game-eid)))
+
+(defn get-draft-state
+  "Returns {:main [uuid ...] :reinforcements [uuid ...]} parsed from the stored JSON blob.
+   Returns empty collections if no state exists yet."
+  [dependencies draft-eid]
+  (if-let [row (db/get-draft-state-by-draft (:connection dependencies) draft-eid)]
+    (let [parsed (jsonista/read-value (:state row) (jsonista/object-mapper {:decode-key-fn keyword}))]
+      {:main           (mapv #(java.util.UUID/fromString %) (get parsed :main []))
+       :reinforcements (mapv #(java.util.UUID/fromString %) (get parsed :reinforcements []))})
+    {:main [] :reinforcements []}))
+
+(defn set-draft-state
+  "Persists {:main [uuid ...] :reinforcements [uuid ...]} as an atomic JSON blob."
+  [dependencies draft-eid state]
+  (let [json-str (jsonista/write-value-as-string
+                  {:main           (mapv str (:main state))
+                   :reinforcements (mapv str (:reinforcements state))})]
+    (db/upsert-draft-state (:connection dependencies) draft-eid json-str)))

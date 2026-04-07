@@ -33,6 +33,8 @@
    :com.devereux-henley.rts-web.web.view/faction-view                     default-api-dependencies
    :com.devereux-henley.rts-web.web.view/unit-view                        default-api-dependencies
    :com.devereux-henley.rts-web.web.view/draft-view                       default-api-dependencies
+   :com.devereux-henley.rts-web.web.view/draft-add-unit-view              default-api-dependencies
+   :com.devereux-henley.rts-web.web.view/draft-remove-unit-view           default-api-dependencies
    :com.devereux-henley.rts-web.web.view/my-drafts-view                   default-api-dependencies
    :com.devereux-henley.rts-web.web.view/game-index-view                  default-view-dependencies
    :com.devereux-henley.rts-web.web.view/create-draft-view                default-api-dependencies

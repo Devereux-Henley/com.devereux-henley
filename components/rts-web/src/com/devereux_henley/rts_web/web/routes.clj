@@ -72,7 +72,26 @@
      ["/:eid/index.html"
       {:get {:produces   ["text/html"]
              :parameters {:path schema.contract/game-and-id-path-parameter}
-             :handler    (integrant.core/ref ::web.view/draft-view)}}]]]])
+             :handler    (integrant.core/ref ::web.view/draft-view)}}]
+     ["/:eid/unit"
+      {:post {:produces   ["text/html"]
+              :parameters {:path schema.contract/game-and-id-path-parameter
+                           :body (schema.contract/to-schema
+                                  [:map
+                                   [:unit-eid :uuid]
+                                   [:section [:enum "main" "reinforcements"]]])}
+              :handler    (integrant.core/ref ::web.view/draft-add-unit-view)}}]
+     ["/:eid/unit/:unit-eid"
+      {:delete {:produces   ["text/html"]
+                :parameters {:path  (schema.contract/to-schema
+                                     [:map
+                                      [:game-eid :uuid]
+                                      [:eid :uuid]
+                                      [:unit-eid :uuid]])
+                             :query (schema.contract/to-schema
+                                     [:map
+                                      [:section [:enum "main" "reinforcements"]]])}
+                :handler    (integrant.core/ref ::web.view/draft-remove-unit-view)}}]]]])
 
 (def api-routes
   ["/api"

@@ -68,6 +68,10 @@
 (def get-spells-by-keys query.game/get-spells-by-keys)
 (def get-abilities-by-names query.game/get-abilities-by-names)
 
+(def draft-state-entity schema/draft-state-entity)
+(def get-draft-state-by-draft query.game/get-draft-state-by-draft)
+(def upsert-draft-state query.game/upsert-draft-state)
+
 ;;; ─── Social Media DB entities ──────────────────────────────────────────────
 
 (def platform-entity schema/platform-entity)

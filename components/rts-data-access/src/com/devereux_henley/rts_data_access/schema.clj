@@ -140,6 +140,13 @@
     [:updated-at :instant]
     [:deleted-at [:maybe :instant]]]))
 
+(def draft-state-entity
+  (schema.contract/to-schema
+   [:map
+    [:id :int]
+    [:state :string]
+    [:updated-at :instant]]))
+
 (def create-tournament-params
   (schema.contract/to-schema
    [:map

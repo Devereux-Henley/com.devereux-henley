@@ -147,6 +147,79 @@
                                          (str "rts-api/asset/card/unit/" (:eid data) ".png"))
                                     (str "/card/unit/" (:eid data) ".png"))}))))
 
+(defn ^:private section-pct [cost max-val]
+  (if (and max-val (pos? max-val))
+    (int (min 100 (Math/round (double (* 100 (/ cost max-val))))))
+    0))
+
+(defn ^:private hydrate-units-with-stats
+  [units]
+  (mapv (fn [u]
+          (let [{:keys [stats abilities]} (domain/parse-unit-statistics (:unit-statistics u))]
+            (assoc u
+                   :parsed-stats stats
+                   :parsed-abilities abilities
+                   :is-lord (= "Lord" (:unit-category-name u)))))
+        units))
+
+(defn ^:private build-section-context
+  [section units game-eid draft-eid game-mode]
+  (let [is-main       (= section "main")
+        section-label (if is-main "Main Army" "Reinforcements")
+        section-id    (if is-main "main-army-section" "reinforcements-section")
+        section-max   (if is-main (:draft-value game-mode) (:reinforcement-value game-mode))
+        cost          (reduce (fn [s u] (+ s (or (:cost u) 0))) 0 units)
+        pct           (section-pct cost section-max)
+        lord-unit     (first (filter :is-lord units))
+        non-lords     (vec (remove :is-lord units))]
+    {:section             section
+     :section-label       section-label
+     :section-id          section-id
+     :is-main             is-main
+     :section-units       units
+     :lord-unit           lord-unit
+     :non-lord-units      non-lords
+     :section-cost        cost
+     :section-max         section-max
+     :section-pct         pct
+     :section-near-limit  (> pct 85)
+     :section-over-budget (> cost section-max)
+     :game-eid            game-eid
+     :draft-eid           draft-eid}))
+
+(defn ^:private render-army-section
+  [context]
+  {:status  200
+   :headers {"Content-Type" "text/html; charset=utf-8"}
+   :body    (selmer.parser/render-file "rts-api/view/draft-army-section.html" context)})
+
+(defn ^:private build-draft-context
+  [dependencies draft request]
+  (let [game-mode    (domain/get-game-mode-by-eid dependencies (:game-mode-eid draft))
+        faction      (domain/get-faction-by-eid dependencies (:faction-eid draft))
+        units        (hydrate-units-with-stats
+                      (domain/get-units-for-faction dependencies (:faction-eid draft)))
+        unit-by-eid  (into {} (map (juxt :eid identity) units))
+        units-by-cat (->> units
+                          (partition-by :unit-category-name)
+                          (mapv (fn [g] {:category (:unit-category-name (first g))
+                                         :units    (vec g)})))
+        state        (domain/get-draft-state dependencies (:eid draft))
+        hydrate      (fn [eids] (vec (keep unit-by-eid eids)))
+        game-eid     (:game-eid (:game-context request))
+        main-units   (hydrate (:main state))
+        reinf-units  (hydrate (:reinforcements state))
+        main-ctx     (build-section-context "main" main-units game-eid (:eid draft) game-mode)
+        reinf-ctx    (build-section-context "reinforcements" reinf-units game-eid (:eid draft) game-mode)]
+    {:faction                faction
+     :game-mode              game-mode
+     :reinforcements-enabled (= 1 (:reinforcements-enabled game-mode))
+     :units-by-category      units-by-cat
+     :main-section           main-ctx
+     :reinf-section          reinf-ctx
+     :game                   (:game (:game-context request))
+     :draft-eid              (:eid draft)}))
+
 (defmethod integrant.core/init-key ::draft-view
   [_init-key dependencies]
   (partial standard-entity-view-handler
@@ -155,9 +228,85 @@
               (either/right eid)
               (partial web.game/get-draft-by-eid dependencies)))
            "draft-index.html"
-           (fn [draft request]
-             {:faction (domain/get-faction-by-eid dependencies (:faction-eid draft))
-              :game    (:game (:game-context request))})))
+           (partial build-draft-context dependencies)))
+
+(defmethod integrant.core/init-key ::draft-add-unit-view
+  [_init-key dependencies]
+  (fn [request]
+    (try
+      (let [{{{:keys [eid game-eid]} :path
+              {:keys [unit-eid section]} :body} :parameters} request
+            draft       (domain/get-draft-by-eid dependencies eid)
+            game-mode   (domain/get-game-mode-by-eid dependencies (:game-mode-eid draft))
+            unit        (domain/get-unit-by-eid dependencies unit-eid)
+            state       (domain/get-draft-state dependencies eid)
+            section-k   (keyword section)
+            all-units   (hydrate-units-with-stats
+                         (domain/get-units-for-faction dependencies (:faction-eid draft)))
+            unit-by-eid (into {} (map (juxt :eid identity) all-units))
+            hydrate     (fn [eids] (vec (keep unit-by-eid eids)))
+            units-in    (hydrate (get state section-k []))
+            section-max (if (= section "main") (:draft-value game-mode) (:reinforcement-value game-mode))
+            cost-so-far (reduce (fn [s u] (+ s (or (:cost u) 0))) 0 units-in)
+            unit-hydrated (first (filter #(= unit-eid (:eid %)) all-units))
+            unit-cost   (or (:cost unit-hydrated) 0)
+            total-cost  (+ cost-so-far unit-cost)
+            is-lord     (:is-lord unit-hydrated)
+            lords-in    (count (filter :is-lord units-in))]
+        (cond
+          (> total-cost section-max)
+          {:status  422
+           :headers {"Content-Type" "text/html; charset=utf-8"}
+           :body    (selmer.parser/render-file
+                     "rts-api/view/draft-error-fragment.html"
+                     {:message (str "Adding " (:name unit) " would exceed the " section " army budget of " section-max ".")})}
+
+          (and is-lord (> lords-in 0))
+          {:status  422
+           :headers {"Content-Type" "text/html; charset=utf-8"}
+           :body    (selmer.parser/render-file
+                     "rts-api/view/draft-error-fragment.html"
+                     {:message "Only one lord may be added to an army section."})}
+
+          :else
+          (let [new-state (update state section-k (fnil conj []) unit-eid)
+                new-units (hydrate (get new-state section-k []))]
+            (domain/set-draft-state dependencies eid new-state)
+            (render-army-section
+             (merge (build-section-context section new-units game-eid eid game-mode)
+                    (:game-context request))))))
+      (catch Exception exc
+        (log/error exc)
+        (error-page 500 "Internal Server Error" "An unexpected error occurred.")))))
+
+(defmethod integrant.core/init-key ::draft-remove-unit-view
+  [_init-key dependencies]
+  (fn [request]
+    (try
+      (let [{{{:keys [eid unit-eid game-eid]} :path
+              {:keys [section]}               :query} :parameters} request
+            draft       (domain/get-draft-by-eid dependencies eid)
+            game-mode   (domain/get-game-mode-by-eid dependencies (:game-mode-eid draft))
+            state       (domain/get-draft-state dependencies eid)
+            section-k   (keyword section)
+            old-list    (get state section-k [])
+            idx         (.indexOf old-list unit-eid)
+            new-list    (if (>= idx 0)
+                          (into [] (concat (subvec old-list 0 idx) (subvec old-list (inc idx))))
+                          old-list)
+            new-state   (assoc state section-k new-list)]
+        (domain/set-draft-state dependencies eid new-state)
+        (let [all-units   (hydrate-units-with-stats
+                           (domain/get-units-for-faction dependencies (:faction-eid draft)))
+              unit-by-eid (into {} (map (juxt :eid identity) all-units))
+              hydrate     (fn [eids] (vec (keep unit-by-eid eids)))
+              new-units   (hydrate new-list)]
+          (render-army-section
+           (merge (build-section-context section new-units game-eid eid game-mode)
+                  (:game-context request)))))
+      (catch Exception exc
+        (log/error exc)
+        (error-page 500 "Internal Server Error" "An unexpected error occurred.")))))
 
 (defmethod integrant.core/init-key ::my-drafts-view
   [_init-key dependencies]
