@@ -27,8 +27,7 @@
 
 .app-content {
   flex: 1;
-  padding: var(--space-6);
-  overflow: auto;
+  padding: 0 var(--space-6);
 }
 
 /* --- Page header --- */

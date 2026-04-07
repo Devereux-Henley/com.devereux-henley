@@ -39,7 +39,8 @@
   align-items: center;
   justify-content: space-between;
   height: 3.5rem;
-  padding: 0 var(--space-6);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
   box-sizing: border-box;
   background-color: var(--color-navbar-bg);
   border-bottom: 1px solid var(--color-border);
