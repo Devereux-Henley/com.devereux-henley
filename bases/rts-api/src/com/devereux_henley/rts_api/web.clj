@@ -61,7 +61,8 @@
         [(str resourcekit/asset-path "/")
          "/style/"
          "/image/"
-         "/icon/"]))
+         "/icon/"
+         "/card/"]))
 
 (defn ^:private accepts-html?
   [request]
@@ -216,7 +217,7 @@
                                    :path "/"
                                    :not-found-handler
                                    (fn [_] {:status  301
-                                           :headers {"Location" "/view/dashboard.html"}})})
+                                            :headers {"Location" "/view/dashboard.html"}})})
     (ring/create-default-handler))
    {:middleware [ring.middleware.cookies/wrap-cookies
                  (partial ory-session-middleware auth-hostname session-name)]}))

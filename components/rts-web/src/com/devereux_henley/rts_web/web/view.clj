@@ -142,7 +142,10 @@
                 :abilities        (not-empty resolved-abilities)
                 :draftable-spells (not-empty resolved-spells)
                 :mounts           (not-empty mounts)
-                :equipment        (not-empty resolved-equipment)}))))
+                :equipment        (not-empty resolved-equipment)
+                :unit-card        (when (clojure.java.io/resource
+                                         (str "rts-api/asset/card/unit/" (:eid data) ".png"))
+                                    (str "/card/unit/" (:eid data) ".png"))}))))
 
 (defmethod integrant.core/init-key ::draft-view
   [_init-key dependencies]

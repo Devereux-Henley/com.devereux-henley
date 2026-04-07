@@ -38,6 +38,7 @@ import subprocess
 import sys
 
 SEED_DIR = "components/rts-data/resources/rts-data/sql/seed"
+UNIT_CARD_ASSET_DIR = os.path.join("bases", "rts-api", "resources", "rts-api", "asset", "card", "unit")
 
 FACTION_KEY_MAP = {
     "empire":            ["emp"],
@@ -358,6 +359,126 @@ def copy_ability_icons(icons_dir, asset_dir, unit_ability_map, key_eid_map,
     if missing_eid:
         print(f"  [icons] {len(missing_eid)} keys have no eid in seed "
               f"(e.g. {missing_eid[:3]})", file=sys.stderr)
+
+
+# ---------------------------------------------------------------------------
+# Unit card copying
+# ---------------------------------------------------------------------------
+
+# Matches one INSERT row in a unit seed file:
+# (id, 'eid', 'name', ...)
+UNIT_SEED_ROW_RE = re.compile(
+    r"\(\s*\d+,\s*'([0-9a-f\-]+)',\s*'((?:[^']|'')*)',"
+)
+
+
+def build_unit_name_eid_map(seed_dir):
+    """Parse all faction unit seed SQL files → {unit_name: eid}."""
+    result = {}
+    for filename in sorted(os.listdir(seed_dir)):
+        if not (filename.startswith("seed-") and filename.endswith("-units.sql")):
+            continue
+        filepath = os.path.join(seed_dir, filename)
+        with open(filepath, encoding="utf-8") as f:
+            content = f.read()
+        for m in UNIT_SEED_ROW_RE.finditer(content):
+            eid  = m.group(1)
+            name = m.group(2).replace("''", "'")
+            result[name] = eid
+    return result
+
+
+# Category infixes present in unit keys but often absent from icon filenames.
+_CATEGORY_RE = re.compile(r"_(inf|cav|mon|veh|art|cha|hrd|rng|mis)_")
+
+
+def _normalize_unit_key(uk):
+    """Strip category infix and trailing numeric suffix from a unit key."""
+    return re.sub(r"_\d+$", "", _CATEGORY_RE.sub("_", uk))
+
+
+def copy_unit_cards(cards_dir, asset_dir, name_index, unit_name_eid_map,
+                    dry_run=False):
+    """
+    For each unit name in unit_name_eid_map, finds the best-matching unit_key
+    from name_index, copies {cards_dir}/{unit_key}.png → {asset_dir}/{eid}.png,
+    then trims transparent borders.
+
+    Matching order (first hit wins):
+      1. Exact unit_key
+      2. unit_key with numeric suffix stripped
+      3. unit_key with category infix stripped
+      4. unit_key with both stripped
+      5. Prefix match: any icon whose name starts with the normalised key + '_'
+    """
+    available      = {os.path.splitext(f)[0] for f in os.listdir(cards_dir)
+                      if f.endswith(".png")}
+    available_list = sorted(available)   # for prefix scan
+
+    copied      = 0
+    missing_key = []
+    missing_src = []
+
+    def _find_icon(uk):
+        """Return the best-matching icon key for a unit_key, or None."""
+        # 1. Exact
+        if uk in available:
+            return uk
+        # 2. Strip numeric suffix
+        s1 = re.sub(r"_\d+$", "", uk)
+        if s1 in available:
+            return s1
+        # 3. Strip category infix
+        s2 = _CATEGORY_RE.sub("_", uk)
+        if s2 in available:
+            return s2
+        # 4. Strip both
+        s3 = _normalize_unit_key(uk)
+        if s3 in available:
+            return s3
+        # 5. Prefix match: any icon whose name starts with normalised key + '_'
+        prefix = s3 + "_"
+        matches = [ik for ik in available_list if ik.startswith(prefix)]
+        if matches:
+            return matches[0]
+        return None
+
+    for name, eid in unit_name_eid_map.items():
+        candidates = name_index.get(normalize_name(name), [])
+        if not candidates:
+            missing_key.append(name)
+            continue
+
+        unit_key = None
+        for uk, _lk in candidates:
+            result = _find_icon(uk)
+            if result is not None:
+                unit_key = result
+                break
+
+        if unit_key is None:
+            missing_src.append(name)
+            continue
+
+        src  = os.path.join(cards_dir, unit_key + ".png")
+        dest = os.path.join(asset_dir,  eid      + ".png")
+        if not dry_run:
+            shutil.copy2(src, dest)
+            subprocess.run(
+                ["mogrify", "-fuzz", "20%", "-trim", "+repage", dest],
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        copied += 1
+
+    print(f"  [unit cards] copied+trimmed {copied} cards", file=sys.stderr)
+    if missing_key:
+        print(f"  [unit cards] {len(missing_key)} units not in name index "
+              f"(e.g. {missing_key[:3]})", file=sys.stderr)
+    if missing_src:
+        print(f"  [unit cards] {len(missing_src)} units with no matching icon "
+              f"(e.g. {missing_src[:3]})", file=sys.stderr)
 
 
 # ---------------------------------------------------------------------------
@@ -720,6 +841,10 @@ def main():
                         help="Directory containing extracted ability icon PNGs "
                              "(named by icon_name from unit_abilities_tables). "
                              "If omitted, icon copying is skipped.")
+    parser.add_argument("--unit-cards-dir",
+                        help="Directory containing extracted unit card PNGs "
+                             "(ui/units/icons/ from game files, named by unit key). "
+                             "If omitted, unit card copying is skipped.")
     parser.add_argument("--dry-run", action="store_true",
                         help="Print what would change without writing files.")
     args = parser.parse_args()
@@ -815,6 +940,15 @@ def main():
     if not args.dry_run:
         with open(ability_file, "w", encoding="utf-8") as f:
             f.write(new_abilities)
+
+    if args.unit_cards_dir:
+        print("Copying and trimming unit cards...", file=sys.stderr)
+        unit_name_eid_map = build_unit_name_eid_map(SEED_DIR)
+        print(f"  {len(unit_name_eid_map)} units in seed", file=sys.stderr)
+        copy_unit_cards(args.unit_cards_dir, UNIT_CARD_ASSET_DIR,
+                        name_index, unit_name_eid_map, dry_run=args.dry_run)
+    else:
+        print("  [unit cards] --unit-cards-dir not provided, skipping", file=sys.stderr)
 
     if args.icons_dir:
         print("Copying and trimming ability icons...", file=sys.stderr)

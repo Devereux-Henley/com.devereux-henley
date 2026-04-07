@@ -6,11 +6,18 @@
 <section id="unit-page" aria-labelledby="unit-heading">
 
     <header class="unit-hero">
-        <div class="stack stack-2">
-            <h2 id="unit-heading" class="unit-name">{{data.name}}</h2>
-            <div class="cluster cluster-2">
-                <span class="badge badge-primary">{{data.unit-type-name}}</span>
-                <span class="badge badge-neutral">{{data.unit-category-name}}</span>
+        <div class="unit-hero-inner">
+            {% if unit-card %}
+            <img class="unit-hero-card"
+                 src="{{unit-card}}"
+                 alt="{{data.name}} unit card">
+            {% endif %}
+            <div class="stack stack-2">
+                <h2 id="unit-heading" class="unit-name">{{data.name}}</h2>
+                <div class="cluster cluster-2">
+                    <span class="badge badge-primary">{{data.unit-type-name}}</span>
+                    <span class="badge badge-neutral">{{data.unit-category-name}}</span>
+                </div>
             </div>
         </div>
     </header>

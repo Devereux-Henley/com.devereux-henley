@@ -108,6 +108,21 @@ a:hover:has(img) {
   margin-bottom: var(--space-4);
 }
 
+.unit-hero-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.unit-hero-card {
+  height: 6rem;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  flex-shrink: 0;
+  background-color: color-mix(in srgb, var(--color-neutral-900) 60%, transparent);
+}
+
 .unit-name {
   font-size: var(--font-size-2xl);
   color: var(--color-neutral-900);
