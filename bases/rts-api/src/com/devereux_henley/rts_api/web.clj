@@ -30,10 +30,14 @@
 (defn view-by-type
   [type]
   (get
-   {:game/game    "rts-web/resource/game.html"
-    :game/faction "rts-web/resource/faction.html"
-    :game/draft   "rts-web/resource/draft.html"
-    "exception"   "rts-web/resource/error.html"}
+   {:game/game           "rts-web/resource/game.html"
+    :game/faction        "rts-web/resource/faction.html"
+    :game/draft          "rts-web/resource/draft.html"
+    :draft/unit-panel    "rts-web/resource/draft-unit-panel.html"
+    :draft/add-success   "rts-web/resource/draft-add-success.html"
+    :draft/add-error     "rts-web/resource/draft-add-error.html"
+    :draft/remove-success "rts-web/resource/draft-remove-success.html"
+    "exception"          "rts-web/resource/error.html"}
    type
    "rts-web/resource/unknown.html"))
 

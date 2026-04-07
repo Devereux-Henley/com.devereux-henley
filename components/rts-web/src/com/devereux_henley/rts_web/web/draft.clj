@@ -3,7 +3,6 @@
    [clojure.string :as str]
    [com.devereux-henley.rts-domain.contract :as domain]
    [integrant.core]
-   [selmer.parser]
    [taoensso.timbre :as log]))
 
 ;; ─── Shared helpers ───────────────────────────────────────────────────────────
@@ -71,47 +70,6 @@
                   :else 0.0)]
     (assoc s :pct (int (min 100 (Math/round (* 100.0 (/ raw-val max-val))))))))
 
-;; ─── Response builders ────────────────────────────────────────────────────────
-
-(defn ^:private render-section [ctx oob?]
-  (selmer.parser/render-file "rts-web/view/draft-army-section.html"
-                             (assoc ctx :oob oob?)))
-
-(def ^:private oob-clear-error
-  "<div id=\"draft-action-error\" role=\"alert\" aria-live=\"polite\" hidden hx-swap-oob=\"outerHTML\"></div>")
-
-(defn ^:private add-success-response
-  "Primary target is #draft-action-error (cleared). Both army sections are OOB."
-  [main-ctx reinf-ctx reinforcements-enabled]
-  {:status  200
-   :headers {"Content-Type" "text/html; charset=utf-8"}
-   :body    (str
-             "<div id=\"draft-action-error\" role=\"alert\" aria-live=\"polite\" hidden></div>"
-             (render-section main-ctx true)
-             (when reinforcements-enabled
-               (render-section reinf-ctx true)))})
-
-(defn ^:private add-error-response
-  "Primary target is #draft-action-error (populated with message)."
-  [message]
-  {:status  200
-   :headers {"Content-Type" "text/html; charset=utf-8"}
-   :body    (str "<div id=\"draft-action-error\" role=\"alert\" aria-live=\"polite\">"
-                 message "</div>")})
-
-(defn ^:private remove-success-response
-  "Primary target is the modified section. OOB: other section (if applicable) + clear error."
-  [section main-ctx reinf-ctx reinforcements-enabled]
-  (let [primary-ctx   (if (= section "main") main-ctx reinf-ctx)
-        secondary-ctx (if (= section "main") reinf-ctx main-ctx)]
-    {:status  200
-     :headers {"Content-Type" "text/html; charset=utf-8"}
-     :body    (str
-               (render-section primary-ctx false)
-               (when reinforcements-enabled
-                 (render-section secondary-ctx true))
-               oob-clear-error)}))
-
 ;; ─── Handlers ─────────────────────────────────────────────────────────────────
 
 (defmethod integrant.core/init-key ::draft-unit-panel
@@ -119,25 +77,23 @@
   (fn [request]
     (try
       (let [{{{:keys [eid unit-eid]} :path} :parameters} request
-            draft     (domain/get-draft-by-eid dependencies eid)
-            game-mode (domain/get-game-mode-by-eid dependencies (:game-mode-eid draft))
-            unit      (domain/get-unit-by-eid dependencies unit-eid)
+            draft       (domain/get-draft-by-eid dependencies eid)
+            game-mode   (domain/get-game-mode-by-eid dependencies (:game-mode-eid draft))
+            unit        (domain/get-unit-by-eid dependencies unit-eid)
             {:keys [stats abilities]} (domain/parse-unit-statistics (:unit-statistics unit))
             panel-stats (mapv add-stat-pct stats)]
-        {:status  200
-         :headers {"Content-Type" "text/html; charset=utf-8"}
-         :body    (selmer.parser/render-file
-                   "rts-web/view/draft-unit-panel.html"
-                   {:unit                   (assoc unit
-                                                   :panel-stats panel-stats
-                                                   :parsed-abilities abilities)
-                    :draft-eid              eid
-                    :reinforcements-enabled (= 1 (:reinforcements-enabled game-mode))})})
+        {:status 200
+         :body   {:type                   :draft/unit-panel
+                  :unit                   (assoc unit
+                                                 :panel-stats panel-stats
+                                                 :parsed-abilities abilities)
+                  :draft-eid              eid
+                  :reinforcements-enabled (= 1 (:reinforcements-enabled game-mode))}})
       (catch Exception exc
         (log/error exc)
-        {:status  500
-         :headers {"Content-Type" "text/html; charset=utf-8"}
-         :body    "<aside id=\"draft-stats-panel\" class=\"draft-stats-panel\" role=\"complementary\"><p role=\"alert\">Failed to load unit details.</p></aside>"}))))
+        {:status 500
+         :body   {:type    :draft/add-error
+                  :message "Failed to load unit details."}}))))
 
 (defmethod integrant.core/init-key ::draft-add-unit
   [_init-key dependencies]
@@ -161,30 +117,36 @@
             total-cost    (+ cost-so-far unit-cost)
             is-lord       (:is-lord unit-hydrated)
             lords-in      (count (filter :is-lord units-in))
-            reinforcements-enabled (= 1 (:reinforcements-enabled game-mode))]
+            reinf-enabled (= 1 (:reinforcements-enabled game-mode))]
         (cond
           (nil? unit-hydrated)
-          (add-error-response "Unit not found in this faction's roster.")
+          {:status 422
+           :body   {:type :draft/add-error :message "Unit not found in this faction's roster."}}
 
           (> total-cost section-max)
-          (add-error-response (str "Adding " (:name unit-hydrated)
-                                   " would exceed the " section
-                                   " army budget of " section-max "."))
+          {:status 422
+           :body   {:type    :draft/add-error
+                    :message (str "Adding " (:name unit-hydrated)
+                                  " would exceed the " section
+                                  " army budget of " section-max ".")}}
 
           (and is-lord (> lords-in 0))
-          (add-error-response "Only one lord may be added to an army section.")
+          {:status 422
+           :body   {:type :draft/add-error :message "Only one lord may be added to an army section."}}
 
           :else
           (let [new-state   (update state section-k (fnil conj []) unit-eid)
-                new-units-m (hydrate (:main new-state))
-                new-units-r (hydrate (:reinforcements new-state))
-                main-ctx    (build-section-context "main" new-units-m eid game-mode)
-                reinf-ctx   (build-section-context "reinforcements" new-units-r eid game-mode)]
+                main-ctx    (build-section-context "main" (hydrate (:main new-state)) eid game-mode)
+                reinf-ctx   (build-section-context "reinforcements" (hydrate (:reinforcements new-state)) eid game-mode)]
             (domain/set-draft-state dependencies eid new-state)
-            (add-success-response main-ctx reinf-ctx reinforcements-enabled))))
+            {:status 200
+             :body   {:type          :draft/add-success
+                      :main-section  (assoc main-ctx :oob true)
+                      :reinf-section (when reinf-enabled (assoc reinf-ctx :oob true))}})))
       (catch Exception exc
         (log/error exc)
-        (add-error-response "An unexpected error occurred.")))))
+        {:status 500
+         :body   {:type :draft/add-error :message "An unexpected error occurred."}}))))
 
 (defmethod integrant.core/init-key ::draft-remove-unit
   [_init-key dependencies]
@@ -192,18 +154,18 @@
     (try
       (let [{{{:keys [eid unit-eid]} :path
               {:keys [section]}      :query} :parameters} request
-            draft                  (domain/get-draft-by-eid dependencies eid)
-            game-mode              (domain/get-game-mode-by-eid dependencies (:game-mode-eid draft))
-            state                  (domain/get-draft-state dependencies eid)
-            section-k              (keyword section)
-            old-list               (get state section-k [])
-            idx                    (.indexOf old-list unit-eid)
-            new-list               (if (>= idx 0)
-                                     (into [] (concat (subvec old-list 0 idx)
-                                                      (subvec old-list (inc idx))))
-                                     old-list)
-            new-state              (assoc state section-k new-list)
-            reinforcements-enabled (= 1 (:reinforcements-enabled game-mode))]
+            draft         (domain/get-draft-by-eid dependencies eid)
+            game-mode     (domain/get-game-mode-by-eid dependencies (:game-mode-eid draft))
+            state         (domain/get-draft-state dependencies eid)
+            section-k     (keyword section)
+            old-list      (get state section-k [])
+            idx           (.indexOf old-list unit-eid)
+            new-list      (if (>= idx 0)
+                            (into [] (concat (subvec old-list 0 idx)
+                                             (subvec old-list (inc idx))))
+                            old-list)
+            new-state     (assoc state section-k new-list)
+            reinf-enabled (= 1 (:reinforcements-enabled game-mode))]
         (domain/set-draft-state dependencies eid new-state)
         (let [all-units   (hydrate-units-with-stats
                            (domain/get-units-for-faction dependencies (:faction-eid draft)))
@@ -211,7 +173,11 @@
               hydrate     (fn [eids] (vec (keep unit-by-eid eids)))
               main-ctx    (build-section-context "main" (hydrate (:main new-state)) eid game-mode)
               reinf-ctx   (build-section-context "reinforcements" (hydrate (:reinforcements new-state)) eid game-mode)]
-          (remove-success-response section main-ctx reinf-ctx reinforcements-enabled)))
+          {:status 200
+           :body   {:type          :draft/remove-success
+                    :main-section  (assoc main-ctx :oob true)
+                    :reinf-section (when reinf-enabled (assoc reinf-ctx :oob true))}}))
       (catch Exception exc
         (log/error exc)
-        (add-error-response "An unexpected error occurred.")))))
+        {:status 200
+         :body   {:type :draft/add-error :message "An unexpected error occurred."}}))))

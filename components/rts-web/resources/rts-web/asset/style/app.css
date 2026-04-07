@@ -79,6 +79,8 @@ a:hover:has(img) {
 
 #game-section-factions {
   margin-top: var(--space-8);
+  overflow-y: auto;
+  max-height: calc(100vh - 12rem);
 }
 
 #game-section-factions p {

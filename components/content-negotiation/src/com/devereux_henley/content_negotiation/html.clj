@@ -29,7 +29,7 @@
   (reify
     muuntaja.format.core/EncodeToBytes
     (encode-to-bytes [_ data charset]
-      (if (map? data) ;; Handle exception maps
+      (if (map? data)
         (do
           (log/error data)
           (.getBytes "<div>Something went wrong.</div>" ^String charset))

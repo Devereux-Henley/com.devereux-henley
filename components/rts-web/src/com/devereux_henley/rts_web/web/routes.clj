@@ -50,28 +50,28 @@
    ["/game/:game-eid"
     {:middleware [(integrant.core/ref ::web.view/game-context-middleware)]}
     ["/index.html"
-     {:get {:produces   ["text/html"]
+     {:get {:produces   ["application/htmx+html"]
             :parameters {:path schema.contract/game-id-path-parameter}
             :handler    (integrant.core/ref ::web.view/game-index-view)}}]
     ["/faction/:eid/index.html"
-     {:get {:produces   ["text/html"]
+     {:get {:produces   ["application/htmx+html"]
             :parameters {:path schema.contract/game-and-id-path-parameter}
             :handler    (integrant.core/ref ::web.view/faction-view)}}]
     ["/unit/:eid/index.html"
-     {:get {:produces   ["text/html"]
+     {:get {:produces   ["application/htmx+html"]
             :parameters {:path schema.contract/game-and-id-path-parameter}
             :handler    (integrant.core/ref ::web.view/unit-view)}}]
     ["/draft"
      ["/create.html"
-      {:get {:produces   ["text/html"]
+      {:get {:produces   ["application/htmx+html"]
              :parameters {:path schema.contract/game-id-path-parameter}
              :handler    (integrant.core/ref ::web.view/create-draft-view)}}]
      ["/me.html"
-      {:get {:produces   ["text/html"]
+      {:get {:produces   ["application/htmx+html"]
              :parameters {:path schema.contract/game-id-path-parameter}
              :handler    (integrant.core/ref ::web.view/my-drafts-view)}}]
      ["/:eid/index.html"
-      {:get {:produces   ["text/html"]
+      {:get {:produces   ["application/htmx+html"]
              :parameters {:path schema.contract/game-and-id-path-parameter}
              :handler    (integrant.core/ref ::web.view/draft-view)}}]]]])
 
@@ -125,7 +125,7 @@
             :handler    (integrant.core/ref ::web.game/get-faction)}}]
    ["/draft/:eid/unit/:unit-eid"
     {:post   {:no-doc     true
-              :produces   ["text/html"]
+              :produces   ["application/htmx+html"]
               :parameters {:path  (schema.contract/to-schema
                                    [:map
                                     [:eid :uuid]
@@ -135,7 +135,7 @@
                                     [:section [:enum "main" "reinforcements"]]])}
               :handler    (integrant.core/ref ::web.draft/draft-add-unit)}
      :delete {:no-doc     true
-              :produces   ["text/html"]
+              :produces   ["application/htmx+html"]
               :parameters {:path  (schema.contract/to-schema
                                    [:map
                                     [:eid :uuid]
@@ -146,7 +146,7 @@
               :handler    (integrant.core/ref ::web.draft/draft-remove-unit)}}]
    ["/draft/:eid/unit/:unit-eid/panel"
     {:get {:no-doc     true
-           :produces   ["text/html"]
+           :produces   ["application/htmx+html"]
            :parameters {:path (schema.contract/to-schema
                                [:map
                                 [:eid :uuid]

@@ -144,5 +144,13 @@
             {% block content %}
             {% endblock %}
         </main>
+        <script>
+            // Allow HTMX to swap content even on 4xx responses (e.g. 422 validation errors).
+            document.body.addEventListener('htmx:beforeSwap', function (evt) {
+                if (evt.detail.xhr.status >= 400) {
+                    evt.detail.shouldSwap = true;
+                }
+            });
+        </script>
     </body>
 </html>

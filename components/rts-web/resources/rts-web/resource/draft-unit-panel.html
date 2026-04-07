@@ -1,0 +1,101 @@
+<aside class="draft-stats-panel" id="draft-stats-panel" role="complementary" aria-label="Unit statistics for {{data.unit.name}}">
+    <div class="draft-stats-inner">
+
+        <div class="draft-stats-header">
+            <img class="draft-stats-portrait"
+                 src="/card/unit/{{data.unit.eid}}.png"
+                 alt="{{data.unit.name}}"
+                 onerror="this.style.display='none'">
+            <div class="draft-stats-meta">
+                <h3 class="draft-stats-name">{{data.unit.name}}</h3>
+                <div class="draft-stats-badges">
+                    <span class="badge badge-primary">{{data.unit.unit-type-name}}</span>
+                    <span class="badge badge-neutral">{{data.unit.unit-category-name}}</span>
+                </div>
+                <div class="draft-stats-cost-row">
+                    <span class="draft-budget-icon" aria-hidden="true">&#11044;</span>
+                    <span class="draft-stats-cost">{{data.unit.cost}}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="draft-stats-actions">
+            <div id="draft-action-error" role="alert" aria-live="polite" hidden></div>
+            <button class="btn btn-primary draft-add-btn"
+                    type="button"
+                    hx-post="/api/draft/{{data.draft-eid}}/unit/{{data.unit.eid}}?section=main"
+                    hx-target="#draft-action-error"
+                    hx-swap="outerHTML">
+                Add to Main Army
+            </button>
+            {% if data.reinforcements-enabled %}
+            <button class="btn btn-primary draft-add-btn draft-add-btn--reinf"
+                    type="button"
+                    hx-post="/api/draft/{{data.draft-eid}}/unit/{{data.unit.eid}}?section=reinforcements"
+                    hx-target="#draft-action-error"
+                    hx-swap="outerHTML">
+                Add to Reinforcements
+            </button>
+            {% endif %}
+            <a class="draft-details-link"
+               href="/view/game/{{data.unit.game-eid}}/unit/{{data.unit.eid}}/index.html"
+               aria-label="View full details for {{data.unit.name}}">
+                View full details &rarr;
+            </a>
+        </div>
+
+        <section class="draft-stats-section unit-panel" aria-labelledby="panel-stats-heading">
+            <h4 class="unit-panel-heading" id="panel-stats-heading">Statistics</h4>
+            <div class="draft-stat-rows">
+                {% for stat in data.unit.panel-stats %}
+                <div class="draft-stat-bar-row">
+                    <span class="draft-stat-label">{{stat.stat}}</span>
+                    <span class="draft-stat-value">{{stat.value}}</span>
+                    <div class="draft-stat-bar" aria-hidden="true">
+                        <div class="draft-stat-bar-fill" style="--pct:{{stat.pct}}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        {% if data.unit.parsed-abilities %}
+        <section class="draft-stats-section unit-panel" aria-labelledby="panel-abilities-heading">
+            <h4 class="unit-panel-heading" id="panel-abilities-heading">Abilities</h4>
+            <ul class="unit-ability-list" aria-label="Unit abilities">
+                {% for ability in data.unit.parsed-abilities %}
+                <li class="unit-ability-item">
+                    <img class="unit-ability-icon"
+                         src="/icon/ability/{{ability}}.png"
+                         alt="{{ability}}"
+                         onerror="this.style.display='none'">
+                    <span class="unit-ability-tooltip" role="tooltip">{{ability}}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
+        <section class="draft-stats-section draft-future-section unit-panel" aria-labelledby="panel-spells-heading">
+            <h4 class="unit-panel-heading" id="panel-spells-heading">
+                Spells <span class="draft-future-badge" aria-label="Coming soon">&#128274;</span>
+            </h4>
+            <p class="draft-future-msg">Spell selection coming soon.</p>
+        </section>
+
+        <section class="draft-stats-section draft-future-section unit-panel" aria-labelledby="panel-equip-heading">
+            <h4 class="unit-panel-heading" id="panel-equip-heading">
+                Equipment <span class="draft-future-badge" aria-label="Coming soon">&#128274;</span>
+            </h4>
+            <p class="draft-future-msg">Equipment selection coming soon.</p>
+        </section>
+
+        <section class="draft-stats-section draft-future-section unit-panel" aria-labelledby="panel-level-heading">
+            <h4 class="unit-panel-heading" id="panel-level-heading">
+                Level <span class="draft-future-badge" aria-label="Coming soon">&#128274;</span>
+            </h4>
+            <p class="draft-future-msg">Unit leveling coming soon.</p>
+        </section>
+
+    </div>
+</aside>
