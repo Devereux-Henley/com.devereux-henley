@@ -390,11 +390,180 @@ def build_unit_name_eid_map(seed_dir):
 
 # Category infixes present in unit keys but often absent from icon filenames.
 _CATEGORY_RE = re.compile(r"_(inf|cav|mon|veh|art|cha|hrd|rng|mis)_")
+# Game version prefixes on unit keys: wh_main_, wh2_dlc17_, wh3_twa04_, etc.
+_GAME_PREFIX_RE = re.compile(r"^wh[23]?_(main|dlc\d+|pro\d+|twa\d+)_")
 
 
 def _normalize_unit_key(uk):
     """Strip category infix and trailing numeric suffix from a unit key."""
     return re.sub(r"_\d+$", "", _CATEGORY_RE.sub("_", uk))
+
+
+_STOPWORDS = {"of", "the", "at", "a", "an", "and", "in", "on", "for"}
+
+
+def _strip_stopwords(key):
+    """Remove common English stopwords from a snake_case key."""
+    return "_".join(w for w in key.split("_") if w not in _STOPWORDS)
+
+
+def _unit_key_to_portrait_base(uk):
+    """
+    Reduce a unit key to {faction}_{role} form for portrait matching.
+    e.g. wh2_dlc17_bst_cha_beastlord_2 -> bst_beastlord
+         wh_main_emp_cha_wizard_light_0 -> emp_wizard_light
+    """
+    uk = _GAME_PREFIX_RE.sub("", uk)   # strip wh_main_ / wh2_dlc17_ etc.
+    uk = _CATEGORY_RE.sub("_", uk)     # strip _cha_ / _inf_ etc.
+    uk = re.sub(r"_\d+$", "", uk)      # strip trailing _0/_1
+    uk = re.sub(r"_+", "_", uk).strip("_")
+    return uk
+
+
+# ---------------------------------------------------------------------------
+# Portrait copying (lords / heroes)
+# ---------------------------------------------------------------------------
+
+def build_portrait_role_map(portraits_dir):
+    """
+    Scans portraits_dir for base PNGs (no _maskN suffix) and returns
+    {role_key: best_filename} where role_key strips the _campaign_XX suffix
+    and best_filename prefers the campaign_01 / quality-0 variant.
+    """
+    role_map: dict[str, str] = {}
+    for fname in sorted(os.listdir(portraits_dir)):
+        if not fname.endswith(".png") or "_mask" in fname:
+            continue
+        stem = fname[:-4]
+        m = re.match(r"^(.+)_(\d+)$", stem)
+        if not m:
+            continue
+        base, quality = m.group(1), int(m.group(2))
+        if quality != 0:
+            continue   # only keep quality-0 portraits
+        # role = base without _campaign_XX
+        role = re.sub(r"_campaign_\d+$", "", base)
+        # Prefer campaign_01 over higher-numbered variants
+        if role not in role_map:
+            role_map[role] = fname
+        elif "_campaign_01" in base and "_campaign_01" not in role_map[role]:
+            role_map[role] = fname
+    return role_map
+
+
+def _find_portrait(base, role_map, role_list):
+    """
+    Try to find a portrait for a normalised unit key `base`.
+    Attempts (in order):
+      1. Exact role match
+      2. Any role that starts with base (covers bst_beastlords vs bst_beastlord)
+      3. base starts with role (portrait role is a prefix of base)
+      4. Named-character variant: insert _ch_ after faction prefix
+      5. Progressively drop trailing words from base and retry 1-4
+    """
+    def _try(key):
+        if key in role_map:
+            return role_map[key]
+        # forward prefix: any role starts with key (catches plural/suffix variants)
+        for r in role_list:
+            if r.startswith(key):
+                return role_map[r]
+        # reverse prefix: key starts with role
+        for r in role_list:
+            if key.startswith(r):
+                return role_map[r]
+        return None
+
+    def _try_with_ch(key):
+        """Also attempt {faction}_ch_{rest} for named character portraits."""
+        parts = key.split("_", 1)
+        if len(parts) == 2:
+            ch_key = parts[0] + "_ch_" + parts[1]
+            result = _try(ch_key)
+            if result:
+                return result
+        return _try(key)
+
+    result = _try_with_ch(base)
+    if result:
+        return result
+    # Stopword-stripped variant
+    stripped = _strip_stopwords(base)
+    if stripped != base:
+        result = _try_with_ch(stripped)
+        if result:
+            return result
+    # Progressively drop last word
+    parts = base.split("_")
+    for drop in range(1, len(parts) - 1):   # keep at least faction + 1 word
+        shorter = "_".join(parts[:-drop])
+        result = _try_with_ch(shorter)
+        if result:
+            return result
+        sw = _strip_stopwords(shorter)
+        if sw != shorter:
+            result = _try_with_ch(sw)
+            if result:
+                return result
+    return None
+
+
+def copy_unit_portraits(portraits_dir, asset_dir, name_index, unit_name_eid_map,
+                        dry_run=False):
+    """
+    For each unit in unit_name_eid_map that has no card yet, find a matching
+    portrait and copy it to {asset_dir}/{eid}.png.
+    Skips units that already have a card file.
+    """
+    role_map  = build_portrait_role_map(portraits_dir)
+    role_list = sorted(role_map.keys())
+
+    # Skip units that already have a card
+    existing = {os.path.splitext(f)[0] for f in os.listdir(asset_dir)
+                if f.endswith(".png")}
+
+    copied      = 0
+    missing_key = []
+    no_portrait = []
+
+    for name, eid in unit_name_eid_map.items():
+        if eid in existing:
+            continue
+        candidates = name_index.get(normalize_name(name), [])
+        if not candidates:
+            missing_key.append(name)
+            continue
+
+        portrait_file = None
+        for uk, _lk in candidates:
+            base = _unit_key_to_portrait_base(uk)
+            portrait_file = _find_portrait(base, role_map, role_list)
+            if portrait_file:
+                break
+
+        if not portrait_file:
+            no_portrait.append(name)
+            continue
+
+        src  = os.path.join(portraits_dir, portrait_file)
+        dest = os.path.join(asset_dir, eid + ".png")
+        if not dry_run:
+            shutil.copy2(src, dest)
+            subprocess.run(
+                ["mogrify", "-fuzz", "20%", "-trim", "+repage", dest],
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        copied += 1
+
+    print(f"  [portraits] copied+trimmed {copied} portraits", file=sys.stderr)
+    if missing_key:
+        print(f"  [portraits] {len(missing_key)} units not in name index "
+              f"(e.g. {missing_key[:3]})", file=sys.stderr)
+    if no_portrait:
+        print(f"  [portraits] {len(no_portrait)} units with no matching portrait "
+              f"(e.g. {no_portrait[:5]})", file=sys.stderr)
 
 
 def copy_unit_cards(cards_dir, asset_dir, name_index, unit_name_eid_map,
@@ -441,6 +610,19 @@ def copy_unit_cards(cards_dir, asset_dir, name_index, unit_name_eid_map,
         matches = [ik for ik in available_list if ik.startswith(prefix)]
         if matches:
             return matches[0]
+        # 6. Stopword-stripped versions of all the above
+        s4 = _strip_stopwords(s3)
+        if s4 != s3:
+            if s4 in available:
+                return s4
+            prefix4 = s4 + "_"
+            matches4 = [ik for ik in available_list if ik.startswith(prefix4)]
+            if matches4:
+                return matches4[0]
+            # Also try icon keys with stopwords stripped
+            for ik in available_list:
+                if _strip_stopwords(ik) == s4:
+                    return ik
         return None
 
     for name, eid in unit_name_eid_map.items():
@@ -845,6 +1027,11 @@ def main():
                         help="Directory containing extracted unit card PNGs "
                              "(ui/units/icons/ from game files, named by unit key). "
                              "If omitted, unit card copying is skipped.")
+    parser.add_argument("--portraits-dir",
+                        help="Directory containing extracted portrait PNGs "
+                             "(ui/portraits/units/no_culture/ from game files). "
+                             "Used for lords/heroes without a unit card. "
+                             "If omitted, portrait copying is skipped.")
     parser.add_argument("--dry-run", action="store_true",
                         help="Print what would change without writing files.")
     args = parser.parse_args()
@@ -949,6 +1136,14 @@ def main():
                         name_index, unit_name_eid_map, dry_run=args.dry_run)
     else:
         print("  [unit cards] --unit-cards-dir not provided, skipping", file=sys.stderr)
+
+    if args.portraits_dir:
+        print("Copying and trimming lord/hero portraits...", file=sys.stderr)
+        unit_name_eid_map = build_unit_name_eid_map(SEED_DIR)
+        copy_unit_portraits(args.portraits_dir, UNIT_CARD_ASSET_DIR,
+                            name_index, unit_name_eid_map, dry_run=args.dry_run)
+    else:
+        print("  [portraits] --portraits-dir not provided, skipping", file=sys.stderr)
 
     if args.icons_dir:
         print("Copying and trimming ability icons...", file=sys.stderr)
