@@ -40,6 +40,272 @@ import sys
 SEED_DIR = "components/rts-data/resources/rts-data/sql/seed"
 UNIT_CARD_ASSET_DIR = os.path.join("bases", "rts-api", "resources", "rts-api", "asset", "card", "unit")
 
+# ---------------------------------------------------------------------------
+# Explicit unit-name → icon/portrait key overrides
+#
+# Used for units whose display name is absent from the land_units loc file
+# (RoR units, variant units, lords/heroes with special names).
+#
+# Values are icon stems from ui/units/icons/ OR portrait stems from
+# ui/portraits/units/no_culture/ — the functions below will search both dirs.
+# ---------------------------------------------------------------------------
+
+UNIT_CARD_OVERRIDES: dict[str, str] = {
+    # ── Units with known possible_cards (icon overrides) ─────────────────────
+    "Amaxon Barbs (Razordon Hunting Pack)":                "wh2_dlc13_lzd_razordon",
+    "Amethyst Helstorm Rocket Battery":                    "wh_main_emp_helstorm_rocket",
+    "Amethyst Outriders":                                  "wh_main_emp_outriders",
+    "Armoured Squig Hoppers":                              "wh_dlc06_grn_squig_hoppers",
+    "Beastslayers of Bastonne (Foot Squires)":             "wh_dlc07_brt_foot_squires",
+    "Blackhole Flayers (Doom-Flayers)":                    "wh2_dlc12_skv_doom_flayers_ror",
+    "Blessed Razordon Hunting Pack":                       "wh2_dlc13_lzd_razordon_blessed",
+    "Blessed Sacred Kroxigor":                             "wh2_dlc13_lzd_sacred_kroxigors_blessed",
+    "Butchers of Kalkengard (Minotaurs - Shields)":        "wh_dlc03_bst_minotaurs",
+    "Cairn Wraiths":                                       "wh_main_vmp_cairn_wraith",
+    "Centigors of Tzeentch":                               "wh_dlc03_bst_centigors",
+    "Chosen of the Gods (Ushabti - Great Bows)":           "wh2_dlc09_tmb_ushabti_bow_ror",
+    "Death Dealers (Ratling Guns)":                        "wh2_dlc12_skv_ratling_gun_team_ror",
+    "Defenders of the Fleur-de-lis (Knights Errant)":      "wh_dlc07_brt_knights_errant",
+    "Destroyers of the Drakwald (Ungor Spearmen Herd - Shields)": "wh_dlc03_bst_ungor_spearmen_shield",
+    "Doom Diver Catapults":                                "wh_main_grn_doom_diver",
+    "Doom-Flayers":                                        "wh2_dlc12_skv_doom_flayers",
+    "Dwarf-Thing Menace (Doom-Flayers)":                   "wh2_dlc12_skv_doom_flayers_ror",
+    "Exalted Great Unclean One (Death)":                   "wh3_dlc25_nur_exalted_great_unclean_one_qb_boss",
+    "Exalted Great Unclean One (Nurgle)":                  "wh3_dlc25_nur_exalted_great_unclean_one_qb_boss",
+    "Flame Cannons (Grudge Settlers)":                     "wh_main_dwf_flame_cannon",
+    "Groghooves of Wolf's Run (Centigors - Throwing Axes)": "wh2_dlc17_bst_centigors_throwing_axes_ror",
+    "Grudge Throwers (Grudge Settlers)":                   "wh_main_dwf_grudge_thrower",
+    "Gyrocopters (Trollhammers - Grudge Settlers)":        "wh_main_dwf_gyrocopter",
+    "Halberdiers":                                         "wh2_dlc13_emp_halberdiers_ror",
+    "Hammerers (Grudge Settlers)":                         "wh_main_dwf_hammerers",
+    "Hawk-Eyes of Drakira (Waywatchers)":                  "wh_dlc05_wef_waywatchers",
+    "Helstorm Rocket Battery":                             "wh_main_emp_helstorm_rocket",
+    "Irondrakes (Grudge Settlers)":                        "wh_main_dwf_irondrakes",
+    "Khargan the Crazed":                                  "wh3_dlc25_nur_exalted_great_unclean_one_qb_boss",
+    "Khorrok's Manrippers (Bestigor Herd)":                "wh_dlc03_bst_bestigor_herd",
+    "Knights of Morr (Empire Knights)":                    "wh2_dlc13_emp_empire_knights_morr_ror",
+    "Knights of the Everlasting Light (Empire Knights)":   "wh2_dlc13_emp_empire_knights_everlasting_light_ror",
+    "Knights of the Lionhearted (Knights of the Realm)":   "wh_main_brt_knights_realm",
+    "Lava Arachnarok Spider":                              "wh_main_grn_arachnarok_spider",
+    "Loec's Tricksters (Wardancers - Asrai Spears)":       "wh_dlc05_wef_wardancers_spear",
+    "Longbeards (Great Weapons - Grudge Settlers)":        "wh_main_dwf_longbeards_great_weapons",
+    "Lost Sylvan Knights (Great Stag Knights)":            "wh2_dlc16_wef_great_stag_knights",
+    "Luminark of Hysh":                                    "wh_main_emp_luminark",
+    "Malevolent Ancient Treeman (Beasts)":                 "wh2_dlc16_wef_malicious_treekin",
+    "Malevolent Ancient Treeman (Life)":                   "wh2_dlc16_wef_malicious_treekin",
+    "Malevolent Ancient Treeman (Shadows)":                "wh2_dlc16_wef_malicious_treekin",
+    "Malevolent Branchwraith (Beasts)":                    "wh2_dlc16_wef_malicious_dryads",
+    "Malevolent Branchwraith (Life)":                      "wh2_dlc16_wef_malicious_dryads",
+    "Malevolent Branchwraith (Shadows)":                   "wh2_dlc16_wef_malicious_dryads",
+    "Morskittar's Hellion (Mutant Rat Ogre)":              "wh2_dlc16_skv_rat_ogre_mutant",
+    "Peasant Bowmen":                                      "wh_dlc07_brt_peasant_mob",
+    "Peasant Bowmen (Fire Arrows)":                        "wh_dlc07_brt_peasant_mob",
+    "Peasant Bowmen (Pox Arrows)":                         "wh_dlc07_brt_peasant_mob",
+    "Quarrellers (Great Weapons - Grudge Settlers)":       "wh_main_dwf_quarrellers_great_weapons",
+    "Raven Heralds (Dark Riders)":                         "wh2_dlc10_def_raven_heralds",
+    "Razordon Hunting Pack":                               "wh2_dlc13_lzd_razordon",
+    "Skeleton Archer Chariots":                            "wh2_dlc09_tmb_skeleton_archers_ror",
+    "Skin Wolf Werekin":                                   "wh_dlc08_nor_skin_wolves",
+    "Sons of Ghorros (Centigors - Great Weapons)":         "wh_dlc03_bst_centigors",
+    "Steam Tank":                                          "wh2_dlc13_emp_steam_tank_ror",
+    "Steam Tank (Volley Gun)":                             "wh2_dlc13_emp_steam_tank_ror",
+    "Teeth-Breakers (Ratling Guns)":                       "wh2_dlc12_skv_ratling_gun_team_ror",
+    "The Companions of Quenelles (Questing Knights)":      "wh_dlc07_brt_questing_knights",
+    "The Daemonspew (Forsaken)":                           "wh_dlc01_chs_forsaken",
+    "The Feasters in the Dusk (Crypt Ghouls)":             "wh_dlc04_vmp_feasters",
+    "The Holy Wardens of La Maisontaal (Battle Pilgrims)": "wh_dlc07_brt_battle_pilgrims",
+    "The Stubborn Bulls (Empire Knights - Greatswords)":   "wh2_dlc13_emp_empire_knights_everlasting_light_ror",
+    "The Tide of Skjold (Zombie Pirate Deckhand Mob)":     "wh2_dlc11_cst_zombie_deckhands_ror",
+    "Thunderers (Grudge-Rakers)":                          "wh_main_dwf_thunderers",
+    "Wardens of Cythral (Wildwood Rangers)":               "wh_dlc05_wef_wildwood_ranger",
+    "Wardens of Montfort (Mounted Yeomen Archers)":        "wh_main_brt_mounted_yeomen_archers",
+    "Wild Hunters of Kurnous (Wild Riders - Shields)":     "wh_dlc05_wef_wild_riders_shield",
+    "Wildwood Rangers":                                    "wh_dlc05_wef_wildwood_ranger",
+    "Winterheart Guard (Eternal Guard - Shields)":         "wh_dlc05_wef_eternal_guard_shield",
+    "Zintler's Reiksguard (Reiksguard)":                   "wh_dlc04_emp_zintlers",
+    "Zombie Pirate Deckhand Mob":                          "wh2_dlc11_cst_zombie_deckhands",
+    "Zombie Pirate Deckhand Mob (Polearms)":               "wh2_dlc11_cst_zombie_deckhands_polearm",
+
+    # ── Regular units matched by unit-key prefix scan ─────────────────────────
+    "Ancient Stegadon (Engine of the Gods)":               "wh2_dlc12_lzd_mon_ancient_stegadon_engine_gpds",
+    "Bastiladon (Ark of Sotek)":                           "wh2_dlc12_lzd_mon_bastiladon_ark_of_sotek",
+    "Bastiladon (Revivification Crystal)":                 "wh2_main_lzd_mon_bastiladon_healing_platform",
+    "Bastiladon (Solar Engine)":                           "wh2_main_lzd_mon_bastiladon_solar",
+    "Blessed Ancient Salamander":                          "wh2_dlc12_lzd_mon_ancient_salamander_blessed",
+    "Blessed Bastiladon (Solar Engine)":                   "wh2_main_lzd_mon_bastiladon_solar_blessed",
+    "Blessed Chameleon Stalkers":                          "wh2_dlc17_lzd_inf_chameleon_stalkers_blessed",
+    "Blessed Ripperdactyl Riders":                         "wh2_dlc12_lzd_cav_ripperdactyl_riders_blessed",
+    "Blessed Salamander Hunting Pack":                     "wh2_dlc12_lzd_mon_salamander_hunting_pack_blessed",
+    "Blessed Saurus Spears (Shields)":                     "wh2_main_lzd_inf_saurus_spearmen_shields_blesssed",
+    "Blessed Saurus Warriors (Shields)":                   "wh2_main_lzd_inf_saurus_warriors_shields_blessed",
+    "Blessed Terradon Riders":                             "wh2_main_lzd_mon_terradon_blessed",
+    "Blessed Terradon Riders (Fireleech Bolas)":           "wh2_main_lzd_mon_terradon_fireleech_blessed",
+    "Blades of the Blood Queen (Har Ganeth Executioners)": "wh2_dlc10_def_har_ganeth_executioners_ror",
+    "Bugman's Rangers":                                    "wh_dlc06_dwf_rangers_bugmans",
+    "Cave Bats":                                           "wh2_dlc16_wef_ror_dryads",
+    "Chill of Sontar (War Hydra)":                         "wh2_dlc10_def_war_hydra_ror",
+    "Clan Vulkn Tailslashers (Clanrats - Shields)":        "wh2_dlc12_skv_inf_clanrats_shields_ror",
+    "Cold One Riders":                                     "wh2_main_lzd_cav_cold_one_riders",
+    "Cold One Spear-Riders":                               "wh2_main_lzd_cav_cold_one_spearriders",
+    "Council Guard (Stormvermin - Halberds)":              "wh2_dlc12_skv_inf_stormvermin_halberds_ror",
+    "Death Shriek Terrorgheist":                           "wh2_dlc11_cst_death_shriek_terrogheist",
+    "Doom Knights of Tzeentch":                            "wh3_twa07_tze_cav_doom_knights_ror_0",
+    "Dwarf Warriors":                                      "wh_main_dwf_warriors",
+    "Dwarf Warriors (Great Weapons)":                      "wh_main_dwf_warriors_great_weapons",
+    "Enigmas of Ghyran (Zoats)":                           "wh2_dlc16_wef_ror_zoats",
+    "Everqueen's Court Guards (Sisters of Avelorn)":       "wh2_dlc10_hef_inf_sisters_of_avelorn_ror",
+    "Exalted Flamer of Tzeentch":                          "wh3_main_tze_mon_exalted_flamer_0",
+    "Explosive Squig":                                     "wh_dlc06_grn_squig_herd",
+    "Feral Bastiladon":                                    "wh2_main_lzd_mon_bastiladon_feral",
+    "Feral Hydra":                                         "wh2_main_def_war_hydra",
+    "Field Trebuchets":                                    "wh_main_brt_trebuchet",
+    "Firebark Elders (Tree Kin)":                          "wh_pro04_wef_ror_treekin",
+    "Forest Goblin Spider Rider Archers":                  "wh_main_grn_goblin_spider_rider_bow",
+    "Forest Goblin Spider Riders":                         "wh_main_grn_goblin_spider_rider_spear",
+    "Gorgers":                                             "wh3_main_ogr_mon_gorger_0",
+    "Great Cannons":                                       "wh_main_emp_cannon",
+    "Gwindalor":                                           "wh2_dlc16_wef_ror_zoats",
+    "Iron Daemon - Dreadquake Mortar":                     "wh3_dlc23_chd_veh_iron_daemon",
+    "Ithilmar Chariots":                                   "wh2_main_hef_cav_ithilmar_tiranoc_chariot",
+    "Keepers of the Flame (Phoenix Guard)":                "wh2_dlc10_hef_phoenix_guard_ror",
+    "Khemrian Warsphinx":                                  "wh2_dlc09_tmb_warsphinx",
+    "Knights of the Ebon Claw (Dread Knights)":            "wh2_dlc10_def_cold_one_dread_knights_ror",
+    "Legion of Chaqua (Saurus Spears)":                    "wh2_dlc12_lzd_inf_saurus_spearmen_shields_ror",
+    "Lion Chariots of Chrace":                             "wh2_dlc15_hef_veh_lion_chariot",
+    "Lothern Skycutters":                                  "wh3_dlc27_hef_veh_sky_cutter_bows",
+    "Lothern Skycutters (Bolt Throwers)":                  "wh3_dlc27_hef_veh_sky_cutter_bolt_thrower",
+    "Maws of Savagery (Skin Wolves - Armoured)":           "wh_pro04_nor_ror_skin_wolves_armoured",
+    "Norscan Giant":                                       "wh_dlc08_nor_giant",
+    "Norscan Ice Trolls":                                  "wh_dlc08_nor_ice_trolls",
+    "Norscan Ice Wolves":                                  "wh_dlc08_nor_ice_wolves",
+    "Noxbringer (Soul Grinder of Nurgle)":                 "wh3_dlc25_nur_mon_soul_grinder_ror",
+    "Obsinite Gyrocopters":                                "wh3_dlc25_dwf_veh_gyrocopter_1_grudge_unit",
+    "Pahaux Sentinels (Terradon Riders)":                  "wh2_dlc12_lzd_mon_terradon_ror",
+    "Rahagra's Pride (War Lions of Chrace)":               "wh2_dlc15_hef_mon_war_lions_ror",
+    "Salamander Hunting Pack":                             "wh2_dlc12_lzd_mon_salamander_hunting_pack",
+    "Sisters of the Singing Doom (Witch Elves)":           "wh2_dlc10_def_witch_elves_ror",
+    "Skin Wolves":                                         "wh_dlc08_nor_skin_wolves",
+    "Skin Wolves (Armoured)":                              "wh_dlc08_nor_skin_wolves_armoured",
+    "Skullcracker - Dreadquake Mortar":                    "wh3_dlc23_chd_veh_skullcracker",
+    "Slaanesh's Harvesters (Doomfire Warlocks)":           "wh2_dlc10_def_cav_doomfire_warlocks_ror",
+    "Slayers (Grudge Settlers)":                           "wh3_dlc25_dwf_inf_slayers_grudge_unit",
+    "Soopa-Squig!":                                        "wh_dlc06_grn_squig_herd",
+    "Spider Hatchlings":                                   "wh_dlc06_grn_spider_hatchling",
+    "Stormvermin (Halberds)":                              "wh2_main_skv_inf_stormvermin_halberds",
+    "Stormvermin (Swords & Shields)":                      "wh2_main_skv_inf_stormvermin_shields",
+    "Supply Train":                                        "wh3_dlc23_chd_veh_iron_daemon",
+    "Terradon Riders":                                     "wh2_dlc12_lzd_mon_terradon_ror",
+    "Terradon Riders (Fireleech Bolas)":                   "wh2_main_lzd_mon_terradon_fireleech",
+    "The Daemon's Tongue - Dreadquake Mortar":             "wh3_dlc23_chd_veh_iron_daemon_ror",
+    "The Ice-Forged Legion (Hellcannons)":                 "wh_dlc08_nor_art_hellcannon_god",
+    "The Konigstein Stalkers (Skeleton Warriors)":         "wh_main_vmp_skeleton_warrior_sword",
+    "The Royal Altdorf Gryphites (Demigryph Knights)":     "wh_main_emp_demigryph_knights_halberd",
+    "The Umbral Tide (Salamander Hunting Pack)":           "wh2_dlc12_lzd_mon_salamander_hunting_pack_ror",
+    "Tzar Guard":                                          "wh3_twa06_ksl_inf_tzar_guard_ror_0",
+    "Tzar Guard (Great Weapons)":                          "wh3_twa06_ksl_inf_tzar_guard_ror_0",
+    "War Lions of Chrace":                                 "wh2_dlc15_hef_mon_war_lions",
+    "Wraiths of the Frozen Heart (Dryads)":                "wh2_dlc16_wef_ror_dryads",
+    "Yoked Carnosaur":                                     "wh2_dlc17_lzd_mon_troglodon_ror",
+
+    # ── Heroes / lords → portrait filenames ───────────────────────────────────
+    # Named characters (specific portraits)
+    "Aekold Helbrass":                                     "chs_ch_aekold_0",
+    "Aranessa Saltspite":                                  "cst_cha_aranessa_saltspite_0",
+    "Arbaal the Undefeated":                               "dae_arbaal_0",
+    "Ataman":                                              "ksl_cha_boris_campaign_0",  # generic Kislev lord
+    "Azazel":                                              "dae_azazel_0",
+    "Azrik the Maze Keeper":                               "chs_ch_arzik_0",
+    "Boris Ursus":                                         "ksl_cha_boris_campaign_0",
+    "Dechala, the Denied One":                             "dae_dechala_0",
+    "Deathmaster Snikch":                                  "skv_snikch_0",
+    "Epidemius":                                           "dae_epidemius_0",
+    "Eshin Sorcerer":                                      "skv_warlord_campaign_01_0",
+    "Festus the Leechlord":                                "dae_festus_0",
+    "Harald Hammerstorm":                                  "chs_ch_aekold_0",  # closest chs named char
+    "Helman Ghorst":                                       "vmp_ch_master_necromancer_helman_0",
+    "Hertwig van Hal":                                     "emp_ch_boris_todbringer_0",  # generic Empire lord
+    "High Beastmaster":                                    "def_cha_lokhir_0",  # generic Dark Elf hero
+    "Jorek Grimm":                                         "emp_ch_boris_todbringer_0",
+    "Kairos Fateweaver":                                   "dae_kairos_0",
+    "Kalara":                                              "emp_ch_boris_todbringer_0",
+    "Karanak":                                             "dae_karanak_0",
+    "Kayzk the Befouled":                                  "dae_nur_kayzk_the_befouled_0",
+    "Khainite Assassin":                                   "def_cha_lokhir_0",
+    "Kihar the Tormentor":                                 "chs_ch_kihar_0",
+    "Kroq-Gar":                                            "lzd_lord_kroq_gar_0",
+    "Ku'gath Plaguefather":                                "dae_epidemius_0",
+    "Lokhir Fellheart":                                    "def_cha_lokhir_0",
+    "Luthor Harkon":                                       "cst_cha_luthor_harkon_0",
+    "Master Assassin":                                     "skv_warlord_campaign_01_0",
+    "Mother Ostankya":                                     "ksl_ostankya_0",
+    "N'Kari":                                              "dae_nkari_0",
+    "Prince Sigvald the Magnificent":                      "chs_ch_sigvald_0",
+    "Rodrik L'Anguille":                                   "emp_ch_boris_todbringer_0",
+    "Saurus Oldblood":                                     "lzd_lord_saurus_old_blood_campaign_01_0",
+    "Saurus Scar-Veteran":                                 "lzd_hero_saurus_scar_veteran_campaign_01_0",
+    "Scyla Anfingrimm":                                    "dae_kho_scyla_anfingrimm_0",
+    "Skarbrand the Exiled":                                "dae_skarbrand_0",
+    "Skarr Bloodwrath":                                    "dae_skarr_bloodwrath_0",
+    "Skulltaker":                                          "dae_skulltaker_0",
+    "Tamurkhan the Maggot Lord":                           "dae_tamurkhan_0",
+    "The Blue Scribes":                                    "dae_blue_scribes_0",
+    "The Changeling":                                      "dae_changeling_0",
+    "The Masque of Slaanesh":                              "dae_masque_of_slaanesh_0",
+    "The Red Duke":                                        "vmp_the_red_duke_0",
+    "Thorgrim Grudgebearer":                               "dwf_ch_thorgrim_0",
+    "Throgg":                                              "nor_cha_throgg_0",
+    "Valkia the Bloody":                                   "dae_valkia_0",
+    "Vilitch the Curseling":                               "dae_vilitch_0",
+    "Wulfrik the Wanderer":                                "nor_cha_wulfrik_0",
+    "Yuan Bo, the Jade Dragon":                            "wh3_dlc24_cth_cha_yuan_bo_dragon",
+
+    # ── Heroes/lords → generic portrait by type ───────────────────────────────
+    "Alluress (Shadows)":                                  "dae_daemonette_alluress_campaign_01_0",
+    "Alluress (Slaanesh)":                                 "dae_daemonette_alluress_campaign_01_0",
+    "Bloodreaper":                                         "dae_bloodreaper_campaign_01_0",
+    "Bloodspeaker":                                        "dae_bloodspeaker_campaign_01_0",
+    "Burplesmirk Spewpit":                                 "dae_nur_nor_skin_wolf_werekin_chieftain_0",
+    "Cultist of Khorne":                                   "dae_cultist_of_khorne_campaign_01_0",
+    "Cultist of Nurgle":                                   "dae_cultist_of_nurgle_campaign_01_0",
+    "Cultist of Slaanesh":                                 "dae_cultist_of_slaanesh_campaign_01_0",
+    "Cultist of Tzeentch":                                 "dae_cultist_of_tzeentch_campaign_01_0",
+    "Daemon Prince of Khorne":                             "dae_kho_daemon_prince_0",
+    "Daemon Prince of Nurgle":                             "dae_nur_daemon_prince_1_0",
+    "Daemon Prince of Slaanesh":                           "dae_sla_daemon_prince_1_0",
+    "Daemon Prince of Tzeentch":                           "dae_tze_daemon_prince_1_0",
+    "Dragon-blooded Shugengan Lord (Yang)":                "cth_shugengan_lord_campaign_01_0",
+    "Dragon-blooded Shugengan Lord (Yin)":                 "cth_shugengan_lord_campaign_01_0",
+    "Exalted Bloodthirster":                               "dae_bloodthirster_exalted_campaign_01_0",
+    "Exalted Keeper of Secrets (Shadows)":                 "dae_daemonette_alluress_campaign_01_0",
+    "Exalted Keeper of Secrets (Slaanesh)":                "dae_daemonette_alluress_campaign_01_0",
+    "Exalted Lord of Change (Metal)":                      "dae_exalted_lord_of_change_campaign_01_0",
+    "Exalted Lord of Change (Tzeentch)":                   "dae_exalted_lord_of_change_campaign_01_0",
+    "Ezar Doombolt":                                       "dae_plaguebearer_plagueridden_campaign_01_0",
+    "Grukmur Three-Horn":                                  "bst_great_bray_shaman_campaign_01_0",
+    "Herald of Khorne":                                    "dae_herald_of_khorne_campaign_01_0",
+    "Herald of Nurgle (Death)":                            "dae_plaguebearer_herald_campaign_01_0",
+    "Herald of Nurgle (Nurgle)":                           "dae_plaguebearer_herald_campaign_01_0",
+    "Herald of Slaanesh (Shadows)":                        "dae_daemonette_herald_campaign_01_0",
+    "Herald of Slaanesh (Slaanesh)":                       "dae_daemonette_herald_campaign_01_0",
+    "Herald of Tzeentch (Metal)":                          "dae_horror_herald_campaign_01_0",
+    "Herald of Tzeentch (Tzeentch)":                       "dae_horror_herald_campaign_01_0",
+    "Iridescent Horror (Metal)":                           "dae_horror_herald_campaign_01_0",
+    "Iridescent Horror (Tzeentch)":                        "dae_horror_herald_campaign_01_0",
+    "Ketzak Fimdirach":                                    "dae_plaguebearer_plagueridden_campaign_01_0",
+    "Killgore Slaymaim":                                   "dae_herald_of_khorne_campaign_01_0",
+    "Lord Kroak":                                          "lzd_lord_kroak_0",
+    "Mournhowl":                                           "dae_nur_nor_skin_wolf_werekin_chieftain_0",
+    "Plagueridden (Death)":                                "dae_plaguebearer_plagueridden_campaign_01_0",
+    "Plagueridden (Nurgle)":                               "dae_plaguebearer_plagueridden_campaign_01_0",
+    "Shaman-Sorcerer (Death)":                             "nor_great_shaman_sorcerer_death_campaign_01_0",
+    "Shaman-Sorcerer (Fire)":                              "nor_great_shaman_sorcerer_fire_campaign_01_0",
+    "Shaman-Sorcerer (Metal)":                             "nor_great_shaman_sorcerer_metal_campaign_01_0",
+    "Slann Mage-Priest (Beasts)":                          "lzd_slann_campaign_01_0",
+    "Slann Mage-Priest (Death)":                           "lzd_slann_campaign_01_0",
+    "Slann Mage-Priest (Metal)":                           "lzd_slann_campaign_01_0",
+    "Slann Mage-Priest (Shadows)":                         "lzd_slann_campaign_01_0",
+}
+
 FACTION_KEY_MAP = {
     "empire":            ["emp"],
     "beastmen":          ["bst"],
@@ -508,12 +774,43 @@ def _find_portrait(base, role_map, role_list):
     return None
 
 
+def _apply_override(name, eid, cards_dir, portraits_dir, asset_dir, dry_run):
+    """
+    Look up name in UNIT_CARD_OVERRIDES and copy the file if found.
+    Searches cards_dir first, then portraits_dir.
+    Returns True if copied (or would copy in dry_run), False if key not in override.
+    """
+    key = UNIT_CARD_OVERRIDES.get(name)
+    if key is None:
+        return False
+    for search_dir in (cards_dir, portraits_dir):
+        if search_dir is None:
+            continue
+        src = os.path.join(search_dir, key + ".png")
+        if os.path.exists(src):
+            dest = os.path.join(asset_dir, eid + ".png")
+            if not dry_run:
+                shutil.copy2(src, dest)
+                subprocess.run(
+                    ["mogrify", "-fuzz", "20%", "-trim", "+repage", dest],
+                    check=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+            return True
+    # Override key listed but file not found in either dir — still consumed
+    print(f"  [override] WARNING: override key '{key}' not found for '{name}'",
+          file=sys.stderr)
+    return True
+
+
 def copy_unit_portraits(portraits_dir, asset_dir, name_index, unit_name_eid_map,
-                        dry_run=False):
+                        cards_dir=None, dry_run=False):
     """
     For each unit in unit_name_eid_map that has no card yet, find a matching
     portrait and copy it to {asset_dir}/{eid}.png.
     Skips units that already have a card file.
+    UNIT_CARD_OVERRIDES are applied first (before name_index lookup).
     """
     role_map  = build_portrait_role_map(portraits_dir)
     role_list = sorted(role_map.keys())
@@ -529,6 +826,12 @@ def copy_unit_portraits(portraits_dir, asset_dir, name_index, unit_name_eid_map,
     for name, eid in unit_name_eid_map.items():
         if eid in existing:
             continue
+
+        # Check explicit override first
+        if _apply_override(name, eid, cards_dir, portraits_dir, asset_dir, dry_run):
+            copied += 1
+            continue
+
         candidates = name_index.get(normalize_name(name), [])
         if not candidates:
             missing_key.append(name)
@@ -567,18 +870,20 @@ def copy_unit_portraits(portraits_dir, asset_dir, name_index, unit_name_eid_map,
 
 
 def copy_unit_cards(cards_dir, asset_dir, name_index, unit_name_eid_map,
-                    dry_run=False):
+                    portraits_dir=None, dry_run=False):
     """
     For each unit name in unit_name_eid_map, finds the best-matching unit_key
     from name_index, copies {cards_dir}/{unit_key}.png → {asset_dir}/{eid}.png,
     then trims transparent borders.
 
-    Matching order (first hit wins):
+    UNIT_CARD_OVERRIDES are applied first (before name_index lookup).
+
+    Matching order for name_index hits (first hit wins):
       1. Exact unit_key
-      2. unit_key with numeric suffix stripped
+      2. unit_key with numeric suffix stripped (+ prefix scan)
       3. unit_key with category infix stripped
-      4. unit_key with both stripped
-      5. Prefix match: any icon whose name starts with the normalised key + '_'
+      4. unit_key with both stripped (+ prefix scan)
+      5. Stopword-stripped variants
     """
     available      = {os.path.splitext(f)[0] for f in os.listdir(cards_dir)
                       if f.endswith(".png")}
@@ -626,6 +931,11 @@ def copy_unit_cards(cards_dir, asset_dir, name_index, unit_name_eid_map,
         return None
 
     for name, eid in unit_name_eid_map.items():
+        # Check explicit override first (covers RoR units and missing-loc units)
+        if _apply_override(name, eid, cards_dir, portraits_dir, asset_dir, dry_run):
+            copied += 1
+            continue
+
         candidates = name_index.get(normalize_name(name), [])
         if not candidates:
             missing_key.append(name)
@@ -1128,22 +1438,26 @@ def main():
         with open(ability_file, "w", encoding="utf-8") as f:
             f.write(new_abilities)
 
-    if args.unit_cards_dir:
+    if args.unit_cards_dir or args.portraits_dir:
         print("Copying and trimming unit cards...", file=sys.stderr)
         unit_name_eid_map = build_unit_name_eid_map(SEED_DIR)
         print(f"  {len(unit_name_eid_map)} units in seed", file=sys.stderr)
-        copy_unit_cards(args.unit_cards_dir, UNIT_CARD_ASSET_DIR,
-                        name_index, unit_name_eid_map, dry_run=args.dry_run)
-    else:
-        print("  [unit cards] --unit-cards-dir not provided, skipping", file=sys.stderr)
+        if args.unit_cards_dir:
+            copy_unit_cards(args.unit_cards_dir, UNIT_CARD_ASSET_DIR,
+                            name_index, unit_name_eid_map,
+                            portraits_dir=args.portraits_dir,
+                            dry_run=args.dry_run)
+        else:
+            print("  [unit cards] --unit-cards-dir not provided, skipping", file=sys.stderr)
 
-    if args.portraits_dir:
-        print("Copying and trimming lord/hero portraits...", file=sys.stderr)
-        unit_name_eid_map = build_unit_name_eid_map(SEED_DIR)
-        copy_unit_portraits(args.portraits_dir, UNIT_CARD_ASSET_DIR,
-                            name_index, unit_name_eid_map, dry_run=args.dry_run)
-    else:
-        print("  [portraits] --portraits-dir not provided, skipping", file=sys.stderr)
+        if args.portraits_dir:
+            print("Copying and trimming lord/hero portraits...", file=sys.stderr)
+            copy_unit_portraits(args.portraits_dir, UNIT_CARD_ASSET_DIR,
+                                name_index, unit_name_eid_map,
+                                cards_dir=args.unit_cards_dir,
+                                dry_run=args.dry_run)
+        else:
+            print("  [portraits] --portraits-dir not provided, skipping", file=sys.stderr)
 
     if args.icons_dir:
         print("Copying and trimming ability icons...", file=sys.stderr)
