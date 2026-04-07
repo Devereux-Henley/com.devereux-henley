@@ -33,6 +33,8 @@ import argparse
 import json
 import os
 import re
+import shutil
+import subprocess
 import sys
 
 SEED_DIR = "components/rts-data/resources/rts-data/sql/seed"
@@ -289,6 +291,73 @@ def build_ability_loc_maps(loc):
         elif k and k.startswith(tooltip_prefix):
             tooltips[k[len(tooltip_prefix):]] = v
     return names, tooltips
+
+
+# ---------------------------------------------------------------------------
+# Ability icon copying
+# ---------------------------------------------------------------------------
+
+# Parses seed-abilities.sql to build: ability_key -> eid
+ABILITY_SEED_EID_RE = re.compile(
+    r"\(\d+,\s*'([0-9a-f\-]+)',\s*'([^']+)',"
+)
+
+
+def build_ability_key_eid_map(seed_filepath):
+    """Returns {ability_key: eid} from the seed-abilities.sql INSERT rows."""
+    result = {}
+    with open(seed_filepath, encoding="utf-8") as f:
+        for line in f:
+            m = ABILITY_SEED_EID_RE.search(line)
+            if m:
+                result[m.group(2)] = m.group(1)
+    return result
+
+
+def copy_ability_icons(icons_dir, asset_dir, unit_ability_map, key_eid_map,
+                       dry_run=False):
+    """
+    For each ability key in unit_ability_map, copies
+      {icons_dir}/{icon_name}.png  →  {asset_dir}/{eid}.png
+    then trims transparent borders with mogrify.
+    """
+    copied = 0
+    missing_src = []
+    missing_eid = []
+
+    for key, info in unit_ability_map.items():
+        icon_name = info.get("icon_name") or ""
+        if not icon_name:
+            continue
+
+        eid = key_eid_map.get(key)
+        if not eid:
+            missing_eid.append(key)
+            continue
+
+        src = os.path.join(icons_dir, icon_name + ".png")
+        if not os.path.isfile(src):
+            missing_src.append(icon_name)
+            continue
+
+        dest = os.path.join(asset_dir, eid + ".png")
+        if not dry_run:
+            shutil.copy2(src, dest)
+            subprocess.run(
+                ["mogrify", "-fuzz", "20%", "-trim", "+repage", dest],
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        copied += 1
+
+    print(f"  [icons] copied+trimmed {copied} icons", file=sys.stderr)
+    if missing_src:
+        print(f"  [icons] {len(missing_src)} source PNGs not found "
+              f"(e.g. {missing_src[:3]})", file=sys.stderr)
+    if missing_eid:
+        print(f"  [icons] {len(missing_eid)} keys have no eid in seed "
+              f"(e.g. {missing_eid[:3]})", file=sys.stderr)
 
 
 # ---------------------------------------------------------------------------
@@ -647,6 +716,10 @@ def main():
     parser = argparse.ArgumentParser(description="Update seed data from RPFM-decoded game tables.")
     parser.add_argument("--data-dir", required=True,
                         help="Directory containing RPFM-decoded JSON table files.")
+    parser.add_argument("--icons-dir",
+                        help="Directory containing extracted ability icon PNGs "
+                             "(named by icon_name from unit_abilities_tables). "
+                             "If omitted, icon copying is skipped.")
     parser.add_argument("--dry-run", action="store_true",
                         help="Print what would change without writing files.")
     args = parser.parse_args()
@@ -742,6 +815,17 @@ def main():
     if not args.dry_run:
         with open(ability_file, "w", encoding="utf-8") as f:
             f.write(new_abilities)
+
+    if args.icons_dir:
+        print("Copying and trimming ability icons...", file=sys.stderr)
+        ability_seed_file = os.path.join(SEED_DIR, "seed-abilities.sql")
+        key_eid_map = build_ability_key_eid_map(ability_seed_file)
+        asset_dir = os.path.join("bases", "rts-api", "resources", "rts-api",
+                                 "asset", "icon", "ability")
+        copy_ability_icons(args.icons_dir, asset_dir, unit_ability_map,
+                           key_eid_map, dry_run=args.dry_run)
+    else:
+        print("  [icons] --icons-dir not provided, skipping icon copy", file=sys.stderr)
 
     print("Updating spell gold costs...", file=sys.stderr)
     spell_file = os.path.join(SEED_DIR, "seed-spells.sql")

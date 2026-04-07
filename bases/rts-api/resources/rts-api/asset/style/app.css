@@ -234,16 +234,22 @@ a:hover:has(img) {
 
 .unit-ability-item {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
   line-height: 0;
 }
 
 .unit-ability-icon {
   width: 2rem;
   height: 2rem;
+  object-fit: contain;
   border-radius: var(--radius-sm);
   display: block;
   cursor: default;
+  flex-shrink: 0;
 }
 
 .unit-ability-tooltip {
