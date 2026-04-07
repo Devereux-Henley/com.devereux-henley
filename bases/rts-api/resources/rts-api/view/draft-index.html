@@ -47,7 +47,7 @@
                     <div class="draft-slot-cost" aria-hidden="true">{{main-section.lord-unit.cost}}</div>
                     <button class="draft-slot-remove"
                             aria-label="Remove {{main-section.lord-unit.name}} from Main Army"
-                            hx-delete="/view/game/{{game-eid}}/draft/{{draft-eid}}/unit/{{main-section.lord-unit.eid}}?section=main"
+                            hx-delete="/api/draft/{{draft-eid}}/unit/{{main-section.lord-unit.eid}}?section=main"
                             hx-target="#main-army-section"
                             hx-swap="outerHTML">&#10005;</button>
                     {% else %}
@@ -67,7 +67,7 @@
                     <div class="draft-slot-cost" aria-hidden="true">{{unit.cost}}</div>
                     <button class="draft-slot-remove"
                             aria-label="Remove {{unit.name}} from Main Army"
-                            hx-delete="/view/game/{{game-eid}}/draft/{{draft-eid}}/unit/{{unit.eid}}?section=main"
+                            hx-delete="/api/draft/{{draft-eid}}/unit/{{unit.eid}}?section=main"
                             hx-target="#main-army-section"
                             hx-swap="outerHTML">&#10005;</button>
                 </div>
@@ -114,7 +114,7 @@
                     <div class="draft-slot-cost" aria-hidden="true">{{unit.cost}}</div>
                     <button class="draft-slot-remove"
                             aria-label="Remove {{unit.name}} from Reinforcements"
-                            hx-delete="/view/game/{{game-eid}}/draft/{{draft-eid}}/unit/{{unit.eid}}?section=reinforcements"
+                            hx-delete="/api/draft/{{draft-eid}}/unit/{{unit.eid}}?section=reinforcements"
                             hx-target="#reinforcements-section"
                             hx-swap="outerHTML">&#10005;</button>
                 </div>
@@ -438,7 +438,7 @@
         clearActionError();
 
         htmx.ajax('POST',
-            '/view/game/' + DRAFT.gameEid + '/draft/' + DRAFT.draftEid + '/unit',
+            '/api/draft/' + DRAFT.draftEid + '/unit',
             {
                 target:  '#' + sectionId,
                 swap:    'outerHTML',

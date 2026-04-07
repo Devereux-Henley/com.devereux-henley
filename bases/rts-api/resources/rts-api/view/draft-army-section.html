@@ -32,7 +32,7 @@
             <div class="draft-slot-cost" aria-hidden="true">{{lord-unit.cost}}</div>
             <button class="draft-slot-remove"
                     aria-label="Remove {{lord-unit.name}} from Main Army"
-                    hx-delete="/view/game/{{game-eid}}/draft/{{draft-eid}}/unit/{{lord-unit.eid}}?section=main"
+                    hx-delete="/api/draft/{{draft-eid}}/unit/{{lord-unit.eid}}?section=main"
                     hx-target="#main-army-section"
                     hx-swap="outerHTML">&#10005;</button>
             {% else %}
@@ -53,7 +53,7 @@
             <div class="draft-slot-cost" aria-hidden="true">{{unit.cost}}</div>
             <button class="draft-slot-remove"
                     aria-label="Remove {{unit.name}} from Main Army"
-                    hx-delete="/view/game/{{game-eid}}/draft/{{draft-eid}}/unit/{{unit.eid}}?section=main"
+                    hx-delete="/api/draft/{{draft-eid}}/unit/{{unit.eid}}?section=main"
                     hx-target="#main-army-section"
                     hx-swap="outerHTML">&#10005;</button>
         </div>
@@ -70,7 +70,7 @@
             <div class="draft-slot-cost" aria-hidden="true">{{unit.cost}}</div>
             <button class="draft-slot-remove"
                     aria-label="Remove {{unit.name}} from Reinforcements"
-                    hx-delete="/view/game/{{game-eid}}/draft/{{draft-eid}}/unit/{{unit.eid}}?section=reinforcements"
+                    hx-delete="/api/draft/{{draft-eid}}/unit/{{unit.eid}}?section=reinforcements"
                     hx-target="#reinforcements-section"
                     hx-swap="outerHTML">&#10005;</button>
         </div>

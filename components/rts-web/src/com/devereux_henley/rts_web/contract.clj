@@ -1,5 +1,6 @@
 (ns com.devereux-henley.rts-web.contract
   (:require
+   [com.devereux-henley.rts-web.web.draft]
    [com.devereux-henley.rts-web.web.game]
    [com.devereux-henley.rts-web.web.routes :as web.routes]
    [com.devereux-henley.rts-web.web.social-media]
