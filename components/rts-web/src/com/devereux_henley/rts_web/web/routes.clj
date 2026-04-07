@@ -123,17 +123,18 @@
                          :query web.game/faction-query-parameters}
             :responses  {200 {:body domain/faction-resource}}
             :handler    (integrant.core/ref ::web.game/get-faction)}}]
-   ["/draft/:eid/unit"
-    {:post {:no-doc     true
-            :produces   ["text/html"]
-            :parameters {:path schema.contract/id-path-parameter
-                         :body (schema.contract/to-schema
-                                [:map
-                                 [:unit-eid :uuid]
-                                 [:section [:enum "main" "reinforcements"]]])}
-            :handler    (integrant.core/ref ::web.draft/draft-add-unit)}}]
    ["/draft/:eid/unit/:unit-eid"
-    {:delete {:no-doc     true
+    {:post   {:no-doc     true
+              :produces   ["text/html"]
+              :parameters {:path  (schema.contract/to-schema
+                                   [:map
+                                    [:eid :uuid]
+                                    [:unit-eid :uuid]])
+                           :query (schema.contract/to-schema
+                                   [:map
+                                    [:section [:enum "main" "reinforcements"]]])}
+              :handler    (integrant.core/ref ::web.draft/draft-add-unit)}
+     :delete {:no-doc     true
               :produces   ["text/html"]
               :parameters {:path  (schema.contract/to-schema
                                    [:map
@@ -143,6 +144,14 @@
                                    [:map
                                     [:section [:enum "main" "reinforcements"]]])}
               :handler    (integrant.core/ref ::web.draft/draft-remove-unit)}}]
+   ["/draft/:eid/unit/:unit-eid/panel"
+    {:get {:no-doc     true
+           :produces   ["text/html"]
+           :parameters {:path (schema.contract/to-schema
+                               [:map
+                                [:eid :uuid]
+                                [:unit-eid :uuid]])}
+           :handler    (integrant.core/ref ::web.draft/draft-unit-panel)}}]
    ["/draft/:eid"
     {:name :draft/by-eid
      :put  {:summary    "Creates a draft with the given eid and version."

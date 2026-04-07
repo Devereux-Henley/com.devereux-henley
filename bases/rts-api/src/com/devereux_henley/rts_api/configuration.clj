@@ -33,6 +33,7 @@
    :com.devereux-henley.rts-web.web.view/faction-view                     default-api-dependencies
    :com.devereux-henley.rts-web.web.view/unit-view                        default-api-dependencies
    :com.devereux-henley.rts-web.web.view/draft-view                       default-api-dependencies
+   :com.devereux-henley.rts-web.web.draft/draft-unit-panel                 default-api-dependencies
    :com.devereux-henley.rts-web.web.draft/draft-add-unit                  default-api-dependencies
    :com.devereux-henley.rts-web.web.draft/draft-remove-unit               default-api-dependencies
    :com.devereux-henley.rts-web.web.view/my-drafts-view                   default-api-dependencies

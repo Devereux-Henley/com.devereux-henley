@@ -158,7 +158,7 @@
         units-by-cat (->> units
                           (partition-by :unit-category-name)
                           (mapv (fn [g] {:category (:unit-category-name (first g))
-                                         :units    (vec g)})))
+                                         :units    (vec (sort-by :cost g))})))
         state        (domain/get-draft-state dependencies (:eid draft))
         hydrate      (fn [eids] (vec (keep unit-by-eid eids)))
         main-units   (hydrate (:main state))

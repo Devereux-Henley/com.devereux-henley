@@ -446,8 +446,8 @@ a:hover:has(img) {
 
 .draft-slot {
   flex-shrink: 0;
-  width: 4.25rem;
-  height: 5.75rem;
+  width: 4rem;
+  height: 130px;
   border: 1px dashed #3d2820;
   background: #1a1410;
   border-radius: var(--radius-sm);
@@ -459,8 +459,6 @@ a:hover:has(img) {
 }
 
 .draft-slot--lord {
-  width: 4.75rem;
-  height: 6.25rem;
   border-color: #6a5228;
   border-style: solid;
   background: #1c1608;

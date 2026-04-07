@@ -1,4 +1,4 @@
-<div class="draft-section" id="{{section-id}}" aria-labelledby="{{section-id}}-heading">
+<div class="draft-section" id="{{section-id}}" aria-labelledby="{{section-id}}-heading" {% if oob %}hx-swap-oob="outerHTML"{% endif %}>
     <div class="draft-section-header">
         <h3 class="draft-section-title" id="{{section-id}}-heading">{{section-label}}</h3>
         <div class="draft-budget-group"
