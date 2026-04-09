@@ -18,7 +18,7 @@
    [reitit.ring.middleware.multipart :as multipart]
    [reitit.ring.middleware.muuntaja :as muuntaja]
    [reitit.ring.middleware.parameters :as parameters]
-   [reitit.swagger :as swagger]
+   [reitit.openapi :as openapi]
    [reitit.swagger-ui :as swagger-ui]
    [ring.adapter.jetty :as jetty]
    [ring.middleware.cookies]
@@ -150,9 +150,9 @@
                                          continuity-key {:value continuity}}))
            request))))))
 
-(defmethod integrant.core/init-key ::swagger-handler
+(defmethod integrant.core/init-key ::openapi-handler
   [_init-key _dependencies]
-  (swagger/create-swagger-handler))
+  (openapi/create-openapi-handler))
 
 (defmethod integrant.core/init-key ::app
   [_init-key {:keys [routes session-name auth-hostname]}]
@@ -191,8 +191,8 @@
                                   (assoc-in [:formats "application/htmx+html"]
                                             content-negotiation/html-htmx-format)
                                   (assoc-in [:formats "application/htmx+html" :encoder-opts] {:view-fn view-by-type})))
-                 :middleware [;; swagger feature
-                              swagger/swagger-feature
+                 :middleware [;; openapi feature
+                              openapi/openapi-feature
                               ;; query-params & form-params
                               parameters/parameters-middleware
                               ;; content-negotiation
@@ -212,8 +212,10 @@
    (ring/routes
     (swagger-ui/create-swagger-ui-handler
      {:path   "/api"
-      :url    "/api/swagger.json"
+      :url    "/api/openapi.json"
       :config {:validatorUrl     nil
+               :urls [{:name "openapi", :url "openapi.json"}]
+               :urls.primaryName "openapi"
                :operationsSorter "alpha"}})
     (ring/create-resource-handler {:root resourcekit/asset-root
                                    :path resourcekit/asset-path})

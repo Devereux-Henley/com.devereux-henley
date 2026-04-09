@@ -38,7 +38,7 @@ import subprocess
 import sys
 
 SEED_DIR = "components/rts-data/resources/rts-data/sql/seed"
-UNIT_CARD_ASSET_DIR = os.path.join("bases", "rts-api", "resources", "rts-api", "asset", "card", "unit")
+UNIT_CARD_ASSET_DIR = os.path.join("components", "rts-web", "resources", "rts-web", "asset", "card", "unit")
 
 # ---------------------------------------------------------------------------
 # Explicit unit-name → icon/portrait key overrides
@@ -73,6 +73,7 @@ UNIT_CARD_OVERRIDES: dict[str, str] = {
     "Exalted Great Unclean One (Death)":                   "wh3_dlc25_nur_exalted_great_unclean_one_qb_boss",
     "Exalted Great Unclean One (Nurgle)":                  "wh3_dlc25_nur_exalted_great_unclean_one_qb_boss",
     "Flame Cannons (Grudge Settlers)":                     "wh_main_dwf_flame_cannon",
+    "Glade Lord (bow)":                                    "wef_glade_female_lord_kalara_sword_bow_ror_01_0",
     "Groghooves of Wolf's Run (Centigors - Throwing Axes)": "wh2_dlc17_bst_centigors_throwing_axes_ror",
     "Grudge Throwers (Grudge Settlers)":                   "wh_main_dwf_grudge_thrower",
     "Gyrocopters (Trollhammers - Grudge Settlers)":        "wh_main_dwf_gyrocopter",
@@ -210,6 +211,7 @@ UNIT_CARD_OVERRIDES: dict[str, str] = {
     # ── Heroes / lords → portrait filenames ───────────────────────────────────
     # Named characters (specific portraits)
     "Aekold Helbrass":                                     "chs_ch_aekold_0",
+    "Alith Anar":                                          "hef_alith_anar_0",
     "Aranessa Saltspite":                                  "cst_cha_aranessa_saltspite_0",
     "Arbaal the Undefeated":                               "dae_arbaal_0",
     "Ataman":                                              "ksl_cha_boris_campaign_0",  # generic Kislev lord
@@ -217,13 +219,14 @@ UNIT_CARD_OVERRIDES: dict[str, str] = {
     "Azrik the Maze Keeper":                               "chs_ch_arzik_0",
     "Boris Ursus":                                         "ksl_cha_boris_campaign_0",
     "Dechala, the Denied One":                             "dae_dechala_0",
-    "Deathmaster Snikch":                                  "skv_snikch_0",
+    "Deathmaster Snikch":                                  "skv_snikch_tzarkan_0",
     "Epidemius":                                           "dae_epidemius_0",
     "Eshin Sorcerer":                                      "skv_warlord_campaign_01_0",
     "Festus the Leechlord":                                "dae_festus_0",
+    "Grimgor Ironhide":                                    "grn_ch_grimgor_0",
     "Harald Hammerstorm":                                  "chs_ch_aekold_0",  # closest chs named char
     "Helman Ghorst":                                       "vmp_ch_master_necromancer_helman_0",
-    "Hertwig van Hal":                                     "emp_ch_boris_todbringer_0",  # generic Empire lord
+    "Hertwig van Hal":                                     "emp_witch_hunter_hertwig_ror_0",
     "High Beastmaster":                                    "def_cha_lokhir_0",  # generic Dark Elf hero
     "Jorek Grimm":                                         "emp_ch_boris_todbringer_0",
     "Kairos Fateweaver":                                   "dae_kairos_0",
@@ -237,10 +240,11 @@ UNIT_CARD_OVERRIDES: dict[str, str] = {
     "Lokhir Fellheart":                                    "def_cha_lokhir_0",
     "Luthor Harkon":                                       "cst_cha_luthor_harkon_0",
     "Master Assassin":                                     "skv_warlord_campaign_01_0",
+    "Master Engineer":                                     "dwf_master_engineer_jorek_ror_0",
     "Mother Ostankya":                                     "ksl_ostankya_0",
     "N'Kari":                                              "dae_nkari_0",
     "Prince Sigvald the Magnificent":                      "chs_ch_sigvald_0",
-    "Rodrik L'Anguille":                                   "emp_ch_boris_todbringer_0",
+    "Rodrik L'Anguille":                                   "emp_paladin_rodrik_0",
     "Saurus Oldblood":                                     "lzd_lord_saurus_old_blood_campaign_01_0",
     "Saurus Scar-Veteran":                                 "lzd_hero_saurus_scar_veteran_campaign_01_0",
     "Scyla Anfingrimm":                                    "dae_kho_scyla_anfingrimm_0",
@@ -639,8 +643,13 @@ UNIT_SEED_ROW_RE = re.compile(
 
 
 def build_unit_name_eid_map(seed_dir):
-    """Parse all faction unit seed SQL files → {unit_name: eid}."""
-    result = {}
+    """Parse all faction unit seed SQL files → list of (unit_name, eid) pairs.
+
+    Returns a list rather than a dict so that units sharing a display name across
+    factions (e.g. Tzaangors appearing in both Tzeentch and Beastmen seeds) are
+    all processed — a dict would silently drop all but the last-seen eid.
+    """
+    result = []
     for filename in sorted(os.listdir(seed_dir)):
         if not (filename.startswith("seed-") and filename.endswith("-units.sql")):
             continue
@@ -650,7 +659,7 @@ def build_unit_name_eid_map(seed_dir):
         for m in UNIT_SEED_ROW_RE.finditer(content):
             eid  = m.group(1)
             name = m.group(2).replace("''", "'")
-            result[name] = eid
+            result.append((name, eid))
     return result
 
 
@@ -671,6 +680,71 @@ _STOPWORDS = {"of", "the", "at", "a", "an", "and", "in", "on", "for"}
 def _strip_stopwords(key):
     """Remove common English stopwords from a snake_case key."""
     return "_".join(w for w in key.split("_") if w not in _STOPWORDS)
+
+
+def _find_icon(uk, available, available_list, display_name=None):
+    """Return the best-matching icon stem for a unit_key, or None.
+
+    Matching order (first hit wins):
+      1. Exact unit_key
+      2. unit_key with numeric suffix stripped
+      3. unit_key with category infix stripped
+      4. unit_key with both stripped
+      5. Prefix match against normalised key; if multiple hits, prefer the one
+         whose suffix matches the parenthetical variant in the display name
+         (e.g. "(Shields)" → prefer icons ending in "_shields")
+      6. Stopword-stripped variants of all the above
+    """
+    # 1. Exact
+    if uk in available:
+        return uk
+    # 2. Strip numeric suffix
+    s1 = re.sub(r"_\d+$", "", uk)
+    if s1 in available:
+        return s1
+    # 3. Strip category infix
+    s2 = _CATEGORY_RE.sub("_", uk)
+    if s2 in available:
+        return s2
+    # 4. Strip both
+    s3 = _normalize_unit_key(uk)
+    if s3 in available:
+        return s3
+    # 5. Prefix match
+    prefix = s3 + "_"
+    matches = [ik for ik in available_list if ik.startswith(prefix)]
+    if matches:
+        if len(matches) > 1 and display_name:
+            # Try to pick the right variant using the parenthetical in the name,
+            # e.g. "Gor Herd (Shields)" → prefer icon ending in "_shields".
+            paren = re.search(r"\(([^)]+)\)", display_name)
+            if paren:
+                variant = re.sub(r"\s+", "_", paren.group(1).lower().strip())
+                for m in matches:
+                    if m.endswith("_" + variant):
+                        return m
+        return matches[0]
+    # 6. Stopword-stripped versions of all the above
+    s4 = _strip_stopwords(s3)
+    if s4 != s3:
+        if s4 in available:
+            return s4
+        prefix4 = s4 + "_"
+        matches4 = [ik for ik in available_list if ik.startswith(prefix4)]
+        if matches4:
+            if len(matches4) > 1 and display_name:
+                paren = re.search(r"\(([^)]+)\)", display_name)
+                if paren:
+                    variant = re.sub(r"\s+", "_", paren.group(1).lower().strip())
+                    for m in matches4:
+                        if m.endswith("_" + variant):
+                            return m
+            return matches4[0]
+        # Also try icon keys with stopwords stripped
+        for ik in available_list:
+            if _strip_stopwords(ik) == s4:
+                return ik
+    return None
 
 
 def _unit_key_to_portrait_base(uk):
@@ -804,11 +878,11 @@ def _apply_override(name, eid, cards_dir, portraits_dir, asset_dir, dry_run):
     return True
 
 
-def copy_unit_portraits(portraits_dir, asset_dir, name_index, unit_name_eid_map,
+def copy_unit_portraits(portraits_dir, asset_dir, name_index, unit_name_eid_pairs,
                         cards_dir=None, dry_run=False):
     """
-    For each unit in unit_name_eid_map that has no card yet, find a matching
-    portrait and copy it to {asset_dir}/{eid}.png.
+    For each (name, eid) pair in unit_name_eid_pairs that has no card yet, find
+    a matching portrait and copy it to {asset_dir}/{eid}.png.
     Skips units that already have a card file.
     UNIT_CARD_OVERRIDES are applied first (before name_index lookup).
     """
@@ -823,7 +897,7 @@ def copy_unit_portraits(portraits_dir, asset_dir, name_index, unit_name_eid_map,
     missing_key = []
     no_portrait = []
 
-    for name, eid in unit_name_eid_map.items():
+    for name, eid in unit_name_eid_pairs:
         if eid in existing:
             continue
 
@@ -869,68 +943,26 @@ def copy_unit_portraits(portraits_dir, asset_dir, name_index, unit_name_eid_map,
               f"(e.g. {no_portrait[:5]})", file=sys.stderr)
 
 
-def copy_unit_cards(cards_dir, asset_dir, name_index, unit_name_eid_map,
+def copy_unit_cards(cards_dir, asset_dir, name_index, unit_name_eid_pairs,
                     portraits_dir=None, dry_run=False):
     """
-    For each unit name in unit_name_eid_map, finds the best-matching unit_key
-    from name_index, copies {cards_dir}/{unit_key}.png → {asset_dir}/{eid}.png,
-    then trims transparent borders.
+    For each (name, eid) pair in unit_name_eid_pairs, finds the best-matching
+    icon, copies {cards_dir}/{icon}.png → {asset_dir}/{eid}.png, then trims.
+
+    unit_name_eid_pairs is a list of (name, eid) tuples (not a dict) so that
+    units sharing a display name across factions are all processed.
 
     UNIT_CARD_OVERRIDES are applied first (before name_index lookup).
-
-    Matching order for name_index hits (first hit wins):
-      1. Exact unit_key
-      2. unit_key with numeric suffix stripped (+ prefix scan)
-      3. unit_key with category infix stripped
-      4. unit_key with both stripped (+ prefix scan)
-      5. Stopword-stripped variants
     """
     available      = {os.path.splitext(f)[0] for f in os.listdir(cards_dir)
                       if f.endswith(".png")}
-    available_list = sorted(available)   # for prefix scan
+    available_list = sorted(available)
 
     copied      = 0
     missing_key = []
     missing_src = []
 
-    def _find_icon(uk):
-        """Return the best-matching icon key for a unit_key, or None."""
-        # 1. Exact
-        if uk in available:
-            return uk
-        # 2. Strip numeric suffix
-        s1 = re.sub(r"_\d+$", "", uk)
-        if s1 in available:
-            return s1
-        # 3. Strip category infix
-        s2 = _CATEGORY_RE.sub("_", uk)
-        if s2 in available:
-            return s2
-        # 4. Strip both
-        s3 = _normalize_unit_key(uk)
-        if s3 in available:
-            return s3
-        # 5. Prefix match: any icon whose name starts with normalised key + '_'
-        prefix = s3 + "_"
-        matches = [ik for ik in available_list if ik.startswith(prefix)]
-        if matches:
-            return matches[0]
-        # 6. Stopword-stripped versions of all the above
-        s4 = _strip_stopwords(s3)
-        if s4 != s3:
-            if s4 in available:
-                return s4
-            prefix4 = s4 + "_"
-            matches4 = [ik for ik in available_list if ik.startswith(prefix4)]
-            if matches4:
-                return matches4[0]
-            # Also try icon keys with stopwords stripped
-            for ik in available_list:
-                if _strip_stopwords(ik) == s4:
-                    return ik
-        return None
-
-    for name, eid in unit_name_eid_map.items():
+    for name, eid in unit_name_eid_pairs:
         # Check explicit override first (covers RoR units and missing-loc units)
         if _apply_override(name, eid, cards_dir, portraits_dir, asset_dir, dry_run):
             copied += 1
@@ -943,7 +975,7 @@ def copy_unit_cards(cards_dir, asset_dir, name_index, unit_name_eid_map,
 
         unit_key = None
         for uk, _lk in candidates:
-            result = _find_icon(uk)
+            result = _find_icon(uk, available, available_list, display_name=name)
             if result is not None:
                 unit_key = result
                 break
@@ -1440,11 +1472,11 @@ def main():
 
     if args.unit_cards_dir or args.portraits_dir:
         print("Copying and trimming unit cards...", file=sys.stderr)
-        unit_name_eid_map = build_unit_name_eid_map(SEED_DIR)
-        print(f"  {len(unit_name_eid_map)} units in seed", file=sys.stderr)
+        unit_name_eid_pairs = build_unit_name_eid_map(SEED_DIR)
+        print(f"  {len(unit_name_eid_pairs)} units in seed", file=sys.stderr)
         if args.unit_cards_dir:
             copy_unit_cards(args.unit_cards_dir, UNIT_CARD_ASSET_DIR,
-                            name_index, unit_name_eid_map,
+                            name_index, unit_name_eid_pairs,
                             portraits_dir=args.portraits_dir,
                             dry_run=args.dry_run)
         else:
@@ -1453,7 +1485,7 @@ def main():
         if args.portraits_dir:
             print("Copying and trimming lord/hero portraits...", file=sys.stderr)
             copy_unit_portraits(args.portraits_dir, UNIT_CARD_ASSET_DIR,
-                                name_index, unit_name_eid_map,
+                                name_index, unit_name_eid_pairs,
                                 cards_dir=args.unit_cards_dir,
                                 dry_run=args.dry_run)
         else:
@@ -1463,7 +1495,7 @@ def main():
         print("Copying and trimming ability icons...", file=sys.stderr)
         ability_seed_file = os.path.join(SEED_DIR, "seed-abilities.sql")
         key_eid_map = build_ability_key_eid_map(ability_seed_file)
-        asset_dir = os.path.join("bases", "rts-api", "resources", "rts-api",
+        asset_dir = os.path.join("bases", "rts-web", "resources", "rts-web",
                                  "asset", "icon", "ability")
         copy_ability_icons(args.icons_dir, asset_dir, unit_ability_map,
                            key_eid_map, dry_run=args.dry_run)

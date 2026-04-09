@@ -2,6 +2,7 @@
   (:require
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.web.asset :as web.asset]
+   [com.devereux-henley.rts-web.web.configuration :as web.configuration]
    [com.devereux-henley.rts-web.web.draft :as web.draft]
    [com.devereux-henley.rts-web.web.game :as web.game]
    [com.devereux-henley.rts-web.web.social-media :as web.social-media]
@@ -77,17 +78,20 @@
 
 (def api-routes
   ["/api"
-   ["/swagger.json"
+   {:openapi {:security [{"ory" ["openid"]}]}}
+   ["/openapi.json"
     {:get {:no-doc  true
-           :swagger {:info {:title       "rts-api"
+           :openapi {:info {:title       "rts-api"
                             :description "Rts API"}
+                     :components {:securitySchemes {"ory" {:type :openIdConnect
+                                                           :openIdConnectUrl (integrant.core/ref ::web.configuration/openid-url)}}}
                      :tags [{:name "game" :description "game api"}]}
-           :handler (integrant.core/ref :com.devereux-henley.rts-api.web/swagger-handler)}}]
+           :handler (integrant.core/ref :com.devereux-henley.rts-api.web/openapi-handler)}}]
 
    ["/game"
     {:name :collection/game
      :get  {:summary   "Fetches a list of games."
-            :swagger   {:tags         ["game"]
+            :openapi   {:tags         ["game"]
                         :produces     ["application/htmx+html" "application/json"]
                         :operation-id "game/all"}
             :responses {200 {:body domain/game-collection-resource}}
@@ -96,7 +100,7 @@
    ["/game/:eid"
     {:name :game/by-eid
      :get  {:summary    "Fetches a game by eid."
-            :swagger    {:tags         ["game"]
+            :openapi    {:tags         ["game"]
                          :produces     ["application/htmx+html" "application/json"]
                          :operation-id "game/by-eid"}
             :parameters {:path  schema.contract/id-path-parameter
@@ -106,7 +110,7 @@
    ["/game/social-link/:eid"
     {:name :game/social-by-eid
      :get  {:summary    "Fetches a link between social media and a game by eid."
-            :swagger    {:tags         ["game"]
+            :openapi    {:tags         ["game"]
                          :produces     ["application/htmx+html" "application/json"]
                          :operation-id "game/social-by-eid"}
             :parameters {:path  schema.contract/id-path-parameter
@@ -116,7 +120,7 @@
    ["/game/faction/:eid"
     {:name :game/faction-by-eid
      :get  {:summary    "Fetches a game faction by eid."
-            :swagger    {:tags         ["game"]
+            :openapi    {:tags         ["game"]
                          :produces     ["application/htmx+html" "application/json"]
                          :operation-id "game/faction-by-eid"}
             :parameters {:path  schema.contract/id-path-parameter
@@ -125,7 +129,7 @@
             :handler    (integrant.core/ref ::web.game/get-faction)}}]
    ["/draft/:eid/unit/:unit-eid"
     {:post   {:no-doc     true
-              :produces   ["application/htmx+html"]
+              :produces   ["application/json" "application/htmx+html"]
               :parameters {:path  (schema.contract/to-schema
                                    [:map
                                     [:eid :uuid]
@@ -135,7 +139,7 @@
                                     [:section [:enum "main" "reinforcements"]]])}
               :handler    (integrant.core/ref ::web.draft/draft-add-unit)}
      :delete {:no-doc     true
-              :produces   ["application/htmx+html"]
+              :produces   ["application/json" "application/htmx+html"]
               :parameters {:path  (schema.contract/to-schema
                                    [:map
                                     [:eid :uuid]
@@ -146,7 +150,7 @@
               :handler    (integrant.core/ref ::web.draft/draft-remove-unit)}}]
    ["/draft/:eid/unit/:unit-eid/panel"
     {:get {:no-doc     true
-           :produces   ["application/htmx+html"]
+           :produces   ["application/json" "application/htmx+html"]
            :parameters {:path (schema.contract/to-schema
                                [:map
                                 [:eid :uuid]
@@ -155,8 +159,8 @@
    ["/draft/:eid"
     {:name :draft/by-eid
      :put  {:summary    "Creates a draft with the given eid and version."
-            :swagger    {:tags         ["draft"]
-                         :produces     ["application/json"]
+            :openapi    {:tags         ["draft"]
+                         :produces     ["application/json" "application/htmx+html"]
                          :operation-id "draft/create"}
             :parameters {:path  schema.contract/id-path-parameter
                          :query schema.contract/version-query-parameter
@@ -167,7 +171,7 @@
    ["/tournament"
     {:name :collection/tournament
      :get  {:summary    "A collection of all tournaments."
-            :swagger    {:tags         ["collection" "tournament"]
+            :openapi    {:tags         ["collection" "tournament"]
                          :produces     ["application/htmx+html" "application/json"]
                          :operation-id "collection/tournament"}
             :parameters {:query schema.contract/collection-parameters}
@@ -176,7 +180,7 @@
    ["/tournament/:eid"
     {:name :tournament/by-eid
      :get  {:summary    "Fetches a tournament by eid."
-            :swagger    {:tags         ["tournament"]
+            :openapi    {:tags         ["tournament"]
                          :produces     ["application/htmx+html" "application/json"]
                          :operation-id "tournament/by-eid"}
             :parameters {:path  schema.contract/id-path-parameter
@@ -184,7 +188,7 @@
             :responses  {200 {:body domain/tournament-resource}}
             :handler    (integrant.core/ref ::web.tournament/get-tournament)}
      :put  {:summary    "Creates a tournament with the given eid and version."
-            :swagger    {:tags         ["tournament"]
+            :openapi    {:tags         ["tournament"]
                          :produces     ["application/htmlx+html" "application/json"]
                          :operation-id "tournament/create"}
             :parameters {:path  schema.contract/id-path-parameter
@@ -195,7 +199,7 @@
    ["/tournament/snapshot/:eid"
     {:name :tournament/snapshot-by-eid
      :get  {:summary    "Fetches a tournament snapshot by eid."
-            :swagger    {:tags         ["tournament"]
+            :openapi    {:tags         ["tournament"]
                          :produces     ["application/htmx+html" "application/json"]
                          :operation-id "tournament/snapshot-by-eid"}
             :parameters {:path  schema.contract/id-path-parameter
@@ -205,7 +209,7 @@
    ["/social-media/:eid"
     {:name :social-media/by-eid
      :get  {:summary    "Fetches a social media platform by eid."
-            :swagger    {:tags         ["social-media"]
+            :openapi    {:tags         ["social-media"]
                          :produces     ["application/htmx+html" "application/json"]
                          :operation-id "social-media/by-eid"}
             :parameters {:path  schema.contract/id-path-parameter
