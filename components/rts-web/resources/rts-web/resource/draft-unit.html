@@ -47,12 +47,12 @@
         <section class="draft-stats-section unit-panel" aria-labelledby="panel-stats-heading">
             <h4 class="unit-panel-heading" id="panel-stats-heading">Statistics</h4>
             <div class="draft-stat-rows">
-                {% for stat in data.unit.panel-stats %}
+                {% for stat in data.unit.unit-statistics %}
                 <div class="draft-stat-bar-row">
                     <span class="draft-stat-label">{{stat.stat}}</span>
                     <span class="draft-stat-value">{{stat.value}}</span>
                     <div class="draft-stat-bar" aria-hidden="true">
-                        <div class="draft-stat-bar-fill" style="--pct:{{stat.pct}}%"></div>
+                        <div class="draft-stat-bar-fill" style="--pct:{{stat.percentage}}%"></div>
                     </div>
                 </div>
                 {% endfor %}
@@ -66,10 +66,10 @@
                 {% for ability in data.unit.parsed-abilities %}
                 <li class="unit-ability-item">
                     <img class="unit-ability-icon"
-                         src="/icon/ability/{{ability}}.png"
-                         alt="{{ability}}"
+                         src="/icon/ability/{{ability.eid}}.png"
+                         alt="{{ability.name}}"
                          onerror="this.style.display='none'">
-                    <span class="unit-ability-tooltip" role="tooltip">{{ability}}</span>
+                    <span class="unit-ability-tooltip" role="tooltip">{{ability.name}}</span>
                 </li>
                 {% endfor %}
             </ul>

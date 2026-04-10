@@ -66,10 +66,6 @@
   [_init-key _dependencies]
   (partial standard-view-handler "dashboard.html"))
 
-(defmethod integrant.core/init-key ::tournament-view
-  [_init-key _dependencies]
-  (partial standard-view-handler "tournament.html"))
-
 (defmethod integrant.core/init-key ::game-view
   [_init-key _dependencies]
   (partial standard-view-handler "game.html"))

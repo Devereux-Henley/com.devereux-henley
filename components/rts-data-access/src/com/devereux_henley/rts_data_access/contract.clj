@@ -2,7 +2,6 @@
   (:require
    [com.devereux-henley.rts-data-access.query.game :as query.game]
    [com.devereux-henley.rts-data-access.query.social-media :as query.social-media]
-   [com.devereux-henley.rts-data-access.query.tournament :as query.tournament]
    [com.devereux-henley.rts-data-access.schema :as schema]))
 
 ;;; ─── Game DB entities ──────────────────────────────────────────────────────
@@ -80,28 +79,3 @@
 
 (def get-platform-by-eid query.social-media/get-platform-by-eid)
 
-;;; ─── Tournament DB entities ────────────────────────────────────────────────
-
-(def create-tournament-params schema/create-tournament-params)
-
-(def tournament-entity schema/tournament-entity)
-
-(def tournament-snapshot-entity schema/tournament-snapshot-entity)
-
-(def update-tournament-snapshot-specification schema/update-tournament-snapshot-specification)
-
-;;; ─── Tournament DB queries ────────────────────────────────────────────────
-
-(def get-tournaments query.tournament/get-tournaments)
-
-(def get-tournaments-by-game-eid query.tournament/get-tournaments-by-game-eid)
-
-(def get-tournament-by-eid query.tournament/get-tournament-by-eid)
-
-(def get-tournament-snapshot-by-eid query.tournament/get-tournament-snapshot-by-eid)
-
-(def get-tournament-snapshot-by-tournament-eid query.tournament/get-tournament-snapshot-by-tournament-eid)
-
-(def create-tournament query.tournament/create-tournament)
-
-(def update-tournament-snapshot-by-tournament-eid query.tournament/update-tournament-snapshot-by-tournament-eid)

@@ -7,7 +7,8 @@
    [com.devereux-henley.schema.contract :as schema.contract]
    [next.jdbc :as jdbc])
   (:import
-   [java.sql Connection]))
+   [java.sql Connection]
+   [java.time Instant]))
 
 (def get-draft-by-eid-query (resource/load-query-resource "game" "get-draft-by-eid.sql"))
 
@@ -194,23 +195,16 @@
   (when (seq spell-keys)
     (let [placeholders (str/join "," (repeat (count spell-keys) "?"))
           sql          (str "SELECT key, name, mana_cost, gold_cost FROM spell WHERE key IN (" placeholders ")")]
-      (into {} (map (fn [row]
-                      [(:key row)
-                       {:name      (:name row)
-                        :mana-cost (:mana-cost row)
-                        :gold-cost (:gold-cost row)}])
-                    (jdbc.contract/execute! connection (into [sql] spell-keys)))))))
+      (into {} (map (fn [row] [(:key row) row])
+                    (jdbc.contract/query-for-entities connection (into [sql] spell-keys) schema/spell-entity))))))
 
 (defn get-abilities-by-names
   [connection ability-names]
   (when (seq ability-names)
     (let [placeholders (str/join "," (repeat (count ability-names) "?"))
           sql          (str "SELECT eid, name, description FROM ability WHERE name IN (" placeholders ")")]
-      (into {} (map (fn [row]
-                      [(:name row)
-                       {:eid         (:eid row)
-                        :description (:description row)}])
-                    (jdbc.contract/execute! connection (into [sql] ability-names)))))))
+      (into {} (map (fn [row] [(:name row) row])
+                    (jdbc.contract/query-for-entities connection (into [sql] ability-names) schema/ability-entity))))))
 
 (defn get-draft-state-by-draft
   [connection draft-eid]
@@ -224,7 +218,7 @@
      ["INSERT INTO draft_state (draft_id, state, updated_at)
        VALUES (?, ?, ?)
        ON CONFLICT(draft_id) DO UPDATE SET state = excluded.state, updated_at = excluded.updated_at"
-      (:id draft) state-json-str (str (java.time.Instant/now))])))
+      (:id draft) state-json-str (str (Instant/now))])))
 
 (defn create-draft
   {:malli/schema (schema.contract/to-schema

@@ -23,7 +23,6 @@
    ::db/connection                                                        {:migrations (integrant.core/ref ::rts-data/migrate)}
    ::web/openapi-handler                                                  {}
    :com.devereux-henley.rts-web.web.view/dashboard-view                   default-view-dependencies
-   :com.devereux-henley.rts-web.web.view/tournament-view                  default-view-dependencies
    :com.devereux-henley.rts-web.web.view/game-view                        default-view-dependencies
    :com.devereux-henley.rts-web.web.view/about-view                       default-view-dependencies
    :com.devereux-henley.rts-web.web.view/contact-view                     default-view-dependencies
@@ -44,10 +43,6 @@
    :com.devereux-henley.rts-web.web.game/get-faction                      default-api-dependencies
    :com.devereux-henley.rts-web.web.game/get-game-social-link             default-api-dependencies
    :com.devereux-henley.rts-web.web.social-media/get-platform             default-api-dependencies
-   :com.devereux-henley.rts-web.web.tournament/get-tournament             default-api-dependencies
-   :com.devereux-henley.rts-web.web.tournament/get-tournament-snapshot    default-api-dependencies
-   :com.devereux-henley.rts-web.web.tournament/get-tournaments            default-api-dependencies
-   :com.devereux-henley.rts-web.web.tournament/create-tournament          default-api-dependencies
    :com.devereux-henley.rts-web.web.game/create-draft                     default-api-dependencies
    :com.devereux-henley.rts-web.web.routes/routes
    [rts-web/root-route

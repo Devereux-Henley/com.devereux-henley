@@ -2,7 +2,6 @@
   (:require
    [com.devereux-henley.rts-domain.handlers.game :as handlers.game]
    [com.devereux-henley.rts-domain.handlers.social-media :as handlers.social-media]
-   [com.devereux-henley.rts-domain.handlers.tournament :as handlers.tournament]
    [com.devereux-henley.rts-domain.schema :as schema]
    [malli.util]))
 
@@ -16,21 +15,19 @@
 
 (def create-draft-specification schema/create-draft-specification)
 
+(def draft-error-response schema/draft-error-response)
+
+(def draft-unit-response schema/draft-unit-response)
+
+(def draft-mutation-response schema/draft-mutation-response)
+
 (def faction-resource schema/faction-resource)
 
 (def game-resource schema/game-resource)
 
-(def tournament-snapshot-resource schema/tournament-snapshot-resource)
-
-(def tournament-resource schema/tournament-resource)
-
 (def game-collection-resource schema/game-collection-resource)
 
-(def tournament-collection-resource schema/tournament-collection-resource)
-
 (def resource-identifier schema/resource-identifier)
-
-(def create-tournament-specification schema/create-tournament-specification)
 
 ;;; ─── Handler-level functions (typed domain models) ─────────────────────────
 
@@ -56,11 +53,3 @@
 (def set-draft-state                            handlers.game/set-draft-state)
 
 (def get-platform-by-eid                        handlers.social-media/get-platform-by-eid)
-
-(def get-tournaments                            handlers.tournament/get-tournaments)
-(def get-tournaments-by-game-eid                handlers.tournament/get-tournaments-by-game-eid)
-(def get-tournament-by-eid                      handlers.tournament/get-tournament-by-eid)
-(def get-tournament-snapshot-by-eid             handlers.tournament/get-tournament-snapshot-by-eid)
-(def get-tournament-snapshot-by-tournament-eid  handlers.tournament/get-tournament-snapshot-by-tournament-eid)
-(def create-tournament                          handlers.tournament/create-tournament)
-(def update-tournament-snapshot                 handlers.tournament/update-tournament-snapshot)

@@ -214,8 +214,9 @@
      {:path   "/api"
       :url    "/api/openapi.json"
       :config {:validatorUrl     nil
-               :urls [{:name "openapi", :url "openapi.json"}]
+               :urls             [{:name "openapi", :url "openapi.json"}]
                :urls.primaryName "openapi"
+               :withCredentials  true
                :operationsSorter "alpha"}})
     (ring/create-resource-handler {:root resourcekit/asset-root
                                    :path resourcekit/asset-path})

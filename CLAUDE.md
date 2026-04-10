@@ -94,6 +94,14 @@ rts-web, rts-domain, rts-data-access → http, jdbc, schema, content-negotiation
 
 **SQL in resources.** Queries live in `.sql` files under `resources/<base>/sql/` and are loaded by `next.jdbc`. The `jdbc` component provides thin wrappers (`query-for-entity`, `insert!`, etc.) that apply camel-snake-kebab column mapping and the `sqlite-transformer`.
 
+**IMPORTANT — data-access layer must never call `execute!` or `execute-one!` directly for reading data.** Always use the higher-level `jdbc.contract` wrappers:
+- `query-for-entities` / `query-for-entity` — for SELECT queries; applies `sqlite-transformer` (converts string UUIDs → `java.util.UUID`, etc.)
+- `insert!` — for INSERT statements
+- `execute!` / `execute-one!` — only acceptable for write operations (UPSERT/UPDATE/DELETE) where the result is not read back
+- `entity-by-eid` — shorthand for fetching a single row by eid column
+
+Bypassing these wrappers omits the `sqlite-transformer`, which silently returns raw strings instead of typed values and causes Malli coercion failures at the response boundary.
+
 ## Adding a new resource (checklist)
 
 1. Entity + resource Malli schemas in `domain/<resource>.clj` — merge from `base-resource`; annotate FK fields with `:model/link`

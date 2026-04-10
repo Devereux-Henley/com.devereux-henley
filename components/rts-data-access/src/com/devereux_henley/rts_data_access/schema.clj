@@ -140,6 +140,21 @@
     [:updated-at :instant]
     [:deleted-at [:maybe :instant]]]))
 
+(def ability-entity
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:name :string]
+    [:description [:maybe :string]]]))
+
+(def spell-entity
+  (schema.contract/to-schema
+   [:map
+    [:key :string]
+    [:name :string]
+    [:mana-cost [:maybe :int]]
+    [:gold-cost [:maybe :int]]]))
+
 (def draft-state-entity
   (schema.contract/to-schema
    [:map
@@ -147,52 +162,3 @@
     [:state :string]
     [:updated-at :instant]]))
 
-(def create-tournament-params
-  (schema.contract/to-schema
-   [:map
-    [:eid :uuid]
-    [:game-eid :uuid]
-    [:title :string]
-    [:description :string]
-    [:tournament-start-datetime :instant]
-    [:tournament-checkin-datetime :instant]
-    [:tournament-type [:enum "elimination" "round-robin"]]
-    [:competitor-type [:enum "player"]]
-    [:version :int]
-    [:created-at :instant]
-    [:updated-at :instant]]))
-
-(def tournament-entity
-  (schema.contract/to-schema
-   [:map
-    [:id :int]
-    [:eid :uuid]
-    [:game-eid :uuid]
-    [:title :string]
-    [:description :string]
-    [:tournament-start-datetime :instant]
-    [:tournament-checkin-datetime :instant]
-    [:tournament-type [:enum "elimination" "round-robin"]]
-    [:competitor-type [:enum "player"]]
-    [:version :int]
-    [:created-at :instant]
-    [:updated-at :instant]
-    [:deleted-at [:maybe :instant]]]))
-
-(def tournament-snapshot-entity
-  (schema.contract/to-schema
-   [:map
-    [:id :int]
-    [:eid :uuid]
-    [:tournament-eid :uuid]
-    [:tournament-state :string]
-    [:version :int]
-    [:created-at :instant]
-    [:updated-at :instant]
-    [:deleted-at [:maybe :instant]]]))
-
-(def update-tournament-snapshot-specification
-  (schema.contract/to-schema
-   [:map
-    [:tournament-state :string]
-    [:updated-at :instant]]))

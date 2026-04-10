@@ -1,6 +1,45 @@
 <!doctype html>
 <html lang="en-US">
 <body>
-<script src="oauth2-redirect.js"></script>
+<script>
+    'use strict';
+    function run () {
+        var opener = window.opener;
+        var oauth2 = opener ? opener.swaggerUIRedirectOauth2 : undefined;
+
+        var qp, arr;
+
+        if (/code|token|error/.test(window.location.hash)) {
+            qp = window.location.hash.substring(1).replace('?', '&');
+        } else {
+            qp = location.search.substring(1);
+        }
+
+        arr = qp.split("&")
+        arr.forEach(function (v,i,_arr) { _arr[i] = '"' + v.replace('=', '":"') + '"';})
+        qp = qp ? JSON.parse('{' + arr.join() + '}',
+                function (key, value) {
+                    return key === "" ? value : decodeURIComponent(value)
+                }
+        ) : {}
+
+        if (oauth2) {
+            oauth2.handleAuth(qp);
+        } else {
+            var oauth2Channel = new BroadcastChannel("oauth2_channel");
+            oauth2Channel.postMessage(qp);
+        }
+
+        window.close();
+    }
+
+    if( document.readyState !== 'loading' ) {
+      run();
+    } else {
+      document.addEventListener('DOMContentLoaded', function () {
+        run();
+      });
+    }
+</script>
 </body>
 </html>

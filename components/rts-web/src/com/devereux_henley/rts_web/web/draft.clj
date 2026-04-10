@@ -7,7 +7,7 @@
 
 ;; ─── Shared helpers ───────────────────────────────────────────────────────────
 
-(defn section-pct [cost max-val]
+(defn section-percentage [cost max-val]
   (if (and max-val (pos? max-val))
     (int (min 100 (Math/round (double (* 100 (/ cost max-val))))))
     0))
@@ -29,7 +29,7 @@
         section-id    (if is-main "main-army-section" "reinforcements-section")
         section-max   (if is-main (:draft-value game-mode) (:reinforcement-value game-mode))
         cost          (reduce (fn [s u] (+ s (or (:cost u) 0))) 0 units)
-        pct           (section-pct cost section-max)
+        percentage    (section-percentage cost section-max)
         lord-unit     (first (filter :is-lord units))
         non-lords     (vec (remove :is-lord units))]
     {:section             section
@@ -41,12 +41,12 @@
      :non-lord-units      non-lords
      :section-cost        cost
      :section-max         section-max
-     :section-pct         pct
-     :section-near-limit  (> pct 85)
+     :section-percentage  percentage
+     :section-near-limit  (> percentage 85)
      :section-over-budget (> cost section-max)
      :draft-eid           draft-eid}))
 
-;; ─── Stat pct for draft unit ───────────────────────────────────────────────────────
+;; ─── Stat percentage for draft unit ───────────────────────────────────────────────────────
 
 (def ^:private stat-max-values
   {"armor"           100.0
@@ -61,14 +61,14 @@
    "health"         1000.0
    "barrier"        1000.0})
 
-(defn ^:private add-stat-pct
+(defn ^:private add-stat-percentage
   [{:keys [stat value] :as s}]
   (let [max-val (get stat-max-values (str/lower-case (str stat)) 100.0)
         raw-val (cond
                   (number? value) (double value)
                   (string? value) (try (Double/parseDouble value) (catch Exception _ 0.0))
                   :else 0.0)]
-    (assoc s :pct (int (min 100 (Math/round (* 100.0 (/ raw-val max-val))))))))
+    (assoc s :percentage (int (min 100 (Math/round (* 100.0 (/ raw-val max-val))))))))
 
 ;; ─── Handlers ─────────────────────────────────────────────────────────────────
 
@@ -81,12 +81,19 @@
             game-mode   (domain/get-game-mode-by-eid dependencies (:game-mode-eid draft))
             unit        (domain/get-unit-by-eid dependencies unit-eid)
             {:keys [stats abilities]} (domain/parse-unit-statistics (:unit-statistics unit))
-            unit-statistics (mapv add-stat-pct stats)]
+            unit-statistics  (mapv add-stat-percentage stats)
+            ability-by-name  (domain/get-abilities-by-names dependencies abilities)
+            parsed-abilities (mapv (fn [a]
+                                     (let [{:keys [eid description]} (get ability-by-name a)]
+                                       {:name        a
+                                        :eid         eid
+                                        :description description}))
+                                   abilities)]
         {:status 200
          :body   {:type                   :draft/unit
                   :unit                   (assoc unit
                                                  :unit-statistics unit-statistics
-                                                 :parsed-abilities abilities)
+                                                 :parsed-abilities parsed-abilities)
                   :draft-eid              eid
                   :reinforcements-enabled (= 1 (:reinforcements-enabled game-mode))}})
       (catch Exception exc

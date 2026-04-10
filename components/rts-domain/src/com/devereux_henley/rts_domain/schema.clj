@@ -65,48 +65,12 @@
        [:socials {:optional true} [:sequential game-social-link-resource]]
        [:factions {:optional true} [:sequential faction-resource]]]]])))
 
-(def tournament-snapshot-resource
-  (malli.util/merge
-   schema.contract/base-resource
-   (schema.contract/to-schema
-    [:map
-     [:eid {:model/link :tournament/snapshot-by-eid} :uuid]
-     [:type [:= :tournament/snapshot]]
-     [:tournament-eid {:model/link :tournament/by-eid} :uuid]
-     ;; TODO Proper schema for tournament state.
-     [:tournament-state :string]])))
-
-(def tournament-resource
-  (malli.util/merge
-   schema.contract/base-resource
-   (schema.contract/to-schema
-    [:map
-     [:eid {:model/link :tournament/by-eid} :uuid]
-     [:type [:= :tournament/tournament]]
-     [:title :string]
-     [:description :string]
-     [:tournament-start-datetime :instant]
-     [:tournament-checkin-datetime :instant]
-     [:tournament-type [:enum "elimination" "round-robin"]]
-     [:competitor-type [:enum "player"]]
-     [:_embedded
-      [:map
-       [:snapshot {:optional true} tournament-snapshot-resource]]]])))
-
 (def game-collection-resource
   (malli.util/merge
    (schema.contract/make-collection-resource game-resource)
    (schema.contract/to-schema
     [:map
      [:type [:= :collection/game]]])))
-
-(def tournament-collection-resource
-  (malli.util/merge
-   (schema.contract/make-collection-resource tournament-resource)
-   (schema.contract/to-schema
-    [:map
-     [:type [:= :collection/tournament]]
-     [:specification {:collection/link :collection/tournament} [:map]]])))
 
 (def resource-identifier
   [:map
@@ -131,15 +95,61 @@
     [:game-mode-eid :uuid]
     [:faction-eid :uuid]]))
 
-(def create-tournament-specification
+(def draft-error-response
   (schema.contract/to-schema
    [:map
-    [:specification
+    [:type [:= :draft/add-error]]
+    [:message :string]]))
+
+(def draft-unit-stat
+  (schema.contract/to-schema
+   [:map
+    [:stat :string]
+    [:value :any]
+    [:percentage :int]]))
+
+(def draft-unit-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :draft/unit]]
+    [:draft-eid :uuid]
+    [:reinforcements-enabled :boolean]
+    [:unit
      [:map
-      [:game-eid :uuid]
-      [:title :string]
+      [:eid :uuid]
+      [:name :string]
       [:description :string]
-      [:tournament-start-datetime :instant]
-      [:tournament-checkin-datetime :instant]
-      [:tournament-type [:enum "elimination" "round-robin"]]
-      [:competitor-type [:enum "player"]]]]]))
+      [:unit-type-name :string]
+      [:unit-category-name :string]
+      [:cost [:maybe :int]]
+      [:unit-statistics [:sequential draft-unit-stat]]
+      [:parsed-abilities [:sequential [:map
+                                       [:name :string]
+                                       [:eid {:optional true} [:maybe :uuid]]
+                                       [:description {:optional true} [:maybe :string]]]]]]]]))
+
+(def draft-section-context
+  (schema.contract/to-schema
+   [:map
+    [:section :string]
+    [:section-label :string]
+    [:section-id :string]
+    [:is-main :boolean]
+    [:draft-eid :uuid]
+    [:section-cost :int]
+    [:section-max {:optional true} [:maybe :int]]
+    [:section-percentage :int]
+    [:section-near-limit :boolean]
+    [:section-over-budget :boolean]
+    [:lord-unit {:optional true} :any]
+    [:non-lord-units [:sequential :any]]
+    [:section-units [:sequential :any]]
+    [:oob {:optional true} :boolean]]))
+
+(def draft-mutation-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:enum :draft/add-success :draft/remove-success]]
+    [:main-section draft-section-context]
+    [:reinf-section {:optional true} [:maybe draft-section-context]]]))
+
