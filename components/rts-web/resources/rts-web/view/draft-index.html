@@ -42,8 +42,8 @@
                             role="listitem"
                             aria-pressed="false"
                             aria-label="{{unit.name}}, {{unit.unit-type-name}}, cost {{unit.cost}}"
-                            hx-get="/api/draft/{{draft-eid}}/unit/{{unit.eid}}/panel"
-                            hx-target="#draft-stats-panel"
+                            hx-get="/api/draft/{{draft-eid}}/unit/{{unit.eid}}"
+                            hx-target="#draft-unit"
                             hx-swap="outerHTML">
                         <img src="/card/unit/{{unit.eid}}.png"
                              alt=""
@@ -58,7 +58,7 @@
         </div>
 
         <!-- Stats Panel placeholder — replaced by HTMX on unit card click -->
-        <aside class="draft-stats-panel" id="draft-stats-panel" role="complementary" aria-label="Unit statistics" hidden>
+        <aside class="draft-stats-panel" id="draft-unit" role="complementary" aria-label="Unit statistics" hidden>
             <p class="draft-stats-placeholder">Select a unit from the roster to view details.</p>
         </aside>
     </div>

@@ -33,7 +33,7 @@
    {:game/game           "rts-web/resource/game.html"
     :game/faction        "rts-web/resource/faction.html"
     :game/draft          "rts-web/resource/draft.html"
-    :draft/unit-panel    "rts-web/resource/draft-unit-panel.html"
+    :draft/unit          "rts-web/resource/draft-unit.html"
     :draft/add-success   "rts-web/resource/draft-add-success.html"
     :draft/add-error     "rts-web/resource/draft-add-error.html"
     :draft/remove-success "rts-web/resource/draft-remove-success.html"

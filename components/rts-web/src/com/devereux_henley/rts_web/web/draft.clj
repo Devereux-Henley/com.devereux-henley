@@ -46,7 +46,7 @@
      :section-over-budget (> cost section-max)
      :draft-eid           draft-eid}))
 
-;; ─── Stat pct for panel ───────────────────────────────────────────────────────
+;; ─── Stat pct for draft unit ───────────────────────────────────────────────────────
 
 (def ^:private stat-max-values
   {"armor"           100.0
@@ -72,7 +72,7 @@
 
 ;; ─── Handlers ─────────────────────────────────────────────────────────────────
 
-(defmethod integrant.core/init-key ::draft-unit-panel
+(defmethod integrant.core/init-key ::get-draft-unit
   [_init-key dependencies]
   (fn [request]
     (try
@@ -81,11 +81,11 @@
             game-mode   (domain/get-game-mode-by-eid dependencies (:game-mode-eid draft))
             unit        (domain/get-unit-by-eid dependencies unit-eid)
             {:keys [stats abilities]} (domain/parse-unit-statistics (:unit-statistics unit))
-            panel-stats (mapv add-stat-pct stats)]
+            unit-statistics (mapv add-stat-pct stats)]
         {:status 200
-         :body   {:type                   :draft/unit-panel
+         :body   {:type                   :draft/unit
                   :unit                   (assoc unit
-                                                 :panel-stats panel-stats
+                                                 :unit-statistics unit-statistics
                                                  :parsed-abilities abilities)
                   :draft-eid              eid
                   :reinforcements-enabled (= 1 (:reinforcements-enabled game-mode))}})

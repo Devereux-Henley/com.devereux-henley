@@ -128,8 +128,13 @@
             :responses  {200 {:body domain/faction-resource}}
             :handler    (integrant.core/ref ::web.game/get-faction)}}]
    ["/draft/:eid/unit/:unit-eid"
-    {:post   {:no-doc     true
-              :produces   ["application/json" "application/htmx+html"]
+    {:get    {:produces   ["application/json" "application/htmx+html"]
+              :parameters {:path (schema.contract/to-schema
+                                  [:map
+                                   [:eid :uuid]
+                                   [:unit-eid :uuid]])}
+              :handler    (integrant.core/ref ::web.draft/get-draft-unit)}
+     :post   {:produces   ["application/json" "application/htmx+html"]
               :parameters {:path  (schema.contract/to-schema
                                    [:map
                                     [:eid :uuid]
@@ -138,8 +143,7 @@
                                    [:map
                                     [:section [:enum "main" "reinforcements"]]])}
               :handler    (integrant.core/ref ::web.draft/draft-add-unit)}
-     :delete {:no-doc     true
-              :produces   ["application/json" "application/htmx+html"]
+     :delete {:produces   ["application/json" "application/htmx+html"]
               :parameters {:path  (schema.contract/to-schema
                                    [:map
                                     [:eid :uuid]
@@ -148,14 +152,6 @@
                                    [:map
                                     [:section [:enum "main" "reinforcements"]]])}
               :handler    (integrant.core/ref ::web.draft/draft-remove-unit)}}]
-   ["/draft/:eid/unit/:unit-eid/panel"
-    {:get {:no-doc     true
-           :produces   ["application/json" "application/htmx+html"]
-           :parameters {:path (schema.contract/to-schema
-                               [:map
-                                [:eid :uuid]
-                                [:unit-eid :uuid]])}
-           :handler    (integrant.core/ref ::web.draft/draft-unit-panel)}}]
    ["/draft/:eid"
     {:name :draft/by-eid
      :put  {:summary    "Creates a draft with the given eid and version."

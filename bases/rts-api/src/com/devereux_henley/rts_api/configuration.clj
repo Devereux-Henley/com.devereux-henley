@@ -18,10 +18,10 @@
                                :connection (integrant.core/ref ::db/connection)})
 (def default-view-dependencies {})
 (def core-configuration
-  {::rts-data/migrate                                                      {:db-spec       db/db-spec
-                                                                            :migration-dir rts-data/migration-dir}
-   ::db/connection                                                         {:migrations (integrant.core/ref ::rts-data/migrate)}
-   ::web/openapi-handler                                                   {}
+  {::rts-data/migrate                                                     {:db-spec       db/db-spec
+                                                                           :migration-dir rts-data/migration-dir}
+   ::db/connection                                                        {:migrations (integrant.core/ref ::rts-data/migrate)}
+   ::web/openapi-handler                                                  {}
    :com.devereux-henley.rts-web.web.view/dashboard-view                   default-view-dependencies
    :com.devereux-henley.rts-web.web.view/tournament-view                  default-view-dependencies
    :com.devereux-henley.rts-web.web.view/game-view                        default-view-dependencies
@@ -29,11 +29,11 @@
    :com.devereux-henley.rts-web.web.view/contact-view                     default-view-dependencies
    :com.devereux-henley.rts-web.web.view/login-view                       {:auth-hostname auth-hostname}
    :com.devereux-henley.rts-web.web.view/logout-view                      {:auth-hostname auth-hostname}
-   :com.devereux-henley.rts-web.web.view/game-context-middleware            default-api-dependencies
+   :com.devereux-henley.rts-web.web.view/game-context-middleware          default-api-dependencies
    :com.devereux-henley.rts-web.web.view/faction-view                     default-api-dependencies
    :com.devereux-henley.rts-web.web.view/unit-view                        default-api-dependencies
    :com.devereux-henley.rts-web.web.view/draft-view                       default-api-dependencies
-   :com.devereux-henley.rts-web.web.draft/draft-unit-panel                 default-api-dependencies
+   :com.devereux-henley.rts-web.web.draft/get-draft-unit                  default-api-dependencies
    :com.devereux-henley.rts-web.web.draft/draft-add-unit                  default-api-dependencies
    :com.devereux-henley.rts-web.web.draft/draft-remove-unit               default-api-dependencies
    :com.devereux-henley.rts-web.web.view/my-drafts-view                   default-api-dependencies
@@ -48,7 +48,7 @@
    :com.devereux-henley.rts-web.web.tournament/get-tournament-snapshot    default-api-dependencies
    :com.devereux-henley.rts-web.web.tournament/get-tournaments            default-api-dependencies
    :com.devereux-henley.rts-web.web.tournament/create-tournament          default-api-dependencies
-   :com.devereux-henley.rts-web.web.game/create-draft                    default-api-dependencies
+   :com.devereux-henley.rts-web.web.game/create-draft                     default-api-dependencies
    :com.devereux-henley.rts-web.web.routes/routes
    [rts-web/root-route
     rts-web/icon-routes
