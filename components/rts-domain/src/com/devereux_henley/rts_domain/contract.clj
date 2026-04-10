@@ -1,5 +1,6 @@
 (ns com.devereux-henley.rts-domain.contract
   (:require
+   [com.devereux-henley.rts-domain.handlers.draft :as handlers.draft]
    [com.devereux-henley.rts-domain.handlers.game :as handlers.game]
    [com.devereux-henley.rts-domain.handlers.social-media :as handlers.social-media]
    [com.devereux-henley.rts-domain.schema :as schema]
@@ -31,10 +32,8 @@
 
 ;;; ─── Handler-level functions (typed domain models) ─────────────────────────
 
-(def get-draft-by-eid                           handlers.game/get-draft-by-eid)
-(def get-drafts-for-player                      handlers.game/get-drafts-for-player)
-(def get-drafts-for-player-by-game              handlers.game/get-drafts-for-player-by-game)
-(def create-draft                               handlers.game/create-draft)
+;;; ─── Game handler functions ────────────────────────────────────────────────
+
 (def get-game-by-eid                            handlers.game/get-game-by-eid)
 (def get-games                                  handlers.game/get-games)
 (def get-factions-for-game                      handlers.game/get-factions-for-game)
@@ -46,10 +45,22 @@
 (def get-units-for-faction                      handlers.game/get-units-for-faction)
 (def get-game-mode-by-eid                       handlers.game/get-game-mode-by-eid)
 (def get-game-modes-for-game                    handlers.game/get-game-modes-for-game)
-(def get-spells-by-keys                         handlers.game/get-spells-by-keys)
-(def get-abilities-by-names                     handlers.game/get-abilities-by-names)
-(def parse-unit-statistics                      handlers.game/parse-unit-statistics)
-(def get-draft-state                            handlers.game/get-draft-state)
-(def set-draft-state                            handlers.game/set-draft-state)
+
+;;; ─── Draft handler functions ────────────────────────────────────────────────
+
+(def get-draft-by-eid                           handlers.draft/get-draft-by-eid)
+(def get-drafts-for-player                      handlers.draft/get-drafts-for-player)
+(def get-drafts-for-player-by-game              handlers.draft/get-drafts-for-player-by-game)
+(def create-draft                               handlers.draft/create-draft)
+(def get-draft-state                            handlers.draft/get-draft-state)
+(def set-draft-state                            handlers.draft/set-draft-state)
+(def parse-unit-statistics                      handlers.draft/parse-unit-statistics)
+(def get-spells-by-keys                         handlers.draft/get-spells-by-keys)
+(def get-abilities-by-names                     handlers.draft/get-abilities-by-names)
+(def hydrate-units-with-stats                   handlers.draft/hydrate-units-with-stats)
+(def build-section-context                      handlers.draft/build-section-context)
+(def get-draft-unit-details                     handlers.draft/get-draft-unit-details)
+(def add-unit-to-draft                          handlers.draft/add-unit-to-draft)
+(def remove-unit-from-draft                     handlers.draft/remove-unit-from-draft)
 
 (def get-platform-by-eid                        handlers.social-media/get-platform-by-eid)

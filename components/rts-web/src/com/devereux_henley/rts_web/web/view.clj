@@ -3,7 +3,6 @@
    [cats.core :as cats]
    [cats.monad.either :as either]
    [com.devereux-henley.rts-domain.contract :as domain]
-   [com.devereux-henley.rts-web.web.draft :as web.draft]
    [com.devereux-henley.rts-web.web.game :as web.game]
    [integrant.core]
    [selmer.parser]
@@ -148,7 +147,7 @@
   [dependencies draft request]
   (let [game-mode    (domain/get-game-mode-by-eid dependencies (:game-mode-eid draft))
         faction      (domain/get-faction-by-eid dependencies (:faction-eid draft))
-        units        (web.draft/hydrate-units-with-stats
+        units        (domain/hydrate-units-with-stats
                       (domain/get-units-for-faction dependencies (:faction-eid draft)))
         unit-by-eid  (into {} (map (juxt :eid identity) units))
         units-by-cat (->> units
@@ -159,8 +158,8 @@
         hydrate      (fn [eids] (vec (keep unit-by-eid eids)))
         main-units   (hydrate (:main state))
         reinf-units  (hydrate (:reinforcements state))
-        main-ctx     (web.draft/build-section-context "main" main-units (:eid draft) game-mode)
-        reinf-ctx    (web.draft/build-section-context "reinforcements" reinf-units (:eid draft) game-mode)]
+        main-ctx     (domain/build-section-context "main" main-units (:eid draft) game-mode)
+        reinf-ctx    (domain/build-section-context "reinforcements" reinf-units (:eid draft) game-mode)]
     {:faction                faction
      :game-mode              game-mode
      :reinforcements-enabled (= 1 (:reinforcements-enabled game-mode))
