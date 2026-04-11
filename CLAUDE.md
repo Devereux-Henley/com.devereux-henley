@@ -108,10 +108,11 @@ Bypassing these wrappers omits the `sqlite-transformer`, which silently returns 
 
 1. Entity + resource Malli schemas in `domain/<resource>.clj` — merge from `base-resource`; annotate FK fields with `:model/link`
 2. SQL files in `resources/<base>/sql/` + `db/<resource>.clj`
-3. Handler functions in `handlers/<resource>.clj`: fetch fns return nil for missing (callers throw `:error/missing`); validation errors are returned as typed maps `{:type :<resource>/error :message "…"}`; unexpected infrastructure failures throw and propagate to the exception middleware
-4. Route definitions in `web/<resource>.clj` with `:name`, `:parameters`, `:responses`, `:produces`, and an Integrant `ref` for the handler; web handlers dispatch on `:type` of the domain return value — **no try/catch**
-5. Register routes in `web/routes.clj` and handler keys in `configuration.clj`
-6. HTML templates under `resources/<base>/` + view dispatch entry in `web.clj` (keyed by `"<type>"` string)
+3. Handler functions in `handlers/<resource>.clj`: fetch fns return nil for missing; validation errors return a typed map `{:type :<resource>/error :message "…"}`; infrastructure failures throw and propagate to the Reitit exception middleware
+4. Web fetch fns in `web/<resource>.clj` return `{:type :missing/resource :name "<resource>" :id eid}` when domain returns nil — no throwing
+5. Route definitions in `web/<resource>.clj` with `:name`, `:parameters`, `:responses`, `:produces`, and an Integrant `ref` for the handler; web handlers dispatch on `:type` of the return value — **no try/catch**
+6. Register routes in `web/routes.clj` and handler keys in `configuration.clj`
+7. HTML templates under `resources/<base>/` + view dispatch entry in `web.clj` `view-by-type` map (keyed by keyword `:type`)
 
 ## Accessibility
 

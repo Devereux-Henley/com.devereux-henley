@@ -107,12 +107,18 @@ The middleware stack applies in this order:
 
 ### HTML and htmx rendering
 
-For `text/html` and `application/htmx+html`, the encoder dispatches to a Selmer template based on the `:type` key in the response body. The view routing map lives in `web.clj`:
+For `text/html` and `application/htmx+html`, the encoder dispatches to a Selmer template based on the `:type` key in the response body. The view routing map (`view-by-type`) lives in `web.clj`:
 
 ```clojure
-{"game/game"  "rts-api/resource/game.html"
- "exception"  "rts-api/resource/error.html"
- :default     "rts-api/resource/unknown.html"}
+{:game/game            "rts-web/resource/game.html"
+ :game/faction         "rts-web/resource/faction.html"
+ :game/draft           "rts-web/resource/draft.html"
+ :draft/unit           "rts-web/resource/draft-unit.html"
+ :draft/add-success    "rts-web/resource/draft-add-success.html"
+ :draft/add-error      "rts-web/resource/draft-add-error.html"
+ :draft/remove-success "rts-web/resource/draft-remove-success.html"
+ :missing/resource     "rts-web/resource/missing.html"
+ "exception"           "rts-web/resource/error.html"}
 ```
 
 The `application/htmx+html` format additionally supports `hx-swap-oob` for out-of-band partial updates.
@@ -163,35 +169,49 @@ Handlers are registered via Integrant. Each handler is an `init-key` method that
     ))
 ```
 
-### Either monad pipeline
+### Error signalling conventions
 
-Handlers use `cats.monad.either` to sequence operations. Each step returns `either/right` on success or `either/left` on failure. A left value short-circuits the pipeline.
+Domain and web functions signal errors in two distinct ways:
 
-```clojure
-(cats/>>= (either/right eid)
-          (partial db/fetch-game dependencies)
-          (partial load-embedded dependencies embed))
-```
-
-The result is branched into an error or success response:
+**Return a typed map** for logic and validation errors — conditions the caller is expected to handle as normal outcomes (e.g. budget exceeded, duplicate lord, missing resource):
 
 ```clojure
-(either/branch
-  result
-  to-error-response
-  (partial to-success-response game-resource-schema route-data))
+;; domain validation error
+{:type :draft/add-error :message "Only one lord may be added to an army section."}
+
+;; missing resource (returned by web-layer fetch fns when domain returns nil)
+{:type :missing/resource :name "game" :id #uuid "..."}
 ```
 
-### Standard handler helpers
+Web handlers dispatch on `:type` — no try/catch:
 
-`handlers/core.clj` provides helpers that codify the common cases:
+```clojure
+(let [result (domain/add-unit-to-draft dependencies eid unit-eid section)]
+  {:status (if (= :draft/add-success (:type result)) 200 422)
+   :body   result})
+```
 
-| Helper | Use |
+**Throw `ex-info`** only for infrastructure failures — conditions callers cannot handle meaningfully (DB errors, unexpected nil from a required service). These propagate to the Reitit exception middleware in `web.clj`, which maps `:error/kind` to an HTTP status and renders an appropriate error response.
+
+### Fetch functions
+
+Web-layer fetch functions (in `web/<resource>.clj`) call domain functions and return a typed missing-resource map when the domain returns nil:
+
+```clojure
+(defn get-game-by-eid
+  [dependencies eid]
+  (or (domain/get-game-by-eid dependencies eid)
+      {:type :missing/resource :name "game" :id eid}))
+```
+
+### Response helpers (`http/contract.clj`)
+
+| Helper | Behaviour |
 |---|---|
-| `standard-fetch` | Fetch a single resource by eid |
-| `standard-fetch-collection` | Fetch a paginated collection |
-| `standard-create` | Create a resource and return 201 |
-| `standard-load-embedded` | Fetch and attach embedded sub-resources |
+| `handle-fetch-response` | Calls thunk; returns 404 if result is `:missing/resource`, otherwise encodes and returns 200 |
+| `handle-create-response` | Calls thunk; encodes and returns 201 |
+| `apply-embeds` | Threads embed fns through a model; short-circuits on `:missing/resource` |
+| `encode-value` | Applies the model transformer to resolve `_links` |
 
 ---
 
@@ -236,29 +256,45 @@ GET /api/game/:eid?embed=factions&embed=socials
 
 ## Error responses
 
-All errors follow a consistent shape. The `:error/kind` keyword determines the HTTP status.
+### Missing resource (404)
 
-| `:error/kind` | Status | Meaning |
-|---|---|---|
-| `:error/invalid` | 400 | Request failed schema coercion |
-| `:error/missing` | 404 | Resource not found |
-| `:error/conflict` | 409 | State conflict (e.g. duplicate) |
-| `:error/unknown` | 500 | Unexpected server error |
+When a fetch function cannot find a resource, it returns a typed map that propagates as the response body:
 
 ```clojure
-;; 404
 {:status 404
- :body   {:error/kind    :error/missing
-          :model/type    :game/game
-          :model/eid     #uuid "..."
-          :error/message "No game with given eid."}}
-
-;; 400
-{:status 400
- :body   {:error/kind :error/invalid
-          :model/type :game/game
-          :coercion   {...malli coercion errors...}}}
+ :body   {:type :missing/resource
+          :name "game"
+          :id   #uuid "..."}}
 ```
+
+For HTML requests this renders `rts-web/resource/missing.html`. For htmx partial requests, the `:missing/resource` type is dispatched through `view-by-type` in `web.clj`.
+
+### Validation / logic error
+
+Domain functions return a typed error map for expected failure conditions. The web handler maps this to an appropriate HTTP status:
+
+```clojure
+{:status 422
+ :body   {:type    :draft/add-error
+          :message "Only one lord may be added to an army section."}}
+```
+
+### Infrastructure / coercion error
+
+Unhandled exceptions propagate to the Reitit exception middleware (`exception-handlers` in `web.clj`). The middleware maps exception types to HTTP statuses:
+
+| Exception type | Status | Trigger |
+|---|---|---|
+| `clojure.lang.ExceptionInfo` with `:error/missing` | 404 | Resource not found (thrown path) |
+| `clojure.lang.ExceptionInfo` with `:error/invalid` | 400 | Invalid input |
+| `clojure.lang.ExceptionInfo` with `:error/conflict` | 409 | State conflict |
+| `clojure.lang.ExceptionInfo` (other) | 500 | Unexpected application error |
+| `::coercion/request-coercion` | 400 | Malli request coercion failure |
+| `::coercion/response-coercion` | 500 | Malli response coercion failure |
+| `java.net.ConnectException` | 503 | Auth service unreachable |
+| `::exception/default` | 500 | Any other unhandled exception |
+
+For HTML requests the middleware renders `rts-web/view/error.html` with the session attached; for htmx partial requests it renders an inline error fragment; for JSON requests it returns `{:error <message>}`.
 
 ---
 
@@ -322,8 +358,11 @@ Session authentication is handled by `ory-session-middleware`, which wraps the R
 ## Adding a new resource
 
 1. **Define entity and resource schemas** in the base's `schema.clj`. Merge from `base-resource` or `base-collection-resource`. Annotate foreign-key fields with `:model/link`.
-2. **Write SQL queries** in `resources/<base>/sql/` and expose them through a `db/<resource>.clj` namespace. Return either values.
-3. **Implement handler functions** in `handlers/<resource>.clj` using the either pipeline and `standard-*` helpers from `handlers/core.clj`.
-4. **Expose endpoints** in `web/<resource>.clj`. Declare `:name`, `:parameters`, `:responses`, and `:produces` on each route.
+2. **Write SQL queries** in `resources/<base>/sql/` and expose them through a `db/<resource>.clj` namespace.
+3. **Implement domain functions** in `handlers/<resource>.clj`:
+   - Fetch functions return the entity or `nil` (callers return `{:type :missing/resource …}` when nil).
+   - Validation/logic failures return a typed error map (e.g. `{:type :<resource>/error :message "…"}`).
+   - Infrastructure failures throw and propagate to the exception middleware.
+4. **Expose endpoints** in `web/<resource>.clj`. Declare `:name`, `:parameters`, `:responses`, and `:produces` on each route. Web handlers dispatch on the `:type` of the domain return value — **no try/catch**.
 5. **Register routes** in `web/routes.clj` and **register handler init-keys** in `configuration.clj`.
-6. **Add HTML templates** under `resources/<base>/` for `text/html` and `application/htmx+html` support, and register them in the view dispatch map in `web.clj`.
+6. **Add HTML templates** under `resources/<base>/` for `text/html` and `application/htmx+html` support, and register them in `view-by-type` in `web.clj`.

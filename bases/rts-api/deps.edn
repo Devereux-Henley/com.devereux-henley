@@ -1,7 +1,6 @@
 {:paths ["src" "resources"]
  :deps {com.taoensso/timbre {:mvn/version "6.0.4"}
         integrant/integrant {:mvn/version "1.0.1"}
-        funcool/cats {:mvn/version "2.4.2"}
         metosin/reitit {:mvn/version "0.10.1"}
         metosin/malli {:mvn/version "0.9.2"}
         metosin/muuntaja {:mvn/version "0.6.8"}
