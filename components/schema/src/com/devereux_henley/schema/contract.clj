@@ -5,7 +5,6 @@
    [malli.core]
    [malli.transform]
    [malli.util]
-   [reitit.coercion.malli]
    [reitit.core])
   (:import
    [java.net URL]
@@ -148,8 +147,8 @@
   (let [link-schema (create-link-schema input-schema)]
     (to-schema
      (-> input-schema
-       (malli.util/merge base-resource)
-       (malli.util/merge [:map [:_links link-schema]])))))
+         (malli.util/merge base-resource)
+         (malli.util/merge [:map [:_links link-schema]])))))
 
 (defn make-embedded-schema
   [schema]
@@ -261,9 +260,9 @@
     :decoders {:uuid       (fn [uuid-string] (UUID/fromString uuid-string))
                :bool       (fn [bit] (if bit true false))
                :local-date (fn [date-string] (when-not (empty? date-string)
-                                              (LocalDate/parse date-string)))
+                                               (LocalDate/parse date-string)))
                :instant    (fn [instant-string] (when-not (empty? instant-string)
-                                                 (Instant/parse instant-string)))}}))
+                                                  (Instant/parse instant-string)))}}))
 
 (defn handle-model-transform
   [route-data schema]
@@ -295,9 +294,9 @@
   [specification]
   (let [{:keys [offset size]} specification]
     (when (and (some? offset) (some? size))
-        (assoc specification
-               :offset
-               (+ offset size)))))
+      (assoc specification
+             :offset
+             (+ offset size)))))
 
 (defn previous-specification
   [specification]

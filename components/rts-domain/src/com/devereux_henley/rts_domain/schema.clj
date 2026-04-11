@@ -117,6 +117,7 @@
     [:unit
      [:map
       [:eid :uuid]
+      [:game-eid :uuid]
       [:name :string]
       [:description :string]
       [:unit-type-name :string]
