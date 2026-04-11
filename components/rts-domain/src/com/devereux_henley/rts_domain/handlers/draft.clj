@@ -131,26 +131,17 @@
         (db/get-drafts-for-player-by-game (:connection dependencies) player-sub game-eid)))
 
 (defn- parse-state-entry
-  "Normalises a draft-state entry into the canonical map form.
-   Handles the legacy format where entries were plain UUID strings."
   [entry]
-  (if (string? entry)
-    {:unit-eid   (java.util.UUID/fromString entry)
-     :mount      nil
-     :spells     []
-     :items      []
-     :total-cost nil}
-    {:unit-eid   (java.util.UUID/fromString (str (:unit-eid entry)))
-     :mount      (:mount entry)
-     :spells     (or (:spells entry) [])
-     :items      (or (:items entry) [])
-     :total-cost (:total-cost entry)}))
+  {:unit-eid   (java.util.UUID/fromString (str (:unit-eid entry)))
+   :mount      (:mount entry)
+   :spells     (or (:spells entry) [])
+   :items      (or (:items entry) [])
+   :total-cost (:total-cost entry)})
 
 (defn get-draft-state
   "Returns {:main [entry …] :reinforcements [entry …]} where each entry is
    {:unit-eid uuid :mount str-or-nil :spells [str] :items [str] :total-cost int-or-nil}.
-   Returns empty collections when no state exists.
-   Handles the legacy format where entries were plain UUID strings."
+   Returns empty collections when no state exists."
   [dependencies draft-eid]
   (if-let [row (db/get-draft-state-by-draft (:connection dependencies) draft-eid)]
     (let [parsed (jsonista/read-value (:state row) (jsonista/object-mapper {:decode-key-fn keyword}))]
@@ -289,8 +280,8 @@
                                                   draft-eid game-mode)]
             (set-draft-state dependencies draft-eid new-state)
             {:type          :draft/add-success
-             :main-section  main-ctx
-             :reinf-section (when reinf-enabled reinf-ctx)}))))))
+             :main-section  (assoc main-ctx :oob true)
+             :reinf-section (when reinf-enabled (assoc reinf-ctx :oob true))}))))))
 
 (defn remove-unit-from-draft
   [dependencies draft-eid unit-eid section]
@@ -324,5 +315,5 @@
                                              (hydrate-section (:reinforcements new-state))
                                              draft-eid game-mode)]
       {:type          :draft/remove-success
-       :main-section  main-ctx
-       :reinf-section (when reinf-enabled reinf-ctx)})))
+       :main-section  (assoc main-ctx :oob true)
+       :reinf-section (when reinf-enabled (assoc reinf-ctx :oob true))})))

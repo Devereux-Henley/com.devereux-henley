@@ -131,7 +131,11 @@
                           (mapv (fn [g] {:category (:unit-category-name (first g))
                                          :units    (vec (sort-by :cost g))})))
         state        (domain/get-draft-state dependencies (:eid draft))
-        hydrate      (fn [eids] (vec (keep unit-by-eid eids)))
+        hydrate      (fn [entries]
+                       (vec (keep (fn [entry]
+                                    (when-let [u (get unit-by-eid (:unit-eid entry))]
+                                      (assoc u :total-cost (or (:total-cost entry) (:cost u)))))
+                                  entries)))
         main-units   (hydrate (:main state))
         reinf-units  (hydrate (:reinforcements state))
         main-ctx     (domain/build-section-context "main" main-units (:eid draft) game-mode)

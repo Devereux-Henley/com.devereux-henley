@@ -14,7 +14,8 @@
 
 (def draft-resource schema/draft-resource)
 
-(def create-draft-specification schema/create-draft-specification)
+(def create-draft-specification       schema/create-draft-specification)
+(def add-unit-to-draft-specification  schema/add-unit-to-draft-specification)
 
 (def draft-error-response schema/draft-error-response)
 

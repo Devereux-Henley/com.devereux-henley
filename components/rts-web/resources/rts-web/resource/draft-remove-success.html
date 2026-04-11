@@ -1,5 +1,5 @@
-<div id="draft-error-zone" aria-live="assertive" aria-atomic="true" hx-swap-oob="outerHTML"></div>
-<div id="draft-action-error" role="alert" aria-live="polite" hidden hx-swap-oob="outerHTML"></div>
+<div id="draft-error-zone" aria-live="assertive" aria-atomic="true" hx-swap-oob="true"></div>
+<div id="draft-action-error" role="alert" aria-live="polite" hidden hx-swap-oob="true"></div>
 {% with section=data.main-section %}{% include "rts-web/view/draft-army-section.html" %}{% endwith %}
 {% if data.reinf-section %}
 {% with section=data.reinf-section %}{% include "rts-web/view/draft-army-section.html" %}{% endwith %}

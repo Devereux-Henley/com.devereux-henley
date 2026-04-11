@@ -1,7 +1,5 @@
 {:deps {org.clojure/clojure           {:mvn/version "1.11.1"}
-        io.github.oakes/odoyle-rules {:git/url "https://github.com/oakes/odoyle-rules"
-                                      :git/tag "1.3.1"
-                                      :git/sha "2ea7a5fd2b8553159e9a53cd58585a51a1281e25"}
+        net.sekao/odoyle-rules       {:mvn/version "1.3.1"}
         mono/content-negotiation     {:local/root "../../components/content-negotiation"}
         mono/http                    {:local/root "../../components/http"}
         mono/jdbc                    {:local/root "../../components/jdbc"}
