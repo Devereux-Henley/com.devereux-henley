@@ -115,7 +115,7 @@
 
 (deftest per-unit-cap-exceeded-returns-error
   (let [unit (infantry)
-        army [(assoc unit :section "main") (assoc unit :section "reinforcements")]
+        army (into [] (repeat 6 (assoc unit :section "main")))
         result (validate army unit "main")]
     (is (= :draft/add-error (:type result)))))
 

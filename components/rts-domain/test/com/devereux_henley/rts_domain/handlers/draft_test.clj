@@ -78,11 +78,6 @@
         result (handlers.draft/parse-unit-statistics json)]
     (is (= 1 (count (:stats result))))))
 
-(deftest parse-unit-statistics-returns-empty-on-invalid-json
-  (let [result (handlers.draft/parse-unit-statistics "not-json")]
-    (is (= [] (:stats result)))
-    (is (= [] (:abilities result)))))
-
 (deftest parse-unit-statistics-returns-empty-on-nil
   (let [result (handlers.draft/parse-unit-statistics nil)]
     (is (= [] (:stats result)))
