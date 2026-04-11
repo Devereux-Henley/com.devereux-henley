@@ -80,7 +80,9 @@ rts-web, rts-domain, rts-data-access → http, jdbc, schema, content-negotiation
 1. **Reitit** routes the request, coerces path/query/body via Malli schemas
 2. **Muuntaja** negotiates content type (`application/json`, `application/hal+json`, `text/html`, `application/htmx+html`)
 3. **Integrant**-managed handler (`init-key`) receives injected `{:db … :router …}`
-4. Handler uses the **Either monad** (`cats.monad.either`) to chain db calls; a `left` short-circuits to an error response
+4. Handler calls domain functions. Domain signals errors in two ways:
+   - **Logic/validation errors** (budget exceeded, duplicate lord, etc.) — returned as a typed map `{:type :draft/add-error :message "…"}`; web handlers dispatch on `:type` to choose the HTTP status and body. **No try/catch in web handlers.**
+   - **Infrastructure/missing-resource errors** — thrown as `ex-info` with `:error/kind` (`:error/missing`, `:error/invalid`, `:error/conflict`). These propagate through the stack and are caught by the Reitit exception middleware in `web.clj` (`exception-handlers`), which maps them to the appropriate HTTP status and renders an error page or JSON body.
 5. On success, the **model transformer** walks the resource, resolves `:model/link` annotations into `_links` URLs using the reitit router
 6. For HTML responses, a Selmer template is chosen by `:type` in the response body (dispatch map in `web.clj`)
 
@@ -105,9 +107,9 @@ Bypassing these wrappers omits the `sqlite-transformer`, which silently returns 
 ## Adding a new resource (checklist)
 
 1. Entity + resource Malli schemas in `domain/<resource>.clj` — merge from `base-resource`; annotate FK fields with `:model/link`
-2. SQL files in `resources/<base>/sql/` + `db/<resource>.clj` returning `either` values
-3. Handler functions in `handlers/<resource>.clj` using the either pipeline + `standard-fetch` / `standard-create` helpers from `handlers/core.clj`
-4. Route definitions in `web/<resource>.clj` with `:name`, `:parameters`, `:responses`, `:produces`, and an Integrant `ref` for the handler
+2. SQL files in `resources/<base>/sql/` + `db/<resource>.clj`
+3. Handler functions in `handlers/<resource>.clj`: fetch fns return nil for missing (callers throw `:error/missing`); validation errors are returned as typed maps `{:type :<resource>/error :message "…"}`; unexpected infrastructure failures throw and propagate to the exception middleware
+4. Route definitions in `web/<resource>.clj` with `:name`, `:parameters`, `:responses`, `:produces`, and an Integrant `ref` for the handler; web handlers dispatch on `:type` of the domain return value — **no try/catch**
 5. Register routes in `web/routes.clj` and handler keys in `configuration.clj`
 6. HTML templates under `resources/<base>/` + view dispatch entry in `web.clj` (keyed by `"<type>"` string)
 

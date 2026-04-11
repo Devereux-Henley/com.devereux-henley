@@ -153,15 +153,14 @@
 ;; ─── Composite domain operations ──────────────────────────────────────────────
 
 (defn get-draft-unit-details
-  "Returns the full unit response for a unit in the context of a draft,
-   including stat percentages and resolved abilities."
   [dependencies draft-eid unit-eid]
-  (let [draft            (get-draft-by-eid dependencies draft-eid)
-        game-mode        (db/get-game-mode-by-eid (:connection dependencies) (:game-mode-eid draft))
-        unit             (db/get-unit-by-eid (:connection dependencies) unit-eid)
+  (let [conn             (:connection dependencies)
+        draft            (db/get-draft-by-eid conn draft-eid)
+        game-mode        (db/get-game-mode-by-eid conn (:game-mode-eid draft))
+        unit             (db/get-unit-by-eid conn unit-eid)
         {:keys [stats abilities]} (parse-unit-statistics (:unit-statistics unit))
         unit-statistics  (mapv add-stat-percentage stats)
-        ability-by-name  (db/get-abilities-by-names (:connection dependencies) abilities)
+        ability-by-name  (db/get-abilities-by-names conn abilities)
         parsed-abilities (mapv (fn [a]
                                  (let [{:keys [eid description]} (get ability-by-name a)]
                                    {:name a :eid eid :description description}))
@@ -174,15 +173,13 @@
      :reinforcements-enabled (= 1 (:reinforcements-enabled game-mode))}))
 
 (defn add-unit-to-draft
-  "Validates and adds a unit to the specified section of a draft.
-   Returns a success body or an error body with :http-status."
   [dependencies draft-eid unit-eid section]
-  (let [draft         (get-draft-by-eid dependencies draft-eid)
-        game-mode     (db/get-game-mode-by-eid (:connection dependencies) (:game-mode-eid draft))
+  (let [conn          (:connection dependencies)
+        draft         (db/get-draft-by-eid conn draft-eid)
+        game-mode     (db/get-game-mode-by-eid conn (:game-mode-eid draft))
         state         (get-draft-state dependencies draft-eid)
         section-k     (keyword section)
-        all-units     (hydrate-units-with-stats
-                       (db/get-units-for-faction (:connection dependencies) (:faction-eid draft)))
+        all-units     (hydrate-units-with-stats (db/get-units-for-faction conn (:faction-eid draft)))
         unit-by-eid   (into {} (map (juxt :eid identity) all-units))
         hydrate       (fn [eids] (vec (keep unit-by-eid eids)))
         units-in      (hydrate (get state section-k []))
@@ -196,21 +193,18 @@
         reinf-enabled (= 1 (:reinforcements-enabled game-mode))]
     (cond
       (nil? unit-hydrated)
-      {:type :draft/add-error
-       :message "Unit not found in this faction's roster."
-       :http-status 422}
+      {:type    :draft/add-error
+       :message "Unit not found in this faction's roster."}
 
       (> total-cost section-max)
-      {:type :draft/add-error
+      {:type    :draft/add-error
        :message (str "Adding " (:name unit-hydrated)
                      " would exceed the " section
-                     " army budget of " section-max ".")
-       :http-status 422}
+                     " army budget of " section-max ".")}
 
       (and is-lord (> lords-in 0))
-      {:type :draft/add-error
-       :message "Only one lord may be added to an army section."
-       :http-status 422}
+      {:type    :draft/add-error
+       :message "Only one lord may be added to an army section."}
 
       :else
       (let [new-state  (update state section-k (fnil conj []) unit-eid)
@@ -222,11 +216,10 @@
          :reinf-section (when reinf-enabled reinf-ctx)}))))
 
 (defn remove-unit-from-draft
-  "Removes the first occurrence of unit-eid from the specified section of a draft.
-   Returns a success body."
   [dependencies draft-eid unit-eid section]
-  (let [draft         (get-draft-by-eid dependencies draft-eid)
-        game-mode     (db/get-game-mode-by-eid (:connection dependencies) (:game-mode-eid draft))
+  (let [conn          (:connection dependencies)
+        draft         (db/get-draft-by-eid conn draft-eid)
+        game-mode     (db/get-game-mode-by-eid conn (:game-mode-eid draft))
         state         (get-draft-state dependencies draft-eid)
         section-k     (keyword section)
         old-list      (get state section-k [])
@@ -238,8 +231,7 @@
         new-state     (assoc state section-k new-list)
         reinf-enabled (= 1 (:reinforcements-enabled game-mode))]
     (set-draft-state dependencies draft-eid new-state)
-    (let [all-units   (hydrate-units-with-stats
-                       (db/get-units-for-faction (:connection dependencies) (:faction-eid draft)))
+    (let [all-units   (hydrate-units-with-stats (db/get-units-for-faction conn (:faction-eid draft)))
           unit-by-eid (into {} (map (juxt :eid identity) all-units))
           hydrate     (fn [eids] (vec (keep unit-by-eid eids)))
           main-ctx    (build-section-context "main" (hydrate (:main new-state)) draft-eid game-mode)

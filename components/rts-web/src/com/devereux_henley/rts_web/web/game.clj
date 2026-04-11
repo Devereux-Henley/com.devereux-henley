@@ -1,7 +1,5 @@
 (ns com.devereux-henley.rts-web.web.game
   (:require
-   [cats.core :as cats]
-   [cats.monad.either :as either]
    [com.devereux-henley.http.contract :as web.core]
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.schema.contract :as schema.contract]
@@ -9,17 +7,25 @@
    [reitit.core]
    [taoensso.timbre :as log]))
 
-(def get-game-by-eid
-  (web.core/standard-fetch domain/get-game-by-eid :game/game))
+(defn get-game-by-eid
+  [dependencies eid]
+  (or (domain/get-game-by-eid dependencies eid)
+      {:type :missing/resource :name "game" :id eid}))
 
-(def get-factions-for-game
-  (web.core/standard-load-embedded domain/get-factions-for-game :factions :game/game))
+(defn get-factions-for-game
+  [dependencies model]
+  (assoc-in model [:_embedded :factions]
+            (domain/get-factions-for-game dependencies (:eid model))))
 
-(def get-game-modes-for-game
-  (web.core/standard-load-embedded domain/get-game-modes-for-game :game-modes :game/game))
+(defn get-game-modes-for-game
+  [dependencies model]
+  (assoc-in model [:_embedded :game-modes]
+            (domain/get-game-modes-for-game dependencies (:eid model))))
 
-(def get-socials-for-game
-  (web.core/standard-load-embedded domain/get-socials-for-game :socials :game/game))
+(defn get-socials-for-game
+  [dependencies model]
+  (assoc-in model [:_embedded :socials]
+            (domain/get-socials-for-game dependencies (:eid model))))
 
 (def game-embed-registry
   {:factions   get-factions-for-game
@@ -34,22 +40,13 @@
 
 (defn load-units-by-category-for-faction
   [dependencies model]
-  (try
-    (let [units             (domain/get-units-for-faction dependencies (:eid model))
-          units-by-category (->> units
-                                 (partition-by :unit-category-name)
-                                 (mapv (fn [group]
-                                         {:category (:unit-category-name (first group))
-                                          :units    (vec group)})))]
-      (either/right (assoc-in model [:_embedded :units-by-category] units-by-category)))
-    (catch Exception exc
-      (log/error exc)
-      (either/left (ex-info
-                    "Failed to fetch units for faction."
-                    {:error/kind :error/unknown
-                     :model/eid  (:eid model)
-                     :model/type :game/faction}
-                    exc)))))
+  (let [units             (domain/get-units-for-faction dependencies (:eid model))
+        units-by-category (->> units
+                               (partition-by :unit-category-name)
+                               (mapv (fn [group]
+                                       {:category (:unit-category-name (first group))
+                                        :units    (vec group)})))]
+    (assoc-in model [:_embedded :units-by-category] units-by-category)))
 
 (def faction-embed-registry
   {:units-by-category load-units-by-category-for-faction})
@@ -60,111 +57,98 @@
     [:version {:optional true} :pos-int]
     [:embed {:optional true} [:or :string [:sequential :string]]]]))
 
-(def get-draft-by-eid
-  (web.core/standard-fetch domain/get-draft-by-eid :game/draft))
+(defn get-draft-by-eid
+  [dependencies eid]
+  (or (domain/get-draft-by-eid dependencies eid)
+      {:type :missing/resource :name "draft" :id eid}))
 
-(def create-draft
-  (web.core/standard-create domain/create-draft :game/draft))
+(defn create-draft
+  [dependencies create-specification]
+  (domain/create-draft dependencies create-specification))
 
-(def get-unit-by-eid
-  (web.core/standard-fetch domain/get-unit-by-eid :game/unit))
+(defn get-unit-by-eid
+  [dependencies eid]
+  (or (domain/get-unit-by-eid dependencies eid)
+      {:type :missing/resource :name "unit" :id eid}))
 
-(def get-faction-by-eid
-  (web.core/standard-fetch domain/get-faction-by-eid :game/faction))
+(defn get-faction-by-eid
+  [dependencies eid]
+  (or (domain/get-faction-by-eid dependencies eid)
+      {:type :missing/resource :name "faction" :id eid}))
 
 (defn load-factions-for-faction-game
   [dependencies model]
-  (try
-    (either/right (assoc-in model [:_embedded :factions]
-                             (domain/get-factions-for-game dependencies (:game-eid model))))
-    (catch Exception exc
-      (log/error exc)
-      (either/left (ex-info
-                    "Failed to fetch factions for game."
-                    {:error/kind :error/unknown
-                     :model/eid  (:eid model)
-                     :model/type :game/faction}
-                    exc)))))
+  (assoc-in model [:_embedded :factions]
+            (domain/get-factions-for-game dependencies (:game-eid model))))
 
-(def get-game-social-link-by-eid
-  (web.core/standard-fetch domain/get-game-social-link-by-eid :game/social))
+(defn get-game-social-link-by-eid
+  [dependencies eid]
+  (or (domain/get-game-social-link-by-eid dependencies eid)
+      {:type :missing/resource :name "social link" :id eid}))
 
 (defn get-games
   [dependencies {:keys [hostname router]}]
-  (try
-    (either/right {:type      :collection/game
-                   :_embedded {:results (domain/get-games dependencies)}
-                   :_links    {:self (str hostname "/"
-                                          (-> router
-                                              (reitit.core/match-by-name! :collection/game)
-                                              :path))}})
-    (catch Exception exc
-      (log/error exc)
-      (either/left (ex-info
-                    "Failed to fetch games."
-                    {:error/kind :error/unknown
-                     :model/type :collection/game}
-                    exc)))))
+  {:type      :collection/game
+   :_embedded {:results (domain/get-games dependencies)}
+   :_links    {:self (str hostname "/"
+                          (-> router
+                              (reitit.core/match-by-name! :collection/game)
+                              :path))}})
 
 (defmethod integrant.core/init-key ::get-faction
   [_init-key dependencies]
   (fn [{{{:keys [eid]}   :path
          {:keys [embed]} :query} :parameters
-       router                    :reitit.core/router
-       :as                       _request}]
-    (web.core/handle-fetch-response
-     domain/faction-resource
-     {:hostname (:hostname dependencies) :router router}
-     (cats/>>=
-      (either/right eid)
-      (partial get-faction-by-eid dependencies)
-      (partial web.core/apply-embeds faction-embed-registry dependencies (some-> embed (as-> e (set (map keyword (if (string? e) [e] e))))))))))
+        router                    :reitit.core/router
+        :as                       _request}]
+    (let [embed-set (some-> embed (as-> e (set (map keyword (if (string? e) [e] e)))))]
+      (web.core/handle-fetch-response
+       domain/faction-resource
+       {:hostname (:hostname dependencies) :router router}
+       #(web.core/apply-embeds faction-embed-registry dependencies embed-set
+                               (get-faction-by-eid dependencies eid))))))
 
 (defmethod integrant.core/init-key ::get-game-social-link
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
-       router                :reitit.core/router
-       :as                   _request}]
+        router                :reitit.core/router
+        :as                   _request}]
     (web.core/handle-fetch-response
      domain/game-social-link-resource
      {:hostname (:hostname dependencies) :router router}
-     (cats/>>=
-      (either/right eid)
-      (partial get-game-social-link-by-eid dependencies)))))
+     #(get-game-social-link-by-eid dependencies eid))))
 
 (defmethod integrant.core/init-key ::get-game
   [_init-key dependencies]
   (fn [{{{:keys [eid]}   :path
          {:keys [embed]} :query} :parameters
-       router                    :reitit.core/router
-       :as                       _request}]
-    (web.core/handle-fetch-response
-     domain/game-resource
-     {:hostname (:hostname dependencies) :router router}
-     (cats/>>=
-      (either/right eid)
-      (partial get-game-by-eid dependencies)
-      (partial web.core/apply-embeds game-embed-registry dependencies (some-> embed (as-> e (set (map keyword (if (string? e) [e] e))))))))))
+        router                    :reitit.core/router
+        :as                       _request}]
+    (let [embed-set (some-> embed (as-> e (set (map keyword (if (string? e) [e] e)))))]
+      (web.core/handle-fetch-response
+       domain/game-resource
+       {:hostname (:hostname dependencies) :router router}
+       #(web.core/apply-embeds game-embed-registry dependencies embed-set
+                               (get-game-by-eid dependencies eid))))))
 
 (defmethod integrant.core/init-key ::create-draft
   [_init-key dependencies]
   (fn [{{{:keys [faction-eid game-mode-eid game-eid]} :body
-        {:keys [version]}                            :query
-        {:keys [eid]}                                :path} :parameters
-       router                                                :reitit.core/router
-       session                                               :ory-session
-       :as                                                   _request}]
+         {:keys [version]}                            :query
+         {:keys [eid]}                                :path} :parameters
+        router                                                :reitit.core/router
+        session                                               :ory-session
+        :as                                                   _request}]
     (let [response (web.core/handle-create-response
                     domain/draft-resource
                     {:hostname (:hostname dependencies) :router router}
-                    (cats/>>=
-                     (either/right {:faction-eid    faction-eid
+                    #(create-draft dependencies
+                                   {:faction-eid    faction-eid
                                     :game-mode-eid  game-mode-eid
                                     :player-sub     (get-in session [:identity :id])
                                     :created-by-sub (get-in session [:identity :id])
                                     :eid            eid
-                                    :version        version})
-                     (partial create-draft dependencies)))]
+                                    :version        version}))]
       (assoc-in response [:headers "HX-Redirect"] (str "/view/game/" game-eid "/draft/" eid "/index.html")))))
 
 (defmethod integrant.core/init-key ::get-games
@@ -173,4 +157,4 @@
     (web.core/handle-fetch-response
      domain/game-collection-resource
      {:hostname (:hostname dependencies) :router router}
-     (get-games dependencies {:hostname (:hostname dependencies) :router router}))))
+     #(get-games dependencies {:hostname (:hostname dependencies) :router router}))))

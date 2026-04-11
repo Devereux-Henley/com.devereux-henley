@@ -30,14 +30,15 @@
 (defn view-by-type
   [type]
   (get
-   {:game/game           "rts-web/resource/game.html"
-    :game/faction        "rts-web/resource/faction.html"
-    :game/draft          "rts-web/resource/draft.html"
-    :draft/unit          "rts-web/resource/draft-unit.html"
-    :draft/add-success   "rts-web/resource/draft-add-success.html"
-    :draft/add-error     "rts-web/resource/draft-add-error.html"
+   {:game/game            "rts-web/resource/game.html"
+    :game/faction         "rts-web/resource/faction.html"
+    :game/draft           "rts-web/resource/draft.html"
+    :draft/unit           "rts-web/resource/draft-unit.html"
+    :draft/add-success    "rts-web/resource/draft-add-success.html"
+    :draft/add-error      "rts-web/resource/draft-add-error.html"
     :draft/remove-success "rts-web/resource/draft-remove-success.html"
-    "exception"          "rts-web/resource/error.html"}
+    :missing/resource     "rts-web/resource/missing.html"
+    "exception"           "rts-web/resource/error.html"}
    type
    "rts-web/resource/unknown.html"))
 
@@ -75,13 +76,14 @@
         (str/includes? accept "htmx+html"))))
 
 (defn ^:private render-error-page
-  [status status-text message]
+  [status status-text message request]
   {:status  status
    :headers {"Content-Type" "text/html; charset=utf-8"}
    :body    (selmer.parser/render-file
              "rts-web/view/error.html"
              {:status-text status-text
-              :message     message})})
+              :message     message
+              :session     (:ory-session request)})})
 
 (defn ^:private render-error-fragment
   [status message]
@@ -95,7 +97,7 @@
   [status status-text message request]
   (if (get-in request [:headers "hx-request"])
     (render-error-fragment status message)
-    (render-error-page status status-text message)))
+    (render-error-page status status-text message request)))
 
 (defn ^:private error-response
   [status status-text message request]
@@ -126,6 +128,23 @@
       (error-response 503 "Service Unavailable"
                       "A required service is temporarily unavailable. Please try again shortly."
                       request))
+
+    clojure.lang.ExceptionInfo
+    (fn [exc request]
+      (let [status (case (:error/kind (ex-data exc))
+                     :error/missing  404
+                     :error/invalid  400
+                     :error/conflict 409
+                     500)]
+        (when (= status 500) (log/error exc "Application error" {:uri (:uri request)}))
+        (error-response status
+                        (case status
+                          400 "Bad Request"
+                          404 "Not Found"
+                          409 "Conflict"
+                          "Internal Server Error")
+                        (ex-message exc)
+                        request)))
 
     ::exception/default
     (fn [exc request]
@@ -223,8 +242,8 @@
     (ring/create-resource-handler {:root "rts-web/asset"
                                    :path "/"
                                    :not-found-handler
-                                   (fn [_] {:status  301
-                                            :headers {"Location" "/view/dashboard.html"}})})
+                                   (fn [_] {:status  404
+                                            :body    "Oopsie"})})
     (ring/create-default-handler))
    {:middleware [ring.middleware.cookies/wrap-cookies
                  (partial ory-session-middleware auth-hostname session-name)]}))

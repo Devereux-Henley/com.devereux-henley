@@ -1,65 +1,45 @@
 (ns com.devereux-henley.rts-web.web.view
   (:require
-   [cats.core :as cats]
-   [cats.monad.either :as either]
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.web.game :as web.game]
    [integrant.core]
    [selmer.parser]
    [taoensso.timbre :as log]))
 
-(defn ^:private error-page
-  [status status-text message]
-  {:status  status
-   :headers {"Content-Type" "text/html; charset=utf-8"}
-   :body    (selmer.parser/render-file
-             "rts-web/view/error.html"
-             {:status-text status-text
-              :message     message})})
-
 (defn standard-view-handler
   [view-name request]
-  (try
-    {:status 200
-     :body   (selmer.parser/render-file
-              (str "rts-web/view/" view-name)
-              (merge {:session (:ory-session request)}
-                     (:game-context request)))}
-    (catch Exception exc
-      (log/error exc)
-      (error-page 500 "Internal Server Error" "An unexpected error occurred."))))
+  {:status 200
+   :body   (selmer.parser/render-file
+            (str "rts-web/view/" view-name)
+            (merge {:session (:ory-session request)}
+                   (:game-context request)))})
 
 (defn standard-entity-view-handler
   [pipeline-fn template-name extra-data-fn request]
-  (let [{{{:keys [eid]} :path} :parameters} request]
-    (try
-      (let [result (pipeline-fn eid)]
-        (either/branch
-         result
-         (fn [_] (error-page 404 "Not Found" "The requested resource could not be found."))
-         (fn [data]
-           {:status 200
-            :body   (selmer.parser/render-file
-                     (str "rts-web/view/" template-name)
-                     (merge {:data    data
-                             :session (:ory-session request)}
-                            (:game-context request)
-                            (extra-data-fn data request)))})))
-      (catch Exception exc
-        (log/error exc)
-        (error-page 500 "Internal Server Error" "An unexpected error occurred.")))))
+  (let [{{{:keys [eid]} :path} :parameters} request
+        data (pipeline-fn eid)]
+    (if (= :missing/resource (:type data))
+      {:status 404 :body data}
+      {:status 200
+       :body   (selmer.parser/render-file
+                (str "rts-web/view/" template-name)
+                (merge {:data    data
+                        :session (:ory-session request)}
+                       (:game-context request)
+                       (extra-data-fn data request)))})))
 
 (defmethod integrant.core/init-key ::game-context-middleware
   [_init-key dependencies]
   (fn [handler]
     (fn [request]
-      (let [game-eid (get-in request [:parameters :path :game-eid])]
-        (if-let [game (domain/get-game-by-eid dependencies game-eid)]
+      (let [game-eid (get-in request [:parameters :path :game-eid])
+            game     (domain/get-game-by-eid dependencies game-eid)]
+        (if game
           (handler (assoc request :game-context {:game-eid game-eid
                                                  :game     game
                                                  :factions (domain/get-factions-for-game dependencies game-eid)
                                                  :socials  (domain/get-socials-for-game dependencies game-eid)}))
-          (error-page 404 "Not Found" "The requested game could not be found."))))))
+          {:status 404 :body {:type :missing/resource :name "game" :id game-eid}})))))
 
 (defmethod integrant.core/init-key ::dashboard-view
   [_init-key _dependencies]
@@ -85,10 +65,9 @@
   [_init-key dependencies]
   (partial standard-entity-view-handler
            (fn [eid]
-             (cats/>>=
-              (either/right eid)
-              (partial web.game/get-faction-by-eid dependencies)
-              (partial web.game/load-units-by-category-for-faction dependencies)))
+             (web.game/load-units-by-category-for-faction
+              dependencies
+              (web.game/get-faction-by-eid dependencies eid)))
            "faction.html"
            (fn [_data _request] {})))
 
@@ -107,23 +86,20 @@
 (defmethod integrant.core/init-key ::unit-view
   [_init-key dependencies]
   (partial standard-entity-view-handler
-           (fn [eid]
-             (cats/>>=
-              (either/right eid)
-              (partial web.game/get-unit-by-eid dependencies)))
+           (fn [eid] (web.game/get-unit-by-eid dependencies eid))
            "unit.html"
            (fn [data _request]
              (let [{:keys [stats abilities draftable-spells mounts equipment]} (domain/parse-unit-statistics (:unit-statistics data))
-                   spell-keys      (map #(get % "key") draftable-spells)
-                   key->spell      (domain/get-spells-by-keys dependencies spell-keys)
-                   name->ability   (domain/get-abilities-by-names dependencies abilities)
-                   resolved-spells (mapv (fn [s]
-                                           (let [key   (get s "key")
-                                                 spell (get key->spell key)]
-                                             {:name      (or (:name spell) key)
-                                              :mana-cost (:mana-cost spell)
-                                              :gold-cost (:gold-cost spell)}))
-                                         draftable-spells)
+                   spell-keys         (map #(get % "key") draftable-spells)
+                   key->spell         (domain/get-spells-by-keys dependencies spell-keys)
+                   name->ability      (domain/get-abilities-by-names dependencies abilities)
+                   resolved-spells    (mapv (fn [s]
+                                              (let [key   (get s "key")
+                                                    spell (get key->spell key)]
+                                                {:name      (or (:name spell) key)
+                                                 :mana-cost (:mana-cost spell)
+                                                 :gold-cost (:gold-cost spell)}))
+                                            draftable-spells)
                    resolved-abilities (mapv (fn [name]
                                               (let [a (get name->ability name)]
                                                 {:name        name
@@ -172,10 +148,7 @@
 (defmethod integrant.core/init-key ::draft-view
   [_init-key dependencies]
   (partial standard-entity-view-handler
-           (fn [eid]
-             (cats/>>=
-              (either/right eid)
-              (partial web.game/get-draft-by-eid dependencies)))
+           (fn [eid] (web.game/get-draft-by-eid dependencies eid))
            "draft-index.html"
            (partial build-draft-context dependencies)))
 
@@ -184,50 +157,38 @@
   (fn [{session      :ory-session
         game-context :game-context
         :as          _request}]
-    (try
-      (let [player-sub (get-in session [:identity :id])]
-        {:status 200
-         :body   (selmer.parser/render-file
-                  "rts-web/view/my-drafts.html"
-                  (merge {:drafts  (domain/get-drafts-for-player-by-game dependencies player-sub (:game-eid game-context))
-                          :session session}
-                         game-context))})
-      (catch Exception exc
-        (log/error exc)
-        (error-page 500 "Internal Server Error" "An unexpected error occurred.")))))
+    (let [player-sub (get-in session [:identity :id])]
+      {:status 200
+       :body   (selmer.parser/render-file
+                "rts-web/view/my-drafts.html"
+                (merge {:drafts  (domain/get-drafts-for-player-by-game dependencies player-sub (:game-eid game-context))
+                        :session session}
+                       game-context))})))
 
 (defmethod integrant.core/init-key ::game-index-view
   [_init-key _dependencies]
   (fn [{game-context :game-context
         session      :ory-session
         :as          _request}]
-    (try
-      {:status 200
-       :body   (selmer.parser/render-file
-                "rts-web/view/game-index.html"
-                (merge {:data    (:game game-context)
-                        :session session}
-                       game-context))}
-      (catch Exception exc
-        (log/error exc)
-        (error-page 500 "Internal Server Error" "An unexpected error occurred.")))))
+    {:status 200
+     :body   (selmer.parser/render-file
+              "rts-web/view/game-index.html"
+              (merge {:data    (:game game-context)
+                      :session session}
+                     game-context))}))
 
 (defmethod integrant.core/init-key ::create-draft-view
   [_init-key dependencies]
   (fn [{game-context :game-context
         session      :ory-session
         :as          _request}]
-    (try
-      (let [game-modes (domain/get-game-modes-for-game dependencies (:game-eid game-context))]
-        {:status 200
-         :body   (selmer.parser/render-file
-                  "rts-web/view/create-draft.html"
-                  (merge {:game-modes game-modes
-                          :session    session}
-                         game-context))})
-      (catch Exception exc
-        (log/error exc)
-        (error-page 500 "Internal Server Error" "An unexpected error occurred.")))))
+    (let [game-modes (domain/get-game-modes-for-game dependencies (:game-eid game-context))]
+      {:status 200
+       :body   (selmer.parser/render-file
+                "rts-web/view/create-draft.html"
+                (merge {:game-modes game-modes
+                        :session    session}
+                       game-context))})))
 
 (defmethod integrant.core/init-key ::logout-view
   [_init-key {:keys [auth-hostname]}]
