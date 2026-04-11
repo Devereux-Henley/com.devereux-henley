@@ -13,29 +13,26 @@
 
 (defn parse-unit-statistics
   [unit-statistics-str]
-  (try
-    (let [stats (jsonista/read-value unit-statistics-str (jsonista/object-mapper {:decode-key-fn name}))]
-      {:stats
-       (into []
-             (keep (fn [[k v]]
-                     (when-not (stat-exclude-keys k)
-                       (cond
-                         (and (vector? v) (empty? v)) nil
-                         (= v 0)                      nil
-                         (vector? v)                  {:stat (str/replace k "_" " ") :value (str/join ", " v)}
-                         :else                        {:stat (str/replace k "_" " ") :value v}))))
-             stats)
-       :abilities        (get stats "abilities" [])
-       :draftable-spells (get stats "draftable-spells" [])
-       :mounts           (mapv (fn [m] {:name    (get m "name")
-                                        :mp-cost (get m "mp_cost")})
-                               (get stats "mounts" []))
-       :equipment        (get stats "equipment" [])
-       :is-unique        (if (contains? stats "is_unique")
-                           (boolean (get stats "is_unique"))
-                           (boolean (seq (get stats "equipment" []))))})
-    (catch Exception _
-      {:stats [] :abilities [] :draftable-spells [] :mounts [] :equipment [] :is-unique false})))
+  (let [stats (jsonista/read-value unit-statistics-str (jsonista/object-mapper {:decode-key-fn name}))]
+    {:stats
+     (into []
+           (keep (fn [[k v]]
+                   (when-not (stat-exclude-keys k)
+                     (cond
+                       (and (vector? v) (empty? v)) nil
+                       (= v 0)                      nil
+                       (vector? v)                  {:stat (str/replace k "_" " ") :value (str/join ", " v)}
+                       :else                        {:stat (str/replace k "_" " ") :value v}))))
+           stats)
+     :abilities        (get stats "abilities" [])
+     :draftable-spells (get stats "draftable-spells" [])
+     :mounts           (mapv (fn [m] {:name    (get m "name")
+                                      :mp-cost (get m "mp_cost")})
+                             (get stats "mounts" []))
+     :equipment        (get stats "equipment" [])
+     :is-unique        (if (contains? stats "is_unique")
+                         (boolean (get stats "is_unique"))
+                         (boolean (seq (get stats "equipment" []))))}))
 
 ;; ─── Stat percentages ─────────────────────────────────────────────────────────
 

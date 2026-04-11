@@ -9,7 +9,7 @@
    :hero-max          2
    :semc-wm-max       4
    :semc-wm-categories #{"Hero" "Monster" "War Machine" "Artillery" "Monstrous Cavalry"}
-   :per-unit-max      2
+   :per-unit-max      5
    :unique-unit-max   1
    :section-slot-max  20})
 
