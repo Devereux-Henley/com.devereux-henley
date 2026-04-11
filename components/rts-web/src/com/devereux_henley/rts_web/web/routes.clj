@@ -147,7 +147,12 @@
                                     [:unit-eid :uuid]])
                            :query (schema.contract/to-schema
                                    [:map
-                                    [:section [:enum "main" "reinforcements"]]])}
+                                    [:section [:enum "main" "reinforcements"]]])
+                           :body  (schema.contract/to-schema
+                                   [:map
+                                    [:mount {:optional true} [:maybe :string]]
+                                    [:spells {:optional true} [:sequential :string]]
+                                    [:items {:optional true} [:sequential :string]]])}
               :responses  {200 {:body domain/draft-mutation-response}
                            422 {:body domain/draft-error-response}
                            500 {:body domain/draft-error-response}}

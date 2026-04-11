@@ -1234,7 +1234,7 @@ def update_unit_seed_file(filepath, faction_name, faction_prefixes, name_index,
         except Exception:
             old_stats = {}
 
-        for preserve_key in ("abilities", "draftable-spells", "mounts"):
+        for preserve_key in ("abilities", "draftable-spells", "mounts", "is_unique"):
             if preserve_key in old_stats:
                 new_stats[preserve_key] = old_stats[preserve_key]
         # equipment is sourced from game data — only fall back to old value if RPFM
