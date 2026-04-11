@@ -95,7 +95,7 @@
      :section-max         section-max
      :section-percentage  percentage
      :section-near-limit  (> percentage 85)
-     :section-over-budget (> cost section-max)
+     :section-over-budget (and (some? section-max) (> cost section-max))
      :draft-eid           draft-eid}))
 
 ;; ─── Draft state ──────────────────────────────────────────────────────────────

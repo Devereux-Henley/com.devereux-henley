@@ -4,7 +4,8 @@
 
 (defn get-game-by-eid
   [dependencies eid]
-  (assoc (db/get-game-by-eid (:connection dependencies) eid) :type :game/game))
+  (when-let [game (db/get-game-by-eid (:connection dependencies) eid)]
+    (assoc game :type :game/game)))
 
 (defn get-games
   [dependencies]
@@ -17,7 +18,8 @@
 
 (defn get-faction-by-eid
   [dependencies eid]
-  (assoc (db/get-faction-by-eid (:connection dependencies) eid) :type :game/faction))
+  (when-let [faction (db/get-faction-by-eid (:connection dependencies) eid)]
+    (assoc faction :type :game/faction)))
 
 (defn get-socials-for-game
   [dependencies game-eid]
@@ -26,7 +28,8 @@
 
 (defn get-game-social-link-by-eid
   [dependencies eid]
-  (assoc (db/get-game-social-link-by-eid (:connection dependencies) eid) :type :game/social))
+  (when-let [link (db/get-game-social-link-by-eid (:connection dependencies) eid)]
+    (assoc link :type :game/social)))
 
 (defn get-units-for-game
   [dependencies game-eid]
@@ -35,7 +38,8 @@
 
 (defn get-unit-by-eid
   [dependencies eid]
-  (assoc (db/get-unit-by-eid (:connection dependencies) eid) :type :game/unit))
+  (when-let [unit (db/get-unit-by-eid (:connection dependencies) eid)]
+    (assoc unit :type :game/unit)))
 
 (defn get-units-for-faction
   [dependencies faction-eid]
@@ -44,7 +48,8 @@
 
 (defn get-game-mode-by-eid
   [dependencies eid]
-  (assoc (db/get-game-mode-by-eid (:connection dependencies) eid) :type :game/game-mode))
+  (when-let [mode (db/get-game-mode-by-eid (:connection dependencies) eid)]
+    (assoc mode :type :game/game-mode)))
 
 (defn get-game-modes-for-game
   [dependencies game-eid]

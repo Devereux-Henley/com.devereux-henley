@@ -60,13 +60,22 @@ UNIT_CARD_OVERRIDES: dict[str, str] = {
     "Blackhole Flayers (Doom-Flayers)":                    "wh2_dlc12_skv_doom_flayers_ror",
     "Blessed Razordon Hunting Pack":                       "wh2_dlc13_lzd_razordon_blessed",
     "Blessed Sacred Kroxigor":                             "wh2_dlc13_lzd_sacred_kroxigors_blessed",
-    "Butchers of Kalkengard (Minotaurs - Shields)":        "wh_dlc03_bst_minotaurs",
+    "Butchers of Kalkengard (Minotaurs - Shields)":        "wh_pro04_bst_ror_minotaurs_shield",
+    "Chaos Spawn":                                          "wh_dlc03_bst_spawn",
+    "Chaos Warhounds":                                      "wh_dlc03_bst_warhounds",
+    "Wargor":                                               "wh2_dlc17_bst_wargor",
+    "Chaos Warhounds (Poison)":                             "wh_dlc03_bst_warhounds_poison",
+    "Minotaurs (Great Weapons)":                            "wh_dlc03_bst_minotaurs_great_weapons",
+    "Minotaurs (Shields)":                                  "wh_dlc03_bst_minotaurs_shield",
     "Cairn Wraiths":                                       "wh_main_vmp_cairn_wraith",
-    "Centigors of Tzeentch":                               "wh_dlc03_bst_centigors",
+    "Centigors (Great Weapons)":                             "wh_dlc03_bst_centigors_great_weapons",
+    "Centigors (Throwing Axes)":                            "wh_dlc03_bst_centigors_throwing_axes",
+    "Centigors of Tzeentch":                               "wh3_dlc24_tze_inf_centigors",
     "Chosen of the Gods (Ushabti - Great Bows)":           "wh2_dlc09_tmb_ushabti_bow_ror",
     "Death Dealers (Ratling Guns)":                        "wh2_dlc12_skv_ratling_gun_team_ror",
     "Defenders of the Fleur-de-lis (Knights Errant)":      "wh_dlc07_brt_knights_errant",
-    "Destroyers of the Drakwald (Ungor Spearmen Herd - Shields)": "wh_dlc03_bst_ungor_spearmen_shield",
+    "Destroyers of the Drakwald (Ungor Spearmen Herd - Shields)": "wh_pro04_bst_ror_ungor_spearmen_shield",
+    "Ungor Spearmen Herd (Shields)":                            "wh_dlc03_bst_ungor_spearmen_shield",
     "Doom Diver Catapults":                                "wh_main_grn_doom_diver",
     "Doom-Flayers":                                        "wh2_dlc12_skv_doom_flayers",
     "Dwarf-Thing Menace (Doom-Flayers)":                   "wh2_dlc12_skv_doom_flayers_ror",
@@ -107,9 +116,12 @@ UNIT_CARD_OVERRIDES: dict[str, str] = {
     "Razordon Hunting Pack":                               "wh2_dlc13_lzd_razordon",
     "Skeleton Archer Chariots":                            "wh2_dlc09_tmb_skeleton_archers_ror",
     "Skin Wolf Werekin":                                   "wh_dlc08_nor_skin_wolves",
-    "Sons of Ghorros (Centigors - Great Weapons)":         "wh_dlc03_bst_centigors",
-    "Steam Tank":                                          "wh2_dlc13_emp_steam_tank_ror",
-    "Steam Tank (Volley Gun)":                             "wh2_dlc13_emp_steam_tank_ror",
+    "Mortars":                                              "wh_main_emp_mortar",
+    "Outriders (Grenade Launchers)":                        "wh_main_emp_outriders_grenade_launcher",
+    "Spearmen (Shields)":                                   "wh_main_emp_spearmen_shield",
+    "Sons of Ghorros (Centigors - Great Weapons)":         "wh_pro04_bst_ror_centigors_great_weapons",
+    "Steam Tank":                                          "wh_main_emp_steamtank",
+    "Steam Tank (Volley Gun)":                             "wh3_dlc25_emp_veh_steam_tank_helblaster",
     "Teeth-Breakers (Ratling Guns)":                       "wh2_dlc12_skv_ratling_gun_team_ror",
     "The Companions of Quenelles (Questing Knights)":      "wh_dlc07_brt_questing_knights",
     "The Daemonspew (Forsaken)":                           "wh_dlc01_chs_forsaken",
@@ -222,7 +234,9 @@ UNIT_CARD_OVERRIDES: dict[str, str] = {
     "Deathmaster Snikch":                                  "skv_snikch_tzarkan_0",
     "Epidemius":                                           "dae_epidemius_0",
     "Eshin Sorcerer":                                      "skv_warlord_campaign_01_0",
+    "Felix":                                               "neu_felix_0",
     "Festus the Leechlord":                                "dae_festus_0",
+    "Gotrek":                                              "neu_gotrek_0",
     "Grimgor Ironhide":                                    "grn_ch_grimgor_0",
     "Harald Hammerstorm":                                  "chs_ch_aekold_0",  # closest chs named char
     "Helman Ghorst":                                       "vmp_ch_master_necromancer_helman_0",
@@ -240,7 +254,7 @@ UNIT_CARD_OVERRIDES: dict[str, str] = {
     "Lokhir Fellheart":                                    "def_cha_lokhir_0",
     "Luthor Harkon":                                       "cst_cha_luthor_harkon_0",
     "Master Assassin":                                     "skv_warlord_campaign_01_0",
-    "Master Engineer":                                     "dwf_master_engineer_jorek_ror_0",
+    "Master Engineer":                                     "emp_master_engineer_campaign_01_0",
     "Mother Ostankya":                                     "ksl_ostankya_0",
     "N'Kari":                                              "dae_nkari_0",
     "Prince Sigvald the Magnificent":                      "chs_ch_sigvald_0",
@@ -262,6 +276,8 @@ UNIT_CARD_OVERRIDES: dict[str, str] = {
     "Vilitch the Curseling":                               "dae_vilitch_0",
     "Wulfrik the Wanderer":                                "nor_cha_wulfrik_0",
     "Yuan Bo, the Jade Dragon":                            "wh3_dlc24_cth_cha_yuan_bo_dragon",
+
+    "Ulrika Magdova":                                      "neu_ulrika_0",
 
     # ── Heroes/lords → generic portrait by type ───────────────────────────────
     "Alluress (Shadows)":                                  "dae_daemonette_alluress_campaign_01_0",
@@ -285,6 +301,12 @@ UNIT_CARD_OVERRIDES: dict[str, str] = {
     "Exalted Lord of Change (Metal)":                      "dae_exalted_lord_of_change_campaign_01_0",
     "Exalted Lord of Change (Tzeentch)":                   "dae_exalted_lord_of_change_campaign_01_0",
     "Ezar Doombolt":                                       "dae_plaguebearer_plagueridden_campaign_01_0",
+    "Bray-Shaman (Death)":                                 "bst_bray_shaman_campaign_02_0",
+    "Bray-Shaman (Shadows)":                               "bst_bray_shaman_campaign_03_0",
+    "Bray-Shaman (Wild)":                                  "bst_bray_shaman_campaign_04_0",
+    "Great Bray-Shaman (Death)":                           "bst_great_bray_shaman_campaign_02_0",
+    "Great Bray-Shaman (Shadows)":                         "bst_great_bray_shaman_campaign_03_0",
+    "Great Bray-Shaman (Wild)":                            "bst_great_bray_shaman_campaign_04_0",
     "Grukmur Three-Horn":                                  "bst_great_bray_shaman_campaign_01_0",
     "Herald of Khorne":                                    "dae_herald_of_khorne_campaign_01_0",
     "Herald of Nurgle (Death)":                            "dae_plaguebearer_herald_campaign_01_0",
@@ -643,23 +665,28 @@ UNIT_SEED_ROW_RE = re.compile(
 
 
 def build_unit_name_eid_map(seed_dir):
-    """Parse all faction unit seed SQL files → list of (unit_name, eid) pairs.
+    """Parse all faction unit seed SQL files → list of (unit_name, eid, faction) triples.
 
     Returns a list rather than a dict so that units sharing a display name across
     factions (e.g. Tzaangors appearing in both Tzeentch and Beastmen seeds) are
     all processed — a dict would silently drop all but the last-seen eid.
+
+    faction is the slug from the filename, e.g. "empire" from seed-empire-units.sql,
+    matching the keys of FACTION_KEY_MAP.
     """
     result = []
     for filename in sorted(os.listdir(seed_dir)):
         if not (filename.startswith("seed-") and filename.endswith("-units.sql")):
             continue
+        # seed-{faction}-units.sql → faction slug
+        faction = filename[len("seed-"):-len("-units.sql")]
         filepath = os.path.join(seed_dir, filename)
         with open(filepath, encoding="utf-8") as f:
             content = f.read()
         for m in UNIT_SEED_ROW_RE.finditer(content):
             eid  = m.group(1)
             name = m.group(2).replace("''", "'")
-            result.append((name, eid))
+            result.append((name, eid, faction))
     return result
 
 
@@ -897,7 +924,10 @@ def copy_unit_portraits(portraits_dir, asset_dir, name_index, unit_name_eid_pair
     missing_key = []
     no_portrait = []
 
-    for name, eid in unit_name_eid_pairs:
+    for entry in unit_name_eid_pairs:
+        name, eid = entry[0], entry[1]
+        faction   = entry[2] if len(entry) > 2 else None
+
         if eid in existing:
             continue
 
@@ -906,10 +936,18 @@ def copy_unit_portraits(portraits_dir, asset_dir, name_index, unit_name_eid_pair
             copied += 1
             continue
 
-        candidates = name_index.get(normalize_name(name), [])
-        if not candidates:
+        all_candidates = name_index.get(normalize_name(name), [])
+        if not all_candidates:
             missing_key.append(name)
             continue
+
+        if faction and len(all_candidates) > 1:
+            faction_prefixes = FACTION_KEY_MAP.get(faction, [])
+            filtered = [(uk, lk) for uk, lk in all_candidates
+                        if any(f"_{p}_" in uk for p in faction_prefixes)]
+            candidates = filtered if filtered else all_candidates
+        else:
+            candidates = all_candidates
 
         portrait_file = None
         for uk, _lk in candidates:
@@ -962,16 +1000,29 @@ def copy_unit_cards(cards_dir, asset_dir, name_index, unit_name_eid_pairs,
     missing_key = []
     missing_src = []
 
-    for name, eid in unit_name_eid_pairs:
+    for entry in unit_name_eid_pairs:
+        name, eid = entry[0], entry[1]
+        faction   = entry[2] if len(entry) > 2 else None
+
         # Check explicit override first (covers RoR units and missing-loc units)
         if _apply_override(name, eid, cards_dir, portraits_dir, asset_dir, dry_run):
             copied += 1
             continue
 
-        candidates = name_index.get(normalize_name(name), [])
-        if not candidates:
+        all_candidates = name_index.get(normalize_name(name), [])
+        if not all_candidates:
             missing_key.append(name)
             continue
+
+        # Prefer candidates matching this unit's faction key prefix when there
+        # are multiple (e.g. "Giant" appears in beastmen, greenskins, norsca).
+        if faction and len(all_candidates) > 1:
+            faction_prefixes = FACTION_KEY_MAP.get(faction, [])
+            filtered = [(uk, lk) for uk, lk in all_candidates
+                        if any(f"_{p}_" in uk for p in faction_prefixes)]
+            candidates = filtered if filtered else all_candidates
+        else:
+            candidates = all_candidates
 
         unit_key = None
         for uk, _lk in candidates:

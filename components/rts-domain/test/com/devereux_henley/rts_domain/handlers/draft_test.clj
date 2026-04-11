@@ -137,6 +137,10 @@
   (let [ctx (handlers.draft/build-section-context "main" [] test-draft-eid test-game-mode)]
     (is (= test-draft-eid (:draft-eid ctx)))))
 
+(deftest build-section-context-not-over-budget-when-game-mode-nil
+  (let [ctx (handlers.draft/build-section-context "main" [{:cost 99999 :is-lord false}] test-draft-eid nil)]
+    (is (false? (:section-over-budget ctx)))))
+
 ;; --- get-draft-by-eid ---
 
 (deftest get-draft-by-eid-assigns-type

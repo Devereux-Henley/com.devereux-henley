@@ -24,6 +24,10 @@
       (is (= test-game-eid (:eid result)))
       (is (= "Total War: Warhammer III" (:name result))))))
 
+(deftest get-game-by-eid-returns-nil-when-not-found
+  (with-redefs [data-access.contract/get-game-by-eid (fn [_ _] nil)]
+    (is (nil? (handlers.game/get-game-by-eid test-deps test-game-eid)))))
+
 ;; --- get-games ---
 
 (deftest get-games-assigns-type-to-each-game
@@ -71,6 +75,10 @@
       (is (= test-faction-eid (:eid result)))
       (is (= "Empire" (:name result))))))
 
+(deftest get-faction-by-eid-returns-nil-when-not-found
+  (with-redefs [data-access.contract/get-faction-by-eid (fn [_ _] nil)]
+    (is (nil? (handlers.game/get-faction-by-eid test-deps test-faction-eid)))))
+
 ;; --- get-socials-for-game ---
 
 (deftest get-socials-for-game-assigns-type-to-each-social
@@ -97,6 +105,11 @@
         (is (= link-eid (:eid result)))
         (is (= "https://discord.gg/test" (:url result)))))))
 
+(deftest get-game-social-link-by-eid-returns-nil-when-not-found
+  (let [link-eid (UUID/randomUUID)]
+    (with-redefs [data-access.contract/get-game-social-link-by-eid (fn [_ _] nil)]
+      (is (nil? (handlers.game/get-game-social-link-by-eid test-deps link-eid))))))
+
 ;; --- get-unit-by-eid ---
 
 (deftest get-unit-by-eid-assigns-type
@@ -112,6 +125,11 @@
         (is (= unit-eid (:eid result)))
         (is (= "Karl Franz" (:name result)))
         (is (= "Emperor of the Empire" (:description result)))))))
+
+(deftest get-unit-by-eid-returns-nil-when-not-found
+  (let [unit-eid (UUID/fromString "c1000000-0000-0000-0000-000000000001")]
+    (with-redefs [data-access.contract/get-unit-by-eid (fn [_ _] nil)]
+      (is (nil? (handlers.game/get-unit-by-eid test-deps unit-eid))))))
 
 ;; --- get-units-for-game ---
 
@@ -163,6 +181,10 @@
       (is (= 2 (:player-count result)))
       (is (= 0 (:reinforcement-value result)))
       (is (= 1 (:reinforcements-enabled result))))))
+
+(deftest get-game-mode-by-eid-returns-nil-when-not-found
+  (with-redefs [data-access.contract/get-game-mode-by-eid (fn [_ _] nil)]
+    (is (nil? (handlers.game/get-game-mode-by-eid test-deps test-game-mode-eid)))))
 
 ;; --- get-game-modes-for-game ---
 
