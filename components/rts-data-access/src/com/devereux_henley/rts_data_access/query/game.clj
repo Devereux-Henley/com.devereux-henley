@@ -198,13 +198,13 @@
       (into {} (map (fn [row] [(:key row) row])
                     (jdbc.contract/query-for-entities connection (into [sql] spell-keys) schema/spell-entity))))))
 
-(defn get-abilities-by-names
-  [connection ability-names]
-  (when (seq ability-names)
-    (let [placeholders (str/join "," (repeat (count ability-names) "?"))
-          sql          (str "SELECT eid, name, description FROM ability WHERE name IN (" placeholders ")")]
-      (into {} (map (fn [row] [(:name row) row])
-                    (jdbc.contract/query-for-entities connection (into [sql] ability-names) schema/ability-entity))))))
+(defn get-abilities-by-keys
+  [connection ability-keys]
+  (when (seq ability-keys)
+    (let [placeholders (str/join "," (repeat (count ability-keys) "?"))
+          sql          (str "SELECT eid, key, name, description FROM ability WHERE key IN (" placeholders ")")]
+      (into {} (map (fn [row] [(:key row) row])
+                    (jdbc.contract/query-for-entities connection (into [sql] ability-keys) schema/ability-entity))))))
 
 (defn get-draft-state-by-draft
   [connection draft-eid]

@@ -349,7 +349,7 @@
   (with-redefs [data-access.contract/get-draft-by-eid     (fn [_ _] test-draft)
                 data-access.contract/get-game-mode-by-eid (fn [_ _] test-game-mode)
                 data-access.contract/get-unit-by-eid      (fn [_ _] infantry-unit)
-                data-access.contract/get-abilities-by-names (fn [_ _] {})]
+                data-access.contract/get-abilities-by-keys (fn [_ _] {})]
     (let [result (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)]
       (is (= :draft/unit (:type result))))))
 
@@ -357,7 +357,7 @@
   (with-redefs [data-access.contract/get-draft-by-eid      (fn [_ _] test-draft)
                 data-access.contract/get-game-mode-by-eid  (fn [_ _] test-game-mode)
                 data-access.contract/get-unit-by-eid       (fn [_ _] infantry-unit)
-                data-access.contract/get-abilities-by-names (fn [_ _] {})]
+                data-access.contract/get-abilities-by-keys (fn [_ _] {})]
     (let [result (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)]
       (is (= test-draft-eid (:draft-eid result))))))
 
@@ -365,12 +365,12 @@
   (with-redefs [data-access.contract/get-draft-by-eid      (fn [_ _] test-draft)
                 data-access.contract/get-game-mode-by-eid  (fn [_ _] test-game-mode)
                 data-access.contract/get-unit-by-eid       (fn [_ _] infantry-unit)
-                data-access.contract/get-abilities-by-names (fn [_ _] {})]
+                data-access.contract/get-abilities-by-keys (fn [_ _] {})]
     (is (true? (:reinforcements-enabled (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid))))))
 
 (deftest get-draft-unit-details-sets-reinforcements-disabled-when-zero
   (with-redefs [data-access.contract/get-draft-by-eid      (fn [_ _] test-draft)
                 data-access.contract/get-game-mode-by-eid  (fn [_ _] (assoc test-game-mode :reinforcements-enabled 0))
                 data-access.contract/get-unit-by-eid       (fn [_ _] infantry-unit)
-                data-access.contract/get-abilities-by-names (fn [_ _] {})]
+                data-access.contract/get-abilities-by-keys (fn [_ _] {})]
     (is (false? (:reinforcements-enabled (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid))))))

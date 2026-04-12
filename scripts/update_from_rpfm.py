@@ -584,6 +584,18 @@ def build_ability_loc_maps(loc):
     return names, tooltips
 
 
+def build_ability_name_key_map(ability_name_map):
+    """Inverts ability_name_map (key -> display name) to (display name -> key).
+    Used to migrate unit-statistics JSON from storing ability display names to keys."""
+    return {name: key for key, name in ability_name_map.items()}
+
+
+def resolve_ability_names_to_keys(abilities, name_to_key):
+    """Converts a list of ability display names or keys to canonical ability keys.
+    Entries already in key format (not found in name_to_key) are returned unchanged."""
+    return [name_to_key.get(a, a) for a in abilities]
+
+
 # ---------------------------------------------------------------------------
 # Ability icon copying
 # ---------------------------------------------------------------------------
@@ -1200,7 +1212,8 @@ STATS_BLOCK_RE = re.compile(
 
 def update_unit_seed_file(filepath, faction_name, faction_prefixes, name_index,
                           main_unit_map, land_unit_stats,
-                          agent_subtype_map=None, equipment_map=None, ancillary_cost_map=None):
+                          agent_subtype_map=None, equipment_map=None, ancillary_cost_map=None,
+                          ability_name_to_key=None):
     with open(filepath, encoding="utf-8") as f:
         content = f.read()
 
@@ -1229,12 +1242,18 @@ def update_unit_seed_file(filepath, faction_name, faction_prefixes, name_index,
         # Preserve non-stat fields from existing stats (abilities, mounts, draftable-spells,
         # equipment) and append them in canonical order at the end. Equipment from RPFM
         # takes precedence over any previously stored value.
+        # Abilities are stored as canonical keys; resolve display names to keys if needed.
         try:
             old_stats = json.loads(old_stats_str)
         except Exception:
             old_stats = {}
 
-        for preserve_key in ("abilities", "draftable-spells", "mounts", "is_unique"):
+        if "abilities" in old_stats:
+            abilities = old_stats["abilities"]
+            if ability_name_to_key:
+                abilities = resolve_ability_names_to_keys(abilities, ability_name_to_key)
+            new_stats["abilities"] = abilities
+        for preserve_key in ("draftable-spells", "mounts", "is_unique"):
             if preserve_key in old_stats:
                 new_stats[preserve_key] = old_stats[preserve_key]
         # equipment is sourced from game data — only fall back to old value if RPFM
@@ -1491,6 +1510,9 @@ def main():
     print(f"  ability loc: {len(ability_name_map)} names, {len(ability_tooltip_map)} tooltips",
           file=sys.stderr)
 
+    ability_name_to_key = build_ability_name_key_map(ability_name_map)
+    print(f"  ability name->key map: {len(ability_name_to_key)} entries", file=sys.stderr)
+
     print("Building name index...", file=sys.stderr)
     name_index = build_name_index(land_units_loc, main_unit_map, land_unit_stats)
     print(f"  {len(name_index)} unique unit names indexed", file=sys.stderr)
@@ -1506,7 +1528,8 @@ def main():
         new_content = update_unit_seed_file(
             filepath, faction_name, faction_prefixes,
             name_index, main_unit_map, land_unit_stats,
-            agent_subtype_map, equipment_map, ancillary_cost_map
+            agent_subtype_map, equipment_map, ancillary_cost_map,
+            ability_name_to_key=ability_name_to_key
         )
         if not args.dry_run:
             with open(filepath, "w", encoding="utf-8") as f:

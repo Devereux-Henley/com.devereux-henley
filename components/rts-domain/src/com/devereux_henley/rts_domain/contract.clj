@@ -57,7 +57,7 @@
 (def set-draft-state                            handlers.draft/set-draft-state)
 (def parse-unit-statistics                      handlers.draft/parse-unit-statistics)
 (def get-spells-by-keys                         handlers.draft/get-spells-by-keys)
-(def get-abilities-by-names                     handlers.draft/get-abilities-by-names)
+(def get-abilities-by-keys                      handlers.draft/get-abilities-by-keys)
 (def hydrate-units-with-stats                   handlers.draft/hydrate-units-with-stats)
 (def build-section-context                      handlers.draft/build-section-context)
 (def get-draft-unit-details                     handlers.draft/get-draft-unit-details)

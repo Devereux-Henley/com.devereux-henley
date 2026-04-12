@@ -65,7 +65,7 @@
 (def get-units-for-faction query.game/get-units-for-faction)
 
 (def get-spells-by-keys query.game/get-spells-by-keys)
-(def get-abilities-by-names query.game/get-abilities-by-names)
+(def get-abilities-by-keys query.game/get-abilities-by-keys)
 
 (def draft-state-entity schema/draft-state-entity)
 (def get-draft-state-by-draft query.game/get-draft-state-by-draft)

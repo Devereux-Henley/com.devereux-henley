@@ -190,10 +190,10 @@
   [dependencies spell-keys]
   (db/get-spells-by-keys (:connection dependencies) spell-keys))
 
-(defn get-abilities-by-names
-  "Returns a map of ability-name → ability entity for the given ability names."
-  [dependencies ability-names]
-  (db/get-abilities-by-names (:connection dependencies) ability-names))
+(defn get-abilities-by-keys
+  "Returns a map of ability-key → ability entity for the given ability keys."
+  [dependencies ability-keys]
+  (db/get-abilities-by-keys (:connection dependencies) ability-keys))
 
 ;; ─── Cost calculation ─────────────────────────────────────────────────────────
 
@@ -262,10 +262,10 @@
         unit             (db/get-unit-by-eid conn unit-eid)
         {:keys [stats abilities]} (parse-unit-statistics (:unit-statistics unit))
         unit-statistics  (mapv add-stat-percentage stats)
-        ability-by-name  (db/get-abilities-by-names conn abilities)
-        parsed-abilities (mapv (fn [a]
-                                 (let [{:keys [eid description]} (get ability-by-name a)]
-                                   {:name a :eid eid :description description}))
+        ability-by-key   (db/get-abilities-by-keys conn abilities)
+        parsed-abilities (mapv (fn [k]
+                                 (let [{:keys [name eid description]} (get ability-by-key k)]
+                                   {:name name :eid eid :description description}))
                                abilities)]
     {:type                   :draft/unit
      :unit                   (assoc unit

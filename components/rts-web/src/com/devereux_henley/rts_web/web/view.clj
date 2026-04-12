@@ -92,7 +92,7 @@
              (let [{:keys [stats abilities draftable-spells mounts equipment]} (domain/parse-unit-statistics (:unit-statistics data))
                    spell-keys         (map #(get % "key") draftable-spells)
                    key->spell         (domain/get-spells-by-keys dependencies spell-keys)
-                   name->ability      (domain/get-abilities-by-names dependencies abilities)
+                   key->ability       (domain/get-abilities-by-keys dependencies abilities)
                    resolved-spells    (mapv (fn [s]
                                               (let [key   (get s "key")
                                                     spell (get key->spell key)]
@@ -100,9 +100,9 @@
                                                  :mana-cost (:mana-cost spell)
                                                  :gold-cost (:gold-cost spell)}))
                                             draftable-spells)
-                   resolved-abilities (mapv (fn [name]
-                                              (let [a (get name->ability name)]
-                                                {:name        name
+                   resolved-abilities (mapv (fn [k]
+                                              (let [a (get key->ability k)]
+                                                {:name        (:name a)
                                                  :eid         (:eid a)
                                                  :description (:description a)}))
                                             abilities)
