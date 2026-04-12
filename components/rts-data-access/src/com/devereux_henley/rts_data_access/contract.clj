@@ -71,6 +71,9 @@
 (def get-draft-state-by-draft query.game/get-draft-state-by-draft)
 (def upsert-draft-state query.game/upsert-draft-state)
 
+(def unit-statistics-raw-schema schema/unit-statistics-raw-schema)
+(def unit-statistics-transformer schema/unit-statistics-transformer)
+
 ;;; ─── Social Media DB entities ──────────────────────────────────────────────
 
 (def platform-entity schema/platform-entity)

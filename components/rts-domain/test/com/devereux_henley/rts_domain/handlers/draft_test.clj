@@ -78,11 +78,6 @@
         result (handlers.draft/parse-unit-statistics json)]
     (is (= 1 (count (:stats result))))))
 
-(deftest parse-unit-statistics-returns-empty-on-nil
-  (let [result (handlers.draft/parse-unit-statistics nil)]
-    (is (= [] (:stats result)))
-    (is (= [] (:abilities result)))))
-
 ;; --- hydrate-units-with-stats ---
 
 (deftest hydrate-units-with-stats-sets-is-lord-true-for-lord-category

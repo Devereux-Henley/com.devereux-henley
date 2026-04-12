@@ -4,17 +4,28 @@
    [selmer.parser]
    [taoensso.timbre :as log]))
 
+(defn- with-oob
+  "Sets :oob true on every top-level map value in data so templates can render
+   hx-swap-oob without the handler needing to know about the HTMX format."
+  [data]
+  (reduce-kv (fn [m k v]
+               (if (map? v) (assoc m k (assoc v :oob true)) m))
+             data
+             data))
+
 (defn html-htmx-encoder
   [{:keys [view-fn]}]
   (reify
     muuntaja.format.core/EncodeToBytes
     (encode-to-bytes [_ data charset]
-      (.getBytes ^String (selmer.parser/render-file (view-fn (:type data)) {:data data}) ^String charset))
+      (let [enriched (with-oob data)]
+        (.getBytes ^String (selmer.parser/render-file (view-fn (:type enriched)) {:data enriched}) ^String charset)))
     muuntaja.format.core/EncodeToOutputStream
     (encode-to-output-stream [_ data charset]
       (fn [^java.io.OutputStream output-stream]
-        (let [encoded (selmer.parser/render-file (view-fn (:type data)) {:data data})
-              bytes   (.getBytes ^String encoded ^String charset)]
+        (let [enriched (with-oob data)
+              encoded  (selmer.parser/render-file (view-fn (:type enriched)) {:data enriched})
+              bytes    (.getBytes ^String encoded ^String charset)]
           (.write output-stream bytes))))))
 
 (defn html-decoder

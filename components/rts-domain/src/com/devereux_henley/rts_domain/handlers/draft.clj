@@ -3,36 +3,45 @@
    [clojure.string :as str]
    [com.devereux-henley.rts-data-access.contract :as db]
    [com.devereux-henley.rts-domain.rules.draft :as rules.draft]
-   [jsonista.core :as jsonista])
+   [jsonista.core :as jsonista]
+   [malli.core :as m])
   (:import
    [java.time Instant]))
 
 ;; ─── Unit statistics parsing ──────────────────────────────────────────────────
 
-(def ^:private stat-exclude-keys #{"abilities" "draftable-spells" "draftable-abilities" "mounts" "equipment" "is_unique"})
+(def ^:private stat-exclude-keys #{"abilities" "draftable-spells" "draftable-abilities" "mounts" "equipment"})
+
+(defn- stat-entry
+  "Converts a single decoded JSON entry into a stat map, or nil if it should be excluded.
+   Drops structured fields (abilities, mounts, etc.), zero values, and empty vectors."
+  [[k v]]
+  (when-not (stat-exclude-keys k)
+    (cond
+      (and (vector? v) (empty? v)) nil
+      (= v 0)                      nil
+      (vector? v)                  {:stat (str/replace k "_" " ") :value (str/join ", " v)}
+      :else                        {:stat (str/replace k "_" " ") :value v})))
 
 (defn parse-unit-statistics
+  "Parses a unit-statistics JSON string into a structured map with keys:
+     :stats            — vector of {:stat name :value val} for numeric/list fields
+     :abilities        — vector of ability name strings
+     :draftable-spells — vector of spell key strings
+     :mounts           — vector of {:name str :mp-cost int}
+     :equipment        — vector of raw equipment maps"
   [unit-statistics-str]
-  (let [stats (jsonista/read-value unit-statistics-str (jsonista/object-mapper {:decode-key-fn name}))]
+  (let [decoded (m/decode db/unit-statistics-raw-schema
+                          (jsonista/read-value unit-statistics-str (jsonista/object-mapper {:decode-key-fn name}))
+                          db/unit-statistics-transformer)]
     {:stats
-     (into []
-           (keep (fn [[k v]]
-                   (when-not (stat-exclude-keys k)
-                     (cond
-                       (and (vector? v) (empty? v)) nil
-                       (= v 0)                      nil
-                       (vector? v)                  {:stat (str/replace k "_" " ") :value (str/join ", " v)}
-                       :else                        {:stat (str/replace k "_" " ") :value v}))))
-           stats)
-     :abilities        (get stats "abilities" [])
-     :draftable-spells (get stats "draftable-spells" [])
+     (into [] (keep stat-entry) decoded)
+     :abilities        (get decoded "abilities")
+     :draftable-spells (get decoded "draftable-spells")
      :mounts           (mapv (fn [m] {:name    (get m "name")
                                       :mp-cost (get m "mp_cost")})
-                             (get stats "mounts" []))
-     :equipment        (get stats "equipment" [])
-     :is-unique        (if (contains? stats "is_unique")
-                         (boolean (get stats "is_unique"))
-                         (boolean (seq (get stats "equipment" []))))}))
+                             (get decoded "mounts"))
+     :equipment        (get decoded "equipment")}))
 
 ;; ─── Stat percentages ─────────────────────────────────────────────────────────
 
@@ -50,6 +59,7 @@
    "barrier"        1000.0})
 
 (defn- add-stat-percentage
+  "Attaches a :percentage key to a stat map, clamped to [0, 100], relative to known max values."
   [{:keys [stat value] :as s}]
   (let [max-val (get stat-max-values (str/lower-case (str stat)) 100.0)
         raw-val (cond
@@ -60,29 +70,34 @@
 
 ;; ─── Section context ──────────────────────────────────────────────────────────
 
-(defn- section-percentage [cost max-val]
+(defn- section-percentage
+  "Returns cost as an integer percentage of max-val, clamped to [0, 100]. Returns 0 if max-val is nil or zero."
+  [cost max-val]
   (if (and max-val (pos? max-val))
     (int (min 100 (Math/round (double (* 100 (/ cost max-val))))))
     0))
 
 (defn hydrate-units-with-stats
+  "Enriches each unit entity with :parsed-stats, :parsed-abilities, :is-lord, and :is-unique
+   derived from its :unit-statistics JSON string."
   [units]
   (mapv (fn [u]
-          (let [{:keys [stats abilities is-unique]} (parse-unit-statistics (:unit-statistics u))]
+          (let [{:keys [stats abilities]} (parse-unit-statistics (:unit-statistics u))]
             (assoc u
                    :parsed-stats stats
                    :parsed-abilities abilities
                    :is-lord (= "Lord" (:unit-category-name u))
-                   :is-unique is-unique)))
+                   :is-unique (= 1 (:is-unique u)))))
         units))
 
 (defn build-section-context
+  "Builds the template context map for a draft section (\"main\" or \"reinforcements\"),
+   including cost totals, budget percentage, lord/non-lord split, and over-budget flag."
   [section units draft-eid game-mode]
   (let [is-main       (= section "main")
         section-label (if is-main "Main Army" "Reinforcements")
         section-id    (if is-main "main-army-section" "reinforcements-section")
         section-max   (if is-main (:draft-value game-mode) (:reinforcement-value game-mode))
-        ;; Use :total-cost (set from draft state) when present; fall back to base :cost.
         cost          (reduce (fn [s u] (+ s (or (:total-cost u) (:cost u) 0))) 0 units)
         percentage    (section-percentage cost section-max)
         lord-unit     (first (filter :is-lord units))
@@ -104,10 +119,12 @@
 ;; ─── Draft state ──────────────────────────────────────────────────────────────
 
 (defn get-draft-by-eid
+  "Fetches a draft by eid and attaches :type :game/draft."
   [dependencies eid]
   (assoc (db/get-draft-by-eid (:connection dependencies) eid) :type :game/draft))
 
 (defn create-draft
+  "Creates a new draft, stamping :created-at and :updated-at, and attaches :type :game/draft."
   [dependencies create-specification]
   (let [created-at (Instant/now)
         updated-at created-at]
@@ -118,16 +135,20 @@
            :type :game/draft)))
 
 (defn get-drafts-for-player
+  "Returns all drafts for a player, each tagged with :type :game/draft."
   [dependencies player-sub]
   (mapv (fn [draft] (assoc draft :type :game/draft))
         (db/get-drafts-for-player (:connection dependencies) player-sub)))
 
 (defn get-drafts-for-player-by-game
+  "Returns all drafts for a player scoped to a specific game, each tagged with :type :game/draft."
   [dependencies player-sub game-eid]
   (mapv (fn [draft] (assoc draft :type :game/draft))
         (db/get-drafts-for-player-by-game (:connection dependencies) player-sub game-eid)))
 
 (defn- parse-state-entry
+  "Coerces a raw JSON-decoded state entry into a typed map, ensuring :unit-eid is a UUID
+   and :spells/:items default to []."
   [entry]
   {:unit-eid   (java.util.UUID/fromString (str (:unit-eid entry)))
    :mount      (:mount entry)
@@ -146,26 +167,31 @@
        :reinforcements (mapv parse-state-entry (get parsed :reinforcements []))})
     {:main [] :reinforcements []}))
 
+(defn- serialise-entry
+  "Converts a typed state entry to a JSON-serialisable map, stringifying :unit-eid."
+  [e]
+  {:unit-eid   (str (:unit-eid e))
+   :mount      (:mount e)
+   :spells     (or (:spells e) [])
+   :items      (or (:items e) [])
+   :total-cost (:total-cost e)})
+
 (defn set-draft-state
   "Persists {:main [entry …] :reinforcements [entry …]} as an atomic JSON blob.
    Each entry: {:unit-eid uuid :mount str-or-nil :spells [str] :items [str] :total-cost int-or-nil}."
   [dependencies draft-eid state]
-  (let [serialise-entry (fn [entry]
-                          {:unit-eid   (str (:unit-eid entry))
-                           :mount      (:mount entry)
-                           :spells     (or (:spells entry) [])
-                           :items      (or (:items entry) [])
-                           :total-cost (:total-cost entry)})
-        json-str (jsonista/write-value-as-string
-                  {:main           (mapv serialise-entry (:main state))
-                   :reinforcements (mapv serialise-entry (:reinforcements state))})]
-    (db/upsert-draft-state (:connection dependencies) draft-eid json-str)))
+  (db/upsert-draft-state (:connection dependencies) draft-eid
+                         (jsonista/write-value-as-string
+                          {:main           (mapv serialise-entry (:main state))
+                           :reinforcements (mapv serialise-entry (:reinforcements state))})))
 
 (defn get-spells-by-keys
+  "Returns a map of spell-key → spell entity for the given spell keys."
   [dependencies spell-keys]
   (db/get-spells-by-keys (:connection dependencies) spell-keys))
 
 (defn get-abilities-by-names
+  "Returns a map of ability-name → ability entity for the given ability names."
   [dependencies ability-names]
   (db/get-abilities-by-names (:connection dependencies) ability-names))
 
@@ -195,9 +221,40 @@
                             (reduce + 0)))]
     (+ base-cost (or mount-cost 0) (or spell-cost 0) (or item-cost 0))))
 
+;; ─── Shared helpers ───────────────────────────────────────────────────────────
+
+(defn- faction-unit-index
+  "Returns a map of unit-eid → hydrated-unit for all units in the draft's faction."
+  [conn faction-eid]
+  (into {} (map (juxt :eid identity) (hydrate-units-with-stats (db/get-units-for-faction conn faction-eid)))))
+
+(defn- hydrate-section
+  "Resolves state entries to their hydrated units, attaching :total-cost from the entry."
+  [unit-by-eid entries]
+  (mapv (fn [entry]
+          (when-let [u (get unit-by-eid (:unit-eid entry))]
+            (assoc u :total-cost (or (:total-cost entry) (:cost u)))))
+        entries))
+
+(defn- build-section-mutation-response
+  "Builds the add/remove success response map containing updated section contexts.
+   :oob rendering is handled by the HTMX encoder, not here."
+  [type unit-by-eid new-state draft-eid game-mode reinf-enabled]
+  (let [main-ctx  (build-section-context "main"
+                                         (hydrate-section unit-by-eid (:main new-state))
+                                         draft-eid game-mode)
+        reinf-ctx (build-section-context "reinforcements"
+                                         (hydrate-section unit-by-eid (:reinforcements new-state))
+                                         draft-eid game-mode)]
+    {:type          type
+     :main-section  main-ctx
+     :reinf-section (when reinf-enabled reinf-ctx)}))
+
 ;; ─── Composite domain operations ──────────────────────────────────────────────
 
 (defn get-draft-unit-details
+  "Returns a :draft/unit response map for a unit in the context of a draft, including
+   parsed stat percentages, resolved ability descriptions, and whether reinforcements are enabled."
   [dependencies draft-eid unit-eid]
   (let [conn             (:connection dependencies)
         draft            (db/get-draft-by-eid conn draft-eid)
@@ -227,8 +284,7 @@
         game-mode     (db/get-game-mode-by-eid conn (:game-mode-eid draft))
         state         (get-draft-state dependencies draft-eid)
         section-k     (keyword section)
-        all-units     (hydrate-units-with-stats (db/get-units-for-faction conn (:faction-eid draft)))
-        unit-by-eid   (into {} (map (juxt :eid identity) all-units))
+        unit-by-eid   (faction-unit-index conn (:faction-eid draft))
         unit-hydrated (get unit-by-eid unit-eid)
         reinf-enabled (= 1 (:reinforcements-enabled game-mode))
         section-max   (if (= section "main")
@@ -236,51 +292,35 @@
                         (:reinforcement-value game-mode))]
     (if (nil? unit-hydrated)
       {:type :draft/add-error :message "Unit not found in this faction's roster."}
-      (let [total-cost    (compute-unit-total-cost unit-hydrated selections conn)
-            ;; Build flat army entries (both sections) for rule evaluation.
-            build-entries (fn [entries sec]
-                            (keep (fn [entry]
-                                    (when-let [u (get unit-by-eid (:unit-eid entry))]
-                                      (assoc u :section sec)))
-                                  entries))
-            army-entries  (concat
-                           (build-entries (get state :main []) "main")
-                           (build-entries (get state :reinforcements []) "reinforcements"))
-            ;; Cost of units already in target section (from stored total-costs).
-            section-cost  (reduce (fn [s entry]
-                                    (if-let [u (get unit-by-eid (:unit-eid entry))]
-                                      (+ s (or (:total-cost entry) (:cost u) 0))
-                                      s))
-                                  0
-                                  (get state section-k []))
-            violation     (rules.draft/validate-add
-                           army-entries unit-hydrated section
-                           section-cost section-max total-cost)]
+      (let [total-cost   (compute-unit-total-cost unit-hydrated selections conn)
+            army-entries (concat
+                          (keep (fn [e] (when-let [u (get unit-by-eid (:unit-eid e))] (assoc u :section "main")))
+                                (:main state))
+                          (keep (fn [e] (when-let [u (get unit-by-eid (:unit-eid e))] (assoc u :section "reinforcements")))
+                                (:reinforcements state)))
+            section-cost (reduce (fn [s entry]
+                                   (if-let [u (get unit-by-eid (:unit-eid entry))]
+                                     (+ s (or (:total-cost entry) (:cost u) 0))
+                                     s))
+                                 0
+                                 (get state section-k []))
+            violation    (rules.draft/validate-add
+                          army-entries unit-hydrated section
+                          section-cost section-max total-cost)]
         (if violation
           violation
-          (let [new-entry  {:unit-eid   unit-eid
-                            :mount      (:mount selections)
-                            :spells     (or (:spells selections) [])
-                            :items      (or (:items selections) [])
-                            :total-cost total-cost}
-                new-state  (update state section-k (fnil conj []) new-entry)
-                hydrate-section (fn [entries]
-                                  (mapv (fn [entry]
-                                          (when-let [u (get unit-by-eid (:unit-eid entry))]
-                                            (assoc u :total-cost (or (:total-cost entry) (:cost u)))))
-                                        entries))
-                main-ctx   (build-section-context "main"
-                                                  (hydrate-section (:main new-state))
-                                                  draft-eid game-mode)
-                reinf-ctx  (build-section-context "reinforcements"
-                                                  (hydrate-section (:reinforcements new-state))
-                                                  draft-eid game-mode)]
+          (let [new-state (update state section-k (fnil conj [])
+                                  {:unit-eid   unit-eid
+                                   :mount      (:mount selections)
+                                   :spells     (or (:spells selections) [])
+                                   :items      (or (:items selections) [])
+                                   :total-cost total-cost})]
             (set-draft-state dependencies draft-eid new-state)
-            {:type          :draft/add-success
-             :main-section  (assoc main-ctx :oob true)
-             :reinf-section (when reinf-enabled (assoc reinf-ctx :oob true))}))))))
+            (build-section-mutation-response :draft/add-success unit-by-eid new-state draft-eid game-mode reinf-enabled)))))))
 
 (defn remove-unit-from-draft
+  "Removes the first occurrence of unit-eid from the given section of a draft's state
+   and returns a :draft/remove-success OOB response map."
   [dependencies draft-eid unit-eid section]
   (let [conn          (:connection dependencies)
         draft         (db/get-draft-by-eid conn draft-eid)
@@ -291,26 +331,11 @@
         idx           (first (keep-indexed
                               (fn [i entry] (when (= unit-eid (:unit-eid entry)) i))
                               old-list))
-        new-list      (if (some? idx)
-                        (into [] (concat (subvec old-list 0 idx)
-                                         (subvec old-list (inc idx))))
-                        old-list)
-        new-state     (assoc state section-k new-list)
-        reinf-enabled (= 1 (:reinforcements-enabled game-mode))]
+        new-state     (assoc state section-k
+                             (if (some? idx)
+                               (into [] (concat (subvec old-list 0 idx) (subvec old-list (inc idx))))
+                               old-list))
+        reinf-enabled (= 1 (:reinforcements-enabled game-mode))
+        unit-by-eid   (faction-unit-index conn (:faction-eid draft))]
     (set-draft-state dependencies draft-eid new-state)
-    (let [all-units   (hydrate-units-with-stats (db/get-units-for-faction conn (:faction-eid draft)))
-          unit-by-eid (into {} (map (juxt :eid identity) all-units))
-          hydrate-section (fn [entries]
-                            (mapv (fn [entry]
-                                    (when-let [u (get unit-by-eid (:unit-eid entry))]
-                                      (assoc u :total-cost (or (:total-cost entry) (:cost u)))))
-                                  entries))
-          main-ctx    (build-section-context "main"
-                                             (hydrate-section (:main new-state))
-                                             draft-eid game-mode)
-          reinf-ctx   (build-section-context "reinforcements"
-                                             (hydrate-section (:reinforcements new-state))
-                                             draft-eid game-mode)]
-      {:type          :draft/remove-success
-       :main-section  (assoc main-ctx :oob true)
-       :reinf-section (when reinf-enabled (assoc reinf-ctx :oob true))})))
+    (build-section-mutation-response :draft/remove-success unit-by-eid new-state draft-eid game-mode reinf-enabled)))

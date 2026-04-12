@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS unit (
   unit_type_id INTEGER NOT NULL,
   unit_category_id INTEGER NOT NULL,
   unit_statistics TEXT NOT NULL,
+  is_unique INTEGER NOT NULL DEFAULT 0,
   version INT NOT NULL,
   created_by_sub TEXT NOT NULL,
   created_at TEXT NOT NULL,

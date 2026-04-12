@@ -1,6 +1,8 @@
 (ns com.devereux-henley.rts-data-access.schema
   (:require
-   [com.devereux-henley.schema.contract :as schema.contract]))
+   [com.devereux-henley.schema.contract :as schema.contract]
+   [malli.core :as m]
+   [malli.transform :as mt]))
 
 (def game-mode-entity
   (schema.contract/to-schema
@@ -122,6 +124,7 @@
     [:unit-category-name :string]
     [:cost [:maybe :int]]
     [:unit-statistics :string]
+    [:is-unique :int]
     [:version :int]
     [:created-at :instant]
     [:updated-at :instant]
@@ -161,4 +164,19 @@
     [:id :int]
     [:state :string]
     [:updated-at :instant]]))
+
+;; Schema for the known structured fields in the raw unit-statistics JSON (string keys).
+;; :closed false allows the extra dynamic stat keys to pass through.
+(def unit-statistics-raw-schema
+  (m/schema
+   [:map {:closed false}
+    ["abilities"           {:optional true, :default []} [:sequential :string]]
+    ["draftable-spells"    {:optional true, :default []} [:sequential :string]]
+    ["draftable-abilities" {:optional true, :default []} [:sequential :string]]
+    ["mounts"              {:optional true, :default []}
+     [:sequential [:map ["name" [:maybe :string]] ["mp_cost" [:maybe :int]]]]]
+    ["equipment"           {:optional true, :default []} [:sequential :any]]]))
+
+(def unit-statistics-transformer
+  (mt/default-value-transformer {::mt/add-optional-keys true}))
 

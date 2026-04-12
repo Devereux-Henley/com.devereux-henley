@@ -3,15 +3,46 @@
    [odoyle.rules :as o]))
 
 ;; ─── Configuration ────────────────────────────────────────────────────────────
+;;
+;; Verified from RPFM wh3 game files (unit_set_to_mp_unit_caps_tables,
+;; battle_unit_caps_for_team_sizes_tables) — 2026-04-12
+;;
+;; lord-max:          engine-enforced; mp_cap_group_lords exists but has no table entry
+;; hero-max:          mp_cap_group_heroes cap=2
+;; semc-wm-max:       mp_cap_group_single_entities cap=5 (lords+heroes+monsters+select
+;;                    war machines combined); since lords are tracked separately via
+;;                    lord-max the non-lord pool is 4, matching the game's intent of
+;;                    1 lord + 4 heroes/monsters/machines = 5 total
+;; semc-wm-categories: confirmed from unit_set_to_unit_junctions — SE pool uses
+;;                    unit_caste=hero, unit_caste=lord, plus explicit monster and
+;;                    war_machine records. Artillery and Monstrous Cavalry are NOT
+;;                    in the game's single-entities pool.
+;; chariot-wm-max:    mp_cap_group_chariots_warmachines cap=4; all units with
+;;                    land_unit.category=war_machine (which covers both chariots and
+;;                    war machines in WH3) are in this group. Independent from
+;;                    semc-wm — e.g. regular Chaos Chariots are capped here but are
+;;                    not in the SE pool.
+;; per-unit-max:      216 regular unit entries at cap=4 in unit_set_to_mp_unit_caps;
+;;                    cap=4 is the de-facto default for non-unique, non-rare units
+;; section-slot-max:  battle_unit_caps_for_team_sizes team_size=1 starting_unit_cap=20
+;;
+;; Untracked cap groups (require per-unit flags not yet in schema):
+;;   mp_cap_group_flying_unit cap=6      — needs is_flying on unit_statistics
+;;   mp_cap_group_rare_single_entities cap=3 — needs is_rare_se on unit_statistics
+;;   mp_cap_group_360_degree_fire cap=6  — needs is_360_fire on unit_statistics
+;;   mp_cap_group_ranged_units cap=12    — missile_infantry + missile_cavalry; cap of
+;;                                        12 out of 20 slots is non-binding in practice
 
 (def ^:private caps
-  {:lord-max          1
-   :hero-max          2
-   :semc-wm-max       4
-   :semc-wm-categories #{"Hero" "Monster" "War Machine" "Artillery" "Monstrous Cavalry"}
-   :per-unit-max      5
-   :unique-unit-max   1
-   :section-slot-max  20})
+  {:lord-max             1
+   :hero-max             2
+   :semc-wm-max          4
+   :semc-wm-categories   #{"Hero" "Monster" "War Machine"}
+   :chariot-wm-max       4
+   :chariot-wm-categories #{"Chariot" "War Machine"}
+   :per-unit-max         4
+   :unique-unit-max      1
+   :section-slot-max     20})
 
 ;; ─── Rule keys ────────────────────────────────────────────────────────────────
 ;;
@@ -27,6 +58,7 @@
 ;;   [::army :counts/lords         N]   ;; lords across entire army (should always be 0 or 1)
 ;;   [::army :counts/heroes        N]   ;; heroes across entire army
 ;;   [::army :counts/semc-wm       N]   ;; semc-wm units across entire army
+;;   [::army :counts/chariot-wm    N]   ;; chariot+war machine units across entire army
 ;;   [::army :counts/unit-copies   N]   ;; copies of the target unit already in army
 ;;   [::army :counts/section-slots N]   ;; units already in target section
 ;;
@@ -37,6 +69,7 @@
    ::lord-cap-violation
    ::hero-cap-violation
    ::semc-wm-cap-violation
+   ::chariot-wm-cap-violation
    ::unique-unit-violation
    ::per-unit-cap-violation
    ::section-slot-violation
@@ -72,6 +105,13 @@
      [::army :counts/semc-wm semc-wm-count]
      :when (and (contains? (:semc-wm-categories caps) category)
                 (>= semc-wm-count (:semc-wm-max caps)))]
+
+    ::chariot-wm-cap-violation
+    [:what
+     [::action :action/category category]
+     [::army :counts/chariot-wm chariot-wm-count]
+     :when (and (contains? (:chariot-wm-categories caps) category)
+                (>= chariot-wm-count (:chariot-wm-max caps)))]
 
     ::unique-unit-violation
     [:what
@@ -120,6 +160,10 @@
     (str "You may not have more than " (:semc-wm-max caps)
          " single entity characters, monsters, and war machines combined in your army.")
 
+    ::chariot-wm-cap-violation
+    (str "You may not have more than " (:chariot-wm-max caps)
+         " chariots and war machines combined in your army.")
+
     ::unique-unit-violation
     (str unit-name " is a unique unit and may only appear once in your army.")
 
@@ -154,17 +198,20 @@
   (let [category       (:unit-category-name unit-to-add)
         is-unique      (boolean (:is-unique unit-to-add))
         unit-eid       (:eid unit-to-add)
-        lord-count     (count (filter #(= "Lord" (:unit-category-name %)) army-entries))
-        hero-count     (count (filter #(= "Hero" (:unit-category-name %)) army-entries))
-        semc-wm-count  (count (filter #(contains? (:semc-wm-categories caps)
-                                                  (:unit-category-name %)) army-entries))
-        unit-copies    (count (filter #(= unit-eid (:eid %)) army-entries))
-        slot-count     (count (filter #(= section (:section %)) army-entries))
+        lord-count      (count (filter #(= "Lord" (:unit-category-name %)) army-entries))
+        hero-count      (count (filter #(= "Hero" (:unit-category-name %)) army-entries))
+        semc-wm-count   (count (filter #(contains? (:semc-wm-categories caps)
+                                                   (:unit-category-name %)) army-entries))
+        chariot-wm-count (count (filter #(contains? (:chariot-wm-categories caps)
+                                                    (:unit-category-name %)) army-entries))
+        unit-copies     (count (filter #(= unit-eid (:eid %)) army-entries))
+        slot-count      (count (filter #(= section (:section %)) army-entries))
         session        (cond-> (-> base-session
                                    (o/insert ::army
                                              {:counts/lords         lord-count
                                               :counts/heroes        hero-count
                                               :counts/semc-wm       semc-wm-count
+                                              :counts/chariot-wm    chariot-wm-count
                                               :counts/unit-copies   unit-copies
                                               :counts/section-slots slot-count})
                                    (o/insert ::action

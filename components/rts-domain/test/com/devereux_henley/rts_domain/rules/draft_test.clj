@@ -11,6 +11,8 @@
 (def ^:private infantry-eid (UUID/fromString "a0000000-0000-0000-0000-000000000002"))
 (def ^:private lord-eid     (UUID/fromString "a0000000-0000-0000-0000-000000000003"))
 (def ^:private monster-eid  (UUID/fromString "a0000000-0000-0000-0000-000000000004"))
+(def ^:private chariot-eid  (UUID/fromString "a0000000-0000-0000-0000-000000000005"))
+(def ^:private warmachine-eid (UUID/fromString "a0000000-0000-0000-0000-000000000006"))
 
 (defn- hero
   ([]   (hero hero-eid))
@@ -27,6 +29,14 @@
 (defn- monster
   ([]   (monster monster-eid))
   ([id] {:eid id :unit-category-name "Monster" :is-unique false :name "Dragon" :cost 500 :section "main"}))
+
+(defn- chariot
+  ([]   (chariot chariot-eid))
+  ([id] {:eid id :unit-category-name "Chariot" :is-unique false :name "Chaos Chariot" :cost 150 :section "main"}))
+
+(defn- war-machine
+  ([]   (war-machine warmachine-eid))
+  ([id] {:eid id :unit-category-name "War Machine" :is-unique false :name "Cannon" :cost 200 :section "main"}))
 
 (def ^:private section-max 12400)
 (def ^:private base-cost 100)
@@ -153,3 +163,34 @@
 
 (deftest budget-check-skipped-when-section-max-nil
   (is (nil? (rules.draft/validate-add [] (infantry) "main" 99999 nil 99999))))
+
+;; ─── Rule 2e: Chariot+War Machine cap (4 per army) ────────────────────────────
+
+(deftest chariot-wm-cap-exceeded-returns-error
+  (let [army (repeatedly 4 #(chariot (UUID/randomUUID)))
+        result (validate army (chariot chariot-eid) "main")]
+    (is (= :draft/add-error (:type result)))))
+
+(deftest chariot-wm-cap-at-limit-allows-add
+  (let [army (take 3 (repeatedly #(chariot (UUID/randomUUID))))]
+    (is (nil? (validate army (chariot chariot-eid) "main")))))
+
+(deftest war-machines-count-toward-chariot-wm-cap
+  (let [army (vec (concat
+                   (take 3 (repeatedly #(chariot (UUID/randomUUID))))
+                   [(war-machine (UUID/randomUUID))]))
+        result (validate army (war-machine warmachine-eid) "main")]
+    (is (= :draft/add-error (:type result)))))
+
+(deftest chariots-and-war-machines-share-cap
+  (let [army (vec (concat
+                   (take 2 (repeatedly #(chariot (UUID/randomUUID))))
+                   (take 2 (repeatedly #(war-machine (UUID/randomUUID))))))
+        result (validate army (chariot chariot-eid) "main")]
+    (is (= :draft/add-error (:type result)))))
+
+(deftest chariot-wm-cap-independent-of-semc-wm-cap
+  ;; A war machine that is not in the semc-wm pool counts toward chariot-wm
+  ;; (in the game, regular war machines are in the chariot-wm group but not the SE pool)
+  (let [army (take 3 (repeatedly #(war-machine (UUID/randomUUID))))]
+    (is (nil? (validate army (war-machine warmachine-eid) "main")))))
