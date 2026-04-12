@@ -69,6 +69,28 @@
                   :else 0.0)]
     (assoc s :percentage (int (min 100 (Math/round (* 100.0 (/ raw-val max-val))))))))
 
+;; ─── Unit hydration ──────────────────────────────────────────────────────────
+
+(def ^:private unit-hydration-transformer
+  (mt/transformer {:name :unit-hydrate}))
+
+(def ^:private hydrated-unit-schema
+  (m/schema
+   [:map {:decode/unit-hydrate
+          (fn [unit]
+            (let [{:keys [stats abilities]} (parse-unit-statistics (:unit-statistics unit))]
+              (assoc unit
+                     :parsed-stats     stats
+                     :parsed-abilities abilities
+                     :is-lord          (= "Lord" (:unit-category-name unit))
+                     :is-unique        (= 1 (:is-unique unit)))))}]))
+
+(defn hydrate-units-with-stats
+  "Enriches each unit entity with :parsed-stats, :parsed-abilities, :is-lord, and :is-unique
+   derived from its :unit-statistics JSON string."
+  [units]
+  (mapv #(m/decode hydrated-unit-schema % unit-hydration-transformer) units))
+
 ;; ─── Section context ──────────────────────────────────────────────────────────
 
 (defn- section-percentage
@@ -77,19 +99,6 @@
   (if (and max-val (pos? max-val))
     (int (min 100 (Math/round (double (* 100 (/ cost max-val))))))
     0))
-
-(defn hydrate-units-with-stats
-  "Enriches each unit entity with :parsed-stats, :parsed-abilities, :is-lord, and :is-unique
-   derived from its :unit-statistics JSON string."
-  [units]
-  (mapv (fn [u]
-          (let [{:keys [stats abilities]} (parse-unit-statistics (:unit-statistics u))]
-            (assoc u
-                   :parsed-stats stats
-                   :parsed-abilities abilities
-                   :is-lord (= "Lord" (:unit-category-name u))
-                   :is-unique (= 1 (:is-unique u)))))
-        units))
 
 (defn build-section-context
   "Builds the template context map for a draft section (\"main\" or \"reinforcements\"),
@@ -292,14 +301,14 @@
         state         (get-draft-state dependencies draft-eid)
         section-k     (keyword section)
         unit-by-eid   (faction-unit-index conn (:faction-eid draft))
-        unit-hydrated (get unit-by-eid unit-eid)
+        unit          (get unit-by-eid unit-eid)
         reinf-enabled (= 1 (:reinforcements-enabled game-mode))
         section-max   (if (= section "main")
                         (:draft-value game-mode)
                         (:reinforcement-value game-mode))]
-    (if (nil? unit-hydrated)
+    (if (nil? unit)
       {:type :draft/add-error :message "Unit not found in this faction's roster."}
-      (let [total-cost   (compute-unit-total-cost unit-hydrated selections conn)
+      (let [total-cost   (compute-unit-total-cost unit selections conn)
             army-entries (concat
                           (keep (fn [e] (when-let [u (get unit-by-eid (:unit-eid e))] (assoc u :section "main")))
                                 (:main state))
@@ -312,7 +321,7 @@
                                  0
                                  (get state section-k []))
             violation    (rules.draft/validate-add
-                          army-entries unit-hydrated section
+                          army-entries unit section
                           section-cost section-max total-cost)]
         (if violation
           violation
