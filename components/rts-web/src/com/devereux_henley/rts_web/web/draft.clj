@@ -13,8 +13,10 @@
   [_init-key dependencies]
   (fn [request]
     (let [{{{:keys [eid unit-eid]} :path
-            {:keys [section]}      :query} :parameters} request
-          result (domain/add-unit-to-draft dependencies eid unit-eid section)]
+            {:keys [section]}      :query
+            body                   :body}  :parameters} request
+          selections (select-keys (or body {}) [:mount :spells :items])
+          result     (domain/add-unit-to-draft dependencies eid unit-eid section selections)]
       {:status (if (= :draft/add-success (:type result)) 200 422)
        :body   result})))
 

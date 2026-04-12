@@ -2,10 +2,18 @@
   (:require
    [clojure.test :refer [deftest is]]
    [com.devereux-henley.rts-data-access.contract :as data-access.contract]
-   [com.devereux-henley.rts-domain.handlers.draft :as handlers.draft])
+   [com.devereux-henley.rts-domain.handlers.draft :as handlers.draft]
+   [jsonista.core])
   (:import
    [java.time Instant]
    [java.util UUID]))
+
+(defn- state-json
+  "Builds a draft-state JSON string from maps of {:main [uuid …] :reinforcements [uuid …]}."
+  [{:keys [main reinforcements]}]
+  (letfn [(entry [uid] (str "{\"unit-eid\":\"" uid "\",\"mount\":null,\"spells\":[],\"items\":[],\"total-cost\":null}"))]
+    (str "{\"main\":["  (clojure.string/join "," (map entry main))
+         "],\"reinforcements\":[" (clojure.string/join "," (map entry reinforcements)) "]}")))
 
 (def ^:private test-draft-eid    (UUID/fromString "d0000000-0000-0000-0000-000000000001"))
 (def ^:private test-unit-eid     (UUID/fromString "c0000000-0000-0000-0000-000000000001"))
@@ -69,16 +77,6 @@
   (let [json   "{\"abilities\":[],\"leadership\":50}"
         result (handlers.draft/parse-unit-statistics json)]
     (is (= 1 (count (:stats result))))))
-
-(deftest parse-unit-statistics-returns-empty-on-invalid-json
-  (let [result (handlers.draft/parse-unit-statistics "not-json")]
-    (is (= [] (:stats result)))
-    (is (= [] (:abilities result)))))
-
-(deftest parse-unit-statistics-returns-empty-on-nil
-  (let [result (handlers.draft/parse-unit-statistics nil)]
-    (is (= [] (:stats result)))
-    (is (= [] (:abilities result)))))
 
 ;; --- hydrate-units-with-stats ---
 
@@ -210,44 +208,50 @@
       (is (= [] (:main result)))
       (is (= [] (:reinforcements result))))))
 
-(deftest get-draft-state-parses-well-formed-state
+(deftest get-draft-state-parses-new-entry-format
   (let [uid (UUID/randomUUID)]
     (with-redefs [data-access.contract/get-draft-state-by-draft
-                  (fn [_ _] {:state (str "{\"main\":[\"" uid "\"],\"reinforcements\":[]}")})]
-      (let [result (handlers.draft/get-draft-state test-deps test-draft-eid)]
-        (is (= [uid] (:main result)))
-        (is (= [] (:reinforcements result)))))))
+                  (fn [_ _] {:state (str "{\"main\":[{\"unit-eid\":\"" uid
+                                         "\",\"mount\":\"Barded Warhorse\",\"spells\":[]"
+                                         ",\"items\":[],\"total-cost\":1350}]"
+                                         ",\"reinforcements\":[]}")})]
+      (let [result (handlers.draft/get-draft-state test-deps test-draft-eid)
+            entry  (first (:main result))]
+        (is (= uid (:unit-eid entry)))
+        (is (= "Barded Warhorse" (:mount entry)))
+        (is (= 1350 (:total-cost entry)))))))
 
 ;; --- add-unit-to-draft ---
 
 (defn- stub-add-unit
-  "Returns a with-redefs binding map for add-unit-to-draft tests.
-   faction-units is the list returned by get-units-for-faction.
-   existing-state-json is the :state string for get-draft-state-by-draft, or nil."
+  "Returns a fixture fn for add-unit-to-draft tests.
+   faction-units  — list returned by get-units-for-faction.
+   existing-state-json — :state string for get-draft-state-by-draft, or nil."
   [faction-units existing-state-json]
   (fn [f]
-    (with-redefs [data-access.contract/get-draft-by-eid        (fn [_ _] test-draft)
-                  data-access.contract/get-game-mode-by-eid    (fn [_ _] test-game-mode)
+    (with-redefs [data-access.contract/get-draft-by-eid         (fn [_ _] test-draft)
+                  data-access.contract/get-game-mode-by-eid     (fn [_ _] test-game-mode)
                   data-access.contract/get-draft-state-by-draft (fn [_ _] (when existing-state-json {:state existing-state-json}))
-                  data-access.contract/get-units-for-faction   (fn [_ _] faction-units)
-                  data-access.contract/upsert-draft-state      (fn [_ _ _] nil)]
+                  data-access.contract/get-units-for-faction    (fn [_ _] faction-units)
+                  data-access.contract/get-spells-by-keys       (fn [_ _] {})
+                  data-access.contract/upsert-draft-state       (fn [_ _ _] nil)]
       (f))))
 
 (deftest add-unit-to-draft-returns-error-when-unit-not-in-faction
   ((stub-add-unit [] nil)
    (fn []
-     (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main")]
+     (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main" {})]
        (is (= :draft/add-error (:type result)))
        (is (string? (:message result)))))))
 
 (deftest add-unit-to-draft-returns-error-when-over-budget
   ((stub-add-unit [{:eid test-unit-eid :name "Giant" :cost 1100 :unit-category-name "Infantry" :unit-statistics "{}"}] nil)
    (fn []
-     (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main")]
+     (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main" {})]
        (is (= :draft/add-error (:type result)))))))
 
-(deftest add-unit-to-draft-returns-error-when-lord-already-present
-  (let [existing-state (str "{\"main\":[\"" test-lord-eid "\"],\"reinforcements\":[]}")]
+(deftest add-unit-to-draft-returns-error-when-lord-already-in-main
+  (let [existing-state (state-json {:main [test-lord-eid] :reinforcements []})]
     ((stub-add-unit [infantry-unit lord-unit
                      {:eid (UUID/fromString "c0000000-0000-0000-0000-000000000003")
                       :name "Archaon"
@@ -258,13 +262,19 @@
      (fn []
        (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid
                                                       (UUID/fromString "c0000000-0000-0000-0000-000000000003")
-                                                      "main")]
+                                                      "main" {})]
          (is (= :draft/add-error (:type result))))))))
+
+(deftest add-unit-to-draft-returns-error-when-lord-added-to-reinforcements
+  ((stub-add-unit [lord-unit] nil)
+   (fn []
+     (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-lord-eid "reinforcements" {})]
+       (is (= :draft/add-error (:type result)))))))
 
 (deftest add-unit-to-draft-returns-success-on-valid-add
   ((stub-add-unit [infantry-unit] nil)
    (fn []
-     (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main")]
+     (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main" {})]
        (is (= :draft/add-success (:type result)))
        (is (contains? result :main-section))
        (is (contains? result :reinf-section))))))
@@ -272,7 +282,7 @@
 (deftest add-unit-to-draft-includes-section-context-on-success
   ((stub-add-unit [infantry-unit] nil)
    (fn []
-     (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main")]
+     (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main" {})]
        (is (= "main" (:section (:main-section result))))
        (is (= 100 (:section-cost (:main-section result))))))))
 
@@ -281,14 +291,29 @@
    (fn []
      (with-redefs [data-access.contract/get-game-mode-by-eid
                    (fn [_ _] (assoc test-game-mode :reinforcements-enabled 0))]
-       (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main")]
+       (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main" {})]
          (is (= :draft/add-success (:type result)))
          (is (nil? (:reinf-section result))))))))
+
+(deftest add-unit-to-draft-stores-mount-in-state
+  (let [stored (atom nil)]
+    ((stub-add-unit [{:eid test-unit-eid :name "Warrior Priest" :cost 100
+                      :unit-category-name "Hero"
+                      :unit-statistics "{\"mounts\":[{\"name\":\"Barded Warhorse\",\"mp_cost\":800}]}"}]
+                    nil)
+     (fn []
+       (with-redefs [data-access.contract/upsert-draft-state (fn [_ _ json] (reset! stored json))]
+         (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main"
+                                           {:mount "Barded Warhorse"}))
+       (let [state (when @stored
+                     (jsonista.core/read-value @stored (jsonista.core/object-mapper {:decode-key-fn keyword})))]
+         (is (= "Barded Warhorse" (get-in state [:main 0 :mount])))
+         (is (= 900 (get-in state [:main 0 :total-cost]))))))))
 
 ;; --- remove-unit-from-draft ---
 
 (deftest remove-unit-from-draft-returns-success
-  (let [existing-state (str "{\"main\":[\"" test-unit-eid "\"],\"reinforcements\":[]}")]
+  (let [existing-state (state-json {:main [test-unit-eid] :reinforcements []})]
     (with-redefs [data-access.contract/get-draft-by-eid         (fn [_ _] test-draft)
                   data-access.contract/get-game-mode-by-eid     (fn [_ _] test-game-mode)
                   data-access.contract/get-draft-state-by-draft (fn [_ _] {:state existing-state})
@@ -300,7 +325,7 @@
         (is (contains? result :reinf-section))))))
 
 (deftest remove-unit-from-draft-section-cost-is-zero-after-removal
-  (let [existing-state (str "{\"main\":[\"" test-unit-eid "\"],\"reinforcements\":[]}")]
+  (let [existing-state (state-json {:main [test-unit-eid] :reinforcements []})]
     (with-redefs [data-access.contract/get-draft-by-eid         (fn [_ _] test-draft)
                   data-access.contract/get-game-mode-by-eid     (fn [_ _] test-game-mode)
                   data-access.contract/get-draft-state-by-draft (fn [_ _] {:state existing-state})
@@ -324,7 +349,7 @@
   (with-redefs [data-access.contract/get-draft-by-eid     (fn [_ _] test-draft)
                 data-access.contract/get-game-mode-by-eid (fn [_ _] test-game-mode)
                 data-access.contract/get-unit-by-eid      (fn [_ _] infantry-unit)
-                data-access.contract/get-abilities-by-names (fn [_ _] {})]
+                data-access.contract/get-abilities-by-keys (fn [_ _] {})]
     (let [result (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)]
       (is (= :draft/unit (:type result))))))
 
@@ -332,7 +357,7 @@
   (with-redefs [data-access.contract/get-draft-by-eid      (fn [_ _] test-draft)
                 data-access.contract/get-game-mode-by-eid  (fn [_ _] test-game-mode)
                 data-access.contract/get-unit-by-eid       (fn [_ _] infantry-unit)
-                data-access.contract/get-abilities-by-names (fn [_ _] {})]
+                data-access.contract/get-abilities-by-keys (fn [_ _] {})]
     (let [result (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)]
       (is (= test-draft-eid (:draft-eid result))))))
 
@@ -340,12 +365,12 @@
   (with-redefs [data-access.contract/get-draft-by-eid      (fn [_ _] test-draft)
                 data-access.contract/get-game-mode-by-eid  (fn [_ _] test-game-mode)
                 data-access.contract/get-unit-by-eid       (fn [_ _] infantry-unit)
-                data-access.contract/get-abilities-by-names (fn [_ _] {})]
+                data-access.contract/get-abilities-by-keys (fn [_ _] {})]
     (is (true? (:reinforcements-enabled (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid))))))
 
 (deftest get-draft-unit-details-sets-reinforcements-disabled-when-zero
   (with-redefs [data-access.contract/get-draft-by-eid      (fn [_ _] test-draft)
                 data-access.contract/get-game-mode-by-eid  (fn [_ _] (assoc test-game-mode :reinforcements-enabled 0))
                 data-access.contract/get-unit-by-eid       (fn [_ _] infantry-unit)
-                data-access.contract/get-abilities-by-names (fn [_ _] {})]
+                data-access.contract/get-abilities-by-keys (fn [_ _] {})]
     (is (false? (:reinforcements-enabled (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid))))))

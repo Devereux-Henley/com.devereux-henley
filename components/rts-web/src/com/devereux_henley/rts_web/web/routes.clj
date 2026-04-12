@@ -147,7 +147,8 @@
                                     [:unit-eid :uuid]])
                            :query (schema.contract/to-schema
                                    [:map
-                                    [:section [:enum "main" "reinforcements"]]])}
+                                    [:section [:enum "main" "reinforcements"]]])
+                           :body  domain/add-unit-to-draft-specification}
               :responses  {200 {:body domain/draft-mutation-response}
                            422 {:body domain/draft-error-response}
                            500 {:body domain/draft-error-response}}

@@ -24,16 +24,14 @@
             <button class="btn btn-primary draft-add-btn"
                     type="button"
                     hx-post="/api/draft/{{data.draft-eid}}/unit/{{data.unit.eid}}?section=main"
-                    hx-target="#draft-action-error"
-                    hx-swap="outerHTML">
+                    hx-swap="none">
                 Add to Main Army
             </button>
             {% if data.reinforcements-enabled %}
             <button class="btn btn-primary draft-add-btn draft-add-btn--reinf"
                     type="button"
                     hx-post="/api/draft/{{data.draft-eid}}/unit/{{data.unit.eid}}?section=reinforcements"
-                    hx-target="#draft-action-error"
-                    hx-swap="outerHTML">
+                    hx-swap="none">
                 Add to Reinforcements
             </button>
             {% endif %}

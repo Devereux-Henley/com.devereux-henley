@@ -10,6 +10,7 @@ SELECT
   uc.name as unit_category_name,
   json_extract(u.unit_statistics, '$.cost') as cost,
   u.unit_statistics,
+  u.is_unique,
   u.version,
   u.created_at,
   u.updated_at,

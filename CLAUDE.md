@@ -86,6 +86,10 @@ rts-web, rts-domain, rts-data-access → http, jdbc, schema, content-negotiation
 5. On success, the **model transformer** walks the resource, resolves `:model/link` annotations into `_links` URLs using the reitit router
 6. For HTML responses, a Selmer template is chosen by `:type` in the response body (dispatch map in `web.clj`)
 
+### Comments
+
+Prefer docstrings over `;;` comments for all `defn` and `defn-` forms. Use `;;` comments only for non-function top-level forms (e.g. `def`, `defmulti`) or for inline logic annotations that are genuinely not self-evident.
+
 ### Key patterns
 
 **HATEOAS everywhere.** Every resource carries `_links`. Foreign-key fields are annotated with `[:field {:model/link :route/name} :uuid]`; the transformer resolves the named route to a URL automatically.

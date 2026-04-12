@@ -147,6 +147,13 @@
     [:section-units [:sequential :any]]
     [:oob {:optional true} :boolean]]))
 
+(def add-unit-to-draft-specification
+  (schema.contract/to-schema
+   [:map
+    [:mount {:optional true} [:maybe :string]]
+    [:spells {:optional true} [:sequential :string]]
+    [:items {:optional true} [:sequential :string]]]))
+
 (def draft-mutation-response
   (schema.contract/to-schema
    [:map
