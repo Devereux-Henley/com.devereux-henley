@@ -174,7 +174,7 @@
     ["draftable-spells"    {:optional true, :default []} [:sequential :string]]
     ["draftable-abilities" {:optional true, :default []} [:sequential :string]]
     ["mounts"              {:optional true, :default []}
-     [:sequential [:map ["name" [:maybe :string]] ["mp_cost" [:maybe :int]]]]]
+     [:sequential [:map ["name" [:maybe :string]] ["cost" [:maybe :int]]]]]
     ["equipment"           {:optional true, :default []} [:sequential :any]]]))
 
 (def unit-statistics-transformer

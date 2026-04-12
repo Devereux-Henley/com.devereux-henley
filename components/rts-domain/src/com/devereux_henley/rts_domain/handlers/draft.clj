@@ -39,8 +39,8 @@
      (into [] (keep stat-entry) decoded)
      :abilities        (get decoded "abilities")
      :draftable-spells (get decoded "draftable-spells")
-     :mounts           (mapv (fn [m] {:name    (get m "name")
-                                      :mp-cost (get m "mp_cost")})
+     :mounts           (mapv (fn [m] {:name (get m "name")
+                                      :cost (get m "cost")})
                              (get decoded "mounts"))
      :equipment        (get decoded "equipment")}))
 
@@ -221,19 +221,19 @@
         base-cost    (or (:cost unit-hydrated) 0)
         mount-name   (:mount selections)
         mount-cost   (when mount-name
-                       (:mp-cost (first (filter #(= mount-name (:name %))
-                                                (:mounts parsed-stats)))))
+                       (:cost (first (filter #(= mount-name (:name %))
+                                             (:mounts parsed-stats)))))
         spell-keys   (not-empty (:spells selections []))
         spell-cost   (when spell-keys
                        (->> (db/get-spells-by-keys conn spell-keys)
                             vals
-                            (map #(or (:gold-cost %) 0))
+                            (map #(or (:cost %) 0))
                             (reduce + 0)))
         item-keys    (not-empty (set (:items selections [])))
         item-cost    (when item-keys
                        (->> (:equipment parsed-stats)
                             (filter #(item-keys (get % "key")))
-                            (map #(or (get % "gold_cost") 0))
+                            (map #(or (get % "cost") 0))
                             (reduce + 0)))]
     (+ base-cost (or mount-cost 0) (or spell-cost 0) (or item-cost 0))))
 

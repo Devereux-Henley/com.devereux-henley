@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS spell (
   key TEXT NOT NULL,
   spell_type TEXT NOT NULL,
   mana_cost INTEGER NOT NULL,
+  cost INTEGER NOT NULL DEFAULT 0,
   UNIQUE(eid),
   UNIQUE(name, game_id, deleted_at),
   UNIQUE(key, game_id, deleted_at),

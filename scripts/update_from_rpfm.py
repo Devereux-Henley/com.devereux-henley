@@ -2,7 +2,7 @@
 """
 Updates all seed SQL data from RPFM-decoded WH3 game files.
 
-Replaces update_unit_stats.py and update_spell_gold_costs.py, reading directly
+Replaces update_unit_stats.py and update_spell_costs.py, reading directly
 from RPFM-decoded game tables instead of the stale twwstats.com API.
 
 Usage:
@@ -514,18 +514,18 @@ def build_land_unit_map(rows, armour_map, entity_map, melee_map, missile_wep_map
 
 
 def build_main_unit_map(rows):
-    """unit key -> {land_unit, num_men, mp_cost, barrier, is_monstrous}"""
+    """unit key -> {land_unit, num_men, cost, barrier, is_monstrous}"""
     return {r["unit"]: {
         "land_unit": r["land_unit"],
         "num_men": r["num_men"],
-        "mp_cost": r["multiplayer_cost"],
+        "cost": r["multiplayer_cost"],
         "barrier": int(r.get("barrier_health") or 0),
         "is_monstrous": r.get("is_monstrous", False),
     } for r in rows}
 
 
 def build_special_ability_map(rows):
-    """ability key -> gold_cost (round(additional_melee_cp + additional_missile_cp))"""
+    """ability key -> cost (round(additional_melee_cp + additional_missile_cp))"""
     return {r["key"]: round((r.get("additional_melee_cp") or 0) + (r.get("additional_missile_cp") or 0))
             for r in rows}
 
@@ -559,7 +559,7 @@ def build_equipment_map(rows):
 
 
 def build_ancillary_cost_map(rows):
-    """ancillary key -> gold_cost (uniqueness_score from ancillaries_tables).
+    """ancillary key -> cost (uniqueness_score from ancillaries_tables).
     The uniqueness_score field stores the MP gold cost for each item.
     """
     return {r["key"]: r["uniqueness_score"] for r in rows if r.get("uniqueness_score") is not None}
@@ -1158,7 +1158,7 @@ def extract_stats(unit_key, main_unit_map, land_unit_stats,
         speed = round(speed)
 
     stats = {
-        "cost": mu["mp_cost"],
+        "cost": mu["cost"],
         "is_large": lu["is_large"] or mu.get("is_monstrous", False),
         "unit_size": mu["num_men"],
         "health": lu["bonus_hit_points"],
@@ -1194,7 +1194,7 @@ def extract_stats(unit_key, main_unit_map, land_unit_stats,
             items = equipment_map.get(agent_subtype)
             if items:
                 stats["equipment"] = [
-                    {"key": k, "gold_cost": (ancillary_cost_map or {}).get(k)}
+                    {"key": k, "cost": (ancillary_cost_map or {}).get(k)}
                     for k in items
                 ]
 
@@ -1294,15 +1294,26 @@ ABILITY_ROW_WITH_ICON_RE = re.compile(
     re.DOTALL,
 )
 
+# Matches a row when cost column is already present — integer immediately after ability_type.
+# (id, 'eid', 'key', 'name', 'desc', 'ability_type', CURRENT_MP_COST, game_id, ...)
+# Groups: id, eid, key, name, desc, ability_type, current_cost, rest_through_strftime_open
+ABILITY_ROW_WITH_COST_RE = re.compile(
+    r"\((\d+),\s*'([^']+)',\s*'([^']+)',\s*'((?:[^']|'')*)',\s*'((?:[^']|'')*)',\s*'([^']+)',\s*(\d+)(,\s*[^)]+)",
+    re.DOTALL,
+)
+
 
 def _sql_escape(s):
     return (s or "").replace("'", "''")
 
 
-def update_ability_seed_file(filepath, ability_name_map, ability_tooltip_map):
+def update_ability_seed_file(filepath, ability_name_map, ability_tooltip_map,
+                             special_ability_map):
     """
-    Rewrites seed-abilities.sql refreshing name and description from game loc.
-    Icon is NOT stored in the DB — it is derived from the eid at render time.
+    Rewrites seed-abilities.sql refreshing name, description, and cost from
+    game data.  cost is the sum of additional_melee_cp + additional_missile_cp
+    from unit_special_abilities_tables.  Icon is NOT stored in the DB — it is
+    derived from the eid at render time.
     """
     with open(filepath, encoding="utf-8") as f:
         content = f.read()
@@ -1316,51 +1327,93 @@ def update_ability_seed_file(filepath, ability_name_map, ability_tooltip_map):
         "INSERT OR REPLACE INTO ability(id, eid, key, name, description, ability_type,",
     )
 
+    # Detect whether cost column is already present by checking the INSERT header.
+    has_cost = "cost" in content[:500]
+
     updated   = 0
     not_found = 0
 
-    def refresh_row(m):
-        nonlocal updated, not_found
-        full         = m.group(0)
-        eid          = m.group(2)
-        key          = m.group(3)
-        _name        = m.group(4)
-        _desc        = m.group(5)
-        ability_type = m.group(6)
-        rest         = m.group(7)
-        id_part      = full.lstrip("(").split(",")[0].strip()
-        name = ability_name_map.get(key)
-        desc = ability_tooltip_map.get(key)
-        if name is None and desc is None:
-            not_found += 1
-            return full
-        name = name or _name.replace("''", "'")
-        desc = desc or _desc.replace("''", "'")
-        updated += 1
-        return (f"({id_part}, '{eid}', '{key}', '{_sql_escape(name)}', "
-                f"'{_sql_escape(desc)}', '{ability_type}'{rest}")
+    if has_cost:
+        # cost already in rows — update the integer value and refresh name/desc.
+        def update_row_with_cost(m):
+            nonlocal updated, not_found
+            id_part      = m.group(1)
+            eid          = m.group(2)
+            key          = m.group(3)
+            _name        = m.group(4)
+            _desc        = m.group(5)
+            ability_type = m.group(6)
+            rest         = m.group(8)   # after cost integer, up to first ')' in STRFTIME
+            name = ability_name_map.get(key)
+            desc = ability_tooltip_map.get(key)
+            if name is None and desc is None:
+                not_found += 1
+                name = _name.replace("''", "'")
+                desc = _desc.replace("''", "'")
+            else:
+                name = name or _name.replace("''", "'")
+                desc = desc or _desc.replace("''", "'")
+                updated += 1
+            cost = special_ability_map.get(key, 0)
+            return (f"({id_part}, '{eid}', '{key}', '{_sql_escape(name)}', "
+                    f"'{_sql_escape(desc)}', '{ability_type}', {cost}{rest}")
 
-    # Handle rows that may still have an icon column value (7 string cols)
-    def strip_icon_and_refresh(m):
-        nonlocal updated, not_found
-        full         = m.group(0)
-        eid          = m.group(2)
-        key          = m.group(3)
-        _name        = m.group(4)
-        _desc        = m.group(5)
-        ability_type = m.group(6)
-        rest         = m.group(8)   # skip icon group (7)
-        id_part      = full.lstrip("(").split(",")[0].strip()
-        name = ability_name_map.get(key) or _name.replace("''", "'")
-        desc = ability_tooltip_map.get(key) or _desc.replace("''", "'")
-        updated += 1
-        return (f"({id_part}, '{eid}', '{key}', '{_sql_escape(name)}', "
-                f"'{_sql_escape(desc)}', '{ability_type}'{rest}")
+        new_content = ABILITY_ROW_WITH_COST_RE.sub(update_row_with_cost, content)
 
-    if ABILITY_ROW_WITH_ICON_RE.search(content):
-        new_content = ABILITY_ROW_WITH_ICON_RE.sub(strip_icon_and_refresh, content)
     else:
-        new_content = ABILITY_ROW_RE.sub(refresh_row, content)
+        # cost not yet in rows — add the column to the header and inject the value.
+        content = content.replace(
+            "INSERT OR IGNORE INTO ability(id, eid, key, name, description, ability_type,",
+            "INSERT OR IGNORE INTO ability(id, eid, key, name, description, ability_type, cost,",
+        ).replace(
+            "INSERT OR REPLACE INTO ability(id, eid, key, name, description, ability_type,",
+            "INSERT OR REPLACE INTO ability(id, eid, key, name, description, ability_type, cost,",
+        )
+
+        def refresh_row_with_cost(m):
+            nonlocal updated, not_found
+            full         = m.group(0)
+            eid          = m.group(2)
+            key          = m.group(3)
+            _name        = m.group(4)
+            _desc        = m.group(5)
+            ability_type = m.group(6)
+            rest         = m.group(7)
+            id_part      = full.lstrip("(").split(",")[0].strip()
+            name = ability_name_map.get(key)
+            desc = ability_tooltip_map.get(key)
+            cost = special_ability_map.get(key, 0)
+            if name is None and desc is None:
+                not_found += 1
+                return (f"({id_part}, '{eid}', '{key}', '{_name}', "
+                        f"'{_desc}', '{ability_type}', {cost}{rest}")
+            name = name or _name.replace("''", "'")
+            desc = desc or _desc.replace("''", "'")
+            updated += 1
+            return (f"({id_part}, '{eid}', '{key}', '{_sql_escape(name)}', "
+                    f"'{_sql_escape(desc)}', '{ability_type}', {cost}{rest}")
+
+        def strip_icon_add_cost(m):
+            nonlocal updated, not_found
+            full         = m.group(0)
+            eid          = m.group(2)
+            key          = m.group(3)
+            _name        = m.group(4)
+            _desc        = m.group(5)
+            ability_type = m.group(6)
+            rest         = m.group(8)   # skip icon group (7)
+            id_part      = full.lstrip("(").split(",")[0].strip()
+            name = ability_name_map.get(key) or _name.replace("''", "'")
+            desc = ability_tooltip_map.get(key) or _desc.replace("''", "'")
+            cost = special_ability_map.get(key, 0)
+            updated += 1
+            return (f"({id_part}, '{eid}', '{key}', '{_sql_escape(name)}', "
+                    f"'{_sql_escape(desc)}', '{ability_type}', {cost}{rest}")
+
+        if ABILITY_ROW_WITH_ICON_RE.search(content):
+            new_content = ABILITY_ROW_WITH_ICON_RE.sub(strip_icon_add_cost, content)
+        else:
+            new_content = ABILITY_ROW_RE.sub(refresh_row_with_cost, content)
 
     print(f"  [abilities] updated {updated} rows, {not_found} without loc entry",
           file=sys.stderr)
@@ -1371,14 +1424,14 @@ def update_ability_seed_file(filepath, ability_name_map, ability_tooltip_map):
 # Spell seed updating
 # ---------------------------------------------------------------------------
 
-# Regex for when gold_cost column already exists in the INSERT:
-# Matches: ..., spell_type, mana_cost, CURRENT_gold_cost, game_id, version, ...
-# Groups: (prefix_through_mana_cost, spell_key, current_gold_cost, post_gold_cost_suffix)
+# Regex for when cost column already exists in the INSERT:
+# Matches: ..., spell_type, mana_cost, CURRENT_cost, game_id, version, ...
+# Groups: (prefix_through_mana_cost, spell_key, current_cost, post_cost_suffix)
 SPELL_UPDATE_RE = re.compile(
     r"(\(\d+,\s*'[0-9a-f\-]+',\s*'([^']+)',\s*'(?:[^']|'')*',\s*'(?:[^']|'')*',\s*'[^']+',\s*\d+,\s*)(\d+)(,\s*\d+,\s*\d+,\s*')"
 )
 
-# Regex for when gold_cost column does NOT exist yet:
+# Regex for when cost column does NOT exist yet:
 # Matches: ..., spell_type, mana_cost, game_id, version, ...
 # Groups: (prefix_through_spell_type, spell_key, mana_cost, post_mana_cost_suffix)
 SPELL_INSERT_RE = re.compile(
@@ -1392,29 +1445,29 @@ def update_spell_seed_file(filepath, special_ability_map):
 
     not_found = []
     found = 0
-    has_gold_cost = "gold_cost" in content
+    has_cost = "cost" in content
 
-    if has_gold_cost:
+    if has_cost:
         pattern = SPELL_UPDATE_RE
     else:
-        print("  seed-spells.sql does not have gold_cost column — skipping spell update", file=sys.stderr)
+        print("  seed-spells.sql does not have cost column — skipping spell update", file=sys.stderr)
         return content
 
     def replacer(m):
         nonlocal found
-        prefix_str = m.group(1)  # everything up to and including mana_cost (with gold_cost mode: up to mana_cost)
+        prefix_str = m.group(1)  # everything up to and including mana_cost (with cost mode: up to mana_cost)
         spell_key = m.group(2)
-        _old_gold = m.group(3)  # existing gold_cost value (to be replaced)
+        _old_gold = m.group(3)  # existing cost value (to be replaced)
         suffix = m.group(4)     # ", game_id, version, 'uuid'..."
 
-        gold_cost = special_ability_map.get(spell_key)
-        if gold_cost is None:
+        cost = special_ability_map.get(spell_key)
+        if cost is None:
             not_found.append(spell_key)
-            gold_cost = 0
+            cost = 0
         else:
             found += 1
 
-        return prefix_str + str(gold_cost) + suffix
+        return prefix_str + str(cost) + suffix
 
     new_content = pattern.sub(replacer, content)
     print(f"  Updated {found} spell gold costs, {len(not_found)} not found", file=sys.stderr)
@@ -1535,9 +1588,10 @@ def main():
             with open(filepath, "w", encoding="utf-8") as f:
                 f.write(new_content)
 
-    print("Updating ability descriptions...", file=sys.stderr)
+    print("Updating ability descriptions and costs...", file=sys.stderr)
     ability_file = os.path.join(SEED_DIR, "seed-abilities.sql")
-    new_abilities = update_ability_seed_file(ability_file, ability_name_map, ability_tooltip_map)
+    new_abilities = update_ability_seed_file(
+        ability_file, ability_name_map, ability_tooltip_map, special_ability_map)
     if not args.dry_run:
         with open(ability_file, "w", encoding="utf-8") as f:
             f.write(new_abilities)

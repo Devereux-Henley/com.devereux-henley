@@ -15,7 +15,8 @@ Non-numeric fields (`abilities`, `draftable-spells`, `mounts`) are preserved fro
 | Seed file(s) | Fields updated |
 |---|---|
 | `seed-<faction>-units.sql` | `cost`, `is_large`, `unit_size`, `health`, `barrier`, `armor`, `leadership`, `speed`, `melee_attack`, `melee_attack_types`, `melee_defence`, `weapon_strength`, `weapon_damage`, `weapon_ap_damage`, `charge_bonus`, `ammunition`, `range`, `missile_damage`, `missile_base_damage`, `missile_ap_damage`, `missile_damage_types`, `equipment` (lords/heroes only) |
-| `seed-spells.sql` | `gold_cost` |
+| `seed-spells.sql` | `cost` |
+| `seed-abilities.sql` | `name`, `description`, `cost` (`additional_melee_cp + additional_missile_cp` from `unit_special_abilities_tables`) |
 
 ---
 

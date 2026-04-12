@@ -194,7 +194,7 @@
   [connection spell-keys]
   (when (seq spell-keys)
     (let [placeholders (str/join "," (repeat (count spell-keys) "?"))
-          sql          (str "SELECT key, name, mana_cost, gold_cost FROM spell WHERE key IN (" placeholders ")")]
+          sql          (str "SELECT key, name, mana_cost, cost FROM spell WHERE key IN (" placeholders ")")]
       (into {} (map (fn [row] [(:key row) row])
                     (jdbc.contract/query-for-entities connection (into [sql] spell-keys) schema/spell-entity))))))
 

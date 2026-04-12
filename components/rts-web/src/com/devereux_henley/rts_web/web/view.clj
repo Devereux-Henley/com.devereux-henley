@@ -108,7 +108,7 @@
                                             abilities)
                    resolved-equipment (mapv (fn [e]
                                               {:name      (format-equipment-key (get e "key"))
-                                               :gold-cost (get e "gold_cost")})
+                                               :cost (get e "cost")})
                                             equipment)]
                {:unit-statistics  stats
                 :abilities        (not-empty resolved-abilities)
