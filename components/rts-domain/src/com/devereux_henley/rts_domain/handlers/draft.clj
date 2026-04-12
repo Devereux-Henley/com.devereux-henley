@@ -4,7 +4,8 @@
    [com.devereux-henley.rts-data-access.contract :as db]
    [com.devereux-henley.rts-domain.rules.draft :as rules.draft]
    [jsonista.core :as jsonista]
-   [malli.core :as m])
+   [malli.core :as m]
+   [malli.transform :as mt])
   (:import
    [java.time Instant]))
 
@@ -146,15 +147,24 @@
   (mapv (fn [draft] (assoc draft :type :game/draft))
         (db/get-drafts-for-player-by-game (:connection dependencies) player-sub game-eid)))
 
+(def ^:private state-entry-schema
+  (m/schema
+   [:map
+    [:unit-eid :uuid]
+    [:mount {:optional true} [:maybe :string]]
+    [:spells {:optional true, :default []} [:sequential :string]]
+    [:items  {:optional true, :default []} [:sequential :string]]
+    [:total-cost {:optional true} [:maybe :int]]]))
+
+(def ^:private state-entry-transformer
+  (mt/transformer mt/string-transformer
+                  (mt/default-value-transformer {::mt/add-optional-keys true})))
+
 (defn- parse-state-entry
-  "Coerces a raw JSON-decoded state entry into a typed map, ensuring :unit-eid is a UUID
-   and :spells/:items default to []."
+  "Decodes a raw JSON-decoded state entry into a typed map via Malli.
+   Converts :unit-eid string to UUID and defaults :spells/:items to []."
   [entry]
-  {:unit-eid   (java.util.UUID/fromString (str (:unit-eid entry)))
-   :mount      (:mount entry)
-   :spells     (or (:spells entry) [])
-   :items      (or (:items entry) [])
-   :total-cost (:total-cost entry)})
+  (m/decode state-entry-schema entry state-entry-transformer))
 
 (defn get-draft-state
   "Returns {:main [entry …] :reinforcements [entry …]} where each entry is
@@ -168,13 +178,10 @@
     {:main [] :reinforcements []}))
 
 (defn- serialise-entry
-  "Converts a typed state entry to a JSON-serialisable map, stringifying :unit-eid."
+  "Encodes a typed state entry to a JSON-serialisable map via Malli.
+   Converts :unit-eid UUID to string."
   [e]
-  {:unit-eid   (str (:unit-eid e))
-   :mount      (:mount e)
-   :spells     (or (:spells e) [])
-   :items      (or (:items e) [])
-   :total-cost (:total-cost e)})
+  (m/encode state-entry-schema e state-entry-transformer))
 
 (defn set-draft-state
   "Persists {:main [entry …] :reinforcements [entry …]} as an atomic JSON blob.
@@ -320,7 +327,7 @@
 
 (defn remove-unit-from-draft
   "Removes the first occurrence of unit-eid from the given section of a draft's state
-   and returns a :draft/remove-success OOB response map."
+   and returns a :draft/remove-success response map."
   [dependencies draft-eid unit-eid section]
   (let [conn          (:connection dependencies)
         draft         (db/get-draft-by-eid conn draft-eid)
