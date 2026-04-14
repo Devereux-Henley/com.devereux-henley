@@ -28,7 +28,7 @@
   (when-let [mu (get main-unit-map unit-key)]
     (let [land-unit-key (:land_unit mu)]
       (when-let [lu (get land-unit-stats land-unit-key)]
-        (let [speed (round-int (:run_speed lu))
+        (let [speed (round-int (* 10 (or (:run_speed lu) 0)))
               equipment
               (when (and agent-subtype-map equipment-map)
                 (when-let [subtype (get agent-subtype-map land-unit-key)]
@@ -84,7 +84,7 @@
   new-stats)
 
 (def stats-block-re
-  #"(\(\d+,\s*'[0-9a-f\-]+',\s*'((?:[^']|'')*)',\s*'(?:[^']|'')*',\s*\n\s*\d+,\s*\d+,\s*\d+,\s*\d+,\s*')(\{[^']*\})(')")
+  #"(\(\d+,\s*'[0-9a-f\-]+',\s*'((?:[^']|'')*)',\s*'(?:[^']|'')*',\s*\n\s*\d+,\s*\d+,\s*\d+,\s*\d+,\s*')(\{[^']*(?:''[^']*)*\})(')")
 
 (defn update-unit-seed-file
   "Rewrite the stats blob for every INSERT row in `filepath` using RPFM data.
@@ -111,13 +111,15 @@
               (if-let [^java.util.LinkedHashMap new-stats
                        (extract-stats unit-key main-unit-map land-unit-stats
                                       agent-subtype-map equipment-map ancillary-cost-map)]
-                (let [old-stats (try (json/read-str old-stats-str) (catch Exception _ {}))]
+                (let [old-json  (str/replace old-stats-str "''" "'")
+                      old-stats (try (json/read-str old-json) (catch Exception _ {}))]
                   (apply-preserved new-stats old-stats ability-name->key)
                   (swap! found inc)
                   (str prefix-str
-                       (json/write-str new-stats
-                                       :escape-slash false
-                                       :escape-js-separators false)
+                       (-> (json/write-str new-stats
+                                           :escape-slash false
+                                           :escape-js-separators false)
+                           (str/replace "'" "''"))
                        suffix))
                 (do (swap! no-data conj raw-name) (nth m 0))))))
         new-content (str/replace content stats-block-re replacer)]

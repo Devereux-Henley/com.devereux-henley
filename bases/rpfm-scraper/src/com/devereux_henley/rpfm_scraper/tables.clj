@@ -8,15 +8,26 @@
   (into {} (map (juxt #(get % "key") #(get % "armour_value"))) rows))
 
 (defn build-entity-map
-  "key → {hit_points, run_speed, size}"
+  "key → {hit_points, run_speed, fly_speed, size}"
   [rows]
   (into {}
         (map (fn [r]
                [(get r "key")
                 {:hit_points (get r "hit_points")
                  :run_speed  (get r "run_speed")
+                 :fly_speed  (get r "fly_speed")
                  :size       (get r "size")}]))
         rows))
+
+(defn build-mount-entity-map
+  "mount key → battle_entity key, from mounts_tables."
+  [rows]
+  (into {} (map (juxt #(get % "key") #(get % "entity"))) rows))
+
+(defn build-engine-entity-map
+  "engine key → battle_entity key, from battlefield_engines_tables."
+  [rows]
+  (into {} (map (juxt #(get % "key") #(get % "battle_entity"))) rows))
 
 (defn build-melee-weapon-map
   "key → {damage, ap_damage, is_magical, ignition_amount}"
@@ -50,15 +61,28 @@
 
 (def ^:private large-sizes #{"large" "very_large" "massive" "ultra"})
 
+(defn- movement-entity-key
+  "Pick the battle_entity that actually drives this unit's displayed movement
+  speed: engine (chariot/artillery) > mount (cavalry/monstrous mount) > man."
+  [r mount-entity-map engine-entity-map]
+  (let [engine (get r "engine")
+        mount  (get r "mount")]
+    (or (when (seq engine) (get engine-entity-map engine))
+        (when (seq mount)  (get mount-entity-map mount))
+        (get r "man_entity"))))
+
 (defn build-land-unit-map
   "land_unit key → computed stat dict, combining armour/entity/melee/missile lookups."
-  [rows armour-map entity-map melee-map missile-wep-map projectile-map]
+  [rows armour-map entity-map melee-map missile-wep-map projectile-map
+   mount-entity-map engine-entity-map]
   (into {}
         (map
          (fn [r]
            (let [key       (get r "key")
                  armour    (get armour-map (or (get r "armour") "") 0)
-                 entity    (get entity-map (or (get r "man_entity") "") {})
+                 man-entity (get entity-map (or (get r "man_entity") "") {})
+                 move-key  (or (movement-entity-key r mount-entity-map engine-entity-map) "")
+                 move-entity (get entity-map move-key {})
                  melee     (get melee-map (or (get r "primary_melee_weapon") "") {})
                  missile-k (or (get r "primary_missile_weapon") "")
                  proj-k    (if (seq missile-k) (get missile-wep-map missile-k "") "")
@@ -72,8 +96,10 @@
                  melee-dmg   (+ (or (:damage melee) 0) (or (:ap_damage melee) 0))
                  missile-dmg (when (seq proj)
                                (+ (or (:damage proj) 0) (or (:ap_damage proj) 0)))
-                 run-speed   (:run_speed entity)
-                 size        (or (:size entity) "small")
+                 move-run    (or (:run_speed move-entity) 0)
+                 move-fly    (or (:fly_speed move-entity) 0)
+                 run-speed   (max move-run move-fly)
+                 size        (or (:size man-entity) "small")
                  is-large    (contains? large-sizes size)]
              [key
               {:bonus_hit_points    (get r "bonus_hit_points")

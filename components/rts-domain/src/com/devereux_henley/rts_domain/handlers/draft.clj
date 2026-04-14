@@ -77,7 +77,7 @@
   {"armor"           100.0
    "armour"          100.0
    "leadership"      100.0
-   "speed"            60.0
+   "speed"           140.0
    "melee attack"     60.0
    "melee defence"    60.0
    "weapon strength" 700.0

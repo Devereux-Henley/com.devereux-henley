@@ -50,6 +50,8 @@ Open Claude Code with the RPFM MCP server active, set the game to `warhammer_3` 
 | `ancillaries_loc.json` | `text/db/ancillaries__.loc` |
 | `ancillary_types_tables.json` | `db/ancillary_types_tables/data__` |
 | `units_custom_battle_mounts_tables.json` | `db/units_custom_battle_mounts_tables/data__` |
+| `mounts_tables.json` | `db/mounts_tables/data__` |
+| `battlefield_engines_tables.json` | `db/battlefield_engines_tables/data__` |
 
 Each decoded file must be in the RPFM MCP output format: a JSON array with a single `{type, text}` element where `text` is the serialised `DBRFileInfo` or `LocRFileInfo` object.
 

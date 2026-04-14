@@ -81,9 +81,18 @@
           projectile-map (tables/build-projectile-map (:rows (rpfm/parse-rpfm-table (p "projectiles_tables.json"))))
           _ (logf "  projectiles: %d" (count projectile-map))
 
+          mount-entity-map (tables/build-mount-entity-map
+                            (:rows (rpfm/parse-rpfm-table (p "mounts_tables.json"))))
+          _ (logf "  mounts: %d" (count mount-entity-map))
+
+          engine-entity-map (tables/build-engine-entity-map
+                             (:rows (rpfm/parse-rpfm-table (p "battlefield_engines_tables.json"))))
+          _ (logf "  battlefield engines: %d" (count engine-entity-map))
+
           land-unit-stats (tables/build-land-unit-map
                            (:rows (rpfm/parse-rpfm-table (p "land_units_tables.json")))
-                           armour-map entity-map melee-map missile-wep-map projectile-map)
+                           armour-map entity-map melee-map missile-wep-map projectile-map
+                           mount-entity-map engine-entity-map)
           _ (logf "  land units: %d" (count land-unit-stats))
 
           main-unit-rows (:rows (rpfm/parse-rpfm-table (p "main_units_tables.json")))
