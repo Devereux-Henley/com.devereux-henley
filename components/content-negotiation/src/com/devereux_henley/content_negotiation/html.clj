@@ -13,18 +13,38 @@
              data
              data))
 
+(def ^:private fallback-error-fragment
+  "<section class=\"resource\" role=\"alert\" aria-labelledby=\"render-error-heading\">
+  <p id=\"render-error-heading\">Something went wrong rendering this view.</p>
+</section>")
+
+(defn- safe-render
+  "Renders a selmer template and returns the result as a string. On any
+  exception logs and returns the fallback error fragment, so a broken template
+  or data mismatch degrades to an inline HTMX-friendly error instead of
+  crashing through the response encoder (which runs outside Reitit's exception
+  middleware)."
+  [view-fn data]
+  (try
+    (selmer.parser/render-file (view-fn (:type data)) {:data data})
+    (catch Throwable t
+      (log/error t "Template render failure"
+                 {:type (:type data)
+                  :template (try (view-fn (:type data)) (catch Throwable _ nil))})
+      fallback-error-fragment)))
+
 (defn html-htmx-encoder
   [{:keys [view-fn]}]
   (reify
     muuntaja.format.core/EncodeToBytes
     (encode-to-bytes [_ data charset]
       (let [enriched (with-oob data)]
-        (.getBytes ^String (selmer.parser/render-file (view-fn (:type enriched)) {:data enriched}) ^String charset)))
+        (.getBytes ^String (safe-render view-fn enriched) ^String charset)))
     muuntaja.format.core/EncodeToOutputStream
     (encode-to-output-stream [_ data charset]
       (fn [^java.io.OutputStream output-stream]
         (let [enriched (with-oob data)
-              encoded  (selmer.parser/render-file (view-fn (:type enriched)) {:data enriched})
+              encoded  (safe-render view-fn enriched)
               bytes    (.getBytes ^String encoded ^String charset)]
           (.write output-stream bytes))))))
 

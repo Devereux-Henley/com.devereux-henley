@@ -1,10 +1,14 @@
 (ns com.devereux-henley.rts-web.web.view
   (:require
+   [clojure.java.io :as io]
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.web.game :as web.game]
    [integrant.core]
+   [selmer.filters]
    [selmer.parser]
    [taoensso.timbre :as log]))
+
+(selmer.filters/add-filter! :not-empty? (comp boolean seq))
 
 (defn standard-view-handler
   [view-name request]
@@ -71,34 +75,21 @@
            "faction.html"
            (fn [_data _request] {})))
 
-(defn ^:private format-equipment-key
-  "Converts an ancillary key like wh3_dlc27_anc_armour_perverse_plate
-  into a display name like \"Perverse Plate\"."
-  [k]
-  (let [after-anc (second (clojure.string/split k #"_anc_" 2))
-        name-part (if after-anc
-                    (clojure.string/join "_" (rest (clojure.string/split after-anc #"_")))
-                    k)]
-    (->> (clojure.string/split name-part #"_")
-         (map clojure.string/capitalize)
-         (clojure.string/join " "))))
-
 (defmethod integrant.core/init-key ::unit-view
   [_init-key dependencies]
   (partial standard-entity-view-handler
            (fn [eid] (web.game/get-unit-by-eid dependencies eid))
            "unit.html"
            (fn [data _request]
-             (let [{:keys [stats abilities draftable-spells mounts equipment]} (domain/parse-unit-statistics (:unit-statistics data))
-                   spell-keys         (map #(get % "key") draftable-spells)
-                   key->spell         (domain/get-spells-by-keys dependencies spell-keys)
+             (let [{:keys [stats abilities draftable-spells]} (domain/parse-unit-statistics (:unit-statistics data))
+                   key->spell         (domain/get-spells-by-keys dependencies draftable-spells)
                    key->ability       (domain/get-abilities-by-keys dependencies abilities)
-                   resolved-spells    (mapv (fn [s]
-                                              (let [key   (get s "key")
-                                                    spell (get key->spell key)]
-                                                {:name      (or (:name spell) key)
+                   resolved-spells    (mapv (fn [k]
+                                              (let [spell (get key->spell k)]
+                                                {:name      (or (:name spell) k)
+                                                 :eid       (:eid spell)
                                                  :mana-cost (:mana-cost spell)
-                                                 :gold-cost (:gold-cost spell)}))
+                                                 :cost      (:cost spell)}))
                                             draftable-spells)
                    resolved-abilities (mapv (fn [k]
                                               (let [a (get key->ability k)]
@@ -106,16 +97,14 @@
                                                  :eid         (:eid a)
                                                  :description (:description a)}))
                                             abilities)
-                   resolved-equipment (mapv (fn [e]
-                                              {:name      (format-equipment-key (get e "key"))
-                                               :gold-cost (get e "gold_cost")})
-                                            equipment)]
+                   mounts             (domain/get-mounts-for-unit dependencies (:eid data))
+                   items              (domain/get-items-for-unit dependencies (:eid data))]
                {:unit-statistics  stats
                 :abilities        (not-empty resolved-abilities)
                 :draftable-spells (not-empty resolved-spells)
                 :mounts           (not-empty mounts)
-                :equipment        (not-empty resolved-equipment)
-                :unit-card        (when (clojure.java.io/resource
+                :items            (not-empty items)
+                :unit-card        (when (io/resource
                                          (str "rts-web/asset/card/unit/" (:eid data) ".png"))
                                     (str "/card/unit/" (:eid data) ".png"))}))))
 

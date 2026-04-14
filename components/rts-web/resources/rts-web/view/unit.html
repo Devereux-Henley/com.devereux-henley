@@ -12,19 +12,18 @@
                  src="{{unit-card}}"
                  alt="{{data.name}} unit card">
             {% endif %}
-            <div class="stack stack-2">
+            <div class="unit-hero-body">
                 <h2 id="unit-heading" class="unit-name">{{data.name}}</h2>
                 <div class="cluster cluster-2">
                     <span class="badge badge-primary">{{data.unit-type-name}}</span>
                     <span class="badge badge-neutral">{{data.unit-category-name}}</span>
                 </div>
+                {% if data.description %}
+                <p class="unit-description">{{data.description|safe}}</p>
+                {% endif %}
             </div>
         </div>
     </header>
-
-    {% if data.description %}
-    <p class="unit-description">{{data.description|linebreaks|safe}}</p>
-    {% endif %}
 
     <div class="unit-layout{% if not unit-statistics %}{% if not abilities %} unit-layout-no-stats{% endif %}{% endif %}">
 
@@ -82,9 +81,17 @@
                     <tbody>
                         {% for spell in draftable-spells %}
                         <tr>
-                            <td>{{spell.name}}</td>
+                            <td>
+                                <span class="unit-row-with-icon">
+                                    <img class="unit-option-icon"
+                                         src="/icon/ability/{{spell.eid}}.png"
+                                         alt=""
+                                         onerror="this.style.display='none'">
+                                    {{spell.name}}
+                                </span>
+                            </td>
                             <td><span class="badge badge-primary">{{spell.mana-cost}}&thinsp;mp</span></td>
-                            <td><span class="badge badge-secondary">{{spell.gold-cost}}&thinsp;g</span></td>
+                            <td><span class="badge badge-secondary">{{spell.cost}}</span></td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -106,8 +113,16 @@
                     <tbody>
                         {% for mount in mounts %}
                         <tr>
-                            <td>{{mount.name}}</td>
-                            <td><span class="badge badge-neutral">{{mount.mp-cost}}&thinsp;g</span></td>
+                            <td>
+                                <span class="unit-row-with-icon">
+                                    <img class="unit-option-icon"
+                                         src="/icon/mount/{{mount.icon-key}}.png"
+                                         alt=""
+                                         onerror="this.style.display='none'">
+                                    {{mount.name}}
+                                </span>
+                            </td>
+                            <td><span class="badge badge-neutral">{{mount.cost}}</span></td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -115,22 +130,32 @@
             </section>
             {% endif %}
 
-            {% if equipment %}
-            <section class="unit-panel" id="unit-equipment" aria-labelledby="unit-equipment-heading">
-                <h3 class="unit-panel-heading" id="unit-equipment-heading">Equipment</h3>
-                <table class="unit-panel-table" aria-labelledby="unit-equipment-heading">
-                    <caption class="sr-only">Equipment for {{data.name}}</caption>
+            {% if items %}
+            <section class="unit-panel" id="unit-items" aria-labelledby="unit-items-heading">
+                <h3 class="unit-panel-heading" id="unit-items-heading">Items</h3>
+                <table class="unit-panel-table" aria-labelledby="unit-items-heading">
+                    <caption class="sr-only">Items available to {{data.name}}</caption>
                     <thead>
                         <tr>
                             <th scope="col">Item</th>
+                            <th scope="col">Category</th>
                             <th scope="col">Cost</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for item in equipment %}
+                        {% for item in items %}
                         <tr>
-                            <td>{{item.name}}</td>
-                            <td><span class="badge badge-secondary">{{item.gold-cost}}&thinsp;g</span></td>
+                            <td>
+                                <span class="unit-row-with-icon">
+                                    <img class="unit-option-icon"
+                                         src="/icon/item/{{item.icon-key}}.png"
+                                         alt=""
+                                         onerror="this.style.display='none'">
+                                    {{item.name}}
+                                </span>
+                            </td>
+                            <td>{{item.category}}</td>
+                            <td><span class="badge badge-secondary">{{item.cost}}</span></td>
                         </tr>
                         {% endfor %}
                     </tbody>

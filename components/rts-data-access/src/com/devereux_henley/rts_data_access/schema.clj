@@ -147,16 +147,40 @@
   (schema.contract/to-schema
    [:map
     [:eid :uuid]
+    [:key :string]
     [:name :string]
-    [:description [:maybe :string]]]))
+    [:description [:maybe :string]]
+    [:cost :int]]))
 
 (def spell-entity
   (schema.contract/to-schema
    [:map
+    [:eid :uuid]
     [:key :string]
     [:name :string]
-    [:mana-cost [:maybe :int]]
-    [:gold-cost [:maybe :int]]]))
+    [:mana-cost :int]
+    [:cost :int]]))
+
+(def item-entity
+  (schema.contract/to-schema
+   [:map
+    [:id :int]
+    [:eid :uuid]
+    [:key :string]
+    [:name :string]
+    [:category :string]
+    [:cost :int]
+    [:icon-key [:maybe :string]]]))
+
+(def mount-entity
+  (schema.contract/to-schema
+   [:map
+    [:id :int]
+    [:eid :uuid]
+    [:key :string]
+    [:name :string]
+    [:icon-key [:maybe :string]]
+    [:cost :int]]))
 
 (def draft-state-entity
   (schema.contract/to-schema
@@ -171,10 +195,10 @@
   (m/schema
    [:map {:closed false}
     ["abilities"           {:optional true, :default []} [:sequential :string]]
-    ["draftable-spells"    {:optional true, :default []} [:sequential :string]]
+    ["draftable-spells"    {:optional true, :default []} [:sequential [:map ["key" :string]]]]
     ["draftable-abilities" {:optional true, :default []} [:sequential :string]]
     ["mounts"              {:optional true, :default []}
-     [:sequential [:map ["name" [:maybe :string]] ["mp_cost" [:maybe :int]]]]]
+     [:sequential [:map ["name" [:maybe :string]] ["cost" [:maybe :int]]]]]
     ["equipment"           {:optional true, :default []} [:sequential :any]]]))
 
 (def unit-statistics-transformer

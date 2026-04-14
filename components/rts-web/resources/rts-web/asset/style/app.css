@@ -114,22 +114,34 @@ a:hover:has(img) {
 }
 
 .unit-hero {
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-6);
 }
 
 .unit-hero-inner {
   display: flex;
-  align-items: flex-start;
-  gap: var(--space-4);
+  align-items: center;
+  gap: var(--space-5);
+  min-height: 130px;
 }
 
 .unit-hero-card {
-  height: 6rem;
+  height: 130px;
+  width: auto;
   object-fit: contain;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   flex-shrink: 0;
+  align-self: center;
   background-color: color-mix(in srgb, var(--color-neutral-900) 60%, transparent);
+}
+
+.unit-hero-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-2);
+  min-width: 0;
+  flex: 1;
 }
 
 .unit-name {
@@ -141,9 +153,13 @@ a:hover:has(img) {
 .unit-description {
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
-  margin-bottom: var(--space-6);
   max-width: 64ch;
-  line-height: var(--line-height-relaxed);
+  line-height: var(--line-height-base);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* Two-column: narrow stats sidebar left, panels right */
@@ -342,6 +358,19 @@ a:hover:has(img) {
 .unit-panel-table thead th:last-child,
 .unit-panel-table td:last-child {
   text-align: right;
+}
+
+.unit-row-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.unit-option-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 /* ─── Draft page ─────────────────────────────────────────────────────────── */
@@ -763,6 +792,104 @@ a:hover:has(img) {
   letter-spacing: 0.04em;
 }
 
+/* ─── Health bar ─────────────────────────────────────────────────────────── */
+
+.draft-health-block {
+  padding: var(--space-1) var(--space-3) var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.draft-health-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.draft-health-label {
+  font-size: 0.6rem;
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6a8a5a;
+}
+
+.draft-health-value {
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-bold);
+  color: #9aba80;
+  letter-spacing: 0.04em;
+}
+
+.draft-health-track {
+  position: relative;
+  height: 1rem;
+  background: #0e1a0a;
+  border: 1px solid #2a3e20;
+  border-radius: 1px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px #000a, 0 0 6px #1a3010 40%;
+}
+
+.draft-health-fill {
+  position: absolute;
+  inset: 0;
+  width: var(--hp-pct, 100%);
+  background: linear-gradient(
+    180deg,
+    #507840 0%,
+    #3d6030 45%,
+    #2e4a24 100%
+  );
+  transition: width 400ms ease;
+}
+
+/* Segmented notch overlay — thin vertical lines every ~10% */
+.draft-health-notches {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent calc(10% - 1px),
+    #00000040 calc(10% - 1px),
+    #00000040 10%
+  );
+  pointer-events: none;
+}
+
+/* Barrier badge in header row */
+.draft-barrier-badge {
+  flex: 1;
+  font-size: 0.55rem;
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-bold);
+  color: #6878c0;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+/* Barrier track (sits below HP bar) */
+.draft-barrier-track {
+  position: relative;
+  height: 3px;
+  background: #0a0e1a;
+  border: 1px solid #1e2a4a;
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.draft-barrier-fill {
+  position: absolute;
+  inset: 0;
+  width: var(--barrier-pct, 100%);
+  background: linear-gradient(90deg, #3a4e8a, #5a70c0);
+  transition: width 400ms ease;
+}
+
 /* Stats section panels */
 .draft-stats-section {
   overflow: visible;
@@ -817,6 +944,40 @@ a:hover:has(img) {
   background: #8b2020;
   border-radius: 2px;
   transition: width 250ms ease;
+}
+
+/* Stat value with damage-breakdown tooltip */
+.draft-stat-value-tip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  cursor: default;
+  border-bottom: 1px dashed #5a3820;
+}
+
+.draft-stat-tip-popup {
+  display: none;
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 4px);
+  white-space: nowrap;
+  background: #1e1208;
+  border: 1px solid #4a2e18;
+  border-radius: var(--radius-sm);
+  padding: 3px var(--space-2);
+  font-size: 0.6rem;
+  font-family: var(--font-family-heading);
+  color: #c8a84b;
+  letter-spacing: 0.04em;
+  box-shadow: 0 2px 8px #000a;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.draft-stat-value-tip:hover .draft-stat-tip-popup,
+.draft-stat-value-tip:focus .draft-stat-tip-popup {
+  display: block;
 }
 
 /* Future (locked) sections */
@@ -874,4 +1035,103 @@ a:hover:has(img) {
 .draft-details-link:hover {
   color: var(--color-accent);
   text-decoration: underline;
+}
+
+/* ─── Draft option list (abilities, spells, items) ──────────────────────── */
+
+.draft-option-list {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-1) 0;
+}
+
+.draft-option-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  min-height: 2rem;
+}
+
+.draft-option-row--selectable:hover {
+  background: color-mix(in srgb, var(--color-neutral-300) 8%, transparent);
+}
+
+.draft-option-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  cursor: pointer;
+}
+
+.draft-option-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  background: #1a1410;
+}
+
+.draft-option-name {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.draft-option-cost {
+  flex-shrink: 0;
+  font-size: 0.65rem;
+}
+
+.draft-option-mana {
+  flex-shrink: 0;
+  font-size: 0.65rem;
+}
+
+.badge-mana {
+  background: color-mix(in srgb, #3060b0 25%, transparent);
+  color: #8ab4f0;
+  border-color: color-mix(in srgb, #3060b0 40%, transparent);
+}
+
+/* ─── Passive ability row (icon + name, readonly) ────────────────────────── */
+
+.draft-passive-list {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-1) 0;
+}
+
+.draft-passive-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  min-height: 2rem;
+}
+
+.draft-passive-name {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.draft-passive-row .unit-ability-item {
+  flex-shrink: 0;
+}
+
+.draft-passive-row .unit-ability-tooltip {
+  left: calc(100% + 0.5rem);
+  top: 50%;
+  transform: translateY(-50%);
 }

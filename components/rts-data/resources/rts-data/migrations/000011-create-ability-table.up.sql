@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS ability (
   deleted_at TEXT,
   key TEXT NOT NULL,
   ability_type TEXT NOT NULL,
+  cost INTEGER NOT NULL DEFAULT 0,
   UNIQUE(eid),
   UNIQUE(name, game_id, deleted_at),
   UNIQUE(key, game_id, deleted_at),
