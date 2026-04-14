@@ -1,1 +1,0 @@
-ALTER TABLE item ADD COLUMN icon_key TEXT;

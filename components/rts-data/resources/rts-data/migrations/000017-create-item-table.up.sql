@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS item (
   name TEXT NOT NULL,
   category TEXT NOT NULL,
   cost INTEGER NOT NULL DEFAULT 0,
+  icon_key TEXT,
   game_id INTEGER NOT NULL,
   version INT NOT NULL,
   created_by_sub TEXT NOT NULL,
