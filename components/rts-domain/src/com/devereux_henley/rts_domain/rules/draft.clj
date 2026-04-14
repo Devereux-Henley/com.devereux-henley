@@ -145,7 +145,7 @@
 ;; ─── Violation messages ───────────────────────────────────────────────────────
 
 (defn- violation-message
-  [rule-key unit-name section section-max total-cost]
+  [rule-key unit-name section section-max _total-cost]
   (case rule-key
     ::lord-section-violation
     "Lords may only be drafted into the main army section."

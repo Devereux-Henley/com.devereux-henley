@@ -191,13 +191,24 @@
     [:section-units [:sequential :any]]
     [:oob {:optional true} :boolean]]))
 
+(defn- ^:private scalar-or-seq->vec
+  "json-enc serialises a group of same-named form inputs as a scalar when
+  only one is selected and as an array when 2+ are selected. Our schema
+  expects `[:sequential :string]` — coerce the scalar case up into a
+  singleton vector so Malli validation passes for both shapes."
+  [v]
+  (cond
+    (nil? v)        nil
+    (sequential? v) v
+    :else           [v]))
+
 (def add-unit-to-draft-specification
   (schema.contract/to-schema
    [:map
     [:mount     {:optional true} [:maybe :string]]
-    [:abilities {:optional true} [:sequential :string]]
-    [:spells    {:optional true} [:sequential :string]]
-    [:items     {:optional true} [:sequential :string]]]))
+    [:abilities {:optional true :decode/json scalar-or-seq->vec} [:sequential :string]]
+    [:spells    {:optional true :decode/json scalar-or-seq->vec} [:sequential :string]]
+    [:items     {:optional true :decode/json scalar-or-seq->vec} [:sequential :string]]]))
 
 (def draft-mutation-response
   (schema.contract/to-schema

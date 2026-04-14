@@ -4,8 +4,7 @@
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.schema.contract :as schema.contract]
    [integrant.core]
-   [reitit.core]
-   [taoensso.timbre :as log]))
+   [reitit.core]))
 
 (defn get-game-by-eid
   [dependencies eid]

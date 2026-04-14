@@ -1,5 +1,6 @@
 (ns com.devereux-henley.rts-web.web.view
   (:require
+   [clojure.java.io :as io]
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.web.game :as web.game]
    [integrant.core]
@@ -103,7 +104,7 @@
                 :draftable-spells (not-empty resolved-spells)
                 :mounts           (not-empty mounts)
                 :items            (not-empty items)
-                :unit-card        (when (clojure.java.io/resource
+                :unit-card        (when (io/resource
                                          (str "rts-web/asset/card/unit/" (:eid data) ".png"))
                                     (str "/card/unit/" (:eid data) ".png"))}))))
 

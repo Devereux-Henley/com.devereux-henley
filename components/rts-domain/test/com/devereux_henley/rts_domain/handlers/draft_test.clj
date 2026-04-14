@@ -1,5 +1,6 @@
 (ns com.devereux-henley.rts-domain.handlers.draft-test
   (:require
+   [clojure.string]
    [clojure.test :refer [deftest is]]
    [com.devereux-henley.rts-data-access.contract :as data-access.contract]
    [com.devereux-henley.rts-domain.handlers.draft :as handlers.draft]
@@ -227,15 +228,21 @@
   "Returns a fixture fn for add-unit-to-draft tests.
    faction-units  — list returned by get-units-for-faction.
    existing-state-json — :state string for get-draft-state-by-draft, or nil."
-  [faction-units existing-state-json]
-  (fn [f]
-    (with-redefs [data-access.contract/get-draft-by-eid         (fn [_ _] test-draft)
-                  data-access.contract/get-game-mode-by-eid     (fn [_ _] test-game-mode)
-                  data-access.contract/get-draft-state-by-draft (fn [_ _] (when existing-state-json {:state existing-state-json}))
-                  data-access.contract/get-units-for-faction    (fn [_ _] faction-units)
-                  data-access.contract/get-spells-by-keys       (fn [_ _] {})
-                  data-access.contract/upsert-draft-state       (fn [_ _ _] nil)]
-      (f))))
+  ([faction-units existing-state-json]
+   (stub-add-unit faction-units existing-state-json {}))
+  ([faction-units existing-state-json {:keys [mounts items abilities]
+                                       :or   {mounts [] items [] abilities {}}}]
+   (fn [f]
+     (with-redefs [data-access.contract/get-draft-by-eid         (fn [_ _] test-draft)
+                   data-access.contract/get-game-mode-by-eid     (fn [_ _] test-game-mode)
+                   data-access.contract/get-draft-state-by-draft (fn [_ _] (when existing-state-json {:state existing-state-json}))
+                   data-access.contract/get-units-for-faction    (fn [_ _] faction-units)
+                   data-access.contract/get-spells-by-keys       (fn [_ _] {})
+                   data-access.contract/get-abilities-by-keys    (fn [_ _] abilities)
+                   data-access.contract/get-items-for-unit       (fn [_ _] items)
+                   data-access.contract/get-mounts-for-unit      (fn [_ _] mounts)
+                   data-access.contract/upsert-draft-state       (fn [_ _ _] nil)]
+       (f)))))
 
 (deftest add-unit-to-draft-returns-error-when-unit-not-in-faction
   ((stub-add-unit [] nil)
@@ -296,19 +303,25 @@
          (is (nil? (:reinf-section result))))))))
 
 (deftest add-unit-to-draft-stores-mount-in-state
-  (let [stored (atom nil)]
+  (let [stored    (atom nil)
+        mount-key "mount_barded_warhorse"
+        mounts    [{:id 1 :eid (UUID/randomUUID) :key mount-key
+                    :name "Barded Warhorse" :icon-key mount-key :cost 800}]]
     ((stub-add-unit [{:eid test-unit-eid :name "Warrior Priest" :cost 100
                       :unit-category-name "Hero"
-                      :unit-statistics "{\"mounts\":[{\"name\":\"Barded Warhorse\",\"mp_cost\":800}]}"}]
-                    nil)
+                      :unit-statistics "{}"}]
+                    nil
+                    {:mounts mounts})
      (fn []
        (with-redefs [data-access.contract/upsert-draft-state (fn [_ _ json] (reset! stored json))]
          (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main"
-                                           {:mount "Barded Warhorse"}))
+                                           {:mount mount-key}))
        (let [state (when @stored
                      (jsonista.core/read-value @stored (jsonista.core/object-mapper {:decode-key-fn keyword})))]
-         (is (= "Barded Warhorse" (get-in state [:main 0 :mount])))
-         (is (= 900 (get-in state [:main 0 :total-cost]))))))))
+         (is (= mount-key (get-in state [:main 0 :mount])))
+         ;; set-draft-state runs Malli's string-transformer on encode, which
+         ;; stringifies :int fields; compare the stored form directly.
+         (is (= "900" (get-in state [:main 0 :total-cost]))))))))
 
 ;; --- remove-unit-from-draft ---
 
@@ -351,7 +364,8 @@
                 data-access.contract/get-unit-by-eid       (fn [_ _] infantry-unit)
                 data-access.contract/get-abilities-by-keys (fn [_ _] {})
                 data-access.contract/get-spells-by-keys    (fn [_ _] {})
-                data-access.contract/get-items-for-unit    (fn [_ _] [])]
+                data-access.contract/get-items-for-unit    (fn [_ _] [])
+                data-access.contract/get-mounts-for-unit   (fn [_ _] [])]
     (let [result (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)]
       (is (= :draft/unit (:type result))))))
 
@@ -361,7 +375,8 @@
                 data-access.contract/get-unit-by-eid       (fn [_ _] infantry-unit)
                 data-access.contract/get-abilities-by-keys (fn [_ _] {})
                 data-access.contract/get-spells-by-keys    (fn [_ _] {})
-                data-access.contract/get-items-for-unit    (fn [_ _] [])]
+                data-access.contract/get-items-for-unit    (fn [_ _] [])
+                data-access.contract/get-mounts-for-unit   (fn [_ _] [])]
     (let [result (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)]
       (is (= test-draft-eid (:draft-eid result))))))
 
@@ -371,7 +386,8 @@
                 data-access.contract/get-unit-by-eid       (fn [_ _] infantry-unit)
                 data-access.contract/get-abilities-by-keys (fn [_ _] {})
                 data-access.contract/get-spells-by-keys    (fn [_ _] {})
-                data-access.contract/get-items-for-unit    (fn [_ _] [])]
+                data-access.contract/get-items-for-unit    (fn [_ _] [])
+                data-access.contract/get-mounts-for-unit   (fn [_ _] [])]
     (is (true? (:reinforcements-enabled (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid))))))
 
 (deftest get-draft-unit-details-sets-reinforcements-disabled-when-zero
@@ -380,5 +396,6 @@
                 data-access.contract/get-unit-by-eid       (fn [_ _] infantry-unit)
                 data-access.contract/get-abilities-by-keys (fn [_ _] {})
                 data-access.contract/get-spells-by-keys    (fn [_ _] {})
-                data-access.contract/get-items-for-unit    (fn [_ _] [])]
+                data-access.contract/get-items-for-unit    (fn [_ _] [])
+                data-access.contract/get-mounts-for-unit   (fn [_ _] [])]
     (is (false? (:reinforcements-enabled (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid))))))
