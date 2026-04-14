@@ -71,25 +71,13 @@
            "faction.html"
            (fn [_data _request] {})))
 
-(defn ^:private format-equipment-key
-  "Converts an ancillary key like wh3_dlc27_anc_armour_perverse_plate
-  into a display name like \"Perverse Plate\"."
-  [k]
-  (let [after-anc (second (clojure.string/split k #"_anc_" 2))
-        name-part (if after-anc
-                    (clojure.string/join "_" (rest (clojure.string/split after-anc #"_")))
-                    k)]
-    (->> (clojure.string/split name-part #"_")
-         (map clojure.string/capitalize)
-         (clojure.string/join " "))))
-
 (defmethod integrant.core/init-key ::unit-view
   [_init-key dependencies]
   (partial standard-entity-view-handler
            (fn [eid] (web.game/get-unit-by-eid dependencies eid))
            "unit.html"
            (fn [data _request]
-             (let [{:keys [stats abilities draftable-spells mounts equipment]} (domain/parse-unit-statistics (:unit-statistics data))
+             (let [{:keys [stats abilities draftable-spells mounts]} (domain/parse-unit-statistics (:unit-statistics data))
                    spell-keys         (map #(get % "key") draftable-spells)
                    key->spell         (domain/get-spells-by-keys dependencies spell-keys)
                    key->ability       (domain/get-abilities-by-keys dependencies abilities)
@@ -106,15 +94,12 @@
                                                  :eid         (:eid a)
                                                  :description (:description a)}))
                                             abilities)
-                   resolved-equipment (mapv (fn [e]
-                                              {:name      (format-equipment-key (get e "key"))
-                                               :cost (get e "cost")})
-                                            equipment)]
+                   items              (domain/get-items-for-unit dependencies (:eid data))]
                {:unit-statistics  stats
                 :abilities        (not-empty resolved-abilities)
                 :draftable-spells (not-empty resolved-spells)
                 :mounts           (not-empty mounts)
-                :equipment        (not-empty resolved-equipment)
+                :items            (not-empty items)
                 :unit-card        (when (clojure.java.io/resource
                                          (str "rts-web/asset/card/unit/" (:eid data) ".png"))
                                     (str "/card/unit/" (:eid data) ".png"))}))))

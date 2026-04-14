@@ -108,12 +108,22 @@
     [:value :any]
     [:percentage :int]]))
 
+(def draft-item
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:key :string]
+    [:name :string]
+    [:category :string]
+    [:cost :int]]))
+
 (def draft-unit-response
   (schema.contract/to-schema
    [:map
     [:type [:= :draft/unit]]
     [:draft-eid :uuid]
     [:reinforcements-enabled :boolean]
+    [:items {:optional true} [:sequential draft-item]]
     [:unit
      [:map
       [:eid :uuid]

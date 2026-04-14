@@ -23,6 +23,7 @@ produced by the RPFM MCP decode_packed_file tool for these tables:
   agent_subtypes_tables.json
   ancillaries_included_agent_subtypes_tables.json
   ancillaries_tables.json
+  ancillaries_loc.json
 
 To regenerate these files, use Claude Code with the RPFM MCP server and run
 decode_packed_file for each table from GameFiles, then save the output to
@@ -356,6 +357,9 @@ FACTION_KEY_MAP = {
     "warriors-of-chaos": ["chs", "woc"],
     "wood-elves":        ["wef"],
 }
+
+# MP item categories (excludes campaign-only 'general' followers and 'mount').
+MP_ITEM_CATEGORIES = {"weapon", "armour", "talisman", "enchanted_item", "arcane_item"}
 
 
 # ---------------------------------------------------------------------------
@@ -1475,6 +1479,159 @@ def update_spell_seed_file(filepath, special_ability_map):
 
 
 # ---------------------------------------------------------------------------
+# Item seed generation
+# ---------------------------------------------------------------------------
+
+# Matches one INSERT row in a unit seed file to capture the integer ID:
+# (id, 'eid', 'name', ...)
+UNIT_SEED_ID_NAME_RE = re.compile(
+    r"\(\s*(\d+),\s*'([0-9a-f\-]+)',\s*'((?:[^']|'')*)',"
+)
+
+_SEED_AUTHOR = "f0ce7395-a57f-41e9-ade0-fd13bafc058f"
+_GAME_ID = 1
+
+
+def build_ancillary_name_map(loc_dict):
+    """Extract ancillary display names from a loc dict.
+    Keys in the loc are 'ancillaries_onscreen_name_<ancillary_key>' -> display name.
+    Returns {ancillary_key: display_name}.
+    """
+    prefix = "ancillaries_onscreen_name_"
+    return {k[len(prefix):]: v for k, v in loc_dict.items() if k.startswith(prefix)}
+
+
+def generate_item_seed(ancillary_rows, name_map):
+    """Generate seed-items.sql content from ancillaries_tables rows and a name map.
+
+    Only includes MP item categories (weapon, armour, talisman, enchanted_item,
+    arcane_item). Campaign-only followers ('general') and mounts are excluded.
+
+    Returns (sql_content: str, key_to_id: dict[str, int]).
+    Items are sorted by key for stable IDs across runs.
+    """
+    mp_rows = [r for r in ancillary_rows if r.get("category") in MP_ITEM_CATEGORIES]
+    sorted_rows = sorted(mp_rows, key=lambda r: r["key"])
+    lines = [
+        "INSERT OR IGNORE INTO item(id, eid, key, name, category, cost,"
+        " game_id, version, created_by_sub, created_at, updated_at, deleted_at)",
+        "VALUES",
+    ]
+    key_to_id = {}
+    rows_sql = []
+    for idx, row in enumerate(sorted_rows, start=1):
+        key = row["key"]
+        name = _sql_escape(name_map.get(key) or key)
+        category = _sql_escape(row.get("category") or "")
+        cost = row.get("uniqueness_score") or 0
+        eid = f"e1000000-0000-0000-0000-{idx:012x}"
+        key_to_id[key] = idx
+        comma = "," if idx < len(sorted_rows) else ";"
+        rows_sql.append(
+            f"  ({idx}, '{eid}', '{_sql_escape(key)}', '{name}', '{category}', {cost},"
+            f" {_GAME_ID}, 1, '{_SEED_AUTHOR}',"
+            " STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'),"
+            " STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'),"
+            f" null){comma}"
+        )
+    lines.extend(rows_sql)
+    return "\n".join(lines) + "\n", key_to_id
+
+
+def build_unit_seed_id_map(seed_dir):
+    """Parse all faction unit seed SQL files to build {(name, faction): unit_id}.
+
+    Faction is the slug from the filename (e.g. 'empire' from seed-empire-units.sql).
+    """
+    result = {}
+    for filename in sorted(os.listdir(seed_dir)):
+        if not (filename.startswith("seed-") and filename.endswith("-units.sql")):
+            continue
+        faction = filename[len("seed-"):-len("-units.sql")]
+        filepath = os.path.join(seed_dir, filename)
+        with open(filepath, encoding="utf-8") as f:
+            content = f.read()
+        for m in UNIT_SEED_ID_NAME_RE.finditer(content):
+            unit_id = int(m.group(1))
+            name = m.group(3).replace("''", "'")
+            result[(name, faction)] = unit_id
+    return result
+
+
+def generate_unit_item_seed(unit_id_map, name_index, main_unit_map,
+                             agent_subtype_map, equipment_map, item_key_to_id):
+    """Generate seed-unit-items.sql content linking lords/heroes to their items.
+
+    Only produces rows for units that have items in ancillaries_included_agent_subtypes
+    (i.e. legendary lords and named heroes with pre-assigned gear). Mount ancillaries
+    are excluded (already filtered by build_equipment_map).
+
+    Returns sql_content: str.
+    """
+    rows_sql = []
+    seen = set()  # (unit_id, item_id) dedup guard
+
+    for faction_name, faction_prefixes in sorted(FACTION_KEY_MAP.items()):
+        for (name, faction), unit_id in unit_id_map.items():
+            if faction != faction_name:
+                continue
+
+            unit_key, _ = find_unit_key(name, faction_prefixes, name_index, main_unit_map)
+            if unit_key is None:
+                continue
+
+            mu = main_unit_map.get(unit_key)
+            if not mu:
+                continue
+            land_unit_key = mu["land_unit"]
+
+            agent_subtype = agent_subtype_map.get(land_unit_key)
+            if not agent_subtype:
+                continue
+
+            items = equipment_map.get(agent_subtype)
+            if not items:
+                continue
+
+            for item_key in items:
+                item_id = item_key_to_id.get(item_key)
+                if item_id is None:
+                    continue
+                pair = (unit_id, item_id)
+                if pair in seen:
+                    continue
+                seen.add(pair)
+                rows_sql.append((unit_id, item_id))
+
+    if not rows_sql:
+        return (
+            "INSERT OR IGNORE INTO unit_item(id, unit_id, item_id,"
+            " version, created_by_sub, created_at, updated_at, deleted_at)\n"
+            "VALUES\n"
+            "  -- no rows generated\n;\n"
+        )
+
+    # Sort for stability: by unit_id then item_id
+    rows_sql.sort()
+
+    lines = [
+        "INSERT OR IGNORE INTO unit_item(id, unit_id, item_id,"
+        " version, created_by_sub, created_at, updated_at, deleted_at)",
+        "VALUES",
+    ]
+    for idx, (unit_id, item_id) in enumerate(rows_sql, start=1):
+        comma = "," if idx < len(rows_sql) else ";"
+        lines.append(
+            f"  ({idx}, {unit_id}, {item_id},"
+            f" 1, '{_SEED_AUTHOR}',"
+            " STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'),"
+            " STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'),"
+            f" null){comma}"
+        )
+    return "\n".join(lines) + "\n"
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -1553,6 +1710,10 @@ def main():
     _, ancillaries_rows = parse_rpfm_table(path("ancillaries_tables.json"))
     ancillary_cost_map = build_ancillary_cost_map(ancillaries_rows)
     print(f"  ancillary gold costs: {len(ancillary_cost_map)}", file=sys.stderr)
+
+    ancillaries_loc = parse_loc_file(path("ancillaries_loc.json"))
+    ancillary_name_map = build_ancillary_name_map(ancillaries_loc)
+    print(f"  ancillary names: {len(ancillary_name_map)}", file=sys.stderr)
 
     _, ua_rows = parse_rpfm_table(path("unit_abilities_tables.json"))
     unit_ability_map = build_unit_ability_map(ua_rows)
@@ -1634,6 +1795,29 @@ def main():
     if not args.dry_run:
         with open(spell_file, "w", encoding="utf-8") as f:
             f.write(new_spell)
+
+    print("Generating item seed...", file=sys.stderr)
+    item_seed_content, item_key_to_id = generate_item_seed(ancillaries_rows, ancillary_name_map)
+    print(f"  {len(item_key_to_id)} items", file=sys.stderr)
+    item_seed_file = os.path.join(SEED_DIR, "seed-items.sql")
+    if not args.dry_run:
+        with open(item_seed_file, "w", encoding="utf-8") as f:
+            f.write(item_seed_content)
+
+    print("Generating unit-item seed...", file=sys.stderr)
+    unit_id_map = build_unit_seed_id_map(SEED_DIR)
+    print(f"  {len(unit_id_map)} units parsed from seed files", file=sys.stderr)
+    unit_item_seed_content = generate_unit_item_seed(
+        unit_id_map, name_index, main_unit_map,
+        agent_subtype_map, equipment_map, item_key_to_id,
+    )
+    unit_item_seed_file = os.path.join(SEED_DIR, "seed-unit-items.sql")
+    if not args.dry_run:
+        with open(unit_item_seed_file, "w", encoding="utf-8") as f:
+            f.write(unit_item_seed_content)
+    # Count rows generated
+    unit_item_rows = unit_item_seed_content.count("\n  (")
+    print(f"  {unit_item_rows} unit-item links", file=sys.stderr)
 
     print("Done.", file=sys.stderr)
 

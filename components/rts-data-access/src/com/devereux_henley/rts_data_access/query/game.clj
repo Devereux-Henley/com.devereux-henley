@@ -206,6 +206,19 @@
       (into {} (map (fn [row] [(:key row) row])
                     (jdbc.contract/query-for-entities connection (into [sql] ability-keys) schema/ability-entity))))))
 
+(defn get-items-for-unit
+  "Returns all active items linked to the given unit EID via the unit_item join table."
+  [connection unit-eid]
+  (let [sql (str "SELECT i.id, i.eid, i.key, i.name, i.category, i.cost"
+                 " FROM item i"
+                 " JOIN unit_item ui ON ui.item_id = i.id"
+                 " JOIN unit u ON u.id = ui.unit_id"
+                 " WHERE u.eid = ?"
+                 " AND ui.deleted_at IS NULL"
+                 " AND i.deleted_at IS NULL"
+                 " ORDER BY i.category, i.name")]
+    (jdbc.contract/query-for-entities connection [sql unit-eid] schema/item-entity)))
+
 (defn get-draft-state-by-draft
   [connection draft-eid]
   (jdbc.contract/query-for-entity connection [get-draft-state-by-draft-query draft-eid] schema/draft-state-entity))

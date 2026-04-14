@@ -158,6 +158,16 @@
     [:mana-cost [:maybe :int]]
     [:gold-cost [:maybe :int]]]))
 
+(def item-entity
+  (schema.contract/to-schema
+   [:map
+    [:id :int]
+    [:eid :uuid]
+    [:key :string]
+    [:name :string]
+    [:category :string]
+    [:cost :int]]))
+
 (def draft-state-entity
   (schema.contract/to-schema
    [:map

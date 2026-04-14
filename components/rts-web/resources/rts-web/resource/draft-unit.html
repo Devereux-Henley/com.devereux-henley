@@ -24,6 +24,8 @@
             <button class="btn btn-primary draft-add-btn"
                     type="button"
                     hx-post="/api/draft/{{data.draft-eid}}/unit/{{data.unit.eid}}?section=main"
+                    hx-ext="json-enc"
+                    hx-vals="js:{items:Array.from(document.querySelectorAll('.draft-item-check:checked')).map(function(e){return e.value;})}"
                     hx-swap="none">
                 Add to Main Army
             </button>
@@ -31,6 +33,8 @@
             <button class="btn btn-primary draft-add-btn draft-add-btn--reinf"
                     type="button"
                     hx-post="/api/draft/{{data.draft-eid}}/unit/{{data.unit.eid}}?section=reinforcements"
+                    hx-ext="json-enc"
+                    hx-vals="js:{items:Array.from(document.querySelectorAll('.draft-item-check:checked')).map(function(e){return e.value;})}"
                     hx-swap="none">
                 Add to Reinforcements
             </button>
@@ -81,12 +85,26 @@
             <p class="draft-future-msg">Spell selection coming soon.</p>
         </section>
 
-        <section class="draft-stats-section draft-future-section unit-panel" aria-labelledby="panel-equip-heading">
-            <h4 class="unit-panel-heading" id="panel-equip-heading">
-                Equipment <span class="draft-future-badge" aria-label="Coming soon">&#128274;</span>
-            </h4>
-            <p class="draft-future-msg">Equipment selection coming soon.</p>
+        {% if data.items %}
+        <section class="draft-stats-section unit-panel" aria-labelledby="panel-items-heading">
+            <h4 class="unit-panel-heading" id="panel-items-heading">Items</h4>
+            <ul class="draft-item-list" aria-label="Available items for {{data.unit.name}}">
+                {% for item in data.items %}
+                <li class="draft-item-row">
+                    <label class="draft-item-label">
+                        <input class="draft-item-check"
+                               type="checkbox"
+                               name="items"
+                               value="{{item.key}}"
+                               aria-label="{{item.name}} (+{{item.cost}}g)">
+                        <span class="draft-item-name">{{item.name}}</span>
+                        <span class="badge badge-secondary draft-item-cost">+{{item.cost}}&thinsp;g</span>
+                    </label>
+                </li>
+                {% endfor %}
+            </ul>
         </section>
+        {% endif %}
 
         <section class="draft-stats-section draft-future-section unit-panel" aria-labelledby="panel-level-heading">
             <h4 class="unit-panel-heading" id="panel-level-heading">

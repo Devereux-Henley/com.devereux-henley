@@ -115,22 +115,24 @@
             </section>
             {% endif %}
 
-            {% if equipment %}
-            <section class="unit-panel" id="unit-equipment" aria-labelledby="unit-equipment-heading">
-                <h3 class="unit-panel-heading" id="unit-equipment-heading">Equipment</h3>
-                <table class="unit-panel-table" aria-labelledby="unit-equipment-heading">
-                    <caption class="sr-only">Equipment for {{data.name}}</caption>
+            {% if items %}
+            <section class="unit-panel" id="unit-items" aria-labelledby="unit-items-heading">
+                <h3 class="unit-panel-heading" id="unit-items-heading">Items</h3>
+                <table class="unit-panel-table" aria-labelledby="unit-items-heading">
+                    <caption class="sr-only">Items available to {{data.name}}</caption>
                     <thead>
                         <tr>
                             <th scope="col">Item</th>
+                            <th scope="col">Category</th>
                             <th scope="col">Cost</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for item in equipment %}
+                        {% for item in items %}
                         <tr>
                             <td>{{item.name}}</td>
-                            <td><span class="badge badge-secondary">{{item.gold-cost}}&thinsp;g</span></td>
+                            <td>{{item.category}}</td>
+                            <td><span class="badge badge-secondary">{{item.cost}}&thinsp;g</span></td>
                         </tr>
                         {% endfor %}
                     </tbody>

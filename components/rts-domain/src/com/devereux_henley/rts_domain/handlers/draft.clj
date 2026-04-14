@@ -211,6 +211,11 @@
   [dependencies ability-keys]
   (db/get-abilities-by-keys (:connection dependencies) ability-keys))
 
+(defn get-items-for-unit
+  "Returns all active items linked to the given unit EID."
+  [dependencies unit-eid]
+  (db/get-items-for-unit (:connection dependencies) unit-eid))
+
 ;; ─── Cost calculation ─────────────────────────────────────────────────────────
 
 (defn- compute-unit-total-cost
@@ -231,9 +236,9 @@
                             (reduce + 0)))
         item-keys    (not-empty (set (:items selections [])))
         item-cost    (when item-keys
-                       (->> (:equipment parsed-stats)
-                            (filter #(item-keys (get % "key")))
-                            (map #(or (get % "cost") 0))
+                       (->> (db/get-items-for-unit conn (:eid unit-hydrated))
+                            (filter #(item-keys (:key %)))
+                            (map #(or (:cost %) 0))
                             (reduce + 0)))]
     (+ base-cost (or mount-cost 0) (or spell-cost 0) (or item-cost 0))))
 
@@ -270,7 +275,8 @@
 
 (defn get-draft-unit-details
   "Returns a :draft/unit response map for a unit in the context of a draft, including
-   parsed stat percentages, resolved ability descriptions, and whether reinforcements are enabled."
+   parsed stat percentages, resolved ability descriptions, available items, and whether
+   reinforcements are enabled."
   [dependencies draft-eid unit-eid]
   (let [conn             (:connection dependencies)
         draft            (db/get-draft-by-eid conn draft-eid)
@@ -279,14 +285,17 @@
         {:keys [stats abilities]} (parse-unit-statistics (:unit-statistics unit))
         unit-statistics  (mapv add-stat-percentage stats)
         ability-by-key   (db/get-abilities-by-keys conn abilities)
-        parsed-abilities (mapv (fn [k]
-                                 (let [{:keys [name eid description]} (get ability-by-key k)]
-                                   {:name name :eid eid :description description}))
-                               abilities)]
+        parsed-abilities (into []
+                               (keep (fn [k]
+                                       (when-let [{:keys [name eid description]} (get ability-by-key k)]
+                                         {:name name :eid eid :description description})))
+                               abilities)
+        items            (db/get-items-for-unit conn unit-eid)]
     {:type                   :draft/unit
      :unit                   (assoc unit
                                     :unit-statistics unit-statistics
                                     :parsed-abilities parsed-abilities)
+     :items                  items
      :draft-eid              draft-eid
      :reinforcements-enabled (= 1 (:reinforcements-enabled game-mode))}))
 

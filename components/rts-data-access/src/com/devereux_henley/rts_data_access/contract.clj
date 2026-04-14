@@ -67,6 +67,9 @@
 (def get-spells-by-keys query.game/get-spells-by-keys)
 (def get-abilities-by-keys query.game/get-abilities-by-keys)
 
+(def item-entity schema/item-entity)
+(def get-items-for-unit query.game/get-items-for-unit)
+
 (def draft-state-entity schema/draft-state-entity)
 (def get-draft-state-by-draft query.game/get-draft-state-by-draft)
 (def upsert-draft-state query.game/upsert-draft-state)
