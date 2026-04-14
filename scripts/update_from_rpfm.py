@@ -2134,7 +2134,14 @@ def main():
     special_ability_map = build_special_ability_map(sa_rows)
     print(f"  special abilities: {len(special_ability_map)}", file=sys.stderr)
 
-    land_units_loc = parse_loc_file(path("land_units_loc.json"))
+    # WH3 loc uses typographic dashes (en/em) in unit name variants like
+    # "Vampire Fleet Admiral (Pistol – Death)"; our seed files use ASCII
+    # hyphens. Normalise at read time so display-name lookups work against
+    # either punctuation style.
+    land_units_loc = {
+        k: (v.replace("\u2014", "-").replace("\u2013", "-") if isinstance(v, str) else v)
+        for k, v in parse_loc_file(path("land_units_loc.json")).items()
+    }
     print(f"  land units loc: {len(land_units_loc)} entries", file=sys.stderr)
 
     _, agent_subtype_rows = parse_rpfm_table(path("agent_subtypes_tables.json"))
