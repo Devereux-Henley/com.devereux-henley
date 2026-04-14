@@ -19,6 +19,9 @@ Non-numeric fields (`abilities`, `draftable-spells`, `mounts`) are preserved fro
 | `seed-abilities.sql` | `name`, `description`, `cost` (`additional_melee_cp + additional_missile_cp` from `unit_special_abilities_tables`) |
 | `seed-items.sql` | fully regenerated: all ancillaries with `key`, `name`, `category`, `cost` (`uniqueness_score`) |
 | `seed-unit-items.sql` | fully regenerated: unit → item links for legendary lords/heroes with pre-assigned gear |
+| `asset/icon/ability/*.png` | spell icons copied alongside ability icons when `--icons-dir` is given (spells are abilities in WH3; icons keyed by spell eid) |
+| `asset/icon/item/*.png` | item icons copied when `--item-icons-dir` is given (keyed by item eid) |
+| `asset/icon/mount/*.png` | mount icons copied when `--mount-icons-dir` is given (keyed by display-name slug, e.g. `barded_warhorse.png`) |
 
 ---
 
@@ -43,6 +46,7 @@ Open Claude Code with the RPFM MCP server active, set the game to `warhammer_3` 
 | `ancillaries_included_agent_subtypes_tables.json` | `db/ancillaries_included_agent_subtypes_tables/data__` |
 | `ancillaries_tables.json` | `db/ancillaries_tables/data__` |
 | `ancillaries_loc.json` | `text/db/ancillaries__.loc` |
+| `ancillary_types_tables.json` | `db/ancillary_types_tables/data__` |
 
 Each decoded file must be in the RPFM MCP output format: a JSON array with a single `{type, text}` element where `text` is the serialised `DBRFileInfo` or `LocRFileInfo` object.
 
@@ -55,6 +59,28 @@ python3 scripts/update_from_rpfm.py --data-dir scripts/rpfm_data
 The script prints a per-faction summary. Any units whose display name could not be matched to a game key are listed as warnings and left unchanged.
 
 Use `--dry-run` to preview changes without writing files.
+
+#### Optional: copy game icons
+
+Extract the relevant folders from the game files (e.g. via RPFM's Extract → to disk), then pass the extracted paths:
+
+| Arg | Source folder in game files | Writes to |
+|---|---|---|
+| `--icons-dir` | `ui/abilities/` | `asset/icon/ability/` (abilities **and** spells) |
+| `--item-icons-dir` | extraction root containing `ui/` (items reference multiple subfolders: `ui/campaign ui/ancillaries/`, `ui/skins/default/`, etc.) | `asset/icon/item/` |
+| `--mount-icons-dir` | extraction root containing `ui/` (same dir as `--item-icons-dir`; mounts are in `ui/campaign ui/mounts/`) | `asset/icon/mount/` |
+
+```bash
+python3 scripts/update_from_rpfm.py \
+  --data-dir scripts/rpfm_data \
+  --icons-dir "/path/to/extracted/ui/battle ui/ability_icons" \
+  --item-icons-dir /path/to/extracted \
+  --mount-icons-dir /path/to/extracted
+```
+
+Spell icons are sourced from the same `--icons-dir` as abilities (WH3 stores spells as abilities internally). Spell icons are written alongside ability icons in `asset/icon/ability/` since templates resolve both via the `/icon/ability/` path.
+
+Mount icons are keyed by display-name slug (e.g. `barded_warhorse.png`) so templates can look them up using `mount.name`.
 
 ### 3. Review and commit
 

@@ -194,7 +194,7 @@
   [connection spell-keys]
   (when (seq spell-keys)
     (let [placeholders (str/join "," (repeat (count spell-keys) "?"))
-          sql          (str "SELECT key, name, mana_cost, cost FROM spell WHERE key IN (" placeholders ")")]
+          sql          (str "SELECT eid, key, name, mana_cost, cost FROM spell WHERE key IN (" placeholders ")")]
       (into {} (map (fn [row] [(:key row) row])
                     (jdbc.contract/query-for-entities connection (into [sql] spell-keys) schema/spell-entity))))))
 
@@ -202,14 +202,14 @@
   [connection ability-keys]
   (when (seq ability-keys)
     (let [placeholders (str/join "," (repeat (count ability-keys) "?"))
-          sql          (str "SELECT eid, key, name, description FROM ability WHERE key IN (" placeholders ")")]
+          sql          (str "SELECT eid, key, name, description, cost FROM ability WHERE key IN (" placeholders ")")]
       (into {} (map (fn [row] [(:key row) row])
                     (jdbc.contract/query-for-entities connection (into [sql] ability-keys) schema/ability-entity))))))
 
 (defn get-items-for-unit
   "Returns all active items linked to the given unit EID via the unit_item join table."
   [connection unit-eid]
-  (let [sql (str "SELECT i.id, i.eid, i.key, i.name, i.category, i.cost"
+  (let [sql (str "SELECT i.id, i.eid, i.key, i.name, i.category, i.cost, i.icon_key"
                  " FROM item i"
                  " JOIN unit_item ui ON ui.item_id = i.id"
                  " JOIN unit u ON u.id = ui.unit_id"

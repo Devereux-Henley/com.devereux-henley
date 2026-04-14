@@ -668,6 +668,246 @@ def copy_ability_icons(icons_dir, asset_dir, unit_ability_map, key_eid_map,
 
 
 # ---------------------------------------------------------------------------
+# Spell icon copying (reuses ui/abilities/ source dir, writes to icon/ability/)
+# ---------------------------------------------------------------------------
+
+# Parses seed-spells.sql to build: spell_key -> eid
+SPELL_SEED_EID_RE = re.compile(
+    r"\(\d+,\s*'([0-9a-f\-]+)',\s*'([^']+)',"
+)
+
+
+def build_spell_key_eid_map(seed_filepath):
+    """Returns {spell_key: eid} from the seed-spells.sql INSERT rows."""
+    result = {}
+    with open(seed_filepath, encoding="utf-8") as f:
+        for line in f:
+            m = SPELL_SEED_EID_RE.search(line)
+            if m:
+                result[m.group(2)] = m.group(1)
+    return result
+
+
+def copy_spell_icons(icons_dir, asset_dir, unit_ability_map, spell_key_eid_map,
+                     dry_run=False):
+    """
+    For each spell key in spell_key_eid_map, looks up its icon_name in
+    unit_ability_map (spells are abilities in WH3), then copies
+      {icons_dir}/{icon_name}.png  →  {asset_dir}/{eid}.png
+    and trims transparent borders with mogrify.  asset_dir should be the same
+    ability icon directory since templates resolve spell icons via /icon/ability/.
+    """
+    copied = 0
+    missing_src = []
+    missing_ability = []
+
+    for key, eid in spell_key_eid_map.items():
+        info = unit_ability_map.get(key)
+        if not info:
+            missing_ability.append(key)
+            continue
+
+        icon_name = info.get("icon_name") or ""
+        if not icon_name:
+            missing_ability.append(key)
+            continue
+
+        src = os.path.join(icons_dir, icon_name + ".png")
+        if not os.path.isfile(src):
+            missing_src.append(icon_name)
+            continue
+
+        dest = os.path.join(asset_dir, eid + ".png")
+        if not dry_run:
+            shutil.copy2(src, dest)
+            subprocess.run(
+                ["mogrify", "-fuzz", "20%", "-trim", "+repage", dest],
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        copied += 1
+
+    print(f"  [spell icons] copied+trimmed {copied} icons", file=sys.stderr)
+    if missing_src:
+        print(f"  [spell icons] {len(missing_src)} source PNGs not found "
+              f"(e.g. {missing_src[:3]})", file=sys.stderr)
+    if missing_ability:
+        print(f"  [spell icons] {len(missing_ability)} spell keys not in unit_abilities_tables "
+              f"(e.g. {missing_ability[:3]})", file=sys.stderr)
+
+
+# ---------------------------------------------------------------------------
+# Item icon copying
+# ---------------------------------------------------------------------------
+
+def build_ancillary_type_icon_map(rows):
+    """Returns {type: relative_icon_path} from ancillary_types_tables rows.
+
+    The relative path is the full ui_icon field lowercased (game data uses
+    mixed-case `UI/...` but RPFM extracts to lowercase `ui/...`) with `.png`
+    appended if missing. Callers resolve the absolute path by joining against
+    the extraction root directory."""
+    result = {}
+    for r in rows:
+        t = r.get("type") or ""
+        ui_icon = r.get("ui_icon") or ""
+        if t and ui_icon:
+            rel = ui_icon.lower()
+            if not rel.endswith(".png"):
+                rel = rel + ".png"
+            result[t] = rel
+    return result
+
+
+def build_item_key_type_map(ancillary_rows):
+    """Returns {ancillary_key: type} for MP item ancillaries — the categories
+    that are actually written to `seed-items.sql` by generate_item_seed.
+    Campaign-only followers, banners, and mounts are excluded so the icon
+    copy step stays aligned with the seed."""
+    return {r["key"]: r["type"] for r in ancillary_rows
+            if r.get("category") in MP_ITEM_CATEGORIES}
+
+
+def copy_item_icons(ancillary_icons_root, asset_dir, item_key_type_map,
+                    type_icon_map, dry_run=False):
+    """
+    Copies one icon file per distinct ui_icon stem referenced by any item
+    in item_key_type_map, producing {asset_dir}/{stem}.png. Because many
+    items share the same source icon (e.g. all generic weapons point at
+    `equipment_items_weapon.png`) this collapses ~1190 items down to the
+    ~80 distinct icons they actually draw from on disk.
+
+    Items look up their icon via the `icon_key` column on `item` (written
+    by generate_item_seed) which stores the same stem computed here.
+
+    ancillary_icons_root should point to the extraction root containing
+    `ui/`. The full ui_icon path from ancillary_types_tables is joined to
+    it so subfolders like `ui/skins/default/` are handled automatically.
+    """
+    # Build stem -> source path, deduped
+    stem_to_src = {}
+    missing_type = 0
+    for key, item_type in item_key_type_map.items():
+        rel_path = type_icon_map.get(item_type)
+        if not rel_path:
+            missing_type += 1
+            continue
+        stem = os.path.splitext(os.path.basename(rel_path))[0]
+        if stem in stem_to_src:
+            continue
+        stem_to_src[stem] = os.path.join(ancillary_icons_root, rel_path)
+
+    copied = 0
+    missing_src = []
+    for stem, src in stem_to_src.items():
+        if not os.path.isfile(src):
+            missing_src.append(stem)
+            continue
+        dest = os.path.join(asset_dir, stem + ".png")
+        if not dry_run:
+            shutil.copy2(src, dest)
+            subprocess.run(
+                ["mogrify", "-fuzz", "20%", "-trim", "+repage", dest],
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        copied += 1
+
+    print(f"  [item icons] copied+trimmed {copied} distinct icons "
+          f"(dedup from {len(item_key_type_map)} items)", file=sys.stderr)
+    if missing_src:
+        print(f"  [item icons] {len(missing_src)} source PNGs not found "
+              f"(e.g. {missing_src[:3]})", file=sys.stderr)
+    if missing_type:
+        print(f"  [item icons] {missing_type} items with no type/icon mapping",
+              file=sys.stderr)
+
+
+# ---------------------------------------------------------------------------
+# Mount icon copying
+# ---------------------------------------------------------------------------
+
+def _mount_name_slug(name):
+    """Converts a mount display name to a filesystem-safe slug.
+    e.g. 'Barded Warhorse' -> 'barded_warhorse'
+    """
+    import re as _re
+    slug = name.lower().strip()
+    slug = _re.sub(r"[^a-z0-9]+", "_", slug)
+    return slug.strip("_")
+
+
+def build_mount_name_icon_map(ancillary_rows, type_icon_map, ancillary_name_map):
+    """Returns {display_name: relative_icon_path} for mount-category ancillaries.
+
+    Mapping chain:
+      ancillary_rows (category=mount): key → type
+      type_icon_map:                   type → relative_icon_path
+      ancillary_name_map:              key → display_name
+                                       (built from ancillaries_loc prefix
+                                       'ancillaries_onscreen_name_')
+
+    Multiple ancillary keys may share the same display name (faction variants
+    of the same mount); the relative path is the same for all of them since
+    they share a type, so last-write wins harmlessly.
+    """
+    result = {}
+    for r in ancillary_rows:
+        if r.get("category") != "mount":
+            continue
+        key = r["key"]
+        mount_type = r.get("type") or ""
+        rel_path = type_icon_map.get(mount_type)
+        if not rel_path:
+            continue
+        display_name = ancillary_name_map.get(key)
+        if display_name:
+            result[display_name] = rel_path
+    return result
+
+
+def copy_mount_icons(ancillary_icons_root, asset_dir, mount_name_icon_map,
+                     dry_run=False):
+    """
+    For each (display_name, relative_path) in mount_name_icon_map, copies
+      {ancillary_icons_root}/{relative_path}  →  {asset_dir}/{name_slug}.png
+    and trims transparent borders with mogrify.
+
+    ancillary_icons_root should point to the extraction root containing `ui/`;
+    the full ui_icon path from ancillary_types_tables is joined to it.
+    asset_dir is asset/icon/mount/. Icons are keyed by display-name slug so
+    templates can look them up via mount.name.
+    """
+    copied = 0
+    missing_src = []
+
+    for display_name, rel_path in mount_name_icon_map.items():
+        src = os.path.join(ancillary_icons_root, rel_path)
+        if not os.path.isfile(src):
+            missing_src.append(rel_path)
+            continue
+
+        slug = _mount_name_slug(display_name)
+        dest = os.path.join(asset_dir, slug + ".png")
+        if not dry_run:
+            shutil.copy2(src, dest)
+            subprocess.run(
+                ["mogrify", "-fuzz", "20%", "-trim", "+repage", dest],
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        copied += 1
+
+    print(f"  [mount icons] copied+trimmed {copied} icons", file=sys.stderr)
+    if missing_src:
+        print(f"  [mount icons] {len(missing_src)} source PNGs not found "
+              f"(e.g. {missing_src[:3]})", file=sys.stderr)
+
+
+# ---------------------------------------------------------------------------
 # Unit card copying
 # ---------------------------------------------------------------------------
 
@@ -1501,11 +1741,25 @@ def build_ancillary_name_map(loc_dict):
     return {k[len(prefix):]: v for k, v in loc_dict.items() if k.startswith(prefix)}
 
 
-def generate_item_seed(ancillary_rows, name_map):
+def _icon_key_for_ancillary(ancillary_row, type_icon_map):
+    """Resolves an ancillary row to its icon_key — the basename (without .png)
+    of the ui_icon path from ancillary_types_tables. Returns None if unresolvable."""
+    t = ancillary_row.get("type") or ""
+    rel = type_icon_map.get(t)
+    if not rel:
+        return None
+    return os.path.splitext(os.path.basename(rel))[0]
+
+
+def generate_item_seed(ancillary_rows, name_map, type_icon_map):
     """Generate seed-items.sql content from ancillaries_tables rows and a name map.
 
     Only includes MP item categories (weapon, armour, talisman, enchanted_item,
     arcane_item). Campaign-only followers ('general') and mounts are excluded.
+
+    Each row includes an `icon_key` column resolved via ancillary_types_tables
+    (basename of ui_icon, no extension). Multiple items of the same type will
+    share an icon_key and therefore a single icon file on disk.
 
     Returns (sql_content: str, key_to_id: dict[str, int]).
     Items are sorted by key for stable IDs across runs.
@@ -1513,7 +1767,7 @@ def generate_item_seed(ancillary_rows, name_map):
     mp_rows = [r for r in ancillary_rows if r.get("category") in MP_ITEM_CATEGORIES]
     sorted_rows = sorted(mp_rows, key=lambda r: r["key"])
     lines = [
-        "INSERT OR IGNORE INTO item(id, eid, key, name, category, cost,"
+        "INSERT OR IGNORE INTO item(id, eid, key, name, category, cost, icon_key,"
         " game_id, version, created_by_sub, created_at, updated_at, deleted_at)",
         "VALUES",
     ]
@@ -1526,9 +1780,12 @@ def generate_item_seed(ancillary_rows, name_map):
         cost = row.get("uniqueness_score") or 0
         eid = f"e1000000-0000-0000-0000-{idx:012x}"
         key_to_id[key] = idx
+        icon_key = _icon_key_for_ancillary(row, type_icon_map)
+        icon_sql = f"'{_sql_escape(icon_key)}'" if icon_key else "null"
         comma = "," if idx < len(sorted_rows) else ";"
         rows_sql.append(
             f"  ({idx}, '{eid}', '{_sql_escape(key)}', '{name}', '{category}', {cost},"
+            f" {icon_sql},"
             f" {_GAME_ID}, 1, '{_SEED_AUTHOR}',"
             " STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'),"
             " STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'),"
@@ -1640,9 +1897,23 @@ def main():
     parser.add_argument("--data-dir", required=True,
                         help="Directory containing RPFM-decoded JSON table files.")
     parser.add_argument("--icons-dir",
-                        help="Directory containing extracted ability icon PNGs "
-                             "(named by icon_name from unit_abilities_tables). "
-                             "If omitted, icon copying is skipped.")
+                        help="Directory containing extracted ability/spell icon PNGs "
+                             "(ui/abilities/ from game files, named by icon_name from "
+                             "unit_abilities_tables). If omitted, icon copying is skipped.")
+    parser.add_argument("--item-icons-dir",
+                        help="Path to the extraction root containing `ui/`. "
+                             "Item icons are resolved via the full ui_icon "
+                             "path from ancillary_types_tables, so this must "
+                             "include `ui/campaign ui/ancillaries/`, "
+                             "`ui/skins/default/`, and any other referenced "
+                             "subfolders. If omitted, item icon copying is "
+                             "skipped.")
+    parser.add_argument("--mount-icons-dir",
+                        help="Path to the extraction root containing `ui/`. "
+                             "Mount icons are resolved via the full ui_icon "
+                             "path from ancillary_types_tables. Typically the "
+                             "same directory as --item-icons-dir. If omitted, "
+                             "mount icon copying is skipped.")
     parser.add_argument("--unit-cards-dir",
                         help="Directory containing extracted unit card PNGs "
                              "(ui/units/icons/ from game files, named by unit key). "
@@ -1719,6 +1990,10 @@ def main():
     unit_ability_map = build_unit_ability_map(ua_rows)
     print(f"  unit abilities (icons): {len(unit_ability_map)}", file=sys.stderr)
 
+    _, anc_type_rows = parse_rpfm_table(path("ancillary_types_tables.json"))
+    ancillary_type_icon_map = build_ancillary_type_icon_map(anc_type_rows)
+    print(f"  ancillary type icons: {len(ancillary_type_icon_map)}", file=sys.stderr)
+
     ua_loc = parse_loc_file(path("unit_abilities_loc.json"))
     ability_name_map, ability_tooltip_map = build_ability_loc_maps(ua_loc)
     print(f"  ability loc: {len(ability_name_map)} names, {len(ability_tooltip_map)} tooltips",
@@ -1778,16 +2053,47 @@ def main():
         else:
             print("  [portraits] --portraits-dir not provided, skipping", file=sys.stderr)
 
+    ability_asset_dir = os.path.join("components", "rts-web", "resources", "rts-web",
+                                     "asset", "icon", "ability")
+
     if args.icons_dir:
         print("Copying and trimming ability icons...", file=sys.stderr)
         ability_seed_file = os.path.join(SEED_DIR, "seed-abilities.sql")
         key_eid_map = build_ability_key_eid_map(ability_seed_file)
-        asset_dir = os.path.join("bases", "rts-web", "resources", "rts-web",
-                                 "asset", "icon", "ability")
-        copy_ability_icons(args.icons_dir, asset_dir, unit_ability_map,
+        copy_ability_icons(args.icons_dir, ability_asset_dir, unit_ability_map,
                            key_eid_map, dry_run=args.dry_run)
+
+        print("Copying and trimming spell icons...", file=sys.stderr)
+        spell_seed_file = os.path.join(SEED_DIR, "seed-spells.sql")
+        spell_key_eid_map = build_spell_key_eid_map(spell_seed_file)
+        copy_spell_icons(args.icons_dir, ability_asset_dir, unit_ability_map,
+                         spell_key_eid_map, dry_run=args.dry_run)
     else:
-        print("  [icons] --icons-dir not provided, skipping icon copy", file=sys.stderr)
+        print("  [icons] --icons-dir not provided, skipping ability/spell icon copy",
+              file=sys.stderr)
+
+    if args.item_icons_dir:
+        print("Copying and trimming item icons...", file=sys.stderr)
+        item_key_type_map = build_item_key_type_map(ancillaries_rows)
+        item_asset_dir = os.path.join("components", "rts-web", "resources", "rts-web",
+                                      "asset", "icon", "item")
+        copy_item_icons(args.item_icons_dir, item_asset_dir, item_key_type_map,
+                        ancillary_type_icon_map, dry_run=args.dry_run)
+    else:
+        print("  [item icons] --item-icons-dir not provided, skipping item icon copy",
+              file=sys.stderr)
+
+    if args.mount_icons_dir:
+        print("Copying and trimming mount icons...", file=sys.stderr)
+        mount_name_icon_map = build_mount_name_icon_map(
+            ancillaries_rows, ancillary_type_icon_map, ancillary_name_map)
+        mount_asset_dir = os.path.join("components", "rts-web", "resources", "rts-web",
+                                       "asset", "icon", "mount")
+        copy_mount_icons(args.mount_icons_dir, mount_asset_dir, mount_name_icon_map,
+                         dry_run=args.dry_run)
+    else:
+        print("  [mount icons] --mount-icons-dir not provided, skipping mount icon copy",
+              file=sys.stderr)
 
     print("Updating spell gold costs...", file=sys.stderr)
     spell_file = os.path.join(SEED_DIR, "seed-spells.sql")
@@ -1797,7 +2103,8 @@ def main():
             f.write(new_spell)
 
     print("Generating item seed...", file=sys.stderr)
-    item_seed_content, item_key_to_id = generate_item_seed(ancillaries_rows, ancillary_name_map)
+    item_seed_content, item_key_to_id = generate_item_seed(
+        ancillaries_rows, ancillary_name_map, ancillary_type_icon_map)
     print(f"  {len(item_key_to_id)} items", file=sys.stderr)
     item_seed_file = os.path.join(SEED_DIR, "seed-items.sql")
     if not args.dry_run:

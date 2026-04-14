@@ -3,8 +3,11 @@
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.web.game :as web.game]
    [integrant.core]
+   [selmer.filters]
    [selmer.parser]
    [taoensso.timbre :as log]))
+
+(selmer.filters/add-filter! :not-empty? (comp boolean seq))
 
 (defn standard-view-handler
   [view-name request]
@@ -71,6 +74,17 @@
            "faction.html"
            (fn [_data _request] {})))
 
+(defn- mount-name->slug
+  "Converts a mount display name to a filesystem-safe slug matching the icon
+  filename written by update_from_rpfm.py.
+  e.g. \"Barded Warhorse\" -> \"barded_warhorse\""
+  [name]
+  (-> (or name "")
+      clojure.string/lower-case
+      clojure.string/trim
+      (clojure.string/replace #"[^a-z0-9]+" "_")
+      (clojure.string/replace #"^_+|_+$" "")))
+
 (defmethod integrant.core/init-key ::unit-view
   [_init-key dependencies]
   (partial standard-entity-view-handler
@@ -78,15 +92,14 @@
            "unit.html"
            (fn [data _request]
              (let [{:keys [stats abilities draftable-spells mounts]} (domain/parse-unit-statistics (:unit-statistics data))
-                   spell-keys         (map #(get % "key") draftable-spells)
-                   key->spell         (domain/get-spells-by-keys dependencies spell-keys)
+                   key->spell         (domain/get-spells-by-keys dependencies draftable-spells)
                    key->ability       (domain/get-abilities-by-keys dependencies abilities)
-                   resolved-spells    (mapv (fn [s]
-                                              (let [key   (get s "key")
-                                                    spell (get key->spell key)]
-                                                {:name      (or (:name spell) key)
+                   resolved-spells    (mapv (fn [k]
+                                              (let [spell (get key->spell k)]
+                                                {:name      (or (:name spell) k)
+                                                 :eid       (:eid spell)
                                                  :mana-cost (:mana-cost spell)
-                                                 :gold-cost (:gold-cost spell)}))
+                                                 :cost      (:cost spell)}))
                                             draftable-spells)
                    resolved-abilities (mapv (fn [k]
                                               (let [a (get key->ability k)]
@@ -94,11 +107,14 @@
                                                  :eid         (:eid a)
                                                  :description (:description a)}))
                                             abilities)
+                   resolved-mounts    (mapv (fn [{:keys [name] :as m}]
+                                              (assoc m :slug (mount-name->slug name)))
+                                            mounts)
                    items              (domain/get-items-for-unit dependencies (:eid data))]
                {:unit-statistics  stats
                 :abilities        (not-empty resolved-abilities)
                 :draftable-spells (not-empty resolved-spells)
-                :mounts           (not-empty mounts)
+                :mounts           (not-empty resolved-mounts)
                 :items            (not-empty items)
                 :unit-card        (when (clojure.java.io/resource
                                          (str "rts-web/asset/card/unit/" (:eid data) ".png"))

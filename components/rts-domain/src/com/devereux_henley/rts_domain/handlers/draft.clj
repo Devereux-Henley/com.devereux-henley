@@ -11,11 +11,16 @@
 
 ;; ─── Unit statistics parsing ──────────────────────────────────────────────────
 
-(def ^:private stat-exclude-keys #{"abilities" "draftable-spells" "draftable-abilities" "mounts" "equipment"})
+(def ^:private stat-exclude-keys #{"abilities" "draftable-spells" "draftable-abilities" "mounts" "equipment"
+                                   "cost" "health" "barrier"
+                                   "weapon_damage" "weapon_ap_damage"
+                                   "missile_base_damage" "missile_ap_damage"})
 
 (defn- stat-entry
   "Converts a single decoded JSON entry into a stat map, or nil if it should be excluded.
-   Drops structured fields (abilities, mounts, etc.), zero values, and empty vectors."
+   Drops structured fields (abilities, mounts, etc.), zero values, empty vectors,
+   fields rendered separately (cost, health, barrier), and damage sub-components
+   that are folded into tooltips on their parent stat."
   [[k v]]
   (when-not (stat-exclude-keys k)
     (cond
@@ -24,21 +29,43 @@
       (vector? v)                  {:stat (str/replace k "_" " ") :value (str/join ", " v)}
       :else                        {:stat (str/replace k "_" " ") :value v})))
 
+(defn- attach-stat-tooltips
+  "Attaches a :tooltip string to weapon-strength and missile-damage entries,
+   showing their base/AP breakdown."
+  [stats decoded]
+  (let [w-dmg  (get decoded "weapon_damage")
+        w-ap   (get decoded "weapon_ap_damage")
+        m-base (get decoded "missile_base_damage")
+        m-ap   (get decoded "missile_ap_damage")]
+    (mapv (fn [{:keys [stat] :as s}]
+            (cond
+              (and (= stat "weapon strength") w-dmg w-ap)
+              (assoc s :tooltip (str w-dmg " dmg · " w-ap " AP"))
+              (and (= stat "missile damage") m-base m-ap)
+              (assoc s :tooltip (str m-base " base · " m-ap " AP"))
+              :else s))
+          stats)))
+
 (defn parse-unit-statistics
   "Parses a unit-statistics JSON string into a structured map with keys:
-     :stats            — vector of {:stat name :value val} for numeric/list fields
-     :abilities        — vector of ability name strings
+     :stats            — vector of {:stat name :value val :tooltip str-or-nil} for numeric/list fields
+     :health           — integer HP value (rendered separately as a health bar)
+     :barrier          — integer barrier value, or nil if absent/zero
+     :abilities        — vector of ability key strings
      :draftable-spells — vector of spell key strings
-     :mounts           — vector of {:name str :mp-cost int}
+     :mounts           — vector of {:name str :cost int}
      :equipment        — vector of raw equipment maps"
   [unit-statistics-str]
   (let [decoded (m/decode db/unit-statistics-raw-schema
                           (jsonista/read-value unit-statistics-str (jsonista/object-mapper {:decode-key-fn name}))
                           db/unit-statistics-transformer)]
     {:stats
-     (into [] (keep stat-entry) decoded)
+     (-> (into [] (keep stat-entry) decoded)
+         (attach-stat-tooltips decoded))
+     :health           (get decoded "health")
+     :barrier          (let [b (get decoded "barrier")] (when (and b (pos? b)) b))
      :abilities        (get decoded "abilities")
-     :draftable-spells (get decoded "draftable-spells")
+     :draftable-spells (mapv #(get % "key") (get decoded "draftable-spells"))
      :mounts           (mapv (fn [m] {:name (get m "name")
                                       :cost (get m "cost")})
                              (get decoded "mounts"))
@@ -160,9 +187,10 @@
   (m/schema
    [:map
     [:unit-eid :uuid]
-    [:mount {:optional true} [:maybe :string]]
-    [:spells {:optional true, :default []} [:sequential :string]]
-    [:items  {:optional true, :default []} [:sequential :string]]
+    [:mount      {:optional true} [:maybe :string]]
+    [:abilities  {:optional true, :default []} [:sequential :string]]
+    [:spells     {:optional true, :default []} [:sequential :string]]
+    [:items      {:optional true, :default []} [:sequential :string]]
     [:total-cost {:optional true} [:maybe :int]]]))
 
 (def ^:private state-entry-transformer
@@ -171,7 +199,7 @@
 
 (defn- parse-state-entry
   "Decodes a raw JSON-decoded state entry into a typed map via Malli.
-   Converts :unit-eid string to UUID and defaults :spells/:items to []."
+   Converts :unit-eid string to UUID and defaults :abilities/:spells/:items to []."
   [entry]
   (m/decode state-entry-schema entry state-entry-transformer))
 
@@ -194,7 +222,7 @@
 
 (defn set-draft-state
   "Persists {:main [entry …] :reinforcements [entry …]} as an atomic JSON blob.
-   Each entry: {:unit-eid uuid :mount str-or-nil :spells [str] :items [str] :total-cost int-or-nil}."
+   Each entry: {:unit-eid uuid :mount str-or-nil :abilities [str] :spells [str] :items [str] :total-cost int-or-nil}."
   [dependencies draft-eid state]
   (db/upsert-draft-state (:connection dependencies) draft-eid
                          (jsonista/write-value-as-string
@@ -219,28 +247,34 @@
 ;; ─── Cost calculation ─────────────────────────────────────────────────────────
 
 (defn- compute-unit-total-cost
-  "Returns base-cost + mount-cost + spell-cost + item-cost.
-   selections: {:mount str-or-nil :spells [spell-key] :items [item-key]}"
+  "Returns base-cost + mount-cost + ability-cost + spell-cost + item-cost.
+   selections: {:mount str-or-nil :abilities [ability-key] :spells [spell-key] :items [item-key]}"
   [unit-hydrated selections conn]
-  (let [parsed-stats (parse-unit-statistics (:unit-statistics unit-hydrated))
-        base-cost    (or (:cost unit-hydrated) 0)
-        mount-name   (:mount selections)
-        mount-cost   (when mount-name
-                       (:cost (first (filter #(= mount-name (:name %))
-                                             (:mounts parsed-stats)))))
-        spell-keys   (not-empty (:spells selections []))
-        spell-cost   (when spell-keys
-                       (->> (db/get-spells-by-keys conn spell-keys)
-                            vals
-                            (map #(or (:cost %) 0))
-                            (reduce + 0)))
-        item-keys    (not-empty (set (:items selections [])))
-        item-cost    (when item-keys
-                       (->> (db/get-items-for-unit conn (:eid unit-hydrated))
-                            (filter #(item-keys (:key %)))
-                            (map #(or (:cost %) 0))
-                            (reduce + 0)))]
-    (+ base-cost (or mount-cost 0) (or spell-cost 0) (or item-cost 0))))
+  (let [parsed-stats  (parse-unit-statistics (:unit-statistics unit-hydrated))
+        base-cost     (or (:cost unit-hydrated) 0)
+        mount-name    (:mount selections)
+        mount-cost    (when mount-name
+                        (:cost (first (filter #(= mount-name (:name %))
+                                              (:mounts parsed-stats)))))
+        ability-keys  (not-empty (:abilities selections []))
+        ability-cost  (when ability-keys
+                        (->> (db/get-abilities-by-keys conn ability-keys)
+                             vals
+                             (map #(or (:cost %) 0))
+                             (reduce + 0)))
+        spell-keys    (not-empty (:spells selections []))
+        spell-cost    (when spell-keys
+                        (->> (db/get-spells-by-keys conn spell-keys)
+                             vals
+                             (map #(or (:cost %) 0))
+                             (reduce + 0)))
+        item-keys     (not-empty (set (:items selections [])))
+        item-cost     (when item-keys
+                        (->> (db/get-items-for-unit conn (:eid unit-hydrated))
+                             (filter #(item-keys (:key %)))
+                             (map #(or (:cost %) 0))
+                             (reduce + 0)))]
+    (+ base-cost (or mount-cost 0) (or ability-cost 0) (or spell-cost 0) (or item-cost 0))))
 
 ;; ─── Shared helpers ───────────────────────────────────────────────────────────
 
@@ -275,33 +309,53 @@
 
 (defn get-draft-unit-details
   "Returns a :draft/unit response map for a unit in the context of a draft, including
-   parsed stat percentages, resolved ability descriptions, available items, and whether
-   reinforcements are enabled."
+   parsed stat percentages, resolved ability descriptions, available items, draftable
+   spells, and whether reinforcements are enabled.
+
+   Abilities and spells are split into two groups by cost:
+     - passive (cost = 0): always on the character; shown in a readonly section
+     - draftable (cost > 0): purchasable options shown in a selectable section"
   [dependencies draft-eid unit-eid]
-  (let [conn             (:connection dependencies)
-        draft            (db/get-draft-by-eid conn draft-eid)
-        game-mode        (db/get-game-mode-by-eid conn (:game-mode-eid draft))
-        unit             (db/get-unit-by-eid conn unit-eid)
-        {:keys [stats abilities]} (parse-unit-statistics (:unit-statistics unit))
-        unit-statistics  (mapv add-stat-percentage stats)
-        ability-by-key   (db/get-abilities-by-keys conn abilities)
-        parsed-abilities (into []
-                               (keep (fn [k]
-                                       (when-let [{:keys [name eid description]} (get ability-by-key k)]
-                                         {:name name :eid eid :description description})))
-                               abilities)
-        items            (db/get-items-for-unit conn unit-eid)]
+  (let [conn                (:connection dependencies)
+        draft               (db/get-draft-by-eid conn draft-eid)
+        game-mode           (db/get-game-mode-by-eid conn (:game-mode-eid draft))
+        unit                (db/get-unit-by-eid conn unit-eid)
+        {:keys [stats health barrier abilities draftable-spells]} (parse-unit-statistics (:unit-statistics unit))
+        unit-statistics     (mapv add-stat-percentage stats)
+        ability-by-key      (db/get-abilities-by-keys conn abilities)
+        all-abilities       (into []
+                                  (keep (fn [k]
+                                          (when-let [{:keys [name eid description cost]} (get ability-by-key k)]
+                                            {:key k :name name :eid eid :description description :cost (or cost 0)})))
+                                  abilities)
+        passive-abilities   (filterv #(= 0 (:cost %)) all-abilities)
+        draftable-abilities (filterv #(pos? (:cost %)) all-abilities)
+        spell-by-key        (db/get-spells-by-keys conn draftable-spells)
+        all-spells          (into []
+                                  (keep (fn [k]
+                                          (when-let [{:keys [eid name mana-cost cost]} (get spell-by-key k)]
+                                            {:key k :eid eid :name name :mana-cost (or mana-cost 0) :cost (or cost 0)})))
+                                  draftable-spells)
+        passive-spells      (filterv #(= 0 (:cost %)) all-spells)
+        draftable-spells-v  (filterv #(pos? (:cost %)) all-spells)
+        items               (db/get-items-for-unit conn unit-eid)]
     {:type                   :draft/unit
      :unit                   (assoc unit
-                                    :unit-statistics unit-statistics
-                                    :parsed-abilities parsed-abilities)
+                                    :unit-statistics     unit-statistics
+                                    :health              health
+                                    :barrier             barrier
+                                    :parsed-abilities    all-abilities
+                                    :passive-abilities   passive-abilities
+                                    :draftable-abilities draftable-abilities)
      :items                  items
+     :passive-spells         passive-spells
+     :draftable-spells       draftable-spells-v
      :draft-eid              draft-eid
      :reinforcements-enabled (= 1 (:reinforcements-enabled game-mode))}))
 
 (defn add-unit-to-draft
   "Validates and adds a unit to the specified section of a draft.
-   selections: {:mount str-or-nil :spells [spell-key] :items [item-key]}
+   selections: {:mount str-or-nil :abilities [ability-key] :spells [spell-key] :items [item-key]}
    Returns {:type :draft/add-success ...} on success, {:type :draft/add-error ...} on violation."
   [dependencies draft-eid unit-eid section selections]
   (let [conn          (:connection dependencies)
@@ -337,6 +391,7 @@
           (let [new-state (update state section-k (fnil conj [])
                                   {:unit-eid   unit-eid
                                    :mount      (:mount selections)
+                                   :abilities  (or (:abilities selections) [])
                                    :spells     (or (:spells selections) [])
                                    :items      (or (:items selections) [])
                                    :total-cost total-cost})]

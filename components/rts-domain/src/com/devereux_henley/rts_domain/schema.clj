@@ -106,7 +106,8 @@
    [:map
     [:stat :string]
     [:value :any]
-    [:percentage :int]]))
+    [:percentage :int]
+    [:tooltip {:optional true} [:maybe :string]]]))
 
 (def draft-item
   (schema.contract/to-schema
@@ -115,6 +116,25 @@
     [:key :string]
     [:name :string]
     [:category :string]
+    [:cost :int]
+    [:icon-key {:optional true} [:maybe :string]]]))
+
+(def draft-ability
+  (schema.contract/to-schema
+   [:map
+    [:key :string]
+    [:name :string]
+    [:eid {:optional true} [:maybe :uuid]]
+    [:description {:optional true} [:maybe :string]]
+    [:cost :int]]))
+
+(def draft-spell
+  (schema.contract/to-schema
+   [:map
+    [:key :string]
+    [:eid {:optional true} [:maybe :uuid]]
+    [:name :string]
+    [:mana-cost :int]
     [:cost :int]]))
 
 (def draft-unit-response
@@ -124,6 +144,8 @@
     [:draft-eid :uuid]
     [:reinforcements-enabled :boolean]
     [:items {:optional true} [:sequential draft-item]]
+    [:passive-spells {:optional true} [:sequential draft-spell]]
+    [:draftable-spells {:optional true} [:sequential draft-spell]]
     [:unit
      [:map
       [:eid :uuid]
@@ -133,11 +155,12 @@
       [:unit-type-name :string]
       [:unit-category-name :string]
       [:cost [:maybe :int]]
+      [:health {:optional true} [:maybe :int]]
+      [:barrier {:optional true} [:maybe :int]]
       [:unit-statistics [:sequential draft-unit-stat]]
-      [:parsed-abilities [:sequential [:map
-                                       [:name :string]
-                                       [:eid {:optional true} [:maybe :uuid]]
-                                       [:description {:optional true} [:maybe :string]]]]]]]]))
+      [:parsed-abilities {:optional true} [:sequential draft-ability]]
+      [:passive-abilities {:optional true} [:sequential draft-ability]]
+      [:draftable-abilities {:optional true} [:sequential draft-ability]]]]]))
 
 (def draft-section-context
   (schema.contract/to-schema
@@ -160,9 +183,10 @@
 (def add-unit-to-draft-specification
   (schema.contract/to-schema
    [:map
-    [:mount {:optional true} [:maybe :string]]
-    [:spells {:optional true} [:sequential :string]]
-    [:items {:optional true} [:sequential :string]]]))
+    [:mount     {:optional true} [:maybe :string]]
+    [:abilities {:optional true} [:sequential :string]]
+    [:spells    {:optional true} [:sequential :string]]
+    [:items     {:optional true} [:sequential :string]]]))
 
 (def draft-mutation-response
   (schema.contract/to-schema
