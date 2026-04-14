@@ -1,5 +1,7 @@
 <aside class="draft-stats-panel" id="draft-unit" role="complementary" aria-label="Unit statistics for {{data.unit.name}}">
-    <div class="draft-stats-inner">
+    <form class="draft-stats-inner"
+          hx-ext="json-enc"
+          onsubmit="return false">
 
         <div class="draft-stats-header">
             <img class="draft-stats-portrait"
@@ -24,8 +26,6 @@
             <button class="btn btn-primary draft-add-btn"
                     type="button"
                     hx-post="/api/draft/{{data.draft-eid}}/unit/{{data.unit.eid}}?section=main"
-                    hx-ext="json-enc"
-                    hx-vals="js:{mount:(document.querySelector('.draft-mount-radio:checked')||{}).value||null,abilities:Array.from(document.querySelectorAll('.draft-ability-check:checked')).map(function(e){return e.value;}),spells:Array.from(document.querySelectorAll('.draft-spell-check:checked')).map(function(e){return e.value;}),items:Array.from(document.querySelectorAll('.draft-item-check:checked')).map(function(e){return e.value;})}"
                     hx-swap="none">
                 Add to Main Army
             </button>
@@ -33,8 +33,6 @@
             <button class="btn btn-primary draft-add-btn draft-add-btn--reinf"
                     type="button"
                     hx-post="/api/draft/{{data.draft-eid}}/unit/{{data.unit.eid}}?section=reinforcements"
-                    hx-ext="json-enc"
-                    hx-vals="js:{mount:(document.querySelector('.draft-mount-radio:checked')||{}).value||null,abilities:Array.from(document.querySelectorAll('.draft-ability-check:checked')).map(function(e){return e.value;}),spells:Array.from(document.querySelectorAll('.draft-spell-check:checked')).map(function(e){return e.value;}),items:Array.from(document.querySelectorAll('.draft-item-check:checked')).map(function(e){return e.value;})}"
                     hx-swap="none">
                 Add to Reinforcements
             </button>
@@ -249,5 +247,5 @@
             <p class="draft-future-msg">Unit leveling coming soon.</p>
         </section>
 
-    </div>
+    </form>
 </aside>

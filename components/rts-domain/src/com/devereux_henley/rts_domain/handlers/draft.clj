@@ -366,7 +366,11 @@
    selections: {:mount str-or-nil :abilities [ability-key] :spells [spell-key] :items [item-key]}
    Returns {:type :draft/add-success ...} on success, {:type :draft/add-error ...} on violation."
   [dependencies draft-eid unit-eid section selections]
-  (let [conn          (:connection dependencies)
+  (let [;; Form-encoded submissions send an empty-string `mount` when the
+        ;; "No mount" radio is selected; normalise to nil so downstream
+        ;; lookups and persistence see the absent-mount shape.
+        selections    (update selections :mount not-empty)
+        conn          (:connection dependencies)
         draft         (db/get-draft-by-eid conn draft-eid)
         game-mode     (db/get-game-mode-by-eid conn (:game-mode-eid draft))
         state         (get-draft-state dependencies draft-eid)

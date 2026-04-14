@@ -46,6 +46,14 @@
 
 (def get-draft-state-by-draft-query (resource/load-query-resource "game" "get-draft-state-by-draft.sql"))
 
+(def get-items-for-unit-query (resource/load-query-resource "game" "get-items-for-unit.sql"))
+
+(def get-mounts-for-unit-query (resource/load-query-resource "game" "get-mounts-for-unit.sql"))
+
+(def get-mount-by-key-query (resource/load-query-resource "game" "get-mount-by-key.sql"))
+
+(def upsert-draft-state-query (resource/load-query-resource "game" "upsert-draft-state.sql"))
+
 (defn get-game-by-eid
   {:malli/schema (schema.contract/to-schema
                   [:=>
@@ -209,37 +217,19 @@
 (defn get-items-for-unit
   "Returns all active items linked to the given unit EID via the unit_item join table."
   [connection unit-eid]
-  (let [sql (str "SELECT i.id, i.eid, i.key, i.name, i.category, i.cost, i.icon_key"
-                 " FROM item i"
-                 " JOIN unit_item ui ON ui.item_id = i.id"
-                 " JOIN unit u ON u.id = ui.unit_id"
-                 " WHERE u.eid = ?"
-                 " AND ui.deleted_at IS NULL"
-                 " AND i.deleted_at IS NULL"
-                 " ORDER BY i.category, i.name")]
-    (jdbc.contract/query-for-entities connection [sql unit-eid] schema/item-entity)))
+  (jdbc.contract/query-for-entities connection [get-items-for-unit-query unit-eid] schema/item-entity))
 
 (defn get-mounts-for-unit
   "Returns all active mounts linked to the given unit EID via the unit_mount
   join table. The per-unit mount cost is projected from unit_mount.cost into
   the mount map's :cost field."
   [connection unit-eid]
-  (let [sql (str "SELECT m.id, m.eid, m.key, m.name, m.icon_key, um.cost"
-                 " FROM mount m"
-                 " JOIN unit_mount um ON um.mount_id = m.id"
-                 " JOIN unit u ON u.id = um.unit_id"
-                 " WHERE u.eid = ?"
-                 " AND um.deleted_at IS NULL"
-                 " AND m.deleted_at IS NULL"
-                 " ORDER BY um.cost, m.name")]
-    (jdbc.contract/query-for-entities connection [sql unit-eid] schema/mount-entity)))
+  (jdbc.contract/query-for-entities connection [get-mounts-for-unit-query unit-eid] schema/mount-entity))
 
 (defn get-mount-by-key
   "Returns a single mount row by its ancillary `type` key, or nil."
   [connection mount-key]
-  (let [sql (str "SELECT id, eid, key, name, icon_key, 0 AS cost"
-                 " FROM mount WHERE key = ? AND deleted_at IS NULL LIMIT 1")]
-    (jdbc.contract/query-for-entity connection [sql mount-key] schema/mount-entity)))
+  (jdbc.contract/query-for-entity connection [get-mount-by-key-query mount-key] schema/mount-entity))
 
 (defn get-draft-state-by-draft
   [connection draft-eid]
@@ -250,10 +240,7 @@
   (let [draft (get-draft-by-eid connection draft-eid)]
     (jdbc.contract/execute-one!
      connection
-     ["INSERT INTO draft_state (draft_id, state, updated_at)
-       VALUES (?, ?, ?)
-       ON CONFLICT(draft_id) DO UPDATE SET state = excluded.state, updated_at = excluded.updated_at"
-      (:id draft) state-json-str (str (Instant/now))])))
+     [upsert-draft-state-query (:id draft) state-json-str (str (Instant/now))])))
 
 (defn create-draft
   {:malli/schema (schema.contract/to-schema
