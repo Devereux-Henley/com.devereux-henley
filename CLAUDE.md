@@ -26,8 +26,9 @@ clojure -M:poly check     # validate component boundaries
 clojure -M:poly test      # run tests across affected units
 
 # Build JARs
-clojure -M:build -A api uber          # → target/rts-api.jar
-clojure -M:build -A deploy-data uber  # → migrations CLI JAR
+clojure -M:build -A api uber           # → target/rts-api.jar
+clojure -M:build -A deploy-data uber   # → migrations CLI JAR
+clojure -M:build -A rpfm-scraper uber  # → target/rpfm-scraper.jar
 
 # Docker (from bases/rts-api/)
 make build_docker
@@ -35,7 +36,7 @@ make run_docker
 make ory_local            # create Ory Cloud tunnel for local auth
 
 # Refresh game data seed files from RPFM (after a patch)
-python3 scripts/update_from_rpfm.py --data-dir scripts/rpfm_data
+clojure -M:dev -m com.devereux-henley.rpfm-scraper.core --data-dir bases/rpfm-scraper/data
 ```
 
 See `docs/game-data.md` for the full RPFM data refresh workflow.

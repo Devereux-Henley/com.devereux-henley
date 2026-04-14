@@ -11,7 +11,8 @@
                                mono/rts-domain {:local/root "components/rts-domain"}
                                mono/rts-web {:local/root "components/rts-web"}
                                mono/rts-api {:local/root "bases/rts-api"}
-                               mono/rts-data-deploy {:local/root "bases/rts-data-deploy"}}}
+                               mono/rts-data-deploy {:local/root "bases/rts-data-deploy"}
+                               mono/rpfm-scraper {:local/root "bases/rpfm-scraper"}}}
 
             :test {:extra-paths ["components/schema"
                                  "components/resourcekit"

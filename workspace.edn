@@ -8,4 +8,5 @@
                 :release "v[0-9]*"}
  :projects {"development"  {:alias "dev"}
             "api"          {:alias "api"}
-            "deploy-data"  {:alias "deploy-data"}}}
+            "deploy-data"  {:alias "deploy-data"}
+            "rpfm-scraper" {:alias "rpfm-scraper"}}}

@@ -39,6 +39,7 @@ projects/**/pom.xml
 .calva/output-window/output.calva-repl
 db/
 
-# Scripts
-scripts/__pycache__/
-scripts/rpfm_data/
+# RPFM-decoded game table JSONs + extracted card/portrait assets
+# (regenerated from game files via RPFM MCP, not committed)
+bases/rpfm-scraper/data/
+bases/rpfm-scraper/assets/

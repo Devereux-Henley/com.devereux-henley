@@ -4,7 +4,7 @@
 
 Unit statistics, spell costs, and related seed data are sourced directly from the WH3 game files using [RPFM](https://github.com/Frodo45127/rpfm) (Rusted PackFile Manager). After each game patch, the seed SQL files must be refreshed to reflect the latest balance changes.
 
-The update script is `scripts/update_from_rpfm.py`. It reads RPFM-decoded game tables from `scripts/rpfm_data/` and rewrites the `unit_statistics` JSON blob for every unit in every faction seed file, and updates spell gold costs in `seed-spells.sql`.
+The update tool is the `rpfm-scraper` base (`bases/rpfm-scraper`), invoked from the repo root. It reads RPFM-decoded game tables from `bases/rpfm-scraper/data/` and rewrites the `unit_statistics` JSON blob for every unit in every faction seed file, and updates spell gold costs in `seed-spells.sql`.
 
 Non-numeric fields (`abilities`, `draftable-spells`, `mounts`) are preserved from the existing seed and are not overwritten.
 
@@ -31,7 +31,7 @@ Non-numeric fields (`abilities`, `draftable-spells`, `mounts`) are preserved fro
 
 ### 1. Decode game tables via RPFM MCP
 
-Open Claude Code with the RPFM MCP server active, set the game to `warhammer_3` with `rebuild_dependencies: true`, and decode each table below from `GameFiles`. Save each result to the corresponding file in `scripts/rpfm_data/`.
+Open Claude Code with the RPFM MCP server active, set the game to `warhammer_3` with `rebuild_dependencies: true`, and decode each table below from `GameFiles`. Save each result to the corresponding file in `bases/rpfm-scraper/data/` (gitignored — these files are regenerated from the game install on demand and are not committed).
 
 | File | RPFM path |
 |---|---|
@@ -53,33 +53,45 @@ Open Claude Code with the RPFM MCP server active, set the game to `warhammer_3` 
 
 Each decoded file must be in the RPFM MCP output format: a JSON array with a single `{type, text}` element where `text` is the serialised `DBRFileInfo` or `LocRFileInfo` object.
 
-### 2. Run the update script
+### 2. Run the update tool
 
 ```bash
-python3 scripts/update_from_rpfm.py --data-dir scripts/rpfm_data
+clojure -M:dev -m com.devereux-henley.rpfm-scraper.core --data-dir bases/rpfm-scraper/data
 ```
 
-The script prints a per-faction summary. Any units whose display name could not be matched to a game key are listed as warnings and left unchanged.
+Or, after building the uber JAR with `clojure -M:build -A rpfm-scraper uber`:
+
+```bash
+java -jar target/rpfm-scraper.jar --data-dir bases/rpfm-scraper/data
+```
+
+The tool prints a per-faction summary. Any units whose display name could not be matched to a game key are listed as warnings and left unchanged.
 
 Use `--dry-run` to preview changes without writing files.
 
-#### Optional: copy game icons
+#### Optional: copy game icons and unit cards
 
-Extract the relevant folders from the game files (e.g. via RPFM's Extract → to disk), then pass the extracted paths:
+RPFM-extract the relevant folders from the game files and place them under `bases/rpfm-scraper/assets/` (gitignored), preserving the game's internal folder structure. Then pass the leaf / extraction-root directories:
 
 | Arg | Source folder in game files | Writes to |
 |---|---|---|
 | `--icons-dir` | `ui/abilities/` | `asset/icon/ability/` (abilities **and** spells) |
-| `--item-icons-dir` | extraction root containing `ui/` (items reference multiple subfolders: `ui/campaign ui/ancillaries/`, `ui/skins/default/`, etc.) | `asset/icon/item/` |
+| `--item-icons-dir` | extraction root containing `ui/` (items reference `ui/campaign ui/ancillaries/`, `ui/skins/default/`, etc.) | `asset/icon/item/` |
 | `--mount-icons-dir` | extraction root containing `ui/` (same dir as `--item-icons-dir`; mounts are in `ui/campaign ui/mounts/`) | `asset/icon/mount/` |
+| `--unit-cards-dir` | `ui/units/icons/` | `asset/card/unit/` |
+| `--portraits-dir` | `ui/portraits/units/no_culture/` | `asset/card/unit/` (fallback for units without a card) |
 
 ```bash
-python3 scripts/update_from_rpfm.py \
-  --data-dir scripts/rpfm_data \
-  --icons-dir "/path/to/extracted/ui/battle ui/ability_icons" \
-  --item-icons-dir /path/to/extracted \
-  --mount-icons-dir /path/to/extracted
+clojure -M:dev -m com.devereux-henley.rpfm-scraper.core \
+  --data-dir        bases/rpfm-scraper/data \
+  --icons-dir       "bases/rpfm-scraper/assets/ability-icons/ui/battle ui/ability_icons" \
+  --item-icons-dir  bases/rpfm-scraper/assets/items \
+  --mount-icons-dir bases/rpfm-scraper/assets/items \
+  --unit-cards-dir  bases/rpfm-scraper/assets/cards/ui/units/icons \
+  --portraits-dir   bases/rpfm-scraper/assets/portraits/ui/portraits/units/no_culture
 ```
+
+Each flag is independent — omit any you don't have extracted. Copied PNGs are trimmed of transparent borders via `mogrify` (ImageMagick), which must be on `PATH`.
 
 Spell icons are sourced from the same `--icons-dir` as abilities (WH3 stores spells as abilities internally). Spell icons are written alongside ability icons in `asset/icon/ability/` since templates resolve both via the `/icon/ability/` path.
 

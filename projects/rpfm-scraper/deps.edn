@@ -1,0 +1,5 @@
+{:deps {org.clojure/clojure {:mvn/version "1.11.1"}
+        mono/rpfm-scraper   {:local/root "../../bases/rpfm-scraper"}}
+ :aliases {:build {:extra-paths ["."]
+                   :extra-deps  {io.github.clojure/tools.build {:mvn/version "0.10.13"}}
+                   :ns-default  build}}}
