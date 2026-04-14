@@ -172,6 +172,16 @@
     [:cost :int]
     [:icon-key [:maybe :string]]]))
 
+(def mount-entity
+  (schema.contract/to-schema
+   [:map
+    [:id :int]
+    [:eid :uuid]
+    [:key :string]
+    [:name :string]
+    [:icon-key [:maybe :string]]
+    [:cost :int]]))
+
 (def draft-state-entity
   (schema.contract/to-schema
    [:map

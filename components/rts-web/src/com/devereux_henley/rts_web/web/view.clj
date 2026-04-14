@@ -74,24 +74,13 @@
            "faction.html"
            (fn [_data _request] {})))
 
-(defn- mount-name->slug
-  "Converts a mount display name to a filesystem-safe slug matching the icon
-  filename written by update_from_rpfm.py.
-  e.g. \"Barded Warhorse\" -> \"barded_warhorse\""
-  [name]
-  (-> (or name "")
-      clojure.string/lower-case
-      clojure.string/trim
-      (clojure.string/replace #"[^a-z0-9]+" "_")
-      (clojure.string/replace #"^_+|_+$" "")))
-
 (defmethod integrant.core/init-key ::unit-view
   [_init-key dependencies]
   (partial standard-entity-view-handler
            (fn [eid] (web.game/get-unit-by-eid dependencies eid))
            "unit.html"
            (fn [data _request]
-             (let [{:keys [stats abilities draftable-spells mounts]} (domain/parse-unit-statistics (:unit-statistics data))
+             (let [{:keys [stats abilities draftable-spells]} (domain/parse-unit-statistics (:unit-statistics data))
                    key->spell         (domain/get-spells-by-keys dependencies draftable-spells)
                    key->ability       (domain/get-abilities-by-keys dependencies abilities)
                    resolved-spells    (mapv (fn [k]
@@ -107,14 +96,12 @@
                                                  :eid         (:eid a)
                                                  :description (:description a)}))
                                             abilities)
-                   resolved-mounts    (mapv (fn [{:keys [name] :as m}]
-                                              (assoc m :slug (mount-name->slug name)))
-                                            mounts)
+                   mounts             (domain/get-mounts-for-unit dependencies (:eid data))
                    items              (domain/get-items-for-unit dependencies (:eid data))]
                {:unit-statistics  stats
                 :abilities        (not-empty resolved-abilities)
                 :draftable-spells (not-empty resolved-spells)
-                :mounts           (not-empty resolved-mounts)
+                :mounts           (not-empty mounts)
                 :items            (not-empty items)
                 :unit-card        (when (clojure.java.io/resource
                                          (str "rts-web/asset/card/unit/" (:eid data) ".png"))

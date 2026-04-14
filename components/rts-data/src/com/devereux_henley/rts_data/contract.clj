@@ -58,7 +58,9 @@
    (load-seed "seed-lores.sql")
    (load-seed "seed-spell-lores.sql")
    (load-seed "seed-items.sql")
-   (load-seed "seed-unit-items.sql")])
+   (load-seed "seed-unit-items.sql")
+   (load-seed "seed-mounts.sql")
+   (load-seed "seed-unit-mounts.sql")])
 
 (defn seed-db
   "Seeds the database with baseline data."

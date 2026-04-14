@@ -829,68 +829,36 @@ def copy_item_icons(ancillary_icons_root, asset_dir, item_key_type_map,
 # Mount icon copying
 # ---------------------------------------------------------------------------
 
-def _mount_name_slug(name):
-    """Converts a mount display name to a filesystem-safe slug.
-    e.g. 'Barded Warhorse' -> 'barded_warhorse'
+def copy_mount_icons(ancillary_icons_root, asset_dir, ancillary_rows,
+                     type_icon_map, dry_run=False):
     """
-    import re as _re
-    slug = name.lower().strip()
-    slug = _re.sub(r"[^a-z0-9]+", "_", slug)
-    return slug.strip("_")
+    Copies one icon per distinct ui_icon stem referenced by any mount-category
+    ancillary, producing {asset_dir}/{stem}.png. The same stem is written to
+    `mount.icon_key` in `seed-mounts.sql` so templates resolve icons via
+    /icon/mount/{{mount.icon-key}}.png, matching the item pattern.
 
-
-def build_mount_name_icon_map(ancillary_rows, type_icon_map, ancillary_name_map):
-    """Returns {display_name: relative_icon_path} for mount-category ancillaries.
-
-    Mapping chain:
-      ancillary_rows (category=mount): key → type
-      type_icon_map:                   type → relative_icon_path
-      ancillary_name_map:              key → display_name
-                                       (built from ancillaries_loc prefix
-                                       'ancillaries_onscreen_name_')
-
-    Multiple ancillary keys may share the same display name (faction variants
-    of the same mount); the relative path is the same for all of them since
-    they share a type, so last-write wins harmlessly.
+    ancillary_icons_root should point to the extraction root containing `ui/`.
     """
-    result = {}
-    for r in ancillary_rows:
-        if r.get("category") != "mount":
+    stem_to_src = {}
+    for a in ancillary_rows:
+        if a.get("category") != "mount":
             continue
-        key = r["key"]
-        mount_type = r.get("type") or ""
+        mount_type = a.get("type") or ""
         rel_path = type_icon_map.get(mount_type)
         if not rel_path:
             continue
-        display_name = ancillary_name_map.get(key)
-        if display_name:
-            result[display_name] = rel_path
-    return result
+        stem = os.path.splitext(os.path.basename(rel_path))[0]
+        if stem in stem_to_src:
+            continue
+        stem_to_src[stem] = os.path.join(ancillary_icons_root, rel_path)
 
-
-def copy_mount_icons(ancillary_icons_root, asset_dir, mount_name_icon_map,
-                     dry_run=False):
-    """
-    For each (display_name, relative_path) in mount_name_icon_map, copies
-      {ancillary_icons_root}/{relative_path}  →  {asset_dir}/{name_slug}.png
-    and trims transparent borders with mogrify.
-
-    ancillary_icons_root should point to the extraction root containing `ui/`;
-    the full ui_icon path from ancillary_types_tables is joined to it.
-    asset_dir is asset/icon/mount/. Icons are keyed by display-name slug so
-    templates can look them up via mount.name.
-    """
     copied = 0
     missing_src = []
-
-    for display_name, rel_path in mount_name_icon_map.items():
-        src = os.path.join(ancillary_icons_root, rel_path)
+    for stem, src in stem_to_src.items():
         if not os.path.isfile(src):
-            missing_src.append(rel_path)
+            missing_src.append(stem)
             continue
-
-        slug = _mount_name_slug(display_name)
-        dest = os.path.join(asset_dir, slug + ".png")
+        dest = os.path.join(asset_dir, stem + ".png")
         if not dry_run:
             shutil.copy2(src, dest)
             subprocess.run(
@@ -901,7 +869,8 @@ def copy_mount_icons(ancillary_icons_root, asset_dir, mount_name_icon_map,
             )
         copied += 1
 
-    print(f"  [mount icons] copied+trimmed {copied} icons", file=sys.stderr)
+    print(f"  [mount icons] copied+trimmed {copied} distinct icons",
+          file=sys.stderr)
     if missing_src:
         print(f"  [mount icons] {len(missing_src)} source PNGs not found "
               f"(e.g. {missing_src[:3]})", file=sys.stderr)
@@ -1497,7 +1466,7 @@ def update_unit_seed_file(filepath, faction_name, faction_prefixes, name_index,
             if ability_name_to_key:
                 abilities = resolve_ability_names_to_keys(abilities, ability_name_to_key)
             new_stats["abilities"] = abilities
-        for preserve_key in ("draftable-spells", "mounts", "is_unique"):
+        for preserve_key in ("draftable-spells", "is_unique"):
             if preserve_key in old_stats:
                 new_stats[preserve_key] = old_stats[preserve_key]
         # equipment is sourced from game data — only fall back to old value if RPFM
@@ -1815,6 +1784,204 @@ def build_unit_seed_id_map(seed_dir):
     return result
 
 
+# ---------------------------------------------------------------------------
+# Mount seed generation
+# ---------------------------------------------------------------------------
+
+def _mount_name_from_stem(stem):
+    """Fallback display name when a mount icon stem has no match in
+    ancillaries_loc. Strips the `mount_` prefix and title-cases the rest,
+    e.g. `mount_barded_warhorse` → 'Barded Warhorse'."""
+    s = stem
+    if s.startswith("mount_"):
+        s = s[len("mount_"):]
+    return s.replace("_", " ").title() if s else stem
+
+
+def _build_icon_stem_to_name(ancillary_rows, ancillary_name_map, type_icon_map):
+    """Returns {icon_stem: display_name} by resolving every mount-category
+    ancillary to its type's ui_icon basename and using the ancillary's
+    localised display name. Multiple ancillaries may share a stem (faction
+    variants); first wins."""
+    out = {}
+    for a in ancillary_rows:
+        if a.get("category") != "mount":
+            continue
+        t = a.get("type") or ""
+        rel = type_icon_map.get(t)
+        if not rel:
+            continue
+        stem = os.path.splitext(os.path.basename(rel))[0]
+        if not stem or stem in out:
+            continue
+        name = ancillary_name_map.get(a.get("key"))
+        if name:
+            out[stem] = name
+    return out
+
+
+def generate_mount_seed(custom_battle_mount_rows, ancillary_rows,
+                        ancillary_name_map, type_icon_map):
+    """Generate seed-mounts.sql from units_custom_battle_mounts_tables.
+
+    One row per distinct `icon_name` basename referenced by an MP-available
+    mount entry (the game's Custom Battle / Army Builder mount list). This
+    replaces the earlier ancillary-type-based mount table, which included
+    campaign-only mounts and conflated MP availability with ancillary
+    definitions. Now every row corresponds to a mount that is actually
+    selectable in MP army builder.
+
+    The mount `key` is the icon stem (e.g. `mount_barded_warhorse`) — stable
+    across patches and 1:1 with the icon filename on disk.
+
+    Returns (sql_content: str, stem_to_id: dict[str, int]).
+    """
+    stem_to_name = _build_icon_stem_to_name(ancillary_rows, ancillary_name_map, type_icon_map)
+
+    # Collect distinct icon stems from the custom battle mounts table
+    stems = set()
+    for r in custom_battle_mount_rows:
+        icon = r.get("icon_name") or ""
+        if not icon:
+            continue
+        stems.add(os.path.splitext(os.path.basename(icon))[0])
+    stems.discard("")
+    ordered = sorted(stems)
+
+    lines = [
+        "INSERT OR IGNORE INTO mount(id, eid, key, name, icon_key,"
+        " game_id, version, created_by_sub, created_at, updated_at, deleted_at)",
+        "VALUES",
+    ]
+    stem_to_id = {}
+    for idx, stem in enumerate(ordered, start=1):
+        name = stem_to_name.get(stem) or _mount_name_from_stem(stem)
+        eid = f"d2000000-0000-0000-0000-{idx:012x}"
+        stem_to_id[stem] = idx
+        comma = "," if idx < len(ordered) else ";"
+        lines.append(
+            f"  ({idx}, '{eid}', '{_sql_escape(stem)}', '{_sql_escape(name)}', '{_sql_escape(stem)}',"
+            f" {_GAME_ID}, 1, '{_SEED_AUTHOR}',"
+            " STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'),"
+            " STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'),"
+            f" null){comma}"
+        )
+    return "\n".join(lines) + "\n", stem_to_id
+
+
+def generate_unit_mount_seed(custom_battle_mount_rows, main_unit_rows,
+                              land_units_loc, stem_to_mount_id, unit_id_map):
+    """Generate seed-unit-mounts.sql from units_custom_battle_mounts_tables.
+
+    This table is the authoritative MP army-builder mount list — every
+    (base_unit, mounted_unit, icon_name) row represents a mount option that
+    the player can actually pick. Campaign-only variants (e.g. Karl Franz's
+    unarmored Warhorse) appear in `main_units_tables` but are absent here,
+    and are therefore correctly excluded.
+
+    For each row we:
+      - look up base_unit and mounted_unit in main_units_tables to get
+        base_cost and variant_cost
+      - cost = variant_cost − base_cost (the MP add-on cost)
+      - resolve base_unit → display name via main_units_tables.land_unit +
+        land_units_loc, then to unit_id via the seed id map
+      - resolve icon_name basename → mount_id via stem_to_mount_id
+    """
+    # Index main_units by unit key for fast lookups
+    mu_by_unit = {r.get("unit"): r for r in main_unit_rows if r.get("unit")}
+
+    # Reverse FACTION_KEY_MAP so we can infer the faction slug from a unit key
+    prefix_to_faction = {}
+    for faction, prefixes in FACTION_KEY_MAP.items():
+        for p in prefixes:
+            prefix_to_faction.setdefault(p, faction)
+
+    def faction_from_unit_key(unit_key):
+        for seg in unit_key.split("_"):
+            if seg in prefix_to_faction:
+                return prefix_to_faction[seg]
+        return None
+
+    resolved_rows = []
+    seen = set()
+    unresolved_mounts = set()
+    unresolved_units = set()
+    missing_main_units = set()
+
+    for entry in custom_battle_mount_rows:
+        base_key    = entry.get("base_unit") or ""
+        mounted_key = entry.get("mounted_unit") or ""
+        icon_name   = entry.get("icon_name") or ""
+        if not (base_key and mounted_key and icon_name):
+            continue
+
+        base = mu_by_unit.get(base_key)
+        mounted = mu_by_unit.get(mounted_key)
+        if not base or not mounted:
+            missing_main_units.add((base_key, mounted_key))
+            continue
+
+        lu_key = base.get("land_unit")
+        unit_name = land_units_loc.get(f"land_units_onscreen_name_{lu_key}") if lu_key else None
+        if not unit_name:
+            continue
+
+        faction = faction_from_unit_key(base_key)
+        if not faction:
+            continue
+        unit_id = unit_id_map.get((unit_name, faction))
+        if not unit_id:
+            unresolved_units.add((unit_name, faction))
+            continue
+
+        stem = os.path.splitext(os.path.basename(icon_name))[0]
+        mount_id = stem_to_mount_id.get(stem)
+        if not mount_id:
+            unresolved_mounts.add(stem)
+            continue
+
+        diff_cost = max(0,
+            (mounted.get("multiplayer_cost") or 0) - (base.get("multiplayer_cost") or 0))
+        pair = (unit_id, mount_id)
+        if pair in seen:
+            continue
+        seen.add(pair)
+        resolved_rows.append((unit_id, mount_id, diff_cost))
+
+    if not resolved_rows:
+        print("  [unit-mounts] no entries resolved; emitting empty seed", file=sys.stderr)
+        return "-- no unit_mount rows\n"
+
+    resolved_rows.sort()
+    lines = [
+        "INSERT OR IGNORE INTO unit_mount(id, unit_id, mount_id, cost,"
+        " version, created_by_sub, created_at, updated_at, deleted_at)",
+        "VALUES",
+    ]
+    for idx, (unit_id, mount_id, cost) in enumerate(resolved_rows, start=1):
+        comma = "," if idx < len(resolved_rows) else ";"
+        lines.append(
+            f"  ({idx}, {unit_id}, {mount_id}, {cost},"
+            f" 1, '{_SEED_AUTHOR}',"
+            " STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'),"
+            " STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'),"
+            f" null){comma}"
+        )
+
+    print(f"  [unit-mounts] emitted {len(resolved_rows)} rows from "
+          f"units_custom_battle_mounts_tables", file=sys.stderr)
+    if unresolved_mounts:
+        print(f"  [unit-mounts] {len(unresolved_mounts)} icon stems not in mount table "
+              f"(e.g. {sorted(unresolved_mounts)[:4]})", file=sys.stderr)
+    if unresolved_units:
+        print(f"  [unit-mounts] {len(unresolved_units)} units not in seed id map "
+              f"(e.g. {sorted(unresolved_units)[:3]})", file=sys.stderr)
+    if missing_main_units:
+        print(f"  [unit-mounts] {len(missing_main_units)} base/mounted key pairs "
+              f"not in main_units_tables", file=sys.stderr)
+    return "\n".join(lines) + "\n"
+
+
 def generate_unit_item_seed(unit_id_map, name_index, main_unit_map,
                              agent_subtype_map, equipment_map, item_key_to_id):
     """Generate seed-unit-items.sql content linking lords/heroes to their items.
@@ -1994,6 +2161,9 @@ def main():
     ancillary_type_icon_map = build_ancillary_type_icon_map(anc_type_rows)
     print(f"  ancillary type icons: {len(ancillary_type_icon_map)}", file=sys.stderr)
 
+    _, custom_battle_mount_rows = parse_rpfm_table(path("units_custom_battle_mounts_tables.json"))
+    print(f"  custom battle mounts (MP): {len(custom_battle_mount_rows)}", file=sys.stderr)
+
     ua_loc = parse_loc_file(path("unit_abilities_loc.json"))
     ability_name_map, ability_tooltip_map = build_ability_loc_maps(ua_loc)
     print(f"  ability loc: {len(ability_name_map)} names, {len(ability_tooltip_map)} tooltips",
@@ -2085,12 +2255,10 @@ def main():
 
     if args.mount_icons_dir:
         print("Copying and trimming mount icons...", file=sys.stderr)
-        mount_name_icon_map = build_mount_name_icon_map(
-            ancillaries_rows, ancillary_type_icon_map, ancillary_name_map)
         mount_asset_dir = os.path.join("components", "rts-web", "resources", "rts-web",
                                        "asset", "icon", "mount")
-        copy_mount_icons(args.mount_icons_dir, mount_asset_dir, mount_name_icon_map,
-                         dry_run=args.dry_run)
+        copy_mount_icons(args.mount_icons_dir, mount_asset_dir, ancillaries_rows,
+                         ancillary_type_icon_map, dry_run=args.dry_run)
     else:
         print("  [mount icons] --mount-icons-dir not provided, skipping mount icon copy",
               file=sys.stderr)
@@ -2122,9 +2290,27 @@ def main():
     if not args.dry_run:
         with open(unit_item_seed_file, "w", encoding="utf-8") as f:
             f.write(unit_item_seed_content)
-    # Count rows generated
     unit_item_rows = unit_item_seed_content.count("\n  (")
     print(f"  {unit_item_rows} unit-item links", file=sys.stderr)
+
+    print("Generating mount seed...", file=sys.stderr)
+    mount_seed_content, mount_stem_to_id = generate_mount_seed(
+        custom_battle_mount_rows, ancillaries_rows,
+        ancillary_name_map, ancillary_type_icon_map)
+    print(f"  {len(mount_stem_to_id)} MP mounts", file=sys.stderr)
+    mount_seed_file = os.path.join(SEED_DIR, "seed-mounts.sql")
+    if not args.dry_run:
+        with open(mount_seed_file, "w", encoding="utf-8") as f:
+            f.write(mount_seed_content)
+
+    print("Generating unit-mount seed...", file=sys.stderr)
+    unit_mount_seed_content = generate_unit_mount_seed(
+        custom_battle_mount_rows, mu_rows, land_units_loc,
+        mount_stem_to_id, unit_id_map)
+    unit_mount_seed_file = os.path.join(SEED_DIR, "seed-unit-mounts.sql")
+    if not args.dry_run:
+        with open(unit_mount_seed_file, "w", encoding="utf-8") as f:
+            f.write(unit_mount_seed_content)
 
     print("Done.", file=sys.stderr)
 

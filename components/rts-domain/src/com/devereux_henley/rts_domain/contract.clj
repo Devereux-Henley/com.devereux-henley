@@ -59,6 +59,7 @@
 (def get-spells-by-keys                         handlers.draft/get-spells-by-keys)
 (def get-abilities-by-keys                      handlers.draft/get-abilities-by-keys)
 (def get-items-for-unit                         handlers.draft/get-items-for-unit)
+(def get-mounts-for-unit                         handlers.draft/get-mounts-for-unit)
 (def hydrate-units-with-stats                   handlers.draft/hydrate-units-with-stats)
 (def build-section-context                      handlers.draft/build-section-context)
 (def get-draft-unit-details                     handlers.draft/get-draft-unit-details)

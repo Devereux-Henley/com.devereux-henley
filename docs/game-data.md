@@ -17,11 +17,13 @@ Non-numeric fields (`abilities`, `draftable-spells`, `mounts`) are preserved fro
 | `seed-<faction>-units.sql` | `cost`, `is_large`, `unit_size`, `health`, `barrier`, `armor`, `leadership`, `speed`, `melee_attack`, `melee_attack_types`, `melee_defence`, `weapon_strength`, `weapon_damage`, `weapon_ap_damage`, `charge_bonus`, `ammunition`, `range`, `missile_damage`, `missile_base_damage`, `missile_ap_damage`, `missile_damage_types`, `equipment` (lords/heroes only) |
 | `seed-spells.sql` | `cost` |
 | `seed-abilities.sql` | `name`, `description`, `cost` (`additional_melee_cp + additional_missile_cp` from `unit_special_abilities_tables`) |
-| `seed-items.sql` | fully regenerated: all ancillaries with `key`, `name`, `category`, `cost` (`uniqueness_score`) |
+| `seed-items.sql` | fully regenerated: all MP ancillaries with `key`, `name`, `category`, `cost`, `icon_key` (dedupe stem) |
 | `seed-unit-items.sql` | fully regenerated: unit → item links for legendary lords/heroes with pre-assigned gear |
+| `seed-mounts.sql` | fully regenerated from `units_custom_battle_mounts_tables`: one row per distinct MP mount, keyed on icon stem (e.g. `mount_barded_warhorse`) |
+| `seed-unit-mounts.sql` | fully regenerated: unit → mount links with cost = `main_units_tables.multiplayer_cost` diff (mounted variant − base) |
 | `asset/icon/ability/*.png` | spell icons copied alongside ability icons when `--icons-dir` is given (spells are abilities in WH3; icons keyed by spell eid) |
-| `asset/icon/item/*.png` | item icons copied when `--item-icons-dir` is given (keyed by item eid) |
-| `asset/icon/mount/*.png` | mount icons copied when `--mount-icons-dir` is given (keyed by display-name slug, e.g. `barded_warhorse.png`) |
+| `asset/icon/item/*.png` | item icons copied when `--item-icons-dir` is given (one file per distinct `ancillary_types_tables.ui_icon` stem) |
+| `asset/icon/mount/*.png` | mount icons copied when `--mount-icons-dir` is given (one file per distinct mount icon stem, matching `mount.icon_key`) |
 
 ---
 
@@ -47,6 +49,7 @@ Open Claude Code with the RPFM MCP server active, set the game to `warhammer_3` 
 | `ancillaries_tables.json` | `db/ancillaries_tables/data__` |
 | `ancillaries_loc.json` | `text/db/ancillaries__.loc` |
 | `ancillary_types_tables.json` | `db/ancillary_types_tables/data__` |
+| `units_custom_battle_mounts_tables.json` | `db/units_custom_battle_mounts_tables/data__` |
 
 Each decoded file must be in the RPFM MCP output format: a JSON array with a single `{type, text}` element where `text` is the serialised `DBRFileInfo` or `LocRFileInfo` object.
 
@@ -80,7 +83,7 @@ python3 scripts/update_from_rpfm.py \
 
 Spell icons are sourced from the same `--icons-dir` as abilities (WH3 stores spells as abilities internally). Spell icons are written alongside ability icons in `asset/icon/ability/` since templates resolve both via the `/icon/ability/` path.
 
-Mount icons are keyed by display-name slug (e.g. `barded_warhorse.png`) so templates can look them up using `mount.name`.
+Mount icons are keyed by icon stem (e.g. `mount_barded_warhorse.png`), matching the `mount.icon_key` column populated in `seed-mounts.sql`. Templates resolve them via `mount.icon-key`.
 
 ### 3. Review and commit
 
@@ -95,9 +98,10 @@ Verify that the stat changes look plausible (costs, armor, weapon strength, etc.
 ## Known limitations
 
 - **4 Lizardmen Slann variants** (`Slann Mage-Priest (Beasts/Death/Metal/Shadows)`) share the same display name in-game and are not matched; their stats must be updated manually if changed.
-- `abilities`, `draftable-spells`, and `mounts` are not sourced from game data — they must be maintained manually when CA adds or renames abilities for a unit.
+- `abilities` and `draftable-spells` are not sourced from game data — they must be maintained manually when CA adds or renames abilities for a unit. (Mounts **are** sourced from game data via `units_custom_battle_mounts_tables` as of the 000021 / 000022 migrations.)
 - `equipment` is populated only for legendary lords/heroes with character-specific items in `ancillaries_included_agent_subtypes_tables`. Generic lords/heroes (non-legendary) have no `equipment` field — their item pools are defined by the game's faction/category system and are not stored per-unit.
 - `seed-spells.sql` `mana_cost` and spell descriptions are not updated by this script.
+- **Missing MP-mount units (13)** — some units that appear as mounted variants in `units_custom_battle_mounts_tables` (e.g. Amethyst Wizard, pre-DLC Kislev heroes, Vampire Fleet Admiral loadout variants) aren't in our faction seed files and therefore get no `unit_mount` rows. See `todo/missing-mp-mount-units.md` for the list and resolution notes.
 
 ---
 
@@ -131,3 +135,30 @@ A raw byte search of `data_script.pack`, `boot.pack`, and `data.pack` confirmed 
 The `unit_item` table supports manual curation: for each unit that has a defined item pool in the in-game MP builder, add rows to the relevant `seed-<faction>-units.sql` or a dedicated seed file associating the unit's DB id with the item DB ids from `seed-items.sql`.
 
 The item keys and costs are available in `seed-items.sql` (regenerated by `update_from_rpfm.py` after each patch). Item DB ids are assigned by sorted key order and are stable across runs as long as CA does not rename or remove an item.
+
+---
+
+## MP mount availability — resolved
+
+Unlike items, MP mount availability **is** stored in a data-driven file:
+`db/units_custom_battle_mounts_tables`. WH3 calls its MP army builder
+"Custom Battle" internally, and this table directly enumerates every
+`(base_unit, mounted_unit, icon_name)` combination selectable in it.
+
+- **Mount identity** — each row's `icon_name` basename (e.g.
+  `mount_barded_warhorse`) is the stable mount key; one `mount` row per
+  distinct stem. This matches the on-disk icon filename exactly, so
+  templates resolve to `/icon/mount/{{mount.icon-key}}.png`.
+- **Mount cost** — computed from `main_units_tables.multiplayer_cost`:
+  `cost = mounted_variant.mp_cost − base_variant.mp_cost`, giving the
+  correct MP add-on cost.
+- **Mount display name** — resolved by cross-referencing the icon stem
+  against `ancillary_types_tables.ui_icon` and looking up the matching
+  ancillary's localised name from `ancillaries_loc`. For MP-only mounts
+  that have no ancillary (rare), the script falls back to title-casing
+  the stem.
+
+The earlier curated `unit_statistics.mounts` JSON approach was removed
+— it stored `main_units_tables.multiplayer_cost` as the mount cost
+(the variant's TOTAL price) instead of the add-on diff, which caused
+the UI to double-count the base unit cost.

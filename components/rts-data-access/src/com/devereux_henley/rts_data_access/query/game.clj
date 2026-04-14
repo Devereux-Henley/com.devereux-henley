@@ -219,6 +219,28 @@
                  " ORDER BY i.category, i.name")]
     (jdbc.contract/query-for-entities connection [sql unit-eid] schema/item-entity)))
 
+(defn get-mounts-for-unit
+  "Returns all active mounts linked to the given unit EID via the unit_mount
+  join table. The per-unit mount cost is projected from unit_mount.cost into
+  the mount map's :cost field."
+  [connection unit-eid]
+  (let [sql (str "SELECT m.id, m.eid, m.key, m.name, m.icon_key, um.cost"
+                 " FROM mount m"
+                 " JOIN unit_mount um ON um.mount_id = m.id"
+                 " JOIN unit u ON u.id = um.unit_id"
+                 " WHERE u.eid = ?"
+                 " AND um.deleted_at IS NULL"
+                 " AND m.deleted_at IS NULL"
+                 " ORDER BY um.cost, m.name")]
+    (jdbc.contract/query-for-entities connection [sql unit-eid] schema/mount-entity)))
+
+(defn get-mount-by-key
+  "Returns a single mount row by its ancillary `type` key, or nil."
+  [connection mount-key]
+  (let [sql (str "SELECT id, eid, key, name, icon_key, 0 AS cost"
+                 " FROM mount WHERE key = ? AND deleted_at IS NULL LIMIT 1")]
+    (jdbc.contract/query-for-entity connection [sql mount-key] schema/mount-entity)))
+
 (defn get-draft-state-by-draft
   [connection draft-eid]
   (jdbc.contract/query-for-entity connection [get-draft-state-by-draft-query draft-eid] schema/draft-state-entity))

@@ -25,7 +25,7 @@
                     type="button"
                     hx-post="/api/draft/{{data.draft-eid}}/unit/{{data.unit.eid}}?section=main"
                     hx-ext="json-enc"
-                    hx-vals="js:{abilities:Array.from(document.querySelectorAll('.draft-ability-check:checked')).map(function(e){return e.value;}),spells:Array.from(document.querySelectorAll('.draft-spell-check:checked')).map(function(e){return e.value;}),items:Array.from(document.querySelectorAll('.draft-item-check:checked')).map(function(e){return e.value;})}"
+                    hx-vals="js:{mount:(document.querySelector('.draft-mount-radio:checked')||{}).value||null,abilities:Array.from(document.querySelectorAll('.draft-ability-check:checked')).map(function(e){return e.value;}),spells:Array.from(document.querySelectorAll('.draft-spell-check:checked')).map(function(e){return e.value;}),items:Array.from(document.querySelectorAll('.draft-item-check:checked')).map(function(e){return e.value;})}"
                     hx-swap="none">
                 Add to Main Army
             </button>
@@ -34,7 +34,7 @@
                     type="button"
                     hx-post="/api/draft/{{data.draft-eid}}/unit/{{data.unit.eid}}?section=reinforcements"
                     hx-ext="json-enc"
-                    hx-vals="js:{abilities:Array.from(document.querySelectorAll('.draft-ability-check:checked')).map(function(e){return e.value;}),spells:Array.from(document.querySelectorAll('.draft-spell-check:checked')).map(function(e){return e.value;}),items:Array.from(document.querySelectorAll('.draft-item-check:checked')).map(function(e){return e.value;})}"
+                    hx-vals="js:{mount:(document.querySelector('.draft-mount-radio:checked')||{}).value||null,abilities:Array.from(document.querySelectorAll('.draft-ability-check:checked')).map(function(e){return e.value;}),spells:Array.from(document.querySelectorAll('.draft-spell-check:checked')).map(function(e){return e.value;}),items:Array.from(document.querySelectorAll('.draft-item-check:checked')).map(function(e){return e.value;})}"
                     hx-swap="none">
                 Add to Reinforcements
             </button>
@@ -142,6 +142,42 @@
                              onerror="this.style.display='none'">
                         <span class="draft-option-name">{{spell.name}}</span>
                         <span class="badge badge-secondary draft-option-cost">+{{spell.cost}}</span>
+                    </label>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
+        {% if data.mounts|not-empty? %}
+        <section class="draft-stats-section unit-panel" aria-labelledby="panel-mounts-heading">
+            <h4 class="unit-panel-heading" id="panel-mounts-heading">Mounts</h4>
+            <ul class="draft-option-list" aria-label="Available mounts for {{data.unit.name}}">
+                <li class="draft-option-row draft-option-row--selectable">
+                    <label class="draft-option-label">
+                        <input class="draft-mount-radio"
+                               type="radio"
+                               name="mount"
+                               value=""
+                               checked
+                               aria-label="No mount">
+                        <span class="draft-option-name">No mount</span>
+                    </label>
+                </li>
+                {% for mount in data.mounts %}
+                <li class="draft-option-row draft-option-row--selectable">
+                    <label class="draft-option-label">
+                        <input class="draft-mount-radio"
+                               type="radio"
+                               name="mount"
+                               value="{{mount.key}}"
+                               aria-label="{{mount.name}} (+{{mount.cost}})">
+                        <img class="draft-option-icon"
+                             src="/icon/mount/{{mount.icon-key}}.png"
+                             alt=""
+                             onerror="this.style.display='none'">
+                        <span class="draft-option-name">{{mount.name}}</span>
+                        <span class="badge badge-secondary draft-option-cost">+{{mount.cost}}</span>
                     </label>
                 </li>
                 {% endfor %}

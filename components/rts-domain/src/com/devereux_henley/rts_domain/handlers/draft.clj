@@ -53,8 +53,11 @@
      :barrier          — integer barrier value, or nil if absent/zero
      :abilities        — vector of ability key strings
      :draftable-spells — vector of spell key strings
-     :mounts           — vector of {:name str :cost int}
-     :equipment        — vector of raw equipment maps"
+     :equipment        — vector of raw equipment maps
+
+  Mounts are no longer embedded in unit_statistics — they live in the
+  `mount` / `unit_mount` tables and are fetched via
+  `db/get-mounts-for-unit`."
   [unit-statistics-str]
   (let [decoded (m/decode db/unit-statistics-raw-schema
                           (jsonista/read-value unit-statistics-str (jsonista/object-mapper {:decode-key-fn name}))
@@ -66,9 +69,6 @@
      :barrier          (let [b (get decoded "barrier")] (when (and b (pos? b)) b))
      :abilities        (get decoded "abilities")
      :draftable-spells (mapv #(get % "key") (get decoded "draftable-spells"))
-     :mounts           (mapv (fn [m] {:name (get m "name")
-                                      :cost (get m "cost")})
-                             (get decoded "mounts"))
      :equipment        (get decoded "equipment")}))
 
 ;; ─── Stat percentages ─────────────────────────────────────────────────────────
@@ -244,18 +244,24 @@
   [dependencies unit-eid]
   (db/get-items-for-unit (:connection dependencies) unit-eid))
 
+(defn get-mounts-for-unit
+  "Returns all active mounts linked to the given unit EID."
+  [dependencies unit-eid]
+  (db/get-mounts-for-unit (:connection dependencies) unit-eid))
+
 ;; ─── Cost calculation ─────────────────────────────────────────────────────────
 
 (defn- compute-unit-total-cost
   "Returns base-cost + mount-cost + ability-cost + spell-cost + item-cost.
-   selections: {:mount str-or-nil :abilities [ability-key] :spells [spell-key] :items [item-key]}"
+   selections: {:mount str-or-nil :abilities [ability-key] :spells [spell-key] :items [item-key]}
+   :mount is the mount `type` key (e.g. \"wh2_dlc09_anc_mount_skeleton_chariot\"),
+   not a display name. Cost comes from unit_mount.cost via get-mounts-for-unit."
   [unit-hydrated selections conn]
-  (let [parsed-stats  (parse-unit-statistics (:unit-statistics unit-hydrated))
-        base-cost     (or (:cost unit-hydrated) 0)
-        mount-name    (:mount selections)
-        mount-cost    (when mount-name
-                        (:cost (first (filter #(= mount-name (:name %))
-                                              (:mounts parsed-stats)))))
+  (let [base-cost     (or (:cost unit-hydrated) 0)
+        mount-key     (:mount selections)
+        mount-cost    (when mount-key
+                        (:cost (first (filter #(= mount-key (:key %))
+                                              (db/get-mounts-for-unit conn (:eid unit-hydrated))))))
         ability-keys  (not-empty (:abilities selections []))
         ability-cost  (when ability-keys
                         (->> (db/get-abilities-by-keys conn ability-keys)
@@ -338,7 +344,8 @@
                                   draftable-spells)
         passive-spells      (filterv #(= 0 (:cost %)) all-spells)
         draftable-spells-v  (filterv #(pos? (:cost %)) all-spells)
-        items               (db/get-items-for-unit conn unit-eid)]
+        items               (db/get-items-for-unit conn unit-eid)
+        mounts              (db/get-mounts-for-unit conn unit-eid)]
     {:type                   :draft/unit
      :unit                   (assoc unit
                                     :unit-statistics     unit-statistics
@@ -348,6 +355,7 @@
                                     :passive-abilities   passive-abilities
                                     :draftable-abilities draftable-abilities)
      :items                  items
+     :mounts                 mounts
      :passive-spells         passive-spells
      :draftable-spells       draftable-spells-v
      :draft-eid              draft-eid

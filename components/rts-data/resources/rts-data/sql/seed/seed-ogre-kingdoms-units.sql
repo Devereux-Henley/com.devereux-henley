@@ -250,7 +250,7 @@ VALUES
    16,
    1,
    2,
-   '{"cost":800,"is_large":true,"unit_size":1,"health":5500,"barrier":0,"armor":30,"leadership":75,"speed":6,"melee_attack":48,"melee_attack_types":[],"melee_defence":46,"weapon_strength":370,"weapon_damage":110,"weapon_ap_damage":260,"charge_bonus":50,"ammunition":20,"missile_damage_types":[],"range":120,"missile_damage":320,"missile_base_damage":70,"missile_ap_damage":250,"abilities":["wh3_main_unit_passive_single_entity","wh3_main_character_abilities_crippling_throw","wh3_main_character_passive_loner"],"draftable-spells":[],"mounts":[{"name":"Stonehorn","cost":2150}]}',
+   '{"cost":800,"is_large":true,"unit_size":1,"health":5500,"barrier":0,"armor":30,"leadership":75,"speed":6,"melee_attack":48,"melee_attack_types":[],"melee_defence":46,"weapon_strength":370,"weapon_damage":110,"weapon_ap_damage":260,"charge_bonus":50,"ammunition":20,"missile_damage_types":[],"range":120,"missile_damage":320,"missile_base_damage":70,"missile_ap_damage":250,"abilities":["wh3_main_unit_passive_single_entity","wh3_main_character_abilities_crippling_throw","wh3_main_character_passive_loner"],"draftable-spells":[]}',
    0,
    1,
    'f0ce7395-a57f-41e9-ade0-fd13bafc058f',

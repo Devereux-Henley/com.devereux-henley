@@ -137,6 +137,15 @@
     [:mana-cost :int]
     [:cost :int]]))
 
+(def draft-mount
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:key :string]
+    [:name :string]
+    [:cost :int]
+    [:icon-key {:optional true} [:maybe :string]]]))
+
 (def draft-unit-response
   (schema.contract/to-schema
    [:map
@@ -144,8 +153,10 @@
     [:draft-eid :uuid]
     [:reinforcements-enabled :boolean]
     [:items {:optional true} [:sequential draft-item]]
+    [:mounts {:optional true} [:sequential draft-mount]]
     [:passive-spells {:optional true} [:sequential draft-spell]]
     [:draftable-spells {:optional true} [:sequential draft-spell]]
+    [:has-passives {:optional true} :boolean]
     [:unit
      [:map
       [:eid :uuid]
