@@ -20,51 +20,52 @@
   [file-name]
   (slurp (io/resource (str "rts-data/sql/seed/" file-name)) :encoding "UTF-8"))
 
-(def seed-queries
-  [(load-seed "seed-games.sql")
-   (load-seed "seed-factions.sql")
-   (load-seed "seed-social-media-platforms.sql")
-   (load-seed "seed-game-social-links.sql")
-   (load-seed "seed-unit-types.sql")
-   (load-seed "seed-unit-categories.sql")
-   (load-seed "seed-empire-units.sql")
-   (load-seed "seed-beastmen-units.sql")
-   (load-seed "seed-bretonnia-units.sql")
-   (load-seed "seed-chaos-dwarfs-units.sql")
-   (load-seed "seed-daemons-of-chaos-units.sql")
-   (load-seed "seed-dark-elves-units.sql")
-   (load-seed "seed-dwarfs-units.sql")
-   (load-seed "seed-grand-cathay-units.sql")
-   (load-seed "seed-greenskins-units.sql")
-   (load-seed "seed-high-elves-units.sql")
-   (load-seed "seed-khorne-units.sql")
-   (load-seed "seed-kislev-units.sql")
-   (load-seed "seed-lizardmen-units.sql")
-   (load-seed "seed-norsca-units.sql")
-   (load-seed "seed-nurgle-units.sql")
-   (load-seed "seed-ogre-kingdoms-units.sql")
-   (load-seed "seed-skaven-units.sql")
-   (load-seed "seed-slaanesh-units.sql")
-   (load-seed "seed-tomb-kings-units.sql")
-   (load-seed "seed-tzeentch-units.sql")
-   (load-seed "seed-vampire-coast-units.sql")
-   (load-seed "seed-vampire-counts-units.sql")
-   (load-seed "seed-warriors-of-chaos-units.sql")
-   (load-seed "seed-wood-elves-units.sql")
-   (load-seed "seed-game-modes.sql")
-   (load-seed "seed-attributes.sql")
-   (load-seed "seed-abilities.sql")
-   (load-seed "seed-spells.sql")
-   (load-seed "seed-lores.sql")
-   (load-seed "seed-spell-lores.sql")
-   (load-seed "seed-items.sql")
-   (load-seed "seed-unit-items.sql")
-   (load-seed "seed-mounts.sql")
-   (load-seed "seed-unit-mounts.sql")])
+(def seed-files
+  ["seed-games.sql"
+   "seed-factions.sql"
+   "seed-social-media-platforms.sql"
+   "seed-game-social-links.sql"
+   "seed-unit-types.sql"
+   "seed-unit-categories.sql"
+   "seed-empire-units.sql"
+   "seed-beastmen-units.sql"
+   "seed-bretonnia-units.sql"
+   "seed-chaos-dwarfs-units.sql"
+   "seed-daemons-of-chaos-units.sql"
+   "seed-dark-elves-units.sql"
+   "seed-dwarfs-units.sql"
+   "seed-grand-cathay-units.sql"
+   "seed-greenskins-units.sql"
+   "seed-high-elves-units.sql"
+   "seed-khorne-units.sql"
+   "seed-kislev-units.sql"
+   "seed-lizardmen-units.sql"
+   "seed-norsca-units.sql"
+   "seed-nurgle-units.sql"
+   "seed-ogre-kingdoms-units.sql"
+   "seed-skaven-units.sql"
+   "seed-slaanesh-units.sql"
+   "seed-tomb-kings-units.sql"
+   "seed-tzeentch-units.sql"
+   "seed-vampire-coast-units.sql"
+   "seed-vampire-counts-units.sql"
+   "seed-warriors-of-chaos-units.sql"
+   "seed-wood-elves-units.sql"
+   "seed-game-modes.sql"
+   "seed-attributes.sql"
+   "seed-abilities.sql"
+   "seed-spells.sql"
+   "seed-lores.sql"
+   "seed-spell-lores.sql"
+   "seed-items.sql"
+   "seed-unit-items.sql"
+   "seed-mounts.sql"
+   "seed-unit-mounts.sql"])
 
 (defn seed-db
-  "Seeds the database with baseline data."
+  "Seeds the database with baseline data. Reads each seed file on every call so
+  REPL-driven reseeds always pick up the current files on disk."
   [db-spec]
   (let [conn (jdbc/get-connection db-spec)]
-    (doseq [query seed-queries]
-      (jdbc/execute! conn [query]))))
+    (doseq [file-name seed-files]
+      (jdbc/execute! conn [(load-seed file-name)]))))

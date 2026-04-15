@@ -12,38 +12,81 @@
 ;; ─── Unit statistics parsing ──────────────────────────────────────────────────
 
 (def ^:private stat-exclude-keys #{"abilities" "draftable-spells" "draftable-abilities" "mounts" "equipment"
-                                   "cost" "health" "barrier"
+                                   "cost" "health" "barrier" "is_large"
                                    "weapon_damage" "weapon_ap_damage"
-                                   "missile_base_damage" "missile_ap_damage"})
+                                   "missile_base_damage" "missile_ap_damage"
+                                   "melee_attack_types" "missile_damage_types"
+                                   "melee_modifiers" "missile_modifiers"
+                                   "bonus_vs_infantry" "bonus_vs_large"
+                                   "attributes"})
 
 (defn- stat-entry
   "Converts a single decoded JSON entry into a stat map, or nil if it should be excluded.
    Drops structured fields (abilities, mounts, etc.), zero values, empty vectors,
    fields rendered separately (cost, health, barrier), and damage sub-components
-   that are folded into tooltips on their parent stat."
+   that are folded into tooltips on their parent stat. `:icon` is a kebab-case
+   slug (e.g. \"melee-attack\") used by templates to build /icon/stat/<icon>.png."
   [[k v]]
   (when-not (stat-exclude-keys k)
-    (cond
-      (and (vector? v) (empty? v)) nil
-      (= v 0)                      nil
-      (vector? v)                  {:stat (str/replace k "_" " ") :value (str/join ", " v)}
-      :else                        {:stat (str/replace k "_" " ") :value v})))
+    (let [label (str/replace k "_" " ")
+          icon  (str/replace k "_" "-")]
+      (cond
+        (and (vector? v) (empty? v)) nil
+        (= v 0)                      nil
+        (vector? v)                  {:stat label :icon icon :value (str/join ", " v)}
+        :else                        {:stat label :icon icon :value v}))))
+
+(defn- damage-tooltip
+  "Build a tooltip string for weapon-strength / missile-damage rows. Folds in
+  base/AP split and any bonus-vs-infantry / bonus-vs-large values."
+  [base ap bonus-inf bonus-lg base-label]
+  (let [parts (cond-> []
+                (and base ap) (conj (str base " " base-label " · " ap " AP"))
+                (and bonus-inf (pos? bonus-inf)) (conj (str "+" bonus-inf " vs infantry"))
+                (and bonus-lg (pos? bonus-lg)) (conj (str "+" bonus-lg " vs large")))]
+    (when (seq parts) (str/join " · " parts))))
 
 (defn- attach-stat-tooltips
   "Attaches a :tooltip string to weapon-strength and missile-damage entries,
-   showing their base/AP breakdown."
+   folding in base/AP breakdown and bonus-vs values. Also attaches :damage-types
+   and :attack-modifiers badges to the appropriate rows:
+     - melee attack    — melee damage types + melee contact modifiers
+     - weapon strength — bonus-vs-infantry / bonus-vs-large badges
+     - ammunition      — missile damage types + missile contact modifiers
+                         (co-located with the ammo icon because they describe
+                          the projectile, not the raw damage number)."
   [stats decoded]
-  (let [w-dmg  (get decoded "weapon_damage")
-        w-ap   (get decoded "weapon_ap_damage")
-        m-base (get decoded "missile_base_damage")
-        m-ap   (get decoded "missile_ap_damage")]
+  (let [w-dmg      (get decoded "weapon_damage")
+        w-ap       (get decoded "weapon_ap_damage")
+        m-base     (get decoded "missile_base_damage")
+        m-ap       (get decoded "missile_ap_damage")
+        bonus-inf  (get decoded "bonus_vs_infantry")
+        bonus-lg   (get decoded "bonus_vs_large")
+        melee-type (or (get decoded "melee_attack_types") [])
+        miss-type  (or (get decoded "missile_damage_types") [])
+        melee-mods (or (get decoded "melee_modifiers") [])
+        miss-mods  (or (get decoded "missile_modifiers") [])
+        bonus-mods (cond-> []
+                     (and bonus-inf (pos? bonus-inf)) (conj "bonus-vs-infantry")
+                     (and bonus-lg (pos? bonus-lg))   (conj "bonus-vs-large"))
+        w-tip      (damage-tooltip w-dmg w-ap bonus-inf bonus-lg "dmg")
+        m-tip      (damage-tooltip m-base m-ap bonus-inf bonus-lg "base")]
     (mapv (fn [{:keys [stat] :as s}]
-            (cond
-              (and (= stat "weapon strength") w-dmg w-ap)
-              (assoc s :tooltip (str w-dmg " dmg · " w-ap " AP"))
-              (and (= stat "missile damage") m-base m-ap)
-              (assoc s :tooltip (str m-base " base · " m-ap " AP"))
-              :else s))
+            (cond-> s
+              (and (= stat "weapon strength") w-tip)
+              (assoc :tooltip w-tip)
+              (and (= stat "missile damage") m-tip)
+              (assoc :tooltip m-tip)
+              (and (= stat "melee attack") (seq melee-type))
+              (assoc :damage-types (vec melee-type))
+              (and (= stat "melee attack") (seq melee-mods))
+              (assoc :attack-modifiers (vec melee-mods))
+              (and (= stat "weapon strength") (seq bonus-mods))
+              (assoc :attack-modifiers bonus-mods)
+              (and (= stat "ammunition") (seq miss-type))
+              (assoc :damage-types (vec miss-type))
+              (and (= stat "ammunition") (seq miss-mods))
+              (assoc :attack-modifiers (vec miss-mods))))
           stats)))
 
 (defn parse-unit-statistics
@@ -69,7 +112,14 @@
      :barrier          (let [b (get decoded "barrier")] (when (and b (pos? b)) b))
      :abilities        (get decoded "abilities")
      :draftable-spells (mapv #(get % "key") (get decoded "draftable-spells"))
-     :equipment        (get decoded "equipment")}))
+     :equipment        (get decoded "equipment")
+     :attributes       (mapv (fn [k]
+                               {:key   k
+                                :icon  (str/replace k "_" "-")
+                                :label (->> (str/split k #"_")
+                                            (map str/capitalize)
+                                            (str/join " "))})
+                             (or (get decoded "attributes") []))}))
 
 ;; ─── Stat percentages ─────────────────────────────────────────────────────────
 
@@ -77,13 +127,13 @@
   {"armor"           100.0
    "armour"          100.0
    "leadership"      100.0
-   "speed"            60.0
+   "speed"           140.0
    "melee attack"     60.0
    "melee defence"    60.0
    "weapon strength" 700.0
    "charge bonus"     60.0
    "missile damage"  300.0
-   "health"         1000.0
+   "health"        12000.0
    "barrier"        1000.0})
 
 (defn- add-stat-percentage
@@ -326,7 +376,7 @@
         draft               (db/get-draft-by-eid conn draft-eid)
         game-mode           (db/get-game-mode-by-eid conn (:game-mode-eid draft))
         unit                (db/get-unit-by-eid conn unit-eid)
-        {:keys [stats health barrier abilities draftable-spells]} (parse-unit-statistics (:unit-statistics unit))
+        {:keys [stats health barrier abilities draftable-spells attributes]} (parse-unit-statistics (:unit-statistics unit))
         unit-statistics     (mapv add-stat-percentage stats)
         ability-by-key      (db/get-abilities-by-keys conn abilities)
         all-abilities       (into []
@@ -351,6 +401,7 @@
                                     :unit-statistics     unit-statistics
                                     :health              health
                                     :barrier             barrier
+                                    :attributes          (vec attributes)
                                     :parsed-abilities    all-abilities
                                     :passive-abilities   passive-abilities
                                     :draftable-abilities draftable-abilities)
