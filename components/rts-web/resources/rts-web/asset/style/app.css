@@ -904,20 +904,57 @@ a:hover:has(img) {
 }
 
 .draft-stat-bar-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 24px 44px 2.5rem 1fr;
   align-items: center;
   gap: var(--space-2);
 }
 
-.draft-stat-label {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-  text-transform: capitalize;
-  flex: 1;
+.draft-stat-mods {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: flex-start;
   min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+.draft-stat-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
+  cursor: help;
+}
+
+.draft-stat-type-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
+  cursor: help;
+}
+
+.draft-attribute-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  margin: 0;
+  list-style: none;
+}
+
+.draft-attribute-item {
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+}
+
+.draft-attribute-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
+  cursor: help;
 }
 
 .draft-stat-value {
@@ -930,12 +967,10 @@ a:hover:has(img) {
 }
 
 .draft-stat-bar {
-  width: 4.5rem;
   height: 3px;
   background: #2a1e18;
   border-radius: 2px;
   overflow: hidden;
-  flex-shrink: 0;
 }
 
 .draft-stat-bar-fill {
@@ -944,40 +979,6 @@ a:hover:has(img) {
   background: #8b2020;
   border-radius: 2px;
   transition: width 250ms ease;
-}
-
-/* Stat value with damage-breakdown tooltip */
-.draft-stat-value-tip {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  cursor: default;
-  border-bottom: 1px dashed #5a3820;
-}
-
-.draft-stat-tip-popup {
-  display: none;
-  position: absolute;
-  right: 0;
-  bottom: calc(100% + 4px);
-  white-space: nowrap;
-  background: #1e1208;
-  border: 1px solid #4a2e18;
-  border-radius: var(--radius-sm);
-  padding: 3px var(--space-2);
-  font-size: 0.6rem;
-  font-family: var(--font-family-heading);
-  color: #c8a84b;
-  letter-spacing: 0.04em;
-  box-shadow: 0 2px 8px #000a;
-  z-index: 10;
-  pointer-events: none;
-}
-
-.draft-stat-value-tip:hover .draft-stat-tip-popup,
-.draft-stat-value-tip:focus .draft-stat-tip-popup {
-  display: block;
 }
 
 /* Future (locked) sections */

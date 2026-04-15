@@ -32,6 +32,9 @@
 (def ^:private mount-icon-asset-dir
   "components/rts-web/resources/rts-web/asset/icon/mount")
 
+(def ^:private stat-icon-asset-dir
+  "components/rts-web/resources/rts-web/asset/icon/stat")
+
 (def ^:private cli-options
   [["-d" "--data-dir DIR" "Directory containing RPFM-decoded JSON table files."
     :id :data-dir]
@@ -41,6 +44,8 @@
     :id :item-icons-dir]
    [nil "--mount-icons-dir DIR" "Extraction root containing ui/ for mount icons."
     :id :mount-icons-dir]
+   [nil "--stat-icons-dir DIR" "Extraction root containing ui/skins/default/ for stat icons."
+    :id :stat-icons-dir]
    [nil "--unit-cards-dir DIR" "Directory containing extracted unit card PNGs."
     :id :unit-cards-dir]
    [nil "--portraits-dir DIR" "Directory containing extracted portrait PNGs."
@@ -89,10 +94,14 @@
                              (:rows (rpfm/parse-rpfm-table (p "battlefield_engines_tables.json"))))
           _ (logf "  battlefield engines: %d" (count engine-entity-map))
 
+          attribute-group-map (tables/build-attribute-group-map
+                               (:rows (rpfm/parse-rpfm-table (p "unit_attributes_to_groups_junctions_tables.json"))))
+          _ (logf "  unit attribute groups: %d" (count attribute-group-map))
+
           land-unit-stats (tables/build-land-unit-map
                            (:rows (rpfm/parse-rpfm-table (p "land_units_tables.json")))
                            armour-map entity-map melee-map missile-wep-map projectile-map
-                           mount-entity-map engine-entity-map)
+                           mount-entity-map engine-entity-map attribute-group-map)
           _ (logf "  land units: %d" (count land-unit-stats))
 
           main-unit-rows (:rows (rpfm/parse-rpfm-table (p "main_units_tables.json")))
@@ -252,7 +261,7 @@
       (spit (io/file seed-dir "seed-unit-mounts.sql") content))))
 
 (defn- copy-assets! [data opts]
-  (let [{:keys [unit-cards-dir portraits-dir icons-dir item-icons-dir mount-icons-dir dry-run]} opts]
+  (let [{:keys [unit-cards-dir portraits-dir icons-dir item-icons-dir mount-icons-dir stat-icons-dir dry-run]} opts]
     (when (or unit-cards-dir portraits-dir)
       (log "Copying and trimming unit cards...")
       (let [pairs (assets/build-unit-name-eid-map seed-dir)]
@@ -289,7 +298,11 @@
           (assets/copy-mount-icons mount-icons-dir mount-icon-asset-dir
                                    (:ancillaries-rows data)
                                    (:ancillary-type-icon-map data) dry-run))
-      (log "  [mount icons] --mount-icons-dir not provided, skipping mount icon copy"))))
+      (log "  [mount icons] --mount-icons-dir not provided, skipping mount icon copy"))
+    (if stat-icons-dir
+      (do (log "Copying and trimming stat icons...")
+          (assets/copy-stat-icons stat-icons-dir stat-icon-asset-dir dry-run))
+      (log "  [stat icons] --stat-icons-dir not provided, skipping stat icon copy"))))
 
 (defn- run [opts]
   (let [data (load-tables (:data-dir opts))

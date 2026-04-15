@@ -177,6 +177,81 @@
       (log (format "  [portraits] %d units with no matching portrait (e.g. %s)"
                    (count @no-portrait) (pr-str (take 5 @no-portrait)))))))
 
+(def stat-icon-sources
+  "Maps the domain's stat slug (kebab-case, matches draft.clj stat-entry :icon)
+  to the CA icon relative path under stat-icons-dir (the extraction root
+  containing ui/). Core stat icons + damage types + attack modifiers +
+  unit attributes are all staged into asset/icon/stat/<slug>.png."
+  (merge
+   ;; Core stat row icons (ui/skins/default/)
+   {"unit-size"       "ui/skins/default/icon_mancount.png"
+    "armor"           "ui/skins/default/icon_stat_armour.png"
+    "leadership"      "ui/skins/default/icon_stat_morale.png"
+    "speed"           "ui/skins/default/icon_stat_speed.png"
+    "melee-attack"    "ui/skins/default/icon_stat_attack.png"
+    "melee-defence"   "ui/skins/default/icon_stat_defence.png"
+    "weapon-strength" "ui/skins/default/icon_stat_damage_base.png"
+    "charge-bonus"    "ui/skins/default/icon_stat_charge_bonus.png"
+    "ammunition"      "ui/skins/default/icon_stat_ammo.png"
+    "range"           "ui/skins/default/icon_stat_range.png"
+    "missile-damage"  "ui/skins/default/icon_stat_ranged_damage_base.png"
+    "health"          "ui/skins/default/icon_stat_health.png"}
+   ;; Damage types + attack modifiers (ui/skins/default/modifier_icon_*.png)
+   (into {}
+         (for [k ["armour_break" "armour_piercing" "armour_piercing_ranged"
+                  "blinded" "blood" "bonus_vs_infantry" "bonus_vs_large"
+                  "dazed" "directional_shield" "flaming" "flammable"
+                  "frostbite" "frostfire" "magical" "overhead_morale"
+                  "poison" "shield" "sotek_poison" "soulblight"
+                  "suppressive_fire" "witch_elf_poison" "zzzzap"]]
+           [(clojure.string/replace k "_" "-")
+            (str "ui/skins/default/modifier_icon_" k ".png")]))
+   ;; Unit attributes (ui/battle ui/ability_icons/<key>.png).
+   ;; Not every attribute has a matching PNG — the copier logs any misses.
+   (into {}
+         (for [k ["always_flying" "armoured_vehicle" "ballistic_plating"
+                  "boar_cavalry" "bound_fire_daemon" "can_block_missiles_360"
+                  "cannot_die" "cant_run" "causes_fear" "causes_terror"
+                  "charge_defense" "charge_defense_vs_large" "charge_reflection"
+                  "construct" "contempt" "daemonic" "devastating_flanker"
+                  "disciplined" "elemental" "encourages" "executor" "expendable"
+                  "fanatic" "fatigue_immune" "fatigue_res" "flanking_immune"
+                  "flying" "force_rally" "formed_attack" "glorious_charge"
+                  "goblin_infantry" "gorger" "guerrilla_deploy" "gunship"
+                  "hellforged" "hide_forest" "ignore_imbue_contact_effects_ally"
+                  "ignore_imbue_contact_effects_enemy" "ignore_trees"
+                  "immune_to_psychology" "invulnerable"
+                  "invulnerable_to_effects_ally" "invulnerable_to_effects_enemy"
+                  "knight" "kroxigor" "mark_khorne" "mark_nurgle"
+                  "mark_slaanesh" "mark_tzeentch" "melee_disabled"
+                  "moulder_monster" "mounted_fire_move" "nasty_skulker"
+                  "night_goblin_archer" "ogre_charge" "ogre_charge_upgraded"
+                  "orc_infantry" "peasant" "rampage" "randomises_spells_on_cast"
+                  "revealed" "shoot_disabled" "silenced" "skink" "slayer"
+                  "snipe" "spell_mastery" "spider" "squig" "squig_herd"
+                  "stalk" "strider" "troll" "unbreakable" "undead" "underground"
+                  "unspottable" "unyielding_assault" "wallbreaker" "yang" "yin"]]
+           [(clojure.string/replace k "_" "-")
+            (str "ui/battle ui/ability_icons/" k ".png")]))))
+
+(defn copy-stat-icons
+  "Copy stat-icons-dir/<ca-relative>.png → asset-dir/<slug>.png for every
+  entry in stat-icon-sources. stat-icons-dir is the extraction root staged
+  from mcp__rpfm extract_packed_files (contains ui/)."
+  [stat-icons-dir asset-dir dry-run?]
+  (let [copied      (atom 0)
+        missing-src (atom [])]
+    (doseq [[slug rel-path] stat-icon-sources]
+      (let [src (io/file stat-icons-dir rel-path)]
+        (if (.isFile src)
+          (do (copy-and-trim! src (io/file asset-dir (str slug ".png")) dry-run?)
+              (swap! copied inc))
+          (swap! missing-src conj rel-path))))
+    (log (format "  [stat icons] copied+trimmed %d icons" @copied))
+    (when (seq @missing-src)
+      (log (format "  [stat icons] %d source PNGs not found (e.g. %s)"
+                   (count @missing-src) (pr-str (take 3 @missing-src)))))))
+
 (defn copy-ability-icons
   "Copy icons-dir/<icon>.png → asset-dir/<eid>.png for every ability with an
   icon_name, then trim transparent borders."
