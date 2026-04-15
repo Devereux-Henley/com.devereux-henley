@@ -89,12 +89,29 @@
             <div class="draft-stat-rows">
                 {% for stat in data.unit.unit-statistics %}
                 <div class="draft-stat-bar-row">
-                    <span class="draft-stat-label">{{stat.stat}}</span>
+                    <img class="draft-stat-icon"
+                         src="/icon/stat/{{stat.icon}}.png"
+                         alt="{{stat.stat}}"
+                         title="{{stat.stat}}"
+                         aria-label="{{stat.stat}}">
+                    <div class="draft-stat-mods">
+                        {% for type in stat.damage-types %}
+                        <img class="draft-stat-type-icon"
+                             src="/icon/stat/{{type}}.png"
+                             alt="{{type}}"
+                             title="{{type}}"
+                             aria-label="{{type}} damage">
+                        {% endfor %}
+                        {% for mod in stat.attack-modifiers %}
+                        <img class="draft-stat-type-icon"
+                             src="/icon/stat/{{mod}}.png"
+                             alt="{{mod}}"
+                             title="{{mod}}"
+                             aria-label="{{mod}} modifier">
+                        {% endfor %}
+                    </div>
                     {% if stat.tooltip %}
-                    <span class="draft-stat-value-tip" tabindex="0">
-                        <span class="draft-stat-value">{{stat.value}}</span>
-                        <span class="draft-stat-tip-popup" role="tooltip">{{stat.tooltip}}</span>
-                    </span>
+                    <span class="draft-stat-value" title="{{stat.tooltip}}" aria-label="{{stat.stat}}, {{stat.value}}, {{stat.tooltip}}">{{stat.value}}</span>
                     {% else %}
                     <span class="draft-stat-value">{{stat.value}}</span>
                     {% endif %}
@@ -105,6 +122,23 @@
                 {% endfor %}
             </div>
         </section>
+
+        {% if data.unit.attributes|not-empty? %}
+        <section class="draft-stats-section unit-panel" aria-labelledby="panel-attributes-heading">
+            <h4 class="unit-panel-heading" id="panel-attributes-heading">Attributes</h4>
+            <ul class="draft-attribute-list" aria-label="Unit attributes for {{data.unit.name}}">
+                {% for attr in data.unit.attributes %}
+                <li class="draft-attribute-item">
+                    <img class="draft-attribute-icon"
+                         src="/icon/stat/{{attr.icon}}.png"
+                         alt="{{attr.label}}"
+                         title="{{attr.label}}"
+                         aria-label="{{attr.label}}">
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
 
         {% if data.unit.draftable-abilities|not-empty? %}
         <section class="draft-stats-section unit-panel" aria-labelledby="panel-abilities-heading">

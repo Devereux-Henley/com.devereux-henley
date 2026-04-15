@@ -105,9 +105,12 @@
   (schema.contract/to-schema
    [:map
     [:stat :string]
+    [:icon :string]
     [:value :any]
     [:percentage :int]
-    [:tooltip {:optional true} [:maybe :string]]]))
+    [:tooltip {:optional true} [:maybe :string]]
+    [:damage-types {:optional true} [:sequential :string]]
+    [:attack-modifiers {:optional true} [:sequential :string]]]))
 
 (def draft-item
   (schema.contract/to-schema
@@ -182,6 +185,11 @@
       [:health {:optional true} [:maybe :int]]
       [:barrier {:optional true} [:maybe :int]]
       [:unit-statistics [:sequential draft-unit-stat]]
+      [:attributes {:optional true}
+       [:sequential [:map
+                     [:key :string]
+                     [:icon :string]
+                     [:label :string]]]]
       [:parsed-abilities {:optional true} [:sequential draft-ability]]
       [:passive-abilities {:optional true} [:sequential draft-ability]]
       [:draftable-abilities {:optional true} [:sequential draft-ability]]]]]))

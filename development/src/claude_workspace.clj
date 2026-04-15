@@ -5,7 +5,13 @@
    [com.devereux-henley.rts-data.contract :as rts-data]
    [com.devereux-henley.rts-api.db :as rts-db]
    [integrant.repl :refer [go halt reset]]
-   [migratus.core :as migratus]))
+   [migratus.core :as migratus]
+   [selmer.parser]))
+
+;; Disable Selmer template caching at namespace load so REPL-driven dev picks
+;; up template edits without needing a manual cache clear. Production code
+;; paths re-enable caching via their own startup.
+(selmer.parser/cache-off!)
 
 ;; -- System helpers ----------------------------------------------------------
 
