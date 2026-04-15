@@ -176,33 +176,13 @@
     [:selected {:optional true} :boolean]
     [:icon-key {:optional true} [:maybe :string]]]))
 
-(def draft-unit-details
-  "The nested :unit map carried by draft-unit-resource and draft-entry-resource:
-   game-unit fields + parsed stats/abilities that the draft UI renders."
-  [:map
-   [:eid :uuid]
-   [:game-eid :uuid]
-   [:name :string]
-   [:description :string]
-   [:unit-type-name :string]
-   [:unit-category-name :string]
-   [:cost [:maybe :int]]
-   [:health {:optional true} [:maybe :int]]
-   [:barrier {:optional true} [:maybe :int]]
-   [:unit-statistics [:sequential draft-unit-stat]]
-   [:attributes {:optional true}
-    [:sequential [:map
-                  [:key :string]
-                  [:icon :string]
-                  [:label :string]]]]
-   [:parsed-abilities {:optional true} [:sequential draft-ability]]
-   [:passive-abilities {:optional true} [:sequential draft-ability]]
-   [:draftable-abilities {:optional true} [:sequential draft-ability]]])
-
 (def draft-unit-resource
-  "Unit details scoped to a draft — what you get back when asking for a unit
-   that is a candidate for addition. :eid is the unit's eid (the resource
-   identity); :draft-eid links to the parent draft."
+  "A unit viewed in the context of a specific draft — the full game-unit
+   fields (name, stats, abilities, attributes, health/barrier) merged with
+   the per-draft option catalog (items, mounts, draftable spells) and a
+   flag for whether reinforcements are enabled for the enclosing game mode.
+   The resource's :eid is the unit's own eid; :draft-eid links to the
+   parent draft."
   (malli.util/merge
    schema.contract/base-resource
    (schema.contract/to-schema
@@ -210,24 +190,44 @@
      [:eid {:model/link :draft-unit/by-eid} :uuid]
      [:type [:= :draft/unit]]
      [:draft-eid {:model/link :draft/by-eid} :uuid]
-     [:reinforcements-enabled :boolean]
+     [:game-eid {:model/link :game/by-eid} :uuid]
+     [:name :string]
+     [:description :string]
+     [:unit-type-name :string]
+     [:unit-category-name :string]
+     [:cost [:maybe :int]]
+     [:health {:optional true} [:maybe :int]]
+     [:barrier {:optional true} [:maybe :int]]
+     [:unit-statistics [:sequential draft-unit-stat]]
+     [:attributes {:optional true}
+      [:sequential [:map
+                    [:key :string]
+                    [:icon :string]
+                    [:label :string]]]]
+     [:parsed-abilities {:optional true} [:sequential draft-ability]]
+     [:passive-abilities {:optional true} [:sequential draft-ability]]
+     [:draftable-abilities {:optional true} [:sequential draft-ability]]
      [:items {:optional true} [:sequential draft-item]]
      [:mounts {:optional true} [:sequential draft-mount]]
      [:passive-spells {:optional true} [:sequential draft-spell]]
      [:draftable-spells {:optional true} [:sequential draft-spell]]
      [:has-passives {:optional true} :boolean]
+     [:validation {:optional true}
+      [:map
+       [:can-add-to-reinforcements? :boolean]]]
      [:_links
       [:map
        [:self :url]
-       [:draft :url]]]
-     [:unit draft-unit-details]])))
+       [:draft :url]]]])))
 
 (def draft-entry-resource
-  "Unit details for an already-placed draft entry. :eid is the entry's eid
-   (the resource identity); :draft-eid links to the parent draft; :unit-eid
-   links to the game unit. The game-unit details are embedded under
-   :_embedded.unit (always populated — the UI expects it). Entry addressing
-   (:section, :mount) and pre-marked :selected flags live at the root."
+  "A placed draft entry — addressing (entry eid, draft-eid, unit-eid,
+   section) plus the selection state the player has stored on this entry
+   (:mount, :abilities, :spells, :items as key lists). Clients that want
+   the game unit's catalog data request it via `?embed=unit`, which
+   populates :_embedded.unit with a full draft-unit-resource whose
+   draftable options carry :selected flags pre-marked from the entry's
+   stored selections."
   (malli.util/merge
    schema.contract/base-resource
    (schema.contract/to-schema
@@ -238,11 +238,9 @@
      [:unit-eid {:model/link :draft-unit/by-eid} :uuid]
      [:section [:enum "main" "reinforcements"]]
      [:mount {:optional true} [:maybe :string]]
-     [:items {:optional true} [:sequential draft-item]]
-     [:mounts {:optional true} [:sequential draft-mount]]
-     [:passive-spells {:optional true} [:sequential draft-spell]]
-     [:draftable-spells {:optional true} [:sequential draft-spell]]
-     [:has-passives {:optional true} :boolean]
+     [:abilities {:optional true} [:sequential :string]]
+     [:spells {:optional true} [:sequential :string]]
+     [:items {:optional true} [:sequential :string]]
      [:_links
       [:map
        [:self :url]
@@ -250,7 +248,7 @@
        [:unit :url]]]
      [:_embedded {:optional true}
       [:map
-       [:unit {:optional true} draft-unit-details]]]])))
+       [:unit {:optional true} draft-unit-resource]]]])))
 
 (def draft-section-unit
   "A unit as it appears inside a rendered draft section: just enough fields

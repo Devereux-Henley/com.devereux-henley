@@ -392,9 +392,10 @@
 ;; ─── Composite domain operations ──────────────────────────────────────────────
 
 (defn get-draft-unit-details
-  "Returns a :draft/unit response map for a unit in the context of a draft, including
-   parsed stat percentages, resolved ability descriptions, available items, draftable
-   spells, and whether reinforcements are enabled.
+  "Returns a flat :draft/unit resource for a unit in the context of a draft:
+   unit identity/stats/abilities merged with the per-draft option catalog
+   (items, mounts, draftable spells, passive spells) and a flag for whether
+   reinforcements are enabled for the enclosing game mode.
 
    Abilities and spells are split into two groups by cost:
      - passive (cost = 0): always on the character; shown in a readonly section
@@ -424,21 +425,22 @@
         draftable-spells-v  (filterv #(pos? (:cost %)) all-spells)
         items               (db/get-items-for-unit conn unit-eid)
         mounts              (db/get-mounts-for-unit conn unit-eid)]
-    {:type                   :draft/unit
-     :unit                   (assoc unit
-                                    :unit-statistics     unit-statistics
-                                    :health              health
-                                    :barrier             barrier
-                                    :attributes          (vec attributes)
-                                    :parsed-abilities    all-abilities
-                                    :passive-abilities   passive-abilities
-                                    :draftable-abilities draftable-abilities)
-     :items                  items
-     :mounts                 mounts
-     :passive-spells         passive-spells
-     :draftable-spells       draftable-spells-v
-     :draft-eid              draft-eid
-     :reinforcements-enabled (= 1 (:reinforcements-enabled game-mode))}))
+    (assoc unit
+           :type                :draft/unit
+           :draft-eid           draft-eid
+           :unit-statistics     unit-statistics
+           :health              health
+           :barrier             barrier
+           :attributes          (vec attributes)
+           :parsed-abilities    all-abilities
+           :passive-abilities   passive-abilities
+           :draftable-abilities draftable-abilities
+           :items               items
+           :mounts              mounts
+           :passive-spells      passive-spells
+           :draftable-spells    draftable-spells-v
+           :has-passives        (boolean (or (seq passive-abilities) (seq passive-spells)))
+           :validation          {:can-add-to-reinforcements? (= 1 (:reinforcements-enabled game-mode))})))
 
 (defn- mark-selected
   "Returns options with :selected true/false set from whether each :key is in selected-keys."
@@ -448,41 +450,39 @@
 (declare get-draft-entry)
 
 (defn get-draft-entry-details
-  "Returns a slim :draft/entry resource for a placed entry in the given
-   section — addressing fields at root, no embedded unit. The entry's stored
-   selections pre-mark :selected on draftable spells and items. Clients that
-   want the full game unit request it via `?embed=unit`, which runs
-   embed-unit-for-entry to populate :_embedded.unit."
+  "Returns a truly slim :draft/entry resource for a placed entry: just
+   addressing fields (eid, draft-eid, unit-eid, section) and the selection
+   state the player has stored on the entry as raw key lists (:mount,
+   :abilities, :spells, :items). Clients that want the unit's catalog
+   fetch it via `?embed=unit`, which runs embed-unit-for-entry."
   [dependencies draft-eid entry-eid section]
-  (let [entry (get-draft-entry dependencies draft-eid entry-eid section)]
-    (when entry
-      (let [details   (get-draft-unit-details dependencies draft-eid (:unit-eid entry))
-            spell-set (set (:spells entry))
-            item-set  (set (:items entry))]
-        (-> details
-            (dissoc :reinforcements-enabled :unit)
-            (assoc :type     :draft/entry
-                   :eid      (:entry-eid entry)
-                   :unit-eid (:unit-eid entry)
-                   :section  section
-                   :mount    (:mount entry))
-            (update :draftable-spells mark-selected spell-set)
-            (update :items mark-selected item-set))))))
+  (when-let [entry (get-draft-entry dependencies draft-eid entry-eid section)]
+    {:type      :draft/entry
+     :eid       (:entry-eid entry)
+     :draft-eid draft-eid
+     :unit-eid  (:unit-eid entry)
+     :section   section
+     :mount     (:mount entry)
+     :abilities (vec (:abilities entry))
+     :spells    (vec (:spells entry))
+     :items     (vec (:items entry))}))
 
 (defn embed-unit-for-entry
   "Embed function for the `unit` embed on a draft-entry-resource. Loads the
-   game unit for the entry's unit-eid and marks :selected on draftable
-   abilities based on the entry's stored ability keys, then assocs the result
-   under [:_embedded :unit]."
+   draft-scoped unit resource for the entry's unit-eid and marks :selected
+   on draftable abilities, draftable spells, items, and mounts based on the
+   entry's stored selection key lists, then assocs the result under
+   [:_embedded :unit]."
   [dependencies entry-resource]
-  (let [draft-eid   (:draft-eid entry-resource)
-        stored      (get-draft-entry dependencies
-                                     draft-eid
-                                     (:eid entry-resource)
-                                     (:section entry-resource))
-        ability-set (set (:abilities stored))
-        details     (get-draft-unit-details dependencies draft-eid (:unit-eid entry-resource))
-        unit        (update (:unit details) :draftable-abilities mark-selected ability-set)]
+  (let [ability-set (set (:abilities entry-resource))
+        spell-set   (set (:spells entry-resource))
+        item-set    (set (:items entry-resource))
+        unit        (-> (get-draft-unit-details dependencies
+                                                (:draft-eid entry-resource)
+                                                (:unit-eid entry-resource))
+                        (update :draftable-abilities mark-selected ability-set)
+                        (update :draftable-spells mark-selected spell-set)
+                        (update :items mark-selected item-set))]
     (assoc-in entry-resource [:_embedded :unit] unit)))
 
 (defn add-unit-to-draft

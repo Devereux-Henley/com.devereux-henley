@@ -467,7 +467,7 @@
     (let [result (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)]
       (is (= test-draft-eid (:draft-eid result))))))
 
-(deftest get-draft-unit-details-sets-reinforcements-enabled-from-game-mode
+(deftest get-draft-unit-details-sets-can-add-to-reinforcements-from-game-mode
   (with-redefs [data-access.contract/get-draft-by-eid      (fn [_ _] test-draft)
                 data-access.contract/get-game-mode-by-eid  (fn [_ _] test-game-mode)
                 data-access.contract/get-unit-by-eid       (fn [_ _] infantry-unit)
@@ -475,9 +475,10 @@
                 data-access.contract/get-spells-by-keys    (fn [_ _] {})
                 data-access.contract/get-items-for-unit    (fn [_ _] [])
                 data-access.contract/get-mounts-for-unit   (fn [_ _] [])]
-    (is (true? (:reinforcements-enabled (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid))))))
+    (is (true? (get-in (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)
+                       [:validation :can-add-to-reinforcements?])))))
 
-(deftest get-draft-unit-details-sets-reinforcements-disabled-when-zero
+(deftest get-draft-unit-details-disables-reinforcements-when-game-mode-zero
   (with-redefs [data-access.contract/get-draft-by-eid      (fn [_ _] test-draft)
                 data-access.contract/get-game-mode-by-eid  (fn [_ _] (assoc test-game-mode :reinforcements-enabled 0))
                 data-access.contract/get-unit-by-eid       (fn [_ _] infantry-unit)
@@ -485,4 +486,5 @@
                 data-access.contract/get-spells-by-keys    (fn [_ _] {})
                 data-access.contract/get-items-for-unit    (fn [_ _] [])
                 data-access.contract/get-mounts-for-unit   (fn [_ _] [])]
-    (is (false? (:reinforcements-enabled (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid))))))
+    (is (false? (get-in (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)
+                        [:validation :can-add-to-reinforcements?])))))

@@ -4,19 +4,6 @@
    [com.devereux-henley.rts-domain.contract :as domain]
    [integrant.core]))
 
-(defn- attach-has-passives
-  [details]
-  (assoc details
-         :has-passives
-         (boolean (or (seq (get-in details [:unit :passive-abilities]))
-                      (seq (:passive-spells details))))))
-
-(defn- promote-unit-eid
-  "Copies the nested `:unit.eid` up to the resource root as `:eid` so the
-   draft-unit-resource's self-link lines up with the unit being viewed."
-  [details]
-  (assoc details :eid (get-in details [:unit :eid])))
-
 (def draft-entry-embed-registry
   "Registry of :embed keys → functions that enrich a draft-entry-resource.
    Clients opt into additional data via `?embed=<key>` on the GET."
@@ -36,9 +23,7 @@
     (web.core/handle-fetch-response
      domain/draft-unit-resource
      {:hostname (:hostname dependencies) :router router}
-     #(-> (domain/get-draft-unit-details dependencies draft-eid eid)
-          promote-unit-eid
-          attach-has-passives))))
+     #(domain/get-draft-unit-details dependencies draft-eid eid))))
 
 (defmethod integrant.core/init-key ::get-draft-entry
   [_init-key dependencies]
@@ -51,9 +36,7 @@
        domain/draft-entry-resource
        {:hostname (:hostname dependencies) :router router}
        #(if-let [details (domain/get-draft-entry-details dependencies draft-eid eid section)]
-          (->> details
-               attach-has-passives
-               (web.core/apply-embeds draft-entry-embed-registry dependencies embed-set))
+          (web.core/apply-embeds draft-entry-embed-registry dependencies embed-set details)
           {:type :missing/resource :name "draft-entry" :id eid})))))
 
 (defmethod integrant.core/init-key ::draft-add-unit
