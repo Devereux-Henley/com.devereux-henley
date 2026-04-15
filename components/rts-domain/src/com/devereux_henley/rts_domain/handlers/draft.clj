@@ -440,6 +440,35 @@
      :draft-eid              draft-eid
      :reinforcements-enabled (= 1 (:reinforcements-enabled game-mode))}))
 
+(defn- mark-selected
+  "Returns options with :selected true/false set from whether each :key is in selected-keys."
+  [options selected-keys]
+  (mapv (fn [opt] (assoc opt :selected (contains? selected-keys (:key opt)))) options))
+
+(declare get-draft-entry)
+
+(defn get-draft-entry-details
+  "Returns a :draft/entry response for a placed entry in the given section.
+   The unit details are looked up from the entry's unit-eid, then the entry's
+   stored selections pre-mark :selected on draftable abilities, spells, items,
+   and mounts. Entry addressing fields (:entry-eid, :section, :mount) live at
+   the response root — no nested :editing map."
+  [dependencies draft-eid entry-eid section]
+  (let [entry (get-draft-entry dependencies draft-eid entry-eid section)]
+    (when entry
+      (let [details     (get-draft-unit-details dependencies draft-eid (:unit-eid entry))
+            ability-set (set (:abilities entry))
+            spell-set   (set (:spells entry))
+            item-set    (set (:items entry))]
+        (-> details
+            (assoc :type      :draft/entry
+                   :entry-eid (:entry-eid entry)
+                   :section   section
+                   :mount     (:mount entry))
+            (update-in [:unit :draftable-abilities] mark-selected ability-set)
+            (update :draftable-spells mark-selected spell-set)
+            (update :items mark-selected item-set))))))
+
 (defn add-unit-to-draft
   "Validates and adds a unit to the specified section of a draft.
    selections: {:mount str-or-nil :abilities [ability-key] :spells [spell-key] :items [item-key]}
@@ -525,29 +554,6 @@
        :removed-entry-eid entry-eid
        :removed-is-lord   (boolean (:is-lord removed-unit))
        :budget            (section-budget section-ctx)})))
-
-(defn- mark-selected
-  "Returns options with :selected true/false set from whether each :key is in selected-keys."
-  [options selected-keys]
-  (mapv (fn [opt] (assoc opt :selected (contains? selected-keys (:key opt)))) options))
-
-(defn apply-editing
-  "Pre-populates :selected flags on draftable abilities, spells, items, and
-   mounts from the entry's stored selections, and attaches an :editing context
-   so web templates can render edit-mode affordances."
-  [details entry section]
-  (let [ability-set (set (:abilities entry))
-        spell-set   (set (:spells entry))
-        item-set    (set (:items entry))
-        section-lbl (if (= section "main") "Main Army" "Reinforcements")]
-    (-> details
-        (assoc :editing {:entry-eid     (:entry-eid entry)
-                         :section       section
-                         :section-label section-lbl
-                         :mount         (:mount entry)})
-        (update-in [:unit :draftable-abilities] mark-selected ability-set)
-        (update :draftable-spells mark-selected spell-set)
-        (update :items mark-selected item-set))))
 
 (defn get-draft-entry
   "Returns the state entry matching entry-eid in the given section, or nil."

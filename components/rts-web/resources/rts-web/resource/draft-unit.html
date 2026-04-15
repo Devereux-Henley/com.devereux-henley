@@ -2,8 +2,8 @@
     <form class="draft-stats-inner"
           hx-ext="json-enc"
           onsubmit="return false"
-          {% if data.editing %}
-          hx-patch="/api/draft/{{data.draft-eid}}/entry/{{data.editing.entry-eid}}?section={{data.editing.section}}"
+          {% if data.entry-eid %}
+          hx-patch="/api/draft/{{data.draft-eid}}/entry/{{data.entry-eid}}?section={{data.section}}"
           hx-trigger="change delay:400ms"
           hx-swap="none"
           {% endif %}>
@@ -28,8 +28,8 @@
 
         <div class="draft-stats-actions">
             <div id="draft-action-error" role="alert" aria-live="polite" hidden></div>
-            {% if data.editing %}
-            <p class="draft-editing-hint">Editing {{data.editing.section-label}} &mdash; changes save automatically.</p>
+            {% if data.entry-eid %}
+            <p class="draft-editing-hint">Editing {% ifequal data.section "main" %}Main Army{% else %}Reinforcements{% endifequal %} &mdash; changes save automatically.</p>
             {% else %}
             <button class="btn btn-primary draft-add-btn"
                     type="button"
@@ -204,7 +204,7 @@
                                type="radio"
                                name="mount"
                                value=""
-                               {% if not data.editing.mount %}checked{% endif %}
+                               {% if not data.mount %}checked{% endif %}
                                aria-label="No mount">
                         <span class="draft-option-name">No mount</span>
                     </label>
@@ -216,7 +216,7 @@
                                type="radio"
                                name="mount"
                                value="{{mount.key}}"
-                               {% ifequal data.editing.mount mount.key %}checked{% endifequal %}
+                               {% ifequal data.mount mount.key %}checked{% endifequal %}
                                aria-label="{{mount.name}} (+{{mount.cost}})">
                         <img class="draft-option-icon"
                              src="/icon/mount/{{mount.icon-key}}.png"

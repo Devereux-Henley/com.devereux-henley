@@ -153,14 +153,6 @@
     [:selected {:optional true} :boolean]
     [:icon-key {:optional true} [:maybe :string]]]))
 
-(def draft-editing-context
-  (schema.contract/to-schema
-   [:map
-    [:entry-eid :uuid]
-    [:section [:enum "main" "reinforcements"]]
-    [:section-label :string]
-    [:mount {:optional true} [:maybe :string]]]))
-
 (def draft-unit-response
   (schema.contract/to-schema
    [:map
@@ -172,7 +164,45 @@
     [:passive-spells {:optional true} [:sequential draft-spell]]
     [:draftable-spells {:optional true} [:sequential draft-spell]]
     [:has-passives {:optional true} :boolean]
-    [:editing {:optional true} [:maybe draft-editing-context]]
+    [:unit
+     [:map
+      [:eid :uuid]
+      [:game-eid :uuid]
+      [:name :string]
+      [:description :string]
+      [:unit-type-name :string]
+      [:unit-category-name :string]
+      [:cost [:maybe :int]]
+      [:health {:optional true} [:maybe :int]]
+      [:barrier {:optional true} [:maybe :int]]
+      [:unit-statistics [:sequential draft-unit-stat]]
+      [:attributes {:optional true}
+       [:sequential [:map
+                     [:key :string]
+                     [:icon :string]
+                     [:label :string]]]]
+      [:parsed-abilities {:optional true} [:sequential draft-ability]]
+      [:passive-abilities {:optional true} [:sequential draft-ability]]
+      [:draftable-abilities {:optional true} [:sequential draft-ability]]]]]))
+
+(def draft-entry-response
+  "The :draft/entry response — unit details for an already-placed entry, with
+   entry addressing (entry-eid, section, mount) merged at the root and :selected
+   flags pre-marked on draftable options. Same shape as draft-unit-response
+   otherwise."
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :draft/entry]]
+    [:draft-eid :uuid]
+    [:entry-eid :uuid]
+    [:section [:enum "main" "reinforcements"]]
+    [:mount {:optional true} [:maybe :string]]
+    [:reinforcements-enabled :boolean]
+    [:items {:optional true} [:sequential draft-item]]
+    [:mounts {:optional true} [:sequential draft-mount]]
+    [:passive-spells {:optional true} [:sequential draft-spell]]
+    [:draftable-spells {:optional true} [:sequential draft-spell]]
+    [:has-passives {:optional true} :boolean]
     [:unit
      [:map
       [:eid :uuid]

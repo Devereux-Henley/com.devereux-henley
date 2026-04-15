@@ -3,20 +3,28 @@
    [com.devereux-henley.rts-domain.contract :as domain]
    [integrant.core]))
 
+(defn- attach-has-passives
+  [details]
+  (assoc details
+         :has-passives
+         (boolean (or (seq (get-in details [:unit :passive-abilities]))
+                      (seq (:passive-spells details))))))
+
 (defmethod integrant.core/init-key ::get-draft-unit
   [_init-key dependencies]
   (fn [request]
-    (let [{{{:keys [eid unit-eid]}          :path
-            {:keys [section entry-eid]}      :query} :parameters} request
-          details       (domain/get-draft-unit-details dependencies eid unit-eid)
-          has-passives? (boolean
-                         (or (seq (get-in details [:unit :passive-abilities]))
-                             (seq (:passive-spells details))))
-          entry         (when (and section entry-eid)
-                          (domain/get-draft-entry dependencies eid entry-eid section))
-          body          (cond-> (assoc details :has-passives has-passives?)
-                          entry (domain/apply-editing entry section))]
-      {:status 200 :body body})))
+    (let [{{{:keys [eid unit-eid]} :path} :parameters} request
+          details (domain/get-draft-unit-details dependencies eid unit-eid)]
+      {:status 200 :body (attach-has-passives details)})))
+
+(defmethod integrant.core/init-key ::get-draft-entry
+  [_init-key dependencies]
+  (fn [request]
+    (let [{{{:keys [eid entry-eid]} :path
+            {:keys [section]}        :query} :parameters} request]
+      (if-let [details (domain/get-draft-entry-details dependencies eid entry-eid section)]
+        {:status 200 :body (attach-has-passives details)}
+        {:status 404 :body {:type :missing/resource :name "draft-entry" :id entry-eid}}))))
 
 (defmethod integrant.core/init-key ::draft-add-unit
   [_init-key dependencies]

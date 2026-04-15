@@ -132,11 +132,7 @@
             :parameters {:path  (schema.contract/to-schema
                                  [:map
                                   [:eid :uuid]
-                                  [:unit-eid :uuid]])
-                         :query (schema.contract/to-schema
-                                 [:map
-                                  [:section   {:optional true} [:enum "main" "reinforcements"]]
-                                  [:entry-eid {:optional true} :uuid]])}
+                                  [:unit-eid :uuid]])}
             :responses  {200 {:body domain/draft-unit-response}
                          500 {:body domain/draft-error-response}}
             :handler    (integrant.core/ref ::web.draft/get-draft-unit)}
@@ -158,7 +154,23 @@
                          500 {:body domain/draft-error-response}}
             :handler    (integrant.core/ref ::web.draft/draft-add-unit)}}]
    ["/draft/:eid/entry/:entry-eid"
-    {:patch  {:produces   ["application/json" "application/htmx+html"]
+    {:get    {:produces   ["application/json" "application/htmx+html"]
+              :openapi    {:summary      "Gets a placed draft entry with its unit details and selection state."
+                           :tags         ["draft"]
+                           :produces     ["application/json" "application/htmx+html"]
+                           :operation-id "draft-entry/get"}
+              :parameters {:path  (schema.contract/to-schema
+                                   [:map
+                                    [:eid :uuid]
+                                    [:entry-eid :uuid]])
+                           :query (schema.contract/to-schema
+                                   [:map
+                                    [:section [:enum "main" "reinforcements"]]])}
+              :responses  {200 {:body domain/draft-entry-response}
+                           404 {:body domain/draft-error-response}
+                           500 {:body domain/draft-error-response}}
+              :handler    (integrant.core/ref ::web.draft/get-draft-entry)}
+     :patch  {:produces   ["application/json" "application/htmx+html"]
               :openapi    {:summary      "Updates the selections of a placed draft entry."
                            :tags         ["draft"]
                            :produces     ["application/json" "application/htmx+html"]
