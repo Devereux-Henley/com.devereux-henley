@@ -50,6 +50,8 @@
             {% endif %}
             <a class="draft-details-link"
                href="/view/game/{{unit.game-eid}}/unit/{{unit.eid}}/index.html"
+               hx-target="body"
+               hx-swap="innerHTML"
                aria-label="View full details for {{unit.name}}">
                 View full details &rarr;
             </a>
