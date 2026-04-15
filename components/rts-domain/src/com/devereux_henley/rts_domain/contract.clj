@@ -67,6 +67,7 @@
 (def build-section-context                      handlers.draft/build-section-context)
 (def get-draft-unit-details                     handlers.draft/get-draft-unit-details)
 (def get-draft-entry-details                    handlers.draft/get-draft-entry-details)
+(def embed-unit-for-entry                       handlers.draft/embed-unit-for-entry)
 (def add-unit-to-draft                          handlers.draft/add-unit-to-draft)
 (def update-unit-in-draft                       handlers.draft/update-unit-in-draft)
 (def remove-unit-from-draft                     handlers.draft/remove-unit-from-draft)

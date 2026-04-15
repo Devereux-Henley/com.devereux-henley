@@ -3,7 +3,7 @@
         hx-preserve="true"
         type="button"
         aria-label="Edit {{unit.name}} in {{section.section-label}}"
-        hx-get="/api/draft/{{section.draft-eid}}/entry/{{unit.entry-eid}}?section={{section.section}}"
+        hx-get="/api/draft/{{section.draft-eid}}/entry/{{unit.entry-eid}}?section={{section.section}}&amp;embed=unit"
         hx-target="#draft-unit"
         hx-swap="outerHTML">
     <img class="draft-slot-card"

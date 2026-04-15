@@ -448,27 +448,42 @@
 (declare get-draft-entry)
 
 (defn get-draft-entry-details
-  "Returns a :draft/entry response for a placed entry in the given section.
-   The unit details are looked up from the entry's unit-eid, then the entry's
-   stored selections pre-mark :selected on draftable abilities, spells, items,
-   and mounts. Entry addressing fields (:eid, :section, :mount) live at the
-   response root — no nested :editing map."
+  "Returns a slim :draft/entry resource for a placed entry in the given
+   section — addressing fields at root, no embedded unit. The entry's stored
+   selections pre-mark :selected on draftable spells and items. Clients that
+   want the full game unit request it via `?embed=unit`, which runs
+   embed-unit-for-entry to populate :_embedded.unit."
   [dependencies draft-eid entry-eid section]
   (let [entry (get-draft-entry dependencies draft-eid entry-eid section)]
     (when entry
-      (let [details     (get-draft-unit-details dependencies draft-eid (:unit-eid entry))
-            ability-set (set (:abilities entry))
-            spell-set   (set (:spells entry))
-            item-set    (set (:items entry))]
+      (let [details   (get-draft-unit-details dependencies draft-eid (:unit-eid entry))
+            spell-set (set (:spells entry))
+            item-set  (set (:items entry))]
         (-> details
-            (dissoc :reinforcements-enabled)
-            (assoc :type    :draft/entry
-                   :eid     (:entry-eid entry)
-                   :section section
-                   :mount   (:mount entry))
-            (update-in [:unit :draftable-abilities] mark-selected ability-set)
+            (dissoc :reinforcements-enabled :unit)
+            (assoc :type     :draft/entry
+                   :eid      (:entry-eid entry)
+                   :unit-eid (:unit-eid entry)
+                   :section  section
+                   :mount    (:mount entry))
             (update :draftable-spells mark-selected spell-set)
             (update :items mark-selected item-set))))))
+
+(defn embed-unit-for-entry
+  "Embed function for the `unit` embed on a draft-entry-resource. Loads the
+   game unit for the entry's unit-eid and marks :selected on draftable
+   abilities based on the entry's stored ability keys, then assocs the result
+   under [:_embedded :unit]."
+  [dependencies entry-resource]
+  (let [draft-eid   (:draft-eid entry-resource)
+        stored      (get-draft-entry dependencies
+                                     draft-eid
+                                     (:eid entry-resource)
+                                     (:section entry-resource))
+        ability-set (set (:abilities stored))
+        details     (get-draft-unit-details dependencies draft-eid (:unit-eid entry-resource))
+        unit        (update (:unit details) :draftable-abilities mark-selected ability-set)]
+    (assoc-in entry-resource [:_embedded :unit] unit)))
 
 (defn add-unit-to-draft
   "Validates and adds a unit to the specified section of a draft.

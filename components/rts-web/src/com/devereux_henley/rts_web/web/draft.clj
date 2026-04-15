@@ -17,6 +17,17 @@
   [details]
   (assoc details :eid (get-in details [:unit :eid])))
 
+(def draft-entry-embed-registry
+  "Registry of :embed keys → functions that enrich a draft-entry-resource.
+   Clients opt into additional data via `?embed=<key>` on the GET."
+  {:unit domain/embed-unit-for-entry})
+
+(defn- parse-embed-set
+  "Normalises the `embed` query param (string, sequence of strings, or nil)
+   into a set of keywords that apply-embeds can consume."
+  [embed]
+  (some-> embed (as-> e (set (map keyword (if (string? e) [e] e))))))
+
 (defmethod integrant.core/init-key ::get-draft-unit
   [_init-key dependencies]
   (fn [{{{:keys [draft-eid eid]} :path} :parameters
@@ -31,16 +42,19 @@
 
 (defmethod integrant.core/init-key ::get-draft-entry
   [_init-key dependencies]
-  (fn [{{{:keys [draft-eid eid]} :path
-         {:keys [section]}       :query} :parameters
-        router                            :reitit.core/router
-        :as                               _request}]
-    (web.core/handle-fetch-response
-     domain/draft-entry-resource
-     {:hostname (:hostname dependencies) :router router}
-     #(if-let [details (domain/get-draft-entry-details dependencies draft-eid eid section)]
-        (attach-has-passives details)
-        {:type :missing/resource :name "draft-entry" :id eid}))))
+  (fn [{{{:keys [draft-eid eid]}    :path
+         {:keys [section embed]}    :query} :parameters
+        router                               :reitit.core/router
+        :as                                  _request}]
+    (let [embed-set (parse-embed-set embed)]
+      (web.core/handle-fetch-response
+       domain/draft-entry-resource
+       {:hostname (:hostname dependencies) :router router}
+       #(if-let [details (domain/get-draft-entry-details dependencies draft-eid eid section)]
+          (->> details
+               attach-has-passives
+               (web.core/apply-embeds draft-entry-embed-registry dependencies embed-set))
+          {:type :missing/resource :name "draft-entry" :id eid})))))
 
 (defmethod integrant.core/init-key ::draft-add-unit
   [_init-key dependencies]

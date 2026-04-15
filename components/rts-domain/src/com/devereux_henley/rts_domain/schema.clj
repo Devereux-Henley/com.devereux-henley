@@ -33,6 +33,29 @@
       [:map
        [:platform {:optional true} social-media-platform-resource]]]])))
 
+(def unit-summary
+  "Slim view of a game unit as it appears inside the faction-resource's
+   :_embedded.units-by-category groups — enough to identify, name, and link
+   to the full unit resource without dragging along unit-statistics JSON or
+   audit columns."
+  [:map
+   [:eid :uuid]
+   [:type {:optional true} [:= :game/unit]]
+   [:name {:min 1} :string]
+   [:description {:optional true} :string]
+   [:cost {:optional true} [:maybe :int]]
+   [:unit-type-name {:optional true} :string]
+   [:unit-category-name {:optional true} :string]
+   [:game-eid {:optional true} :uuid]
+   [:is-unique {:optional true} :int]])
+
+(def unit-category-group
+  "One group in a faction-resource's :_embedded.units-by-category — the
+   category label plus the units that belong to it."
+  [:map
+   [:category :string]
+   [:units [:sequential unit-summary]]])
+
 (def faction-resource
   (malli.util/merge
    schema.contract/base-resource
@@ -49,7 +72,7 @@
        [:game :url]]]
      [:_embedded {:optional true}
       [:map
-       [:units-by-category {:optional true} [:sequential :any]]]]])))
+       [:units-by-category {:optional true} [:sequential unit-category-group]]]]])))
 
 (def game-resource
   (malli.util/merge
@@ -201,9 +224,10 @@
 
 (def draft-entry-resource
   "Unit details for an already-placed draft entry. :eid is the entry's eid
-   (the resource identity); :draft-eid links to the parent draft. Entry
-   addressing fields (:section, :mount) live at the root with :selected flags
-   pre-marked on draftable options."
+   (the resource identity); :draft-eid links to the parent draft; :unit-eid
+   links to the game unit. The game-unit details are embedded under
+   :_embedded.unit (always populated — the UI expects it). Entry addressing
+   (:section, :mount) and pre-marked :selected flags live at the root."
   (malli.util/merge
    schema.contract/base-resource
    (schema.contract/to-schema
@@ -211,6 +235,7 @@
      [:eid {:model/link :draft-entry/by-eid} :uuid]
      [:type [:= :draft/entry]]
      [:draft-eid {:model/link :draft/by-eid} :uuid]
+     [:unit-eid {:model/link :draft-unit/by-eid} :uuid]
      [:section [:enum "main" "reinforcements"]]
      [:mount {:optional true} [:maybe :string]]
      [:items {:optional true} [:sequential draft-item]]
@@ -221,8 +246,11 @@
      [:_links
       [:map
        [:self :url]
-       [:draft :url]]]
-     [:unit draft-unit-details]])))
+       [:draft :url]
+       [:unit :url]]]
+     [:_embedded {:optional true}
+      [:map
+       [:unit {:optional true} draft-unit-details]]]])))
 
 (def draft-section-unit
   "A unit as it appears inside a rendered draft section: just enough fields

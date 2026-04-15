@@ -34,7 +34,7 @@
     :game/faction         "rts-web/resource/faction.html"
     :game/draft           "rts-web/resource/draft.html"
     :draft/unit           "rts-web/resource/draft-unit.html"
-    :draft/entry          "rts-web/resource/draft-unit.html"
+    :draft/entry          "rts-web/resource/draft-entry.html"
     :draft/add-success    "rts-web/resource/draft-add-success.html"
     :draft/add-error      "rts-web/resource/draft-add-error.html"
     :draft/update-success "rts-web/resource/draft-update-success.html"

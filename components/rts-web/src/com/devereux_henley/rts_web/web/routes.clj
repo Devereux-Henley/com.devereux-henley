@@ -167,7 +167,9 @@
                                     [:eid :uuid]])
                            :query (schema.contract/to-schema
                                    [:map
-                                    [:section [:enum "main" "reinforcements"]]])}
+                                    [:section [:enum "main" "reinforcements"]]
+                                    [:embed   {:optional true} [:or [:enum "unit"]
+                                                                [:sequential [:enum "unit"]]]]])}
               :responses  {200 {:body domain/draft-entry-resource}
                            404 {:body domain/draft-error-response}
                            500 {:body domain/draft-error-response}}
