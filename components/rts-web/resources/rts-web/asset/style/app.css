@@ -534,7 +534,7 @@ a:hover:has(img) {
 
 .draft-slot-card {
   width: 100%;
-  height: 100%;
+  height: 130px;
   object-fit: cover;
   display: block;
 }
@@ -612,7 +612,7 @@ a:hover:has(img) {
   to   { opacity: 1; transform: scale(1); }
 }
 
-.draft-slot--filled {
+.draft-slot--new {
   animation: slot-appear 180ms ease-out;
 }
 
@@ -777,12 +777,12 @@ a:hover:has(img) {
 .draft-stats-header {
   display: flex;
   gap: var(--space-3);
-  align-items: flex-start;
+  align-items: stretch;
 }
 
 .draft-stats-portrait {
   width: 4rem;
-  height: 5.5rem;
+  height: 130px;
   object-fit: cover;
   border-radius: var(--radius-sm);
   border: 1px solid #3a2818;
@@ -796,6 +796,8 @@ a:hover:has(img) {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  justify-content: space-between;
+  padding: var(--space-1) 0;
 }
 
 .draft-stats-name {
@@ -937,7 +939,7 @@ a:hover:has(img) {
   padding: var(--space-2) var(--space-3);
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 6px;
 }
 
 .draft-stat-bar-row {
@@ -945,6 +947,7 @@ a:hover:has(img) {
   grid-template-columns: 24px 44px 2.5rem 1fr;
   align-items: center;
   gap: var(--space-2);
+  min-height: 22px;
 }
 
 .draft-stat-mods {
@@ -1004,17 +1007,18 @@ a:hover:has(img) {
 }
 
 .draft-stat-bar {
-  height: 3px;
+  height: 6px;
   background: #2a1e18;
-  border-radius: 2px;
+  border-radius: 3px;
   overflow: hidden;
+  box-shadow: inset 0 1px 2px #000a;
 }
 
 .draft-stat-bar-fill {
   height: 100%;
   width: var(--pct, 0%);
-  background: #8b2020;
-  border-radius: 2px;
+  background: linear-gradient(90deg, #6a1818 0%, #a83030 60%, #c84040 100%);
+  border-radius: 3px;
   transition: width 250ms ease;
 }
 

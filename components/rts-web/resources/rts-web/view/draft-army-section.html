@@ -21,11 +21,13 @@
     </div>
     <div class="draft-slots" role="list" aria-label="{{section.section-label}} units">
         {% if section.is-main %}
-        <div class="draft-slot draft-slot--lord {% if section.lord-unit %}draft-slot--filled{% endif %}"
+        <div class="draft-slot draft-slot--lord {% if section.lord-unit %}draft-slot--filled{% endif %} {% if section.lord-unit.just-added? %}draft-slot--new{% endif %}"
              role="listitem"
              aria-label="Legendary Lord slot{% if not section.lord-unit %} — empty{% endif %}">
             {% if section.lord-unit %}
             <button class="draft-slot-card-button"
+                    id="draft-slot-card-{{section.lord-unit.entry-eid}}"
+                    hx-preserve="true"
                     type="button"
                     aria-label="Edit {{section.lord-unit.name}} in {{section.section-label}}"
                     hx-get="/api/draft/{{section.draft-eid}}/unit/{{section.lord-unit.eid}}?section=main&entry-eid={{section.lord-unit.entry-eid}}"
@@ -49,10 +51,12 @@
             {% endif %}
         </div>
         {% for unit in section.non-lord-units %}
-        <div class="draft-slot draft-slot--filled"
+        <div class="draft-slot draft-slot--filled {% if unit.just-added? %}draft-slot--new{% endif %}"
              role="listitem"
              aria-label="{{unit.name}}">
             <button class="draft-slot-card-button"
+                    id="draft-slot-card-{{unit.entry-eid}}"
+                    hx-preserve="true"
                     type="button"
                     aria-label="Edit {{unit.name}} in {{section.section-label}}"
                     hx-get="/api/draft/{{section.draft-eid}}/unit/{{unit.eid}}?section=main&entry-eid={{unit.entry-eid}}"
@@ -72,10 +76,12 @@
         {% endfor %}
         {% else %}
         {% for unit in section.section-units %}
-        <div class="draft-slot draft-slot--filled"
+        <div class="draft-slot draft-slot--filled {% if unit.just-added? %}draft-slot--new{% endif %}"
              role="listitem"
              aria-label="{{unit.name}}">
             <button class="draft-slot-card-button"
+                    id="draft-slot-card-{{unit.entry-eid}}"
+                    hx-preserve="true"
                     type="button"
                     aria-label="Edit {{unit.name}} in {{section.section-label}}"
                     hx-get="/api/draft/{{section.draft-eid}}/unit/{{unit.eid}}?section=reinforcements&entry-eid={{unit.entry-eid}}"

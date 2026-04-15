@@ -346,24 +346,32 @@
 
 (defn- hydrate-section
   "Resolves state entries to their hydrated units, attaching :total-cost and
-   the entry's :entry-eid so templates can target the specific placed copy."
-  [unit-by-eid entries]
+   the entry's :entry-eid so templates can target the specific placed copy.
+   When highlighted-entry-eid matches an entry, its unit map is tagged with
+   :just-added? so the template can run the slot-appear animation on only
+   the newly added or updated slot."
+  [unit-by-eid entries highlighted-entry-eid]
   (mapv (fn [entry]
           (when-let [u (get unit-by-eid (:unit-eid entry))]
-            (assoc u
-                   :total-cost (or (:total-cost entry) (:cost u))
-                   :entry-eid  (:entry-eid entry))))
+            (cond-> (assoc u
+                           :total-cost (or (:total-cost entry) (:cost u))
+                           :entry-eid  (:entry-eid entry))
+              (and highlighted-entry-eid
+                   (= highlighted-entry-eid (:entry-eid entry)))
+              (assoc :just-added? true))))
         entries))
 
 (defn- build-section-mutation-response
   "Builds the add/remove success response map containing updated section contexts.
-   :oob rendering is handled by the HTMX encoder, not here."
-  [type unit-by-eid new-state draft-eid game-mode reinf-enabled]
+   :oob rendering is handled by the HTMX encoder, not here.
+   highlighted-entry-eid, when non-nil, marks the entry whose slot should
+   replay the appear animation on the client."
+  [type unit-by-eid new-state draft-eid game-mode reinf-enabled highlighted-entry-eid]
   (let [main-ctx  (build-section-context "main"
-                                         (hydrate-section unit-by-eid (:main new-state))
+                                         (hydrate-section unit-by-eid (:main new-state) highlighted-entry-eid)
                                          draft-eid game-mode)
         reinf-ctx (build-section-context "reinforcements"
-                                         (hydrate-section unit-by-eid (:reinforcements new-state))
+                                         (hydrate-section unit-by-eid (:reinforcements new-state) highlighted-entry-eid)
                                          draft-eid game-mode)]
     {:type          type
      :main-section  main-ctx
@@ -459,8 +467,9 @@
                           section-cost section-max total-cost)]
         (if violation
           violation
-          (let [new-state (update state section-k (fnil conj [])
-                                  {:entry-eid  (random-uuid)
+          (let [new-entry-eid (random-uuid)
+                new-state (update state section-k (fnil conj [])
+                                  {:entry-eid  new-entry-eid
                                    :unit-eid   unit-eid
                                    :mount      (:mount selections)
                                    :abilities  (or (:abilities selections) [])
@@ -468,7 +477,7 @@
                                    :items      (or (:items selections) [])
                                    :total-cost total-cost})]
             (set-draft-state dependencies draft-eid new-state)
-            (build-section-mutation-response :draft/add-success unit-by-eid new-state draft-eid game-mode reinf-enabled)))))))
+            (build-section-mutation-response :draft/add-success unit-by-eid new-state draft-eid game-mode reinf-enabled new-entry-eid)))))))
 
 (defn- find-entry-index
   "Returns the index of the first entry with the given :entry-eid in entries,
@@ -495,7 +504,7 @@
         reinf-enabled (= 1 (:reinforcements-enabled game-mode))
         unit-by-eid   (faction-unit-index conn (:faction-eid draft))]
     (set-draft-state dependencies draft-eid new-state)
-    (build-section-mutation-response :draft/remove-success unit-by-eid new-state draft-eid game-mode reinf-enabled)))
+    (build-section-mutation-response :draft/remove-success unit-by-eid new-state draft-eid game-mode reinf-enabled nil)))
 
 (defn- mark-selected
   "Returns options with :selected true/false set from whether each :key is in selected-keys."
@@ -590,4 +599,4 @@
                 new-state (assoc state section-k
                                  (assoc (vec section-list) idx new-entry))]
             (set-draft-state dependencies draft-eid new-state)
-            (build-section-mutation-response :draft/update-success unit-by-eid new-state draft-eid game-mode reinf-enabled)))))))
+            (build-section-mutation-response :draft/update-success unit-by-eid new-state draft-eid game-mode reinf-enabled entry-eid)))))))
