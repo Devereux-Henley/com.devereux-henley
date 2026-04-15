@@ -123,7 +123,9 @@
         hydrate      (fn [entries]
                        (vec (keep (fn [entry]
                                     (when-let [u (get unit-by-eid (:unit-eid entry))]
-                                      (assoc u :total-cost (or (:total-cost entry) (:cost u)))))
+                                      (assoc u
+                                             :total-cost (or (:total-cost entry) (:cost u))
+                                             :entry-eid  (:entry-eid entry))))
                                   entries)))
         main-units   (hydrate (:main state))
         reinf-units  (hydrate (:reinforcements state))

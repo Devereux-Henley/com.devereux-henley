@@ -33,6 +33,29 @@
       [:map
        [:platform {:optional true} social-media-platform-resource]]]])))
 
+(def unit-summary
+  "Slim view of a game unit as it appears inside the faction-resource's
+   :_embedded.units-by-category groups — enough to identify, name, and link
+   to the full unit resource without dragging along unit-statistics JSON or
+   audit columns."
+  [:map
+   [:eid :uuid]
+   [:type {:optional true} [:= :game/unit]]
+   [:name {:min 1} :string]
+   [:description {:optional true} :string]
+   [:cost {:optional true} [:maybe :int]]
+   [:unit-type-name {:optional true} :string]
+   [:unit-category-name {:optional true} :string]
+   [:game-eid {:optional true} :uuid]
+   [:is-unique {:optional true} :int]])
+
+(def unit-category-group
+  "One group in a faction-resource's :_embedded.units-by-category — the
+   category label plus the units that belong to it."
+  [:map
+   [:category :string]
+   [:units [:sequential unit-summary]]])
+
 (def faction-resource
   (malli.util/merge
    schema.contract/base-resource
@@ -49,7 +72,7 @@
        [:game :url]]]
      [:_embedded {:optional true}
       [:map
-       [:units-by-category {:optional true} [:sequential :any]]]]])))
+       [:units-by-category {:optional true} [:sequential unit-category-group]]]]])))
 
 (def game-resource
   (malli.util/merge
@@ -98,7 +121,7 @@
 (def draft-error-response
   (schema.contract/to-schema
    [:map
-    [:type [:= :draft/add-error]]
+    [:type [:enum :draft/add-error :draft/update-error]]
     [:message :string]]))
 
 (def draft-unit-stat
@@ -120,6 +143,7 @@
     [:name :string]
     [:category :string]
     [:cost :int]
+    [:selected {:optional true} :boolean]
     [:icon-key {:optional true} [:maybe :string]]]))
 
 (def draft-ability
@@ -129,6 +153,7 @@
     [:name :string]
     [:eid {:optional true} [:maybe :uuid]]
     [:description {:optional true} [:maybe :string]]
+    [:selected {:optional true} :boolean]
     [:cost :int]]))
 
 (def draft-spell
@@ -138,6 +163,7 @@
     [:eid {:optional true} [:maybe :uuid]]
     [:name :string]
     [:mana-cost :int]
+    [:selected {:optional true} :boolean]
     [:cost :int]]))
 
 (def draft-mount
@@ -147,39 +173,114 @@
     [:key :string]
     [:name :string]
     [:cost :int]
+    [:selected {:optional true} :boolean]
     [:icon-key {:optional true} [:maybe :string]]]))
 
-(def draft-unit-response
-  (schema.contract/to-schema
-   [:map
-    [:type [:= :draft/unit]]
-    [:draft-eid :uuid]
-    [:reinforcements-enabled :boolean]
-    [:items {:optional true} [:sequential draft-item]]
-    [:mounts {:optional true} [:sequential draft-mount]]
-    [:passive-spells {:optional true} [:sequential draft-spell]]
-    [:draftable-spells {:optional true} [:sequential draft-spell]]
-    [:has-passives {:optional true} :boolean]
-    [:unit
-     [:map
-      [:eid :uuid]
-      [:game-eid :uuid]
-      [:name :string]
-      [:description :string]
-      [:unit-type-name :string]
-      [:unit-category-name :string]
-      [:cost [:maybe :int]]
-      [:health {:optional true} [:maybe :int]]
-      [:barrier {:optional true} [:maybe :int]]
-      [:unit-statistics [:sequential draft-unit-stat]]
-      [:attributes {:optional true}
-       [:sequential [:map
-                     [:key :string]
-                     [:icon :string]
-                     [:label :string]]]]
-      [:parsed-abilities {:optional true} [:sequential draft-ability]]
-      [:passive-abilities {:optional true} [:sequential draft-ability]]
-      [:draftable-abilities {:optional true} [:sequential draft-ability]]]]]))
+(def draft-unit-resource
+  "A unit viewed in the context of a specific draft — the full game-unit
+   fields (name, stats, abilities, attributes, health/barrier) merged with
+   the per-draft option catalog (items, mounts, draftable spells) and a
+   flag for whether reinforcements are enabled for the enclosing game mode.
+   The resource's :eid is the unit's own eid; :draft-eid links to the
+   parent draft."
+  (malli.util/merge
+   schema.contract/base-resource
+   (schema.contract/to-schema
+    [:map
+     [:eid {:model/link :draft-unit/by-eid} :uuid]
+     [:type [:= :draft/unit]]
+     [:draft-eid {:model/link :draft/by-eid} :uuid]
+     [:game-eid {:model/link :game/by-eid} :uuid]
+     [:name :string]
+     [:description :string]
+     [:unit-type-name :string]
+     [:unit-category-name :string]
+     [:cost [:maybe :int]]
+     [:health {:optional true} [:maybe :int]]
+     [:barrier {:optional true} [:maybe :int]]
+     [:unit-statistics [:sequential draft-unit-stat]]
+     [:attributes {:optional true}
+      [:sequential [:map
+                    [:key :string]
+                    [:icon :string]
+                    [:label :string]]]]
+     [:parsed-abilities {:optional true} [:sequential draft-ability]]
+     [:passive-abilities {:optional true} [:sequential draft-ability]]
+     [:draftable-abilities {:optional true} [:sequential draft-ability]]
+     [:items {:optional true} [:sequential draft-item]]
+     [:mounts {:optional true} [:sequential draft-mount]]
+     [:passive-spells {:optional true} [:sequential draft-spell]]
+     [:draftable-spells {:optional true} [:sequential draft-spell]]
+     [:has-passives {:optional true} :boolean]
+     [:validation {:optional true}
+      [:map
+       [:can-add-to-reinforcements? :boolean]]]
+     [:_links
+      [:map
+       [:self :url]
+       [:draft :url]]]])))
+
+(def draft-entry-resource
+  "A placed draft entry — addressing (entry eid, draft-eid, unit-eid,
+   section) plus the selection state the player has stored on this entry
+   (:mount, :abilities, :spells, :items as key lists). Clients that want
+   the game unit's catalog data request it via `?embed=unit`, which
+   populates :_embedded.unit with a full draft-unit-resource whose
+   draftable options carry :selected flags pre-marked from the entry's
+   stored selections."
+  (malli.util/merge
+   schema.contract/base-resource
+   (schema.contract/to-schema
+    [:map
+     [:eid {:model/link :draft-entry/by-eid} :uuid]
+     [:type [:= :draft/entry]]
+     [:draft-eid {:model/link :draft/by-eid} :uuid]
+     [:unit-eid {:model/link :draft-unit/by-eid} :uuid]
+     [:section [:enum "main" "reinforcements"]]
+     [:mount {:optional true} [:maybe :string]]
+     [:abilities {:optional true} [:sequential :string]]
+     [:spells {:optional true} [:sequential :string]]
+     [:items {:optional true} [:sequential :string]]
+     [:_links
+      [:map
+       [:self :url]
+       [:draft :url]
+       [:unit :url]]]
+     [:_embedded {:optional true}
+      [:map
+       [:unit {:optional true} draft-unit-resource]]]])))
+
+(def draft-section-unit
+  "A unit as it appears inside a rendered draft section: just enough fields
+   to draw the slot card and target the specific placed entry."
+  [:map
+   [:eid :uuid]
+   [:entry-eid :uuid]
+   [:name :string]
+   [:total-cost [:maybe :int]]
+   [:is-lord {:optional true} :boolean]])
+
+(def draft-section-budget
+  "The meter-only projection of a section context: enough to render the
+   budget group fragment without carrying unit lists."
+  [:map
+   [:section :string]
+   [:section-label :string]
+   [:section-id :string]
+   [:section-cost :int]
+   [:section-max {:optional true} [:maybe :int]]
+   [:section-percentage :int]
+   [:section-near-limit :boolean]
+   [:section-over-budget :boolean]])
+
+(def draft-section-ref
+  "The addressing fields a mutation response uses to point at a section:
+   enough to build URLs and OOB selector targets in a slot fragment."
+  [:map
+   [:section :string]
+   [:section-id :string]
+   [:section-label :string]
+   [:draft-eid :uuid]])
 
 (def draft-section-context
   (schema.contract/to-schema
@@ -194,10 +295,9 @@
     [:section-percentage :int]
     [:section-near-limit :boolean]
     [:section-over-budget :boolean]
-    [:lord-unit {:optional true} :any]
-    [:non-lord-units [:sequential :any]]
-    [:section-units [:sequential :any]]
-    [:oob {:optional true} :boolean]]))
+    [:lord-unit {:optional true} [:maybe draft-section-unit]]
+    [:non-lord-units [:sequential draft-section-unit]]
+    [:section-units [:sequential draft-section-unit]]]))
 
 (defn- ^:private scalar-or-seq->vec
   "json-enc serialises a group of same-named form inputs as a scalar when
@@ -218,10 +318,27 @@
     [:spells    {:optional true :decode/json scalar-or-seq->vec} [:sequential :string]]
     [:items     {:optional true :decode/json scalar-or-seq->vec} [:sequential :string]]]))
 
-(def draft-mutation-response
+(def draft-add-response
   (schema.contract/to-schema
    [:map
-    [:type [:enum :draft/add-success :draft/remove-success]]
-    [:main-section draft-section-context]
-    [:reinf-section {:optional true} [:maybe draft-section-context]]]))
+    [:type [:= :draft/add-success]]
+    [:section draft-section-ref]
+    [:new-unit draft-section-unit]
+    [:budget draft-section-budget]]))
+
+(def draft-remove-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :draft/remove-success]]
+    [:removed-entry-eid :uuid]
+    [:removed-is-lord :boolean]
+    [:budget draft-section-budget]]))
+
+(def draft-update-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :draft/update-success]]
+    [:entry-eid :uuid]
+    [:total-cost [:maybe :int]]
+    [:budget draft-section-budget]]))
 

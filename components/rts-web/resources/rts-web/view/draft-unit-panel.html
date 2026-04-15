@@ -1,0 +1,302 @@
+<aside class="draft-stats-panel" id="draft-unit" role="complementary" aria-label="Unit statistics for {{unit.name}}">
+    <form class="draft-stats-inner"
+          hx-ext="json-enc"
+          onsubmit="return false"
+          {% if data.section %}
+          hx-patch="/api/draft/{{data.draft-eid}}/entry/{{data.eid}}?section={{data.section}}"
+          hx-trigger="change delay:400ms"
+          hx-swap="none"
+          {% endif %}>
+
+        <div class="draft-stats-header">
+            <img class="draft-stats-portrait"
+                 src="/card/unit/{{unit.eid}}.png"
+                 alt="{{unit.name}}"
+                 onerror="this.style.display='none'">
+            <div class="draft-stats-meta">
+                <h3 class="draft-stats-name">{{unit.name}}</h3>
+                <div class="draft-stats-badges">
+                    <span class="badge badge-primary">{{unit.unit-type-name}}</span>
+                    <span class="badge badge-neutral">{{unit.unit-category-name}}</span>
+                </div>
+                <div class="draft-stats-cost-row">
+                    <span class="draft-budget-icon" aria-hidden="true">&#11044;</span>
+                    <span class="draft-stats-cost">{{unit.cost}}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="draft-stats-actions">
+            <div id="draft-action-error" role="alert" aria-live="polite" hidden></div>
+            {% if data.section %}
+            <p class="draft-editing-hint">Editing {% ifequal data.section "main" %}Main Army{% else %}Reinforcements{% endifequal %} &mdash; changes save automatically.</p>
+            {% else %}
+            <button class="btn btn-primary draft-add-btn"
+                    type="button"
+                    hx-post="/api/draft/{{data.draft-eid}}/unit/{{unit.eid}}?section=main"
+                    hx-swap="none">
+                Add to Main Army
+            </button>
+            {% if unit.validation.can-add-to-reinforcements? %}
+            {% ifunequal unit.unit-category-name "Lord" %}
+            <button class="btn btn-primary draft-add-btn draft-add-btn--reinf"
+                    type="button"
+                    hx-post="/api/draft/{{data.draft-eid}}/unit/{{unit.eid}}?section=reinforcements"
+                    hx-swap="none">
+                Add to Reinforcements
+            </button>
+            {% endifunequal %}
+            {% endif %}
+            {% endif %}
+            <a class="draft-details-link"
+               href="/view/game/{{unit.game-eid}}/unit/{{unit.eid}}/index.html"
+               hx-target="body"
+               hx-swap="innerHTML"
+               aria-label="View full details for {{unit.name}}">
+                View full details &rarr;
+            </a>
+        </div>
+
+        {% if unit.health %}
+        <div class="draft-health-block">
+            <div class="draft-health-header">
+                <span class="draft-health-label">HP</span>
+                {% if unit.barrier %}
+                <span class="draft-barrier-badge">Barrier {{unit.barrier}}</span>
+                {% endif %}
+                <span class="draft-health-value">{{unit.health}}</span>
+            </div>
+            <div class="draft-health-track"
+                 role="meter"
+                 aria-label="Health: {{unit.health}}"
+                 aria-valuenow="{{unit.health}}"
+                 aria-valuemin="0"
+                 aria-valuemax="{{unit.health}}">
+                <div class="draft-health-fill" style="--hp-pct:100%"></div>
+                <div class="draft-health-notches" aria-hidden="true"></div>
+            </div>
+            {% if unit.barrier %}
+            <div class="draft-barrier-track"
+                 role="meter"
+                 aria-label="Barrier: {{unit.barrier}}"
+                 aria-valuenow="{{unit.barrier}}"
+                 aria-valuemin="0"
+                 aria-valuemax="{{unit.barrier}}">
+                <div class="draft-barrier-fill" style="--barrier-pct:100%"></div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <section class="draft-stats-section unit-panel" aria-labelledby="panel-stats-heading">
+            <h4 class="unit-panel-heading" id="panel-stats-heading">Statistics</h4>
+            <div class="draft-stat-rows">
+                {% for stat in unit.unit-statistics %}
+                <div class="draft-stat-bar-row">
+                    <img class="draft-stat-icon"
+                         src="/icon/stat/{{stat.icon}}.png"
+                         alt="{{stat.stat}}"
+                         title="{{stat.stat}}"
+                         aria-label="{{stat.stat}}">
+                    <div class="draft-stat-mods">
+                        {% for type in stat.damage-types %}
+                        <img class="draft-stat-type-icon"
+                             src="/icon/stat/{{type}}.png"
+                             alt="{{type}}"
+                             title="{{type}}"
+                             aria-label="{{type}} damage">
+                        {% endfor %}
+                        {% for mod in stat.attack-modifiers %}
+                        <img class="draft-stat-type-icon"
+                             src="/icon/stat/{{mod}}.png"
+                             alt="{{mod}}"
+                             title="{{mod}}"
+                             aria-label="{{mod}} modifier">
+                        {% endfor %}
+                    </div>
+                    {% if stat.tooltip %}
+                    <span class="draft-stat-value" title="{{stat.tooltip}}" aria-label="{{stat.stat}}, {{stat.value}}, {{stat.tooltip}}">{{stat.value}}</span>
+                    {% else %}
+                    <span class="draft-stat-value">{{stat.value}}</span>
+                    {% endif %}
+                    <div class="draft-stat-bar" aria-hidden="true">
+                        <div class="draft-stat-bar-fill" style="--pct:{{stat.percentage}}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        {% if unit.attributes|not-empty? %}
+        <section class="draft-stats-section unit-panel" aria-labelledby="panel-attributes-heading">
+            <h4 class="unit-panel-heading" id="panel-attributes-heading">Attributes</h4>
+            <ul class="draft-attribute-list" aria-label="Unit attributes for {{unit.name}}">
+                {% for attr in unit.attributes %}
+                <li class="draft-attribute-item">
+                    <img class="draft-attribute-icon"
+                         src="/icon/stat/{{attr.icon}}.png"
+                         alt="{{attr.label}}"
+                         title="{{attr.label}}"
+                         aria-label="{{attr.label}}">
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
+        {% if unit.draftable-abilities|not-empty? %}
+        <section class="draft-stats-section unit-panel" aria-labelledby="panel-abilities-heading">
+            <h4 class="unit-panel-heading" id="panel-abilities-heading">Abilities</h4>
+            <ul class="draft-option-list" aria-label="Draftable abilities for {{unit.name}}">
+                {% for ability in unit.draftable-abilities %}
+                <li class="draft-option-row draft-option-row--selectable">
+                    <label class="draft-option-label">
+                        <input class="draft-ability-check"
+                               type="checkbox"
+                               name="abilities"
+                               value="{{ability.key}}"
+                               {% if ability.selected %}checked{% endif %}
+                               aria-label="{{ability.name}} (+{{ability.cost}})">
+                        <img class="draft-option-icon"
+                             src="/icon/ability/{{ability.eid}}.png"
+                             alt=""
+                             onerror="this.style.display='none'">
+                        <span class="draft-option-name">{{ability.name}}</span>
+                        <span class="badge badge-secondary draft-option-cost">+{{ability.cost}}</span>
+                    </label>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
+        {% if unit.draftable-spells|not-empty? %}
+        <section class="draft-stats-section unit-panel" aria-labelledby="panel-spells-heading">
+            <h4 class="unit-panel-heading" id="panel-spells-heading">Spells</h4>
+            <ul class="draft-option-list" aria-label="Available spells for {{unit.name}}">
+                {% for spell in unit.draftable-spells %}
+                <li class="draft-option-row draft-option-row--selectable">
+                    <label class="draft-option-label">
+                        <input class="draft-spell-check"
+                               type="checkbox"
+                               name="spells"
+                               value="{{spell.key}}"
+                               {% if spell.selected %}checked{% endif %}
+                               aria-label="{{spell.name}} ({{spell.mana-cost}} mana, +{{spell.cost}})">
+                        <img class="draft-option-icon"
+                             src="/icon/ability/{{spell.eid}}.png"
+                             alt=""
+                             onerror="this.style.display='none'">
+                        <span class="draft-option-name">{{spell.name}}</span>
+                        <span class="badge badge-secondary draft-option-cost">+{{spell.cost}}</span>
+                    </label>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
+        {% if unit.mounts|not-empty? %}
+        <section class="draft-stats-section unit-panel" aria-labelledby="panel-mounts-heading">
+            <h4 class="unit-panel-heading" id="panel-mounts-heading">Mounts</h4>
+            <ul class="draft-option-list" aria-label="Available mounts for {{unit.name}}">
+                <li class="draft-option-row draft-option-row--selectable">
+                    <label class="draft-option-label">
+                        <input class="draft-mount-radio"
+                               type="radio"
+                               name="mount"
+                               value=""
+                               {% if not data.mount %}checked{% endif %}
+                               aria-label="No mount">
+                        <span class="draft-option-name">No mount</span>
+                    </label>
+                </li>
+                {% for mount in unit.mounts %}
+                <li class="draft-option-row draft-option-row--selectable">
+                    <label class="draft-option-label">
+                        <input class="draft-mount-radio"
+                               type="radio"
+                               name="mount"
+                               value="{{mount.key}}"
+                               {% ifequal data.mount mount.key %}checked{% endifequal %}
+                               aria-label="{{mount.name}} (+{{mount.cost}})">
+                        <img class="draft-option-icon"
+                             src="/icon/mount/{{mount.icon-key}}.png"
+                             alt=""
+                             onerror="this.style.display='none'">
+                        <span class="draft-option-name">{{mount.name}}</span>
+                        <span class="badge badge-secondary draft-option-cost">+{{mount.cost}}</span>
+                    </label>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
+        {% if unit.items|not-empty? %}
+        <section class="draft-stats-section unit-panel" aria-labelledby="panel-items-heading">
+            <h4 class="unit-panel-heading" id="panel-items-heading">Items</h4>
+            <ul class="draft-option-list" aria-label="Available items for {{unit.name}}">
+                {% for item in unit.items %}
+                <li class="draft-option-row draft-option-row--selectable">
+                    <label class="draft-option-label">
+                        <input class="draft-item-check"
+                               type="checkbox"
+                               name="items"
+                               value="{{item.key}}"
+                               {% if item.selected %}checked{% endif %}
+                               aria-label="{{item.name}} (+{{item.cost}})">
+                        <img class="draft-option-icon"
+                             src="/icon/item/{{item.icon-key}}.png"
+                             alt=""
+                             onerror="this.style.display='none'">
+                        <span class="draft-option-name">{{item.name}}</span>
+                        <span class="badge badge-secondary draft-option-cost">+{{item.cost}}</span>
+                    </label>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
+        {% if unit.has-passives %}
+        <section class="draft-stats-section unit-panel" aria-labelledby="panel-passive-abilities-heading">
+            <h4 class="unit-panel-heading" id="panel-passive-abilities-heading">Passive Abilities</h4>
+            <ul class="draft-passive-list" aria-label="Passive abilities for {{unit.name}}">
+                {% for ability in unit.passive-abilities %}
+                <li class="draft-passive-row">
+                    <div class="unit-ability-item">
+                        <img class="unit-ability-icon"
+                             src="/icon/ability/{{ability.eid}}.png"
+                             alt="{{ability.name}}"
+                             onerror="this.style.display='none'">
+                        <span class="unit-ability-tooltip" role="tooltip">{{ability.name}}</span>
+                    </div>
+                    <span class="draft-passive-name">{{ability.name}}</span>
+                </li>
+                {% endfor %}
+                {% for spell in unit.passive-spells %}
+                <li class="draft-passive-row">
+                    <div class="unit-ability-item">
+                        <img class="unit-ability-icon"
+                             src="/icon/ability/{{spell.eid}}.png"
+                             alt="{{spell.name}}"
+                             onerror="this.style.display='none'">
+                        <span class="unit-ability-tooltip" role="tooltip">{{spell.name}}</span>
+                    </div>
+                    <span class="draft-passive-name">{{spell.name}}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
+        <section class="draft-stats-section draft-future-section unit-panel" aria-labelledby="panel-level-heading">
+            <h4 class="unit-panel-heading" id="panel-level-heading">
+                Level <span class="draft-future-badge" aria-label="Coming soon">&#128274;</span>
+            </h4>
+            <p class="draft-future-msg">Unit leveling coming soon.</p>
+        </section>
+
+    </form>
+</aside>

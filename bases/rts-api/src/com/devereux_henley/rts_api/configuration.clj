@@ -33,7 +33,9 @@
    :com.devereux-henley.rts-web.web.view/unit-view                        default-api-dependencies
    :com.devereux-henley.rts-web.web.view/draft-view                       default-api-dependencies
    :com.devereux-henley.rts-web.web.draft/get-draft-unit                  default-api-dependencies
+   :com.devereux-henley.rts-web.web.draft/get-draft-entry                 default-api-dependencies
    :com.devereux-henley.rts-web.web.draft/draft-add-unit                  default-api-dependencies
+   :com.devereux-henley.rts-web.web.draft/draft-update-unit               default-api-dependencies
    :com.devereux-henley.rts-web.web.draft/draft-remove-unit               default-api-dependencies
    :com.devereux-henley.rts-web.web.view/my-drafts-view                   default-api-dependencies
    :com.devereux-henley.rts-web.web.view/game-index-view                  default-view-dependencies

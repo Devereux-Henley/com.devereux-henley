@@ -440,7 +440,12 @@ a:hover:has(img) {
   flex-shrink: 0;
 }
 
-.draft-budget-used { color: #e8c870; }
+.draft-budget-used {
+  color: #e8c870;
+  display: inline-block;
+  transform-origin: center;
+  animation: budget-used-strike 560ms cubic-bezier(.2, .7, .1, 1) both;
+}
 .draft-budget-sep  { color: #5a4830; margin: 0 2px; }
 .draft-budget-max  { color: #7a6040; }
 
@@ -449,21 +454,85 @@ a:hover:has(img) {
   flex: 1;
   min-width: 4rem;
   max-width: 12rem;
-  background: #2a1a10;
+  background: #1a0d08;
   border-radius: 3px;
   overflow: hidden;
+  box-shadow: inset 0 1px 2px #000a, inset 0 0 0 1px #3a2418;
 }
 
 .draft-budget-fill {
+  position: relative;
   height: 100%;
   width: var(--pct, 0%);
-  background: #8b2020;
+  background: linear-gradient(180deg, #a82828 0%, #8b2020 55%, #5a0e0e 100%);
   border-radius: 3px;
-  transition: width 300ms ease, background-color 300ms ease;
+  box-shadow: inset 0 1px 0 #ff606033, inset 0 -2px 0 #3a0808;
+  animation: budget-fill 680ms cubic-bezier(.2, .65, .1, 1) both;
 }
 
-.draft-budget-fill--near { background: #b87020; }
-.draft-budget-fill--over { background: #cc2020; }
+.draft-budget-fill::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  right: -3px;
+  width: 10px;
+  background: radial-gradient(circle at right, #fff4c0dd 0%, #ffb84066 40%, transparent 75%);
+  opacity: 0;
+  pointer-events: none;
+  animation: budget-tip-flash 440ms ease-out 580ms both;
+}
+
+.draft-budget-fill--near {
+  background: linear-gradient(180deg, #d89020 0%, #b87020 55%, #7a4010 100%);
+  box-shadow: inset 0 1px 0 #ffc06040, inset 0 -2px 0 #3a2008;
+}
+
+.draft-budget-fill--over {
+  background: linear-gradient(180deg, #ff3020 0%, #cc2020 55%, #7a0808 100%);
+  box-shadow: inset 0 1px 0 #ff808040, inset 0 -2px 0 #3a0404;
+  animation:
+    budget-fill 680ms cubic-bezier(.2, .65, .1, 1) both,
+    budget-over-throb 1.6s ease-in-out 680ms infinite;
+}
+
+.draft-budget-fill--over::after {
+  background: radial-gradient(circle at right, #ffdcbcdd 0%, #ff604088 40%, transparent 75%);
+}
+
+@keyframes budget-fill {
+  from { width: 0; }
+  to   { width: var(--pct, 0%); }
+}
+
+@keyframes budget-used-strike {
+  0%   { transform: scale(1);    color: #e8c870; text-shadow: 0 0 0 transparent; }
+  38%  { transform: scale(1.22); color: #fff4c0; text-shadow: 0 0 8px #e8c870cc, 0 0 14px #e8c87055; }
+  100% { transform: scale(1);    color: #e8c870; text-shadow: 0 0 0 transparent; }
+}
+
+@keyframes budget-tip-flash {
+  0%   { opacity: 0; }
+  45%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes budget-over-throb {
+  0%, 100% { box-shadow: inset 0 1px 0 #ff808040, inset 0 -2px 0 #3a0404, 0 0 4px -1px #cc2020aa; }
+  50%      { box-shadow: inset 0 1px 0 #ff808080, inset 0 -2px 0 #3a0404, 0 0 12px 0 #ff304099; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .draft-budget-fill,
+  .draft-budget-fill--over,
+  .draft-budget-fill::after,
+  .draft-budget-used {
+    animation: none !important;
+  }
+  .draft-budget-fill {
+    transition: width 300ms ease, background 300ms ease;
+  }
+}
 
 /* Unit slot row */
 .draft-slots {
@@ -500,16 +569,41 @@ a:hover:has(img) {
 .draft-slot--filled {
   border-style: solid;
   border-color: #4a2e18;
-  cursor: default;
 }
 
 .draft-slot--filled:hover .draft-slot-remove {
   display: flex;
 }
 
-.draft-slot-card {
+.draft-slot-card-button {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  display: block;
+  transition: filter 120ms, box-shadow 120ms;
+}
+
+.draft-slot-card-button:hover {
+  filter: brightness(1.1);
+  box-shadow: inset 0 0 0 2px #c89850;
+}
+
+.draft-slot-card-button:focus-visible {
+  outline: 2px solid #e8c870;
+  outline-offset: -2px;
+}
+
+.draft-slot-card {
+  width: 100%;
+  height: 130px;
   object-fit: cover;
   display: block;
 }
@@ -526,26 +620,38 @@ a:hover:has(img) {
   color: #e8c870;
   text-shadow: 0 1px 3px #000, 0 0 6px #000;
   pointer-events: none;
+  z-index: 2;
 }
 
 .draft-slot-remove {
   display: none;
   position: absolute;
-  inset: 0;
+  top: 2px;
+  right: 2px;
+  width: 18px;
+  height: 18px;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.75);
   color: #e06050;
-  font-size: 1.25rem;
-  border: none;
+  font-size: 0.75rem;
+  border: 1px solid #4a2e18;
+  border-radius: 50%;
   cursor: pointer;
   line-height: 1;
-  transition: background-color 120ms;
+  padding: 0;
+  transition: background-color 120ms, color 120ms;
+  z-index: 3;
 }
 
 .draft-slot-remove:hover {
-  background: rgba(120, 20, 10, 0.8);
+  background: rgba(120, 20, 10, 0.9);
   color: #ff8070;
+}
+
+.draft-slot-remove:focus-visible {
+  outline: 2px solid #e8c870;
+  outline-offset: 1px;
 }
 
 .draft-slot-empty-lord {
@@ -568,15 +674,6 @@ a:hover:has(img) {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   opacity: 0.7;
-}
-
-@keyframes slot-appear {
-  from { opacity: 0; transform: scale(0.8); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-.draft-slot--filled {
-  animation: slot-appear 180ms ease-out;
 }
 
 /* Error zone */
@@ -740,12 +837,12 @@ a:hover:has(img) {
 .draft-stats-header {
   display: flex;
   gap: var(--space-3);
-  align-items: flex-start;
+  align-items: stretch;
 }
 
 .draft-stats-portrait {
   width: 4rem;
-  height: 5.5rem;
+  height: 130px;
   object-fit: cover;
   border-radius: var(--radius-sm);
   border: 1px solid #3a2818;
@@ -759,6 +856,8 @@ a:hover:has(img) {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  justify-content: space-between;
+  padding: var(--space-1) 0;
 }
 
 .draft-stats-name {
@@ -900,7 +999,7 @@ a:hover:has(img) {
   padding: var(--space-2) var(--space-3);
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 6px;
 }
 
 .draft-stat-bar-row {
@@ -908,6 +1007,7 @@ a:hover:has(img) {
   grid-template-columns: 24px 44px 2.5rem 1fr;
   align-items: center;
   gap: var(--space-2);
+  min-height: 22px;
 }
 
 .draft-stat-mods {
@@ -967,17 +1067,18 @@ a:hover:has(img) {
 }
 
 .draft-stat-bar {
-  height: 3px;
+  height: 6px;
   background: #2a1e18;
-  border-radius: 2px;
+  border-radius: 3px;
   overflow: hidden;
+  box-shadow: inset 0 1px 2px #000a;
 }
 
 .draft-stat-bar-fill {
   height: 100%;
   width: var(--pct, 0%);
-  background: #8b2020;
-  border-radius: 2px;
+  background: linear-gradient(90deg, #6a1818 0%, #a83030 60%, #c84040 100%);
+  border-radius: 3px;
   transition: width 250ms ease;
 }
 

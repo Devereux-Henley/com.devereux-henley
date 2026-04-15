@@ -1,6 +1,8 @@
 (ns com.devereux-henley.rpfm-scraper.tables
   "Builders for fast lookup maps keyed by table primary key.
-  Input `rows` sequences come from rpfm/parse-rpfm-table or parse-loc-file.")
+  Input `rows` sequences come from rpfm/parse-rpfm-table or parse-loc-file."
+  (:require
+   [clojure.string]))
 
 (defn build-armour-map
   "key → armour_value (int)"

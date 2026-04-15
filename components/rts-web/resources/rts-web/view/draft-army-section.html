@@ -1,82 +1,37 @@
-<div class="draft-section" id="{{section.section-id}}" aria-labelledby="{{section.section-id}}-heading" {% if section.oob %}hx-swap-oob="true"{% endif %}>
+<div class="draft-section" id="{{section.section-id}}" aria-labelledby="{{section.section-id}}-heading">
     <div class="draft-section-header">
         <h3 class="draft-section-title" id="{{section.section-id}}-heading">{{section.section-label}}</h3>
-        <div class="draft-budget-group"
-             role="meter"
-             aria-valuenow="{{section.section-cost}}"
-             aria-valuemin="0"
-             aria-valuemax="{{section.section-max}}"
-             aria-label="{{section.section-label}} budget: {{section.section-cost}} of {{section.section-max}}">
-            <span class="draft-budget-icon" aria-hidden="true">&#11044;</span>
-            <span class="draft-budget-text">
-                <span class="draft-budget-used">{{section.section-cost}}</span>
-                <span class="draft-budget-sep">/</span>
-                <span class="draft-budget-max">{{section.section-max}}</span>
-            </span>
-            <div class="draft-budget-track">
-                <div class="draft-budget-fill {% if section.section-over-budget %}draft-budget-fill--over{% elif section.section-near-limit %}draft-budget-fill--near{% endif %}"
-                     style="--pct: {{section.section-percentage}}%"></div>
-            </div>
-        </div>
+        {% with budget=section %}{% include "rts-web/view/draft-budget-group.html" %}{% endwith %}
     </div>
-    <div class="draft-slots" role="list" aria-label="{{section.section-label}} units">
+    <div class="draft-slots" id="{{section.section-id}}-slots" role="list" aria-label="{{section.section-label}} units">
         {% if section.is-main %}
-        <div class="draft-slot draft-slot--lord {% if section.lord-unit %}draft-slot--filled{% endif %}"
-             role="listitem"
-             aria-label="Legendary Lord slot{% if not section.lord-unit %} — empty{% endif %}">
             {% if section.lord-unit %}
-            <img class="draft-slot-card"
-                 src="/card/unit/{{section.lord-unit.eid}}.png"
-                 alt="{{section.lord-unit.name}}"
-                 onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;">
-            <div class="draft-slot-cost" aria-hidden="true">{{section.lord-unit.total-cost}}</div>
-            <button class="draft-slot-remove"
-                    aria-label="Remove {{section.lord-unit.name}} from Main Army"
-                    hx-delete="/api/draft/{{section.draft-eid}}/unit/{{section.lord-unit.eid}}?section=main"
-                    hx-swap="none">&#10005;</button>
-            {% else %}
-            <div class="draft-slot-empty-lord" aria-hidden="true">
-                <span class="draft-slot-lord-icon">&#9812;</span>
-                <span class="draft-slot-lord-label">Lord</span>
+            <div id="main-army-section-lord-slot"
+                 class="draft-slot draft-slot--lord draft-slot--filled"
+                 role="listitem"
+                 aria-label="{{section.lord-unit.name}}">
+                {% with unit=section.lord-unit %}{% include "rts-web/view/draft-slot-inner.html" %}{% endwith %}
             </div>
+            {% else %}
+            {% include "rts-web/view/draft-slot-empty-lord.html" %}
             {% endif %}
-        </div>
-        {% for unit in section.non-lord-units %}
-        <div class="draft-slot draft-slot--filled"
-             role="listitem"
-             aria-label="{{unit.name}}">
-            <img class="draft-slot-card"
-                 src="/card/unit/{{unit.eid}}.png"
-                 alt="{{unit.name}}"
-                 onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;">
-            <div class="draft-slot-cost" aria-hidden="true">{{unit.total-cost}}</div>
-            <button class="draft-slot-remove"
-                    aria-label="Remove {{unit.name}} from Main Army"
-                    hx-delete="/api/draft/{{section.draft-eid}}/unit/{{unit.eid}}?section=main"
-                    hx-swap="none">&#10005;</button>
-        </div>
-        {% endfor %}
+            {% for unit in section.non-lord-units %}
+            <div id="draft-slot-{{unit.entry-eid}}"
+                 class="draft-slot draft-slot--filled"
+                 role="listitem"
+                 aria-label="{{unit.name}}">
+                {% include "rts-web/view/draft-slot-inner.html" %}
+            </div>
+            {% endfor %}
         {% else %}
-        {% for unit in section.section-units %}
-        <div class="draft-slot draft-slot--filled"
-             role="listitem"
-             aria-label="{{unit.name}}">
-            <img class="draft-slot-card"
-                 src="/card/unit/{{unit.eid}}.png"
-                 alt="{{unit.name}}"
-                 onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;">
-            <div class="draft-slot-cost" aria-hidden="true">{{unit.total-cost}}</div>
-            <button class="draft-slot-remove"
-                    aria-label="Remove {{unit.name}} from Reinforcements"
-                    hx-delete="/api/draft/{{section.draft-eid}}/unit/{{unit.eid}}?section=reinforcements"
-                    hx-swap="none">&#10005;</button>
-        </div>
-        {% endfor %}
+            {% for unit in section.section-units %}
+            <div id="draft-slot-{{unit.entry-eid}}"
+                 class="draft-slot draft-slot--filled"
+                 role="listitem"
+                 aria-label="{{unit.name}}">
+                {% include "rts-web/view/draft-slot-inner.html" %}
+            </div>
+            {% endfor %}
         {% endif %}
-        <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
-        <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
-        <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
-        <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
-        <div class="draft-slot draft-slot--placeholder" aria-hidden="true"></div>
     </div>
 </div>

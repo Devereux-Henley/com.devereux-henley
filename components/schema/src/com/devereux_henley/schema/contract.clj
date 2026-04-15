@@ -264,31 +264,47 @@
                :instant    (fn [instant-string] (when-not (empty? instant-string)
                                                   (Instant/parse instant-string)))}}))
 
+(defn- parent-eid-params
+  "Collects every `*-eid` keyed field from the map into a path-params map
+   keyed by field name. Enables nested resources to self-link via routes
+   whose path requires more than one eid (e.g. `/draft/:draft-eid/entry/:eid`).
+   Reitit silently drops extras, so passing this set alongside `{:eid v}` is
+   safe for single-param routes as well."
+  [value]
+  (reduce-kv (fn [acc k v]
+               (if (and (keyword? k)
+                        (clojure.string/ends-with? (name k) "-eid"))
+                 (assoc acc k v)
+                 acc))
+             {}
+             value))
+
 (defn handle-model-transform
   [route-data schema]
   (let [mapping (key-to-link-mapping schema)]
     (fn [value]
-      (reduce-kv
-       (fn [acc k v]
-         (if-let [link (get mapping k)]
-           (-> acc
-               (assoc k v)
-               (assoc-in [:_links
-                          (if (= k :eid)
-                            :self
-                            (keyword
-                             (clojure.string/replace (name k) #"-eid" "")))]
-                         (to-resource-link
-                          route-data
-                          link
-                          {:eid v})))
-           (assoc acc k v)))
-       (vary-meta {}
-                  assoc
-                  `clojure.core.protocols/nav
-                  (get (meta value)
-                       `clojure.core.protocols/nav))
-       value))))
+      (let [parent-params (parent-eid-params value)]
+        (reduce-kv
+         (fn [acc k v]
+           (if-let [link (get mapping k)]
+             (-> acc
+                 (assoc k v)
+                 (assoc-in [:_links
+                            (if (= k :eid)
+                              :self
+                              (keyword
+                               (clojure.string/replace (name k) #"-eid" "")))]
+                           (to-resource-link
+                            route-data
+                            link
+                            (assoc parent-params :eid v))))
+             (assoc acc k v)))
+         (vary-meta {}
+                    assoc
+                    `clojure.core.protocols/nav
+                    (get (meta value)
+                         `clojure.core.protocols/nav))
+         value)))))
 
 (defn next-specification
   [specification]

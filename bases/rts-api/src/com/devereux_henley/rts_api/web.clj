@@ -34,8 +34,11 @@
     :game/faction         "rts-web/resource/faction.html"
     :game/draft           "rts-web/resource/draft.html"
     :draft/unit           "rts-web/resource/draft-unit.html"
+    :draft/entry          "rts-web/resource/draft-entry.html"
     :draft/add-success    "rts-web/resource/draft-add-success.html"
     :draft/add-error      "rts-web/resource/draft-add-error.html"
+    :draft/update-success "rts-web/resource/draft-update-success.html"
+    :draft/update-error   "rts-web/resource/draft-add-error.html"
     :draft/remove-success "rts-web/resource/draft-remove-success.html"
     :missing/resource     "rts-web/resource/missing.html"
     "exception"           "rts-web/resource/error.html"}

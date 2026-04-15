@@ -4,15 +4,6 @@
    [selmer.parser]
    [taoensso.timbre :as log]))
 
-(defn- with-oob
-  "Sets :oob true on every top-level map value in data so templates can render
-   hx-swap-oob without the handler needing to know about the HTMX format."
-  [data]
-  (reduce-kv (fn [m k v]
-               (if (map? v) (assoc m k (assoc v :oob true)) m))
-             data
-             data))
-
 (def ^:private fallback-error-fragment
   "<section class=\"resource\" role=\"alert\" aria-labelledby=\"render-error-heading\">
   <p id=\"render-error-heading\">Something went wrong rendering this view.</p>
@@ -38,14 +29,12 @@
   (reify
     muuntaja.format.core/EncodeToBytes
     (encode-to-bytes [_ data charset]
-      (let [enriched (with-oob data)]
-        (.getBytes ^String (safe-render view-fn enriched) ^String charset)))
+      (.getBytes ^String (safe-render view-fn data) ^String charset))
     muuntaja.format.core/EncodeToOutputStream
     (encode-to-output-stream [_ data charset]
       (fn [^java.io.OutputStream output-stream]
-        (let [enriched (with-oob data)
-              encoded  (safe-render view-fn enriched)
-              bytes    (.getBytes ^String encoded ^String charset)]
+        (let [encoded (safe-render view-fn data)
+              bytes   (.getBytes ^String encoded ^String charset)]
           (.write output-stream bytes))))))
 
 (defn html-decoder
