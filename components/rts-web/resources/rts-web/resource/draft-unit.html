@@ -4,7 +4,7 @@
           onsubmit="return false"
           {% if data.editing %}
           hx-patch="/api/draft/{{data.draft-eid}}/entry/{{data.editing.entry-eid}}?section={{data.editing.section}}"
-          hx-trigger="change"
+          hx-trigger="change delay:400ms"
           hx-swap="none"
           {% endif %}>
 
@@ -38,12 +38,14 @@
                 Add to Main Army
             </button>
             {% if data.reinforcements-enabled %}
+            {% ifunequal data.unit.unit-category-name "Lord" %}
             <button class="btn btn-primary draft-add-btn draft-add-btn--reinf"
                     type="button"
                     hx-post="/api/draft/{{data.draft-eid}}/unit/{{data.unit.eid}}?section=reinforcements"
                     hx-swap="none">
                 Add to Reinforcements
             </button>
+            {% endifunequal %}
             {% endif %}
             {% endif %}
             <a class="draft-details-link"

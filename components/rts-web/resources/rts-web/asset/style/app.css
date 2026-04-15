@@ -440,7 +440,12 @@ a:hover:has(img) {
   flex-shrink: 0;
 }
 
-.draft-budget-used { color: #e8c870; }
+.draft-budget-used {
+  color: #e8c870;
+  display: inline-block;
+  transform-origin: center;
+  animation: budget-used-strike 560ms cubic-bezier(.2, .7, .1, 1) both;
+}
 .draft-budget-sep  { color: #5a4830; margin: 0 2px; }
 .draft-budget-max  { color: #7a6040; }
 
@@ -449,21 +454,85 @@ a:hover:has(img) {
   flex: 1;
   min-width: 4rem;
   max-width: 12rem;
-  background: #2a1a10;
+  background: #1a0d08;
   border-radius: 3px;
   overflow: hidden;
+  box-shadow: inset 0 1px 2px #000a, inset 0 0 0 1px #3a2418;
 }
 
 .draft-budget-fill {
+  position: relative;
   height: 100%;
   width: var(--pct, 0%);
-  background: #8b2020;
+  background: linear-gradient(180deg, #a82828 0%, #8b2020 55%, #5a0e0e 100%);
   border-radius: 3px;
-  transition: width 300ms ease, background-color 300ms ease;
+  box-shadow: inset 0 1px 0 #ff606033, inset 0 -2px 0 #3a0808;
+  animation: budget-fill 680ms cubic-bezier(.2, .65, .1, 1) both;
 }
 
-.draft-budget-fill--near { background: #b87020; }
-.draft-budget-fill--over { background: #cc2020; }
+.draft-budget-fill::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  right: -3px;
+  width: 10px;
+  background: radial-gradient(circle at right, #fff4c0dd 0%, #ffb84066 40%, transparent 75%);
+  opacity: 0;
+  pointer-events: none;
+  animation: budget-tip-flash 440ms ease-out 580ms both;
+}
+
+.draft-budget-fill--near {
+  background: linear-gradient(180deg, #d89020 0%, #b87020 55%, #7a4010 100%);
+  box-shadow: inset 0 1px 0 #ffc06040, inset 0 -2px 0 #3a2008;
+}
+
+.draft-budget-fill--over {
+  background: linear-gradient(180deg, #ff3020 0%, #cc2020 55%, #7a0808 100%);
+  box-shadow: inset 0 1px 0 #ff808040, inset 0 -2px 0 #3a0404;
+  animation:
+    budget-fill 680ms cubic-bezier(.2, .65, .1, 1) both,
+    budget-over-throb 1.6s ease-in-out 680ms infinite;
+}
+
+.draft-budget-fill--over::after {
+  background: radial-gradient(circle at right, #ffdcbcdd 0%, #ff604088 40%, transparent 75%);
+}
+
+@keyframes budget-fill {
+  from { width: 0; }
+  to   { width: var(--pct, 0%); }
+}
+
+@keyframes budget-used-strike {
+  0%   { transform: scale(1);    color: #e8c870; text-shadow: 0 0 0 transparent; }
+  38%  { transform: scale(1.22); color: #fff4c0; text-shadow: 0 0 8px #e8c870cc, 0 0 14px #e8c87055; }
+  100% { transform: scale(1);    color: #e8c870; text-shadow: 0 0 0 transparent; }
+}
+
+@keyframes budget-tip-flash {
+  0%   { opacity: 0; }
+  45%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes budget-over-throb {
+  0%, 100% { box-shadow: inset 0 1px 0 #ff808040, inset 0 -2px 0 #3a0404, 0 0 4px -1px #cc2020aa; }
+  50%      { box-shadow: inset 0 1px 0 #ff808080, inset 0 -2px 0 #3a0404, 0 0 12px 0 #ff304099; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .draft-budget-fill,
+  .draft-budget-fill--over,
+  .draft-budget-fill::after,
+  .draft-budget-used {
+    animation: none !important;
+  }
+  .draft-budget-fill {
+    transition: width 300ms ease, background 300ms ease;
+  }
+}
 
 /* Unit slot row */
 .draft-slots {
@@ -605,15 +674,6 @@ a:hover:has(img) {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   opacity: 0.7;
-}
-
-@keyframes slot-appear {
-  from { opacity: 0; transform: scale(0.8); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-.draft-slot--new {
-  animation: slot-appear 180ms ease-out;
 }
 
 /* Error zone */

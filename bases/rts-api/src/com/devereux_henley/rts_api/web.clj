@@ -5,7 +5,9 @@
    [com.devereux-henley.content-negotiation.contract :as content-negotiation]
    [com.devereux-henley.resourcekit.contract :as resourcekit]
    [com.devereux-henley.rts-api.extensions.clj-http] ;; Patches multimethod for clj-http
+   [com.devereux-henley.schema.contract :as schema.contract]
    [integrant.core]
+   [malli.core :as malli]
    [malli.util]
    [muuntaja.core :as m]
    [muuntaja.format.form]
@@ -36,7 +38,7 @@
     :draft/unit           "rts-web/resource/draft-unit.html"
     :draft/add-success    "rts-web/resource/draft-add-success.html"
     :draft/add-error      "rts-web/resource/draft-add-error.html"
-    :draft/update-success "rts-web/resource/draft-add-success.html"
+    :draft/update-success "rts-web/resource/draft-update-success.html"
     :draft/update-error   "rts-web/resource/draft-add-error.html"
     :draft/remove-success "rts-web/resource/draft-remove-success.html"
     :missing/resource     "rts-web/resource/missing.html"
@@ -155,6 +157,38 @@
                       "An unexpected error occurred."
                       request))}))
 
+(def ^:private html-formats
+  #{"text/html" "application/htmx+html"})
+
+(defn ^:private response-body-schema
+  "Looks up the matched route's response body schema for the given status,
+   or nil when the match has no schema for that status."
+  [request status]
+  (let [match (:reitit.core/match request)]
+    (get-in match [:result (:request-method request) :data :responses status :body])))
+
+(defn strip-ui-only-middleware
+  "Strips fields marked `{:ui-only true}` from response bodies for non-HTML
+   formats. The htmx+html and text/html encoders keep the full map so
+   templates can consume UI-only state (e.g. per-slot animation flags);
+   JSON/HAL clients never see those fields.
+
+   Placed between format-response and coerce-response in the middleware
+   stack so it runs on the still-unencoded body map after malli coercion
+   has closed and validated it."
+  [handler]
+  (fn [request]
+    (let [response (handler request)
+          format   (some-> request :muuntaja/response :format)]
+      (if (or (contains? html-formats format)
+              (not (map? (:body response))))
+        response
+        (if-let [schema (response-body-schema request (:status response))]
+          (update response :body
+                  (fn [body]
+                    (malli/encode schema body schema.contract/strip-ui-only-transformer)))
+          response)))))
+
 (defn ory-session-middleware
   [ory-base-url session-name handler]
   (fn [request]
@@ -220,6 +254,8 @@
                               muuntaja/format-negotiate-middleware
                               ;; encoding response body
                               muuntaja/format-response-middleware
+                              ;; strip ui-only fields for non-HTML formats
+                              strip-ui-only-middleware
                               ;; exception handling
                               (exception/create-exception-middleware exception-handlers)
                               ;; decoding request body

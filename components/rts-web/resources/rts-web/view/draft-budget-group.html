@@ -1,0 +1,19 @@
+<div id="{{budget.section-id}}-budget"
+     class="draft-budget-group"
+     role="meter"
+     aria-valuenow="{{budget.section-cost}}"
+     aria-valuemin="0"
+     aria-valuemax="{{budget.section-max}}"
+     aria-label="{{budget.section-label}} budget: {{budget.section-cost}} of {{budget.section-max}}"
+     {% if oob %}hx-swap-oob="true"{% endif %}>
+    <span class="draft-budget-icon" aria-hidden="true">&#11044;</span>
+    <span class="draft-budget-text">
+        <span class="draft-budget-used">{{budget.section-cost}}</span>
+        <span class="draft-budget-sep">/</span>
+        <span class="draft-budget-max">{{budget.section-max}}</span>
+    </span>
+    <div class="draft-budget-track">
+        <div class="draft-budget-fill {% if budget.section-over-budget %}draft-budget-fill--over{% elif budget.section-near-limit %}draft-budget-fill--near{% endif %}"
+             style="--pct: {{budget.section-percentage}}%"></div>
+    </div>
+</div>

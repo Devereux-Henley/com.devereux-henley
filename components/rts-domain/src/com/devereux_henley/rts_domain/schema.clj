@@ -194,6 +194,38 @@
       [:passive-abilities {:optional true} [:sequential draft-ability]]
       [:draftable-abilities {:optional true} [:sequential draft-ability]]]]]))
 
+(def draft-section-unit
+  "A unit as it appears inside a rendered draft section: just enough fields
+   to draw the slot card and target the specific placed entry."
+  [:map
+   [:eid :uuid]
+   [:entry-eid :uuid]
+   [:name :string]
+   [:total-cost [:maybe :int]]
+   [:is-lord {:optional true} :boolean]])
+
+(def draft-section-budget
+  "The meter-only projection of a section context: enough to render the
+   budget group fragment without carrying unit lists."
+  [:map
+   [:section :string]
+   [:section-label :string]
+   [:section-id :string]
+   [:section-cost :int]
+   [:section-max {:optional true} [:maybe :int]]
+   [:section-percentage :int]
+   [:section-near-limit :boolean]
+   [:section-over-budget :boolean]])
+
+(def draft-section-ref
+  "The addressing fields a mutation response uses to point at a section:
+   enough to build URLs and OOB selector targets in a slot fragment."
+  [:map
+   [:section :string]
+   [:section-id :string]
+   [:section-label :string]
+   [:draft-eid :uuid]])
+
 (def draft-section-context
   (schema.contract/to-schema
    [:map
@@ -207,10 +239,9 @@
     [:section-percentage :int]
     [:section-near-limit :boolean]
     [:section-over-budget :boolean]
-    [:lord-unit {:optional true} :any]
-    [:non-lord-units [:sequential :any]]
-    [:section-units [:sequential :any]]
-    [:oob {:optional true} :boolean]]))
+    [:lord-unit {:optional true} [:maybe draft-section-unit]]
+    [:non-lord-units [:sequential draft-section-unit]]
+    [:section-units [:sequential draft-section-unit]]]))
 
 (defn- ^:private scalar-or-seq->vec
   "json-enc serialises a group of same-named form inputs as a scalar when
@@ -231,10 +262,27 @@
     [:spells    {:optional true :decode/json scalar-or-seq->vec} [:sequential :string]]
     [:items     {:optional true :decode/json scalar-or-seq->vec} [:sequential :string]]]))
 
-(def draft-mutation-response
+(def draft-add-response
   (schema.contract/to-schema
    [:map
-    [:type [:enum :draft/add-success :draft/update-success :draft/remove-success]]
-    [:main-section draft-section-context]
-    [:reinf-section {:optional true} [:maybe draft-section-context]]]))
+    [:type [:= :draft/add-success]]
+    [:section draft-section-ref]
+    [:new-unit draft-section-unit]
+    [:budget draft-section-budget]]))
+
+(def draft-remove-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :draft/remove-success]]
+    [:removed-entry-eid :uuid]
+    [:removed-is-lord :boolean]
+    [:budget draft-section-budget]]))
+
+(def draft-update-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :draft/update-success]]
+    [:entry-eid :uuid]
+    [:total-cost [:maybe :int]]
+    [:budget draft-section-budget]]))
 

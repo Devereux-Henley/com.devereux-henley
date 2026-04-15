@@ -1,5 +1,20 @@
 <div id="draft-action-error" role="alert" aria-live="polite" hidden hx-swap-oob="true"></div>
-{% with section=data.main-section %}{% include "rts-web/view/draft-army-section.html" %}{% endwith %}
-{% if data.reinf-section %}
-{% with section=data.reinf-section %}{% include "rts-web/view/draft-army-section.html" %}{% endwith %}
+{% if data.new-unit.is-lord %}
+<div id="main-army-section-lord-slot"
+     class="draft-slot draft-slot--lord draft-slot--filled"
+     role="listitem"
+     aria-label="{{data.new-unit.name}}"
+     hx-swap-oob="true">
+    {% with unit=data.new-unit section=data.section %}{% include "rts-web/view/draft-slot-inner.html" %}{% endwith %}
+</div>
+{% else %}
+<div hx-swap-oob="beforeend:#{{data.section.section-id}}-slots">
+    <div id="draft-slot-{{data.new-unit.entry-eid}}"
+         class="draft-slot draft-slot--filled"
+         role="listitem"
+         aria-label="{{data.new-unit.name}}">
+        {% with unit=data.new-unit section=data.section %}{% include "rts-web/view/draft-slot-inner.html" %}{% endwith %}
+    </div>
+</div>
 {% endif %}
+{% with budget=data.budget oob="oob" %}{% include "rts-web/view/draft-budget-group.html" %}{% endwith %}

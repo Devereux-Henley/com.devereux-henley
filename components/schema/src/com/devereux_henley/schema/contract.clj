@@ -368,3 +368,18 @@
                            :model/collection (handle-collection-transform route-data schema)
                            :model/model (handle-model-transform route-data schema)
                            identity)))}}}))
+
+(def strip-ui-only-transformer
+  "Encoder transformer that dissocs fields whose schema properties carry
+   `:ui-only true`. Intended for non-HTML response formats: the declared
+   UI-only fields survive through HTML rendering but are removed before
+   JSON/HAL serialisation so clients never see template-only state."
+  (malli.transform/transformer
+   {:name     :strip-ui-only
+    :encoders {:map {:compile
+                     (fn [schema _]
+                       (let [ui-only-keys (->> (malli.core/children schema)
+                                               (keep (fn [[k props _]]
+                                                       (when (:ui-only props) k))))]
+                         (when (seq ui-only-keys)
+                           (fn [x] (apply dissoc x ui-only-keys)))))}}}))

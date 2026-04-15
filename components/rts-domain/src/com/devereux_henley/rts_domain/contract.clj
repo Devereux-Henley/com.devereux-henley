@@ -21,7 +21,9 @@
 
 (def draft-unit-response schema/draft-unit-response)
 
-(def draft-mutation-response schema/draft-mutation-response)
+(def draft-add-response    schema/draft-add-response)
+(def draft-remove-response schema/draft-remove-response)
+(def draft-update-response schema/draft-update-response)
 
 (def faction-resource schema/faction-resource)
 

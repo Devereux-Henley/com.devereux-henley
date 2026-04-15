@@ -153,7 +153,7 @@
                                  [:map
                                   [:section [:enum "main" "reinforcements"]]])
                          :body  domain/add-unit-to-draft-specification}
-            :responses  {200 {:body domain/draft-mutation-response}
+            :responses  {200 {:body domain/draft-add-response}
                          422 {:body domain/draft-error-response}
                          500 {:body domain/draft-error-response}}
             :handler    (integrant.core/ref ::web.draft/draft-add-unit)}}]
@@ -171,7 +171,7 @@
                                    [:map
                                     [:section [:enum "main" "reinforcements"]]])
                            :body  domain/add-unit-to-draft-specification}
-              :responses  {200 {:body domain/draft-mutation-response}
+              :responses  {200 {:body domain/draft-update-response}
                            422 {:body domain/draft-error-response}
                            500 {:body domain/draft-error-response}}
               :handler    (integrant.core/ref ::web.draft/draft-update-unit)}
@@ -187,7 +187,7 @@
                            :query (schema.contract/to-schema
                                    [:map
                                     [:section [:enum "main" "reinforcements"]]])}
-              :responses  {200 {:body domain/draft-mutation-response}
+              :responses  {200 {:body domain/draft-remove-response}
                            500 {:body domain/draft-error-response}}
               :handler    (integrant.core/ref ::web.draft/draft-remove-unit)}}]
    ["/draft/:eid"
