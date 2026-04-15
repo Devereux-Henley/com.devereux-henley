@@ -291,24 +291,26 @@
    (fn []
      (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main" {})]
        (is (= :draft/add-success (:type result)))
-       (is (contains? result :main-section))
-       (is (contains? result :reinf-section))))))
+       (is (contains? result :section))
+       (is (contains? result :new-unit))
+       (is (contains? result :budget))))))
 
 (deftest add-unit-to-draft-includes-section-context-on-success
   ((stub-add-unit [infantry-unit] nil)
    (fn []
      (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main" {})]
-       (is (= "main" (:section (:main-section result))))
-       (is (= 100 (:section-cost (:main-section result))))))))
+       (is (= "main" (:section (:section result))))
+       (is (= "main-army-section" (:section-id (:section result))))
+       (is (= test-unit-eid (:eid (:new-unit result))))
+       (is (= 100 (:section-cost (:budget result))))))))
 
-(deftest add-unit-to-draft-omits-reinf-section-when-disabled
+(deftest add-unit-to-draft-succeeds-when-reinforcements-disabled
   ((stub-add-unit [infantry-unit] nil)
    (fn []
      (with-redefs [data-access.contract/get-game-mode-by-eid
                    (fn [_ _] (assoc test-game-mode :reinforcements-enabled 0))]
        (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main" {})]
-         (is (= :draft/add-success (:type result)))
-         (is (nil? (:reinf-section result))))))))
+         (is (= :draft/add-success (:type result))))))))
 
 (deftest add-unit-to-draft-stores-mount-in-state
   (let [stored    (atom nil)
@@ -344,8 +346,9 @@
                   data-access.contract/get-units-for-faction    (fn [_ _] [infantry-unit])]
       (let [result (handlers.draft/remove-unit-from-draft test-deps test-draft-eid test-entry-eid "main")]
         (is (= :draft/remove-success (:type result)))
-        (is (contains? result :main-section))
-        (is (contains? result :reinf-section))))))
+        (is (= test-entry-eid (:removed-entry-eid result)))
+        (is (contains? result :removed-is-lord))
+        (is (contains? result :budget))))))
 
 (deftest remove-unit-from-draft-section-cost-is-zero-after-removal
   (let [existing-state (state-json {:main [[test-unit-eid test-entry-eid]] :reinforcements []})]
@@ -355,7 +358,7 @@
                   data-access.contract/upsert-draft-state       (fn [_ _ _] nil)
                   data-access.contract/get-units-for-faction    (fn [_ _] [infantry-unit])]
       (let [result (handlers.draft/remove-unit-from-draft test-deps test-draft-eid test-entry-eid "main")]
-        (is (= 0 (:section-cost (:main-section result))))))))
+        (is (= 0 (:section-cost (:budget result))))))))
 
 ;; --- update-unit-in-draft ---
 
@@ -378,7 +381,9 @@
       (let [result (handlers.draft/update-unit-in-draft test-deps test-draft-eid test-entry-eid "main"
                                                         {:mount mount-key})]
         (is (= :draft/update-success (:type result)))
-        (is (= 150 (:section-cost (:main-section result))))
+        (is (= test-entry-eid (:entry-eid result)))
+        (is (= 150 (:total-cost result)))
+        (is (= 150 (:section-cost (:budget result))))
         (let [parsed (jsonista.core/read-value @stored (jsonista.core/object-mapper {:decode-key-fn keyword}))]
           (is (= (str test-entry-eid) (get-in parsed [:main 0 :entry-eid])))
           (is (= mount-key (get-in parsed [:main 0 :mount]))))))))
