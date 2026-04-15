@@ -98,7 +98,7 @@
 (def draft-error-response
   (schema.contract/to-schema
    [:map
-    [:type [:= :draft/add-error]]
+    [:type [:enum :draft/add-error :draft/update-error]]
     [:message :string]]))
 
 (def draft-unit-stat
@@ -117,6 +117,7 @@
     [:name :string]
     [:category :string]
     [:cost :int]
+    [:selected {:optional true} :boolean]
     [:icon-key {:optional true} [:maybe :string]]]))
 
 (def draft-ability
@@ -126,6 +127,7 @@
     [:name :string]
     [:eid {:optional true} [:maybe :uuid]]
     [:description {:optional true} [:maybe :string]]
+    [:selected {:optional true} :boolean]
     [:cost :int]]))
 
 (def draft-spell
@@ -135,6 +137,7 @@
     [:eid {:optional true} [:maybe :uuid]]
     [:name :string]
     [:mana-cost :int]
+    [:selected {:optional true} :boolean]
     [:cost :int]]))
 
 (def draft-mount
@@ -144,7 +147,16 @@
     [:key :string]
     [:name :string]
     [:cost :int]
+    [:selected {:optional true} :boolean]
     [:icon-key {:optional true} [:maybe :string]]]))
+
+(def draft-editing-context
+  (schema.contract/to-schema
+   [:map
+    [:entry-eid :uuid]
+    [:section [:enum "main" "reinforcements"]]
+    [:section-label :string]
+    [:mount {:optional true} [:maybe :string]]]))
 
 (def draft-unit-response
   (schema.contract/to-schema
@@ -157,6 +169,7 @@
     [:passive-spells {:optional true} [:sequential draft-spell]]
     [:draftable-spells {:optional true} [:sequential draft-spell]]
     [:has-passives {:optional true} :boolean]
+    [:editing {:optional true} [:maybe draft-editing-context]]
     [:unit
      [:map
       [:eid :uuid]
@@ -213,7 +226,7 @@
 (def draft-mutation-response
   (schema.contract/to-schema
    [:map
-    [:type [:enum :draft/add-success :draft/remove-success]]
+    [:type [:enum :draft/add-success :draft/update-success :draft/remove-success]]
     [:main-section draft-section-context]
     [:reinf-section {:optional true} [:maybe draft-section-context]]]))
 

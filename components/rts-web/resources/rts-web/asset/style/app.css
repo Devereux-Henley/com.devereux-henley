@@ -500,11 +500,36 @@ a:hover:has(img) {
 .draft-slot--filled {
   border-style: solid;
   border-color: #4a2e18;
-  cursor: default;
 }
 
 .draft-slot--filled:hover .draft-slot-remove {
   display: flex;
+}
+
+.draft-slot-card-button {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  display: block;
+  transition: filter 120ms, box-shadow 120ms;
+}
+
+.draft-slot-card-button:hover {
+  filter: brightness(1.1);
+  box-shadow: inset 0 0 0 2px #c89850;
+}
+
+.draft-slot-card-button:focus-visible {
+  outline: 2px solid #e8c870;
+  outline-offset: -2px;
 }
 
 .draft-slot-card {
@@ -526,26 +551,38 @@ a:hover:has(img) {
   color: #e8c870;
   text-shadow: 0 1px 3px #000, 0 0 6px #000;
   pointer-events: none;
+  z-index: 2;
 }
 
 .draft-slot-remove {
   display: none;
   position: absolute;
-  inset: 0;
+  top: 2px;
+  right: 2px;
+  width: 18px;
+  height: 18px;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.75);
   color: #e06050;
-  font-size: 1.25rem;
-  border: none;
+  font-size: 0.75rem;
+  border: 1px solid #4a2e18;
+  border-radius: 50%;
   cursor: pointer;
   line-height: 1;
-  transition: background-color 120ms;
+  padding: 0;
+  transition: background-color 120ms, color 120ms;
+  z-index: 3;
 }
 
 .draft-slot-remove:hover {
-  background: rgba(120, 20, 10, 0.8);
+  background: rgba(120, 20, 10, 0.9);
   color: #ff8070;
+}
+
+.draft-slot-remove:focus-visible {
+  outline: 2px solid #e8c870;
+  outline-offset: 1px;
 }
 
 .draft-slot-empty-lord {

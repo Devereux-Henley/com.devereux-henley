@@ -25,14 +25,21 @@
              role="listitem"
              aria-label="Legendary Lord slot{% if not section.lord-unit %} — empty{% endif %}">
             {% if section.lord-unit %}
-            <img class="draft-slot-card"
-                 src="/card/unit/{{section.lord-unit.eid}}.png"
-                 alt="{{section.lord-unit.name}}"
-                 onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;">
+            <button class="draft-slot-card-button"
+                    type="button"
+                    aria-label="Edit {{section.lord-unit.name}} in {{section.section-label}}"
+                    hx-get="/api/draft/{{section.draft-eid}}/unit/{{section.lord-unit.eid}}?section=main&entry-eid={{section.lord-unit.entry-eid}}"
+                    hx-target="#draft-unit"
+                    hx-swap="outerHTML">
+                <img class="draft-slot-card"
+                     src="/card/unit/{{section.lord-unit.eid}}.png"
+                     alt="{{section.lord-unit.name}}"
+                     onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;">
+            </button>
             <div class="draft-slot-cost" aria-hidden="true">{{section.lord-unit.total-cost}}</div>
             <button class="draft-slot-remove"
                     aria-label="Remove {{section.lord-unit.name}} from Main Army"
-                    hx-delete="/api/draft/{{section.draft-eid}}/unit/{{section.lord-unit.eid}}?section=main"
+                    hx-delete="/api/draft/{{section.draft-eid}}/entry/{{section.lord-unit.entry-eid}}?section=main"
                     hx-swap="none">&#10005;</button>
             {% else %}
             <div class="draft-slot-empty-lord" aria-hidden="true">
@@ -45,14 +52,21 @@
         <div class="draft-slot draft-slot--filled"
              role="listitem"
              aria-label="{{unit.name}}">
-            <img class="draft-slot-card"
-                 src="/card/unit/{{unit.eid}}.png"
-                 alt="{{unit.name}}"
-                 onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;">
+            <button class="draft-slot-card-button"
+                    type="button"
+                    aria-label="Edit {{unit.name}} in {{section.section-label}}"
+                    hx-get="/api/draft/{{section.draft-eid}}/unit/{{unit.eid}}?section=main&entry-eid={{unit.entry-eid}}"
+                    hx-target="#draft-unit"
+                    hx-swap="outerHTML">
+                <img class="draft-slot-card"
+                     src="/card/unit/{{unit.eid}}.png"
+                     alt="{{unit.name}}"
+                     onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;">
+            </button>
             <div class="draft-slot-cost" aria-hidden="true">{{unit.total-cost}}</div>
             <button class="draft-slot-remove"
                     aria-label="Remove {{unit.name}} from Main Army"
-                    hx-delete="/api/draft/{{section.draft-eid}}/unit/{{unit.eid}}?section=main"
+                    hx-delete="/api/draft/{{section.draft-eid}}/entry/{{unit.entry-eid}}?section=main"
                     hx-swap="none">&#10005;</button>
         </div>
         {% endfor %}
@@ -61,14 +75,21 @@
         <div class="draft-slot draft-slot--filled"
              role="listitem"
              aria-label="{{unit.name}}">
-            <img class="draft-slot-card"
-                 src="/card/unit/{{unit.eid}}.png"
-                 alt="{{unit.name}}"
-                 onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;">
+            <button class="draft-slot-card-button"
+                    type="button"
+                    aria-label="Edit {{unit.name}} in {{section.section-label}}"
+                    hx-get="/api/draft/{{section.draft-eid}}/unit/{{unit.eid}}?section=reinforcements&entry-eid={{unit.entry-eid}}"
+                    hx-target="#draft-unit"
+                    hx-swap="outerHTML">
+                <img class="draft-slot-card"
+                     src="/card/unit/{{unit.eid}}.png"
+                     alt="{{unit.name}}"
+                     onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;">
+            </button>
             <div class="draft-slot-cost" aria-hidden="true">{{unit.total-cost}}</div>
             <button class="draft-slot-remove"
                     aria-label="Remove {{unit.name}} from Reinforcements"
-                    hx-delete="/api/draft/{{section.draft-eid}}/unit/{{unit.eid}}?section=reinforcements"
+                    hx-delete="/api/draft/{{section.draft-eid}}/entry/{{unit.entry-eid}}?section=reinforcements"
                     hx-swap="none">&#10005;</button>
         </div>
         {% endfor %}

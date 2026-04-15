@@ -124,27 +124,49 @@
             :responses  {200 {:body domain/faction-resource}}
             :handler    (integrant.core/ref ::web.game/get-faction)}}]
    ["/draft/:eid/unit/:unit-eid"
-    {:get    {:produces   ["application/json" "application/htmx+html"]
-              :openapi    {:summary      "Gets details for a unit that can be assigned to the specific draft."
+    {:get  {:produces   ["application/json" "application/htmx+html"]
+            :openapi    {:summary      "Gets details for a unit that can be assigned to the specific draft."
+                         :tags         ["draft"]
+                         :produces     ["application/json" "application/htmx+html"]
+                         :operation-id "draft-unit/get"}
+            :parameters {:path  (schema.contract/to-schema
+                                 [:map
+                                  [:eid :uuid]
+                                  [:unit-eid :uuid]])
+                         :query (schema.contract/to-schema
+                                 [:map
+                                  [:section   {:optional true} [:enum "main" "reinforcements"]]
+                                  [:entry-eid {:optional true} :uuid]])}
+            :responses  {200 {:body domain/draft-unit-response}
+                         500 {:body domain/draft-error-response}}
+            :handler    (integrant.core/ref ::web.draft/get-draft-unit)}
+     :post {:produces   ["application/json" "application/htmx+html"]
+            :openapi    {:summary      "Assigns a unit to the specified draft."
+                         :tags         ["draft"]
+                         :produces     ["application/json" "application/htmx+html"]
+                         :operation-id "draft-unit/create"}
+            :parameters {:path  (schema.contract/to-schema
+                                 [:map
+                                  [:eid :uuid]
+                                  [:unit-eid :uuid]])
+                         :query (schema.contract/to-schema
+                                 [:map
+                                  [:section [:enum "main" "reinforcements"]]])
+                         :body  domain/add-unit-to-draft-specification}
+            :responses  {200 {:body domain/draft-mutation-response}
+                         422 {:body domain/draft-error-response}
+                         500 {:body domain/draft-error-response}}
+            :handler    (integrant.core/ref ::web.draft/draft-add-unit)}}]
+   ["/draft/:eid/entry/:entry-eid"
+    {:patch  {:produces   ["application/json" "application/htmx+html"]
+              :openapi    {:summary      "Updates the selections of a placed draft entry."
                            :tags         ["draft"]
                            :produces     ["application/json" "application/htmx+html"]
-                           :operation-id "draft-unit/get"}
-              :parameters {:path (schema.contract/to-schema
-                                  [:map
-                                   [:eid :uuid]
-                                   [:unit-eid :uuid]])}
-              :responses  {200 {:body domain/draft-unit-response}
-                           500 {:body domain/draft-error-response}}
-              :handler    (integrant.core/ref ::web.draft/get-draft-unit)}
-     :post   {:produces   ["application/json" "application/htmx+html"]
-              :openapi    {:summary      "Assigns a unit to the specified draft."
-                           :tags         ["draft"]
-                           :produces     ["application/json" "application/htmx+html"]
-                           :operation-id "draft-unit/create"}
+                           :operation-id "draft-entry/update"}
               :parameters {:path  (schema.contract/to-schema
                                    [:map
                                     [:eid :uuid]
-                                    [:unit-eid :uuid]])
+                                    [:entry-eid :uuid]])
                            :query (schema.contract/to-schema
                                    [:map
                                     [:section [:enum "main" "reinforcements"]]])
@@ -152,16 +174,16 @@
               :responses  {200 {:body domain/draft-mutation-response}
                            422 {:body domain/draft-error-response}
                            500 {:body domain/draft-error-response}}
-              :handler    (integrant.core/ref ::web.draft/draft-add-unit)}
+              :handler    (integrant.core/ref ::web.draft/draft-update-unit)}
      :delete {:produces   ["application/json" "application/htmx+html"]
-              :openapi    {:summary      "Removes unit assignment from the specified draft."
+              :openapi    {:summary      "Removes a placed entry from the specified draft."
                            :tags         ["draft"]
                            :produces     ["application/json" "application/htmx+html"]
-                           :operation-id "draft-unit/delete"}
+                           :operation-id "draft-entry/delete"}
               :parameters {:path  (schema.contract/to-schema
                                    [:map
                                     [:eid :uuid]
-                                    [:unit-eid :uuid]])
+                                    [:entry-eid :uuid]])
                            :query (schema.contract/to-schema
                                    [:map
                                     [:section [:enum "main" "reinforcements"]]])}

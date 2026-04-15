@@ -186,6 +186,7 @@
 (def ^:private state-entry-schema
   (m/schema
    [:map
+    [:entry-eid  {:optional true} [:maybe :uuid]]
     [:unit-eid :uuid]
     [:mount      {:optional true} [:maybe :string]]
     [:abilities  {:optional true, :default []} [:sequential :string]]
@@ -199,9 +200,13 @@
 
 (defn- parse-state-entry
   "Decodes a raw JSON-decoded state entry into a typed map via Malli.
-   Converts :unit-eid string to UUID and defaults :abilities/:spells/:items to []."
+   Converts :unit-eid / :entry-eid strings to UUIDs and defaults
+   :abilities/:spells/:items to []. Backfills :entry-eid with a fresh UUID
+   when absent so legacy state rows self-heal on first read."
   [entry]
-  (m/decode state-entry-schema entry state-entry-transformer))
+  (let [decoded (m/decode state-entry-schema entry state-entry-transformer)]
+    (cond-> decoded
+      (nil? (:entry-eid decoded)) (assoc :entry-eid (random-uuid)))))
 
 (defn get-draft-state
   "Returns {:main [entry …] :reinforcements [entry …]} where each entry is
@@ -290,11 +295,14 @@
   (into {} (map (juxt :eid identity) (hydrate-units-with-stats (db/get-units-for-faction conn faction-eid)))))
 
 (defn- hydrate-section
-  "Resolves state entries to their hydrated units, attaching :total-cost from the entry."
+  "Resolves state entries to their hydrated units, attaching :total-cost and
+   the entry's :entry-eid so templates can target the specific placed copy."
   [unit-by-eid entries]
   (mapv (fn [entry]
           (when-let [u (get unit-by-eid (:unit-eid entry))]
-            (assoc u :total-cost (or (:total-cost entry) (:cost u)))))
+            (assoc u
+                   :total-cost (or (:total-cost entry) (:cost u))
+                   :entry-eid  (:entry-eid entry))))
         entries))
 
 (defn- build-section-mutation-response
@@ -401,7 +409,8 @@
         (if violation
           violation
           (let [new-state (update state section-k (fnil conj [])
-                                  {:unit-eid   unit-eid
+                                  {:entry-eid  (random-uuid)
+                                   :unit-eid   unit-eid
                                    :mount      (:mount selections)
                                    :abilities  (or (:abilities selections) [])
                                    :spells     (or (:spells selections) [])
@@ -410,19 +419,24 @@
             (set-draft-state dependencies draft-eid new-state)
             (build-section-mutation-response :draft/add-success unit-by-eid new-state draft-eid game-mode reinf-enabled)))))))
 
+(defn- find-entry-index
+  "Returns the index of the first entry with the given :entry-eid in entries,
+   or nil when no entry matches."
+  [entries entry-eid]
+  (first (keep-indexed (fn [i entry] (when (= entry-eid (:entry-eid entry)) i))
+                       entries)))
+
 (defn remove-unit-from-draft
-  "Removes the first occurrence of unit-eid from the given section of a draft's state
+  "Removes the entry matching entry-eid from the given section of a draft's state
    and returns a :draft/remove-success response map."
-  [dependencies draft-eid unit-eid section]
+  [dependencies draft-eid entry-eid section]
   (let [conn          (:connection dependencies)
         draft         (db/get-draft-by-eid conn draft-eid)
         game-mode     (db/get-game-mode-by-eid conn (:game-mode-eid draft))
         state         (get-draft-state dependencies draft-eid)
         section-k     (keyword section)
         old-list      (get state section-k [])
-        idx           (first (keep-indexed
-                              (fn [i entry] (when (= unit-eid (:unit-eid entry)) i))
-                              old-list))
+        idx           (find-entry-index old-list entry-eid)
         new-state     (assoc state section-k
                              (if (some? idx)
                                (into [] (concat (subvec old-list 0 idx) (subvec old-list (inc idx))))
@@ -431,3 +445,98 @@
         unit-by-eid   (faction-unit-index conn (:faction-eid draft))]
     (set-draft-state dependencies draft-eid new-state)
     (build-section-mutation-response :draft/remove-success unit-by-eid new-state draft-eid game-mode reinf-enabled)))
+
+(defn- mark-selected
+  "Returns options with :selected true/false set from whether each :key is in selected-keys."
+  [options selected-keys]
+  (mapv (fn [opt] (assoc opt :selected (contains? selected-keys (:key opt)))) options))
+
+(defn apply-editing
+  "Pre-populates :selected flags on draftable abilities, spells, items, and
+   mounts from the entry's stored selections, and attaches an :editing context
+   so web templates can render edit-mode affordances."
+  [details entry section]
+  (let [ability-set (set (:abilities entry))
+        spell-set   (set (:spells entry))
+        item-set    (set (:items entry))
+        section-lbl (if (= section "main") "Main Army" "Reinforcements")]
+    (-> details
+        (assoc :editing {:entry-eid     (:entry-eid entry)
+                         :section       section
+                         :section-label section-lbl
+                         :mount         (:mount entry)})
+        (update-in [:unit :draftable-abilities] mark-selected ability-set)
+        (update :draftable-spells mark-selected spell-set)
+        (update :items mark-selected item-set))))
+
+(defn get-draft-entry
+  "Returns the state entry matching entry-eid in the given section, or nil."
+  [dependencies draft-eid entry-eid section]
+  (let [state    (get-draft-state dependencies draft-eid)
+        entries  (get state (keyword section) [])]
+    (some #(when (= entry-eid (:entry-eid %)) %) entries)))
+
+(defn update-unit-in-draft
+  "Validates and replaces the selections of an already-placed draft entry.
+   entry-eid identifies the specific state entry; section says which list it
+   lives in. selections has the same shape as add-unit-to-draft selections.
+   Returns {:type :draft/update-success …} on success or
+   {:type :draft/update-error …} on violation or missing entry."
+  [dependencies draft-eid entry-eid section selections]
+  (let [selections    (update selections :mount not-empty)
+        conn          (:connection dependencies)
+        draft         (db/get-draft-by-eid conn draft-eid)
+        game-mode     (db/get-game-mode-by-eid conn (:game-mode-eid draft))
+        state         (get-draft-state dependencies draft-eid)
+        section-k     (keyword section)
+        section-list  (get state section-k [])
+        idx           (find-entry-index section-list entry-eid)
+        existing      (when idx (nth section-list idx))
+        unit-by-eid   (faction-unit-index conn (:faction-eid draft))
+        reinf-enabled (= 1 (:reinforcements-enabled game-mode))
+        section-max   (if (= section "main")
+                        (:draft-value game-mode)
+                        (:reinforcement-value game-mode))]
+    (cond
+      (nil? existing)
+      {:type :draft/update-error :message "Unit not found in this section."}
+
+      (nil? (get unit-by-eid (:unit-eid existing)))
+      {:type :draft/update-error :message "Unit not found in this faction's roster."}
+
+      :else
+      (let [unit           (get unit-by-eid (:unit-eid existing))
+            new-total      (compute-unit-total-cost unit selections conn)
+            ;; Reduced army: the entry under edit is removed so validate-add
+            ;; re-runs as if the unit were being freshly added. For the common
+            ;; "same unit, new mount" case this keeps unit-copy counts correct.
+            reduced-state  (update state section-k
+                                   (fn [xs]
+                                     (into [] (concat (subvec xs 0 idx) (subvec xs (inc idx))))))
+            army-entries   (concat
+                            (keep (fn [e] (when-let [u (get unit-by-eid (:unit-eid e))] (assoc u :section "main")))
+                                  (:main reduced-state))
+                            (keep (fn [e] (when-let [u (get unit-by-eid (:unit-eid e))] (assoc u :section "reinforcements")))
+                                  (:reinforcements reduced-state)))
+            section-cost   (reduce (fn [s entry]
+                                     (if-let [u (get unit-by-eid (:unit-eid entry))]
+                                       (+ s (or (:total-cost entry) (:cost u) 0))
+                                       s))
+                                   0
+                                   (get reduced-state section-k []))
+            violation      (rules.draft/validate-add
+                            army-entries unit section
+                            section-cost section-max new-total)]
+        (if violation
+          (assoc violation :type :draft/update-error)
+          (let [new-entry {:entry-eid  entry-eid
+                           :unit-eid   (:unit-eid existing)
+                           :mount      (:mount selections)
+                           :abilities  (or (:abilities selections) [])
+                           :spells     (or (:spells selections) [])
+                           :items      (or (:items selections) [])
+                           :total-cost new-total}
+                new-state (assoc state section-k
+                                 (assoc (vec section-list) idx new-entry))]
+            (set-draft-state dependencies draft-eid new-state)
+            (build-section-mutation-response :draft/update-success unit-by-eid new-state draft-eid game-mode reinf-enabled)))))))

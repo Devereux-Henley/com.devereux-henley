@@ -36,6 +36,8 @@
     :draft/unit           "rts-web/resource/draft-unit.html"
     :draft/add-success    "rts-web/resource/draft-add-success.html"
     :draft/add-error      "rts-web/resource/draft-add-error.html"
+    :draft/update-success "rts-web/resource/draft-add-success.html"
+    :draft/update-error   "rts-web/resource/draft-add-error.html"
     :draft/remove-success "rts-web/resource/draft-remove-success.html"
     :missing/resource     "rts-web/resource/missing.html"
     "exception"           "rts-web/resource/error.html"}

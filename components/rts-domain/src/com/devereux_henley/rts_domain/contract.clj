@@ -64,6 +64,9 @@
 (def build-section-context                      handlers.draft/build-section-context)
 (def get-draft-unit-details                     handlers.draft/get-draft-unit-details)
 (def add-unit-to-draft                          handlers.draft/add-unit-to-draft)
+(def update-unit-in-draft                       handlers.draft/update-unit-in-draft)
 (def remove-unit-from-draft                     handlers.draft/remove-unit-from-draft)
+(def get-draft-entry                            handlers.draft/get-draft-entry)
+(def apply-editing                              handlers.draft/apply-editing)
 
 (def get-platform-by-eid                        handlers.social-media/get-platform-by-eid)
