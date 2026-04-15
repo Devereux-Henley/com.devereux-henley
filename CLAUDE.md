@@ -97,6 +97,26 @@ Prefer docstrings over `;;` comments for all `defn` and `defn-` forms. Use `;;` 
 
 **Schema separation.** *Entity schemas* (in `rts-data-access`) mirror DB columns. *Resource schemas* (in `rts-domain`) are what the API returns. Handlers map entity → resource (add `:type`, shape links, etc.).
 
+### Resource schema conventions
+
+Every resource schema follows the same shape so that `handle-fetch-response` / `handle-create-response` can run the model-transformer uniformly over it:
+
+1. **Naming.** Resource schemas end in `-resource` (e.g. `draft-unit-resource`, `draft-entry-resource`, `faction-resource`). Mutation response shapes that aren't full resources use the `-response` suffix.
+
+2. **Merge with `base-resource`.** Every resource is defined via `malli.util/merge schema.contract/base-resource (schema.contract/to-schema [:map ...])`. The base contributes `{:model/type :model/model}` (which the transformer checks), a `:uuid :eid`, a `:type` discriminator slot, and a default `[:_links [:map [:self :url]]]`. The child schema overrides `:type` with a closed `[:= :some/type]` and adds domain fields.
+
+3. **`:model/link` on eid fields.** Annotate the root `:eid` with `{:model/link :<resource>/by-eid}` so the transformer fills `_links.self`. Annotate every foreign-key `*-eid` field with its own `{:model/link :<other>/by-eid}`; the transformer strips `-eid` off the key to derive the `_links` entry name (e.g. `:draft-eid` → `_links.draft`).
+
+4. **Declare `:_links` explicitly when adding links beyond `:self`.** The merge with `base-resource` only gives you `[:_links [:map [:self :url]]]`. If the response carries additional links (any resource with foreign keys does), override `:_links` with the full shape: `[:_links [:map [:self :url] [:draft :url] [:faction :url] ...]]`. Reitit's strip-extra-keys will drop any `_links` entries that aren't declared.
+
+5. **Nested and multi-parameter routes.** For nested resources (e.g. `/draft/:draft-eid/entry/:eid`) name path params after the response schema's fields — `:draft-eid` for the parent's eid and `:eid` for the resource itself. The model-transformer gathers every `*-eid` field from the current map and passes them all to `reitit.core/match-by-name!`, so multi-param routes resolve without special handling. Don't reuse `:eid` for both levels — keep the outer path param explicit (`:draft-eid`) to avoid the collision with the resource's own identity.
+
+6. **Route naming.** Routes that resolve a resource by its eid carry `:name :<domain>/by-eid`. Nested resources follow the same pattern with a domain-qualified key: `:draft-unit/by-eid`, `:draft-entry/by-eid`. The transformer's `_links` key derivation and the `by-eid` naming are how `:model/link` annotations map back to URLs.
+
+7. **Handlers route through `handle-fetch-response`.** GET handlers that want their response encoded with the model-transformer (i.e. any resource with `_links`) call `http.contract/handle-fetch-response resource-schema {:hostname … :router router} thunk` instead of returning `{:status 200 :body raw-map}` directly. Without this the transformer never runs and `_links` won't appear in the response.
+
+8. **UI-only fields don't belong on resources.** Anything a template needs that isn't part of the domain model (section labels like `"Main Army"`, booleans driving animations) stays out of the schema — compute it inline in the Selmer template from the fields that *are* in the schema. Clients using `application/json` or `application/edn` see only the domain model.
+
 **Integrant DI.** Each handler is an `integrant.core/init-key` method. System wiring lives in `configuration.clj`. Add a new handler by adding an `init-key` method, a `halt-key!` if needed, and a `ref` in the system map.
 
 **SQL in resources.** Queries live in `.sql` files under `resources/<base>/sql/` and are loaded by `next.jdbc`. The `jdbc` component provides thin wrappers (`query-for-entity`, `insert!`, etc.) that apply camel-snake-kebab column mapping and the `sqlite-transformer`.

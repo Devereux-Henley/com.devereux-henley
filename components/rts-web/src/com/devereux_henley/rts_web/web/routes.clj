@@ -123,17 +123,18 @@
                          :query web.game/faction-query-parameters}
             :responses  {200 {:body domain/faction-resource}}
             :handler    (integrant.core/ref ::web.game/get-faction)}}]
-   ["/draft/:eid/unit/:unit-eid"
-    {:get  {:produces   ["application/json" "application/htmx+html"]
+   ["/draft/:draft-eid/unit/:eid"
+    {:name :draft-unit/by-eid
+     :get  {:produces   ["application/json" "application/htmx+html"]
             :openapi    {:summary      "Gets details for a unit that can be assigned to the specific draft."
                          :tags         ["draft"]
                          :produces     ["application/json" "application/htmx+html"]
                          :operation-id "draft-unit/get"}
             :parameters {:path  (schema.contract/to-schema
                                  [:map
-                                  [:eid :uuid]
-                                  [:unit-eid :uuid]])}
-            :responses  {200 {:body domain/draft-unit-response}
+                                  [:draft-eid :uuid]
+                                  [:eid :uuid]])}
+            :responses  {200 {:body domain/draft-unit-resource}
                          500 {:body domain/draft-error-response}}
             :handler    (integrant.core/ref ::web.draft/get-draft-unit)}
      :post {:produces   ["application/json" "application/htmx+html"]
@@ -143,8 +144,8 @@
                          :operation-id "draft-unit/create"}
             :parameters {:path  (schema.contract/to-schema
                                  [:map
-                                  [:eid :uuid]
-                                  [:unit-eid :uuid]])
+                                  [:draft-eid :uuid]
+                                  [:eid :uuid]])
                          :query (schema.contract/to-schema
                                  [:map
                                   [:section [:enum "main" "reinforcements"]]])
@@ -153,20 +154,21 @@
                          422 {:body domain/draft-error-response}
                          500 {:body domain/draft-error-response}}
             :handler    (integrant.core/ref ::web.draft/draft-add-unit)}}]
-   ["/draft/:eid/entry/:entry-eid"
-    {:get    {:produces   ["application/json" "application/htmx+html"]
+   ["/draft/:draft-eid/entry/:eid"
+    {:name :draft-entry/by-eid
+     :get    {:produces   ["application/json" "application/htmx+html"]
               :openapi    {:summary      "Gets a placed draft entry with its unit details and selection state."
                            :tags         ["draft"]
                            :produces     ["application/json" "application/htmx+html"]
                            :operation-id "draft-entry/get"}
               :parameters {:path  (schema.contract/to-schema
                                    [:map
-                                    [:eid :uuid]
-                                    [:entry-eid :uuid]])
+                                    [:draft-eid :uuid]
+                                    [:eid :uuid]])
                            :query (schema.contract/to-schema
                                    [:map
                                     [:section [:enum "main" "reinforcements"]]])}
-              :responses  {200 {:body domain/draft-entry-response}
+              :responses  {200 {:body domain/draft-entry-resource}
                            404 {:body domain/draft-error-response}
                            500 {:body domain/draft-error-response}}
               :handler    (integrant.core/ref ::web.draft/get-draft-entry)}
@@ -177,8 +179,8 @@
                            :operation-id "draft-entry/update"}
               :parameters {:path  (schema.contract/to-schema
                                    [:map
-                                    [:eid :uuid]
-                                    [:entry-eid :uuid]])
+                                    [:draft-eid :uuid]
+                                    [:eid :uuid]])
                            :query (schema.contract/to-schema
                                    [:map
                                     [:section [:enum "main" "reinforcements"]]])
@@ -194,8 +196,8 @@
                            :operation-id "draft-entry/delete"}
               :parameters {:path  (schema.contract/to-schema
                                    [:map
-                                    [:eid :uuid]
-                                    [:entry-eid :uuid]])
+                                    [:draft-eid :uuid]
+                                    [:eid :uuid]])
                            :query (schema.contract/to-schema
                                    [:map
                                     [:section [:enum "main" "reinforcements"]]])}

@@ -19,8 +19,8 @@
 
 (def draft-error-response schema/draft-error-response)
 
-(def draft-unit-response  schema/draft-unit-response)
-(def draft-entry-response schema/draft-entry-response)
+(def draft-unit-resource  schema/draft-unit-resource)
+(def draft-entry-resource schema/draft-entry-resource)
 
 (def draft-add-response    schema/draft-add-response)
 (def draft-remove-response schema/draft-remove-response)

@@ -451,8 +451,8 @@
   "Returns a :draft/entry response for a placed entry in the given section.
    The unit details are looked up from the entry's unit-eid, then the entry's
    stored selections pre-mark :selected on draftable abilities, spells, items,
-   and mounts. Entry addressing fields (:entry-eid, :section, :mount) live at
-   the response root — no nested :editing map."
+   and mounts. Entry addressing fields (:eid, :section, :mount) live at the
+   response root — no nested :editing map."
   [dependencies draft-eid entry-eid section]
   (let [entry (get-draft-entry dependencies draft-eid entry-eid section)]
     (when entry
@@ -461,10 +461,11 @@
             spell-set   (set (:spells entry))
             item-set    (set (:items entry))]
         (-> details
-            (assoc :type      :draft/entry
-                   :entry-eid (:entry-eid entry)
-                   :section   section
-                   :mount     (:mount entry))
+            (dissoc :reinforcements-enabled)
+            (assoc :type    :draft/entry
+                   :eid     (:entry-eid entry)
+                   :section section
+                   :mount   (:mount entry))
             (update-in [:unit :draftable-abilities] mark-selected ability-set)
             (update :draftable-spells mark-selected spell-set)
             (update :items mark-selected item-set))))))
