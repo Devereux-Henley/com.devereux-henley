@@ -37,7 +37,8 @@ projects/**/pom.xml
 
 # Calva VS Code Extension
 .calva/output-window/output.calva-repl
-db/
+db/*
+!db/.gitkeep
 
 # RPFM-decoded game table JSONs + extracted card/portrait assets
 # (regenerated from game files via RPFM MCP, not committed)

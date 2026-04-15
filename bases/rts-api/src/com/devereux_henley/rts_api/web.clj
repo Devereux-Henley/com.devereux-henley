@@ -176,8 +176,13 @@
   [_init-key _dependencies]
   (openapi/create-openapi-handler))
 
+(defmethod integrant.core/init-key ::ory-auth-middleware
+  [_init-key {:keys [auth-hostname session-name]}]
+  (fn [handler]
+    (ory-session-middleware auth-hostname session-name handler)))
+
 (defmethod integrant.core/init-key ::app
-  [_init-key {:keys [routes session-name auth-hostname]}]
+  [_init-key {:keys [routes auth-middleware]}]
   (ring/ring-handler
    (ring/router
     routes
@@ -249,7 +254,7 @@
                                             :body    "Oopsie"})})
     (ring/create-default-handler))
    {:middleware [ring.middleware.cookies/wrap-cookies
-                 (partial ory-session-middleware auth-hostname session-name)]}))
+                 auth-middleware]}))
 
 (defmethod integrant.core/init-key ::service
   [_init-key {:keys [handler configuration]}]

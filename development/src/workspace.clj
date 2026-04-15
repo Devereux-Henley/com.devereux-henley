@@ -7,7 +7,7 @@
    [integrant.repl :refer [go halt reset]]
    [migratus.core :as migratus]))
 
-(integrant.repl/set-prep! (fn [] (integrant.core/expand configuration/core-configuration)))
+(integrant.repl/set-prep! (fn [] (integrant.core/expand configuration/development-configuration)))
 
 (def migratus-config
   {:store         :database
