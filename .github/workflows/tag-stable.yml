@@ -24,7 +24,7 @@ jobs:
           java-version: '21'
 
       - name: Install Clojure CLI
-        uses: DeLaGuardo/setup-clojure@13.0
+        uses: DeLaGuardo/setup-clojure@13.4
         with:
           cli: latest
           clj-kondo: latest
