@@ -128,6 +128,21 @@
     [:map
      [:type [:= :collection/tournament]]])))
 
+(def tournament-registration-resource
+  (malli.util/merge
+   schema.contract/base-resource
+   (schema.contract/to-schema
+    [:map
+     [:eid {:model/link :tournament-registration/by-eid} :uuid]
+     [:type [:= :tournament/registration]]
+     [:tournament-eid {:model/link :tournament/by-eid} :uuid]
+     [:player-sub :string]
+     [:registered-at :instant]
+     [:_links
+      [:map
+       [:self :url]
+       [:tournament :url]]]])))
+
 (def resource-identifier
   [:map
    [:eid :uuid]

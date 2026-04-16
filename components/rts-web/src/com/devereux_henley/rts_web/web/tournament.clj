@@ -65,3 +65,33 @@
                        :version                version}))]
       (assoc-in response [:headers "HX-Redirect"]
                 (str "/view/game/" game-eid "/tournament/" eid "/index.html")))))
+
+(defmethod integrant.core/init-key ::register-player
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+        session               :ory-session
+        :as                   _request}]
+    (let [player-sub (get-in session [:identity :id])
+          result     (domain/register-player dependencies eid player-sub)]
+      (if (= :tournament/registration-error (:type result))
+        {:status 422 :body result}
+        {:status 201 :body result}))))
+
+(defmethod integrant.core/init-key ::withdraw-player
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+        session               :ory-session
+        :as                   _request}]
+    (let [player-sub (get-in session [:identity :id])
+          result     (domain/withdraw-player dependencies eid player-sub)]
+      (if (= :tournament/registration-error (:type result))
+        {:status 422 :body result}
+        {:status 200 :body result}))))
+
+(defmethod integrant.core/init-key ::get-registrations
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+        :as                   _request}]
+    {:status 200
+     :body   {:type          :tournament/registrations
+              :registrations (domain/get-registrations dependencies eid)}}))

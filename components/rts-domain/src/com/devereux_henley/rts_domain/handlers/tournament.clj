@@ -69,3 +69,47 @@
                        :qualifier-count nil}]
     (set-tournament-state dependencies (:eid tournament) initial-state)
     (assoc tournament :type :tournament/tournament)))
+
+;; ─── Registration ────────────────────────────────────────────────────────────
+
+(defn is-registration-open?
+  "Returns true if the tournament state allows new registrations.
+   Checks status, time window, and closed-early flag."
+  [state now]
+  (and (= "registration" (:status state))
+       (not (get-in state [:registration :closed-early]))
+       (let [opens-at  (some-> (get-in state [:registration :opens-at]) Instant/parse)
+             closes-at (some-> (get-in state [:registration :closes-at]) Instant/parse)]
+         (and (or (nil? opens-at)  (not (.isBefore now opens-at)))
+              (or (nil? closes-at) (.isBefore now closes-at))))))
+
+(defn register-player
+  "Registers a player for a tournament. Returns the registration or an error map."
+  [dependencies tournament-eid player-sub]
+  (let [state (get-tournament-state dependencies tournament-eid)
+        now   (Instant/now)]
+    (if-not (is-registration-open? state now)
+      {:type :tournament/registration-error :message "Registration is not open."}
+      (try
+        (let [registration (db/register-player (:connection dependencies) tournament-eid player-sub)]
+          (assoc registration :type :tournament/registration))
+        (catch org.sqlite.SQLiteException e
+          (if (.contains (.getMessage e) "UNIQUE constraint failed")
+            {:type :tournament/registration-error :message "Already registered for this tournament."}
+            (throw e)))))))
+
+(defn withdraw-player
+  "Withdraws a player from a tournament. Returns a success or error map."
+  [dependencies tournament-eid player-sub]
+  (let [state (get-tournament-state dependencies tournament-eid)]
+    (if-not (= "registration" (:status state))
+      {:type :tournament/registration-error :message "Cannot withdraw outside of registration period."}
+      (do
+        (db/withdraw-player (:connection dependencies) tournament-eid player-sub)
+        {:type :tournament/withdraw-success :message "Withdrawn from tournament."}))))
+
+(defn get-registrations
+  "Returns all active registrations for a tournament."
+  [dependencies tournament-eid]
+  (mapv (fn [r] (assoc r :type :tournament/registration))
+        (db/get-registrations-for-tournament (:connection dependencies) tournament-eid)))

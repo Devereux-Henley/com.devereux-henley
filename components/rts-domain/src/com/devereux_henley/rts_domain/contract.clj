@@ -79,12 +79,17 @@
 (def tournament-resource                          schema/tournament-resource)
 (def create-tournament-specification              schema/create-tournament-specification)
 (def tournament-collection-resource               schema/tournament-collection-resource)
+(def tournament-registration-resource             schema/tournament-registration-resource)
 
 (def get-tournament-by-eid                        handlers.tournament/get-tournament-by-eid)
 (def get-tournaments-for-game                     handlers.tournament/get-tournaments-for-game)
 (def create-tournament                            handlers.tournament/create-tournament)
 (def get-tournament-state                         handlers.tournament/get-tournament-state)
 (def set-tournament-state                         handlers.tournament/set-tournament-state)
+(def register-player                              handlers.tournament/register-player)
+(def withdraw-player                              handlers.tournament/withdraw-player)
+(def get-registrations                            handlers.tournament/get-registrations)
+(def is-registration-open?                        handlers.tournament/is-registration-open?)
 
 ;;; ─── Social Media handler functions ────────────────────────────────────────
 

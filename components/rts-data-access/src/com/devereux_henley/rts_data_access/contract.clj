@@ -87,6 +87,7 @@
 (def tournament-entity schema/tournament-entity)
 (def create-tournament-params schema/create-tournament-params)
 (def tournament-state-entity schema/tournament-state-entity)
+(def tournament-registration-entity schema/tournament-registration-entity)
 
 ;;; ─── Tournament DB queries ────────────────────────────────────────────────
 
@@ -95,6 +96,10 @@
 (def create-tournament query.tournament/create-tournament)
 (def get-tournament-state query.tournament/get-tournament-state)
 (def upsert-tournament-state query.tournament/upsert-tournament-state)
+(def register-player query.tournament/register-player)
+(def withdraw-player query.tournament/withdraw-player)
+(def get-registrations-for-tournament query.tournament/get-registrations-for-tournament)
+(def get-registration-by-tournament-and-player query.tournament/get-registration-by-tournament-and-player)
 
 ;;; ─── Social Media DB entities ──────────────────────────────────────────────
 
