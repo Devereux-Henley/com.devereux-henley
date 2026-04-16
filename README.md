@@ -23,6 +23,7 @@ clojure -M:poly test
 | [Malli](https://github.com/metosin/malli) | Data schema, validation, and transformation |
 | [next.jdbc](https://github.com/seancorfield/next-jdbc) | Database access |
 | [Selmer](https://github.com/yogthos/Selmer) | HTML templating |
+| [Playwright](https://playwright.dev/) | Browser-based e2e testing against the running dev server |
 
 ---
 
@@ -34,6 +35,7 @@ Bases are runnable entry points. Each base wires together components and library
 |---|---|
 | [`rts-api`](bases/rts-api) | HTTP API and server-rendered UI for the RTS tournament application. Serves JSON, HAL+JSON, and htmx-powered HTML via content negotiation. Runs on Jetty with Reitit routing and Integrant lifecycle management. Applies database migrations on startup. |
 | [`rts-data-deploy`](bases/rts-data-deploy) | CLI tool for running RTS database migrations in CI, independent of the application. Accepts `migrate` or `rollback` as a command-line argument. |
+| [`rpfm-scraper`](bases/rpfm-scraper) | Scrapes game data (units, factions, abilities, items, mounts) from RPFM and generates seed SQL files. See [`docs/game-data.md`](docs/game-data.md). |
 
 ---
 
@@ -52,6 +54,7 @@ Components are shared units of behaviour consumed by one or more bases.
 | [`schema`](components/schema) | Shared Malli schema primitives: custom types (`:instant`, `:local-date`, `:url`), base resource and collection schemas, and the model transformer that resolves `:model/link` annotations into HATEOAS `_links` URLs. |
 | [`content-negotiation`](components/content-negotiation) | Muuntaja format definitions for `text/html` and `application/htmx+html`. Shared by any base that serves server-rendered HTML alongside JSON. |
 | [`resourcekit`](components/resourcekit) | Static CSS assets (reset, tokens, layout, and UI component styles) served by bases that render HTML. |
+| [`e2e`](components/e2e) | Playwright e2e tests. Clojure test runner shells out to `npx playwright test`; JavaScript specs cover page navigation, draft UI operations, and HAL+JSON API. See [`docs/e2e-testing.md`](docs/e2e-testing.md). |
 
 ---
 
@@ -87,5 +90,8 @@ The SQLite development database lives at `db/database.db` (relative to the repos
 | [`docs/api.md`](docs/api.md) | API design: HATEOAS patterns, route structure, handler pipeline, content negotiation, error shapes. |
 | [`docs/backend-testing.md`](docs/backend-testing.md) | Testing philosophy: unit tests with stubbed database boundary, domain schema validation, handler transformation tests. |
 | [`docs/database.md`](docs/database.md) | Database migration strategy: Migratus setup, migration ordering, how migrations run in the application and in CI, and the migration test approach. |
+| [`docs/e2e-testing.md`](docs/e2e-testing.md) | E2E testing strategy: Playwright architecture, local and CI usage, dev-only endpoints, test categories, adding new specs. |
+| [`docs/frontend.md`](docs/frontend.md) | Frontend patterns: WCAG 2.1 AA accessibility, HTMX conventions, Selmer template structure. |
+| [`docs/game-data.md`](docs/game-data.md) | RPFM data refresh workflow: scraping game data after a patch and regenerating seed SQL files. |
 
 External references: [Polylith documentation](https://polylith.gitbook.io/polylith) · [Polylith tool](https://github.com/polyfy/polylith)

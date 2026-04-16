@@ -174,13 +174,33 @@ Target: **WCAG 2.1 AA**. See `docs/frontend.md` for full patterns with examples.
 
 
 
-Tests are **unit tests with stubbed database boundaries** — no live DB, no HTTP layer, no Integrant system.
+**Unit tests** are stubbed at the database boundary — no live DB, no HTTP layer, no Integrant system. See `docs/backend-testing.md`.
 
 - **Domain schema tests:** call `malli.core/validate` directly on schemas
 - **Handler tests:** stub db namespaces with `with-redefs`; pass `{:connection nil}` as deps; assert `:type` assignment, field preservation, nil/empty edge cases
-- **What is not tested:** SQL queries, routes/middleware, Selmer templates, content negotiation
+
+**E2E tests** use Playwright against a running dev server. They cover routes, middleware, templates, HTMX interactions, and the HAL+JSON API. See `docs/e2e-testing.md`.
+
+- Live in `components/e2e/tests/` as `.spec.js` files
+- Run via `clojure -M:poly test` (skip gracefully without server; fail hard in CI)
+- Locally: start the dev server first, then run `poly test` or `npx playwright test` from `components/e2e/`
 
 Test files mirror source under `bases/<base>/test/` and `components/<component>/test/`.
+
+**Verifying UI changes with Playwright:** When implementing a feature that touches views, templates, or HTMX interactions, use the `/playwright-cli` skill to verify the change in a browser against the running dev server. The dev server stubs authentication via cookie-based impersonation — set the `dev_impersonation` cookie to `dev-admin`, `dev-player-one`, or `dev-player-two` to browse as that user. No external auth service is needed.
+
+```bash
+# Start the dev server if not already running
+mkdir -p db && clojure -M:dev -i components/e2e/resources/e2e/start_dev_server.clj &
+
+# Use /playwright-cli to interact with the app as dev-admin
+# The skill can set cookies, navigate pages, click elements, and assert content
+```
+
+Available dev users (defined in `bases/rts-api/src/.../dev_auth.clj`):
+- `dev-admin` — default, auto-applied even without the cookie
+- `dev-player-one`
+- `dev-player-two`
 
 ## Environment variables
 
