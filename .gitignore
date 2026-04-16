@@ -29,6 +29,9 @@ projects/**/pom.xml
 # nrepl
 .nrepl-port
 
+# playwright-cli
+.playwright-cli/
+
 # clojure-lsp
 .lsp/
 
