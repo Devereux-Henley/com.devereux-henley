@@ -8,6 +8,14 @@ The primary API base for the RTS tournament platform. Serves the HAL+JSON API an
 - [Tournament Plan](rts-api/tournament-plan.md) — MVP implementation plan for the tournament feature
 - [Content Negotiation & HATEOAS](rts-api/content-negotiation-hateoas.md) — rts-api-specific view-by-type dispatch, template routing, and error rendering
 
+## Flows
+
+Visual walkthroughs of each e2e-tested user flow, with annotated screenshots.
+
+- [Navigation](rts-api/flows/navigation.md) — dashboard, games dropdown, account menu
+- [Game Browsing](rts-api/flows/game-browsing.md) — game index, factions dropdown, faction page
+- [Draft Operations](rts-api/flows/draft-operations.md) — create, unit selection, add/remove/edit, validation
+
 ## Key paths
 
 | Path | Purpose |
