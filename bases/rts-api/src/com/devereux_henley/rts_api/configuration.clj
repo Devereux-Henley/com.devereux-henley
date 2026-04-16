@@ -67,7 +67,7 @@
             :com.devereux-henley.rts-web.web.draft/draft-add-unit
             :com.devereux-henley.rts-web.web.draft/draft-update-unit
             :com.devereux-henley.rts-web.web.draft/draft-remove-unit
-            :com.devereux-henley.rts-web.web.game/create-draft))
+            :com.devereux-henley.rts-web.web.draft/create-draft))
 
 (def social-media-configuration
   (handlers :com.devereux-henley.rts-web.web.social-media/get-platform))

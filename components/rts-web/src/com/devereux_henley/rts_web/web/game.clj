@@ -61,10 +61,6 @@
   (or (domain/get-draft-by-eid dependencies eid)
       {:type :missing/resource :name "draft" :id eid}))
 
-(defn create-draft
-  [dependencies create-specification]
-  (domain/create-draft dependencies create-specification))
-
 (defn get-unit-by-eid
   [dependencies eid]
   (or (domain/get-unit-by-eid dependencies eid)
@@ -129,26 +125,6 @@
        {:hostname (:hostname dependencies) :router router}
        #(web.core/apply-embeds game-embed-registry dependencies embed-set
                                (get-game-by-eid dependencies eid))))))
-
-(defmethod integrant.core/init-key ::create-draft
-  [_init-key dependencies]
-  (fn [{{{:keys [faction-eid game-mode-eid game-eid]} :body
-         {:keys [version]}                            :query
-         {:keys [eid]}                                :path} :parameters
-        router                                                :reitit.core/router
-        session                                               :ory-session
-        :as                                                   _request}]
-    (let [response (web.core/handle-create-response
-                    domain/draft-resource
-                    {:hostname (:hostname dependencies) :router router}
-                    #(create-draft dependencies
-                                   {:faction-eid    faction-eid
-                                    :game-mode-eid  game-mode-eid
-                                    :player-sub     (get-in session [:identity :id])
-                                    :created-by-sub (get-in session [:identity :id])
-                                    :eid            eid
-                                    :version        version}))]
-      (assoc-in response [:headers "HX-Redirect"] (str "/view/game/" game-eid "/draft/" eid "/index.html")))))
 
 (defmethod integrant.core/init-key ::get-games
   [_init-key dependencies]

@@ -235,7 +235,7 @@
                          :query schema.contract/version-query-parameter
                          :body  domain/create-draft-specification}
             :responses  {201 {:body domain/draft-resource}}
-            :handler    (integrant.core/ref ::web.game/create-draft)}}]
+            :handler    (integrant.core/ref ::web.draft/create-draft)}}]
 
    ["/social-media/:eid"
     {:name :social-media/by-eid
