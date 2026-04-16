@@ -39,7 +39,7 @@ make ory_local            # create Ory Cloud tunnel for local auth
 clojure -M:dev -m com.devereux-henley.rpfm-scraper.core --data-dir bases/rpfm-scraper/data
 ```
 
-See `docs/game-data.md` for the full RPFM data refresh workflow.
+See `docs/rpfm-scraper/game-data.md` for the full RPFM data refresh workflow.
 
 **REPL (primary dev workflow):** Jack-in from the repo root with `M-x cider-jack-in`. The `:dev` alias (configured in `.dir-locals.el`) puts all components and bases on the classpath.
 
@@ -196,7 +196,7 @@ Target: **WCAG 2.1 AA**. See `docs/frontend.md` for full patterns with examples.
 - **Handler tests:** stub db namespaces with `with-redefs`; pass `{:connection nil}` as deps; assert `:type` assignment, field preservation, nil/empty edge cases
 - Test files live under `components/<component>/test/` mirroring the source layout
 
-**E2E tests** use Playwright against a running dev server. They cover routes, middleware, templates, HTMX interactions, and the HAL+JSON API. See `docs/e2e-testing.md`.
+**E2E tests** use Playwright against a running dev server. They cover routes, middleware, templates, HTMX interactions, and the HAL+JSON API. See `docs/rts-api/e2e-testing.md`.
 
 - Live in `components/e2e/tests/` as `.spec.js` files
 - Run via `clojure -M:poly test` (skip gracefully without server; fail hard in CI)

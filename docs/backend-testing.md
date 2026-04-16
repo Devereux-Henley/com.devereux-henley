@@ -12,7 +12,7 @@ Tests in this repository are **unit tests that stub the database boundary**. The
 
 The backend is divided into three layers, each with its own test concern.
 
-### Domain schemas (`domain/`)
+### Domain schemas
 
 Tests validate Malli schemas directly using `malli.core/validate`. Each test confirms that a given map either satisfies or violates a schema. These tests cover:
 
@@ -22,18 +22,18 @@ Tests validate Malli schemas directly using `malli.core/validate`. Each test con
 - A field that is `nil` when it should not be
 
 ```clojure
-(deftest game-valid-input
-  (is (malli/validate domain.game/game {:name "Total War: Warhammer III"})))
+(deftest valid-input
+  (is (malli/validate resource-schema {:name "Example"})))
 
-(deftest game-missing-name
-  (is (not (malli/validate domain.game/game {}))))
+(deftest missing-name
+  (is (not (malli/validate resource-schema {}))))
 ```
 
-### Handler functions (`handlers/`)
+### Handler functions
 
 Tests verify that handler functions correctly transform data from the database layer before returning it to callers. The database namespace is stubbed with `with-redefs`. These tests cover:
 
-- `:type` is assigned to the correct value (e.g. `:game/unit`)
+- `:type` is assigned to the correct value
 - All fields from the database result are preserved on the returned map
 - Collection handlers assign `:type` to every element
 - Collection handlers return the correct count
@@ -41,64 +41,43 @@ Tests verify that handler functions correctly transform data from the database l
 - `nil` is returned when the database returns `nil` (not-found case)
 
 ```clojure
-(deftest get-unit-by-eid-assigns-type
-  (with-redefs [db.game/get-unit-by-eid (fn [_ _] {:eid unit-eid :name "Karl Franz"})]
-    (let [result (handlers.game/get-unit-by-eid test-deps unit-eid)]
-      (is (= :game/unit (:type result))))))
-
-(deftest get-unit-by-eid-preserves-fields
-  (with-redefs [db.game/get-unit-by-eid (fn [_ _] {:eid unit-eid :name "Karl Franz" :description "Emperor of the Empire"})]
-    (let [result (handlers.game/get-unit-by-eid test-deps unit-eid)]
-      (is (= unit-eid (:eid result)))
-      (is (= "Karl Franz" (:name result))))))
+(deftest get-by-eid-assigns-type
+  (with-redefs [db/get-by-eid (fn [_ _] {:eid eid :name "Example"})]
+    (let [result (handlers/get-by-eid test-deps eid)]
+      (is (= :domain/resource (:type result))))))
 ```
 
 The dependency map passed to handlers under test is always `{:connection nil}`. Because the database function is fully replaced by `with-redefs`, the connection value is never used.
-
-### Handler core utilities (`handlers/core.clj`)
-
-Tests for the shared handler helpers (`assign-model-type`, etc.) verify the utility behaviour in isolation, including edge cases like `nil` input and overwriting an existing `:type` field.
 
 ---
 
 ## File layout
 
-Tests mirror the source tree under `bases/<base>/test/`.
-
-```
-bases/rts-api/
-├── src/
-│   └── com/devereux_henley/rts_api/
-│       ├── domain/game.clj
-│       ├── handlers/core.clj
-│       ├── handlers/game.clj
-│       └── handlers/tournament.clj
-└── test/
-    └── com/devereux_henley/rts_api/
-        ├── domain/game_test.clj
-        ├── handlers/core_test.clj
-        ├── handlers/game_test.clj
-        └── handlers/tournament_test.clj
-```
-
-Component tests follow the same pattern under `components/<component>/test/`.
+Tests mirror the source tree. Component tests live under `components/<component>/test/`; base tests live under `bases/<base>/test/`.
 
 ---
 
 ## What is not tested
 
-- **Database queries.** SQL files are not exercised by any test. Correctness is verified manually against a running SQLite database.
-- **Web handlers and routes.** The Integrant `init-key` methods, reitit route definitions, and Ring middleware are not tested.
-- **HTML templates.** Selmer templates are not rendered in tests.
-- **Content negotiation.** Muuntaja format encoding is not exercised by any test.
+- **Database queries.** SQL files are not exercised by unit tests. Correctness is verified by e2e tests against a running server.
+- **Web handlers and routes.** Integrant `init-key` methods, reitit route definitions, and Ring middleware are not unit-tested.
+- **HTML templates.** Selmer templates are not rendered in unit tests.
+- **Content negotiation.** Muuntaja format encoding is not exercised by unit tests.
+
+These layers are covered by [E2E tests](rts-api/e2e-testing.md).
 
 ---
 
 ## Running tests
 
-From a base or component directory:
+```bash
+# All tests across affected components
+clojure -M:poly test
 
-```
+# All tests regardless of changes
+clojure -M:poly test :all
+
+# A specific namespace
 clojure -A:test -e "(require 'clojure.test '<namespace>) (clojure.test/run-tests '<namespace>)"
 ```
 
