@@ -68,6 +68,7 @@
 
          :com.devereux-henley.rts-web.web.routes/routes
          [rts-web/root-route
+          rts-web/status-route
           rts-web/icon-routes
           rts-web/view-routes
           rts-web/api-routes]
@@ -91,6 +92,8 @@
 
          :com.devereux-henley.rts-web.web.routes/routes
          [rts-web/root-route
+          rts-web/status-route
+          rts-web/shutdown-route
           rts-web/icon-routes
           rts-web/view-routes
           rts-web/api-routes

@@ -21,10 +21,15 @@ jobs:
           java-version: '21'
 
       - name: Install Clojure CLI
-        uses: DeLaGuardo/setup-clojure@13.0
+        uses: DeLaGuardo/setup-clojure@13.4
         with:
           cli: latest
           clj-kondo: latest
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
 
       - name: Cache Maven & Gitlibs
         uses: actions/cache@v4
@@ -36,6 +41,18 @@ jobs:
           key: ${{ runner.os }}-cljdeps-${{ hashFiles('**/deps.edn') }}
           restore-keys: |
             ${{ runner.os }}-cljdeps-
+
+      - name: Install Playwright
+        working-directory: components/e2e
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Start dev server
+        run: |
+          mkdir -p db
+          clojure -M:dev -i components/e2e/resources/e2e/start_dev_server.clj &
+          timeout 120 bash -c 'until curl -sf http://localhost:3001/status > /dev/null 2>&1; do sleep 2; done'
 
       - name: Polylith check
         run: clojure -M:poly check
@@ -54,6 +71,10 @@ jobs:
 
       - name: Polylith test
         run: clojure -M:poly test
+
+      - name: Stop dev server
+        if: always()
+        run: curl -sf -X POST http://localhost:3001/shutdown || true
 
       - name: clj-kondo prime cache
         run: clj-kondo --copy-configs --dependencies --lint "$(clojure -A:dev -Spath)"
