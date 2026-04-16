@@ -90,6 +90,9 @@
 (def delete-entry                                 handlers.tournament/delete-entry)
 (def get-entries                                   handlers.tournament/get-entries)
 (def is-registration-open?                        handlers.tournament/is-registration-open?)
+(def available-transitions                        handlers.tournament/available-transitions)
+(def advance-tournament                           handlers.tournament/advance-tournament)
+(def close-registration-early                     handlers.tournament/close-registration-early)
 
 ;;; ─── Social Media handler functions ────────────────────────────────────────
 

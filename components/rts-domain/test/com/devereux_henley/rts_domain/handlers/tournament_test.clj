@@ -164,3 +164,61 @@
 (deftest get-entries-empty-result
   (with-redefs [data-access.contract/get-entries-for-tournament (fn [_ _] [])]
     (is (= [] (handlers.tournament/get-entries test-deps test-tournament-eid)))))
+
+;; ─── advance-tournament ──────────────────────────────────────────────────────
+
+(def ^:private registration-state-json
+  "{\"status\":\"registration\",\"registration\":{\"opens-at\":\"2020-01-01T00:00:00Z\",\"closes-at\":\"2030-01-01T00:00:00Z\",\"closed-early\":false},\"standings\":[],\"phases\":[]}")
+
+(deftest advance-tournament-to-active-populates-standings
+  (with-redefs [data-access.contract/get-tournament-by-eid (fn [_ _] test-tournament)
+                data-access.contract/get-tournament-state
+                (fn [_ _] {:id 1 :state registration-state-json :updated-at (Instant/now)})
+                data-access.contract/get-entries-for-tournament
+                (fn [_ _] [{:player-sub "p1"} {:player-sub "p2"}])
+                data-access.contract/upsert-tournament-state (fn [_ _ _] nil)]
+    (let [result (handlers.tournament/advance-tournament test-deps test-tournament-eid "active" "dev-admin")]
+      (is (= :tournament/advance-success (:type result)))
+      (is (= "active" (get-in result [:state :status])))
+      (is (= 2 (count (get-in result [:state :standings])))))))
+
+(deftest advance-tournament-rejects-non-organizer
+  (with-redefs [data-access.contract/get-tournament-by-eid (fn [_ _] test-tournament)]
+    (let [result (handlers.tournament/advance-tournament test-deps test-tournament-eid "active" "not-the-organizer")]
+      (is (= :tournament/advance-error (:type result)))
+      (is (re-find #"organizer" (:message result))))))
+
+(deftest advance-tournament-rejects-invalid-transition
+  (with-redefs [data-access.contract/get-tournament-by-eid (fn [_ _] test-tournament)
+                data-access.contract/get-tournament-state
+                (fn [_ _] {:id 1 :state registration-state-json :updated-at (Instant/now)})]
+    (let [result (handlers.tournament/advance-tournament test-deps test-tournament-eid "complete" "dev-admin")]
+      (is (= :tournament/transition-error (:type result))))))
+
+(deftest advance-tournament-not-found
+  (with-redefs [data-access.contract/get-tournament-by-eid (fn [_ _] nil)]
+    (let [result (handlers.tournament/advance-tournament test-deps test-tournament-eid "active" "dev-admin")]
+      (is (= :tournament/advance-error (:type result))))))
+
+;; ─── close-registration-early ────────────────────────────────────────────────
+
+(deftest close-registration-early-sets-flag
+  (with-redefs [data-access.contract/get-tournament-by-eid (fn [_ _] test-tournament)
+                data-access.contract/get-tournament-state
+                (fn [_ _] {:id 1 :state registration-state-json :updated-at (Instant/now)})
+                data-access.contract/upsert-tournament-state (fn [_ _ _] nil)]
+    (let [result (handlers.tournament/close-registration-early test-deps test-tournament-eid "dev-admin")]
+      (is (= :tournament/close-registration-success (:type result)))
+      (is (true? (get-in result [:state :registration :closed-early]))))))
+
+(deftest close-registration-early-rejects-non-organizer
+  (with-redefs [data-access.contract/get-tournament-by-eid (fn [_ _] test-tournament)]
+    (let [result (handlers.tournament/close-registration-early test-deps test-tournament-eid "not-the-organizer")]
+      (is (= :tournament/advance-error (:type result))))))
+
+(deftest close-registration-early-rejects-wrong-status
+  (with-redefs [data-access.contract/get-tournament-by-eid (fn [_ _] test-tournament)
+                data-access.contract/get-tournament-state
+                (fn [_ _] {:id 1 :state "{\"status\":\"active\"}" :updated-at (Instant/now)})]
+    (let [result (handlers.tournament/close-registration-early test-deps test-tournament-eid "dev-admin")]
+      (is (= :tournament/advance-error (:type result))))))

@@ -207,4 +207,121 @@ test.describe('Tournament UI', () => {
     await expect(page.locator('button', { hasText: 'Withdraw' })).toBeVisible();
     await expect(page.locator('li', { hasText: 'dev-admin' })).toBeVisible();
   });
+
+  test('organizer sees Start Tournament button', async ({ page, request }) => {
+    const eid = await createTournament(request);
+    await page.goto(`/view/game/${GAME_EID}/tournament/${eid}/index.html`);
+    await expect(page.locator('button', { hasText: 'Start Tournament' })).toBeVisible();
+    await expect(page.locator('button', { hasText: 'Close Registration' })).toBeVisible();
+  });
+});
+
+test.describe('Tournament Status Subresource API', () => {
+  test('get status returns current status and available transitions', async ({ request }) => {
+    const eid = await createTournament(request);
+    const res = await request.get(`${BASE}/api/tournament/${eid}/status`, {
+      headers: headers('dev-admin'),
+    });
+    expect(res.status()).toBe(200);
+    const body = await res.json();
+    expect(body.type).toBe('tournament/status');
+    expect(body.status).toBe('registration');
+    expect(body['available-transitions']).toContain('active');
+    expect(body['available-transitions']).toContain('cancelled');
+  });
+
+  test('put status to active populates standings', async ({ request }) => {
+    const eid = await createTournament(request);
+    await request.post(`${BASE}/api/tournament/${eid}/entry/me`, {
+      headers: headers('dev-admin'),
+    });
+    await request.post(`${BASE}/api/tournament/${eid}/entry/me`, {
+      headers: headers('dev-player-one'),
+    });
+
+    const res = await request.put(`${BASE}/api/tournament/${eid}/status`, {
+      headers: headers('dev-admin'),
+      data: { status: 'active' },
+    });
+    expect(res.status()).toBe(200);
+    const body = await res.json();
+    expect(body.type).toBe('tournament/advance-success');
+    expect(body.state.status).toBe('active');
+    expect(body.state.standings).toHaveLength(2);
+  });
+
+  test('put status from active to complete', async ({ request }) => {
+    const eid = await createTournament(request);
+    await request.put(`${BASE}/api/tournament/${eid}/status`, {
+      headers: headers('dev-admin'),
+      data: { status: 'active' },
+    });
+    const res = await request.put(`${BASE}/api/tournament/${eid}/status`, {
+      headers: headers('dev-admin'),
+      data: { status: 'complete' },
+    });
+    expect(res.status()).toBe(200);
+    expect((await res.json()).state.status).toBe('complete');
+  });
+
+  test('invalid transition returns 422', async ({ request }) => {
+    const eid = await createTournament(request);
+    const res = await request.put(`${BASE}/api/tournament/${eid}/status`, {
+      headers: headers('dev-admin'),
+      data: { status: 'complete' },
+    });
+    expect(res.status()).toBe(422);
+    expect((await res.json()).type).toBe('tournament/transition-error');
+  });
+
+  test('non-organizer cannot update status', async ({ request }) => {
+    const eid = await createTournament(request);
+    const res = await request.put(`${BASE}/api/tournament/${eid}/status`, {
+      headers: headers('dev-player-one'),
+      data: { status: 'active' },
+    });
+    expect(res.status()).toBe(422);
+    expect((await res.json()).message).toMatch(/organizer/i);
+  });
+
+  test('cancel tournament from registration', async ({ request }) => {
+    const eid = await createTournament(request);
+    const res = await request.put(`${BASE}/api/tournament/${eid}/status`, {
+      headers: headers('dev-admin'),
+      data: { status: 'cancelled' },
+    });
+    expect(res.status()).toBe(200);
+    expect((await res.json()).state.status).toBe('cancelled');
+  });
+});
+
+test.describe('Tournament Registration Subresource API', () => {
+  test('get registration returns window details', async ({ request }) => {
+    const eid = await createTournament(request);
+    const res = await request.get(`${BASE}/api/tournament/${eid}/registration`, {
+      headers: headers('dev-admin'),
+    });
+    expect(res.status()).toBe(200);
+    const body = await res.json();
+    expect(body.type).toBe('tournament/registration');
+    expect(body['opens-at']).toBeDefined();
+    expect(body['closes-at']).toBeDefined();
+    expect(body['closed-early']).toBe(false);
+  });
+
+  test('patch registration closed-early prevents new entries', async ({ request }) => {
+    const eid = await createTournament(request);
+    const patchRes = await request.patch(`${BASE}/api/tournament/${eid}/registration`, {
+      headers: headers('dev-admin'),
+      data: { 'closed-early': true },
+    });
+    expect(patchRes.status()).toBe(200);
+    expect((await patchRes.json()).type).toBe('tournament/close-registration-success');
+
+    const entryRes = await request.post(`${BASE}/api/tournament/${eid}/entry/me`, {
+      headers: headers('dev-player-one'),
+    });
+    expect(entryRes.status()).toBe(422);
+    expect((await entryRes.json()).message).toMatch(/not open/i);
+  });
 });

@@ -1,6 +1,7 @@
 (ns com.devereux-henley.rts-domain.handlers.tournament
   (:require
    [com.devereux-henley.rts-data-access.contract :as db]
+   [com.devereux-henley.rts-domain.rules.tournament :as rules]
    [jsonista.core :as jsonista])
   (:import
    [java.time Instant LocalDateTime ZoneId]))
@@ -113,3 +114,57 @@
   [dependencies tournament-eid]
   (mapv (fn [e] (assoc e :type :tournament/entry))
         (db/get-entries-for-tournament (:connection dependencies) tournament-eid)))
+
+(defn available-transitions
+  "Returns the set of valid target statuses for a tournament."
+  [dependencies tournament-eid]
+  (let [state (get-tournament-state dependencies tournament-eid)]
+    (rules/available-transitions (:status state))))
+
+;; ─── State machine ──────────────────────────────────────────────────────────
+
+(defn advance-tournament
+  "Advances a tournament to the target status. Only the organizer (created-by-sub)
+   can advance. When transitioning to 'active', populates standings from entries."
+  [dependencies tournament-eid target-status player-sub]
+  (let [tournament (get-tournament-by-eid dependencies tournament-eid)]
+    (cond
+      (nil? tournament)
+      {:type :tournament/advance-error :message "Tournament not found."}
+
+      (not= player-sub (:created-by-sub tournament))
+      {:type :tournament/advance-error :message "Only the tournament organizer can advance the tournament."}
+
+      :else
+      (let [state  (get-tournament-state dependencies tournament-eid)
+            error  (rules/validate-transition (:status state) target-status)]
+        (if error
+          error
+          (let [new-state (if (= "active" target-status)
+                            (let [entries (get-entries dependencies tournament-eid)]
+                              (rules/close-registration state entries))
+                            (assoc state :status target-status))]
+            (set-tournament-state dependencies tournament-eid new-state)
+            {:type  :tournament/advance-success
+             :state new-state}))))))
+
+(defn close-registration-early
+  "Sets the closed-early flag on the tournament state, preventing new entries.
+   Only the organizer can close registration early."
+  [dependencies tournament-eid player-sub]
+  (let [tournament (get-tournament-by-eid dependencies tournament-eid)]
+    (cond
+      (nil? tournament)
+      {:type :tournament/advance-error :message "Tournament not found."}
+
+      (not= player-sub (:created-by-sub tournament))
+      {:type :tournament/advance-error :message "Only the tournament organizer can close registration."}
+
+      :else
+      (let [state (get-tournament-state dependencies tournament-eid)]
+        (if (not= "registration" (:status state))
+          {:type :tournament/advance-error :message "Tournament is not in registration status."}
+          (let [new-state (assoc-in state [:registration :closed-early] true)]
+            (set-tournament-state dependencies tournament-eid new-state)
+            {:type  :tournament/close-registration-success
+             :state new-state}))))))

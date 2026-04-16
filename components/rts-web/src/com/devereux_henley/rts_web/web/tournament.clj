@@ -95,3 +95,51 @@
     {:status 200
      :body   {:type    :tournament/entries
               :entries (domain/get-entries dependencies eid)}}))
+
+(defmethod integrant.core/init-key ::get-status
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+        :as                   _request}]
+    (let [state (domain/get-tournament-state dependencies eid)]
+      {:status 200
+       :body   {:type                  :tournament/status
+                :status                (:status state)
+                :available-transitions (vec (domain/available-transitions dependencies eid))}})))
+
+(defmethod integrant.core/init-key ::update-status
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]}       :path
+         {:keys [status]} :body} :parameters
+        session                   :ory-session
+        :as                       _request}]
+    (let [player-sub (get-in session [:identity :id])
+          result     (domain/advance-tournament dependencies eid status player-sub)]
+      (case (:type result)
+        :tournament/advance-success {:status 200 :body result}
+        {:status 422 :body result}))))
+
+(defmethod integrant.core/init-key ::get-registration
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+        :as                   _request}]
+    (let [state (domain/get-tournament-state dependencies eid)]
+      {:status 200
+       :body   {:type       :tournament/registration
+                :opens-at   (get-in state [:registration :opens-at])
+                :closes-at  (get-in state [:registration :closes-at])
+                :timezone   (get-in state [:registration :timezone])
+                :closed-early (get-in state [:registration :closed-early])}})))
+
+(defmethod integrant.core/init-key ::update-registration
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]}           :path
+         {:keys [closed-early]} :body} :parameters
+        session                         :ory-session
+        :as                             _request}]
+    (let [player-sub (get-in session [:identity :id])
+          result     (if closed-early
+                       (domain/close-registration-early dependencies eid player-sub)
+                       {:type :tournament/registration-error :message "No updates specified."})]
+      (case (:type result)
+        :tournament/close-registration-success {:status 200 :body result}
+        {:status 422 :body result}))))
