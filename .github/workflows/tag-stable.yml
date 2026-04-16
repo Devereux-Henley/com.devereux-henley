@@ -1,0 +1,77 @@
+name: Tag Stable
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  tag:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install Clojure CLI
+        uses: DeLaGuardo/setup-clojure@13.0
+        with:
+          cli: latest
+          clj-kondo: latest
+
+      - name: Cache Maven & Gitlibs
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+            ~/.deps.clj
+          key: ${{ runner.os }}-cljdeps-${{ hashFiles('**/deps.edn') }}
+          restore-keys: |
+            ${{ runner.os }}-cljdeps-
+
+      - name: Polylith check
+        run: clojure -M:poly check
+
+      - name: Polylith ws
+        run: clojure -M:poly ws
+
+      - name: Polylith info
+        run: clojure -M:poly info
+
+      - name: Polylith deps
+        run: clojure -M:poly deps
+
+      - name: Polylith libs
+        run: clojure -M:poly libs
+
+      - name: Polylith test
+        run: clojure -M:poly test
+
+      - name: clj-kondo prime cache
+        run: clj-kondo --copy-configs --dependencies --lint "$(clojure -A:dev -Spath)"
+
+      - name: clj-kondo lint
+        run: clj-kondo --lint bases components development
+
+      - name: Create and push stable tag
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          sanitized_branch="${HEAD_REF//\//-}"
+          date_suffix="$(date -u +%Y%m%d)"
+          tag="stable-${sanitized_branch}-${date_suffix}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$tag" -m "Stable tag for merged PR #${{ github.event.pull_request.number }}"
+          git push origin "$tag"

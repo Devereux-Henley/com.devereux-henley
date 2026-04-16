@@ -1,0 +1,62 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install Clojure CLI
+        uses: DeLaGuardo/setup-clojure@13.0
+        with:
+          cli: latest
+          clj-kondo: latest
+
+      - name: Cache Maven & Gitlibs
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+            ~/.deps.clj
+          key: ${{ runner.os }}-cljdeps-${{ hashFiles('**/deps.edn') }}
+          restore-keys: |
+            ${{ runner.os }}-cljdeps-
+
+      - name: Polylith check
+        run: clojure -M:poly check
+
+      - name: Polylith ws
+        run: clojure -M:poly ws
+
+      - name: Polylith info
+        run: clojure -M:poly info
+
+      - name: Polylith deps
+        run: clojure -M:poly deps
+
+      - name: Polylith libs
+        run: clojure -M:poly libs
+
+      - name: Polylith test
+        run: clojure -M:poly test
+
+      - name: clj-kondo prime cache
+        run: clj-kondo --copy-configs --dependencies --lint "$(clojure -A:dev -Spath)"
+
+      - name: clj-kondo lint
+        run: clj-kondo --lint bases components development
