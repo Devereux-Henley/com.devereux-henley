@@ -20,6 +20,7 @@
                                  "components/rts-data"
                                  "components/rts-data-access"
                                  "components/rts-domain"
+                                 "components/e2e"
                                  "bases/rts-api"]}
 
             :poly {:main-opts ["-m" "polylith.clj.core.poly-cli.core"]

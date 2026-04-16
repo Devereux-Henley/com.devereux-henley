@@ -16,6 +16,25 @@
           :produces ["text/html"]
           :handler  (fn [_request] {:status 301 :headers {"Location" "/view/dashboard.html"}})}}])
 
+(def status-route
+  ["/status"
+   {:get {:no-doc  true
+          :handler (fn [_request]
+                     {:status 200
+                      :headers {"Content-Type" "application/json"}
+                      :body    "{\"status\":\"ok\"}"})}}])
+
+(def shutdown-route
+  ["/shutdown"
+   {:post {:no-doc  true
+           :handler (fn [_request]
+                      (.start (Thread. (fn []
+                                         (Thread/sleep 100)
+                                         (System/exit 0))))
+                      {:status 200
+                       :headers {"Content-Type" "application/json"}
+                       :body    "{\"status\":\"shutting-down\"}"})}}])
+
 (def icon-routes
   ["/icon/social-media/:eid"
    {:get {:no-doc     true
