@@ -66,32 +66,32 @@
       (assoc-in response [:headers "HX-Redirect"]
                 (str "/view/game/" game-eid "/tournament/" eid "/index.html")))))
 
-(defmethod integrant.core/init-key ::register-player
+(defmethod integrant.core/init-key ::create-entry
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
         session               :ory-session
         :as                   _request}]
     (let [player-sub (get-in session [:identity :id])
-          result     (domain/register-player dependencies eid player-sub)]
-      (if (= :tournament/registration-error (:type result))
+          result     (domain/create-entry dependencies eid player-sub)]
+      (if (= :tournament/entry-error (:type result))
         {:status 422 :body result}
         {:status 201 :body result}))))
 
-(defmethod integrant.core/init-key ::withdraw-player
+(defmethod integrant.core/init-key ::delete-entry
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
         session               :ory-session
         :as                   _request}]
     (let [player-sub (get-in session [:identity :id])
-          result     (domain/withdraw-player dependencies eid player-sub)]
-      (if (= :tournament/registration-error (:type result))
+          result     (domain/delete-entry dependencies eid player-sub)]
+      (if (= :tournament/entry-error (:type result))
         {:status 422 :body result}
         {:status 200 :body result}))))
 
-(defmethod integrant.core/init-key ::get-registrations
+(defmethod integrant.core/init-key ::get-entries
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
         :as                   _request}]
     {:status 200
-     :body   {:type          :tournament/registrations
-              :registrations (domain/get-registrations dependencies eid)}}))
+     :body   {:type    :tournament/entries
+              :entries (domain/get-entries dependencies eid)}}))

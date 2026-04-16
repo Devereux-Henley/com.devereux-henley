@@ -83,33 +83,33 @@
          (and (or (nil? opens-at)  (not (.isBefore now opens-at)))
               (or (nil? closes-at) (.isBefore now closes-at))))))
 
-(defn register-player
-  "Registers a player for a tournament. Returns the registration or an error map."
+(defn create-entry
+  "Creates a tournament entry for a player. Returns the entry or an error map."
   [dependencies tournament-eid player-sub]
   (let [state (get-tournament-state dependencies tournament-eid)
         now   (Instant/now)]
     (if-not (is-registration-open? state now)
-      {:type :tournament/registration-error :message "Registration is not open."}
+      {:type :tournament/entry-error :message "Registration is not open."}
       (try
-        (let [registration (db/register-player (:connection dependencies) tournament-eid player-sub)]
-          (assoc registration :type :tournament/registration))
+        (let [entry (db/create-entry (:connection dependencies) tournament-eid player-sub)]
+          (assoc entry :type :tournament/entry))
         (catch org.sqlite.SQLiteException e
           (if (.contains (.getMessage e) "UNIQUE constraint failed")
-            {:type :tournament/registration-error :message "Already registered for this tournament."}
+            {:type :tournament/entry-error :message "Already entered in this tournament."}
             (throw e)))))))
 
-(defn withdraw-player
-  "Withdraws a player from a tournament. Returns a success or error map."
+(defn delete-entry
+  "Removes a player's entry from a tournament. Returns a success or error map."
   [dependencies tournament-eid player-sub]
   (let [state (get-tournament-state dependencies tournament-eid)]
     (if-not (= "registration" (:status state))
-      {:type :tournament/registration-error :message "Cannot withdraw outside of registration period."}
+      {:type :tournament/entry-error :message "Cannot withdraw outside of registration period."}
       (do
-        (db/withdraw-player (:connection dependencies) tournament-eid player-sub)
-        {:type :tournament/withdraw-success :message "Withdrawn from tournament."}))))
+        (db/delete-entry (:connection dependencies) tournament-eid player-sub)
+        {:type :tournament/entry-deleted :message "Entry removed from tournament."}))))
 
-(defn get-registrations
-  "Returns all active registrations for a tournament."
+(defn get-entries
+  "Returns all active entries for a tournament."
   [dependencies tournament-eid]
-  (mapv (fn [r] (assoc r :type :tournament/registration))
-        (db/get-registrations-for-tournament (:connection dependencies) tournament-eid)))
+  (mapv (fn [e] (assoc e :type :tournament/entry))
+        (db/get-entries-for-tournament (:connection dependencies) tournament-eid)))

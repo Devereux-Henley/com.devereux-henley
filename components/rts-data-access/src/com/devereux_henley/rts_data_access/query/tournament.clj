@@ -48,46 +48,46 @@
      connection
      [upsert-tournament-state-query (:id tournament) state-json-str (str (Instant/now))])))
 
-;; ─── Registration queries ────────────────────────────────────────────────────
+;; ─── Entry queries ───────────────────────────────────────────────────────────
 
-(def register-player-query (resource/load-query-resource "tournament" "register-player.sql"))
+(def create-entry-query (resource/load-query-resource "tournament" "create-entry.sql"))
 
-(def withdraw-player-query (resource/load-query-resource "tournament" "withdraw-player.sql"))
+(def delete-entry-query (resource/load-query-resource "tournament" "delete-entry.sql"))
 
-(def get-registrations-for-tournament-query (resource/load-query-resource "tournament" "get-registrations-for-tournament.sql"))
+(def get-entries-for-tournament-query (resource/load-query-resource "tournament" "get-entries-for-tournament.sql"))
 
-(def get-registration-by-tournament-and-player-query (resource/load-query-resource "tournament" "get-registration-by-tournament-and-player.sql"))
+(def get-entry-by-tournament-and-player-query (resource/load-query-resource "tournament" "get-entry-by-tournament-and-player.sql"))
 
-(defn register-player
+(defn create-entry
   [connection tournament-eid player-sub]
   (let [eid (str (random-uuid))]
     (jdbc.contract/execute-one!
      connection
-     [register-player-query eid player-sub (str (Instant/now)) tournament-eid])
+     [create-entry-query eid player-sub (str (Instant/now)) tournament-eid])
     (jdbc.contract/query-for-entity
      connection
-     [get-registration-by-tournament-and-player-query tournament-eid player-sub]
-     schema/tournament-registration-entity)))
+     [get-entry-by-tournament-and-player-query tournament-eid player-sub]
+     schema/tournament-entry-entity)))
 
-(defn withdraw-player
+(defn delete-entry
   [connection tournament-eid player-sub]
   (jdbc.contract/execute-one!
    connection
-   [withdraw-player-query (str (Instant/now)) tournament-eid player-sub]))
+   [delete-entry-query (str (Instant/now)) tournament-eid player-sub]))
 
-(defn get-registrations-for-tournament
+(defn get-entries-for-tournament
   [connection tournament-eid]
   (jdbc.contract/query-for-entities
    connection
-   [get-registrations-for-tournament-query tournament-eid]
-   schema/tournament-registration-entity))
+   [get-entries-for-tournament-query tournament-eid]
+   schema/tournament-entry-entity))
 
-(defn get-registration-by-tournament-and-player
+(defn get-entry-by-tournament-and-player
   [connection tournament-eid player-sub]
   (jdbc.contract/query-for-entity
    connection
-   [get-registration-by-tournament-and-player-query tournament-eid player-sub]
-   schema/tournament-registration-entity))
+   [get-entry-by-tournament-and-player-query tournament-eid player-sub]
+   schema/tournament-entry-entity))
 
 ;; ─── Tournament CRUD ─────────────────────────────────────────────────────────
 

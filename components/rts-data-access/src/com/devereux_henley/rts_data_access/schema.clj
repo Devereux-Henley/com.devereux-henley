@@ -222,15 +222,15 @@
     [:state :string]
     [:updated-at :instant]]))
 
-(def tournament-registration-entity
+(def tournament-entry-entity
   (schema.contract/to-schema
    [:map
     [:id :int]
     [:eid :uuid]
     [:tournament-eid :uuid]
     [:player-sub :string]
-    [:registered-at :instant]
-    [:withdrawn-at [:maybe :instant]]]))
+    [:created-at :instant]
+    [:deleted-at [:maybe :instant]]]))
 
 ;; Schema for the known structured fields in the raw unit-statistics JSON (string keys).
 ;; :closed false allows the extra dynamic stat keys to pass through.

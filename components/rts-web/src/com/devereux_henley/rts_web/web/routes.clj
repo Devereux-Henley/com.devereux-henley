@@ -282,26 +282,27 @@
                            :body  domain/create-tournament-specification}
               :responses  {201 {:body domain/tournament-resource}}
               :handler    (integrant.core/ref ::web.tournament/create-tournament)}}]
-     ["/registration/me"
-      {:post   {:summary    "Register the current player for a tournament."
-                :openapi    {:tags         ["tournament"]
-                             :produces     ["application/json"]
-                             :operation-id "tournament/register"}
-                :parameters {:path schema.contract/id-path-parameter}
-                :handler    (integrant.core/ref ::web.tournament/register-player)}
-       :delete {:summary    "Withdraw the current player from a tournament."
-                :openapi    {:tags         ["tournament"]
-                             :produces     ["application/json"]
-                             :operation-id "tournament/withdraw"}
-                :parameters {:path schema.contract/id-path-parameter}
-                :handler    (integrant.core/ref ::web.tournament/withdraw-player)}}]
-     ["/registrations"
-      {:get {:summary    "List active registrations for a tournament."
-             :openapi    {:tags         ["tournament"]
-                          :produces     ["application/json"]
-                          :operation-id "tournament/registrations"}
-             :parameters {:path schema.contract/id-path-parameter}
-             :handler    (integrant.core/ref ::web.tournament/get-registrations)}}]]]
+     ["/entry"
+      ["/me"
+       {:post   {:summary    "Create a tournament entry for the current player."
+                 :openapi    {:tags         ["tournament"]
+                              :produces     ["application/json"]
+                              :operation-id "tournament-entry/create-mine"}
+                 :parameters {:path schema.contract/id-path-parameter}
+                 :handler    (integrant.core/ref ::web.tournament/create-entry)}
+        :delete {:summary    "Remove the current player's tournament entry."
+                 :openapi    {:tags         ["tournament"]
+                              :produces     ["application/json"]
+                              :operation-id "tournament-entry/delete-mine"}
+                 :parameters {:path schema.contract/id-path-parameter}
+                 :handler    (integrant.core/ref ::web.tournament/delete-entry)}}]
+      [""
+       {:get {:summary    "List active entries for a tournament."
+              :openapi    {:tags         ["tournament"]
+                           :produces     ["application/json"]
+                           :operation-id "tournament-entry/list"}
+              :parameters {:path schema.contract/id-path-parameter}
+              :handler    (integrant.core/ref ::web.tournament/get-entries)}}]]]]
 
    ["/social-media/:eid"
     {:name :social-media/by-eid

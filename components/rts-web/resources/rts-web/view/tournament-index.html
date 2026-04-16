@@ -23,37 +23,37 @@
         </dl>
     </section>
 
-    <section aria-labelledby="tournament-registration-heading">
-        <h3 id="tournament-registration-heading">Registration</h3>
+    <section aria-labelledby="tournament-entries-heading">
+        <h3 id="tournament-entries-heading">Entries</h3>
         {% if session %}
-        <div id="tournament-register-action" class="form-actions" style="margin-bottom: var(--space-4);">
-            {% if is-registered %}
-            <form hx-delete="/api/tournament/{{data.eid}}/registration/me"
+        <div id="tournament-entry-action" class="form-actions" style="margin-bottom: var(--space-4);">
+            {% if has-entry %}
+            <form hx-delete="/api/tournament/{{data.eid}}/entry/me"
                   hx-target="#content"
                   hx-swap="innerHTML">
                 <button type="submit" class="btn btn-danger">Withdraw</button>
             </form>
             {% elif registration-open %}
-            <form hx-post="/api/tournament/{{data.eid}}/registration/me"
+            <form hx-post="/api/tournament/{{data.eid}}/entry/me"
                   hx-target="#content"
                   hx-swap="innerHTML">
-                <button type="submit" class="btn btn-primary">Register</button>
+                <button type="submit" class="btn btn-primary">Enter</button>
             </form>
             {% else %}
             <p>Registration is closed.</p>
             {% endif %}
         </div>
         {% endif %}
-        {% if registrations %}
-        <nav aria-label="Registered players">
+        {% if entries %}
+        <nav aria-label="Tournament entries">
             <ul>
-                {% for reg in registrations %}
-                <li>{{reg.player-sub}} — registered {{reg.registered-at}}</li>
+                {% for entry in entries %}
+                <li>{{entry.player-sub}} — entered {{entry.created-at}}</li>
                 {% endfor %}
             </ul>
         </nav>
         {% else %}
-        <p>No players registered yet.</p>
+        <p>No entries yet.</p>
         {% endif %}
     </section>
 </section>

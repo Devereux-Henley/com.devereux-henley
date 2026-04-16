@@ -15,9 +15,9 @@
   {:id 1 :eid test-tournament-eid :name "Test Tournament" :description "A test."
    :game-eid test-game-eid :created-by-sub "dev-admin" :version 1})
 
-(def ^:private test-registration
+(def ^:private test-entry
   {:id 1 :eid (UUID/randomUUID) :tournament-eid test-tournament-eid
-   :player-sub "dev-admin" :registered-at (Instant/now) :withdrawn-at nil})
+   :player-sub "dev-admin" :created-at (Instant/now) :deleted-at nil})
 
 ;; ─── get-tournament-by-eid ───────────────────────────────────────────────────
 
@@ -115,52 +115,52 @@
         now   (Instant/parse "2025-06-01T00:00:00Z")]
     (is (true? (handlers.tournament/is-registration-open? state now)))))
 
-;; ─── register-player ─────────────────────────────────────────────────────────
+;; ─── create-entry ────────────────────────────────────────────────────────────
 
-(deftest register-player-returns-registration-when-open
+(deftest create-entry-returns-entry-when-open
   (with-redefs [data-access.contract/get-tournament-state
                 (fn [_ _] {:id 1 :state "{\"status\":\"registration\",\"registration\":{\"opens-at\":\"2020-01-01T00:00:00Z\",\"closes-at\":\"2030-01-01T00:00:00Z\",\"closed-early\":false}}" :updated-at (Instant/now)})
-                data-access.contract/register-player
-                (fn [_ _ _] test-registration)]
-    (let [result (handlers.tournament/register-player test-deps test-tournament-eid "dev-admin")]
-      (is (= :tournament/registration (:type result)))
+                data-access.contract/create-entry
+                (fn [_ _ _] test-entry)]
+    (let [result (handlers.tournament/create-entry test-deps test-tournament-eid "dev-admin")]
+      (is (= :tournament/entry (:type result)))
       (is (= "dev-admin" (:player-sub result))))))
 
-(deftest register-player-returns-error-when-closed
+(deftest create-entry-returns-error-when-closed
   (with-redefs [data-access.contract/get-tournament-state
                 (fn [_ _] {:id 1 :state "{\"status\":\"active\",\"registration\":{\"opens-at\":\"2020-01-01T00:00:00Z\",\"closes-at\":\"2025-01-01T00:00:00Z\",\"closed-early\":false}}" :updated-at (Instant/now)})]
-    (let [result (handlers.tournament/register-player test-deps test-tournament-eid "dev-admin")]
-      (is (= :tournament/registration-error (:type result)))
+    (let [result (handlers.tournament/create-entry test-deps test-tournament-eid "dev-admin")]
+      (is (= :tournament/entry-error (:type result)))
       (is (= "Registration is not open." (:message result))))))
 
-;; ─── withdraw-player ─────────────────────────────────────────────────────────
+;; ─── delete-entry ────────────────────────────────────────────────────────────
 
-(deftest withdraw-player-returns-success-during-registration
+(deftest delete-entry-returns-success-during-registration
   (with-redefs [data-access.contract/get-tournament-state
                 (fn [_ _] {:id 1 :state "{\"status\":\"registration\"}" :updated-at (Instant/now)})
-                data-access.contract/withdraw-player (fn [_ _ _] nil)]
-    (let [result (handlers.tournament/withdraw-player test-deps test-tournament-eid "dev-admin")]
-      (is (= :tournament/withdraw-success (:type result))))))
+                data-access.contract/delete-entry (fn [_ _ _] nil)]
+    (let [result (handlers.tournament/delete-entry test-deps test-tournament-eid "dev-admin")]
+      (is (= :tournament/entry-deleted (:type result))))))
 
-(deftest withdraw-player-returns-error-when-not-registration-status
+(deftest delete-entry-returns-error-when-not-registration-status
   (with-redefs [data-access.contract/get-tournament-state
                 (fn [_ _] {:id 1 :state "{\"status\":\"active\"}" :updated-at (Instant/now)})]
-    (let [result (handlers.tournament/withdraw-player test-deps test-tournament-eid "dev-admin")]
-      (is (= :tournament/registration-error (:type result))))))
+    (let [result (handlers.tournament/delete-entry test-deps test-tournament-eid "dev-admin")]
+      (is (= :tournament/entry-error (:type result))))))
 
-;; ─── get-registrations ───────────────────────────────────────────────────────
+;; ─── get-entries ─────────────────────────────────────────────────────────────
 
-(deftest get-registrations-assigns-type-to-each
-  (with-redefs [data-access.contract/get-registrations-for-tournament
-                (fn [_ _] [test-registration (assoc test-registration :player-sub "dev-player-one")])]
-    (let [results (handlers.tournament/get-registrations test-deps test-tournament-eid)]
-      (is (every? #(= :tournament/registration (:type %)) results)))))
+(deftest get-entries-assigns-type-to-each
+  (with-redefs [data-access.contract/get-entries-for-tournament
+                (fn [_ _] [test-entry (assoc test-entry :player-sub "dev-player-one")])]
+    (let [results (handlers.tournament/get-entries test-deps test-tournament-eid)]
+      (is (every? #(= :tournament/entry (:type %)) results)))))
 
-(deftest get-registrations-returns-all-results
-  (with-redefs [data-access.contract/get-registrations-for-tournament
-                (fn [_ _] [test-registration (assoc test-registration :player-sub "dev-player-one")])]
-    (is (= 2 (count (handlers.tournament/get-registrations test-deps test-tournament-eid))))))
+(deftest get-entries-returns-all-results
+  (with-redefs [data-access.contract/get-entries-for-tournament
+                (fn [_ _] [test-entry (assoc test-entry :player-sub "dev-player-one")])]
+    (is (= 2 (count (handlers.tournament/get-entries test-deps test-tournament-eid))))))
 
-(deftest get-registrations-empty-result
-  (with-redefs [data-access.contract/get-registrations-for-tournament (fn [_ _] [])]
-    (is (= [] (handlers.tournament/get-registrations test-deps test-tournament-eid)))))
+(deftest get-entries-empty-result
+  (with-redefs [data-access.contract/get-entries-for-tournament (fn [_ _] [])]
+    (is (= [] (handlers.tournament/get-entries test-deps test-tournament-eid)))))

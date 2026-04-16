@@ -128,16 +128,16 @@
     [:map
      [:type [:= :collection/tournament]]])))
 
-(def tournament-registration-resource
+(def tournament-entry-resource
   (malli.util/merge
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
-     [:eid {:model/link :tournament-registration/by-eid} :uuid]
-     [:type [:= :tournament/registration]]
+     [:eid {:model/link :tournament-entry/by-eid} :uuid]
+     [:type [:= :tournament/entry]]
      [:tournament-eid {:model/link :tournament/by-eid} :uuid]
      [:player-sub :string]
-     [:registered-at :instant]
+     [:created-at :instant]
      [:_links
       [:map
        [:self :url]

@@ -1,5 +1,5 @@
-UPDATE tournament_registration
-SET withdrawn_at = ?
+UPDATE tournament_entry
+SET deleted_at = ?
 WHERE tournament_id = (SELECT id FROM tournament WHERE eid = ?)
   AND player_sub = ?
-  AND withdrawn_at IS NULL
+  AND deleted_at IS NULL
