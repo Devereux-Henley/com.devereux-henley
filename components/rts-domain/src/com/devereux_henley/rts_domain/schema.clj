@@ -95,6 +95,49 @@
     [:map
      [:type [:= :collection/game]]])))
 
+(def tournament-resource
+  (malli.util/merge
+   schema.contract/base-resource
+   (schema.contract/to-schema
+    [:map
+     [:eid {:model/link :tournament/by-eid} :uuid]
+     [:type [:= :tournament/tournament]]
+     [:name {:min 1} :string]
+     [:description {:min 1} :string]
+     [:game-eid {:model/link :game/by-eid} :uuid]
+     [:created-by-sub :string]
+     [:_links
+      [:map
+       [:self :url]
+       [:game :url]]]])))
+
+(defn- ^:private normalize-datetime
+  "Coerces a datetime-local string (e.g. \"2026-05-01T00:00\") to ISO-8601
+   by appending \":00Z\" or \"Z\" as needed so Instant/parse succeeds."
+  [v]
+  (cond
+    (not (string? v))          v
+    (.endsWith ^String v "Z")  v
+    (re-matches #".+T\d{2}:\d{2}$" v)    (str v ":00Z")
+    (re-matches #".+T\d{2}:\d{2}:\d{2}$" v) (str v "Z")
+    :else                      v))
+
+(def create-tournament-specification
+  (schema.contract/to-schema
+   [:map
+    [:game-eid :uuid]
+    [:name {:min 1} :string]
+    [:description {:min 1} :string]
+    [:registration-opens-at {:decode/json normalize-datetime} :instant]
+    [:registration-closes-at {:decode/json normalize-datetime} :instant]]))
+
+(def tournament-collection-resource
+  (malli.util/merge
+   (schema.contract/make-collection-resource tournament-resource)
+   (schema.contract/to-schema
+    [:map
+     [:type [:= :collection/tournament]]])))
+
 (def resource-identifier
   [:map
    [:eid :uuid]

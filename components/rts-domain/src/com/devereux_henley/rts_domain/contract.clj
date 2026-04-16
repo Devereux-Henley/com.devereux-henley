@@ -3,6 +3,7 @@
    [com.devereux-henley.rts-domain.handlers.draft :as handlers.draft]
    [com.devereux-henley.rts-domain.handlers.game :as handlers.game]
    [com.devereux-henley.rts-domain.handlers.social-media :as handlers.social-media]
+   [com.devereux-henley.rts-domain.handlers.tournament :as handlers.tournament]
    [com.devereux-henley.rts-domain.schema :as schema]
    [malli.util]))
 
@@ -72,5 +73,19 @@
 (def update-unit-in-draft                       handlers.draft/update-unit-in-draft)
 (def remove-unit-from-draft                     handlers.draft/remove-unit-from-draft)
 (def get-draft-entry                            handlers.draft/get-draft-entry)
+
+;;; ─── Tournament handler functions ──────────────────────────────────────────
+
+(def tournament-resource                          schema/tournament-resource)
+(def create-tournament-specification              schema/create-tournament-specification)
+(def tournament-collection-resource               schema/tournament-collection-resource)
+
+(def get-tournament-by-eid                        handlers.tournament/get-tournament-by-eid)
+(def get-tournaments-for-game                     handlers.tournament/get-tournaments-for-game)
+(def create-tournament                            handlers.tournament/create-tournament)
+(def get-tournament-state                         handlers.tournament/get-tournament-state)
+(def set-tournament-state                         handlers.tournament/set-tournament-state)
+
+;;; ─── Social Media handler functions ────────────────────────────────────────
 
 (def get-platform-by-eid                        handlers.social-media/get-platform-by-eid)

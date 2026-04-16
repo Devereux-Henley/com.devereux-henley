@@ -14,6 +14,8 @@
                                mono/rts-data-deploy {:local/root "bases/rts-data-deploy"}
                                mono/rpfm-scraper {:local/root "bases/rpfm-scraper"}}}
 
+            :claude {:extra-deps {nrepl/nrepl {:mvn/version "1.3.0"}}}
+
             :test {:extra-paths ["components/schema"
                                  "components/resourcekit"
                                  "components/content-negotiation"

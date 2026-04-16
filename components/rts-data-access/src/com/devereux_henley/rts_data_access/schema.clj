@@ -189,6 +189,39 @@
     [:state :string]
     [:updated-at :instant]]))
 
+(def tournament-entity
+  (schema.contract/to-schema
+   [:map
+    [:id :int]
+    [:eid :uuid]
+    [:name {:min 1} :string]
+    [:description {:min 1} :string]
+    [:game-eid :uuid]
+    [:created-by-sub :string]
+    [:version :int]
+    [:created-at :instant]
+    [:updated-at :instant]
+    [:deleted-at [:maybe :instant]]]))
+
+(def create-tournament-params
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:game-eid :uuid]
+    [:name {:min 1} :string]
+    [:description {:min 1} :string]
+    [:created-by-sub :string]
+    [:version :int]
+    [:created-at :instant]
+    [:updated-at :instant]]))
+
+(def tournament-state-entity
+  (schema.contract/to-schema
+   [:map
+    [:id :int]
+    [:state :string]
+    [:updated-at :instant]]))
+
 ;; Schema for the known structured fields in the raw unit-statistics JSON (string keys).
 ;; :closed false allows the extra dynamic stat keys to pass through.
 (def unit-statistics-raw-schema
