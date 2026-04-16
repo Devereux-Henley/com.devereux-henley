@@ -302,7 +302,24 @@
                            :produces     ["application/json"]
                            :operation-id "tournament-entry/list"}
               :parameters {:path schema.contract/id-path-parameter}
-              :handler    (integrant.core/ref ::web.tournament/get-entries)}}]]]]
+              :handler    (integrant.core/ref ::web.tournament/get-entries)}}]]
+     ["/advance"
+      {:post {:summary    "Advance the tournament to a new status."
+              :openapi    {:tags         ["tournament"]
+                           :produces     ["application/json"]
+                           :operation-id "tournament/advance"}
+              :parameters {:path schema.contract/id-path-parameter
+                           :body (schema.contract/to-schema
+                                  [:map
+                                   [:target-status [:enum "active" "complete" "cancelled"]]])}
+              :handler    (integrant.core/ref ::web.tournament/advance-tournament)}}]
+     ["/close-registration"
+      {:post {:summary    "Close registration early, preventing new entries."
+              :openapi    {:tags         ["tournament"]
+                           :produces     ["application/json"]
+                           :operation-id "tournament/close-registration"}
+              :parameters {:path schema.contract/id-path-parameter}
+              :handler    (integrant.core/ref ::web.tournament/close-registration)}}]]]
 
    ["/social-media/:eid"
     {:name :social-media/by-eid

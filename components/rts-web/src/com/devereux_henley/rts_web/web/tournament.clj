@@ -95,3 +95,26 @@
     {:status 200
      :body   {:type    :tournament/entries
               :entries (domain/get-entries dependencies eid)}}))
+
+(defmethod integrant.core/init-key ::advance-tournament
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]}            :path
+         {:keys [target-status]} :body} :parameters
+        session                          :ory-session
+        :as                              _request}]
+    (let [player-sub (get-in session [:identity :id])
+          result     (domain/advance-tournament dependencies eid target-status player-sub)]
+      (case (:type result)
+        :tournament/advance-success {:status 200 :body result}
+        {:status 422 :body result}))))
+
+(defmethod integrant.core/init-key ::close-registration
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+        session               :ory-session
+        :as                   _request}]
+    (let [player-sub (get-in session [:identity :id])
+          result     (domain/close-registration-early dependencies eid player-sub)]
+      (case (:type result)
+        :tournament/close-registration-success {:status 200 :body result}
+        {:status 422 :body result}))))

@@ -207,4 +207,94 @@ test.describe('Tournament UI', () => {
     await expect(page.locator('button', { hasText: 'Withdraw' })).toBeVisible();
     await expect(page.locator('li', { hasText: 'dev-admin' })).toBeVisible();
   });
+
+  test('organizer sees Start Tournament button', async ({ page, request }) => {
+    const eid = await createTournament(request);
+    await page.goto(`/view/game/${GAME_EID}/tournament/${eid}/index.html`);
+    await expect(page.locator('button', { hasText: 'Start Tournament' })).toBeVisible();
+    await expect(page.locator('button', { hasText: 'Close Registration' })).toBeVisible();
+  });
+});
+
+test.describe('Tournament State Machine API', () => {
+  test('advance from registration to active populates standings', async ({ request }) => {
+    const eid = await createTournament(request);
+    await request.post(`${BASE}/api/tournament/${eid}/entry/me`, {
+      headers: headers('dev-admin'),
+    });
+    await request.post(`${BASE}/api/tournament/${eid}/entry/me`, {
+      headers: headers('dev-player-one'),
+    });
+
+    const res = await request.post(`${BASE}/api/tournament/${eid}/advance`, {
+      headers: headers('dev-admin'),
+      data: { 'target-status': 'active' },
+    });
+    expect(res.status()).toBe(200);
+    const body = await res.json();
+    expect(body.type).toBe('tournament/advance-success');
+    expect(body.state.status).toBe('active');
+    expect(body.state.standings).toHaveLength(2);
+  });
+
+  test('advance from active to complete', async ({ request }) => {
+    const eid = await createTournament(request);
+    await request.post(`${BASE}/api/tournament/${eid}/advance`, {
+      headers: headers('dev-admin'),
+      data: { 'target-status': 'active' },
+    });
+    const res = await request.post(`${BASE}/api/tournament/${eid}/advance`, {
+      headers: headers('dev-admin'),
+      data: { 'target-status': 'complete' },
+    });
+    expect(res.status()).toBe(200);
+    const body = await res.json();
+    expect(body.state.status).toBe('complete');
+  });
+
+  test('invalid transition returns 422', async ({ request }) => {
+    const eid = await createTournament(request);
+    const res = await request.post(`${BASE}/api/tournament/${eid}/advance`, {
+      headers: headers('dev-admin'),
+      data: { 'target-status': 'complete' },
+    });
+    expect(res.status()).toBe(422);
+    const body = await res.json();
+    expect(body.type).toBe('tournament/transition-error');
+  });
+
+  test('non-organizer cannot advance', async ({ request }) => {
+    const eid = await createTournament(request);
+    const res = await request.post(`${BASE}/api/tournament/${eid}/advance`, {
+      headers: headers('dev-player-one'),
+      data: { 'target-status': 'active' },
+    });
+    expect(res.status()).toBe(422);
+    expect((await res.json()).message).toMatch(/organizer/i);
+  });
+
+  test('close registration early prevents new entries', async ({ request }) => {
+    const eid = await createTournament(request);
+    const closeRes = await request.post(`${BASE}/api/tournament/${eid}/close-registration`, {
+      headers: headers('dev-admin'),
+    });
+    expect(closeRes.status()).toBe(200);
+    expect((await closeRes.json()).type).toBe('tournament/close-registration-success');
+
+    const entryRes = await request.post(`${BASE}/api/tournament/${eid}/entry/me`, {
+      headers: headers('dev-player-one'),
+    });
+    expect(entryRes.status()).toBe(422);
+    expect((await entryRes.json()).message).toMatch(/not open/i);
+  });
+
+  test('cancel tournament from registration', async ({ request }) => {
+    const eid = await createTournament(request);
+    const res = await request.post(`${BASE}/api/tournament/${eid}/advance`, {
+      headers: headers('dev-admin'),
+      data: { 'target-status': 'cancelled' },
+    });
+    expect(res.status()).toBe(200);
+    expect((await res.json()).state.status).toBe('cancelled');
+  });
 });

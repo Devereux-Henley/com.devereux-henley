@@ -233,13 +233,15 @@
            (fn [eid] (web.tournament/get-tournament-by-eid dependencies eid))
            "tournament-index.html"
            (fn [data request]
-             (let [state      (domain/get-tournament-state dependencies (:eid data))
-                   entries    (domain/get-entries dependencies (:eid data))
-                   player-sub (get-in request [:ory-session :identity :id])
-                   has-entry  (some #(= player-sub (:player-sub %)) entries)
-                   now        (java.time.Instant/now)
-                   reg-open   (domain/is-registration-open? state now)]
+             (let [state        (domain/get-tournament-state dependencies (:eid data))
+                   entries      (domain/get-entries dependencies (:eid data))
+                   player-sub   (get-in request [:ory-session :identity :id])
+                   has-entry    (some #(= player-sub (:player-sub %)) entries)
+                   now          (java.time.Instant/now)
+                   reg-open     (domain/is-registration-open? state now)
+                   is-organizer (= player-sub (:created-by-sub data))]
                {:tournament-state  state
                 :entries           entries
                 :has-entry         has-entry
-                :registration-open reg-open}))))
+                :registration-open reg-open
+                :is-organizer      is-organizer}))))
