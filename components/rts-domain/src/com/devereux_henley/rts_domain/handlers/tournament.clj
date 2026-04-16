@@ -3,9 +3,14 @@
    [com.devereux-henley.rts-data-access.contract :as db]
    [jsonista.core :as jsonista])
   (:import
-   [java.time Instant]))
+   [java.time Instant LocalDateTime ZoneId]))
 
 (def ^:private json-mapper (jsonista/object-mapper {:decode-key-fn keyword}))
+
+(defn- to-utc-instant
+  "Converts a LocalDateTime in the given ZoneId to a UTC Instant."
+  ^Instant [^LocalDateTime local-dt ^ZoneId zone]
+  (-> local-dt (.atZone zone) .toInstant))
 
 (defn get-tournament-by-eid
   "Fetches a tournament by eid and attaches :type :tournament/tournament."
@@ -44,15 +49,19 @@
   [dependencies create-specification]
   (let [created-at (Instant/now)
         updated-at created-at
+        tz         (:timezone create-specification)
+        opens-at   (to-utc-instant (:registration-opens-at create-specification) tz)
+        closes-at  (to-utc-instant (:registration-closes-at create-specification) tz)
         tournament (db/create-tournament
                     (:connection dependencies)
                     (-> create-specification
-                        (dissoc :registration-opens-at :registration-closes-at)
+                        (dissoc :registration-opens-at :registration-closes-at :timezone)
                         (assoc :created-at created-at)
                         (assoc :updated-at updated-at)))
         initial-state {:status "registration"
-                       :registration {:opens-at (str (:registration-opens-at create-specification))
-                                      :closes-at (str (:registration-closes-at create-specification))
+                       :registration {:opens-at (str opens-at)
+                                      :closes-at (str closes-at)
+                                      :timezone (str tz)
                                       :closed-early false}
                        :phases []
                        :current-phase nil

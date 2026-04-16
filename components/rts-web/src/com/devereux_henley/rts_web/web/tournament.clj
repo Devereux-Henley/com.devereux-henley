@@ -42,7 +42,7 @@
 
 (defmethod integrant.core/init-key ::create-tournament
   [_init-key dependencies]
-  (fn [{{{:keys [name description game-eid
+  (fn [{{{:keys [name description game-eid timezone
                  registration-opens-at registration-closes-at]} :body
          {:keys [version]}                                      :query
          {:keys [eid]}                                          :path} :parameters
@@ -58,6 +58,7 @@
                        :game-eid               game-eid
                        :name                   name
                        :description            description
+                       :timezone               timezone
                        :registration-opens-at  registration-opens-at
                        :registration-closes-at registration-closes-at
                        :created-by-sub         (get-in session [:identity :id])

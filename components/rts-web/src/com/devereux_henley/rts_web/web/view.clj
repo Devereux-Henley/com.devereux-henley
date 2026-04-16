@@ -183,7 +183,8 @@
        :body   (selmer.parser/render-file
                 "rts-web/view/create-draft.html"
                 (merge {:game-modes game-modes
-                        :session    session}
+                        :session    session
+                        :draft-eid  (random-uuid)}
                        game-context))})))
 
 (defmethod integrant.core/init-key ::logout-view
@@ -205,6 +206,13 @@
                         :session     session}
                        game-context))})))
 
+(def ^:private common-timezones
+  "Curated list of IANA timezone IDs for the tournament create form."
+  ["US/Eastern" "US/Central" "US/Mountain" "US/Pacific"
+   "Europe/London" "Europe/Paris" "Europe/Berlin"
+   "Asia/Tokyo" "Asia/Shanghai" "Australia/Sydney"
+   "UTC"])
+
 (defmethod integrant.core/init-key ::create-tournament-view
   [_init-key _dependencies]
   (fn [{game-context :game-context
@@ -213,7 +221,10 @@
     {:status 200
      :body   (selmer.parser/render-file
               "rts-web/view/create-tournament.html"
-              (merge {:session session}
+              (merge {:session          session
+                      :tournament-eid   (random-uuid)
+                      :timezones        common-timezones
+                      :default-timezone "US/Eastern"}
                      game-context))}))
 
 (defmethod integrant.core/init-key ::tournament-view
