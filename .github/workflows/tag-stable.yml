@@ -58,6 +58,9 @@ jobs:
       - name: Polylith test
         run: clojure -M:poly test
 
+      - name: clj-kondo prime cache
+        run: clj-kondo --copy-configs --dependencies --lint "$(clojure -A:dev -Spath)"
+
       - name: clj-kondo lint
         run: clj-kondo --lint bases components development
 
