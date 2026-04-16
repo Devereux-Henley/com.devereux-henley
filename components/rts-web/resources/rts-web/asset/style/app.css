@@ -540,7 +540,7 @@ a:hover:has(img) {
   flex-wrap: wrap;
   gap: var(--space-1);
   padding: var(--space-2) var(--space-4);
-  min-height: 146px;
+  min-height: calc(130px + var(--space-2) * 2);
 }
 
 .draft-slot {
