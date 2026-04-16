@@ -18,46 +18,65 @@
 (def hostname (or (System/getenv "RTS_API_HOSTNAME") "http://localhost:3001"))
 (def auth-hostname (or (System/getenv "AUTH_HOSTNAME") "http://localhost:4000"))
 (def session-name (str "ory_session_" (or (System/getenv "AUTH_SLUG") "eloquentyalowwhtijq6my4")))
-(def default-api-dependencies {:hostname   hostname
-                               :connection (integrant.core/ref ::db/connection)})
-(def default-view-dependencies {})
+(def default-dependencies {:hostname   hostname
+                           :connection (integrant.core/ref ::db/connection)})
+
+;;; ─── Per-namespace handler configuration ───────────────────────────────────
+
+(def infrastructure-configuration
+  {::rts-data/migrate   {:db-spec       db/db-spec
+                         :migration-dir rts-data/migration-dir}
+   ::db/connection      {:migrations (integrant.core/ref ::rts-data/migrate)}
+   ::web/openapi-handler {}
+   ::web/service        {:handler       (integrant.core/ref ::web/app)
+                         :configuration {:port port, :join? false}}
+   :com.devereux-henley.rts-web.web.configuration/configuration
+   {:com.devereux-henley.rts-web.web.configuration/openid-url    (str auth-hostname "/" ".well-known/openid-configuration")
+    :com.devereux-henley.rts-web.web.configuration/auth-hostname auth-hostname}})
+
+(def view-configuration
+  {:com.devereux-henley.rts-web.web.view/dashboard-view          default-dependencies
+   :com.devereux-henley.rts-web.web.view/game-view               default-dependencies
+   :com.devereux-henley.rts-web.web.view/about-view              default-dependencies
+   :com.devereux-henley.rts-web.web.view/contact-view            default-dependencies
+   :com.devereux-henley.rts-web.web.view/login-view              {:auth-hostname auth-hostname}
+   :com.devereux-henley.rts-web.web.view/logout-view             {:auth-hostname auth-hostname}
+   :com.devereux-henley.rts-web.web.view/game-context-middleware default-dependencies
+   :com.devereux-henley.rts-web.web.view/game-index-view         default-dependencies
+   :com.devereux-henley.rts-web.web.view/faction-view            default-dependencies
+   :com.devereux-henley.rts-web.web.view/unit-view               default-dependencies
+   :com.devereux-henley.rts-web.web.view/draft-view              default-dependencies
+   :com.devereux-henley.rts-web.web.view/my-drafts-view          default-dependencies
+   :com.devereux-henley.rts-web.web.view/create-draft-view       default-dependencies})
+
+(def game-configuration
+  {:com.devereux-henley.rts-web.web.game/get-game                default-dependencies
+   :com.devereux-henley.rts-web.web.game/get-games               default-dependencies
+   :com.devereux-henley.rts-web.web.game/get-faction             default-dependencies
+   :com.devereux-henley.rts-web.web.game/get-game-social-link    default-dependencies
+   :com.devereux-henley.rts-web.web.game/create-draft            default-dependencies})
+
+(def draft-configuration
+  {:com.devereux-henley.rts-web.web.draft/get-draft-unit         default-dependencies
+   :com.devereux-henley.rts-web.web.draft/get-draft-entry        default-dependencies
+   :com.devereux-henley.rts-web.web.draft/draft-add-unit         default-dependencies
+   :com.devereux-henley.rts-web.web.draft/draft-update-unit      default-dependencies
+   :com.devereux-henley.rts-web.web.draft/draft-remove-unit      default-dependencies})
+
+(def social-media-configuration
+  {:com.devereux-henley.rts-web.web.social-media/get-platform    default-dependencies})
+
+;;; ─── Assembled system maps ─────────────────────────────────────────────────
 
 (def base-configuration
   "Shared integrant wiring used by every profile. Auth middleware and the
    `::web/app` entry point are contributed by the individual profiles so they
    can swap Ory for a dev stub without copy-pasting the rest of the system."
-  {::rts-data/migrate                                                     {:db-spec       db/db-spec
-                                                                           :migration-dir rts-data/migration-dir}
-   ::db/connection                                                        {:migrations (integrant.core/ref ::rts-data/migrate)}
-   ::web/openapi-handler                                                  {}
-   :com.devereux-henley.rts-web.web.view/dashboard-view                   default-view-dependencies
-   :com.devereux-henley.rts-web.web.view/game-view                        default-view-dependencies
-   :com.devereux-henley.rts-web.web.view/about-view                       default-view-dependencies
-   :com.devereux-henley.rts-web.web.view/contact-view                     default-view-dependencies
-   :com.devereux-henley.rts-web.web.view/login-view                       {:auth-hostname auth-hostname}
-   :com.devereux-henley.rts-web.web.view/logout-view                      {:auth-hostname auth-hostname}
-   :com.devereux-henley.rts-web.web.view/game-context-middleware          default-api-dependencies
-   :com.devereux-henley.rts-web.web.view/faction-view                     default-api-dependencies
-   :com.devereux-henley.rts-web.web.view/unit-view                        default-api-dependencies
-   :com.devereux-henley.rts-web.web.view/draft-view                       default-api-dependencies
-   :com.devereux-henley.rts-web.web.draft/get-draft-unit                  default-api-dependencies
-   :com.devereux-henley.rts-web.web.draft/get-draft-entry                 default-api-dependencies
-   :com.devereux-henley.rts-web.web.draft/draft-add-unit                  default-api-dependencies
-   :com.devereux-henley.rts-web.web.draft/draft-update-unit               default-api-dependencies
-   :com.devereux-henley.rts-web.web.draft/draft-remove-unit               default-api-dependencies
-   :com.devereux-henley.rts-web.web.view/my-drafts-view                   default-api-dependencies
-   :com.devereux-henley.rts-web.web.view/game-index-view                  default-view-dependencies
-   :com.devereux-henley.rts-web.web.view/create-draft-view                default-api-dependencies
-   :com.devereux-henley.rts-web.web.game/get-game                         default-api-dependencies
-   :com.devereux-henley.rts-web.web.game/get-games                        default-api-dependencies
-   :com.devereux-henley.rts-web.web.game/get-faction                      default-api-dependencies
-   :com.devereux-henley.rts-web.web.game/get-game-social-link             default-api-dependencies
-   :com.devereux-henley.rts-web.web.social-media/get-platform             default-api-dependencies
-   :com.devereux-henley.rts-web.web.game/create-draft                     default-api-dependencies
-   :com.devereux-henley.rts-web.web.configuration/configuration           {:com.devereux-henley.rts-web.web.configuration/openid-url    (str auth-hostname "/" ".well-known/openid-configuration")
-                                                                           :com.devereux-henley.rts-web.web.configuration/auth-hostname auth-hostname}
-   ::web/service                                                          {:handler       (integrant.core/ref ::web/app)
-                                                                           :configuration {:port port, :join? false}}})
+  (merge infrastructure-configuration
+         view-configuration
+         game-configuration
+         draft-configuration
+         social-media-configuration))
 
 (def core-configuration
   "Production profile. Uses Ory for authentication."
