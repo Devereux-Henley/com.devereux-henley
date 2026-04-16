@@ -18,46 +18,80 @@
 (def hostname (or (System/getenv "RTS_API_HOSTNAME") "http://localhost:3001"))
 (def auth-hostname (or (System/getenv "AUTH_HOSTNAME") "http://localhost:4000"))
 (def session-name (str "ory_session_" (or (System/getenv "AUTH_SLUG") "eloquentyalowwhtijq6my4")))
-(def default-api-dependencies {:hostname   hostname
-                               :connection (integrant.core/ref ::db/connection)})
-(def default-view-dependencies {})
+(def default-dependencies {:hostname   hostname
+                           :connection (integrant.core/ref ::db/connection)})
+
+(defn- handlers
+  "Maps each Integrant key to default-dependencies."
+  [& keys]
+  (zipmap keys (repeat default-dependencies)))
+
+;;; ─── Per-namespace handler configuration ───────────────────────────────────
+
+(def infrastructure-configuration
+  {::rts-data/migrate   {:db-spec       db/db-spec
+                         :migration-dir rts-data/migration-dir}
+   ::db/connection      {:migrations (integrant.core/ref ::rts-data/migrate)}
+   ::web/openapi-handler {}
+   ::web/service        {:handler       (integrant.core/ref ::web/app)
+                         :configuration {:port port, :join? false}}
+   :com.devereux-henley.rts-web.web.configuration/configuration
+   {:com.devereux-henley.rts-web.web.configuration/openid-url    (str auth-hostname "/" ".well-known/openid-configuration")
+    :com.devereux-henley.rts-web.web.configuration/auth-hostname auth-hostname}})
+
+(def view-configuration
+  (merge
+   (handlers :com.devereux-henley.rts-web.web.view/dashboard-view
+             :com.devereux-henley.rts-web.web.view/game-view
+             :com.devereux-henley.rts-web.web.view/about-view
+             :com.devereux-henley.rts-web.web.view/contact-view
+             :com.devereux-henley.rts-web.web.view/game-context-middleware
+             :com.devereux-henley.rts-web.web.view/game-index-view
+             :com.devereux-henley.rts-web.web.view/faction-view
+             :com.devereux-henley.rts-web.web.view/unit-view
+             :com.devereux-henley.rts-web.web.view/draft-view
+             :com.devereux-henley.rts-web.web.view/my-drafts-view
+             :com.devereux-henley.rts-web.web.view/create-draft-view)
+   {:com.devereux-henley.rts-web.web.view/login-view  {:auth-hostname auth-hostname}
+    :com.devereux-henley.rts-web.web.view/logout-view {:auth-hostname auth-hostname}}))
+
+(def game-configuration
+  (handlers :com.devereux-henley.rts-web.web.game/get-game
+            :com.devereux-henley.rts-web.web.game/get-games
+            :com.devereux-henley.rts-web.web.game/get-faction
+            :com.devereux-henley.rts-web.web.game/get-game-social-link))
+
+(def draft-configuration
+  (handlers :com.devereux-henley.rts-web.web.draft/get-draft-unit
+            :com.devereux-henley.rts-web.web.draft/get-draft-entry
+            :com.devereux-henley.rts-web.web.draft/draft-add-unit
+            :com.devereux-henley.rts-web.web.draft/draft-update-unit
+            :com.devereux-henley.rts-web.web.draft/draft-remove-unit
+            :com.devereux-henley.rts-web.web.draft/create-draft))
+
+(def social-media-configuration
+  (handlers :com.devereux-henley.rts-web.web.social-media/get-platform))
+
+;;; ─── Routes ────────────────────────────────────────────────────────────────
+
+(def base-routes
+  [rts-web/root-route
+   rts-web/status-route
+   rts-web/icon-routes
+   rts-web/view-routes
+   rts-web/api-routes])
+
+;;; ─── Assembled system maps ─────────────────────────────────────────────────
 
 (def base-configuration
   "Shared integrant wiring used by every profile. Auth middleware and the
    `::web/app` entry point are contributed by the individual profiles so they
    can swap Ory for a dev stub without copy-pasting the rest of the system."
-  {::rts-data/migrate                                                     {:db-spec       db/db-spec
-                                                                           :migration-dir rts-data/migration-dir}
-   ::db/connection                                                        {:migrations (integrant.core/ref ::rts-data/migrate)}
-   ::web/openapi-handler                                                  {}
-   :com.devereux-henley.rts-web.web.view/dashboard-view                   default-view-dependencies
-   :com.devereux-henley.rts-web.web.view/game-view                        default-view-dependencies
-   :com.devereux-henley.rts-web.web.view/about-view                       default-view-dependencies
-   :com.devereux-henley.rts-web.web.view/contact-view                     default-view-dependencies
-   :com.devereux-henley.rts-web.web.view/login-view                       {:auth-hostname auth-hostname}
-   :com.devereux-henley.rts-web.web.view/logout-view                      {:auth-hostname auth-hostname}
-   :com.devereux-henley.rts-web.web.view/game-context-middleware          default-api-dependencies
-   :com.devereux-henley.rts-web.web.view/faction-view                     default-api-dependencies
-   :com.devereux-henley.rts-web.web.view/unit-view                        default-api-dependencies
-   :com.devereux-henley.rts-web.web.view/draft-view                       default-api-dependencies
-   :com.devereux-henley.rts-web.web.draft/get-draft-unit                  default-api-dependencies
-   :com.devereux-henley.rts-web.web.draft/get-draft-entry                 default-api-dependencies
-   :com.devereux-henley.rts-web.web.draft/draft-add-unit                  default-api-dependencies
-   :com.devereux-henley.rts-web.web.draft/draft-update-unit               default-api-dependencies
-   :com.devereux-henley.rts-web.web.draft/draft-remove-unit               default-api-dependencies
-   :com.devereux-henley.rts-web.web.view/my-drafts-view                   default-api-dependencies
-   :com.devereux-henley.rts-web.web.view/game-index-view                  default-view-dependencies
-   :com.devereux-henley.rts-web.web.view/create-draft-view                default-api-dependencies
-   :com.devereux-henley.rts-web.web.game/get-game                         default-api-dependencies
-   :com.devereux-henley.rts-web.web.game/get-games                        default-api-dependencies
-   :com.devereux-henley.rts-web.web.game/get-faction                      default-api-dependencies
-   :com.devereux-henley.rts-web.web.game/get-game-social-link             default-api-dependencies
-   :com.devereux-henley.rts-web.web.social-media/get-platform             default-api-dependencies
-   :com.devereux-henley.rts-web.web.game/create-draft                     default-api-dependencies
-   :com.devereux-henley.rts-web.web.configuration/configuration           {:com.devereux-henley.rts-web.web.configuration/openid-url    (str auth-hostname "/" ".well-known/openid-configuration")
-                                                                           :com.devereux-henley.rts-web.web.configuration/auth-hostname auth-hostname}
-   ::web/service                                                          {:handler       (integrant.core/ref ::web/app)
-                                                                           :configuration {:port port, :join? false}}})
+  (merge infrastructure-configuration
+         view-configuration
+         game-configuration
+         draft-configuration
+         social-media-configuration))
 
 (def core-configuration
   "Production profile. Uses Ory for authentication."
@@ -67,11 +101,7 @@
           :session-name  session-name}
 
          :com.devereux-henley.rts-web.web.routes/routes
-         [rts-web/root-route
-          rts-web/status-route
-          rts-web/icon-routes
-          rts-web/view-routes
-          rts-web/api-routes]
+         base-routes
 
          ::web/app
          {:routes          (integrant.core/ref :com.devereux-henley.rts-web.web.routes/routes)
@@ -91,13 +121,7 @@
          ::dev-auth/list-users-handler       {:users (integrant.core/ref ::dev-auth/users)}
 
          :com.devereux-henley.rts-web.web.routes/routes
-         [rts-web/root-route
-          rts-web/status-route
-          rts-web/shutdown-route
-          rts-web/icon-routes
-          rts-web/view-routes
-          rts-web/api-routes
-          dev-auth/routes]
+         (into base-routes [rts-web/shutdown-route dev-auth/routes])
 
          ::web/app
          {:routes          (integrant.core/ref :com.devereux-henley.rts-web.web.routes/routes)
