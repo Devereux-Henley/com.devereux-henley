@@ -69,3 +69,47 @@
                        :qualifier-count nil}]
     (set-tournament-state dependencies (:eid tournament) initial-state)
     (assoc tournament :type :tournament/tournament)))
+
+;; ─── Registration ────────────────────────────────────────────────────────────
+
+(defn is-registration-open?
+  "Returns true if the tournament state allows new registrations.
+   Checks status, time window, and closed-early flag."
+  [state now]
+  (and (= "registration" (:status state))
+       (not (get-in state [:registration :closed-early]))
+       (let [opens-at  (some-> (get-in state [:registration :opens-at]) Instant/parse)
+             closes-at (some-> (get-in state [:registration :closes-at]) Instant/parse)]
+         (and (or (nil? opens-at)  (not (.isBefore now opens-at)))
+              (or (nil? closes-at) (.isBefore now closes-at))))))
+
+(defn create-entry
+  "Creates a tournament entry for a player. Returns the entry or an error map."
+  [dependencies tournament-eid player-sub]
+  (let [state (get-tournament-state dependencies tournament-eid)
+        now   (Instant/now)]
+    (if-not (is-registration-open? state now)
+      {:type :tournament/entry-error :message "Registration is not open."}
+      (try
+        (let [entry (db/create-entry (:connection dependencies) tournament-eid player-sub)]
+          (assoc entry :type :tournament/entry))
+        (catch org.sqlite.SQLiteException e
+          (if (.contains (.getMessage e) "UNIQUE constraint failed")
+            {:type :tournament/entry-error :message "Already entered in this tournament."}
+            (throw e)))))))
+
+(defn delete-entry
+  "Removes a player's entry from a tournament. Returns a success or error map."
+  [dependencies tournament-eid player-sub]
+  (let [state (get-tournament-state dependencies tournament-eid)]
+    (if-not (= "registration" (:status state))
+      {:type :tournament/entry-error :message "Cannot withdraw outside of registration period."}
+      (do
+        (db/delete-entry (:connection dependencies) tournament-eid player-sub)
+        {:type :tournament/entry-deleted :message "Entry removed from tournament."}))))
+
+(defn get-entries
+  "Returns all active entries for a tournament."
+  [dependencies tournament-eid]
+  (mapv (fn [e] (assoc e :type :tournament/entry))
+        (db/get-entries-for-tournament (:connection dependencies) tournament-eid)))

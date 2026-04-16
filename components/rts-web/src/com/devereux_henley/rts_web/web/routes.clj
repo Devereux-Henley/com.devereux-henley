@@ -264,23 +264,45 @@
              :responses  {200 {:body domain/tournament-collection-resource}}
              :handler    (integrant.core/ref ::web.tournament/get-tournaments)}}]
     ["/:eid"
-     {:name :tournament/by-eid
-      :get  {:summary    "Fetches a tournament by eid."
-             :openapi    {:tags         ["tournament"]
-                          :produces     ["application/json"]
-                          :operation-id "tournament/by-eid"}
-             :parameters {:path schema.contract/id-path-parameter}
-             :responses  {200 {:body domain/tournament-resource}}
-             :handler    (integrant.core/ref ::web.tournament/get-tournament)}
-      :put  {:summary    "Creates a tournament with the given eid."
-             :openapi    {:tags         ["tournament"]
-                          :produces     ["application/json"]
-                          :operation-id "tournament/create"}
-             :parameters {:path  schema.contract/id-path-parameter
-                          :query schema.contract/version-query-parameter
-                          :body  domain/create-tournament-specification}
-             :responses  {201 {:body domain/tournament-resource}}
-             :handler    (integrant.core/ref ::web.tournament/create-tournament)}}]]
+     [""
+      {:name :tournament/by-eid
+       :get  {:summary    "Fetches a tournament by eid."
+              :openapi    {:tags         ["tournament"]
+                           :produces     ["application/json"]
+                           :operation-id "tournament/by-eid"}
+              :parameters {:path schema.contract/id-path-parameter}
+              :responses  {200 {:body domain/tournament-resource}}
+              :handler    (integrant.core/ref ::web.tournament/get-tournament)}
+       :put  {:summary    "Creates a tournament with the given eid."
+              :openapi    {:tags         ["tournament"]
+                           :produces     ["application/json"]
+                           :operation-id "tournament/create"}
+              :parameters {:path  schema.contract/id-path-parameter
+                           :query schema.contract/version-query-parameter
+                           :body  domain/create-tournament-specification}
+              :responses  {201 {:body domain/tournament-resource}}
+              :handler    (integrant.core/ref ::web.tournament/create-tournament)}}]
+     ["/entry"
+      ["/me"
+       {:post   {:summary    "Create a tournament entry for the current player."
+                 :openapi    {:tags         ["tournament"]
+                              :produces     ["application/json"]
+                              :operation-id "tournament-entry/create-mine"}
+                 :parameters {:path schema.contract/id-path-parameter}
+                 :handler    (integrant.core/ref ::web.tournament/create-entry)}
+        :delete {:summary    "Remove the current player's tournament entry."
+                 :openapi    {:tags         ["tournament"]
+                              :produces     ["application/json"]
+                              :operation-id "tournament-entry/delete-mine"}
+                 :parameters {:path schema.contract/id-path-parameter}
+                 :handler    (integrant.core/ref ::web.tournament/delete-entry)}}]
+      [""
+       {:get {:summary    "List active entries for a tournament."
+              :openapi    {:tags         ["tournament"]
+                           :produces     ["application/json"]
+                           :operation-id "tournament-entry/list"}
+              :parameters {:path schema.contract/id-path-parameter}
+              :handler    (integrant.core/ref ::web.tournament/get-entries)}}]]]]
 
    ["/social-media/:eid"
     {:name :social-media/by-eid

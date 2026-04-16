@@ -232,6 +232,14 @@
   (partial standard-entity-view-handler
            (fn [eid] (web.tournament/get-tournament-by-eid dependencies eid))
            "tournament-index.html"
-           (fn [data _request]
-             (let [state (domain/get-tournament-state dependencies (:eid data))]
-               {:tournament-state state}))))
+           (fn [data request]
+             (let [state      (domain/get-tournament-state dependencies (:eid data))
+                   entries    (domain/get-entries dependencies (:eid data))
+                   player-sub (get-in request [:ory-session :identity :id])
+                   has-entry  (some #(= player-sub (:player-sub %)) entries)
+                   now        (java.time.Instant/now)
+                   reg-open   (domain/is-registration-open? state now)]
+               {:tournament-state  state
+                :entries           entries
+                :has-entry         has-entry
+                :registration-open reg-open}))))

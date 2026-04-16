@@ -76,6 +76,9 @@
   (handlers :com.devereux-henley.rts-web.web.tournament/get-tournament
             :com.devereux-henley.rts-web.web.tournament/get-tournaments
             :com.devereux-henley.rts-web.web.tournament/create-tournament
+            :com.devereux-henley.rts-web.web.tournament/create-entry
+            :com.devereux-henley.rts-web.web.tournament/delete-entry
+            :com.devereux-henley.rts-web.web.tournament/get-entries
             :com.devereux-henley.rts-web.web.view/tournament-list-view
             :com.devereux-henley.rts-web.web.view/create-tournament-view
             :com.devereux-henley.rts-web.web.view/tournament-view))
