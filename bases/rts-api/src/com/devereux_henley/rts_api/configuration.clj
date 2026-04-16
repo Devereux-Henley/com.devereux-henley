@@ -79,8 +79,10 @@
             :com.devereux-henley.rts-web.web.tournament/create-entry
             :com.devereux-henley.rts-web.web.tournament/delete-entry
             :com.devereux-henley.rts-web.web.tournament/get-entries
-            :com.devereux-henley.rts-web.web.tournament/advance-tournament
-            :com.devereux-henley.rts-web.web.tournament/close-registration
+            :com.devereux-henley.rts-web.web.tournament/get-status
+            :com.devereux-henley.rts-web.web.tournament/update-status
+            :com.devereux-henley.rts-web.web.tournament/get-registration
+            :com.devereux-henley.rts-web.web.tournament/update-registration
             :com.devereux-henley.rts-web.web.view/tournament-list-view
             :com.devereux-henley.rts-web.web.view/create-tournament-view
             :com.devereux-henley.rts-web.web.view/tournament-view))

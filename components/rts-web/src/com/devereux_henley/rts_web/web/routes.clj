@@ -303,23 +303,38 @@
                            :operation-id "tournament-entry/list"}
               :parameters {:path schema.contract/id-path-parameter}
               :handler    (integrant.core/ref ::web.tournament/get-entries)}}]]
-     ["/advance"
-      {:post {:summary    "Advance the tournament to a new status."
-              :openapi    {:tags         ["tournament"]
-                           :produces     ["application/json"]
-                           :operation-id "tournament/advance"}
-              :parameters {:path schema.contract/id-path-parameter
-                           :body (schema.contract/to-schema
-                                  [:map
-                                   [:target-status [:enum "active" "complete" "cancelled"]]])}
-              :handler    (integrant.core/ref ::web.tournament/advance-tournament)}}]
-     ["/close-registration"
-      {:post {:summary    "Close registration early, preventing new entries."
-              :openapi    {:tags         ["tournament"]
-                           :produces     ["application/json"]
-                           :operation-id "tournament/close-registration"}
-              :parameters {:path schema.contract/id-path-parameter}
-              :handler    (integrant.core/ref ::web.tournament/close-registration)}}]]]
+     ["/status"
+      {:get {:summary    "Get the current tournament status and available transitions."
+             :openapi    {:tags         ["tournament"]
+                          :produces     ["application/json"]
+                          :operation-id "tournament-status/get"}
+             :parameters {:path schema.contract/id-path-parameter}
+             :handler    (integrant.core/ref ::web.tournament/get-status)}
+       :put {:summary    "Transition the tournament to a new status."
+             :openapi    {:tags         ["tournament"]
+                          :produces     ["application/json"]
+                          :operation-id "tournament-status/update"}
+             :parameters {:path schema.contract/id-path-parameter
+                          :body (schema.contract/to-schema
+                                 [:map
+                                  [:status [:enum "active" "complete" "cancelled"]]])}
+             :handler    (integrant.core/ref ::web.tournament/update-status)}}]
+     ["/registration"
+      {:get   {:summary    "Get the tournament registration window."
+               :openapi    {:tags         ["tournament"]
+                            :produces     ["application/json"]
+                            :operation-id "tournament-registration/get"}
+               :parameters {:path schema.contract/id-path-parameter}
+               :handler    (integrant.core/ref ::web.tournament/get-registration)}
+       :patch {:summary    "Update the registration window (e.g. close early)."
+               :openapi    {:tags         ["tournament"]
+                            :produces     ["application/json"]
+                            :operation-id "tournament-registration/update"}
+               :parameters {:path schema.contract/id-path-parameter
+                            :body (schema.contract/to-schema
+                                   [:map
+                                    [:closed-early :boolean]])}
+               :handler    (integrant.core/ref ::web.tournament/update-registration)}}]]]
 
    ["/social-media/:eid"
     {:name :social-media/by-eid

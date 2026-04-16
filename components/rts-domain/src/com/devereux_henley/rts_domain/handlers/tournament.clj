@@ -115,6 +115,12 @@
   (mapv (fn [e] (assoc e :type :tournament/entry))
         (db/get-entries-for-tournament (:connection dependencies) tournament-eid)))
 
+(defn available-transitions
+  "Returns the set of valid target statuses for a tournament."
+  [dependencies tournament-eid]
+  (let [state (get-tournament-state dependencies tournament-eid)]
+    (rules/available-transitions (:status state))))
+
 ;; ─── State machine ──────────────────────────────────────────────────────────
 
 (defn advance-tournament

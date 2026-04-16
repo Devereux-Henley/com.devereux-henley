@@ -10,6 +10,11 @@
    "complete"     #{}
    "cancelled"    #{}})
 
+(defn available-transitions
+  "Returns the set of valid target statuses from the given status."
+  [current-status]
+  (get valid-transitions current-status #{}))
+
 (defn validate-transition
   "Returns nil if the transition is valid, or an error map if not."
   [current-status target-status]

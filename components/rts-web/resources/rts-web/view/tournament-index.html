@@ -24,46 +24,46 @@
         {% if is-organizer %}
         <div class="form-actions" style="margin-top: var(--space-3);">
             {% ifequal tournament-state.status "registration" %}
-            <form hx-post="/api/tournament/{{data.eid}}/close-registration"
+            <form hx-patch="/api/tournament/{{data.eid}}/registration"
+                  hx-ext="json-enc"
                   hx-target="#content"
                   hx-swap="innerHTML"
                   style="display:inline;">
+                <input type="hidden" name="closed-early" value="true"/>
                 <button type="submit" class="btn btn-secondary">Close Registration</button>
             </form>
-            <form hx-post="/api/tournament/{{data.eid}}/advance"
+            <form hx-put="/api/tournament/{{data.eid}}/status"
                   hx-ext="json-enc"
                   hx-target="#content"
                   hx-swap="innerHTML"
                   style="display:inline;">
-                <input type="hidden" name="target-status" value="active"/>
+                <input type="hidden" name="status" value="active"/>
                 <button type="submit" class="btn btn-primary">Start Tournament</button>
             </form>
-            {% endifequal %}
-            {% ifequal tournament-state.status "active" %}
-            <form hx-post="/api/tournament/{{data.eid}}/advance"
+            <form hx-put="/api/tournament/{{data.eid}}/status"
                   hx-ext="json-enc"
                   hx-target="#content"
                   hx-swap="innerHTML"
                   style="display:inline;">
-                <input type="hidden" name="target-status" value="complete"/>
-                <button type="submit" class="btn btn-primary">Complete Tournament</button>
-            </form>
-            <form hx-post="/api/tournament/{{data.eid}}/advance"
-                  hx-ext="json-enc"
-                  hx-target="#content"
-                  hx-swap="innerHTML"
-                  style="display:inline;">
-                <input type="hidden" name="target-status" value="cancelled"/>
+                <input type="hidden" name="status" value="cancelled"/>
                 <button type="submit" class="btn btn-danger">Cancel Tournament</button>
             </form>
             {% endifequal %}
-            {% ifequal tournament-state.status "registration" %}
-            <form hx-post="/api/tournament/{{data.eid}}/advance"
+            {% ifequal tournament-state.status "active" %}
+            <form hx-put="/api/tournament/{{data.eid}}/status"
                   hx-ext="json-enc"
                   hx-target="#content"
                   hx-swap="innerHTML"
                   style="display:inline;">
-                <input type="hidden" name="target-status" value="cancelled"/>
+                <input type="hidden" name="status" value="complete"/>
+                <button type="submit" class="btn btn-primary">Complete Tournament</button>
+            </form>
+            <form hx-put="/api/tournament/{{data.eid}}/status"
+                  hx-ext="json-enc"
+                  hx-target="#content"
+                  hx-swap="innerHTML"
+                  style="display:inline;">
+                <input type="hidden" name="status" value="cancelled"/>
                 <button type="submit" class="btn btn-danger">Cancel Tournament</button>
             </form>
             {% endifequal %}

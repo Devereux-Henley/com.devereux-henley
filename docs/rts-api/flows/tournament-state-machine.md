@@ -42,5 +42,7 @@ After completing, the standings table remains visible but no action buttons are 
 
 | Method | Path | Body | Description |
 |--------|------|------|-------------|
-| POST | `/api/tournament/:eid/advance` | `{"target-status": "active"\|"complete"\|"cancelled"}` | Advance tournament state |
-| POST | `/api/tournament/:eid/close-registration` | — | Close registration early |
+| GET | `/api/tournament/:eid/status` | — | Get current status + available transitions |
+| PUT | `/api/tournament/:eid/status` | `{"status": "active"\|"complete"\|"cancelled"}` | Transition to new status |
+| GET | `/api/tournament/:eid/registration` | — | Get registration window details |
+| PATCH | `/api/tournament/:eid/registration` | `{"closed-early": true}` | Close registration early |
