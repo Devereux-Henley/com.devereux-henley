@@ -3,6 +3,7 @@
    [clojure.java.io :as io]
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.web.game :as web.game]
+   [com.devereux-henley.rts-web.web.tournament :as web.tournament]
    [integrant.core]
    [selmer.filters]
    [selmer.parser]
@@ -182,7 +183,8 @@
        :body   (selmer.parser/render-file
                 "rts-web/view/create-draft.html"
                 (merge {:game-modes game-modes
-                        :session    session}
+                        :session    session
+                        :draft-eid  (random-uuid)}
                        game-context))})))
 
 (defmethod integrant.core/init-key ::logout-view
@@ -190,3 +192,46 @@
   (fn [request]
     (log/info (:ory-session request))
     {:status 301 :headers {"Location" (str auth-hostname "/self-service/logout?token=")}}))
+
+(defmethod integrant.core/init-key ::tournament-list-view
+  [_init-key dependencies]
+  (fn [{game-context :game-context
+        session      :ory-session
+        :as          _request}]
+    (let [tournaments (domain/get-tournaments-for-game dependencies (:game-eid game-context))]
+      {:status 200
+       :body   (selmer.parser/render-file
+                "rts-web/view/tournament-list.html"
+                (merge {:tournaments tournaments
+                        :session     session}
+                       game-context))})))
+
+(def ^:private common-timezones
+  "Curated list of IANA timezone IDs for the tournament create form."
+  ["US/Eastern" "US/Central" "US/Mountain" "US/Pacific"
+   "Europe/London" "Europe/Paris" "Europe/Berlin"
+   "Asia/Tokyo" "Asia/Shanghai" "Australia/Sydney"
+   "UTC"])
+
+(defmethod integrant.core/init-key ::create-tournament-view
+  [_init-key _dependencies]
+  (fn [{game-context :game-context
+        session      :ory-session
+        :as          _request}]
+    {:status 200
+     :body   (selmer.parser/render-file
+              "rts-web/view/create-tournament.html"
+              (merge {:session          session
+                      :tournament-eid   (random-uuid)
+                      :timezones        common-timezones
+                      :default-timezone "US/Eastern"}
+                     game-context))}))
+
+(defmethod integrant.core/init-key ::tournament-view
+  [_init-key dependencies]
+  (partial standard-entity-view-handler
+           (fn [eid] (web.tournament/get-tournament-by-eid dependencies eid))
+           "tournament-index.html"
+           (fn [data _request]
+             (let [state (domain/get-tournament-state dependencies (:eid data))]
+               {:tournament-state state}))))

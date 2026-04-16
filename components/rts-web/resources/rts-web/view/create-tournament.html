@@ -1,0 +1,46 @@
+{% extends "rts-web/template/entrypoint.html" %}
+
+{% block title %}Create Tournament | {{game.name}} | RTS-UI{% endblock %}
+
+{% block content %}
+<section class="resource" aria-labelledby="create-tournament-heading">
+    <h2 id="create-tournament-heading">Create Tournament</h2>
+    <form id="create-tournament-form"
+          class="form"
+          aria-labelledby="create-tournament-heading"
+          hx-put="/api/tournament/{{tournament-eid}}?version=1"
+          hx-ext="json-enc"
+          hx-target="#content"
+          hx-swap="innerHTML">
+        <input type="hidden" name="game-eid" value="{{game-eid}}"/>
+        <div class="form-group">
+            <label class="form-label required" for="tournament-name">Name</label>
+            <input id="tournament-name" name="name" type="text" class="input" required aria-required="true" placeholder="Tournament name"/>
+        </div>
+        <div class="form-group">
+            <label class="form-label required" for="tournament-description">Description</label>
+            <textarea id="tournament-description" name="description" class="input" required aria-required="true" rows="3" placeholder="Describe the tournament"></textarea>
+        </div>
+        <div class="form-group">
+            <label class="form-label required" for="timezone">Timezone</label>
+            <select id="timezone" name="timezone" class="select" required aria-required="true">
+                {% for tz in timezones %}
+                <option value="{{tz}}" {% ifequal tz default-timezone %}selected{% endifequal %}>{{tz}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label required" for="registration-opens-at">Registration Opens</label>
+            <input id="registration-opens-at" name="registration-opens-at" type="datetime-local" class="input" required aria-required="true"/>
+        </div>
+        <div class="form-group">
+            <label class="form-label required" for="registration-closes-at">Registration Closes</label>
+            <input id="registration-closes-at" name="registration-closes-at" type="datetime-local" class="input" required aria-required="true"/>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Create Tournament</button>
+        </div>
+        <div id="create-tournament-error" class="form-error" role="alert" aria-live="assertive" hidden></div>
+    </form>
+</section>
+{% endblock %}

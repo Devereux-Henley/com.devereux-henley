@@ -6,6 +6,7 @@
    [com.devereux-henley.rts-web.web.draft :as web.draft]
    [com.devereux-henley.rts-web.web.game :as web.game]
    [com.devereux-henley.rts-web.web.social-media :as web.social-media]
+   [com.devereux-henley.rts-web.web.tournament :as web.tournament]
    [com.devereux-henley.rts-web.web.view :as web.view]
    [com.devereux-henley.schema.contract :as schema.contract]
    [integrant.core]))
@@ -89,7 +90,20 @@
      ["/:eid/index.html"
       {:get {:produces   ["application/htmx+html"]
              :parameters {:path schema.contract/game-and-id-path-parameter}
-             :handler    (integrant.core/ref ::web.view/draft-view)}}]]]])
+             :handler    (integrant.core/ref ::web.view/draft-view)}}]]
+    ["/tournament"
+     ["/index.html"
+      {:get {:produces   ["application/htmx+html"]
+             :parameters {:path schema.contract/game-id-path-parameter}
+             :handler    (integrant.core/ref ::web.view/tournament-list-view)}}]
+     ["/create.html"
+      {:get {:produces   ["application/htmx+html"]
+             :parameters {:path schema.contract/game-id-path-parameter}
+             :handler    (integrant.core/ref ::web.view/create-tournament-view)}}]
+     ["/:eid/index.html"
+      {:get {:produces   ["application/htmx+html"]
+             :parameters {:path schema.contract/game-and-id-path-parameter}
+             :handler    (integrant.core/ref ::web.view/tournament-view)}}]]]])
 
 (def api-routes
   ["/api"
@@ -236,6 +250,37 @@
                          :body  domain/create-draft-specification}
             :responses  {201 {:body domain/draft-resource}}
             :handler    (integrant.core/ref ::web.draft/create-draft)}}]
+
+   ["/tournament"
+    [""
+     {:name :tournament/for-game
+      :get  {:summary    "Fetches tournaments for a game."
+             :openapi    {:tags         ["tournament"]
+                          :produces     ["application/json"]
+                          :operation-id "tournament/for-game"}
+             :parameters {:query (schema.contract/to-schema
+                                  [:map
+                                   [:game-eid :uuid]])}
+             :responses  {200 {:body domain/tournament-collection-resource}}
+             :handler    (integrant.core/ref ::web.tournament/get-tournaments)}}]
+    ["/:eid"
+     {:name :tournament/by-eid
+      :get  {:summary    "Fetches a tournament by eid."
+             :openapi    {:tags         ["tournament"]
+                          :produces     ["application/json"]
+                          :operation-id "tournament/by-eid"}
+             :parameters {:path schema.contract/id-path-parameter}
+             :responses  {200 {:body domain/tournament-resource}}
+             :handler    (integrant.core/ref ::web.tournament/get-tournament)}
+      :put  {:summary    "Creates a tournament with the given eid."
+             :openapi    {:tags         ["tournament"]
+                          :produces     ["application/json"]
+                          :operation-id "tournament/create"}
+             :parameters {:path  schema.contract/id-path-parameter
+                          :query schema.contract/version-query-parameter
+                          :body  domain/create-tournament-specification}
+             :responses  {201 {:body domain/tournament-resource}}
+             :handler    (integrant.core/ref ::web.tournament/create-tournament)}}]]
 
    ["/social-media/:eid"
     {:name :social-media/by-eid

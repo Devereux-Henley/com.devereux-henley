@@ -8,7 +8,7 @@
    [reitit.core])
   (:import
    [java.net URL]
-   [java.time Instant LocalDate]
+   [java.time Instant LocalDate LocalDateTime ZoneId]
    [java.util UUID]))
 
 (def milliseconds-in-a-second 1000)
@@ -70,13 +70,46 @@
                       :gen/schema          [:tuple [:string {:min 1}] [:string {:min 1}] [:string {:min 1}]]}
     :pred            (fn [value] (and (string? value) (not (clojure.string/blank? value))))}))
 
+(def local-datetime
+  (malli.core/-simple-schema
+   {:type            :local-datetime
+    :type-properties {:encode/json         str
+                      :decode/json         (fn [json-value]
+                                             (try (when (not (empty? json-value)) (LocalDateTime/parse json-value))
+                                                  (catch Exception _ json-value)))
+                      :decode/string       (fn [string-value]
+                                             (try (when (not (empty? string-value)) (LocalDateTime/parse string-value))
+                                                  (catch Exception _ string-value)))
+                      :json-schema/type    "string"
+                      :json-schema/format  "date-time"
+                      :json-schema/example "2023-01-01T12:00:00"
+                      :error/message       {:en "Should be a valid local date-time (e.g. 2023-01-01T12:00)."}}
+    :pred            (partial instance? LocalDateTime)}))
+
+(def timezone-id
+  (malli.core/-simple-schema
+   {:type            :timezone-id
+    :type-properties {:encode/json         str
+                      :decode/json         (fn [json-value]
+                                             (try (when (not (empty? json-value)) (ZoneId/of json-value))
+                                                  (catch Exception _ json-value)))
+                      :decode/string       (fn [string-value]
+                                             (try (when (not (empty? string-value)) (ZoneId/of string-value))
+                                                  (catch Exception _ string-value)))
+                      :json-schema/type    "string"
+                      :json-schema/example "US/Eastern"
+                      :error/message       {:en "Should be a valid IANA timezone (e.g. US/Eastern, Europe/London)."}}
+    :pred            (partial instance? ZoneId)}))
+
 (def registry
   (merge
    (malli.core/default-schemas)
-   {:url        url
-    :local-date local-date
-    :instant    instant
-    :instance   instance
+   {:url            url
+    :local-date     local-date
+    :local-datetime local-datetime
+    :timezone-id    timezone-id
+    :instant        instant
+    :instance       instance
     :neg-int    (malli.core/-simple-schema
                  {:type            :neg-int
                   :type-properties {:decode/string
@@ -261,8 +294,12 @@
                :bool       (fn [bit] (if bit true false))
                :local-date (fn [date-string] (when-not (empty? date-string)
                                                (LocalDate/parse date-string)))
-               :instant    (fn [instant-string] (when-not (empty? instant-string)
-                                                  (Instant/parse instant-string)))}}))
+               :instant        (fn [instant-string] (when-not (empty? instant-string)
+                                                      (Instant/parse instant-string)))
+               :local-datetime (fn [dt-string] (when-not (empty? dt-string)
+                                                 (LocalDateTime/parse dt-string)))
+               :timezone-id    (fn [tz-string] (when-not (empty? tz-string)
+                                                 (ZoneId/of tz-string)))}}))
 
 (defn- parent-eid-params
   "Collects every `*-eid` keyed field from the map into a path-params map

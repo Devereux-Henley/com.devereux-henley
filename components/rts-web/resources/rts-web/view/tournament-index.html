@@ -1,0 +1,26 @@
+{% extends "rts-web/template/entrypoint.html" %}
+
+{% block title %}{{data.name}} | {{game.name}} | RTS-UI{% endblock %}
+
+{% block content %}
+<section class="resource" aria-labelledby="tournament-heading">
+    <h2 id="tournament-heading">{{data.name}}</h2>
+    <p>{{data.description|linebreaks|safe}}</p>
+
+    <section aria-labelledby="tournament-status-heading">
+        <h3 id="tournament-status-heading">Status</h3>
+        <dl>
+            <dt>Status</dt>
+            <dd>{{tournament-state.status}}</dd>
+            {% if tournament-state.registration.opens-at %}
+            <dt>Registration Opens</dt>
+            <dd>{{tournament-state.registration.opens-at}}</dd>
+            {% endif %}
+            {% if tournament-state.registration.closes-at %}
+            <dt>Registration Closes</dt>
+            <dd>{{tournament-state.registration.closes-at}}</dd>
+            {% endif %}
+        </dl>
+    </section>
+</section>
+{% endblock %}

@@ -4,6 +4,7 @@
    [com.devereux-henley.rts-web.web.game]
    [com.devereux-henley.rts-web.web.routes :as web.routes]
    [com.devereux-henley.rts-web.web.social-media]
+   [com.devereux-henley.rts-web.web.tournament]
    [com.devereux-henley.rts-web.web.view]))
 
 (def root-route web.routes/root-route)

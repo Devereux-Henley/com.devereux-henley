@@ -2,6 +2,7 @@
   (:require
    [com.devereux-henley.rts-data-access.query.game :as query.game]
    [com.devereux-henley.rts-data-access.query.social-media :as query.social-media]
+   [com.devereux-henley.rts-data-access.query.tournament :as query.tournament]
    [com.devereux-henley.rts-data-access.schema :as schema]))
 
 ;;; ─── Game DB entities ──────────────────────────────────────────────────────
@@ -80,6 +81,20 @@
 
 (def unit-statistics-raw-schema schema/unit-statistics-raw-schema)
 (def unit-statistics-transformer schema/unit-statistics-transformer)
+
+;;; ─── Tournament DB entities ────────────────────────────────────────────────
+
+(def tournament-entity schema/tournament-entity)
+(def create-tournament-params schema/create-tournament-params)
+(def tournament-state-entity schema/tournament-state-entity)
+
+;;; ─── Tournament DB queries ────────────────────────────────────────────────
+
+(def get-tournament-by-eid query.tournament/get-tournament-by-eid)
+(def get-tournaments-for-game query.tournament/get-tournaments-for-game)
+(def create-tournament query.tournament/create-tournament)
+(def get-tournament-state query.tournament/get-tournament-state)
+(def upsert-tournament-state query.tournament/upsert-tournament-state)
 
 ;;; ─── Social Media DB entities ──────────────────────────────────────────────
 

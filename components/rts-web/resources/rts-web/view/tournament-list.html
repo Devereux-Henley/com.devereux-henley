@@ -1,0 +1,25 @@
+{% extends "rts-web/template/entrypoint.html" %}
+
+{% block title %}Tournaments | {{game.name}} | RTS-UI{% endblock %}
+
+{% block content %}
+<section class="resource" aria-labelledby="tournaments-heading">
+    <div class="cluster cluster-2" style="justify-content: space-between; align-items: baseline;">
+        <h2 id="tournaments-heading">Tournaments</h2>
+        <a class="btn btn-primary" href="/view/game/{{game-eid}}/tournament/create.html">Create Tournament</a>
+    </div>
+    {% if tournaments %}
+    <nav aria-label="Available tournaments">
+        <ul>
+            {% for tournament in tournaments %}
+            <li>
+                <a href="/view/game/{{game-eid}}/tournament/{{tournament.eid}}/index.html">{{tournament.name}}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </nav>
+    {% else %}
+    <p>No tournaments found.</p>
+    {% endif %}
+</section>
+{% endblock %}

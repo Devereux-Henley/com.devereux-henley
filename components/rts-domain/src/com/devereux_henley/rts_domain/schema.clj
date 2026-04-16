@@ -95,6 +95,39 @@
     [:map
      [:type [:= :collection/game]]])))
 
+(def tournament-resource
+  (malli.util/merge
+   schema.contract/base-resource
+   (schema.contract/to-schema
+    [:map
+     [:eid {:model/link :tournament/by-eid} :uuid]
+     [:type [:= :tournament/tournament]]
+     [:name {:min 1} :string]
+     [:description {:min 1} :string]
+     [:game-eid {:model/link :game/by-eid} :uuid]
+     [:created-by-sub :string]
+     [:_links
+      [:map
+       [:self :url]
+       [:game :url]]]])))
+
+(def create-tournament-specification
+  (schema.contract/to-schema
+   [:map
+    [:game-eid :uuid]
+    [:name {:min 1} :string]
+    [:description {:min 1} :string]
+    [:timezone :timezone-id]
+    [:registration-opens-at :local-datetime]
+    [:registration-closes-at :local-datetime]]))
+
+(def tournament-collection-resource
+  (malli.util/merge
+   (schema.contract/make-collection-resource tournament-resource)
+   (schema.contract/to-schema
+    [:map
+     [:type [:= :collection/tournament]]])))
+
 (def resource-identifier
   [:map
    [:eid :uuid]

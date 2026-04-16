@@ -43,13 +43,27 @@ See `docs/game-data.md` for the full RPFM data refresh workflow.
 
 **REPL (primary dev workflow):** Jack-in from the repo root with `M-x cider-jack-in`. The `:dev` alias (configured in `.dir-locals.el`) puts all components and bases on the classpath.
 
-**Claude's dev workspace:** `development/src/claude_workspace.clj` — Claude Code's own scratch namespace with system lifecycle helpers (`go!`, `halt!`, `restart!`) and migration helpers (`migrate!`, `rollback!`, `reset-db!`, `seed-db!`). Require it at the REPL with `(require 'claude-workspace)` or add evals directly to the scratch `comment` block. Keep dev helpers here rather than polluting `workspace.clj`.
+**Claude's dev workspace:** `development/src/claude_workspace.clj` — Claude Code's own scratch namespace with system lifecycle helpers (`go!`, `halt!`, `restart!`) and migration helpers (`migrate!`, `rollback!`, `reset-db!`, `seed-db!`). Keep dev helpers here rather than polluting `workspace.clj`.
 
-```clojure
-(go!)       ; start system — runs migrations + starts Jetty on :3001
-(halt!)     ; stop
-(restart!)  ; halt then go
+**Claude's REPL workflow (preferred over starting the dev server script):**
+
+```bash
+# 1. Start nREPL (background — port 7888)
+clojure -M:dev:claude -m nrepl.cmdline --port 7888 &
+
+# 2. Connect and boot the system
+clj-nrepl-eval -p 7888 "(require 'claude-workspace :reload)"
+clj-nrepl-eval -p 7888 "(claude-workspace/go!)"    ; migrations + Jetty on :3001
+clj-nrepl-eval -p 7888 "(claude-workspace/seed-db!)" ; seed game data
+
+# 3. After code changes, reload and restart
+clj-nrepl-eval -p 7888 "(claude-workspace/restart!)"
+
+# 4. Stop the system
+clj-nrepl-eval -p 7888 "(claude-workspace/halt!)"
 ```
+
+This is faster than `clojure -M:dev -i start_dev_server.clj` because it supports incremental reloading (`restart!`) without a full JVM restart, and gives Claude a REPL for debugging.
 
 **Running a specific test namespace:**
 
@@ -178,6 +192,7 @@ Target: **WCAG 2.1 AA**. See `docs/frontend.md` for full patterns with examples.
 
 - **Domain schema tests:** call `malli.core/validate` directly on schemas
 - **Handler tests:** stub db namespaces with `with-redefs`; pass `{:connection nil}` as deps; assert `:type` assignment, field preservation, nil/empty edge cases
+- Test files live under `components/<component>/test/` mirroring the source layout
 
 **E2E tests** use Playwright against a running dev server. They cover routes, middleware, templates, HTMX interactions, and the HAL+JSON API. See `docs/e2e-testing.md`.
 
@@ -185,22 +200,42 @@ Target: **WCAG 2.1 AA**. See `docs/frontend.md` for full patterns with examples.
 - Run via `clojure -M:poly test` (skip gracefully without server; fail hard in CI)
 - Locally: start the dev server first, then run `poly test` or `npx playwright test` from `components/e2e/`
 
-Test files mirror source under `bases/<base>/test/` and `components/<component>/test/`.
+**When implementing a feature that introduces new views or modifies existing templates, the development process is:**
 
-**Verifying UI changes with Playwright:** When implementing a feature that touches views, templates, or HTMX interactions, use the `/playwright-cli` skill to verify the change in a browser against the running dev server. The dev server stubs authentication via cookie-based impersonation — set the `dev_impersonation` cookie to `dev-admin`, `dev-player-one`, or `dev-player-two` to browse as that user. No external auth service is needed.
+1. **Walk through views with `/playwright-cli`** — after the feature compiles and the dev server is running (via the nREPL workflow), use Playwright interactively to exercise every new page: navigate to it, fill forms, submit, verify the result renders. This catches template bugs, schema coercion issues, and missing route wiring before tests are written. Set the `dev_impersonation` cookie to impersonate users.
+
+2. **Write unit tests in `rts-domain`** — add a test namespace under `components/rts-domain/test/` for the new domain handlers. Stub the data-access layer with `with-redefs`; test `:type` assignment, field mapping, nil/empty edge cases, and any domain logic (validation, state transitions). Follow the patterns in `handlers/draft_test.clj` and `handlers/game_test.clj`.
+
+3. **Write Playwright e2e tests in `components/e2e/tests/`** — add a `.spec.js` file covering the happy path and key edge cases for the new views. Tests should navigate pages, interact with forms, and assert on visible content. Follow the patterns in `navigation.spec.js` and `game-browsing.spec.js`.
 
 ```bash
-# Start the dev server if not already running
-mkdir -p db && clojure -M:dev -i components/e2e/resources/e2e/start_dev_server.clj &
+# Interactive Playwright walkthrough (use /playwright-cli skill)
+playwright-cli open http://localhost:3001
+playwright-cli cookie-set dev_impersonation dev-admin --domain=localhost
+playwright-cli goto http://localhost:3001/view/game/<game-eid>/<feature>/index.html
+playwright-cli snapshot  # inspect the rendered page
 
-# Use /playwright-cli to interact with the app as dev-admin
-# The skill can set cookies, navigate pages, click elements, and assert content
+# Run e2e test suite
+cd components/e2e && npx playwright test
 ```
 
 Available dev users (defined in `bases/rts-api/src/.../dev_auth.clj`):
 - `dev-admin` — default, auto-applied even without the cookie
 - `dev-player-one`
 - `dev-player-two`
+
+**PR screenshots** go in the separate [images.com.devereux-henley](https://github.com/Devereux-Henley/images.com.devereux-henley) repo (cloned at `~/Repos/images.com.devereux-henley`), not in this repo. Organize by feature folder (e.g. `tournament-mvp1/`) and reference via raw GitHub URLs in PR descriptions:
+
+```bash
+# Take screenshots with playwright-cli
+playwright-cli screenshot --filename=/tmp/feature-view.png
+
+# Copy to images repo, commit, push
+cp /tmp/feature-view.png ~/Repos/images.com.devereux-henley/<feature>/
+cd ~/Repos/images.com.devereux-henley && git add . && git commit -m "Add <feature> screenshots" && git push
+```
+
+Reference in PR bodies as: `![alt](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/<feature>/<file>.png)`
 
 ## Environment variables
 

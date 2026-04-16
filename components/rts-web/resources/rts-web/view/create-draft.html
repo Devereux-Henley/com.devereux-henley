@@ -8,7 +8,7 @@
     <form id="create-draft-form"
           class="form"
           aria-labelledby="create-draft-heading"
-          hx-put="/api/draft/placeholder?version=1"
+          hx-put="/api/draft/{{draft-eid}}?version=1"
           hx-ext="json-enc"
           hx-target="#content"
           hx-swap="innerHTML">
@@ -35,11 +35,6 @@
             <button type="submit" class="btn btn-primary">Create Draft</button>
         </div>
         <div id="create-draft-error" class="form-error" role="alert" aria-live="assertive" hidden></div>
-        <script>
-            document.getElementById('create-draft-form').addEventListener('htmx:configRequest', function (event) {
-                event.detail.path = '/api/draft/' + crypto.randomUUID() + '?version=1';
-            });
-        </script>
     </form>
 </section>
 {% endblock %}
