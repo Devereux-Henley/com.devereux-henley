@@ -15,6 +15,7 @@ Visual walkthroughs of each e2e-tested user flow, with annotated screenshots.
 - [Navigation](rts-api/flows/navigation.md) — dashboard, games dropdown, account menu
 - [Game Browsing](rts-api/flows/game-browsing.md) — game index, factions dropdown, faction page
 - [Draft Operations](rts-api/flows/draft-operations.md) — create, unit selection, add/remove/edit, validation
+- [Tournament Registration](rts-api/flows/tournament-registration.md) — register, withdraw, validation rules
 
 ## Key paths
 
