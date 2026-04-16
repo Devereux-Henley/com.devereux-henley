@@ -73,13 +73,12 @@
   (handlers :com.devereux-henley.rts-web.web.social-media/get-platform))
 
 (def tournament-configuration
-  (merge
-   (handlers :com.devereux-henley.rts-web.web.tournament/get-tournament
-             :com.devereux-henley.rts-web.web.tournament/get-tournaments
-             :com.devereux-henley.rts-web.web.tournament/create-tournament
-             :com.devereux-henley.rts-web.web.view/tournament-list-view
-             :com.devereux-henley.rts-web.web.view/tournament-view)
-   (handlers :com.devereux-henley.rts-web.web.view/create-tournament-view)))
+  (handlers :com.devereux-henley.rts-web.web.tournament/get-tournament
+            :com.devereux-henley.rts-web.web.tournament/get-tournaments
+            :com.devereux-henley.rts-web.web.tournament/create-tournament
+            :com.devereux-henley.rts-web.web.view/tournament-list-view
+            :com.devereux-henley.rts-web.web.view/create-tournament-view
+            :com.devereux-henley.rts-web.web.view/tournament-view))
 
 ;;; ─── Routes ────────────────────────────────────────────────────────────────
 

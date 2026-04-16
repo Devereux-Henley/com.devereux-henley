@@ -224,6 +224,19 @@ Available dev users (defined in `bases/rts-api/src/.../dev_auth.clj`):
 - `dev-player-one`
 - `dev-player-two`
 
+**PR screenshots** go in the separate [images.com.devereux-henley](https://github.com/Devereux-Henley/images.com.devereux-henley) repo (cloned at `~/Repos/images.com.devereux-henley`), not in this repo. Organize by feature folder (e.g. `tournament-mvp1/`) and reference via raw GitHub URLs in PR descriptions:
+
+```bash
+# Take screenshots with playwright-cli
+playwright-cli screenshot --filename=/tmp/feature-view.png
+
+# Copy to images repo, commit, push
+cp /tmp/feature-view.png ~/Repos/images.com.devereux-henley/<feature>/
+cd ~/Repos/images.com.devereux-henley && git add . && git commit -m "Add <feature> screenshots" && git push
+```
+
+Reference in PR bodies as: `![alt](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/<feature>/<file>.png)`
+
 ## Environment variables
 
 | Variable | Default | Purpose |
