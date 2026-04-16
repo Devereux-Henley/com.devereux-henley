@@ -76,7 +76,7 @@ test.describe('Tournament API', () => {
 test.describe('Tournament Registration API', () => {
   test('register player returns 201', async ({ request }) => {
     const eid = await createTournament(request);
-    const res = await request.post(`${BASE}/api/tournament/${eid}/register`, {
+    const res = await request.post(`${BASE}/api/tournament/${eid}/registration/me`, {
       headers: headers('dev-admin'),
     });
     expect(res.status()).toBe(201);
@@ -88,10 +88,10 @@ test.describe('Tournament Registration API', () => {
 
   test('duplicate registration returns 422', async ({ request }) => {
     const eid = await createTournament(request);
-    await request.post(`${BASE}/api/tournament/${eid}/register`, {
+    await request.post(`${BASE}/api/tournament/${eid}/registration/me`, {
       headers: headers('dev-admin'),
     });
-    const res = await request.post(`${BASE}/api/tournament/${eid}/register`, {
+    const res = await request.post(`${BASE}/api/tournament/${eid}/registration/me`, {
       headers: headers('dev-admin'),
     });
     expect(res.status()).toBe(422);
@@ -102,10 +102,10 @@ test.describe('Tournament Registration API', () => {
 
   test('multiple players can register', async ({ request }) => {
     const eid = await createTournament(request);
-    const r1 = await request.post(`${BASE}/api/tournament/${eid}/register`, {
+    const r1 = await request.post(`${BASE}/api/tournament/${eid}/registration/me`, {
       headers: headers('dev-admin'),
     });
-    const r2 = await request.post(`${BASE}/api/tournament/${eid}/register`, {
+    const r2 = await request.post(`${BASE}/api/tournament/${eid}/registration/me`, {
       headers: headers('dev-player-one'),
     });
     expect(r1.status()).toBe(201);
@@ -120,10 +120,10 @@ test.describe('Tournament Registration API', () => {
 
   test('withdraw player returns 200', async ({ request }) => {
     const eid = await createTournament(request);
-    await request.post(`${BASE}/api/tournament/${eid}/register`, {
+    await request.post(`${BASE}/api/tournament/${eid}/registration/me`, {
       headers: headers('dev-player-one'),
     });
-    const res = await request.delete(`${BASE}/api/tournament/${eid}/register`, {
+    const res = await request.delete(`${BASE}/api/tournament/${eid}/registration/me`, {
       headers: headers('dev-player-one'),
     });
     expect(res.status()).toBe(200);
@@ -133,13 +133,13 @@ test.describe('Tournament Registration API', () => {
 
   test('withdrawn player does not appear in registrations list', async ({ request }) => {
     const eid = await createTournament(request);
-    await request.post(`${BASE}/api/tournament/${eid}/register`, {
+    await request.post(`${BASE}/api/tournament/${eid}/registration/me`, {
       headers: headers('dev-admin'),
     });
-    await request.post(`${BASE}/api/tournament/${eid}/register`, {
+    await request.post(`${BASE}/api/tournament/${eid}/registration/me`, {
       headers: headers('dev-player-one'),
     });
-    await request.delete(`${BASE}/api/tournament/${eid}/register`, {
+    await request.delete(`${BASE}/api/tournament/${eid}/registration/me`, {
       headers: headers('dev-player-one'),
     });
 
@@ -200,7 +200,7 @@ test.describe('Tournament UI', () => {
 
   test('tournament detail shows withdraw button after registration', async ({ page, request }) => {
     const eid = await createTournament(request);
-    await request.post(`${BASE}/api/tournament/${eid}/register`, {
+    await request.post(`${BASE}/api/tournament/${eid}/registration/me`, {
       headers: headers('dev-admin'),
     });
     await page.goto(`/view/game/${GAME_EID}/tournament/${eid}/index.html`);

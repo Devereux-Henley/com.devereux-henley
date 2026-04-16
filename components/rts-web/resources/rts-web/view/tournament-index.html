@@ -28,13 +28,13 @@
         {% if session %}
         <div id="tournament-register-action" class="form-actions" style="margin-bottom: var(--space-4);">
             {% if is-registered %}
-            <form hx-delete="/api/tournament/{{data.eid}}/register"
+            <form hx-delete="/api/tournament/{{data.eid}}/registration/me"
                   hx-target="#content"
                   hx-swap="innerHTML">
                 <button type="submit" class="btn btn-danger">Withdraw</button>
             </form>
             {% elif registration-open %}
-            <form hx-post="/api/tournament/{{data.eid}}/register"
+            <form hx-post="/api/tournament/{{data.eid}}/registration/me"
                   hx-target="#content"
                   hx-swap="innerHTML">
                 <button type="submit" class="btn btn-primary">Register</button>

@@ -10,7 +10,7 @@ When a player views a tournament with an open registration window and is not yet
 
 ## After registering
 
-After clicking "Register" (POST `/api/tournament/:eid/register`), the player appears in the registration list and the button changes to "Withdraw".
+After clicking "Register" (POST `/api/tournament/:eid/registration/me`), the player appears in the registration list and the button changes to "Withdraw".
 
 ![Registered](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/reg-registered.png)
 
@@ -22,7 +22,7 @@ As more players register, the list grows. Each entry shows the player's subject 
 
 ## After withdrawal
 
-A player who withdraws (DELETE `/api/tournament/:eid/register`) is removed from the active registration list. They see the "Register" button again and can re-register if the window is still open.
+A player who withdraws (DELETE `/api/tournament/:eid/registration/me`) is removed from the active registration list. They see the "Register" button again and can re-register if the window is still open.
 
 ![After withdrawal](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/reg-after-withdrawal.png)
 
@@ -39,6 +39,6 @@ A player who withdraws (DELETE `/api/tournament/:eid/register`) is removed from 
 
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/api/tournament/:eid/register` | Register the session user (201 or 422) |
-| DELETE | `/api/tournament/:eid/register` | Withdraw the session user (200 or 422) |
+| POST | `/api/tournament/:eid/registration/me` | Register the session user (201 or 422) |
+| DELETE | `/api/tournament/:eid/registration/me` | Withdraw the session user (200 or 422) |
 | GET | `/api/tournament/:eid/registrations` | List active (non-withdrawn) registrations |

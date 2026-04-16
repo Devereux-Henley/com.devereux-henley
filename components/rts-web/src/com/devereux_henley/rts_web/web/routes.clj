@@ -282,7 +282,7 @@
                            :body  domain/create-tournament-specification}
               :responses  {201 {:body domain/tournament-resource}}
               :handler    (integrant.core/ref ::web.tournament/create-tournament)}}]
-     ["/register"
+     ["/registration/me"
       {:post   {:summary    "Register the current player for a tournament."
                 :openapi    {:tags         ["tournament"]
                              :produces     ["application/json"]
