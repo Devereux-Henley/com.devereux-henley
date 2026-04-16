@@ -74,8 +74,12 @@
   (malli.core/-simple-schema
    {:type            :local-datetime
     :type-properties {:encode/json         str
-                      :decode/json         (fn [json-value] (when (not (empty? json-value)) (LocalDateTime/parse json-value)))
-                      :decode/string       (fn [string-value] (when (not (empty? string-value)) (LocalDateTime/parse string-value)))
+                      :decode/json         (fn [json-value]
+                                             (try (when (not (empty? json-value)) (LocalDateTime/parse json-value))
+                                                  (catch Exception _ json-value)))
+                      :decode/string       (fn [string-value]
+                                             (try (when (not (empty? string-value)) (LocalDateTime/parse string-value))
+                                                  (catch Exception _ string-value)))
                       :json-schema/type    "string"
                       :json-schema/format  "date-time"
                       :json-schema/example "2023-01-01T12:00:00"
@@ -86,8 +90,12 @@
   (malli.core/-simple-schema
    {:type            :timezone-id
     :type-properties {:encode/json         str
-                      :decode/json         (fn [json-value] (when (not (empty? json-value)) (ZoneId/of json-value)))
-                      :decode/string       (fn [string-value] (when (not (empty? string-value)) (ZoneId/of string-value)))
+                      :decode/json         (fn [json-value]
+                                             (try (when (not (empty? json-value)) (ZoneId/of json-value))
+                                                  (catch Exception _ json-value)))
+                      :decode/string       (fn [string-value]
+                                             (try (when (not (empty? string-value)) (ZoneId/of string-value))
+                                                  (catch Exception _ string-value)))
                       :json-schema/type    "string"
                       :json-schema/example "US/Eastern"
                       :error/message       {:en "Should be a valid IANA timezone (e.g. US/Eastern, Europe/London)."}}
