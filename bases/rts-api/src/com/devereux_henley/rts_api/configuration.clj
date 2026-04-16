@@ -21,6 +21,11 @@
 (def default-dependencies {:hostname   hostname
                            :connection (integrant.core/ref ::db/connection)})
 
+(defn- handlers
+  "Maps each Integrant key to default-dependencies."
+  [& keys]
+  (zipmap keys (repeat default-dependencies)))
+
 ;;; ─── Per-namespace handler configuration ───────────────────────────────────
 
 (def infrastructure-configuration
@@ -35,36 +40,46 @@
     :com.devereux-henley.rts-web.web.configuration/auth-hostname auth-hostname}})
 
 (def view-configuration
-  {:com.devereux-henley.rts-web.web.view/dashboard-view          default-dependencies
-   :com.devereux-henley.rts-web.web.view/game-view               default-dependencies
-   :com.devereux-henley.rts-web.web.view/about-view              default-dependencies
-   :com.devereux-henley.rts-web.web.view/contact-view            default-dependencies
-   :com.devereux-henley.rts-web.web.view/login-view              {:auth-hostname auth-hostname}
-   :com.devereux-henley.rts-web.web.view/logout-view             {:auth-hostname auth-hostname}
-   :com.devereux-henley.rts-web.web.view/game-context-middleware default-dependencies
-   :com.devereux-henley.rts-web.web.view/game-index-view         default-dependencies
-   :com.devereux-henley.rts-web.web.view/faction-view            default-dependencies
-   :com.devereux-henley.rts-web.web.view/unit-view               default-dependencies
-   :com.devereux-henley.rts-web.web.view/draft-view              default-dependencies
-   :com.devereux-henley.rts-web.web.view/my-drafts-view          default-dependencies
-   :com.devereux-henley.rts-web.web.view/create-draft-view       default-dependencies})
+  (merge
+   (handlers :com.devereux-henley.rts-web.web.view/dashboard-view
+             :com.devereux-henley.rts-web.web.view/game-view
+             :com.devereux-henley.rts-web.web.view/about-view
+             :com.devereux-henley.rts-web.web.view/contact-view
+             :com.devereux-henley.rts-web.web.view/game-context-middleware
+             :com.devereux-henley.rts-web.web.view/game-index-view
+             :com.devereux-henley.rts-web.web.view/faction-view
+             :com.devereux-henley.rts-web.web.view/unit-view
+             :com.devereux-henley.rts-web.web.view/draft-view
+             :com.devereux-henley.rts-web.web.view/my-drafts-view
+             :com.devereux-henley.rts-web.web.view/create-draft-view)
+   {:com.devereux-henley.rts-web.web.view/login-view  {:auth-hostname auth-hostname}
+    :com.devereux-henley.rts-web.web.view/logout-view {:auth-hostname auth-hostname}}))
 
 (def game-configuration
-  {:com.devereux-henley.rts-web.web.game/get-game                default-dependencies
-   :com.devereux-henley.rts-web.web.game/get-games               default-dependencies
-   :com.devereux-henley.rts-web.web.game/get-faction             default-dependencies
-   :com.devereux-henley.rts-web.web.game/get-game-social-link    default-dependencies
-   :com.devereux-henley.rts-web.web.game/create-draft            default-dependencies})
+  (handlers :com.devereux-henley.rts-web.web.game/get-game
+            :com.devereux-henley.rts-web.web.game/get-games
+            :com.devereux-henley.rts-web.web.game/get-faction
+            :com.devereux-henley.rts-web.web.game/get-game-social-link))
 
 (def draft-configuration
-  {:com.devereux-henley.rts-web.web.draft/get-draft-unit         default-dependencies
-   :com.devereux-henley.rts-web.web.draft/get-draft-entry        default-dependencies
-   :com.devereux-henley.rts-web.web.draft/draft-add-unit         default-dependencies
-   :com.devereux-henley.rts-web.web.draft/draft-update-unit      default-dependencies
-   :com.devereux-henley.rts-web.web.draft/draft-remove-unit      default-dependencies})
+  (handlers :com.devereux-henley.rts-web.web.draft/get-draft-unit
+            :com.devereux-henley.rts-web.web.draft/get-draft-entry
+            :com.devereux-henley.rts-web.web.draft/draft-add-unit
+            :com.devereux-henley.rts-web.web.draft/draft-update-unit
+            :com.devereux-henley.rts-web.web.draft/draft-remove-unit
+            :com.devereux-henley.rts-web.web.game/create-draft))
 
 (def social-media-configuration
-  {:com.devereux-henley.rts-web.web.social-media/get-platform    default-dependencies})
+  (handlers :com.devereux-henley.rts-web.web.social-media/get-platform))
+
+;;; ─── Routes ────────────────────────────────────────────────────────────────
+
+(def base-routes
+  [rts-web/root-route
+   rts-web/status-route
+   rts-web/icon-routes
+   rts-web/view-routes
+   rts-web/api-routes])
 
 ;;; ─── Assembled system maps ─────────────────────────────────────────────────
 
@@ -86,11 +101,7 @@
           :session-name  session-name}
 
          :com.devereux-henley.rts-web.web.routes/routes
-         [rts-web/root-route
-          rts-web/status-route
-          rts-web/icon-routes
-          rts-web/view-routes
-          rts-web/api-routes]
+         base-routes
 
          ::web/app
          {:routes          (integrant.core/ref :com.devereux-henley.rts-web.web.routes/routes)
@@ -110,13 +121,7 @@
          ::dev-auth/list-users-handler       {:users (integrant.core/ref ::dev-auth/users)}
 
          :com.devereux-henley.rts-web.web.routes/routes
-         [rts-web/root-route
-          rts-web/status-route
-          rts-web/shutdown-route
-          rts-web/icon-routes
-          rts-web/view-routes
-          rts-web/api-routes
-          dev-auth/routes]
+         (into base-routes [rts-web/shutdown-route dev-auth/routes])
 
          ::web/app
          {:routes          (integrant.core/ref :com.devereux-henley.rts-web.web.routes/routes)
