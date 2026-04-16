@@ -65,6 +65,8 @@ clj-nrepl-eval -p 7888 "(claude-workspace/halt!)"
 
 This is faster than `clojure -M:dev -i start_dev_server.clj` because it supports incremental reloading (`restart!`) without a full JVM restart, and gives Claude a REPL for debugging.
 
+**When to kill the nREPL process:** Only kill and restart the nREPL when ending a Claude session, switching branches, or after changing migrations/seed data. For normal code changes, `(claude-workspace/restart!)` is sufficient — it reloads all namespaces without a JVM restart.
+
 **Running a specific test namespace:**
 
 ```bash
