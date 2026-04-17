@@ -89,7 +89,7 @@
 (def tournament-state-entity schema/tournament-state-entity)
 (def tournament-entry-entity schema/tournament-entry-entity)
 (def match-entity schema/match-entity)
-(def game-entity schema/game-entity)
+(def match-game-entity schema/match-game-entity)
 
 ;;; ─── Tournament DB queries ────────────────────────────────────────────────
 

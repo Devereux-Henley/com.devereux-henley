@@ -158,7 +158,7 @@
 
 (defn get-games-for-match
   [connection match-eid]
-  (jdbc.contract/query-for-entities connection [get-games-for-match-query (str match-eid)] schema/game-entity))
+  (jdbc.contract/query-for-entities connection [get-games-for-match-query (str match-eid)] schema/match-game-entity))
 
 ;; ─── Tournament CRUD ─────────────────────────────────────────────────────────
 

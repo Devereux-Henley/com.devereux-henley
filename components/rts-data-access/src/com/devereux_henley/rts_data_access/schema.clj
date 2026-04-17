@@ -248,7 +248,7 @@
     [:created-at :instant]
     [:updated-at :instant]]))
 
-(def game-entity
+(def match-game-entity
   (schema.contract/to-schema
    [:map
     [:id :int]
