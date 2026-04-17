@@ -100,6 +100,16 @@
       {:get {:produces   ["application/htmx+html"]
              :parameters {:path schema.contract/game-id-path-parameter}
              :handler    (integrant.core/ref ::web.view/create-tournament-view)}}]
+     ["/phase-row.html"
+      {:get {:produces   ["application/htmx+html"]
+             :parameters {:path  schema.contract/game-id-path-parameter
+                          :query [:map [:index {:optional true} :string]]}
+             :handler    (integrant.core/ref ::web.view/tournament-phase-row-view)}}]
+     ["/round-row.html"
+      {:get {:produces   ["application/htmx+html"]
+             :parameters {:path  schema.contract/game-id-path-parameter
+                          :query [:map [:index {:optional true} :string]]}
+             :handler    (integrant.core/ref ::web.view/tournament-round-row-view)}}]
      ["/:eid/index.html"
       {:get {:produces   ["application/htmx+html"]
              :parameters {:path schema.contract/game-and-id-path-parameter}

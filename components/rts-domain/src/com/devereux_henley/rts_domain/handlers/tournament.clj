@@ -394,8 +394,7 @@
    are satisfied and that has not already been generated. Returns the
    vector of created match entities (possibly empty)."
   [dependencies tournament-eid phase-idx phase qualified]
-  (let [conn (:connection dependencies)
-        wb-rounds    (rules/winners-bracket-round-count (count qualified))
+  (let [wb-rounds    (rules/winners-bracket-round-count (count qualified))
         lb-rounds    (rules/losers-bracket-round-count (count qualified))
         current-matches (atom (get-matches-for-tournament dependencies tournament-eid))
         phase-matches-now (fn [] (filter #(= phase-idx (:phase-index %)) @current-matches))

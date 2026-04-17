@@ -59,45 +59,14 @@
                     Phases define the tournament structure. You can configure phases now or update them later before starting the tournament.
                 </p>
                 <div id="phases-container">
-                    <!-- Phases added dynamically via Hyperscript -->
+                    <!-- Phases added dynamically via htmx (GET phase-row.html) -->
                 </div>
                 <div class="cluster cluster-2" style="margin-top: var(--space-3);">
                     <button type="button" class="btn btn-ghost btn-sm"
-                            _="on click
-                               set phaseCount to #phases-container's children's length
-                               set template to `<div class='tournament-phase-block' data-phase-index='${phaseCount}'>
-                                 <div class='tournament-phase-header'>
-                                   <strong>Phase ${phaseCount + 1}</strong>
-                                   <button type='button' class='btn btn-ghost btn-sm'
-                                           _='on click remove closest .tournament-phase-block'>Remove</button>
-                                 </div>
-                                 <div class='form-group'>
-                                   <label class='form-label'>Phase Type</label>
-                                   <select class='select phase-type-select'>
-                                     <option value='swiss'>Swiss</option>
-                                     <option value='round-robin'>Round Robin</option>
-                                     <option value='single-elimination'>Single Elimination</option>
-                                     <option value='double-elimination'>Double Elimination</option>
-                                   </select>
-                                 </div>
-                                 <div class='tournament-rounds-container'>
-                                   <div class='tournament-round-row'>
-                                     <span class='form-label'>Round 1</span>
-                                     <select class='select round-format-select' style='width:auto;'>
-                                       <option value='1'>Bo1</option>
-                                       <option value='3'>Bo3</option>
-                                       <option value='5'>Bo5</option>
-                                     </select>
-                                   </div>
-                                 </div>
-                                 <button type='button' class='btn btn-ghost btn-sm'
-                                         _='on click
-                                            set container to closest .tournament-phase-block then get container querySelector .tournament-rounds-container
-                                            set roundCount to its children s length
-                                            set roundHtml to \\x60<div class=\"tournament-round-row\"><span class=\"form-label\">Round \\x24{roundCount + 1}</span><select class=\"select round-format-select\" style=\"width:auto;\"><option value=\"1\">Bo1</option><option value=\"3\">Bo3</option><option value=\"5\">Bo5</option></select></div>\\x60
-                                            put roundHtml at end of it'>+ Add Round</button>
-                               </div>`
-                               put template at end of #phases-container">
+                            hx-get="/view/game/{{game-eid}}/tournament/phase-row.html"
+                            hx-vals='js:{"index": document.getElementById("phases-container").children.length}'
+                            hx-target="#phases-container"
+                            hx-swap="beforeend">
                         + Add Phase
                     </button>
                 </div>

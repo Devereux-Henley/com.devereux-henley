@@ -1,5 +1,6 @@
 (ns com.devereux-henley.rts-domain.schema
   (:require
+   [com.devereux-henley.rts-data-access.contract :as data-access.contract]
    [com.devereux-henley.schema.contract :as schema.contract]
    [malli.util]))
 
@@ -95,20 +96,12 @@
     [:map
      [:type [:= :collection/game]]])))
 
-;; ─── Shared enums ───────────────────────────────────────────────────────────
-
-(def tournament-status-enum [:enum "registration" "active" "complete" "cancelled"])
-
-(def phase-type-enum [:enum "swiss" "round-robin" "single-elimination" "double-elimination"])
-
-(def match-format-enum [:enum 1 3 5])
-
 ;; ─── Request body schemas ───────────────────────────────────────────────────
 
 (def update-status-specification
   (schema.contract/to-schema
    [:map
-    [:status tournament-status-enum]]))
+    [:status data-access.contract/tournament-status-enum]]))
 
 (def update-registration-specification
   (schema.contract/to-schema
@@ -119,12 +112,12 @@
   (schema.contract/to-schema
    [:map
     [:round-index :int]
-    [:format {:optional true} match-format-enum]]))
+    [:format {:optional true} data-access.contract/match-format-enum]]))
 
 (def phase-specification
   (schema.contract/to-schema
    [:map
-    [:phase-type phase-type-enum]
+    [:phase-type data-access.contract/phase-type-enum]
     [:rounds [:sequential phase-round-specification]]]))
 
 (def configure-phases-specification
@@ -168,8 +161,6 @@
     [:map
      [:type [:= :collection/tournament]]])))
 
-(def bracket-type-enum [:enum "winners" "losers" "grand-final"])
-
 (def match-resource
   (malli.util/merge
    schema.contract/base-resource
@@ -180,12 +171,12 @@
      [:tournament-eid {:model/link :tournament/by-eid} :uuid]
      [:phase-index :int]
      [:round-index :int]
-     [:bracket-type bracket-type-enum]
+     [:bracket-type data-access.contract/bracket-type-enum]
      [:player-one-sub :string]
      [:player-two-sub [:maybe :string]]
      [:winner-sub [:maybe :string]]
-     [:status :string]
-     [:format match-format-enum]
+     [:status data-access.contract/match-status-enum]
+     [:format data-access.contract/match-format-enum]
      [:_links
       [:map
        [:self :url]
@@ -198,7 +189,7 @@
     [:round-index :int]
     [:player-one-sub :string]
     [:player-two-sub {:optional true} [:maybe :string]]
-    [:format {:optional true} [:enum 1 3 5]]]))
+    [:format {:optional true} data-access.contract/match-format-enum]]))
 
 (def record-result-specification
   (schema.contract/to-schema
@@ -250,7 +241,7 @@
   (schema.contract/to-schema
    [:map
     [:type [:= :tournament/status]]
-    [:status tournament-status-enum]
+    [:status data-access.contract/tournament-status-enum]
     [:available-transitions [:sequential :string]]]))
 
 (def tournament-advance-response
@@ -258,7 +249,7 @@
    [:map
     [:type [:= :tournament/advance-success]]
     [:state [:map {:closed false}
-             [:status tournament-status-enum]]]]))
+             [:status data-access.contract/tournament-status-enum]]]]))
 
 (def tournament-registration-response
   (schema.contract/to-schema
@@ -283,12 +274,12 @@
     [:tournament-eid :uuid]
     [:phase-index :int]
     [:round-index :int]
-    [:bracket-type bracket-type-enum]
+    [:bracket-type data-access.contract/bracket-type-enum]
     [:player-one-sub :string]
     [:player-two-sub [:maybe :string]]
     [:winner-sub [:maybe :string]]
-    [:status :string]
-    [:format match-format-enum]]))
+    [:status data-access.contract/match-status-enum]
+    [:format data-access.contract/match-format-enum]]))
 
 (def tournament-matches-response
   (schema.contract/to-schema
