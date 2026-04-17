@@ -214,10 +214,10 @@
 
 ;; ─── Phase handlers ─────────────────────────────────────────────────────────
 
-(defmethod integrant.core/init-key ::configure-phases
+(defmethod integrant.core/init-key ::update-phase-configuration
   [_init-key dependencies]
-  (fn [{{{:keys [eid]}                          :path
-         {:keys [phases qualifier-count]} :body} :parameters
+  (fn [{{{:keys [eid]}                             :path
+         {:keys [phases qualifier-count]} :body}   :parameters
         session                                    :ory-session
         :as                                        _request}]
     (let [player-sub (get-in session [:identity :id])
@@ -228,7 +228,7 @@
         {:status 422 :body result}
         {:status 200 :body result}))))
 
-(defmethod integrant.core/init-key ::generate-round
+(defmethod integrant.core/init-key ::create-round
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
         session               :ory-session
@@ -238,3 +238,25 @@
       (if (= :tournament/phase-error (:type result))
         {:status 422 :body result}
         {:status 200 :body result}))))
+
+(defmethod integrant.core/init-key ::get-phase
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+        router                :reitit.core/router
+        :as                   _request}]
+    (web.core/handle-fetch-response
+     domain/phase-response
+     {:hostname (:hostname dependencies) :router router}
+     (fn [] {:type           :tournament/phase
+             :tournament-eid eid}))))
+
+(defmethod integrant.core/init-key ::get-round
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+        router                :reitit.core/router
+        :as                   _request}]
+    (web.core/handle-fetch-response
+     domain/round-response
+     {:hostname (:hostname dependencies) :router router}
+     (fn [] {:type           :tournament/round
+             :tournament-eid eid}))))

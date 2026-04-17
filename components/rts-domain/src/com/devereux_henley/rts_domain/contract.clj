@@ -4,6 +4,7 @@
    [com.devereux-henley.rts-domain.handlers.game :as handlers.game]
    [com.devereux-henley.rts-domain.handlers.social-media :as handlers.social-media]
    [com.devereux-henley.rts-domain.handlers.tournament :as handlers.tournament]
+   [com.devereux-henley.rts-domain.rules.tournament :as rules.tournament]
    [com.devereux-henley.rts-domain.schema :as schema]
    [malli.util]))
 
@@ -96,6 +97,12 @@
 (def update-status-specification                  schema/update-status-specification)
 (def update-registration-specification            schema/update-registration-specification)
 (def configure-phases-specification               schema/configure-phases-specification)
+(def phase-response                                schema/phase-response)
+(def round-response                                schema/round-response)
+(def bracket-slot-status-enum                      schema/bracket-slot-status-enum)
+(def bracket-match-slot                            schema/bracket-match-slot)
+(def bracket-round                                 schema/bracket-round)
+(def phase-group                                   schema/phase-group)
 (def tournament-entries-response                  schema/tournament-entries-response)
 (def tournament-status-response                   schema/tournament-status-response)
 (def tournament-advance-response                  schema/tournament-advance-response)
@@ -116,6 +123,11 @@
 (def get-games-for-match                          handlers.tournament/get-games-for-match)
 (def configure-phases                             handlers.tournament/configure-phases)
 (def generate-next-round                          handlers.tournament/generate-next-round)
+
+(def common-timezones                             rules.tournament/common-timezones)
+(def default-timezone                             rules.tournament/default-timezone)
+(def group-matches-by-round                       rules.tournament/group-matches-by-round)
+(def group-matches-by-phase                       rules.tournament/group-matches-by-phase)
 
 ;;; ─── Social Media handler functions ────────────────────────────────────────
 

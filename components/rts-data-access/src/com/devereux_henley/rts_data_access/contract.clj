@@ -91,6 +91,12 @@
 (def match-entity schema/match-entity)
 (def match-game-entity schema/match-game-entity)
 
+(def tournament-status-enum schema/tournament-status-enum)
+(def phase-type-enum schema/phase-type-enum)
+(def match-status-enum schema/match-status-enum)
+(def match-format-enum schema/match-format-enum)
+(def bracket-type-enum schema/bracket-type-enum)
+
 ;;; ─── Tournament DB queries ────────────────────────────────────────────────
 
 (def get-tournament-by-eid query.tournament/get-tournament-by-eid)

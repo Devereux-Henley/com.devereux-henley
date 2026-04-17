@@ -3,23 +3,49 @@
 {% block title %}Tournaments | {{game.name}} | RTS-UI{% endblock %}
 
 {% block content %}
-<section class="resource" aria-labelledby="tournaments-heading">
-    <div class="cluster cluster-2" style="justify-content: space-between; align-items: baseline;">
-        <h2 id="tournaments-heading">Tournaments</h2>
-        <a class="btn btn-primary" href="/view/game/{{game-eid}}/tournament/create.html">Create Tournament</a>
+<div class="tournament-list-page">
+    <div class="tournament-list-header">
+        <div class="cluster cluster-2" style="justify-content: space-between; align-items: baseline;">
+            <h2 id="tournaments-heading">Tournaments</h2>
+            <a class="btn btn-primary btn-sm" href="/view/game/{{game-eid}}/tournament/create.html">Create Tournament</a>
+        </div>
     </div>
-    {% if tournaments %}
-    <nav aria-label="Available tournaments">
-        <ul>
-            {% for tournament in tournaments %}
-            <li>
-                <a href="/view/game/{{game-eid}}/tournament/{{tournament.eid}}/index.html">{{tournament.name}}</a>
-            </li>
-            {% endfor %}
-        </ul>
-    </nav>
-    {% else %}
-    <p>No tournaments found.</p>
-    {% endif %}
-</section>
+
+    <section class="tournament-list-grid" aria-labelledby="tournaments-heading">
+        {% if tournaments %}
+        {% for tournament in tournaments %}
+        <a class="tournament-card"
+           href="/view/game/{{game-eid}}/tournament/{{tournament.eid}}/index.html"
+           aria-label="{{tournament.name}}">
+            <div class="tournament-card-header">
+                <span class="tournament-card-status badge
+                    {% ifequal tournament.status "registration" %}badge-primary{% endifequal %}
+                    {% ifequal tournament.status "active" %}badge-success{% endifequal %}
+                    {% ifequal tournament.status "complete" %}badge-neutral{% endifequal %}
+                    {% ifequal tournament.status "cancelled" %}badge-danger{% endifequal %}
+                ">{{tournament.status}}</span>
+            </div>
+            <div class="tournament-card-body">
+                <h3 class="tournament-card-name">{{tournament.name}}</h3>
+                {% if tournament.description %}
+                <p class="tournament-card-desc">{{tournament.description}}</p>
+                {% endif %}
+            </div>
+            <div class="tournament-card-footer">
+                <span class="tournament-card-meta">
+                    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    {{tournament.entry-count}} entries
+                </span>
+                <span class="tournament-card-meta">by {{tournament.created-by-sub}}</span>
+            </div>
+        </a>
+        {% endfor %}
+        {% else %}
+        <div class="tournament-list-empty">
+            <p>No tournaments found for this game.</p>
+            <a class="btn btn-primary" href="/view/game/{{game-eid}}/tournament/create.html">Create the first tournament</a>
+        </div>
+        {% endif %}
+    </section>
+</div>
 {% endblock %}

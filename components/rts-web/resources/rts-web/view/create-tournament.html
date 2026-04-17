@@ -3,44 +3,83 @@
 {% block title %}Create Tournament | {{game.name}} | RTS-UI{% endblock %}
 
 {% block content %}
-<section class="resource" aria-labelledby="create-tournament-heading">
-    <h2 id="create-tournament-heading">Create Tournament</h2>
-    <form id="create-tournament-form"
-          class="form"
-          aria-labelledby="create-tournament-heading"
-          hx-put="/api/tournament/{{tournament-eid}}?version=1"
-          hx-ext="json-enc"
-          hx-target="#content"
-          hx-swap="innerHTML">
-        <input type="hidden" name="game-eid" value="{{game-eid}}"/>
-        <div class="form-group">
-            <label class="form-label required" for="tournament-name">Name</label>
-            <input id="tournament-name" name="name" type="text" class="input" required aria-required="true" placeholder="Tournament name"/>
-        </div>
-        <div class="form-group">
-            <label class="form-label required" for="tournament-description">Description</label>
-            <textarea id="tournament-description" name="description" class="input" required aria-required="true" rows="3" placeholder="Describe the tournament"></textarea>
-        </div>
-        <div class="form-group">
-            <label class="form-label required" for="timezone">Timezone</label>
-            <select id="timezone" name="timezone" class="select" required aria-required="true">
-                {% for tz in timezones %}
-                <option value="{{tz}}" {% ifequal tz default-timezone %}selected{% endifequal %}>{{tz}}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="form-group">
-            <label class="form-label required" for="registration-opens-at">Registration Opens</label>
-            <input id="registration-opens-at" name="registration-opens-at" type="datetime-local" class="input" required aria-required="true"/>
-        </div>
-        <div class="form-group">
-            <label class="form-label required" for="registration-closes-at">Registration Closes</label>
-            <input id="registration-closes-at" name="registration-closes-at" type="datetime-local" class="input" required aria-required="true"/>
-        </div>
-        <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Create Tournament</button>
-        </div>
-        <div id="create-tournament-error" class="form-error" role="alert" aria-live="assertive" hidden></div>
-    </form>
-</section>
+<div class="tournament-create-page">
+    <section class="resource" aria-labelledby="create-tournament-heading">
+        <h2 id="create-tournament-heading">Create Tournament</h2>
+
+        <form id="create-tournament-form"
+              class="form tournament-form"
+              aria-labelledby="create-tournament-heading"
+              hx-put="/api/tournament/{{tournament-eid}}?version=1"
+              hx-ext="json-enc"
+              hx-target="#content"
+              hx-swap="innerHTML">
+            <input type="hidden" name="game-eid" value="{{game-eid}}"/>
+
+            <!-- ─── Basic Info ─────────────────────────────────────── -->
+            <fieldset class="tournament-fieldset">
+                <legend class="tournament-fieldset-legend">Tournament Details</legend>
+                <div class="form-group">
+                    <label class="form-label required" for="tournament-name">Name</label>
+                    <input id="tournament-name" name="name" type="text" class="input" required aria-required="true" placeholder="e.g. Spring Championship 2026"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required" for="tournament-description">Description</label>
+                    <textarea id="tournament-description" name="description" class="input" required aria-required="true" rows="3" placeholder="Describe the tournament format, rules, and prizes"></textarea>
+                </div>
+            </fieldset>
+
+            <!-- ─── Registration Window ────────────────────────────── -->
+            <fieldset class="tournament-fieldset">
+                <legend class="tournament-fieldset-legend">Registration Window</legend>
+                <div class="form-group">
+                    <label class="form-label required" for="timezone">Timezone</label>
+                    <select id="timezone" name="timezone" class="select" required aria-required="true">
+                        {% for tz in timezones %}
+                        <option value="{{tz}}" {% ifequal tz default-timezone %}selected{% endifequal %}>{{tz}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label required" for="registration-opens-at">Registration Opens</label>
+                        <input id="registration-opens-at" name="registration-opens-at" type="datetime-local" class="input" required aria-required="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label required" for="registration-closes-at">Registration Closes</label>
+                        <input id="registration-closes-at" name="registration-closes-at" type="datetime-local" class="input" required aria-required="true"/>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- ─── Phase Configuration ────────────────────────────── -->
+            <fieldset class="tournament-fieldset" id="phase-config-section">
+                <legend class="tournament-fieldset-legend">Phase Configuration <span class="form-hint">(optional — configure after creation)</span></legend>
+                <p class="form-hint" style="margin-bottom: var(--space-4);">
+                    Phases define the tournament structure. You can configure phases now or update them later before starting the tournament.
+                </p>
+                <div id="phases-container">
+                    <!-- Phases added dynamically via htmx (GET /api/tournament/:eid/phase) -->
+                </div>
+                <div class="cluster cluster-2" style="margin-top: var(--space-3);">
+                    <button type="button" class="btn btn-ghost btn-sm"
+                            hx-get="/api/tournament/{{tournament-eid}}/phase"
+                            hx-target="#phases-container"
+                            hx-swap="beforeend">
+                        + Add Phase
+                    </button>
+                </div>
+                <div class="form-group" style="margin-top: var(--space-4);">
+                    <label class="form-label" for="qualifier-count">Qualifier Count <span class="form-hint">(players advancing between phases)</span></label>
+                    <input id="qualifier-count" type="number" class="input" min="2" placeholder="e.g. 8" style="max-width: 10rem;"/>
+                </div>
+            </fieldset>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create Tournament</button>
+            </div>
+            <div id="create-tournament-error" class="form-error" role="alert" aria-live="assertive" hidden></div>
+        </form>
+    </section>
+</div>
 {% endblock %}

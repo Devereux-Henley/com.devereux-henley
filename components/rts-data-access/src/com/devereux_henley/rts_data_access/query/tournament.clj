@@ -111,6 +111,7 @@
       eid
       (:phase-index match-spec)
       (:round-index match-spec)
+      (or (:bracket-type match-spec) "winners")
       (:player-one-sub match-spec)
       (:player-two-sub match-spec)
       (or (:format match-spec) 1)

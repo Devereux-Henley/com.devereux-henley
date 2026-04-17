@@ -89,8 +89,10 @@
             :com.devereux-henley.rts-web.web.tournament/update-match-result
             :com.devereux-henley.rts-web.web.tournament/record-game
             :com.devereux-henley.rts-web.web.tournament/get-games
-            :com.devereux-henley.rts-web.web.tournament/configure-phases
-            :com.devereux-henley.rts-web.web.tournament/generate-round
+            :com.devereux-henley.rts-web.web.tournament/update-phase-configuration
+            :com.devereux-henley.rts-web.web.tournament/create-round
+            :com.devereux-henley.rts-web.web.tournament/get-phase
+            :com.devereux-henley.rts-web.web.tournament/get-round
             :com.devereux-henley.rts-web.web.view/tournament-list-view
             :com.devereux-henley.rts-web.web.view/create-tournament-view
             :com.devereux-henley.rts-web.web.view/tournament-view))

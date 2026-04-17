@@ -3,173 +3,363 @@
 {% block title %}{{data.name}} | {{game.name}} | RTS-UI{% endblock %}
 
 {% block content %}
-<section class="resource" aria-labelledby="tournament-heading">
-    <h2 id="tournament-heading">{{data.name}}</h2>
-    <p>{{data.description|linebreaks|safe}}</p>
+<div class="tourney-page">
 
-    <section aria-labelledby="tournament-status-heading">
-        <h3 id="tournament-status-heading">Status</h3>
-        <dl>
-            <dt>Status</dt>
-            <dd>{{tournament-state.status}}</dd>
-            {% if tournament-state.registration.opens-at %}
-            <dt>Registration Opens</dt>
-            <dd>{{tournament-state.registration.opens-at}}</dd>
-            {% endif %}
-            {% if tournament-state.registration.closes-at %}
-            <dt>Registration Closes</dt>
-            <dd>{{tournament-state.registration.closes-at}}</dd>
-            {% endif %}
-        </dl>
-        {% if is-organizer %}
-        <div class="form-actions" style="margin-top: var(--space-3);">
-            {% ifequal tournament-state.status "registration" %}
-            <form hx-patch="/api/tournament/{{data.eid}}/registration"
-                  hx-ext="json-enc"
-                  hx-target="#content"
-                  hx-swap="innerHTML"
-                  style="display:inline;">
-                <input type="hidden" name="closed-early" value="true"/>
-                <button type="submit" class="btn btn-secondary">Close Registration</button>
-            </form>
-            <form hx-put="/api/tournament/{{data.eid}}/status"
-                  hx-ext="json-enc"
-                  hx-target="#content"
-                  hx-swap="innerHTML"
-                  style="display:inline;">
-                <input type="hidden" name="status" value="active"/>
-                <button type="submit" class="btn btn-primary">Start Tournament</button>
-            </form>
-            <form hx-put="/api/tournament/{{data.eid}}/status"
-                  hx-ext="json-enc"
-                  hx-target="#content"
-                  hx-swap="innerHTML"
-                  style="display:inline;">
-                <input type="hidden" name="status" value="cancelled"/>
-                <button type="submit" class="btn btn-danger">Cancel Tournament</button>
-            </form>
-            {% endifequal %}
-            {% ifequal tournament-state.status "active" %}
-            <form hx-put="/api/tournament/{{data.eid}}/status"
-                  hx-ext="json-enc"
-                  hx-target="#content"
-                  hx-swap="innerHTML"
-                  style="display:inline;">
-                <input type="hidden" name="status" value="complete"/>
-                <button type="submit" class="btn btn-primary">Complete Tournament</button>
-            </form>
-            <form hx-put="/api/tournament/{{data.eid}}/status"
-                  hx-ext="json-enc"
-                  hx-target="#content"
-                  hx-swap="innerHTML"
-                  style="display:inline;">
-                <input type="hidden" name="status" value="cancelled"/>
-                <button type="submit" class="btn btn-danger">Cancel Tournament</button>
-            </form>
-            {% endifequal %}
-        </div>
-        {% endif %}
-    </section>
-
-    {% if tournament-state.standings|not-empty? %}
-    <section aria-labelledby="tournament-standings-heading">
-        <h3 id="tournament-standings-heading">Standings</h3>
-        <div class="table-container">
-            <table class="table" aria-labelledby="tournament-standings-heading">
-                <caption class="sr-only">Tournament standings</caption>
-                <thead>
-                    <tr>
-                        <th scope="col">Player</th>
-                        <th scope="col">W</th>
-                        <th scope="col">L</th>
-                        <th scope="col">D</th>
-                        <th scope="col">Pts</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for standing in tournament-state.standings %}
-                    <tr>
-                        <td>{{standing.player-sub}}</td>
-                        <td>{{standing.wins}}</td>
-                        <td>{{standing.losses}}</td>
-                        <td>{{standing.draws}}</td>
-                        <td>{{standing.points}}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </section>
-    {% endif %}
-
-    {% if matches-by-round|not-empty? %}
-    <section aria-labelledby="tournament-matches-heading">
-        <h3 id="tournament-matches-heading">Matches</h3>
-        {% for round-group in matches-by-round %}
-        <section aria-labelledby="round-{{round-group.phase}}-{{round-group.round}}-heading">
-            <h4 id="round-{{round-group.phase}}-{{round-group.round}}-heading">Phase {{round-group.phase}} — Round {{round-group.round}}</h4>
-            <div class="table-container">
-                <table class="table" aria-labelledby="round-{{round-group.phase}}-{{round-group.round}}-heading">
-                    <caption class="sr-only">Phase {{round-group.phase}}, Round {{round-group.round}} matches</caption>
-                    <thead>
-                        <tr>
-                            <th scope="col">Player 1</th>
-                            <th scope="col">Player 2</th>
-                            <th scope="col">Winner</th>
-                            <th scope="col">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for match in round-group.matches %}
-                        <tr>
-                            <td>{{match.player-one-sub}}</td>
-                            <td>{% if match.player-two-sub %}{{match.player-two-sub}}{% else %}<em>bye</em>{% endif %}</td>
-                            <td>{% if match.winner-sub %}{{match.winner-sub}}{% else %}—{% endif %}</td>
-                            <td>{{match.status}}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- Hero                                                           -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <header class="tourney-hero" aria-labelledby="tournament-heading">
+        <div class="tourney-hero-inner">
+            <div>
+                <div class="cluster cluster-2" style="align-items: center; gap: var(--space-3);">
+                    <h2 id="tournament-heading" class="tourney-hero-title">{{data.name}}</h2>
+                    <span class="badge
+                        {% ifequal tournament-state.status "registration" %}badge-primary{% endifequal %}
+                        {% ifequal tournament-state.status "active" %}badge-success{% endifequal %}
+                        {% ifequal tournament-state.status "complete" %}badge-neutral{% endifequal %}
+                        {% ifequal tournament-state.status "cancelled" %}badge-danger{% endifequal %}
+                    ">{{tournament-state.status}}</span>
+                </div>
+                <p class="tourney-hero-desc">{{data.description}}</p>
             </div>
-        </section>
-        {% endfor %}
-    </section>
-    {% endif %}
-
-    <section aria-labelledby="tournament-entries-heading">
-        <h3 id="tournament-entries-heading">Entries</h3>
-        {% if session %}
-        {% ifequal tournament-state.status "registration" %}
-        <div id="tournament-entry-action" class="form-actions" style="margin-bottom: var(--space-4);">
-            {% if has-entry %}
-            <form hx-delete="/api/tournament/{{data.eid}}/entry/me"
-                  hx-target="#content"
-                  hx-swap="innerHTML">
-                <button type="submit" class="btn btn-danger">Withdraw</button>
-            </form>
-            {% elif registration-open %}
-            <form hx-post="/api/tournament/{{data.eid}}/entry/me"
-                  hx-target="#content"
-                  hx-swap="innerHTML">
-                <button type="submit" class="btn btn-primary">Enter</button>
-            </form>
-            {% else %}
-            <p>Registration is closed.</p>
-            {% endif %}
         </div>
-        {% endifequal %}
-        {% endif %}
-        {% if entries %}
-        <nav aria-label="Tournament entries">
-            <ul>
-                {% for entry in entries %}
-                <li>{{entry.player-sub}} — entered {{entry.created-at}}</li>
+    </header>
+
+    <div class="tourney-body">
+
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <!-- Sidebar: Status, Registration, Actions                     -->
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <aside class="tourney-sidebar" aria-label="Tournament info">
+
+            <!-- Registration card -->
+            <div class="tourney-info-card">
+                <div class="tourney-info-card-header">Registration</div>
+                <div class="tourney-info-card-body">
+                    <dl class="tourney-dl">
+                        {% if tournament-state.registration.opens-at %}
+                        <dt>Opens</dt>
+                        <dd>{{tournament-state.registration.opens-at}}</dd>
+                        {% endif %}
+                        {% if tournament-state.registration.closes-at %}
+                        <dt>Closes</dt>
+                        <dd>{{tournament-state.registration.closes-at}}</dd>
+                        {% endif %}
+                        {% if tournament-state.registration.timezone %}
+                        <dt>Timezone</dt>
+                        <dd>{{tournament-state.registration.timezone}}</dd>
+                        {% endif %}
+                        {% if tournament-state.registration.closed-early %}
+                        <dt>Early Close</dt>
+                        <dd><span class="badge badge-warning">Closed early</span></dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Player action -->
+            {% if session %}
+            {% ifequal tournament-state.status "registration" %}
+            <div class="tourney-info-card">
+                <div class="tourney-info-card-header">Your Entry</div>
+                <div class="tourney-info-card-body">
+                    {% if has-entry %}
+                    <p style="margin-bottom: var(--space-3);">You are registered.</p>
+                    <form hx-delete="/api/tournament/{{data.eid}}/entry/me"
+                          hx-target="#content" hx-swap="innerHTML">
+                        <button type="submit" class="btn btn-danger btn-sm" style="width:100%;">Withdraw</button>
+                    </form>
+                    {% elif registration-open %}
+                    <form hx-post="/api/tournament/{{data.eid}}/entry/me"
+                          hx-target="#content" hx-swap="innerHTML">
+                        <button type="submit" class="btn btn-primary" style="width:100%;">Enter Tournament</button>
+                    </form>
+                    {% else %}
+                    <p class="tourney-closed-msg">Registration is closed.</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endifequal %}
+            {% endif %}
+
+            <!-- Phase config display -->
+            {% if tournament-state.phases|not-empty? %}
+            <div class="tourney-info-card">
+                <div class="tourney-info-card-header">Phases</div>
+                <div class="tourney-info-card-body">
+                    {% for phase in tournament-state.phases %}
+                    <div class="tourney-phase-item {% ifequal forloop.counter0 tournament-state.current-phase %}tourney-phase-item--active{% endifequal %}">
+                        <span class="tourney-phase-label">{{phase.phase-type}}</span>
+                        <span class="tourney-phase-rounds">{{phase.rounds|length}} rounds</span>
+                    </div>
+                    {% endfor %}
+                    {% if tournament-state.qualifier-count %}
+                    <div class="tourney-qualifier-note">Top {{tournament-state.qualifier-count}} advance</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Organizer controls -->
+            {% if organizer-has-actions %}
+            <div class="tourney-info-card tourney-organizer-card">
+                <div class="tourney-info-card-header">Organizer Controls</div>
+                <div class="tourney-info-card-body stack stack-2">
+                    {% ifequal tournament-state.status "registration" %}
+                    <form hx-patch="/api/tournament/{{data.eid}}/registration"
+                          hx-ext="json-enc" hx-target="#content" hx-swap="innerHTML">
+                        <input type="hidden" name="closed-early" value="true"/>
+                        <button type="submit" class="btn btn-secondary btn-sm" style="width:100%;">Close Registration</button>
+                    </form>
+                    <form hx-put="/api/tournament/{{data.eid}}/status"
+                          hx-ext="json-enc" hx-target="#content" hx-swap="innerHTML">
+                        <input type="hidden" name="status" value="active"/>
+                        <button type="submit" class="btn btn-primary btn-sm" style="width:100%;">Start Tournament</button>
+                    </form>
+                    {% endifequal %}
+                    {% ifequal tournament-state.status "active" %}
+                    <form hx-post="/api/tournament/{{data.eid}}/round"
+                          hx-target="#content" hx-swap="innerHTML">
+                        <button type="submit" class="btn btn-primary btn-sm" style="width:100%;">Generate Next Round</button>
+                    </form>
+                    <form hx-put="/api/tournament/{{data.eid}}/status"
+                          hx-ext="json-enc" hx-target="#content" hx-swap="innerHTML">
+                        <input type="hidden" name="status" value="complete"/>
+                        <button type="submit" class="btn btn-secondary btn-sm" style="width:100%;">Complete Tournament</button>
+                    </form>
+                    {% endifequal %}
+                    {% ifequal tournament-state.status "registration" %}
+                    <form hx-put="/api/tournament/{{data.eid}}/status"
+                          hx-ext="json-enc" hx-target="#content" hx-swap="innerHTML">
+                        <input type="hidden" name="status" value="cancelled"/>
+                        <button type="submit" class="btn btn-danger btn-sm" style="width:100%;">Cancel Tournament</button>
+                    </form>
+                    {% endifequal %}
+                    {% ifequal tournament-state.status "active" %}
+                    <form hx-put="/api/tournament/{{data.eid}}/status"
+                          hx-ext="json-enc" hx-target="#content" hx-swap="innerHTML">
+                        <input type="hidden" name="status" value="cancelled"/>
+                        <button type="submit" class="btn btn-danger btn-sm" style="width:100%;">Cancel Tournament</button>
+                    </form>
+                    {% endifequal %}
+                </div>
+            </div>
+            {% endif %}
+        </aside>
+
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <!-- Main content: Standings, Matches, Entries                  -->
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <div class="tourney-main">
+
+            <!-- Standings -->
+            {% if tournament-state.standings|not-empty? %}
+            <section class="tourney-section" aria-labelledby="standings-heading">
+                <h3 class="tourney-section-heading" id="standings-heading">Standings</h3>
+                <div class="table-container">
+                    <table class="table table-striped" aria-labelledby="standings-heading">
+                        <caption class="sr-only">Tournament standings sorted by points</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Player</th>
+                                <th scope="col">W</th>
+                                <th scope="col">L</th>
+                                <th scope="col">D</th>
+                                <th scope="col">Pts</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for standing in tournament-state.standings %}
+                            <tr>
+                                <td class="tourney-rank">{{forloop.counter}}</td>
+                                <td>{{standing.player-sub}}</td>
+                                <td>{{standing.wins}}</td>
+                                <td>{{standing.losses}}</td>
+                                <td>{{standing.draws}}</td>
+                                <td><strong>{{standing.points}}</strong></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- Matches by phase -->
+            {% if matches-by-phase|not-empty? %}
+            {% for phase-group in matches-by-phase %}
+            <section class="tourney-section" aria-labelledby="phase-{{phase-group.phase}}-heading">
+
+                {% ifequal phase-group.phase-type "single-elimination" %}
+                <!-- ─── Single elimination bracket ─── -->
+                <h3 class="tourney-section-heading" id="phase-{{phase-group.phase}}-heading">Elimination Bracket</h3>
+                <div class="tourney-bracket" aria-label="Elimination bracket">
+                    {% for round-group in phase-group.winners-bracket %}
+                    <div class="tourney-bracket-round">
+                        <h4 class="tourney-bracket-round-label" id="round-{{round-group.phase}}-w-{{round-group.round}}">
+                            Round {{round-group.round|add:1}}
+                        </h4>
+                        {% for match in round-group.matches %}
+                        <div class="tourney-bracket-match {% ifequal match.status "complete" %}tourney-bracket-match--complete{% endifequal %}{% ifequal match.status "tbd" %}tourney-bracket-match--tbd{% endifequal %}">
+                            <div class="tourney-bracket-slot {% ifequal match.winner-sub match.player-one-sub %}tourney-bracket-slot--winner{% endifequal %}">
+                                {% if match.player-one-sub %}{{match.player-one-sub}}{% else %}<span class="tourney-bracket-tbd">TBD</span>{% endif %}
+                            </div>
+                            <div class="tourney-bracket-slot {% ifequal match.winner-sub match.player-two-sub %}tourney-bracket-slot--winner{% endifequal %}">
+                                {% if match.player-two-sub %}{{match.player-two-sub}}{% elif match.player-one-sub %}<em class="tourney-bracket-bye">bye</em>{% else %}<span class="tourney-bracket-tbd">TBD</span>{% endif %}
+                            </div>
+                            {% if match.format %}
+                            <span class="tourney-bracket-format">Bo{{match.format}}</span>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% else %}
+                {% ifequal phase-group.phase-type "double-elimination" %}
+                <!-- ─── Double elimination brackets ─── -->
+                <h3 class="tourney-section-heading" id="phase-{{phase-group.phase}}-heading">Double Elimination</h3>
+
+                <h4 class="tourney-bracket-heading" id="phase-{{phase-group.phase}}-winners-heading">Winners Bracket</h4>
+                <div class="tourney-bracket" aria-labelledby="phase-{{phase-group.phase}}-winners-heading">
+                    {% for round-group in phase-group.winners-bracket %}
+                    <div class="tourney-bracket-round">
+                        <h5 class="tourney-bracket-round-label" id="round-{{round-group.phase}}-w-{{round-group.round}}">
+                            WB Round {{round-group.round|add:1}}
+                        </h5>
+                        {% for match in round-group.matches %}
+                        <div class="tourney-bracket-match {% ifequal match.status "complete" %}tourney-bracket-match--complete{% endifequal %}{% ifequal match.status "tbd" %}tourney-bracket-match--tbd{% endifequal %}">
+                            <div class="tourney-bracket-slot {% ifequal match.winner-sub match.player-one-sub %}tourney-bracket-slot--winner{% endifequal %}">
+                                {% if match.player-one-sub %}{{match.player-one-sub}}{% else %}<span class="tourney-bracket-tbd">TBD</span>{% endif %}
+                            </div>
+                            <div class="tourney-bracket-slot {% ifequal match.winner-sub match.player-two-sub %}tourney-bracket-slot--winner{% endifequal %}">
+                                {% if match.player-two-sub %}{{match.player-two-sub}}{% elif match.player-one-sub %}<em class="tourney-bracket-bye">bye</em>{% else %}<span class="tourney-bracket-tbd">TBD</span>{% endif %}
+                            </div>
+                            {% if match.format %}
+                            <span class="tourney-bracket-format">Bo{{match.format}}</span>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% if phase-group.losers-bracket|not-empty? %}
+                <h4 class="tourney-bracket-heading" id="phase-{{phase-group.phase}}-losers-heading">Losers Bracket</h4>
+                <div class="tourney-bracket tourney-bracket--losers" aria-labelledby="phase-{{phase-group.phase}}-losers-heading">
+                    {% for round-group in phase-group.losers-bracket %}
+                    <div class="tourney-bracket-round">
+                        <h5 class="tourney-bracket-round-label" id="round-{{round-group.phase}}-l-{{round-group.round}}">
+                            LB Round {{round-group.round|add:1}}
+                        </h5>
+                        {% for match in round-group.matches %}
+                        <div class="tourney-bracket-match {% ifequal match.status "complete" %}tourney-bracket-match--complete{% endifequal %}{% ifequal match.status "tbd" %}tourney-bracket-match--tbd{% endifequal %}">
+                            <div class="tourney-bracket-slot {% ifequal match.winner-sub match.player-one-sub %}tourney-bracket-slot--winner{% endifequal %}">
+                                {% if match.player-one-sub %}{{match.player-one-sub}}{% else %}<span class="tourney-bracket-tbd">TBD</span>{% endif %}
+                            </div>
+                            <div class="tourney-bracket-slot {% ifequal match.winner-sub match.player-two-sub %}tourney-bracket-slot--winner{% endifequal %}">
+                                {% if match.player-two-sub %}{{match.player-two-sub}}{% elif match.player-one-sub %}<em class="tourney-bracket-bye">bye</em>{% else %}<span class="tourney-bracket-tbd">TBD</span>{% endif %}
+                            </div>
+                            {% if match.format %}
+                            <span class="tourney-bracket-format">Bo{{match.format}}</span>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <h4 class="tourney-bracket-heading" id="phase-{{phase-group.phase}}-gf-heading">Grand Final</h4>
+                <div class="tourney-bracket tourney-bracket--grand-final" aria-labelledby="phase-{{phase-group.phase}}-gf-heading">
+                    {% for round-group in phase-group.grand-final %}
+                    <div class="tourney-bracket-round">
+                        {% for match in round-group.matches %}
+                        <div class="tourney-bracket-match {% ifequal match.status "complete" %}tourney-bracket-match--complete{% endifequal %}{% ifequal match.status "tbd" %}tourney-bracket-match--tbd{% endifequal %}">
+                            <div class="tourney-bracket-slot {% ifequal match.winner-sub match.player-one-sub %}tourney-bracket-slot--winner{% endifequal %}">
+                                {% if match.player-one-sub %}{{match.player-one-sub}}{% else %}<span class="tourney-bracket-tbd">TBD</span>{% endif %}
+                            </div>
+                            <div class="tourney-bracket-slot {% ifequal match.winner-sub match.player-two-sub %}tourney-bracket-slot--winner{% endifequal %}">
+                                {% if match.player-two-sub %}{{match.player-two-sub}}{% else %}<span class="tourney-bracket-tbd">TBD</span>{% endif %}
+                            </div>
+                            {% if match.format %}
+                            <span class="tourney-bracket-format">Bo{{match.format}}</span>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% else %}
+                <!-- ─── Swiss / Round Robin list view ─── -->
+                <h3 class="tourney-section-heading" id="phase-{{phase-group.phase}}-heading">
+                    {% if phase-group.phase-type %}{{phase-group.phase-type}}{% else %}Matches{% endif %}
+                </h3>
+                {% for round-group in phase-group.rounds %}
+                <div class="tourney-round-block" aria-labelledby="round-{{round-group.phase}}-{{round-group.round}}">
+                    <h4 class="tourney-round-label" id="round-{{round-group.phase}}-{{round-group.round}}">
+                        Round {{round-group.round|add:1}} of {{round-group.total-rounds}}
+                    </h4>
+                    <div class="tourney-match-list">
+                        {% for match in round-group.matches %}
+                        <div class="tourney-match-card {% ifequal match.status "complete" %}tourney-match-card--complete{% endifequal %}">
+                            <div class="tourney-match-players">
+                                <span class="tourney-match-player {% ifequal match.winner-sub match.player-one-sub %}tourney-match-winner{% endifequal %}">
+                                    {{match.player-one-sub}}
+                                </span>
+                                <span class="tourney-match-vs" aria-hidden="true">vs</span>
+                                <span class="tourney-match-player {% ifequal match.winner-sub match.player-two-sub %}tourney-match-winner{% endifequal %}">
+                                    {% if match.player-two-sub %}{{match.player-two-sub}}{% else %}<em>bye</em>{% endif %}
+                                </span>
+                            </div>
+                            <div class="tourney-match-meta">
+                                <span class="badge {% ifequal match.status "pending" %}badge-warning{% endifequal %}{% ifequal match.status "complete" %}badge-success{% endifequal %}" style="font-size: var(--font-size-xs);">
+                                    {{match.status}}
+                                </span>
+                                {% if match.format %}
+                                <span class="tourney-match-format">Bo{{match.format}}</span>
+                                {% endif %}
+                            </div>
+                            {% if match.winner-sub %}
+                            <div class="tourney-match-result">
+                                Winner: <strong>{{match.winner-sub}}</strong>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
                 {% endfor %}
-            </ul>
-        </nav>
-        {% else %}
-        <p>No entries yet.</p>
-        {% endif %}
-    </section>
-</section>
+                {% endifequal %}
+                {% endifequal %}
+
+            </section>
+            {% endfor %}
+            {% endif %}
+
+            <!-- Entries -->
+            <section class="tourney-section" aria-labelledby="entries-heading">
+                <h3 class="tourney-section-heading" id="entries-heading">
+                    Entries
+                    {% if entries %}<span class="tourney-entry-count">{{entries|length}}</span>{% endif %}
+                </h3>
+                {% if entries %}
+                <div class="tourney-entry-grid">
+                    {% for entry in entries %}
+                    <div class="tourney-entry-chip">
+                        <span class="tourney-entry-name">{{entry.player-sub}}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="tourney-empty-msg">No entries yet.</p>
+                {% endif %}
+            </section>
+
+        </div>
+    </div>
+</div>
 {% endblock %}

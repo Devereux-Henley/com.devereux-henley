@@ -198,20 +198,20 @@
   (fn [{game-context :game-context
         session      :ory-session
         :as          _request}]
-    (let [tournaments (domain/get-tournaments-for-game dependencies (:game-eid game-context))]
+    (let [tournaments (domain/get-tournaments-for-game dependencies (:game-eid game-context))
+          enriched    (mapv (fn [t]
+                              (let [state   (domain/get-tournament-state dependencies (:eid t))
+                                    entries (domain/get-entries dependencies (:eid t))]
+                                (assoc t
+                                       :status      (:status state)
+                                       :entry-count (count entries))))
+                            tournaments)]
       {:status 200
        :body   (selmer.parser/render-file
                 "rts-web/view/tournament-list.html"
-                (merge {:tournaments tournaments
+                (merge {:tournaments enriched
                         :session     session}
                        game-context))})))
-
-(def ^:private common-timezones
-  "Curated list of IANA timezone IDs for the tournament create form."
-  ["US/Eastern" "US/Central" "US/Mountain" "US/Pacific"
-   "Europe/London" "Europe/Paris" "Europe/Berlin"
-   "Asia/Tokyo" "Asia/Shanghai" "Australia/Sydney"
-   "UTC"])
 
 (defmethod integrant.core/init-key ::create-tournament-view
   [_init-key _dependencies]
@@ -223,8 +223,8 @@
               "rts-web/view/create-tournament.html"
               (merge {:session          session
                       :tournament-eid   (random-uuid)
-                      :timezones        common-timezones
-                      :default-timezone "US/Eastern"}
+                      :timezones        domain/common-timezones
+                      :default-timezone domain/default-timezone}
                      game-context))}))
 
 (defmethod integrant.core/init-key ::tournament-view
@@ -233,21 +233,23 @@
            (fn [eid] (web.tournament/get-tournament-by-eid dependencies eid))
            "tournament-index.html"
            (fn [data request]
-             (let [state        (domain/get-tournament-state dependencies (:eid data))
-                   entries      (domain/get-entries dependencies (:eid data))
-                   raw-matches  (domain/get-matches-for-tournament dependencies (:eid data))
-                   matches-by-round (->> raw-matches
-                                         (group-by (fn [m] {:phase (:phase-index m) :round (:round-index m)}))
-                                         (sort-by (fn [[k _]] [(:phase k) (:round k)]))
-                                         (mapv (fn [[k ms]] {:phase (:phase k) :round (:round k) :matches ms})))
-                   player-sub   (get-in request [:ory-session :identity :id])
-                   has-entry    (some #(= player-sub (:player-sub %)) entries)
-                   now          (java.time.Instant/now)
-                   reg-open     (domain/is-registration-open? state now)
-                   is-organizer (= player-sub (:created-by-sub data))]
-               {:tournament-state  state
-                :entries           entries
-                :matches-by-round  matches-by-round
-                :has-entry         has-entry
-                :registration-open reg-open
-                :is-organizer      is-organizer}))))
+             (let [tournament-eid  (:eid data)
+                   state           (domain/get-tournament-state dependencies tournament-eid)
+                   entries         (domain/get-entries dependencies tournament-eid)
+                   raw-matches     (domain/get-matches-for-tournament dependencies tournament-eid)
+                   phases          (:phases state)
+                   qualifier-count (or (:qualifier-count state) (count (:standings state)))
+                   player-sub      (get-in request [:ory-session :identity :id])
+                   has-entry       (some #(= player-sub (:player-sub %)) entries)
+                   now             (java.time.Instant/now)
+                   reg-open        (domain/is-registration-open? state now)
+                   is-organizer    (= player-sub (:created-by-sub data))
+                   organizer-has-actions (and is-organizer
+                                              (contains? #{"registration" "active"} (:status state)))]
+               {:tournament-state      state
+                :entries               entries
+                :matches-by-phase      (domain/group-matches-by-phase raw-matches phases qualifier-count)
+                :has-entry             has-entry
+                :registration-open     reg-open
+                :is-organizer          is-organizer
+                :organizer-has-actions organizer-has-actions}))))

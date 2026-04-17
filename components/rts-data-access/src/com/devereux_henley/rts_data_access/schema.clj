@@ -232,6 +232,20 @@
     [:created-at :instant]
     [:deleted-at [:maybe :instant]]]))
 
+;; ─── Tournament / match enums ───────────────────────────────────────────────
+;; These mirror CHECK-constrained values (or the closed sets the domain layer
+;; enforces) so Malli coercion rejects unexpected strings at the DB boundary.
+
+(def tournament-status-enum [:enum "registration" "active" "complete" "cancelled"])
+
+(def phase-type-enum [:enum "swiss" "round-robin" "single-elimination" "double-elimination"])
+
+(def match-status-enum [:enum "pending" "complete"])
+
+(def match-format-enum [:enum 1 3 5])
+
+(def bracket-type-enum [:enum "winners" "losers" "grand-final"])
+
 (def match-entity
   (schema.contract/to-schema
    [:map
@@ -240,11 +254,12 @@
     [:tournament-eid :uuid]
     [:phase-index :int]
     [:round-index :int]
+    [:bracket-type bracket-type-enum]
     [:player-one-sub :string]
     [:player-two-sub [:maybe :string]]
     [:winner-sub [:maybe :string]]
-    [:status :string]
-    [:format :int]
+    [:status match-status-enum]
+    [:format match-format-enum]
     [:created-at :instant]
     [:updated-at :instant]]))
 

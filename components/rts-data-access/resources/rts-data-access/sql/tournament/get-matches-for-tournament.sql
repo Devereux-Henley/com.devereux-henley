@@ -4,6 +4,7 @@ SELECT
   t.eid AS tournament_eid,
   m.phase_index,
   m.round_index,
+  m.bracket_type,
   m.player_one_sub,
   m.player_two_sub,
   m.winner_sub,

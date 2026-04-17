@@ -1,5 +1,6 @@
 (ns com.devereux-henley.rts-domain.schema
   (:require
+   [com.devereux-henley.rts-data-access.contract :as data-access.contract]
    [com.devereux-henley.schema.contract :as schema.contract]
    [malli.util]))
 
@@ -95,20 +96,12 @@
     [:map
      [:type [:= :collection/game]]])))
 
-;; ─── Shared enums ───────────────────────────────────────────────────────────
-
-(def tournament-status-enum [:enum "registration" "active" "complete" "cancelled"])
-
-(def phase-type-enum [:enum "swiss" "round-robin" "single-elimination" "double-elimination"])
-
-(def match-format-enum [:enum 1 3 5])
-
 ;; ─── Request body schemas ───────────────────────────────────────────────────
 
 (def update-status-specification
   (schema.contract/to-schema
    [:map
-    [:status tournament-status-enum]]))
+    [:status data-access.contract/tournament-status-enum]]))
 
 (def update-registration-specification
   (schema.contract/to-schema
@@ -119,13 +112,25 @@
   (schema.contract/to-schema
    [:map
     [:round-index :int]
-    [:format {:optional true} match-format-enum]]))
+    [:format {:optional true} data-access.contract/match-format-enum]]))
 
 (def phase-specification
   (schema.contract/to-schema
    [:map
-    [:phase-type phase-type-enum]
+    [:phase-type data-access.contract/phase-type-enum]
     [:rounds [:sequential phase-round-specification]]]))
+
+(def phase-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :tournament/phase]]
+    [:tournament-eid :uuid]]))
+
+(def round-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :tournament/round]]
+    [:tournament-eid :uuid]]))
 
 (def configure-phases-specification
   (schema.contract/to-schema
@@ -178,11 +183,12 @@
      [:tournament-eid {:model/link :tournament/by-eid} :uuid]
      [:phase-index :int]
      [:round-index :int]
+     [:bracket-type data-access.contract/bracket-type-enum]
      [:player-one-sub :string]
      [:player-two-sub [:maybe :string]]
      [:winner-sub [:maybe :string]]
-     [:status :string]
-     [:format match-format-enum]
+     [:status data-access.contract/match-status-enum]
+     [:format data-access.contract/match-format-enum]
      [:_links
       [:map
        [:self :url]
@@ -195,7 +201,7 @@
     [:round-index :int]
     [:player-one-sub :string]
     [:player-two-sub {:optional true} [:maybe :string]]
-    [:format {:optional true} [:enum 1 3 5]]]))
+    [:format {:optional true} data-access.contract/match-format-enum]]))
 
 (def record-result-specification
   (schema.contract/to-schema
@@ -247,7 +253,7 @@
   (schema.contract/to-schema
    [:map
     [:type [:= :tournament/status]]
-    [:status tournament-status-enum]
+    [:status data-access.contract/tournament-status-enum]
     [:available-transitions [:sequential :string]]]))
 
 (def tournament-advance-response
@@ -255,7 +261,7 @@
    [:map
     [:type [:= :tournament/advance-success]]
     [:state [:map {:closed false}
-             [:status tournament-status-enum]]]]))
+             [:status data-access.contract/tournament-status-enum]]]]))
 
 (def tournament-registration-response
   (schema.contract/to-schema
@@ -280,17 +286,63 @@
     [:tournament-eid :uuid]
     [:phase-index :int]
     [:round-index :int]
+    [:bracket-type data-access.contract/bracket-type-enum]
     [:player-one-sub :string]
     [:player-two-sub [:maybe :string]]
     [:winner-sub [:maybe :string]]
-    [:status :string]
-    [:format match-format-enum]]))
+    [:status data-access.contract/match-status-enum]
+    [:format data-access.contract/match-format-enum]]))
 
 (def tournament-matches-response
   (schema.contract/to-schema
    [:map
     [:type [:= :tournament/matches]]
     [:matches [:sequential tournament-match-summary]]]))
+
+;; ─── Bracket-view shapes ────────────────────────────────────────────────────
+;; Describe the projections built by rules/group-matches-by-round and
+;; rules/group-matches-by-phase for the tournament-index template.
+
+(def bracket-slot-status-enum
+  "Status of a slot in a rendered bracket. Real matches carry the DB
+   match status; unfilled slots in a pre-rendered skeleton carry \"tbd\"."
+  [:enum "pending" "complete" "tbd"])
+
+(def bracket-match-slot
+  "Either a real match or a TBD placeholder. Open on extra keys because
+   real matches arrive straight from the match-entity shape while
+   placeholders carry only a skeletal form."
+  (schema.contract/to-schema
+   [:map {:closed false}
+    [:player-one-sub [:maybe :string]]
+    [:player-two-sub [:maybe :string]]
+    [:winner-sub [:maybe :string]]
+    [:status bracket-slot-status-enum]
+    [:placeholder {:optional true} :boolean]]))
+
+(def bracket-round
+  "One round's worth of slots in a bracket or swiss-style phase."
+  (schema.contract/to-schema
+   [:map
+    [:phase :int]
+    [:round :int]
+    [:phase-type [:maybe :string]]
+    [:bracket-type {:optional true} :string]
+    [:total-rounds :int]
+    [:matches [:sequential bracket-match-slot]]]))
+
+(def phase-group
+  "Aggregated view of a tournament phase. Elimination phases expose
+   :winners-bracket (and for double-elim :losers-bracket + :grand-final);
+   swiss / round-robin phases expose a flat :rounds vector."
+  (schema.contract/to-schema
+   [:map
+    [:phase :int]
+    [:phase-type [:maybe :string]]
+    [:rounds {:optional true} [:sequential bracket-round]]
+    [:winners-bracket {:optional true} [:sequential bracket-round]]
+    [:losers-bracket {:optional true} [:sequential bracket-round]]
+    [:grand-final {:optional true} [:sequential bracket-round]]]))
 
 (def tournament-match-result-response
   (schema.contract/to-schema
