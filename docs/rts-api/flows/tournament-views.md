@@ -40,6 +40,8 @@ Single elimination phases render as a horizontal bracket with round columns. The
 
 ## Double elimination bracket
 
-Double elimination uses the same bracket layout. Each round column shows its matches with format badges (Bo1/Bo3/Bo5).
+Double elimination renders as three stacked sections under a shared "Double Elimination" heading: **Winners Bracket**, **Losers Bracket**, and **Grand Final**. Each section reuses the round-column bracket layout, with TBD placeholders for rounds that haven't been generated yet. Match losers in the winners bracket feed into the losers bracket; the losers bracket champion meets the winners bracket champion in a single grand-final match (no bracket reset). Round labels are prefixed with `WB` or `LB` so it's clear which bracket each column belongs to.
+
+`POST /api/tournament/:eid/round` generates every dependency-satisfied round across all three brackets in a single call — so one click may produce a new winners round, a new losers round, or both. The tournament auto-completes when the grand-final match resolves.
 
 ![Double elimination bracket](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/bracket-double-elim.png)

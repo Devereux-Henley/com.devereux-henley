@@ -151,3 +151,101 @@
                          p2     (when (< seed-b n) (get qualified-players seed-b))]
                      {:player-one-sub p1 :player-two-sub p2}))]
     (vec matchups)))
+
+;; ─── Double elimination ─────────────────────────────────────────────────────
+
+(defn winners-bracket-round-count
+  "Returns the number of winners-bracket rounds for N qualified players:
+   ceil(log2 N)."
+  [n]
+  (loop [s 1 k 0]
+    (if (>= s n) k (recur (* s 2) (inc k)))))
+
+(defn losers-bracket-round-count
+  "Returns the number of losers-bracket rounds for N qualified players:
+   2 * (winners-rounds - 1). Returns 0 for trivial brackets (<=1 player)."
+  [n]
+  (let [k (winners-bracket-round-count n)]
+    (max 0 (* 2 (dec k)))))
+
+(defn winners-from-matches
+  "Returns winner-sub of each completed match, in bracket order.
+   Bye matches (nil player-two-sub) contribute their auto-winner."
+  [matches]
+  (mapv :winner-sub (filter #(= "complete" (:status %)) matches)))
+
+(defn- losers-from-matches
+  "Returns loser-sub of each completed match that had two real players,
+   in bracket order. Bye matches contribute nothing."
+  [matches]
+  (vec
+   (keep (fn [m]
+           (when (and (= "complete" (:status m))
+                      (:player-two-sub m)
+                      (:winner-sub m))
+             (if (= (:winner-sub m) (:player-one-sub m))
+               (:player-two-sub m)
+               (:player-one-sub m))))
+         matches)))
+
+(defn- pair-sequentially
+  "Pairs adjacent players into matches. Odd player out receives a bye
+   (player-two-sub nil)."
+  [players]
+  (loop [remaining (vec players)
+         acc       []]
+    (cond
+      (empty? remaining) acc
+      (= 1 (count remaining))
+      (conj acc {:player-one-sub (first remaining) :player-two-sub nil})
+      :else
+      (recur (subvec remaining 2)
+             (conj acc {:player-one-sub (nth remaining 0)
+                        :player-two-sub (nth remaining 1)})))))
+
+(defn advance-winners-bracket-round
+  "Given matches from the previous winners-bracket round, produces
+   pairings for the next winners-bracket round by pairing winners in
+   bracket order."
+  [prev-round-matches]
+  (pair-sequentially (winners-from-matches prev-round-matches)))
+
+(defn generate-losers-bracket-round
+  "Generates pairings for losers-bracket round r (0-indexed).
+
+   r = 0             — pair the losers from winners-bracket round 0.
+   r odd  (\"major\") — pair losers-bracket winners against losers from
+                      the winners-bracket round that just finished.
+   r even (>0, \"minor\") — pair losers-bracket winners against each other.
+
+   wb-round-matches is the winners-bracket round whose losers feed this
+   losers round (unused for minor rounds). lb-prev-matches is losers
+   round r-1 (unused when r=0)."
+  [r wb-round-matches lb-prev-matches]
+  (cond
+    (zero? r)
+    (pair-sequentially (losers-from-matches wb-round-matches))
+
+    (even? r)
+    (pair-sequentially (winners-from-matches lb-prev-matches))
+
+    :else
+    (let [lb-winners (winners-from-matches lb-prev-matches)
+          wb-losers  (losers-from-matches wb-round-matches)]
+      (mapv (fn [lb wb] {:player-one-sub lb :player-two-sub wb})
+            lb-winners wb-losers))))
+
+(defn grand-final-pairing
+  "Grand final pairing: winners-bracket champion vs losers-bracket champion."
+  [wb-champ lb-champ]
+  [{:player-one-sub wb-champ :player-two-sub lb-champ}])
+
+(defn winners-source-round-for-losers-round
+  "For a losers-bracket round r (0-indexed), returns the 0-indexed
+   winners-bracket round whose losers drop into it, or nil for minor
+   losers rounds that don't pull from WB."
+  [r]
+  (cond
+    (zero? r)   0
+    (odd?  r)   (quot (inc r) 2)
+    :else       nil))

@@ -1808,3 +1808,25 @@ a:hover:has(img) {
     transparent 8px
   );
 }
+
+.tourney-bracket-heading {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-neutral-700);
+  margin: var(--space-5) 0 var(--space-2);
+}
+
+.tourney-bracket--losers .tourney-bracket-slot--winner {
+  background: color-mix(in srgb, var(--color-warning-500) 14%, transparent);
+  color: var(--color-warning-700);
+}
+
+.tourney-bracket--grand-final {
+  border: 1px solid color-mix(in srgb, var(--color-primary-500) 40%, var(--color-border));
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  background: color-mix(in srgb, var(--color-primary-500) 4%, transparent);
+}

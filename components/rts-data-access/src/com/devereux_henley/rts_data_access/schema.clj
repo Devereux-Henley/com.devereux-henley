@@ -240,6 +240,7 @@
     [:tournament-eid :uuid]
     [:phase-index :int]
     [:round-index :int]
+    [:bracket-type :string]
     [:player-one-sub :string]
     [:player-two-sub [:maybe :string]]
     [:winner-sub [:maybe :string]]

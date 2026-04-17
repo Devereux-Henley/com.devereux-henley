@@ -168,6 +168,8 @@
     [:map
      [:type [:= :collection/tournament]]])))
 
+(def bracket-type-enum [:enum "winners" "losers" "grand-final"])
+
 (def match-resource
   (malli.util/merge
    schema.contract/base-resource
@@ -178,6 +180,7 @@
      [:tournament-eid {:model/link :tournament/by-eid} :uuid]
      [:phase-index :int]
      [:round-index :int]
+     [:bracket-type bracket-type-enum]
      [:player-one-sub :string]
      [:player-two-sub [:maybe :string]]
      [:winner-sub [:maybe :string]]
@@ -280,6 +283,7 @@
     [:tournament-eid :uuid]
     [:phase-index :int]
     [:round-index :int]
+    [:bracket-type bracket-type-enum]
     [:player-one-sub :string]
     [:player-two-sub [:maybe :string]]
     [:winner-sub [:maybe :string]]
