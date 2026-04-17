@@ -70,7 +70,7 @@
 ;; ─── Rule 2a: Hero cap (2 per army) ──────────────────────────────────────────
 
 (deftest hero-cap-exceeded-returns-error
-  (let [army [(hero (UUID/randomUUID)) (hero (UUID/randomUUID))]
+  (let [army   [(hero (UUID/randomUUID)) (hero (UUID/randomUUID))]
         result (validate army (hero hero-eid) "main")]
     (is (= :draft/add-error (:type result)))))
 
@@ -79,15 +79,15 @@
     (is (nil? (validate army (hero hero-eid) "main")))))
 
 (deftest heroes-in-both-sections-count-toward-army-cap
-  (let [army [(assoc (hero (UUID/randomUUID)) :section "main")
-              (assoc (hero (UUID/randomUUID)) :section "reinforcements")]
+  (let [army   [(assoc (hero (UUID/randomUUID)) :section "main")
+                (assoc (hero (UUID/randomUUID)) :section "reinforcements")]
         result (validate army (hero hero-eid) "main")]
     (is (= :draft/add-error (:type result)))))
 
 ;; ─── Rule 2b: SEMC+WM cap (4 per army) ───────────────────────────────────────
 
 (deftest semc-wm-cap-exceeded-returns-error
-  (let [army (repeatedly 4 #(monster (UUID/randomUUID)))
+  (let [army   (repeatedly 4 #(monster (UUID/randomUUID)))
         result (validate army (monster monster-eid) "main")]
     (is (= :draft/add-error (:type result)))))
 
@@ -96,36 +96,36 @@
     (is (nil? (validate army (monster monster-eid) "main")))))
 
 (deftest heroes-count-toward-semc-wm-cap
-  (let [army (vec (concat
-                   (take 3 (repeatedly #(monster (UUID/randomUUID))))
-                   [(hero (UUID/randomUUID))]))
+  (let [army   (vec (concat
+                     (take 3 (repeatedly #(monster (UUID/randomUUID))))
+                     [(hero (UUID/randomUUID))]))
         result (validate army (hero hero-eid) "main")]
     (is (= :draft/add-error (:type result)))))
 
 ;; ─── Rule 2c: Unique unit cap (1 per army) ────────────────────────────────────
 
 (deftest unique-unit-already-in-army-returns-error
-  (let [unique-unit {:eid hero-eid :unit-category-name "Hero" :is-unique true
-                     :name "Legendary Hero" :cost 400 :section "main"}
-        army [unique-unit]
-        result (validate army (assoc unique-unit :eid (UUID/randomUUID)
-                                     :section "main") "main")]
+  (let [unique-unit {:eid  hero-eid         :unit-category-name "Hero" :is-unique true
+                     :name "Legendary Hero" :cost               400    :section   "main"}
+        army        [unique-unit]
+        result      (validate army (assoc unique-unit :eid (UUID/randomUUID)
+                                          :section "main") "main")]
     ;; Different UUID but same "unit type" - in practice this would be blocked by per-unit-cap.
     ;; For uniqueness, we add the same eid:
     (is (nil? result))))  ;; different eid → no unique-unit-copies violation
 
 (deftest unique-unit-same-eid-already-in-army-returns-error
-  (let [unique-unit {:eid hero-eid :unit-category-name "Hero" :is-unique true
-                     :name "Legendary Hero" :cost 400 :section "main"}
-        army [unique-unit]
-        result (validate army unique-unit "main")]
+  (let [unique-unit {:eid  hero-eid         :unit-category-name "Hero" :is-unique true
+                     :name "Legendary Hero" :cost               400    :section   "main"}
+        army        [unique-unit]
+        result      (validate army unique-unit "main")]
     (is (= :draft/add-error (:type result)))))
 
 ;; ─── Rule 2d: Per-unit cap (2 per army) ───────────────────────────────────────
 
 (deftest per-unit-cap-exceeded-returns-error
-  (let [unit (infantry)
-        army (into [] (repeat 6 (assoc unit :section "main")))
+  (let [unit   (infantry)
+        army   (into [] (repeat 6 (assoc unit :section "main")))
         result (validate army unit "main")]
     (is (= :draft/add-error (:type result)))))
 
@@ -137,8 +137,8 @@
 ;; ─── Rule 3: Section slot cap (20 per section) ────────────────────────────────
 
 (deftest section-slot-cap-exceeded-returns-error
-  (let [army (mapv #(assoc (infantry %) :section "main")
-                   (repeatedly 20 #(UUID/randomUUID)))
+  (let [army   (mapv #(assoc (infantry %) :section "main")
+                     (repeatedly 20 #(UUID/randomUUID)))
         result (validate army (infantry infantry-eid) "main")]
     (is (= :draft/add-error (:type result)))))
 
@@ -167,7 +167,7 @@
 ;; ─── Rule 2e: Chariot+War Machine cap (4 per army) ────────────────────────────
 
 (deftest chariot-wm-cap-exceeded-returns-error
-  (let [army (repeatedly 4 #(chariot (UUID/randomUUID)))
+  (let [army   (repeatedly 4 #(chariot (UUID/randomUUID)))
         result (validate army (chariot chariot-eid) "main")]
     (is (= :draft/add-error (:type result)))))
 
@@ -176,16 +176,16 @@
     (is (nil? (validate army (chariot chariot-eid) "main")))))
 
 (deftest war-machines-count-toward-chariot-wm-cap
-  (let [army (vec (concat
-                   (take 3 (repeatedly #(chariot (UUID/randomUUID))))
-                   [(war-machine (UUID/randomUUID))]))
+  (let [army   (vec (concat
+                     (take 3 (repeatedly #(chariot (UUID/randomUUID))))
+                     [(war-machine (UUID/randomUUID))]))
         result (validate army (war-machine warmachine-eid) "main")]
     (is (= :draft/add-error (:type result)))))
 
 (deftest chariots-and-war-machines-share-cap
-  (let [army (vec (concat
-                   (take 2 (repeatedly #(chariot (UUID/randomUUID))))
-                   (take 2 (repeatedly #(war-machine (UUID/randomUUID))))))
+  (let [army   (vec (concat
+                     (take 2 (repeatedly #(chariot (UUID/randomUUID))))
+                     (take 2 (repeatedly #(war-machine (UUID/randomUUID))))))
         result (validate army (chariot chariot-eid) "main")]
     (is (= :draft/add-error (:type result)))))
 

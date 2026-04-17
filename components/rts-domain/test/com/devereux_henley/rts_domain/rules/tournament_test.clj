@@ -206,10 +206,10 @@
 ;; ─── advance-winners-bracket-round ──────────────────────────────────────────
 
 (deftest advance-winners-pairs-adjacent-winners
-  (let [prev [{:status "complete" :winner-sub "a" :player-one-sub "a" :player-two-sub "x"}
-              {:status "complete" :winner-sub "b" :player-one-sub "b" :player-two-sub "y"}
-              {:status "complete" :winner-sub "c" :player-one-sub "c" :player-two-sub "z"}
-              {:status "complete" :winner-sub "d" :player-one-sub "d" :player-two-sub "w"}]
+  (let [prev   [{:status "complete" :winner-sub "a" :player-one-sub "a" :player-two-sub "x"}
+                {:status "complete" :winner-sub "b" :player-one-sub "b" :player-two-sub "y"}
+                {:status "complete" :winner-sub "c" :player-one-sub "c" :player-two-sub "z"}
+                {:status "complete" :winner-sub "d" :player-one-sub "d" :player-two-sub "w"}]
         result (rules/advance-winners-bracket-round prev)]
     (is (= 2 (count result)))
     (is (= "a" (:player-one-sub (first result))))
@@ -218,8 +218,8 @@
     (is (= "d" (:player-two-sub (second result))))))
 
 (deftest advance-winners-skips-incomplete-matches
-  (let [prev [{:status "complete" :winner-sub "a" :player-one-sub "a" :player-two-sub "x"}
-              {:status "pending"  :winner-sub nil :player-one-sub "b" :player-two-sub "y"}]
+  (let [prev   [{:status "complete" :winner-sub "a" :player-one-sub "a" :player-two-sub "x"}
+                {:status "pending" :winner-sub nil :player-one-sub "b" :player-two-sub "y"}]
         result (rules/advance-winners-bracket-round prev)]
     (is (= 1 (count result)))
     (is (= "a" (:player-one-sub (first result))))
@@ -228,10 +228,10 @@
 ;; ─── generate-losers-bracket-round ──────────────────────────────────────────
 
 (deftest losers-round-zero-pairs-wb-losers
-  (let [wb [{:status "complete" :winner-sub "a" :player-one-sub "a" :player-two-sub "x"}
-            {:status "complete" :winner-sub "b" :player-one-sub "y" :player-two-sub "b"}
-            {:status "complete" :winner-sub "c" :player-one-sub "c" :player-two-sub "z"}
-            {:status "complete" :winner-sub "d" :player-one-sub "w" :player-two-sub "d"}]
+  (let [wb     [{:status "complete" :winner-sub "a" :player-one-sub "a" :player-two-sub "x"}
+                {:status "complete" :winner-sub "b" :player-one-sub "y" :player-two-sub "b"}
+                {:status "complete" :winner-sub "c" :player-one-sub "c" :player-two-sub "z"}
+                {:status "complete" :winner-sub "d" :player-one-sub "w" :player-two-sub "d"}]
         result (rules/generate-losers-bracket-round 0 wb nil)]
     (is (= 2 (count result)))
     ;; Losers in order: x, y, z, w
@@ -241,8 +241,8 @@
     (is (= "w" (:player-two-sub (second result))))))
 
 (deftest losers-round-zero-ignores-byes
-  (let [wb [{:status "complete" :winner-sub "a" :player-one-sub "a" :player-two-sub nil}
-            {:status "complete" :winner-sub "b" :player-one-sub "b" :player-two-sub "y"}]
+  (let [wb     [{:status "complete" :winner-sub "a" :player-one-sub "a" :player-two-sub nil}
+                {:status "complete" :winner-sub "b" :player-one-sub "b" :player-two-sub "y"}]
         result (rules/generate-losers-bracket-round 0 wb nil)]
     (is (= 1 (count result)))
     (is (= "y" (:player-one-sub (first result))))
@@ -253,7 +253,7 @@
                     {:status "complete" :winner-sub "b" :player-one-sub "b" :player-two-sub "y"}]
         lb-round-0 [{:status "complete" :winner-sub "l1" :player-one-sub "l1" :player-two-sub "l2"}
                     {:status "complete" :winner-sub "l3" :player-one-sub "l3" :player-two-sub "l4"}]
-        result (rules/generate-losers-bracket-round 1 wb-round-1 lb-round-0)]
+        result     (rules/generate-losers-bracket-round 1 wb-round-1 lb-round-0)]
     (is (= 2 (count result)))
     (is (= "l1" (:player-one-sub (first result))))
     (is (= "x"  (:player-two-sub (first result))))

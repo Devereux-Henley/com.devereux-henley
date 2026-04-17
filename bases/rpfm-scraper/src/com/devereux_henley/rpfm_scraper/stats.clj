@@ -98,16 +98,16 @@
   stderr."
   [filepath faction-name faction-prefixes name-index main-unit-map land-unit-stats
    agent-subtype-map equipment-map ancillary-cost-map ability-name->key]
-  (let [content   (slurp filepath)
-        not-found (atom [])
-        no-data   (atom [])
-        found     (atom 0)
+  (let [content     (slurp filepath)
+        not-found   (atom [])
+        no-data     (atom [])
+        found       (atom 0)
         replacer
         (fn [m]
-          (let [prefix-str    (nth m 1)
-                raw-name      (str/replace (nth m 2) "''" "'")
-                old-stats-str (nth m 3)
-                suffix        (nth m 4)
+          (let [prefix-str     (nth m 1)
+                raw-name       (str/replace (nth m 2) "''" "'")
+                old-stats-str  (nth m 3)
+                suffix         (nth m 4)
                 [unit-key _lu] (nm/find-unit-key raw-name faction-prefixes name-index)]
             (cond
               (nil? unit-key)

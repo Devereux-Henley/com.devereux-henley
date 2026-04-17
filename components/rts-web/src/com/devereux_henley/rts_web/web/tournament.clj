@@ -46,9 +46,9 @@
                  registration-opens-at registration-closes-at]} :body
          {:keys [version]}                                      :query
          {:keys [eid]}                                          :path} :parameters
-        router                                                          :reitit.core/router
-        session                                                         :ory-session
-        :as                                                             _request}]
+        router                                                         :reitit.core/router
+        session                                                        :ory-session
+        :as                                                            _request}]
     (let [response (web.core/handle-create-response
                     domain/tournament-resource
                     {:hostname (:hostname dependencies) :router router}
@@ -108,10 +108,10 @@
 
 (defmethod integrant.core/init-key ::update-status
   [_init-key dependencies]
-  (fn [{{{:keys [eid]}       :path
+  (fn [{{{:keys [eid]}    :path
          {:keys [status]} :body} :parameters
-        session                   :ory-session
-        :as                       _request}]
+        session                  :ory-session
+        :as                      _request}]
     (let [player-sub (get-in session [:identity :id])
           result     (domain/advance-tournament dependencies eid status player-sub)]
       (case (:type result)
@@ -124,18 +124,18 @@
         :as                   _request}]
     (let [state (domain/get-tournament-state dependencies eid)]
       {:status 200
-       :body   {:type       :tournament/registration
-                :opens-at   (get-in state [:registration :opens-at])
-                :closes-at  (get-in state [:registration :closes-at])
-                :timezone   (get-in state [:registration :timezone])
+       :body   {:type         :tournament/registration
+                :opens-at     (get-in state [:registration :opens-at])
+                :closes-at    (get-in state [:registration :closes-at])
+                :timezone     (get-in state [:registration :timezone])
                 :closed-early (get-in state [:registration :closed-early])}})))
 
 (defmethod integrant.core/init-key ::update-registration
   [_init-key dependencies]
-  (fn [{{{:keys [eid]}           :path
+  (fn [{{{:keys [eid]}          :path
          {:keys [closed-early]} :body} :parameters
-        session                         :ory-session
-        :as                             _request}]
+        session                        :ory-session
+        :as                            _request}]
     (let [player-sub (get-in session [:identity :id])
           result     (if closed-early
                        (domain/close-registration-early dependencies eid player-sub)
@@ -167,10 +167,10 @@
 
 (defmethod integrant.core/init-key ::create-match
   [_init-key dependencies]
-  (fn [{{{:keys [eid]}                                     :path
+  (fn [{{{:keys [eid]}                           :path
          {:keys [phase-index round-index
                  player-one-sub player-two-sub]} :body} :parameters
-        :as                                                  _request}]
+        :as                                             _request}]
     (let [result (domain/create-match
                   dependencies
                   eid
@@ -184,9 +184,9 @@
 
 (defmethod integrant.core/init-key ::update-match-result
   [_init-key dependencies]
-  (fn [{{{:keys [match-eid]}     :path
+  (fn [{{{:keys [match-eid]}  :path
          {:keys [winner-sub]} :body} :parameters
-        :as                           _request}]
+        :as                          _request}]
     (let [result (domain/update-match-result dependencies match-eid winner-sub)]
       (if (= :tournament/match-error (:type result))
         {:status 422 :body result}
@@ -196,9 +196,9 @@
 
 (defmethod integrant.core/init-key ::record-game
   [_init-key dependencies]
-  (fn [{{{:keys [match-eid]}     :path
+  (fn [{{{:keys [match-eid]}  :path
          {:keys [winner-sub]} :body} :parameters
-        :as                           _request}]
+        :as                          _request}]
     (let [result (domain/record-game-result dependencies match-eid winner-sub)]
       (if (= :tournament/match-error (:type result))
         {:status 422 :body result}
@@ -216,10 +216,10 @@
 
 (defmethod integrant.core/init-key ::update-phase-configuration
   [_init-key dependencies]
-  (fn [{{{:keys [eid]}                             :path
-         {:keys [phases qualifier-count]} :body}   :parameters
-        session                                    :ory-session
-        :as                                        _request}]
+  (fn [{{{:keys [eid]}                    :path
+         {:keys [phases qualifier-count]} :body} :parameters
+        session                                  :ory-session
+        :as                                      _request}]
     (let [player-sub (get-in session [:identity :id])
           result     (domain/configure-phases dependencies eid
                                               {:phases phases :qualifier-count qualifier-count}

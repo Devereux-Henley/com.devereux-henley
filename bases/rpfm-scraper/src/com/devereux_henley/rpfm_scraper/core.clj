@@ -71,103 +71,103 @@
 (defn- load-tables [data-dir]
   (let [p #(path-in data-dir %)]
     (log "Loading game tables...")
-    (let [armour-map (tables/build-armour-map (:rows (rpfm/parse-rpfm-table (p "unit_armour_types_tables.json"))))
-          _ (logf "  armour types: %d" (count armour-map))
+    (let [armour-map                             (tables/build-armour-map (:rows (rpfm/parse-rpfm-table (p "unit_armour_types_tables.json"))))
+          _                                      (logf "  armour types: %d" (count armour-map))
 
-          entity-map (tables/build-entity-map (:rows (rpfm/parse-rpfm-table (p "battle_entities_tables.json"))))
-          _ (logf "  battle entities: %d" (count entity-map))
+          entity-map                             (tables/build-entity-map (:rows (rpfm/parse-rpfm-table (p "battle_entities_tables.json"))))
+          _                                      (logf "  battle entities: %d" (count entity-map))
 
-          melee-map (tables/build-melee-weapon-map (:rows (rpfm/parse-rpfm-table (p "melee_weapons_tables.json"))))
-          _ (logf "  melee weapons: %d" (count melee-map))
+          melee-map                              (tables/build-melee-weapon-map (:rows (rpfm/parse-rpfm-table (p "melee_weapons_tables.json"))))
+          _                                      (logf "  melee weapons: %d" (count melee-map))
 
-          missile-wep-map (tables/build-missile-weapon-map (:rows (rpfm/parse-rpfm-table (p "missile_weapons_tables.json"))))
-          _ (logf "  missile weapons: %d" (count missile-wep-map))
+          missile-wep-map                        (tables/build-missile-weapon-map (:rows (rpfm/parse-rpfm-table (p "missile_weapons_tables.json"))))
+          _                                      (logf "  missile weapons: %d" (count missile-wep-map))
 
-          projectile-map (tables/build-projectile-map (:rows (rpfm/parse-rpfm-table (p "projectiles_tables.json"))))
-          _ (logf "  projectiles: %d" (count projectile-map))
+          projectile-map                         (tables/build-projectile-map (:rows (rpfm/parse-rpfm-table (p "projectiles_tables.json"))))
+          _                                      (logf "  projectiles: %d" (count projectile-map))
 
-          mount-entity-map (tables/build-mount-entity-map
-                            (:rows (rpfm/parse-rpfm-table (p "mounts_tables.json"))))
-          _ (logf "  mounts: %d" (count mount-entity-map))
+          mount-entity-map                       (tables/build-mount-entity-map
+                                                  (:rows (rpfm/parse-rpfm-table (p "mounts_tables.json"))))
+          _                                      (logf "  mounts: %d" (count mount-entity-map))
 
-          engine-entity-map (tables/build-engine-entity-map
-                             (:rows (rpfm/parse-rpfm-table (p "battlefield_engines_tables.json"))))
-          _ (logf "  battlefield engines: %d" (count engine-entity-map))
+          engine-entity-map                      (tables/build-engine-entity-map
+                                                  (:rows (rpfm/parse-rpfm-table (p "battlefield_engines_tables.json"))))
+          _                                      (logf "  battlefield engines: %d" (count engine-entity-map))
 
-          attribute-group-map (tables/build-attribute-group-map
-                               (:rows (rpfm/parse-rpfm-table (p "unit_attributes_to_groups_junctions_tables.json"))))
-          _ (logf "  unit attribute groups: %d" (count attribute-group-map))
+          attribute-group-map                    (tables/build-attribute-group-map
+                                                  (:rows (rpfm/parse-rpfm-table (p "unit_attributes_to_groups_junctions_tables.json"))))
+          _                                      (logf "  unit attribute groups: %d" (count attribute-group-map))
 
-          land-unit-stats (tables/build-land-unit-map
-                           (:rows (rpfm/parse-rpfm-table (p "land_units_tables.json")))
-                           armour-map entity-map melee-map missile-wep-map projectile-map
-                           mount-entity-map engine-entity-map attribute-group-map)
-          _ (logf "  land units: %d" (count land-unit-stats))
+          land-unit-stats                        (tables/build-land-unit-map
+                                                  (:rows (rpfm/parse-rpfm-table (p "land_units_tables.json")))
+                                                  armour-map entity-map melee-map missile-wep-map projectile-map
+                                                  mount-entity-map engine-entity-map attribute-group-map)
+          _                                      (logf "  land units: %d" (count land-unit-stats))
 
-          main-unit-rows (:rows (rpfm/parse-rpfm-table (p "main_units_tables.json")))
-          main-unit-map (tables/build-main-unit-map main-unit-rows)
-          _ (logf "  main units: %d" (count main-unit-map))
+          main-unit-rows                         (:rows (rpfm/parse-rpfm-table (p "main_units_tables.json")))
+          main-unit-map                          (tables/build-main-unit-map main-unit-rows)
+          _                                      (logf "  main units: %d" (count main-unit-map))
 
-          special-ability-map (tables/build-special-ability-map (:rows (rpfm/parse-rpfm-table (p "unit_special_abilities_tables.json"))))
-          _ (logf "  special abilities: %d" (count special-ability-map))
+          special-ability-map                    (tables/build-special-ability-map (:rows (rpfm/parse-rpfm-table (p "unit_special_abilities_tables.json"))))
+          _                                      (logf "  special abilities: %d" (count special-ability-map))
 
-          land-units-loc (into {}
-                               (map (fn [[k v]] [k (normalize-unicode-dashes v)]))
-                               (rpfm/parse-loc-file (p "land_units_loc.json")))
-          _ (logf "  land units loc: %d entries" (count land-units-loc))
+          land-units-loc                         (into {}
+                                                       (map (fn [[k v]] [k (normalize-unicode-dashes v)]))
+                                                       (rpfm/parse-loc-file (p "land_units_loc.json")))
+          _                                      (logf "  land units loc: %d entries" (count land-units-loc))
 
-          agent-subtype-map (tables/build-agent-subtype-map (:rows (rpfm/parse-rpfm-table (p "agent_subtypes_tables.json"))))
-          _ (logf "  agent subtypes: %d" (count agent-subtype-map))
+          agent-subtype-map                      (tables/build-agent-subtype-map (:rows (rpfm/parse-rpfm-table (p "agent_subtypes_tables.json"))))
+          _                                      (logf "  agent subtypes: %d" (count agent-subtype-map))
 
-          equipment-map (tables/build-equipment-map (:rows (rpfm/parse-rpfm-table (p "ancillaries_included_agent_subtypes_tables.json"))))
-          _ (logf "  equipment (agent subtypes with items): %d" (count equipment-map))
+          equipment-map                          (tables/build-equipment-map (:rows (rpfm/parse-rpfm-table (p "ancillaries_included_agent_subtypes_tables.json"))))
+          _                                      (logf "  equipment (agent subtypes with items): %d" (count equipment-map))
 
-          ancillaries-rows (:rows (rpfm/parse-rpfm-table (p "ancillaries_tables.json")))
-          ancillary-cost-map (tables/build-ancillary-cost-map ancillaries-rows)
-          _ (logf "  ancillary gold costs: %d" (count ancillary-cost-map))
+          ancillaries-rows                       (:rows (rpfm/parse-rpfm-table (p "ancillaries_tables.json")))
+          ancillary-cost-map                     (tables/build-ancillary-cost-map ancillaries-rows)
+          _                                      (logf "  ancillary gold costs: %d" (count ancillary-cost-map))
 
-          ancillaries-loc (rpfm/parse-loc-file (p "ancillaries_loc.json"))
-          ancillary-name-map (items-seed/build-ancillary-name-map ancillaries-loc)
-          _ (logf "  ancillary names: %d" (count ancillary-name-map))
+          ancillaries-loc                        (rpfm/parse-loc-file (p "ancillaries_loc.json"))
+          ancillary-name-map                     (items-seed/build-ancillary-name-map ancillaries-loc)
+          _                                      (logf "  ancillary names: %d" (count ancillary-name-map))
 
-          unit-ability-map (tables/build-unit-ability-map (:rows (rpfm/parse-rpfm-table (p "unit_abilities_tables.json"))))
-          _ (logf "  unit abilities (icons): %d" (count unit-ability-map))
+          unit-ability-map                       (tables/build-unit-ability-map (:rows (rpfm/parse-rpfm-table (p "unit_abilities_tables.json"))))
+          _                                      (logf "  unit abilities (icons): %d" (count unit-ability-map))
 
-          anc-type-rows (:rows (rpfm/parse-rpfm-table (p "ancillary_types_tables.json")))
-          ancillary-type-icon-map (items-seed/build-ancillary-type-icon-map anc-type-rows)
-          _ (logf "  ancillary type icons: %d" (count ancillary-type-icon-map))
+          anc-type-rows                          (:rows (rpfm/parse-rpfm-table (p "ancillary_types_tables.json")))
+          ancillary-type-icon-map                (items-seed/build-ancillary-type-icon-map anc-type-rows)
+          _                                      (logf "  ancillary type icons: %d" (count ancillary-type-icon-map))
 
-          custom-battle-mount-rows (:rows (rpfm/parse-rpfm-table (p "units_custom_battle_mounts_tables.json")))
-          _ (logf "  custom battle mounts (MP): %d" (count custom-battle-mount-rows))
+          custom-battle-mount-rows               (:rows (rpfm/parse-rpfm-table (p "units_custom_battle_mounts_tables.json")))
+          _                                      (logf "  custom battle mounts (MP): %d" (count custom-battle-mount-rows))
 
-          ua-loc (rpfm/parse-loc-file (p "unit_abilities_loc.json"))
+          ua-loc                                 (rpfm/parse-loc-file (p "unit_abilities_loc.json"))
           [ability-name-map ability-tooltip-map] (tables/build-ability-loc-maps ua-loc)
-          _ (logf "  ability loc: %d names, %d tooltips"
-                  (count ability-name-map) (count ability-tooltip-map))
+          _                                      (logf "  ability loc: %d names, %d tooltips"
+                                                       (count ability-name-map) (count ability-tooltip-map))
 
-          ability-name->key (tables/build-ability-name-key-map ability-name-map)
-          _ (logf "  ability name->key map: %d entries" (count ability-name->key))
+          ability-name->key                      (tables/build-ability-name-key-map ability-name-map)
+          _                                      (logf "  ability name->key map: %d entries" (count ability-name->key))
 
-          _ (log "Building name index...")
-          name-index (nm/build-name-index land-units-loc main-unit-rows)
-          _ (logf "  %d unique unit names indexed" (count name-index))]
-      {:main-unit-rows main-unit-rows
-       :main-unit-map main-unit-map
-       :land-unit-stats land-unit-stats
-       :special-ability-map special-ability-map
-       :land-units-loc land-units-loc
-       :agent-subtype-map agent-subtype-map
-       :equipment-map equipment-map
-       :ancillaries-rows ancillaries-rows
-       :ancillary-cost-map ancillary-cost-map
-       :ancillary-name-map ancillary-name-map
-       :ancillary-type-icon-map ancillary-type-icon-map
+          _                                      (log "Building name index...")
+          name-index                             (nm/build-name-index land-units-loc main-unit-rows)
+          _                                      (logf "  %d unique unit names indexed" (count name-index))]
+      {:main-unit-rows           main-unit-rows
+       :main-unit-map            main-unit-map
+       :land-unit-stats          land-unit-stats
+       :special-ability-map      special-ability-map
+       :land-units-loc           land-units-loc
+       :agent-subtype-map        agent-subtype-map
+       :equipment-map            equipment-map
+       :ancillaries-rows         ancillaries-rows
+       :ancillary-cost-map       ancillary-cost-map
+       :ancillary-name-map       ancillary-name-map
+       :ancillary-type-icon-map  ancillary-type-icon-map
        :custom-battle-mount-rows custom-battle-mount-rows
-       :unit-ability-map unit-ability-map
-       :ability-name-map ability-name-map
-       :ability-tooltip-map ability-tooltip-map
-       :ability-name->key ability-name->key
-       :name-index name-index})))
+       :unit-ability-map         unit-ability-map
+       :ability-name-map         ability-name-map
+       :ability-tooltip-map      ability-tooltip-map
+       :ability-name->key        ability-name->key
+       :name-index               name-index})))
 
 (defn- update-unit-seeds! [data dry-run?]
   (log "Updating unit seed files...")
@@ -191,7 +191,7 @@
 
 (defn- update-abilities-seed! [data dry-run?]
   (log "Updating ability descriptions and costs...")
-  (let [file (io/file seed-dir "seed-abilities.sql")
+  (let [file        (io/file seed-dir "seed-abilities.sql")
         new-content (abilities-seed/update-ability-seed-file
                      (.getPath file)
                      (:ability-name-map data)
@@ -202,7 +202,7 @@
 
 (defn- update-spell-seed! [data dry-run?]
   (log "Updating spell gold costs...")
-  (let [file (io/file seed-dir "seed-spells.sql")
+  (let [file        (io/file seed-dir "seed-spells.sql")
         new-content (spells-seed/update-spell-seed-file
                      (.getPath file)
                      (:special-ability-map data))]
@@ -223,15 +223,15 @@
 (defn- generate-unit-item-seed! [data item-key->id dry-run?]
   (log "Generating unit-item seed...")
   (let [unit-id-map (unit-items-seed/build-unit-seed-id-map seed-dir)
-        _ (logf "  %d units parsed from seed files" (count unit-id-map))
-        content (unit-items-seed/generate-unit-item-seed
-                 unit-id-map
-                 (:name-index data)
-                 (:main-unit-map data)
-                 (:agent-subtype-map data)
-                 (:equipment-map data)
-                 item-key->id)
-        row-count (count (re-seq #"\n  \(" content))]
+        _           (logf "  %d units parsed from seed files" (count unit-id-map))
+        content     (unit-items-seed/generate-unit-item-seed
+                     unit-id-map
+                     (:name-index data)
+                     (:main-unit-map data)
+                     (:agent-subtype-map data)
+                     (:equipment-map data)
+                     item-key->id)
+        row-count   (count (re-seq #"\n  \(" content))]
     (when-not dry-run?
       (spit (io/file seed-dir "seed-unit-items.sql") content))
     (logf "  %d unit-item links" row-count)

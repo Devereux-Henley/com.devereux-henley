@@ -1,0 +1,27 @@
+{:function-arguments-indentation :community
+ :normalize-newlines-at-file-end? true
+ :align-form-columns? true
+ :align-map-columns? true
+ :paths ["bases/rpfm-scraper/src"
+         "bases/rts-api/src"
+         "bases/rts-api/test"
+         "bases/rts-data-deploy/src"
+         "bases/rts-data-deploy/test"
+         "components/content-negotiation/src"
+         "components/content-negotiation/test"
+         "components/e2e/src"
+         "components/http/src"
+         "components/jdbc/src"
+         "components/resourcekit/src"
+         "components/resourcekit/test"
+         "components/rts-data-access/src"
+         "components/rts-data/src"
+         "components/rts-domain/src"
+         "components/rts-domain/test"
+         "components/rts-web/src"
+         "components/schema/src"
+         "components/schema/test"
+         "development/src"
+         "projects/api/build.clj"
+         "projects/deploy-data/build.clj"
+         "projects/rpfm-scraper/build.clj"]}

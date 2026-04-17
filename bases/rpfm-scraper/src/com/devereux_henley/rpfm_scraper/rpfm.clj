@@ -29,16 +29,16 @@
   "Parse an RPFM-decoded DB table file. Returns {:fields [...], :rows [...]}
   where each row is a map of field-name → scalar value."
   [filepath]
-  (let [obj     (read-json filepath)
-        info    (or (get obj "DBRFileInfo") (get obj "LocRFileInfo"))
-        entry   (first info)
-        table   (get entry "table")
-        fields  (mapv #(get % "name") (get-in table ["definition" "fields"]))
-        rows    (mapv (fn [row]
-                        (into {} (map-indexed
-                                  (fn [i cell] [(nth fields i) (cell-val cell)])
-                                  row)))
-                      (get table "table_data"))]
+  (let [obj    (read-json filepath)
+        info   (or (get obj "DBRFileInfo") (get obj "LocRFileInfo"))
+        entry  (first info)
+        table  (get entry "table")
+        fields (mapv #(get % "name") (get-in table ["definition" "fields"]))
+        rows   (mapv (fn [row]
+                       (into {} (map-indexed
+                                 (fn [i cell] [(nth fields i) (cell-val cell)])
+                                 row)))
+                     (get table "table_data"))]
     {:fields fields :rows rows}))
 
 (defn parse-loc-file

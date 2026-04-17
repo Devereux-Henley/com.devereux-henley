@@ -123,4 +123,3 @@
 ;;; ─── Social Media DB queries ──────────────────────────────────────────────
 
 (def get-platform-by-eid query.social-media/get-platform-by-eid)
-

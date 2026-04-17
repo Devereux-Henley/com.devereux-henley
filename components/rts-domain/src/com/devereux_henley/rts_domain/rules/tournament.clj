@@ -45,8 +45,8 @@
   [standings completed-matches]
   (let [results (reduce
                  (fn [acc match]
-                   (let [p1 (:player-one-sub match)
-                         p2 (:player-two-sub match)
+                   (let [p1     (:player-one-sub match)
+                         p2     (:player-two-sub match)
                          winner (:winner-sub match)]
                      (cond
                        (nil? winner) acc
@@ -115,21 +115,21 @@
             [(vec (remove #{bye-candidate} players)) bye-candidate])
           [players nil])
         ;; Pair adjacent players, avoiding repeat matchups
-        pairs (loop [remaining players
-                     result    []]
-                (if (< (count remaining) 2)
-                  result
-                  (let [p1   (first remaining)
-                        rest (vec (rest remaining))
+        pairs    (loop [remaining players
+                        result    []]
+                   (if (< (count remaining) 2)
+                     result
+                     (let [p1   (first remaining)
+                           rest (vec (rest remaining))
                         ;; Find first opponent p1 hasn't played
-                        idx  (or (first (keep-indexed
-                                         (fn [i p2]
-                                           (when-not (contains? played #{p1 p2}) i))
-                                         rest))
-                                 0) ;; fallback: pair anyway if all played
-                        p2   (nth rest idx)
-                        rest (into (subvec rest 0 idx) (subvec rest (inc idx)))]
-                    (recur rest (conj result {:player-one-sub p1 :player-two-sub p2})))))]
+                           idx  (or (first (keep-indexed
+                                            (fn [i p2]
+                                              (when-not (contains? played #{p1 p2}) i))
+                                            rest))
+                                    0) ;; fallback: pair anyway if all played
+                           p2   (nth rest idx)
+                           rest (into (subvec rest 0 idx) (subvec rest (inc idx)))]
+                       (recur rest (conj result {:player-one-sub p1 :player-two-sub p2})))))]
     (cond-> pairs
       bye-player (conj {:player-one-sub bye-player :player-two-sub nil}))))
 
@@ -140,9 +140,9 @@
    Seeds 1 vs N, 2 vs N-1, etc. For non-power-of-2 counts, top seeds
    get first-round byes (nil player-two-sub)."
   [qualified-players]
-  (let [n     (count qualified-players)
+  (let [n        (count qualified-players)
         ;; Next power of 2
-        slots (loop [s 1] (if (>= s n) s (recur (* s 2))))
+        slots    (loop [s 1] (if (>= s n) s (recur (* s 2))))
         ;; Seed order: 1st vs last, 2nd vs 2nd-last, etc.
         matchups (for [i (range (quot slots 2))]
                    (let [seed-a i
@@ -269,23 +269,23 @@
     (or
      ;; WB round 0: seeded initial bracket.
      (when (and (pos? wb-rounds) (not (exists? "winners" 0)))
-       {:bracket "winners" :round 0
+       {:bracket  "winners"                                :round 0
         :pairings (generate-elimination-bracket qualified)})
      ;; Subsequent WB rounds: pair previous round's winners.
      (some (fn [r]
              (when (and (not (exists? "winners" r))
                         (complete? "winners" (dec r)))
-               {:bracket "winners" :round r
+               {:bracket  "winners"                                                      :round r
                 :pairings (advance-winners-bracket-round (br-matches "winners" (dec r)))}))
            (range 1 wb-rounds))
      ;; LB rounds: first drops WB-0 losers; major rounds pull WB losers +
      ;; previous LB winners; minor rounds pair previous LB winners only.
      (some (fn [r]
-             (let [wb-src  (winners-source-round-for-losers-round r)
-                   wb-ok?  (or (nil? wb-src) (complete? "winners" wb-src))
-                   lb-ok?  (or (zero? r) (complete? "losers" (dec r)))]
+             (let [wb-src (winners-source-round-for-losers-round r)
+                   wb-ok? (or (nil? wb-src) (complete? "winners" wb-src))
+                   lb-ok? (or (zero? r) (complete? "losers" (dec r)))]
                (when (and (not (exists? "losers" r)) wb-ok? lb-ok?)
-                 {:bracket "losers" :round r
+                 {:bracket  "losers"                                        :round r
                   :pairings (generate-losers-bracket-round
                              r
                              (when wb-src (br-matches "winners" wb-src))
@@ -300,7 +300,7 @@
              lb-champ (when (pos? lb-rounds)
                         (first (winners-from-matches (br-matches "losers" (dec lb-rounds)))))]
          (when (and wb-champ (or (zero? lb-rounds) lb-champ))
-           {:bracket "grand-final" :round 0
+           {:bracket  "grand-final"                             :round 0
             :pairings (if (pos? lb-rounds)
                         (grand-final-pairing wb-champ lb-champ)
                         [])}))))))

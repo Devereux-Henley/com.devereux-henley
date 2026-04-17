@@ -12,13 +12,13 @@
    [reitit.coercion :as coercion-error]
    [reitit.coercion.malli]
    [reitit.dev.pretty :as pretty]
+   [reitit.openapi :as openapi]
    [reitit.ring :as ring]
    [reitit.ring.coercion :as coercion]
    [reitit.ring.middleware.exception :as exception]
    [reitit.ring.middleware.multipart :as multipart]
    [reitit.ring.middleware.muuntaja :as muuntaja]
    [reitit.ring.middleware.parameters :as parameters]
-   [reitit.openapi :as openapi]
    [reitit.swagger-ui :as swagger-ui]
    [ring.adapter.jetty :as jetty]
    [ring.middleware.cookies]
@@ -252,8 +252,8 @@
     (ring/create-resource-handler {:root "rts-web/asset"
                                    :path "/"
                                    :not-found-handler
-                                   (fn [_] {:status  404
-                                            :body    "Oopsie"})})
+                                   (fn [_] {:status 404
+                                            :body   "Oopsie"})})
     (ring/create-default-handler))
    {:middleware [ring.middleware.cookies/wrap-cookies
                  auth-middleware]}))

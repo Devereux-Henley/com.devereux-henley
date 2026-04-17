@@ -597,4 +597,3 @@
     [:entry-eid :uuid]
     [:total-cost [:maybe :int]]
     [:budget draft-section-budget]]))
-

@@ -30,11 +30,11 @@
   [dependencies tournament-eid]
   (if-let [row (db/get-tournament-state (:connection dependencies) tournament-eid)]
     (jsonista/read-value (:state row) json-mapper)
-    {:status "registration"
-     :registration {:opens-at nil :closes-at nil :closed-early false}
-     :phases []
-     :current-phase nil
-     :standings []
+    {:status          "registration"
+     :registration    {:opens-at nil :closes-at nil :closed-early false}
+     :phases          []
+     :current-phase   nil
+     :standings       []
      :qualifier-count nil}))
 
 (defn set-tournament-state
@@ -48,25 +48,25 @@
 (defn create-tournament
   "Creates a new tournament with an initial state blob."
   [dependencies create-specification]
-  (let [created-at (Instant/now)
-        updated-at created-at
-        tz         (:timezone create-specification)
-        opens-at   (to-utc-instant (:registration-opens-at create-specification) tz)
-        closes-at  (to-utc-instant (:registration-closes-at create-specification) tz)
-        tournament (db/create-tournament
-                    (:connection dependencies)
-                    (-> create-specification
-                        (dissoc :registration-opens-at :registration-closes-at :timezone)
-                        (assoc :created-at created-at)
-                        (assoc :updated-at updated-at)))
-        initial-state {:status "registration"
-                       :registration {:opens-at (str opens-at)
-                                      :closes-at (str closes-at)
-                                      :timezone (str tz)
-                                      :closed-early false}
-                       :phases []
-                       :current-phase nil
-                       :standings []
+  (let [created-at    (Instant/now)
+        updated-at    created-at
+        tz            (:timezone create-specification)
+        opens-at      (to-utc-instant (:registration-opens-at create-specification) tz)
+        closes-at     (to-utc-instant (:registration-closes-at create-specification) tz)
+        tournament    (db/create-tournament
+                       (:connection dependencies)
+                       (-> create-specification
+                           (dissoc :registration-opens-at :registration-closes-at :timezone)
+                           (assoc :created-at created-at)
+                           (assoc :updated-at updated-at)))
+        initial-state {:status          "registration"
+                       :registration    {:opens-at     (str opens-at)
+                                         :closes-at    (str closes-at)
+                                         :timezone     (str tz)
+                                         :closed-early false}
+                       :phases          []
+                       :current-phase   nil
+                       :standings       []
                        :qualifier-count nil}]
     (set-tournament-state dependencies (:eid tournament) initial-state)
     (assoc tournament :type :tournament/tournament)))
@@ -136,8 +136,8 @@
       {:type :tournament/advance-error :message "Only the tournament organizer can advance the tournament."}
 
       :else
-      (let [state  (get-tournament-state dependencies tournament-eid)
-            error  (rules/validate-transition (:status state) target-status)]
+      (let [state (get-tournament-state dependencies tournament-eid)
+            error (rules/validate-transition (:status state) target-status)]
         (if error
           error
           (let [new-state (if (= "active" target-status)
@@ -221,10 +221,10 @@
         new-standings (rules/recalculate-standings (:standings state) completed)
         has-phases    (seq (:phases state))
         complete?     (when has-phases
-                        (let [all-done      (every? #(= "complete" (:status %)) all-matches)
-                              phase-idx     (:current-phase state)
-                              phase         (get-in state [:phases phase-idx])
-                              last-phase    (nil? (get-in state [:phases (inc phase-idx)]))]
+                        (let [all-done   (every? #(= "complete" (:status %)) all-matches)
+                              phase-idx  (:current-phase state)
+                              phase      (get-in state [:phases phase-idx])
+                              last-phase (nil? (get-in state [:phases (inc phase-idx)]))]
                           (cond
                             (not last-phase) false
                             (= "double-elimination" (:phase-type phase))
@@ -287,11 +287,11 @@
             (db/update-match-result (:connection dependencies) match-eid match-winner)
             (let [{:keys [standings tournament-complete]}
                   (recalculate-and-check-completion dependencies (:tournament-eid match))]
-              (cond-> {:type         :tournament/match-completed
-                       :match-eid    match-eid
-                       :winner-sub   match-winner
-                       :game-index   game-index
-                       :standings    standings}
+              (cond-> {:type       :tournament/match-completed
+                       :match-eid  match-eid
+                       :winner-sub match-winner
+                       :game-index game-index
+                       :standings  standings}
                 tournament-complete (assoc :tournament-complete true))))
           ;; Match still in progress
           {:type       :tournament/game-recorded
@@ -454,11 +454,11 @@
                         matches   (create-round-matches dependencies tournament-eid next-phase-idx 0 "winners" format pairings)
                         new-state (assoc state :current-phase next-phase-idx)]
                     (set-tournament-state dependencies tournament-eid new-state)
-                    {:type          :tournament/round-generated
-                     :round         0
-                     :phase         next-phase-idx
+                    {:type           :tournament/round-generated
+                     :round          0
+                     :phase          next-phase-idx
                      :phase-advanced true
-                     :matches       matches})))
+                     :matches        matches})))
               {:type    :tournament/round-generated
                :phase   phase-idx
                :matches created}))
@@ -485,11 +485,11 @@
                         matches   (create-round-matches dependencies tournament-eid next-phase-idx 0 "winners" format pairings)
                         new-state (assoc state :current-phase next-phase-idx)]
                     (set-tournament-state dependencies tournament-eid new-state)
-                    {:type          :tournament/round-generated
-                     :round         0
-                     :phase         next-phase-idx
+                    {:type           :tournament/round-generated
+                     :round          0
+                     :phase          next-phase-idx
                      :phase-advanced true
-                     :matches       matches})))
+                     :matches        matches})))
 
               ;; Generate next round in current phase
               :else

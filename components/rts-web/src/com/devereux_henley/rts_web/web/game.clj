@@ -94,8 +94,8 @@
   [_init-key dependencies]
   (fn [{{{:keys [eid]}   :path
          {:keys [embed]} :query} :parameters
-        router                    :reitit.core/router
-        :as                       _request}]
+        router                   :reitit.core/router
+        :as                      _request}]
     (let [embed-set (some-> embed (as-> e (set (map keyword (if (string? e) [e] e)))))]
       (web.core/handle-fetch-response
        domain/faction-resource
@@ -117,8 +117,8 @@
   [_init-key dependencies]
   (fn [{{{:keys [eid]}   :path
          {:keys [embed]} :query} :parameters
-        router                    :reitit.core/router
-        :as                       _request}]
+        router                   :reitit.core/router
+        :as                      _request}]
     (let [embed-set (some-> embed (as-> e (set (map keyword (if (string? e) [e] e)))))]
       (web.core/handle-fetch-response
        domain/game-resource

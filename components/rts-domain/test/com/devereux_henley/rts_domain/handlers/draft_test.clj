@@ -39,9 +39,9 @@
    :player-sub    test-player-sub})
 
 (def ^:private test-game-mode
-  {:eid                  test-game-mode-eid
-   :draft-value          1000
-   :reinforcement-value  500
+  {:eid                    test-game-mode-eid
+   :draft-value            1000
+   :reinforcement-value    500
    :reinforcements-enabled 1})
 
 (def ^:private infantry-unit
@@ -268,11 +268,11 @@
 (deftest add-unit-to-draft-returns-error-when-lord-already-in-main
   (let [existing-state (state-json {:main [test-lord-eid] :reinforcements []})]
     ((stub-add-unit [infantry-unit lord-unit
-                     {:eid (UUID/fromString "c0000000-0000-0000-0000-000000000003")
-                      :name "Archaon"
-                      :cost 200
+                     {:eid                (UUID/fromString "c0000000-0000-0000-0000-000000000003")
+                      :name               "Archaon"
+                      :cost               200
                       :unit-category-name "Lord"
-                      :unit-statistics "{}"}]
+                      :unit-statistics    "{}"}]
                     existing-state)
      (fn []
        (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid
@@ -315,11 +315,11 @@
 (deftest add-unit-to-draft-stores-mount-in-state
   (let [stored    (atom nil)
         mount-key "mount_barded_warhorse"
-        mounts    [{:id 1 :eid (UUID/randomUUID) :key mount-key
-                    :name "Barded Warhorse" :icon-key mount-key :cost 800}]]
-    ((stub-add-unit [{:eid test-unit-eid :name "Warrior Priest" :cost 100
+        mounts    [{:id   1                 :eid      (UUID/randomUUID) :key  mount-key
+                    :name "Barded Warhorse" :icon-key mount-key         :cost 800}]]
+    ((stub-add-unit [{:eid                test-unit-eid :name "Warrior Priest" :cost 100
                       :unit-category-name "Hero"
-                      :unit-statistics "{}"}]
+                      :unit-statistics    "{}"}]
                     nil
                     {:mounts mounts})
      (fn []
@@ -365,8 +365,8 @@
 (deftest update-unit-in-draft-replaces-selections
   (let [existing-state (state-json {:main [[test-unit-eid test-entry-eid]] :reinforcements []})
         mount-key      "mount_warhorse"
-        mounts         [{:id 1 :eid (UUID/randomUUID) :key mount-key
-                         :name "Warhorse" :icon-key mount-key :cost 50}]
+        mounts         [{:id   1          :eid      (UUID/randomUUID) :key  mount-key
+                         :name "Warhorse" :icon-key mount-key         :cost 50}]
         stored         (atom nil)]
     (with-redefs [data-access.contract/get-draft-by-eid         (fn [_ _] test-draft)
                   data-access.contract/get-game-mode-by-eid     (fn [_ _] test-game-mode)
@@ -391,8 +391,8 @@
 (deftest update-unit-in-draft-rejects-budget-violation
   (let [existing-state (state-json {:main [[test-unit-eid test-entry-eid]] :reinforcements []})
         mount-key      "mount_expensive"
-        mounts         [{:id 1 :eid (UUID/randomUUID) :key mount-key
-                         :name "Dragon" :icon-key mount-key :cost 10000}]]
+        mounts         [{:id   1        :eid      (UUID/randomUUID) :key  mount-key
+                         :name "Dragon" :icon-key mount-key         :cost 10000}]]
     (with-redefs [data-access.contract/get-draft-by-eid         (fn [_ _] test-draft)
                   data-access.contract/get-game-mode-by-eid     (fn [_ _] test-game-mode)
                   data-access.contract/get-draft-state-by-draft (fn [_ _] {:state existing-state})

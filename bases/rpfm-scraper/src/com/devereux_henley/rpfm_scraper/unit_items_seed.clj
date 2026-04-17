@@ -35,11 +35,11 @@
   "Full seed-unit-items.sql regen linking legendary lords/heroes to their
   pre-assigned items. Iterates factions in sorted order for stable output."
   [unit-id-map name-index main-unit-map agent-subtype-map equipment-map item-key->id]
-  (let [seen  (atom #{})
-        rows  (atom [])]
+  (let [seen (atom #{})
+        rows (atom [])]
     (doseq [[faction-name faction-prefixes] (sort-by key overrides/faction-key-map)
-            [[name faction] unit-id] unit-id-map
-            :when (= faction faction-name)]
+            [[name faction] unit-id]        unit-id-map
+            :when                           (= faction faction-name)]
       (let [[unit-key _] (nm/find-unit-key name faction-prefixes name-index)]
         (when unit-key
           (when-let [mu (get main-unit-map unit-key)]
@@ -59,11 +59,11 @@
              " version, created_by_sub, created_at, updated_at, deleted_at)\n"
              "VALUES\n"
              "  -- no rows generated\n;\n")
-        (let [header   ["INSERT OR IGNORE INTO unit_item(id, unit_id, item_id, version, created_by_sub, created_at, updated_at, deleted_at)"
-                        "VALUES"]
-              indexed  (map-indexed (fn [i r] [(inc i) r]) rows)
-              row-sql  (fn [[idx [unit-id item-id]]]
-                         (let [comma (if (< idx n) "," ";")]
-                           (format "  (%d, %d, %d, 1, '%s', STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), null)%s"
-                                   idx unit-id item-id seed-author comma)))]
+        (let [header  ["INSERT OR IGNORE INTO unit_item(id, unit_id, item_id, version, created_by_sub, created_at, updated_at, deleted_at)"
+                       "VALUES"]
+              indexed (map-indexed (fn [i r] [(inc i) r]) rows)
+              row-sql (fn [[idx [unit-id item-id]]]
+                        (let [comma (if (< idx n) "," ";")]
+                          (format "  (%d, %d, %d, 1, '%s', STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), null)%s"
+                                  idx unit-id item-id seed-author comma)))]
           (str (str/join "\n" (concat header (map row-sql indexed))) "\n"))))))

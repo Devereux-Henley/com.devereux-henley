@@ -79,3 +79,6 @@ jobs:
 
       - name: clj-kondo lint
         run: clj-kondo --lint bases components development
+
+      - name: cljfmt check
+        run: clojure -M:cljfmt check
