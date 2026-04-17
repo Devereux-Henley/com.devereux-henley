@@ -313,14 +313,12 @@
              :parameters {:path schema.contract/id-path-parameter}
              :responses  {200 {:body domain/tournament-status-response}}
              :handler    (integrant.core/ref ::web.tournament/get-status)}
-       :put {:summary    "Transition the tournament to a new status."
+       :put {:summary    "Update the tournament status."
              :openapi    {:tags         ["tournament"]
                           :produces     ["application/json"]
                           :operation-id "tournament-status/update"}
              :parameters {:path schema.contract/id-path-parameter
-                          :body (schema.contract/to-schema
-                                 [:map
-                                  [:status [:enum "active" "complete" "cancelled"]]])}
+                          :body domain/update-status-specification}
              :responses  {200 {:body domain/tournament-advance-response}}
              :handler    (integrant.core/ref ::web.tournament/update-status)}}]
      ["/registration"
@@ -331,14 +329,12 @@
                :parameters {:path schema.contract/id-path-parameter}
                :responses  {200 {:body domain/tournament-registration-response}}
                :handler    (integrant.core/ref ::web.tournament/get-registration)}
-       :patch {:summary    "Update the registration window (e.g. close early)."
+       :patch {:summary    "Update the tournament registration window."
                :openapi    {:tags         ["tournament"]
                             :produces     ["application/json"]
                             :operation-id "tournament-registration/update"}
                :parameters {:path schema.contract/id-path-parameter
-                            :body (schema.contract/to-schema
-                                   [:map
-                                    [:closed-early :boolean]])}
+                            :body domain/update-registration-specification}
                :handler    (integrant.core/ref ::web.tournament/update-registration)}}]
      ["/match"
       [""
@@ -401,25 +397,18 @@
                             :body domain/record-result-specification}
                :handler    (integrant.core/ref ::web.tournament/record-game)}}]]
      ["/phase"
-      {:put {:summary    "Configure tournament phases."
+      {:put {:summary    "Update the tournament phase configuration."
              :openapi    {:tags         ["tournament"]
                           :produces     ["application/json"]
-                          :operation-id "tournament-phase/configure"}
+                          :operation-id "tournament-phase/update"}
              :parameters {:path schema.contract/id-path-parameter
-                          :body (schema.contract/to-schema
-                                 [:map
-                                  [:phases [:sequential [:map
-                                                         [:phase-type :string]
-                                                         [:rounds [:sequential [:map
-                                                                                [:round-index :int]
-                                                                                [:format {:optional true} [:enum 1 3 5]]]]]]]]
-                                  [:qualifier-count {:optional true} [:maybe :int]]])}
+                          :body domain/configure-phases-specification}
              :handler    (integrant.core/ref ::web.tournament/configure-phases)}}]
-     ["/round/generate"
-      {:post {:summary    "Generate next round pairings for the current phase."
+     ["/round"
+      {:post {:summary    "Create the next round of matches for the current phase."
               :openapi    {:tags         ["tournament"]
                            :produces     ["application/json"]
-                           :operation-id "tournament-round/generate"}
+                           :operation-id "tournament-round/create"}
               :parameters {:path schema.contract/id-path-parameter}
               :handler    (integrant.core/ref ::web.tournament/generate-round)}}]]]
 

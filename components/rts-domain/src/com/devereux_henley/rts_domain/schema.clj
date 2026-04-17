@@ -95,6 +95,46 @@
     [:map
      [:type [:= :collection/game]]])))
 
+;; ─── Shared enums ───────────────────────────────────────────────────────────
+
+(def tournament-status-enum [:enum "registration" "active" "complete" "cancelled"])
+
+(def phase-type-enum [:enum "swiss" "round-robin" "single-elimination" "double-elimination"])
+
+(def match-format-enum [:enum 1 3 5])
+
+;; ─── Request body schemas ───────────────────────────────────────────────────
+
+(def update-status-specification
+  (schema.contract/to-schema
+   [:map
+    [:status tournament-status-enum]]))
+
+(def update-registration-specification
+  (schema.contract/to-schema
+   [:map
+    [:closed-early :boolean]]))
+
+(def phase-round-specification
+  (schema.contract/to-schema
+   [:map
+    [:round-index :int]
+    [:format {:optional true} match-format-enum]]))
+
+(def phase-specification
+  (schema.contract/to-schema
+   [:map
+    [:phase-type phase-type-enum]
+    [:rounds [:sequential phase-round-specification]]]))
+
+(def configure-phases-specification
+  (schema.contract/to-schema
+   [:map
+    [:phases [:sequential phase-specification]]
+    [:qualifier-count {:optional true} [:maybe :int]]]))
+
+;; ─── Resource schemas ───────────────────────────────────────────────────────
+
 (def tournament-resource
   (malli.util/merge
    schema.contract/base-resource
@@ -142,7 +182,7 @@
      [:player-two-sub [:maybe :string]]
      [:winner-sub [:maybe :string]]
      [:status :string]
-     [:format [:enum 1 3 5]]
+     [:format match-format-enum]
      [:_links
       [:map
        [:self :url]
@@ -207,7 +247,7 @@
   (schema.contract/to-schema
    [:map
     [:type [:= :tournament/status]]
-    [:status :string]
+    [:status tournament-status-enum]
     [:available-transitions [:sequential :string]]]))
 
 (def tournament-advance-response
@@ -215,7 +255,7 @@
    [:map
     [:type [:= :tournament/advance-success]]
     [:state [:map {:closed false}
-             [:status :string]]]]))
+             [:status tournament-status-enum]]]]))
 
 (def tournament-registration-response
   (schema.contract/to-schema
@@ -244,7 +284,7 @@
     [:player-two-sub [:maybe :string]]
     [:winner-sub [:maybe :string]]
     [:status :string]
-    [:format [:enum 1 3 5]]]))
+    [:format match-format-enum]]))
 
 (def tournament-matches-response
   (schema.contract/to-schema

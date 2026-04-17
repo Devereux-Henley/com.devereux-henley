@@ -476,7 +476,7 @@ test.describe('Tournament Phase & Swiss API', () => {
 
   test('generate first Swiss round', async ({ request }) => {
     const eid = await createTournamentWithPhases(request);
-    const res = await request.post(`${BASE}/api/tournament/${eid}/round/generate`, {
+    const res = await request.post(`${BASE}/api/tournament/${eid}/round`, {
       headers: headers('dev-admin'),
     });
     expect(res.status()).toBe(200);
@@ -489,7 +489,7 @@ test.describe('Tournament Phase & Swiss API', () => {
   test('record game result completes bo1 match', async ({ request }) => {
     const eid = await createTournamentWithPhases(request);
     // Generate round
-    const roundRes = await request.post(`${BASE}/api/tournament/${eid}/round/generate`, {
+    const roundRes = await request.post(`${BASE}/api/tournament/${eid}/round`, {
       headers: headers('dev-admin'),
     });
     const matches = (await roundRes.json()).matches;
@@ -521,7 +521,7 @@ test.describe('Tournament Phase & Swiss API', () => {
       headers: headers('dev-admin'),
       data: { status: 'active' },
     });
-    const roundRes = await request.post(`${BASE}/api/tournament/${eid}/round/generate`, {
+    const roundRes = await request.post(`${BASE}/api/tournament/${eid}/round`, {
       headers: headers('dev-admin'),
     });
     const matches = (await roundRes.json()).matches;
@@ -559,7 +559,7 @@ test.describe('Tournament Phase Auto-Advancement', () => {
     const eid = await createTournamentWithPhases(request);
     // Generate and complete both Swiss rounds (phase has 2 rounds configured)
     for (let round = 0; round < 2; round++) {
-      const r = await request.post(`${BASE}/api/tournament/${eid}/round/generate`, {
+      const r = await request.post(`${BASE}/api/tournament/${eid}/round`, {
         headers: headers('dev-admin'),
       });
       const matches = (await r.json()).matches;
@@ -574,7 +574,7 @@ test.describe('Tournament Phase Auto-Advancement', () => {
     }
 
     // Next generate-round should auto-advance to elimination phase
-    const nextRes = await request.post(`${BASE}/api/tournament/${eid}/round/generate`, {
+    const nextRes = await request.post(`${BASE}/api/tournament/${eid}/round`, {
       headers: headers('dev-admin'),
     });
     expect(nextRes.status()).toBe(200);
