@@ -100,16 +100,6 @@
       {:get {:produces   ["application/htmx+html"]
              :parameters {:path schema.contract/game-id-path-parameter}
              :handler    (integrant.core/ref ::web.view/create-tournament-view)}}]
-     ["/phase-row.html"
-      {:get {:produces   ["application/htmx+html"]
-             :parameters {:path  schema.contract/game-id-path-parameter
-                          :query [:map [:index {:optional true} :string]]}
-             :handler    (integrant.core/ref ::web.view/tournament-phase-row-view)}}]
-     ["/round-row.html"
-      {:get {:produces   ["application/htmx+html"]
-             :parameters {:path  schema.contract/game-id-path-parameter
-                          :query [:map [:index {:optional true} :string]]}
-             :handler    (integrant.core/ref ::web.view/tournament-round-row-view)}}]
      ["/:eid/index.html"
       {:get {:produces   ["application/htmx+html"]
              :parameters {:path schema.contract/game-and-id-path-parameter}
@@ -260,6 +250,30 @@
                          :body  domain/create-draft-specification}
             :responses  {201 {:body domain/draft-resource}}
             :handler    (integrant.core/ref ::web.draft/create-draft)}}]
+
+   ["/tournament-phase-row"
+    {:name :tournament/phase-row
+     :get  {:summary    "Form partial for a tournament phase row."
+            :openapi    {:tags         ["tournament"]
+                         :produces     ["application/json" "application/htmx+html"]
+                         :operation-id "tournament/phase-row"}
+            :parameters {:query (schema.contract/to-schema
+                                 [:map
+                                  [:index {:optional true} :int]])}
+            :responses  {200 {:body domain/phase-row-response}}
+            :handler    (integrant.core/ref ::web.tournament/get-phase-row)}}]
+
+   ["/tournament-round-row"
+    {:name :tournament/round-row
+     :get  {:summary    "Form partial for a tournament round row."
+            :openapi    {:tags         ["tournament"]
+                         :produces     ["application/json" "application/htmx+html"]
+                         :operation-id "tournament/round-row"}
+            :parameters {:query (schema.contract/to-schema
+                                 [:map
+                                  [:index {:optional true} :int]])}
+            :responses  {200 {:body domain/round-row-response}}
+            :handler    (integrant.core/ref ::web.tournament/get-round-row)}}]
 
    ["/tournament"
     [""

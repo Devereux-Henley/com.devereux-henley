@@ -238,3 +238,28 @@
       (if (= :tournament/phase-error (:type result))
         {:status 422 :body result}
         {:status 200 :body result}))))
+
+;; ─── Form partials ──────────────────────────────────────────────────────────
+;; These serve HATEOAS-shaped describe-only responses so that clients that
+;; accept htmx+html receive a phase/round form fragment (via the view-by-type
+;; dispatch), while other clients get the same structured data as JSON.
+
+(defmethod integrant.core/init-key ::get-phase-row
+  [_init-key dependencies]
+  (fn [{{{:keys [index]} :query} :parameters
+        router                    :reitit.core/router
+        :as                       _request}]
+    (web.core/handle-fetch-response
+     domain/phase-row-response
+     {:hostname (:hostname dependencies) :router router}
+     (fn [] {:type :tournament/phase-row :index (or index 0)}))))
+
+(defmethod integrant.core/init-key ::get-round-row
+  [_init-key dependencies]
+  (fn [{{{:keys [index]} :query} :parameters
+        router                    :reitit.core/router
+        :as                       _request}]
+    (web.core/handle-fetch-response
+     domain/round-row-response
+     {:hostname (:hostname dependencies) :router router}
+     (fn [] {:type :tournament/round-row :index (or index 0)}))))

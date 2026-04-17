@@ -234,34 +234,6 @@
                       :default-timezone "US/Eastern"}
                      game-context))}))
 
-(defn- parse-index
-  "Parses the htmx-supplied form index, defaulting to 0 on missing/invalid input."
-  [raw]
-  (try
-    (max 0 (Integer/parseInt (or raw "0")))
-    (catch NumberFormatException _ 0)))
-
-(defmethod integrant.core/init-key ::tournament-phase-row-view
-  [_init-key _dependencies]
-  (fn [{game-context      :game-context
-        {{:keys [index]} :query} :parameters
-        :as _request}]
-    {:status 200
-     :body   (selmer.parser/render-file
-              "rts-web/view/tournament-phase-row.html"
-              (merge {:index    (parse-index index)
-                      :game-eid (:game-eid game-context)}
-                     game-context))}))
-
-(defmethod integrant.core/init-key ::tournament-round-row-view
-  [_init-key _dependencies]
-  (fn [{{{:keys [index]} :query} :parameters
-        :as _request}]
-    {:status 200
-     :body   (selmer.parser/render-file
-              "rts-web/view/tournament-round-row.html"
-              {:index (parse-index index)})}))
-
 (defmethod integrant.core/init-key ::tournament-view
   [_init-key dependencies]
   (partial standard-entity-view-handler

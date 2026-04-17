@@ -96,6 +96,8 @@
 (def update-status-specification                  schema/update-status-specification)
 (def update-registration-specification            schema/update-registration-specification)
 (def configure-phases-specification               schema/configure-phases-specification)
+(def phase-row-response                            schema/phase-row-response)
+(def round-row-response                            schema/round-row-response)
 (def tournament-entries-response                  schema/tournament-entries-response)
 (def tournament-status-response                   schema/tournament-status-response)
 (def tournament-advance-response                  schema/tournament-advance-response)

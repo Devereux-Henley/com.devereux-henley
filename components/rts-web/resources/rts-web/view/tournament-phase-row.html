@@ -24,7 +24,7 @@
         </div>
     </div>
     <button type="button" class="btn btn-ghost btn-sm"
-            hx-get="/view/game/{{game-eid}}/tournament/round-row.html"
+            hx-get="/api/tournament-round-row"
             hx-vals='js:{"index": document.getElementById("rounds-{{index}}").children.length}'
             hx-target="#rounds-{{index}}"
             hx-swap="beforeend">+ Add Round</button>

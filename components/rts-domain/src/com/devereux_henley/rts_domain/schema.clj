@@ -120,6 +120,18 @@
     [:phase-type data-access.contract/phase-type-enum]
     [:rounds [:sequential phase-round-specification]]]))
 
+(def phase-row-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :tournament/phase-row]]
+    [:index :int]]))
+
+(def round-row-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :tournament/round-row]]
+    [:index :int]]))
+
 (def configure-phases-specification
   (schema.contract/to-schema
    [:map
