@@ -235,7 +235,11 @@
            (fn [data request]
              (let [state        (domain/get-tournament-state dependencies (:eid data))
                    entries      (domain/get-entries dependencies (:eid data))
-                   matches      (domain/get-matches-for-tournament dependencies (:eid data))
+                   raw-matches  (domain/get-matches-for-tournament dependencies (:eid data))
+                   matches-by-round (->> raw-matches
+                                         (group-by (fn [m] {:phase (:phase-index m) :round (:round-index m)}))
+                                         (sort-by (fn [[k _]] [(:phase k) (:round k)]))
+                                         (mapv (fn [[k ms]] {:phase (:phase k) :round (:round k) :matches ms})))
                    player-sub   (get-in request [:ory-session :identity :id])
                    has-entry    (some #(= player-sub (:player-sub %)) entries)
                    now          (java.time.Instant/now)
@@ -243,7 +247,7 @@
                    is-organizer (= player-sub (:created-by-sub data))]
                {:tournament-state  state
                 :entries           entries
-                :matches           matches
+                :matches-by-round  matches-by-round
                 :has-entry         has-entry
                 :registration-open reg-open
                 :is-organizer      is-organizer}))))
