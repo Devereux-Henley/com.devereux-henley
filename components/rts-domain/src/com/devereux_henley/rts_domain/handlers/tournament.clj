@@ -366,102 +366,50 @@
 
 (defn- round-format
   "Resolves the bo-N format for a round. Falls back to the first round's
-   format, then to bo1."
+   format, then to bo1.
+
+   Note: double-elim phases have more logical rounds than the organizer
+   configures under :rounds — losers rounds past index (count :rounds)
+   and the grand final all miss the configured list and pick up the
+   first-round format. Treat that as the intended default until a
+   per-bracket format override is wanted."
   [phase round-index]
   (or (get-in phase [:rounds round-index :format])
       (get-in phase [:rounds 0 :format])
       1))
 
-(defn- matches-in-bracket-round
-  "Filters phase-matches by bracket-type and round-index."
-  [phase-matches bracket-type round-index]
-  (filter #(and (= bracket-type (:bracket-type %))
-                (= round-index (:round-index %)))
-          phase-matches))
-
-(defn- round-complete?
-  "Returns true if a round has at least one match and all matches are complete."
-  [phase-matches bracket-type round-index]
-  (let [ms (matches-in-bracket-round phase-matches bracket-type round-index)]
-    (and (seq ms) (every? #(= "complete" (:status %)) ms))))
-
-(defn- round-exists?
-  [phase-matches bracket-type round-index]
-  (seq (matches-in-bracket-round phase-matches bracket-type round-index)))
-
 (defn- generate-double-elim-next-rounds
   "Generates every round in a double-elimination phase whose dependencies
    are satisfied and that has not already been generated. Returns the
-   vector of created match entities (possibly empty)."
+   vector of created match entities (possibly empty).
+
+   Plan-then-execute: on each iteration, ask rules for the next ready
+   round against the current immutable snapshot of phase-matches. If one
+   comes back, write its matches and recur with the extended snapshot.
+   Stop when nothing is ready. Bye-only rounds auto-complete on write,
+   which may unblock a subsequent round in the same call."
   [dependencies tournament-eid phase-idx phase qualified]
-  (let [wb-rounds    (rules/winners-bracket-round-count (count qualified))
-        lb-rounds    (rules/losers-bracket-round-count (count qualified))
-        current-matches (atom (get-matches-for-tournament dependencies tournament-eid))
-        phase-matches-now (fn [] (filter #(= phase-idx (:phase-index %)) @current-matches))
-        br-matches     (fn [bt r] (matches-in-bracket-round (phase-matches-now) bt r))
-        br-complete?   (fn [bt r] (round-complete? (phase-matches-now) bt r))
-        br-exists?     (fn [bt r] (round-exists? (phase-matches-now) bt r))
-        create-round   (fn [bt r pairings]
-                         (let [fmt     (round-format phase r)
-                               created (create-round-matches dependencies tournament-eid phase-idx r bt fmt pairings)]
-                           (swap! current-matches into created)
-                           created))
-        all-created    (atom [])]
-    ;; First WB round: use seeded initial bracket.
-    (when (and (pos? wb-rounds) (not (br-exists? "winners" 0)))
-      (let [pairings (rules/generate-elimination-bracket qualified)
-            created  (create-round "winners" 0 pairings)]
-        (swap! all-created into created)))
-    ;; Iteratively satisfy dependencies. Each pass may generate multiple rounds.
-    (loop []
-      (let [progressed?
-            (reduce
-             (fn [progressed bt-r]
-               (let [{:keys [bracket round ready? pairings-fn]} bt-r]
-                 (if (and ready? (not (br-exists? bracket round)))
-                   (let [pairings (pairings-fn)]
-                     (when (seq pairings)
-                       (let [created (create-round bracket round pairings)]
-                         (swap! all-created into created)))
-                     true)
-                   progressed)))
-             false
-             (concat
-              ;; Winners bracket rounds 1..k-1 (0-indexed): depend on previous WB round.
-              (for [r (range 1 wb-rounds)]
-                {:bracket "winners" :round r
-                 :ready?  (br-complete? "winners" (dec r))
-                 :pairings-fn (fn [] (rules/advance-winners-bracket-round (br-matches "winners" (dec r))))})
-              ;; Losers bracket rounds.
-              (for [r (range lb-rounds)]
-                (let [wb-src (rules/winners-source-round-for-losers-round r)
-                      wb-dep? (when wb-src (br-complete? "winners" wb-src))
-                      lb-dep? (if (zero? r) true (br-complete? "losers" (dec r)))
-                      ready?  (and lb-dep? (if wb-src wb-dep? true))
-                      pairings-fn (fn []
-                                    (rules/generate-losers-bracket-round
-                                     r
-                                     (when wb-src (br-matches "winners" wb-src))
-                                     (when (pos? r) (br-matches "losers" (dec r)))))]
-                  {:bracket "losers" :round r :ready? ready? :pairings-fn pairings-fn}))
-              ;; Grand final: one match once WB final + LB final both complete.
-              [{:bracket "grand-final"
-                :round   0
-                :ready?  (and (pos? wb-rounds)
-                              (br-complete? "winners" (dec wb-rounds))
-                              (or (zero? lb-rounds)
-                                  (br-complete? "losers" (dec lb-rounds))))
-                :pairings-fn (fn []
-                               (let [wb-champ (first (rules/winners-from-matches
-                                                      (br-matches "winners" (dec wb-rounds))))
-                                     lb-champ (if (zero? lb-rounds)
-                                                nil
-                                                (first (rules/winners-from-matches
-                                                        (br-matches "losers" (dec lb-rounds)))))]
-                                 (if (and wb-champ lb-champ)
-                                   (rules/grand-final-pairing wb-champ lb-champ)
-                                   [])))}]))]
-        (if progressed? (recur) @all-created)))))
+  (let [wb-rounds (rules/winners-bracket-round-count (count qualified))
+        lb-rounds (rules/losers-bracket-round-count (count qualified))
+        initial   (filterv #(= phase-idx (:phase-index %))
+                           (get-matches-for-tournament dependencies tournament-eid))]
+    (loop [phase-matches initial
+           created       []]
+      (let [{:keys [bracket round pairings]}
+            (rules/next-ready-double-elim-round phase-matches qualified wb-rounds lb-rounds)]
+        (cond
+          (nil? bracket)
+          created
+
+          (empty? pairings)
+          created
+
+          :else
+          (let [new-matches (create-round-matches
+                             dependencies tournament-eid phase-idx round bracket
+                             (round-format phase round) pairings)]
+            (recur (into phase-matches new-matches)
+                   (into created new-matches))))))))
 
 (defn generate-next-round
   "Generates the next round of matches for the tournament. If the current

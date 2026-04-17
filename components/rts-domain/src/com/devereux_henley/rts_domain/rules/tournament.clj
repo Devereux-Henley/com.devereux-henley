@@ -250,6 +250,61 @@
     (odd?  r)   (quot (inc r) 2)
     :else       nil))
 
+(defn next-ready-double-elim-round
+  "Given an immutable snapshot of a double-elimination phase's matches,
+   returns a descriptor for the next round whose dependencies are all
+   satisfied and that has not yet been generated — or nil if nothing is
+   ready. A descriptor is {:bracket :round :pairings}.
+
+   Dependency order: WB-0 (seeded) → WB-N depends on WB-(N-1) complete
+   → LB-N depends on LB-(N-1) and (for major rounds) its source WB round
+   → grand final depends on both bracket finals complete."
+  [phase-matches qualified wb-rounds lb-rounds]
+  (let [by-bracket (group-by #(or (:bracket-type %) "winners") phase-matches)
+        br-matches (fn [bt r] (filterv #(= r (:round-index %)) (get by-bracket bt [])))
+        exists?    (fn [bt r] (seq (br-matches bt r)))
+        complete?  (fn [bt r]
+                     (let [ms (br-matches bt r)]
+                       (and (seq ms) (every? #(= "complete" (:status %)) ms))))]
+    (or
+     ;; WB round 0: seeded initial bracket.
+     (when (and (pos? wb-rounds) (not (exists? "winners" 0)))
+       {:bracket "winners" :round 0
+        :pairings (generate-elimination-bracket qualified)})
+     ;; Subsequent WB rounds: pair previous round's winners.
+     (some (fn [r]
+             (when (and (not (exists? "winners" r))
+                        (complete? "winners" (dec r)))
+               {:bracket "winners" :round r
+                :pairings (advance-winners-bracket-round (br-matches "winners" (dec r)))}))
+           (range 1 wb-rounds))
+     ;; LB rounds: first drops WB-0 losers; major rounds pull WB losers +
+     ;; previous LB winners; minor rounds pair previous LB winners only.
+     (some (fn [r]
+             (let [wb-src  (winners-source-round-for-losers-round r)
+                   wb-ok?  (or (nil? wb-src) (complete? "winners" wb-src))
+                   lb-ok?  (or (zero? r) (complete? "losers" (dec r)))]
+               (when (and (not (exists? "losers" r)) wb-ok? lb-ok?)
+                 {:bracket "losers" :round r
+                  :pairings (generate-losers-bracket-round
+                             r
+                             (when wb-src (br-matches "winners" wb-src))
+                             (when (pos? r) (br-matches "losers" (dec r))))})))
+           (range lb-rounds))
+     ;; Grand final: one match once both bracket finals are complete.
+     (when (and (not (exists? "grand-final" 0))
+                (pos? wb-rounds)
+                (complete? "winners" (dec wb-rounds))
+                (or (zero? lb-rounds) (complete? "losers" (dec lb-rounds))))
+       (let [wb-champ (first (winners-from-matches (br-matches "winners" (dec wb-rounds))))
+             lb-champ (when (pos? lb-rounds)
+                        (first (winners-from-matches (br-matches "losers" (dec lb-rounds)))))]
+         (when (and wb-champ (or (zero? lb-rounds) lb-champ))
+           {:bracket "grand-final" :round 0
+            :pairings (if (pos? lb-rounds)
+                        (grand-final-pairing wb-champ lb-champ)
+                        [])}))))))
+
 ;; ─── Display constants ──────────────────────────────────────────────────────
 
 (def common-timezones
@@ -353,47 +408,45 @@
    qualifier-count is the expected bracket size; it controls how many
    rounds / matches each bracket skeleton contains."
   [raw-matches phases qualifier-count]
-  (->> (map-indexed vector phases)
-       (filter (fn [[idx phase-config]]
-                 (or (some #(= idx (:phase-index %)) raw-matches)
-                     (#{"single-elimination" "double-elimination"}
-                      (:phase-type phase-config)))))
-       (mapv
-        (fn [[phase-idx phase-config]]
-          (let [phase-type    (:phase-type phase-config)
-                total-rounds  (count (:rounds phase-config))
-                phase-matches (filter #(= phase-idx (:phase-index %)) raw-matches)]
-            (cond
-              (= "single-elimination" phase-type)
-              {:phase           phase-idx
-               :phase-type      phase-type
-               :winners-bracket (build-bracket-rounds
-                                 phase-idx phase-type total-rounds "winners"
-                                 phase-matches total-rounds
-                                 #(expected-winners-round-match-count qualifier-count %))}
-
-              (= "double-elimination" phase-type)
-              (let [wb-rounds  (winners-bracket-round-count qualifier-count)
-                    lb-rounds  (losers-bracket-round-count qualifier-count)
-                    wb-matches (filter #(= "winners" (or (:bracket-type %) "winners"))
-                                       phase-matches)
-                    lb-matches (filter #(= "losers" (:bracket-type %)) phase-matches)
-                    gf-matches (filter #(= "grand-final" (:bracket-type %)) phase-matches)]
+  (let [matches-by-phase-idx (group-by :phase-index raw-matches)]
+    (->> (map-indexed vector phases)
+         (filter (fn [[idx phase-config]]
+                   (or (contains? matches-by-phase-idx idx)
+                       (#{"single-elimination" "double-elimination"}
+                        (:phase-type phase-config)))))
+         (mapv
+          (fn [[phase-idx phase-config]]
+            (let [phase-type    (:phase-type phase-config)
+                  total-rounds  (count (:rounds phase-config))
+                  phase-matches (get matches-by-phase-idx phase-idx [])]
+              (cond
+                (= "single-elimination" phase-type)
                 {:phase           phase-idx
                  :phase-type      phase-type
                  :winners-bracket (build-bracket-rounds
-                                   phase-idx phase-type wb-rounds "winners"
-                                   wb-matches wb-rounds
-                                   #(expected-winners-round-match-count qualifier-count %))
-                 :losers-bracket  (build-bracket-rounds
-                                   phase-idx phase-type lb-rounds "losers"
-                                   lb-matches lb-rounds
-                                   #(expected-losers-round-match-count qualifier-count %))
-                 :grand-final     (build-bracket-rounds
-                                   phase-idx phase-type 1 "grand-final"
-                                   gf-matches 1 (constantly 1))})
+                                   phase-idx phase-type total-rounds "winners"
+                                   phase-matches total-rounds
+                                   #(expected-winners-round-match-count qualifier-count %))}
 
-              :else
-              {:phase      phase-idx
-               :phase-type phase-type
-               :rounds     (swiss-phase-rounds phase-idx phase-type total-rounds phase-matches)}))))))
+                (= "double-elimination" phase-type)
+                (let [wb-rounds  (winners-bracket-round-count qualifier-count)
+                      lb-rounds  (losers-bracket-round-count qualifier-count)
+                      by-bracket (group-by #(or (:bracket-type %) "winners") phase-matches)]
+                  {:phase           phase-idx
+                   :phase-type      phase-type
+                   :winners-bracket (build-bracket-rounds
+                                     phase-idx phase-type wb-rounds "winners"
+                                     (get by-bracket "winners" []) wb-rounds
+                                     #(expected-winners-round-match-count qualifier-count %))
+                   :losers-bracket  (build-bracket-rounds
+                                     phase-idx phase-type lb-rounds "losers"
+                                     (get by-bracket "losers" []) lb-rounds
+                                     #(expected-losers-round-match-count qualifier-count %))
+                   :grand-final     (build-bracket-rounds
+                                     phase-idx phase-type 1 "grand-final"
+                                     (get by-bracket "grand-final" []) 1 (constantly 1))})
+
+                :else
+                {:phase      phase-idx
+                 :phase-type phase-type
+                 :rounds     (swiss-phase-rounds phase-idx phase-type total-rounds phase-matches)})))))))
