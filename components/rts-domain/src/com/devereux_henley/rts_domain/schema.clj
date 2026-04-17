@@ -303,6 +303,11 @@
 ;; Describe the projections built by rules/group-matches-by-round and
 ;; rules/group-matches-by-phase for the tournament-index template.
 
+(def bracket-slot-status-enum
+  "Status of a slot in a rendered bracket. Real matches carry the DB
+   match status; unfilled slots in a pre-rendered skeleton carry \"tbd\"."
+  [:enum "pending" "complete" "tbd"])
+
 (def bracket-match-slot
   "Either a real match or a TBD placeholder. Open on extra keys because
    real matches arrive straight from the match-entity shape while
@@ -312,7 +317,7 @@
     [:player-one-sub [:maybe :string]]
     [:player-two-sub [:maybe :string]]
     [:winner-sub [:maybe :string]]
-    [:status :string]
+    [:status bracket-slot-status-enum]
     [:placeholder {:optional true} :boolean]]))
 
 (def bracket-round

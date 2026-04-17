@@ -99,6 +99,7 @@
 (def configure-phases-specification               schema/configure-phases-specification)
 (def phase-response                                schema/phase-response)
 (def round-response                                schema/round-response)
+(def bracket-slot-status-enum                      schema/bracket-slot-status-enum)
 (def bracket-match-slot                            schema/bracket-match-slot)
 (def bracket-round                                 schema/bracket-round)
 (def phase-group                                   schema/phase-group)
