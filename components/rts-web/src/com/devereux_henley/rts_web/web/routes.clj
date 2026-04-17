@@ -398,41 +398,41 @@
                :handler    (integrant.core/ref ::web.tournament/record-game)}}]]
      ["/phase"
       {:name :tournament/phase
-       :get {:summary    "Form partial for a tournament phase row."
+       :get {:summary    "Form partial for a tournament phase."
              :openapi    {:tags         ["tournament"]
                           :produces     ["application/json" "application/htmx+html"]
-                          :operation-id "tournament-phase/row"}
+                          :operation-id "tournament-phase/get"}
              :parameters {:path  schema.contract/id-path-parameter
                           :query (schema.contract/to-schema
                                   [:map
                                    [:index {:optional true} :int]])}
-             :responses  {200 {:body domain/phase-row-response}}
-             :handler    (integrant.core/ref ::web.tournament/get-phase-row)}
+             :responses  {200 {:body domain/phase-response}}
+             :handler    (integrant.core/ref ::web.tournament/get-phase)}
        :put {:summary    "Update the tournament phase configuration."
              :openapi    {:tags         ["tournament"]
                           :produces     ["application/json"]
-                          :operation-id "tournament-phase/update"}
+                          :operation-id "tournament-phase/put-configuration"}
              :parameters {:path schema.contract/id-path-parameter
                           :body domain/configure-phases-specification}
-             :handler    (integrant.core/ref ::web.tournament/configure-phases)}}]
+             :handler    (integrant.core/ref ::web.tournament/put-phase-configuration)}}]
      ["/round"
       {:name :tournament/round
-       :get  {:summary    "Form partial for a tournament round row."
+       :get  {:summary    "Form partial for a tournament round."
               :openapi    {:tags         ["tournament"]
                            :produces     ["application/json" "application/htmx+html"]
-                           :operation-id "tournament-round/row"}
+                           :operation-id "tournament-round/get"}
               :parameters {:path  schema.contract/id-path-parameter
                            :query (schema.contract/to-schema
                                    [:map
                                     [:index {:optional true} :int]])}
-              :responses  {200 {:body domain/round-row-response}}
-              :handler    (integrant.core/ref ::web.tournament/get-round-row)}
+              :responses  {200 {:body domain/round-response}}
+              :handler    (integrant.core/ref ::web.tournament/get-round)}
        :post {:summary    "Create the next round of matches for the current phase."
               :openapi    {:tags         ["tournament"]
                            :produces     ["application/json"]
                            :operation-id "tournament-round/create"}
               :parameters {:path schema.contract/id-path-parameter}
-              :handler    (integrant.core/ref ::web.tournament/generate-round)}}]]]
+              :handler    (integrant.core/ref ::web.tournament/create-round)}}]]]
 
    ["/social-media/:eid"
     {:name :social-media/by-eid

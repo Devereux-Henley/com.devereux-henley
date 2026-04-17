@@ -214,7 +214,7 @@
 
 ;; ─── Phase handlers ─────────────────────────────────────────────────────────
 
-(defmethod integrant.core/init-key ::configure-phases
+(defmethod integrant.core/init-key ::put-phase-configuration
   [_init-key dependencies]
   (fn [{{{:keys [eid]}                          :path
          {:keys [phases qualifier-count]} :body} :parameters
@@ -228,7 +228,7 @@
         {:status 422 :body result}
         {:status 200 :body result}))))
 
-(defmethod integrant.core/init-key ::generate-round
+(defmethod integrant.core/init-key ::create-round
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
         session               :ory-session
@@ -240,32 +240,32 @@
         {:status 200 :body result}))))
 
 ;; ─── Form partials ──────────────────────────────────────────────────────────
-;; These serve HATEOAS-shaped describe-only responses so that clients that
-;; accept htmx+html receive a phase/round form fragment (via the view-by-type
+;; These serve describe-only responses so that clients that accept
+;; htmx+html receive a phase/round form fragment (via the view-by-type
 ;; dispatch), while other clients get the same structured data as JSON.
 
-(defmethod integrant.core/init-key ::get-phase-row
+(defmethod integrant.core/init-key ::get-phase
   [_init-key dependencies]
   (fn [{{{:keys [eid]}    :path
          {:keys [index]} :query} :parameters
         router                    :reitit.core/router
         :as                       _request}]
     (web.core/handle-fetch-response
-     domain/phase-row-response
+     domain/phase-response
      {:hostname (:hostname dependencies) :router router}
-     (fn [] {:type           :tournament/phase-row
+     (fn [] {:type           :tournament/phase
              :tournament-eid eid
              :index          (or index 0)}))))
 
-(defmethod integrant.core/init-key ::get-round-row
+(defmethod integrant.core/init-key ::get-round
   [_init-key dependencies]
   (fn [{{{:keys [eid]}    :path
          {:keys [index]} :query} :parameters
         router                    :reitit.core/router
         :as                       _request}]
     (web.core/handle-fetch-response
-     domain/round-row-response
+     domain/round-response
      {:hostname (:hostname dependencies) :router router}
-     (fn [] {:type           :tournament/round-row
+     (fn [] {:type           :tournament/round
              :tournament-eid eid
              :index          (or index 0)}))))
