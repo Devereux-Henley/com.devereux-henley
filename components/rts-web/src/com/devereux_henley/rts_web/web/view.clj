@@ -213,13 +213,6 @@
                         :session     session}
                        game-context))})))
 
-(def ^:private common-timezones
-  "Curated list of IANA timezone IDs for the tournament create form."
-  ["US/Eastern" "US/Central" "US/Mountain" "US/Pacific"
-   "Europe/London" "Europe/Paris" "Europe/Berlin"
-   "Asia/Tokyo" "Asia/Shanghai" "Australia/Sydney"
-   "UTC"])
-
 (defmethod integrant.core/init-key ::create-tournament-view
   [_init-key _dependencies]
   (fn [{game-context :game-context
@@ -230,8 +223,8 @@
               "rts-web/view/create-tournament.html"
               (merge {:session          session
                       :tournament-eid   (random-uuid)
-                      :timezones        common-timezones
-                      :default-timezone "US/Eastern"}
+                      :timezones        domain/common-timezones
+                      :default-timezone domain/default-timezone}
                      game-context))}))
 
 (defmethod integrant.core/init-key ::tournament-view
@@ -240,115 +233,23 @@
            (fn [eid] (web.tournament/get-tournament-by-eid dependencies eid))
            "tournament-index.html"
            (fn [data request]
-             (let [state        (domain/get-tournament-state dependencies (:eid data))
-                   entries      (domain/get-entries dependencies (:eid data))
-                   raw-matches  (domain/get-matches-for-tournament dependencies (:eid data))
-                   phases           (:phases state)
-                   matches-by-round (->> raw-matches
-                                         (group-by (fn [m] {:phase (:phase-index m) :round (:round-index m)}))
-                                         (sort-by (fn [[k _]] [(:phase k) (:round k)]))
-                                         (mapv (fn [[k ms]]
-                                                 (let [phase-config (get phases (:phase k))
-                                                       total-rounds (count (:rounds phase-config))]
-                                                   {:phase       (:phase k)
-                                                    :round       (:round k)
-                                                    :phase-type  (:phase-type phase-config)
-                                                    :total-rounds total-rounds
-                                                    :matches     ms}))))
-                   player-sub   (get-in request [:ory-session :identity :id])
-                   has-entry    (some #(= player-sub (:player-sub %)) entries)
-                   now          (java.time.Instant/now)
-                   reg-open     (domain/is-registration-open? state now)
-                   is-organizer (= player-sub (:created-by-sub data))
+             (let [tournament-eid  (:eid data)
+                   state           (domain/get-tournament-state dependencies tournament-eid)
+                   entries         (domain/get-entries dependencies tournament-eid)
+                   raw-matches     (domain/get-matches-for-tournament dependencies tournament-eid)
+                   phases          (:phases state)
+                   qualifier-count (or (:qualifier-count state) (count (:standings state)))
+                   player-sub      (get-in request [:ory-session :identity :id])
+                   has-entry       (some #(= player-sub (:player-sub %)) entries)
+                   now             (java.time.Instant/now)
+                   reg-open        (domain/is-registration-open? state now)
+                   is-organizer    (= player-sub (:created-by-sub data))
                    organizer-has-actions (and is-organizer
-                                              (contains? #{"registration" "active"} (:status state)))
-                   pow2-ceil
-                   (fn [n] (loop [s 1] (if (>= s n) s (recur (* s 2)))))
-                   ceil-log2
-                   (fn [n] (loop [s 1 k 0] (if (>= s n) k (recur (* s 2) (inc k)))))
-                   expected-wb-match-count
-                   (fn [qualifier-count round-idx]
-                     (max 1 (quot (quot (pow2-ceil qualifier-count) 2)
-                                  (int (Math/pow 2 round-idx)))))
-                   expected-lb-match-count
-                   (fn [qualifier-count round-idx]
-                     (let [p     (pow2-ceil qualifier-count)
-                           denom (int (Math/pow 2 (+ (quot round-idx 2) 2)))]
-                       (max 1 (quot p denom))))
-                   build-bracket
-                   (fn [phase-idx phase-type total-rounds bracket-type bracket-matches round-count expected-count-fn]
-                     (let [matches-grouped (group-by :round-index bracket-matches)]
-                       (mapv (fn [round-idx]
-                               (let [expected     (expected-count-fn round-idx)
-                                     actual       (get matches-grouped round-idx [])
-                                     empty-slots  (max 0 (- expected (count actual)))
-                                     placeholders (repeat empty-slots {:placeholder    true
-                                                                       :player-one-sub nil
-                                                                       :player-two-sub nil
-                                                                       :winner-sub     nil
-                                                                       :status         "tbd"})]
-                                 {:phase        phase-idx
-                                  :round        round-idx
-                                  :phase-type   phase-type
-                                  :bracket-type bracket-type
-                                  :total-rounds total-rounds
-                                  :matches      (into (vec actual) placeholders)}))
-                             (range round-count))))
-                   ;; Group by phase for bracket rendering
-                   ;; For elimination phases, build full bracket skeleton(s) from phase config.
-                   ;; Double-elim yields winners, losers, and grand-final brackets.
-                   matches-by-phase
-                   (->> (map-indexed vector phases)
-                        (filter (fn [[idx phase-config]]
-                                  (or (some #(= idx (:phase-index %)) raw-matches)
-                                      (#{"single-elimination" "double-elimination"} (:phase-type phase-config)))))
-                        (mapv (fn [[phase-idx phase-config]]
-                                (let [phase-type      (:phase-type phase-config)
-                                      total-rounds    (count (:rounds phase-config))
-                                      qualifier-count (or (:qualifier-count state) (count (:standings state)))
-                                      phase-matches   (filter #(= phase-idx (:phase-index %)) raw-matches)]
-                                  (cond
-                                    (= "single-elimination" phase-type)
-                                    {:phase        phase-idx
-                                     :phase-type   phase-type
-                                     :winners-bracket
-                                     (build-bracket phase-idx phase-type total-rounds "winners"
-                                                    phase-matches total-rounds
-                                                    #(max 1 (quot (quot (pow2-ceil qualifier-count) 2) (int (Math/pow 2 %)))))}
-
-                                    (= "double-elimination" phase-type)
-                                    (let [wb-rounds (ceil-log2 qualifier-count)
-                                          lb-rounds (max 0 (* 2 (dec wb-rounds)))
-                                          wb-matches (filter #(= "winners" (or (:bracket-type %) "winners")) phase-matches)
-                                          lb-matches (filter #(= "losers" (:bracket-type %)) phase-matches)
-                                          gf-matches (filter #(= "grand-final" (:bracket-type %)) phase-matches)]
-                                      {:phase        phase-idx
-                                       :phase-type   phase-type
-                                       :winners-bracket
-                                       (build-bracket phase-idx phase-type wb-rounds "winners"
-                                                      wb-matches wb-rounds
-                                                      #(expected-wb-match-count qualifier-count %))
-                                       :losers-bracket
-                                       (build-bracket phase-idx phase-type lb-rounds "losers"
-                                                      lb-matches lb-rounds
-                                                      #(expected-lb-match-count qualifier-count %))
-                                       :grand-final
-                                       (build-bracket phase-idx phase-type 1 "grand-final"
-                                                      gf-matches 1 (constantly 1))})
-
-                                    :else
-                                    {:phase      phase-idx
-                                     :phase-type phase-type
-                                     :rounds
-                                     (mapv (fn [[_ rounds]] (first rounds))
-                                           (sort-by first
-                                                    (group-by :round
-                                                              (filter #(= phase-idx (:phase %)) matches-by-round))))})))))]
-               {:tournament-state  state
-                :entries           entries
-                :matches-by-round  matches-by-round
-                :matches-by-phase  matches-by-phase
-                :has-entry         has-entry
-                :registration-open reg-open
-                :is-organizer      is-organizer
+                                              (contains? #{"registration" "active"} (:status state)))]
+               {:tournament-state      state
+                :entries               entries
+                :matches-by-phase      (domain/group-matches-by-phase raw-matches phases qualifier-count)
+                :has-entry             has-entry
+                :registration-open     reg-open
+                :is-organizer          is-organizer
                 :organizer-has-actions organizer-has-actions}))))

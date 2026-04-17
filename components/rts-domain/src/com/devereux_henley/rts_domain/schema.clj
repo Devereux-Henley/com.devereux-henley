@@ -299,6 +299,46 @@
     [:type [:= :tournament/matches]]
     [:matches [:sequential tournament-match-summary]]]))
 
+;; ─── Bracket-view shapes ────────────────────────────────────────────────────
+;; Describe the projections built by rules/group-matches-by-round and
+;; rules/group-matches-by-phase for the tournament-index template.
+
+(def bracket-match-slot
+  "Either a real match or a TBD placeholder. Open on extra keys because
+   real matches arrive straight from the match-entity shape while
+   placeholders carry only a skeletal form."
+  (schema.contract/to-schema
+   [:map {:closed false}
+    [:player-one-sub [:maybe :string]]
+    [:player-two-sub [:maybe :string]]
+    [:winner-sub [:maybe :string]]
+    [:status :string]
+    [:placeholder {:optional true} :boolean]]))
+
+(def bracket-round
+  "One round's worth of slots in a bracket or swiss-style phase."
+  (schema.contract/to-schema
+   [:map
+    [:phase :int]
+    [:round :int]
+    [:phase-type [:maybe :string]]
+    [:bracket-type {:optional true} :string]
+    [:total-rounds :int]
+    [:matches [:sequential bracket-match-slot]]]))
+
+(def phase-group
+  "Aggregated view of a tournament phase. Elimination phases expose
+   :winners-bracket (and for double-elim :losers-bracket + :grand-final);
+   swiss / round-robin phases expose a flat :rounds vector."
+  (schema.contract/to-schema
+   [:map
+    [:phase :int]
+    [:phase-type [:maybe :string]]
+    [:rounds {:optional true} [:sequential bracket-round]]
+    [:winners-bracket {:optional true} [:sequential bracket-round]]
+    [:losers-bracket {:optional true} [:sequential bracket-round]]
+    [:grand-final {:optional true} [:sequential bracket-round]]]))
+
 (def tournament-match-result-response
   (schema.contract/to-schema
    [:map
