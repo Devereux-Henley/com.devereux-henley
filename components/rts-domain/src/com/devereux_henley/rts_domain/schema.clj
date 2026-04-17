@@ -142,6 +142,7 @@
      [:player-two-sub [:maybe :string]]
      [:winner-sub [:maybe :string]]
      [:status :string]
+     [:format :int]
      [:_links
       [:map
        [:self :url]
@@ -153,7 +154,8 @@
     [:phase-index :int]
     [:round-index :int]
     [:player-one-sub :string]
-    [:player-two-sub {:optional true} [:maybe :string]]]))
+    [:player-two-sub {:optional true} [:maybe :string]]
+    [:format {:optional true} :int]]))
 
 (def record-result-specification
   (schema.contract/to-schema
@@ -241,7 +243,8 @@
     [:player-one-sub :string]
     [:player-two-sub [:maybe :string]]
     [:winner-sub [:maybe :string]]
-    [:status :string]]))
+    [:status :string]
+    [:format :int]]))
 
 (def tournament-matches-response
   (schema.contract/to-schema

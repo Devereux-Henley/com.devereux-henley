@@ -379,7 +379,56 @@
                                    [:match-eid :uuid]])
                            :body domain/record-result-specification}
               :responses  {200 {:body domain/tournament-match-result-response}}
-              :handler    (integrant.core/ref ::web.tournament/update-match-result)}}]]]]
+              :handler    (integrant.core/ref ::web.tournament/update-match-result)}}]
+      ["/:match-eid/game"
+       {:get  {:summary    "List games for a match."
+               :openapi    {:tags         ["tournament"]
+                            :produces     ["application/json"]
+                            :operation-id "tournament-game/list"}
+               :parameters {:path (schema.contract/to-schema
+                                   [:map
+                                    [:eid :uuid]
+                                    [:match-eid :uuid]])}
+               :handler    (integrant.core/ref ::web.tournament/get-games)}
+        :post {:summary    "Record a game result within a match."
+               :openapi    {:tags         ["tournament"]
+                            :produces     ["application/json"]
+                            :operation-id "tournament-game/record"}
+               :parameters {:path (schema.contract/to-schema
+                                   [:map
+                                    [:eid :uuid]
+                                    [:match-eid :uuid]])
+                            :body domain/record-result-specification}
+               :handler    (integrant.core/ref ::web.tournament/record-game)}}]]
+     ["/phase"
+      {:put {:summary    "Configure tournament phases."
+             :openapi    {:tags         ["tournament"]
+                          :produces     ["application/json"]
+                          :operation-id "tournament-phase/configure"}
+             :parameters {:path schema.contract/id-path-parameter
+                          :body (schema.contract/to-schema
+                                 [:map
+                                  [:phases [:sequential [:map
+                                                         [:phase-type :string]
+                                                         [:rounds [:sequential [:map
+                                                                                [:round-index :int]
+                                                                                [:format {:optional true} :int]]]]]]]
+                                  [:qualifier-count {:optional true} [:maybe :int]]])}
+             :handler    (integrant.core/ref ::web.tournament/configure-phases)}}]
+     ["/round/generate"
+      {:post {:summary    "Generate next round pairings for the current phase."
+              :openapi    {:tags         ["tournament"]
+                           :produces     ["application/json"]
+                           :operation-id "tournament-round/generate"}
+              :parameters {:path schema.contract/id-path-parameter}
+              :handler    (integrant.core/ref ::web.tournament/generate-round)}}]
+     ["/phase/elimination/start"
+      {:post {:summary    "Start the single-elimination phase."
+              :openapi    {:tags         ["tournament"]
+                           :produces     ["application/json"]
+                           :operation-id "tournament-phase/start-elimination"}
+              :parameters {:path schema.contract/id-path-parameter}
+              :handler    (integrant.core/ref ::web.tournament/start-elimination)}}]]]
 
    ["/social-media/:eid"
     {:name :social-media/by-eid
