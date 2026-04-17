@@ -1363,12 +1363,21 @@ a:hover:has(img) {
   padding: 0 var(--space-2);
 }
 
+#phases-container {
+  counter-reset: phase-counter;
+}
+
 .tournament-phase-block {
+  counter-increment: phase-counter;
   background: var(--color-neutral-100);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: var(--space-4);
   margin-bottom: var(--space-3);
+}
+
+.tournament-phase-label::after {
+  content: " " counter(phase-counter);
 }
 
 .tournament-phase-header {
@@ -1384,6 +1393,7 @@ a:hover:has(img) {
 }
 
 .tournament-rounds-container {
+  counter-reset: round-counter;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -1391,6 +1401,7 @@ a:hover:has(img) {
 }
 
 .tournament-round-row {
+  counter-increment: round-counter;
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -1403,6 +1414,10 @@ a:hover:has(img) {
   margin: 0;
   min-width: 5rem;
   font-size: var(--font-size-xs);
+}
+
+.tournament-round-label::after {
+  content: " " counter(round-counter);
 }
 
 /* ─── Tournament detail page ─────────────────────────────────────────── */

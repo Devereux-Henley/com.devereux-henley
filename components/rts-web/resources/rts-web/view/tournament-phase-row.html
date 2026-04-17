@@ -1,6 +1,6 @@
-<div class="tournament-phase-block" data-phase-index="{{index}}">
+<div class="tournament-phase-block">
     <div class="tournament-phase-header">
-        <strong>Phase {{index|add:1}}</strong>
+        <strong class="tournament-phase-label">Phase</strong>
         <button type="button" class="btn btn-ghost btn-sm"
                 _="on click remove closest .tournament-phase-block">Remove</button>
     </div>
@@ -13,19 +13,11 @@
             <option value="double-elimination">Double Elimination</option>
         </select>
     </div>
-    <div class="tournament-rounds-container" id="rounds-{{index}}">
-        <div class="tournament-round-row">
-            <span class="form-label">Round 1</span>
-            <select class="select round-format-select" style="width:auto;">
-                <option value="1">Bo1</option>
-                <option value="3">Bo3</option>
-                <option value="5">Bo5</option>
-            </select>
-        </div>
+    <div class="tournament-rounds-container">
+        {% include "rts-web/view/tournament-round-row.html" %}
     </div>
     <button type="button" class="btn btn-ghost btn-sm"
             hx-get="/api/tournament/{{tournament-eid}}/round"
-            hx-vals='js:{"index": document.getElementById("rounds-{{index}}").children.length}'
-            hx-target="#rounds-{{index}}"
+            hx-target="previous .tournament-rounds-container"
             hx-swap="beforeend">+ Add Round</button>
 </div>

@@ -64,7 +64,6 @@
                 <div class="cluster cluster-2" style="margin-top: var(--space-3);">
                     <button type="button" class="btn btn-ghost btn-sm"
                             hx-get="/api/tournament/{{tournament-eid}}/phase"
-                            hx-vals='js:{"index": document.getElementById("phases-container").children.length}'
                             hx-target="#phases-container"
                             hx-swap="beforeend">
                         + Add Phase

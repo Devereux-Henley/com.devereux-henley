@@ -124,15 +124,13 @@
   (schema.contract/to-schema
    [:map
     [:type [:= :tournament/phase]]
-    [:tournament-eid :uuid]
-    [:index :int]]))
+    [:tournament-eid :uuid]]))
 
 (def round-response
   (schema.contract/to-schema
    [:map
     [:type [:= :tournament/round]]
-    [:tournament-eid :uuid]
-    [:index :int]]))
+    [:tournament-eid :uuid]]))
 
 (def configure-phases-specification
   (schema.contract/to-schema

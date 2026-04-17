@@ -402,29 +402,23 @@
              :openapi    {:tags         ["tournament"]
                           :produces     ["application/json" "application/htmx+html"]
                           :operation-id "tournament-phase/get"}
-             :parameters {:path  schema.contract/id-path-parameter
-                          :query (schema.contract/to-schema
-                                  [:map
-                                   [:index {:optional true} :int]])}
+             :parameters {:path schema.contract/id-path-parameter}
              :responses  {200 {:body domain/phase-response}}
              :handler    (integrant.core/ref ::web.tournament/get-phase)}
        :put {:summary    "Update the tournament phase configuration."
              :openapi    {:tags         ["tournament"]
                           :produces     ["application/json"]
-                          :operation-id "tournament-phase/put-configuration"}
+                          :operation-id "tournament-phase/update-configuration"}
              :parameters {:path schema.contract/id-path-parameter
                           :body domain/configure-phases-specification}
-             :handler    (integrant.core/ref ::web.tournament/put-phase-configuration)}}]
+             :handler    (integrant.core/ref ::web.tournament/update-phase-configuration)}}]
      ["/round"
       {:name :tournament/round
        :get  {:summary    "Form partial for a tournament round."
               :openapi    {:tags         ["tournament"]
                            :produces     ["application/json" "application/htmx+html"]
                            :operation-id "tournament-round/get"}
-              :parameters {:path  schema.contract/id-path-parameter
-                           :query (schema.contract/to-schema
-                                   [:map
-                                    [:index {:optional true} :int]])}
+              :parameters {:path schema.contract/id-path-parameter}
               :responses  {200 {:body domain/round-response}}
               :handler    (integrant.core/ref ::web.tournament/get-round)}
        :post {:summary    "Create the next round of matches for the current phase."
