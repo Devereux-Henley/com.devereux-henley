@@ -17,6 +17,7 @@ Visual walkthroughs of each e2e-tested user flow, with annotated screenshots.
 - [Draft Operations](rts-api/flows/draft-operations.md) — create, unit selection, add/remove/edit, validation
 - [Tournament Registration](rts-api/flows/tournament-registration.md) — register, withdraw, validation rules
 - [Tournament State Machine](rts-api/flows/tournament-state-machine.md) — advance lifecycle, organizer controls, standings
+- [Tournament Matches](rts-api/flows/tournament-matches.md) — create matches, record results, standings updates
 
 ## Key paths
 
