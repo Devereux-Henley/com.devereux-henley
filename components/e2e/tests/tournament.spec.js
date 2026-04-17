@@ -554,8 +554,8 @@ test.describe('Tournament Phase & Swiss API', () => {
   });
 });
 
-test.describe('Tournament Elimination API', () => {
-  test('start elimination phase after Swiss', async ({ request }) => {
+test.describe('Tournament Phase Advancement API', () => {
+  test('advance to next phase after Swiss', async ({ request }) => {
     const eid = await createTournamentWithPhases(request);
     // Generate and complete Swiss round 0
     const r0 = await request.post(`${BASE}/api/tournament/${eid}/round/generate`, {
@@ -572,12 +572,12 @@ test.describe('Tournament Elimination API', () => {
     }
 
     // Start elimination
-    const elimRes = await request.post(`${BASE}/api/tournament/${eid}/phase/elimination/start`, {
+    const elimRes = await request.post(`${BASE}/api/tournament/${eid}/phase/advance`, {
       headers: headers('dev-admin'),
     });
     expect(elimRes.status()).toBe(200);
     const body = await elimRes.json();
-    expect(body.type).toBe('tournament/elimination-started');
+    expect(body.type).toBe('tournament/phase-advanced');
     expect(body.matches.length).toBeGreaterThan(0);
   });
 });

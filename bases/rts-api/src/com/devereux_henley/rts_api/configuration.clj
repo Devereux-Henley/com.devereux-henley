@@ -91,7 +91,7 @@
             :com.devereux-henley.rts-web.web.tournament/get-games
             :com.devereux-henley.rts-web.web.tournament/configure-phases
             :com.devereux-henley.rts-web.web.tournament/generate-round
-            :com.devereux-henley.rts-web.web.tournament/start-elimination
+            :com.devereux-henley.rts-web.web.tournament/advance-phase
             :com.devereux-henley.rts-web.web.view/tournament-list-view
             :com.devereux-henley.rts-web.web.view/create-tournament-view
             :com.devereux-henley.rts-web.web.view/tournament-view))

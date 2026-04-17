@@ -422,13 +422,13 @@
                            :operation-id "tournament-round/generate"}
               :parameters {:path schema.contract/id-path-parameter}
               :handler    (integrant.core/ref ::web.tournament/generate-round)}}]
-     ["/phase/elimination/start"
-      {:post {:summary    "Start the single-elimination phase."
+     ["/phase/advance"
+      {:post {:summary    "Advance to the next phase and generate its first round."
               :openapi    {:tags         ["tournament"]
                            :produces     ["application/json"]
-                           :operation-id "tournament-phase/start-elimination"}
+                           :operation-id "tournament-phase/advance"}
               :parameters {:path schema.contract/id-path-parameter}
-              :handler    (integrant.core/ref ::web.tournament/start-elimination)}}]]]
+              :handler    (integrant.core/ref ::web.tournament/advance-phase)}}]]]
 
    ["/social-media/:eid"
     {:name :social-media/by-eid

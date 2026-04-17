@@ -239,13 +239,13 @@
         {:status 422 :body result}
         {:status 200 :body result}))))
 
-(defmethod integrant.core/init-key ::start-elimination
+(defmethod integrant.core/init-key ::advance-phase
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
         session               :ory-session
         :as                   _request}]
     (let [player-sub (get-in session [:identity :id])
-          result     (domain/start-elimination-phase dependencies eid player-sub)]
+          result     (domain/advance-phase dependencies eid player-sub)]
       (if (= :tournament/phase-error (:type result))
         {:status 422 :body result}
         {:status 200 :body result}))))
