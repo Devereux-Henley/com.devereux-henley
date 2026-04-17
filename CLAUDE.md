@@ -249,3 +249,61 @@ Reference in PR bodies as: `![alt](https://raw.githubusercontent.com/Devereux-He
 | `AUTH_SLUG` | — | Ory tenant slug |
 
 Development SQLite database: `db/database.db` (gitignored). Migrations apply automatically on `(go!)`.
+
+## Lessons learned (tournament feature implementation retrospective)
+
+### Findings and gotchas
+
+**SQLite table name conflicts.** Migration 000001 creates a `game` table (the Total War game entity). A later migration for match games initially used `CREATE TABLE IF NOT EXISTS game` — the `IF NOT EXISTS` silently skipped because the table already existed. Renamed to `match_game`. Always check existing table names before creating new ones.
+
+**SQLite UUID handling.** The `query-for-entity` / `query-for-entities` wrappers apply `sqlite-transformer` which converts UUID strings to `java.util.UUID`. But `execute-one!` (used for writes) does not — UUIDs passed as query parameters must be explicitly stringified with `(str uuid)` or the WHERE clause won't match.
+
+**Selmer template limitations.**
+- No `ifnotequal` tag — only `ifequal`/`endifequal`. Work around by restructuring conditionals or duplicating blocks per value.
+- No `truncate` filter — use CSS text clamping (`-webkit-line-clamp`) instead.
+- `==` is not a valid comparison operator in `{% if %}` — use `{% ifequal %}` for value comparison.
+- `{% if collection %}` is truthy for empty collections — use `{% if collection|not-empty? %}` with a custom filter.
+
+**Reitit route conflicts.** Routes like `/api/game/:game-eid/tournaments` conflict with `/api/game/social-link/:eid` because reitit can't distinguish path params from literal segments at the same level. Move conflicting routes to avoid shared prefixes (e.g. `/api/tournament?game-eid=...` instead of nesting under `/api/game/`).
+
+**clj-kondo contract re-export warnings.** The contract pattern (`(def foo bar/foo)`) produces "Unresolved var" warnings because clj-kondo doesn't trace through the re-export. These are harmless but CI treats warnings as errors (exit code 2). Redefined vars (same name in different files) also fail CI — always use unique names across all schema/contract files.
+
+**IPv6 localhost in Playwright.** Playwright's `request` context resolves `localhost` to `::1` (IPv6) on some systems, but Jetty binds to `0.0.0.0` (IPv4 only). Use `127.0.0.1` instead of `localhost` in e2e test base URLs.
+
+**Response coercion with _links.** Resource schemas that include `_links` (merged from `base-resource`) can't be used as response schemas for endpoints that don't route through `handle-fetch-response` / `handle-create-response` (which run the model-transformer). Create separate "summary" schemas without `_links` for list/collection endpoints, or use `{:closed false}` for open maps.
+
+### Gaps and future feature additions
+
+**Double elimination losers bracket.** The bracket generation seeds the winners bracket but doesn't create a parallel losers bracket. Need a `losers-bracket` data structure in the state blob and logic to move match losers into the losers bracket.
+
+**Match-level game result recording UI.** Games can be recorded via API (`POST /match/:match-eid/game`) but there's no UI form for it. The tournament detail page shows matches but doesn't offer a "Record Game" button with a player selector.
+
+**Bracket advancement.** When a match completes in an elimination bracket, the winner should auto-populate the next round's match. Currently, `generate-next-round` generates all matches for a round at once — need per-match advancement where completing match A fills a slot in match B.
+
+**Tournament search and filtering.** The tournament list shows all tournaments for a game. As the count grows, need filtering by status, search by name, and pagination.
+
+**Player display names.** Tournaments show `player-sub` (e.g. "dev-admin") instead of human-readable names. Need a player profile or display name system.
+
+**Match scheduling.** No concept of scheduled match times. Tournaments could benefit from round start times and match deadlines.
+
+**Spectator vs organizer views.** The tournament detail page shows organizer controls to everyone who is the organizer. Could benefit from a cleaner separation — perhaps a dedicated organizer management page.
+
+**Phase configuration via UI.** The create-tournament form has a Hyperscript-based phase configurator, but it doesn't submit the phase config with the tournament creation (it's just UI scaffolding). Phase config is done via a separate `PUT /api/tournament/:eid/phase` call after creation.
+
+### Process optimizations for future feature implementations
+
+**Design the API surface first.** The tournament API went through several iterations: `/register` → `/registration/me` → `/entry/me`, `/advance` → `/status` PUT, `/round/generate` → `/round` POST, separate `advance-phase` → auto-advance in `generate-next-round`. Spending time upfront on RESTful resource naming and URL patterns would have reduced churn.
+
+**Use enums from the start.** Status and phase-type started as `:string` and were later tightened to `[:enum ...]`. Starting with enums catches invalid values at the boundary immediately and makes the API self-documenting.
+
+**Extract body schemas immediately.** Inline schemas in route definitions (`(schema.contract/to-schema [:map ...])`) were later extracted to named schemas in the domain layer. Starting with named schemas avoids the extraction refactor and keeps all schemas in one place.
+
+**Commit response schemas alongside handlers.** Several routes were initially missing `:responses` declarations. Adding them later revealed coercion mismatches (e.g. _links on non-HATEOAS responses). Write the response schema when writing the handler.
+
+**Kill nREPL between branch switches.** The nREPL session accumulates stale state across code changes. When switching branches or after migration/seed changes, kill and restart — `restart!` alone isn't sufficient for schema changes in SQL or migration ordering.
+
+**Use 127.0.0.1 in all e2e tests from the start.** The IPv4/IPv6 issue wasted a debugging cycle. Standardize on `127.0.0.1` for all test base URLs.
+
+**Test the full flow before committing.** Several commits required follow-up fixes (Selmer syntax, UUID stringification, table name conflicts). Running one full API+UI flow via curl and Playwright before committing catches these issues earlier.
+
+**Separate PR screenshots from flow doc images.** PR screenshots go in a per-PR folder (frozen), flow doc screenshots go in `flows/rts-api/` (living). Established this pattern mid-session — should be the default from the start.
