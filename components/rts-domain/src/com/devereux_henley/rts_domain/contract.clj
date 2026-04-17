@@ -93,6 +93,13 @@
 (def match-resource                               schema/match-resource)
 (def create-match-specification                   schema/create-match-specification)
 (def record-result-specification                  schema/record-result-specification)
+(def tournament-entries-response                  schema/tournament-entries-response)
+(def tournament-status-response                   schema/tournament-status-response)
+(def tournament-advance-response                  schema/tournament-advance-response)
+(def tournament-registration-response             schema/tournament-registration-response)
+(def tournament-entry-deleted-response            schema/tournament-entry-deleted-response)
+(def tournament-matches-response                  schema/tournament-matches-response)
+(def tournament-match-result-response             schema/tournament-match-result-response)
 
 (def available-transitions                        handlers.tournament/available-transitions)
 (def advance-tournament                           handlers.tournament/advance-tournament)

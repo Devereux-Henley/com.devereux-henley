@@ -289,13 +289,13 @@
                               :produces     ["application/json"]
                               :operation-id "tournament-entry/create-mine"}
                  :parameters {:path schema.contract/id-path-parameter}
-                 :responses  {201 {:body domain/tournament-entry-resource}}
                  :handler    (integrant.core/ref ::web.tournament/create-entry)}
         :delete {:summary    "Remove the current player's tournament entry."
                  :openapi    {:tags         ["tournament"]
                               :produces     ["application/json"]
                               :operation-id "tournament-entry/delete-mine"}
                  :parameters {:path schema.contract/id-path-parameter}
+                 :responses  {200 {:body domain/tournament-entry-deleted-response}}
                  :handler    (integrant.core/ref ::web.tournament/delete-entry)}}]
       [""
        {:get {:summary    "List active entries for a tournament."
@@ -303,6 +303,7 @@
                            :produces     ["application/json"]
                            :operation-id "tournament-entry/list"}
               :parameters {:path schema.contract/id-path-parameter}
+              :responses  {200 {:body domain/tournament-entries-response}}
               :handler    (integrant.core/ref ::web.tournament/get-entries)}}]]
      ["/status"
       {:get {:summary    "Get the current tournament status and available transitions."
@@ -310,6 +311,7 @@
                           :produces     ["application/json"]
                           :operation-id "tournament-status/get"}
              :parameters {:path schema.contract/id-path-parameter}
+             :responses  {200 {:body domain/tournament-status-response}}
              :handler    (integrant.core/ref ::web.tournament/get-status)}
        :put {:summary    "Transition the tournament to a new status."
              :openapi    {:tags         ["tournament"]
@@ -319,6 +321,7 @@
                           :body (schema.contract/to-schema
                                  [:map
                                   [:status [:enum "active" "complete" "cancelled"]]])}
+             :responses  {200 {:body domain/tournament-advance-response}}
              :handler    (integrant.core/ref ::web.tournament/update-status)}}]
      ["/registration"
       {:get   {:summary    "Get the tournament registration window."
@@ -326,6 +329,7 @@
                             :produces     ["application/json"]
                             :operation-id "tournament-registration/get"}
                :parameters {:path schema.contract/id-path-parameter}
+               :responses  {200 {:body domain/tournament-registration-response}}
                :handler    (integrant.core/ref ::web.tournament/get-registration)}
        :patch {:summary    "Update the registration window (e.g. close early)."
                :openapi    {:tags         ["tournament"]
@@ -343,6 +347,7 @@
                             :produces     ["application/json"]
                             :operation-id "tournament-match/list"}
                :parameters {:path schema.contract/id-path-parameter}
+               :responses  {200 {:body domain/tournament-matches-response}}
                :handler    (integrant.core/ref ::web.tournament/get-matches)}
         :post {:summary    "Create a match within a tournament."
                :openapi    {:tags         ["tournament"]
@@ -350,7 +355,6 @@
                             :operation-id "tournament-match/create"}
                :parameters {:path schema.contract/id-path-parameter
                             :body domain/create-match-specification}
-               :responses  {201 {:body domain/match-resource}}
                :handler    (integrant.core/ref ::web.tournament/create-match)}}]
       ["/:match-eid"
        {:name :match/by-eid
@@ -374,6 +378,7 @@
                                    [:eid :uuid]
                                    [:match-eid :uuid]])
                            :body domain/record-result-specification}
+              :responses  {200 {:body domain/tournament-match-result-response}}
               :handler    (integrant.core/ref ::web.tournament/update-match-result)}}]]]]
 
    ["/social-media/:eid"
