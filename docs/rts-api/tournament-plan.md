@@ -274,35 +274,82 @@ CREATE TABLE IF NOT EXISTS match (
 
 ## MVP 5: Swiss Round Phase Logic
 
-Automated Swiss pairing based on standings after each round.
+Automated Swiss pairing based on standings after each round. Also introduces the game sub-resource for best-of-N match formats.
 
-### No new tables
+### New table
 
-Pure domain logic.
+- `000025-create-game-table.up.sql`
+
+```sql
+CREATE TABLE IF NOT EXISTS game (
+  id INTEGER PRIMARY KEY ASC,
+  eid TEXT NOT NULL,
+  match_id INTEGER NOT NULL,
+  game_index INTEGER NOT NULL,
+  winner_sub TEXT,
+  created_at TEXT NOT NULL,
+  UNIQUE(eid),
+  FOREIGN KEY(match_id) REFERENCES match(id)
+);
+```
+
+Add `format` column to `match` table (default 1 for bo1):
+
+- `000026-add-match-format.up.sql`: `ALTER TABLE match ADD COLUMN format INTEGER NOT NULL DEFAULT 1;`
+
+### Round format configuration
+
+Each round in the phase config specifies a `format` (best-of-N). Matches created for that round inherit the format. The match auto-completes when one player reaches the win threshold (`ceil(format / 2)`).
+
+```clojure
+{:phases [{:phase-type "swiss"
+           :rounds [{:round-index 0 :format 1}    ;; bo1
+                    {:round-index 1 :format 1}
+                    {:round-index 2 :format 3}]}  ;; bo3 for final swiss round
+          {:phase-type "single-elimination"
+           :rounds [{:round-index 0 :format 3}    ;; bo3 quarterfinals
+                    {:round-index 1 :format 3}    ;; bo3 semis
+                    {:round-index 2 :format 5}]}]} ;; bo5 grand final
+```
+
+### Game sub-resource
+
+Games are individual results within a match. A match with `format=1` (bo1) behaves identically to the current MVP 4 flow (one game = match complete).
+
+- `POST /api/tournament/:eid/match/:match-eid/game` with `{winner-sub}` — records a game result
+- `GET /api/tournament/:eid/match/:match-eid/game` — list games for a match
+- Match auto-completes when a player reaches the win threshold; standings recalculate on match completion
 
 ### Domain layer
 
 - **In `rules/tournament.clj`:**
   - `swiss-pair [standings match-history]` -- pure fn: sort by points, pair adjacent unplayed opponents, handle byes
   - `generate-swiss-round [state match-history]` -- returns updated state with new round
+  - `match-win-threshold [format]` -- `(inc (quot format 2))`
+  - `check-match-complete [games format]` -- returns winner-sub if threshold reached
 - **Handlers:**
   - `configure-phases [deps tournament-eid phase-config]` -- sets `:phases` and `:qualifier-count` in state blob (called before advancing to active)
-  - `generate-next-round [deps tournament-eid]` -- validates current round complete, computes pairings, creates match rows, updates state blob
+  - `generate-next-round [deps tournament-eid]` -- validates current round complete, computes pairings, creates match rows with round format, updates state blob
   - `complete-phase [deps tournament-eid]` -- marks current phase complete, advances `:current-phase`
+  - `record-game-result [deps match-eid winner-sub]` -- records game, checks if match completes, recalculates standings on completion
 
 ### Web layer
 
 - **Routes:**
   - `POST /api/tournament/:eid/configure-phases`
   - `POST /api/tournament/:eid/generate-round`
-- **Templates:** standings table with points, "Generate Next Round" button
+  - `POST /api/tournament/:eid/match/:match-eid/game`
+  - `GET /api/tournament/:eid/match/:match-eid/game`
+- **Templates:** standings table with points, "Generate Next Round" button, game list within match detail
 
 ### Verification
 
-- Configure a Swiss phase with 3 rounds
+- Configure a Swiss phase with 3 rounds (bo1, bo1, bo3)
 - Advance to active, generate round 1 pairings
 - Record all results, generate round 2
 - Verify no repeat pairings, verify bye handling for odd player count
+- Verify bo3 match requires 2 wins to complete
+- Verify standings only update on match completion, not individual games
 
 ---
 
