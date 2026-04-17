@@ -305,9 +305,35 @@
     ;; Default: Swiss-style pairing
     (rules/swiss-pair standings all-matches)))
 
+(defn- create-round-matches
+  "Creates matches for a round from pairings and returns the match entities.
+   Bye matches (nil player-two-sub) are auto-completed with player-one as winner."
+  [dependencies tournament-eid phase-idx round-index format pairings]
+  (mapv (fn [pairing]
+          (let [match (db/create-match
+                       (:connection dependencies)
+                       tournament-eid
+                       (assoc pairing
+                              :phase-index phase-idx
+                              :round-index round-index
+                              :format format))]
+            (if (nil? (:player-two-sub pairing))
+              (do (db/update-match-result (:connection dependencies) (:eid match) (:player-one-sub pairing))
+                  (assoc match :status "complete" :winner-sub (:player-one-sub pairing)))
+              match)))
+        pairings))
+
+(defn- has-pending-matches?
+  "Returns true if any matches in the given round are still pending."
+  [phase-matches round-index]
+  (some #(= "pending" (:status %))
+        (filter #(= round-index (:round-index %)) phase-matches)))
+
 (defn generate-next-round
-  "Generates the next round of matches for the current phase.
-   Dispatches pairing strategy based on phase-type."
+  "Generates the next round of matches for the tournament. If the current
+   phase has no more rounds configured, automatically advances to the next
+   phase and generates its first round. Dispatches pairing strategy based
+   on the phase's phase-type."
   [dependencies tournament-eid player-sub]
   (let [tournament (get-tournament-by-eid dependencies tournament-eid)]
     (cond
@@ -318,94 +344,56 @@
       {:type :tournament/phase-error :message "Only the tournament organizer can generate rounds."}
 
       :else
-      (let [state       (get-tournament-state dependencies tournament-eid)
-            phase-idx   (:current-phase state)
-            phase       (get-in state [:phases phase-idx])
-            all-matches (get-matches-for-tournament dependencies tournament-eid)
-            ;; Find the next round index for this phase
-            phase-matches (filter #(= phase-idx (:phase-index %)) all-matches)
-            next-round  (if (empty? phase-matches)
-                          0
-                          (inc (apply max (map :round-index phase-matches))))
-            rounds      (:rounds phase)
-            round-config (get rounds next-round)]
+      (let [state           (get-tournament-state dependencies tournament-eid)
+            phase-idx       (:current-phase state)
+            phase           (get-in state [:phases phase-idx])
+            all-matches     (get-matches-for-tournament dependencies tournament-eid)
+            phase-matches   (filter #(= phase-idx (:phase-index %)) all-matches)
+            next-round      (if (empty? phase-matches)
+                              0
+                              (inc (apply max (map :round-index phase-matches))))
+            rounds          (:rounds phase)
+            round-config    (get rounds next-round)
+            qualifier-count (or (:qualifier-count state) (count (:standings state)))
+            qualified       (->> (:standings state)
+                                 (sort-by :points >)
+                                 (take qualifier-count)
+                                 (mapv :player-sub))]
         (cond
           (nil? phase)
           {:type :tournament/phase-error :message "No active phase configured."}
 
-          (nil? round-config)
-          {:type :tournament/phase-error :message "All rounds for this phase have been generated."}
-
-          ;; Check if previous round is complete
-          (and (pos? next-round)
-               (some #(= "pending" (:status %))
-                     (filter #(= (dec next-round) (:round-index %)) phase-matches)))
+          ;; Previous round still has pending matches
+          (and (pos? next-round) (has-pending-matches? phase-matches (dec next-round)))
           {:type :tournament/phase-error :message "Previous round has pending matches."}
 
+          ;; Current phase exhausted — auto-advance to next phase
+          (nil? round-config)
+          (let [next-phase-idx (inc phase-idx)
+                next-phase     (get-in state [:phases next-phase-idx])]
+            (if (nil? next-phase)
+              {:type :tournament/phase-error :message "All phases complete. No more rounds to generate."}
+              (let [format    (or (get-in next-phase [:rounds 0 :format]) 1)
+                    pairings  (generate-pairings (:phase-type next-phase) (:standings state) all-matches qualified)
+                    matches   (create-round-matches dependencies tournament-eid next-phase-idx 0 format pairings)
+                    new-state (assoc state :current-phase next-phase-idx)]
+                (set-tournament-state dependencies tournament-eid new-state)
+                {:type          :tournament/round-generated
+                 :round         0
+                 :phase         next-phase-idx
+                 :phase-advanced true
+                 :matches       matches})))
+
+          ;; Generate next round in current phase
           :else
-          (let [format          (or (:format round-config) 1)
-                qualifier-count (or (:qualifier-count state) (count (:standings state)))
-                qualified       (->> (:standings state)
-                                     (sort-by :points >)
-                                     (take qualifier-count)
-                                     (mapv :player-sub))
-                pairings        (generate-pairings (:phase-type phase) (:standings state) all-matches qualified)
-                matches         (mapv (fn [pairing]
-                                        (db/create-match
-                                         (:connection dependencies)
-                                         tournament-eid
-                                         (assoc pairing
-                                                :phase-index phase-idx
-                                                :round-index next-round
-                                                :format format)))
-                                      pairings)
-                new-state       (update-in state [:phases phase-idx :rounds next-round]
-                                           assoc :match-eids (mapv :eid matches)
-                                           :status "active")]
+          (let [format   (or (:format round-config) 1)
+                pairings (generate-pairings (:phase-type phase) (:standings state) all-matches qualified)
+                matches  (create-round-matches dependencies tournament-eid phase-idx next-round format pairings)
+                new-state (update-in state [:phases phase-idx :rounds next-round]
+                                     assoc :match-eids (mapv :eid matches)
+                                     :status "active")]
             (set-tournament-state dependencies tournament-eid new-state)
             {:type    :tournament/round-generated
              :round   next-round
-             :matches matches}))))))
-
-(defn advance-phase
-  "Advances to the next phase in the tournament. Generates the first round
-   of the next phase using its phase-type to determine pairing strategy.
-   For elimination-style phases, seeds from standings using qualifier-count."
-  [dependencies tournament-eid player-sub]
-  (let [tournament (get-tournament-by-eid dependencies tournament-eid)]
-    (cond
-      (nil? tournament)
-      {:type :tournament/phase-error :message "Tournament not found."}
-
-      (not= player-sub (:created-by-sub tournament))
-      {:type :tournament/phase-error :message "Only the tournament organizer can advance the phase."}
-
-      :else
-      (let [state           (get-tournament-state dependencies tournament-eid)
-            current-idx     (or (:current-phase state) 0)
-            next-idx        (inc current-idx)
-            next-phase      (get-in state [:phases next-idx])]
-        (if (nil? next-phase)
-          {:type :tournament/phase-error :message "No more phases configured."}
-          (let [qualifier-count (or (:qualifier-count state) (count (:standings state)))
-                qualified       (->> (:standings state)
-                                     (sort-by :points >)
-                                     (take qualifier-count)
-                                     (mapv :player-sub))
-                all-matches     (get-matches-for-tournament dependencies tournament-eid)
-                format          (or (get-in next-phase [:rounds 0 :format]) 1)
-                pairings        (generate-pairings (:phase-type next-phase) (:standings state) all-matches qualified)
-                matches         (mapv (fn [pairing]
-                                        (db/create-match
-                                         (:connection dependencies)
-                                         tournament-eid
-                                         (assoc pairing
-                                                :phase-index next-idx
-                                                :round-index 0
-                                                :format format)))
-                                      pairings)
-                new-state       (assoc state :current-phase next-idx)]
-            (set-tournament-state dependencies tournament-eid new-state)
-            {:type    :tournament/phase-advanced
-             :phase   next-idx
+             :phase   phase-idx
              :matches matches}))))))

@@ -554,30 +554,35 @@ test.describe('Tournament Phase & Swiss API', () => {
   });
 });
 
-test.describe('Tournament Phase Advancement API', () => {
-  test('advance to next phase after Swiss', async ({ request }) => {
+test.describe('Tournament Phase Auto-Advancement', () => {
+  test('generate-round auto-advances to next phase when current phase exhausted', async ({ request }) => {
     const eid = await createTournamentWithPhases(request);
-    // Generate and complete Swiss round 0
-    const r0 = await request.post(`${BASE}/api/tournament/${eid}/round/generate`, {
-      headers: headers('dev-admin'),
-    });
-    const r0matches = (await r0.json()).matches;
-    for (const m of r0matches) {
-      if (m['player-two-sub']) {
-        await request.post(`${BASE}/api/tournament/${eid}/match/${m.eid}/game`, {
-          headers: headers('dev-admin'),
-          data: { 'winner-sub': m['player-one-sub'] },
-        });
+    // Generate and complete both Swiss rounds (phase has 2 rounds configured)
+    for (let round = 0; round < 2; round++) {
+      const r = await request.post(`${BASE}/api/tournament/${eid}/round/generate`, {
+        headers: headers('dev-admin'),
+      });
+      const matches = (await r.json()).matches;
+      for (const m of matches) {
+        if (m['player-two-sub']) {
+          await request.post(`${BASE}/api/tournament/${eid}/match/${m.eid}/game`, {
+            headers: headers('dev-admin'),
+            data: { 'winner-sub': m['player-one-sub'] },
+          });
+        }
       }
     }
 
-    // Start elimination
-    const elimRes = await request.post(`${BASE}/api/tournament/${eid}/phase/advance`, {
+    // Next generate-round should auto-advance to elimination phase
+    const nextRes = await request.post(`${BASE}/api/tournament/${eid}/round/generate`, {
       headers: headers('dev-admin'),
     });
-    expect(elimRes.status()).toBe(200);
-    const body = await elimRes.json();
-    expect(body.type).toBe('tournament/phase-advanced');
+    expect(nextRes.status()).toBe(200);
+    const body = await nextRes.json();
+    expect(body.type).toBe('tournament/round-generated');
+    expect(body['phase-advanced']).toBe(true);
+    expect(body.phase).toBe(1);
+    expect(body.round).toBe(0);
     expect(body.matches.length).toBeGreaterThan(0);
   });
 });

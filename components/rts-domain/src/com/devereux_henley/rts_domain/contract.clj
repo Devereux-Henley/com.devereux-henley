@@ -113,7 +113,6 @@
 (def get-games-for-match                          handlers.tournament/get-games-for-match)
 (def configure-phases                             handlers.tournament/configure-phases)
 (def generate-next-round                          handlers.tournament/generate-next-round)
-(def advance-phase                                handlers.tournament/advance-phase)
 
 ;;; ─── Social Media handler functions ────────────────────────────────────────
 
