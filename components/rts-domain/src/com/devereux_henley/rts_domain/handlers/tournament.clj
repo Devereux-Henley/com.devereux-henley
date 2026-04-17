@@ -198,6 +198,32 @@
   (mapv (fn [m] (assoc m :type :tournament/match))
         (db/get-matches-for-round (:connection dependencies) tournament-eid phase-index round-index)))
 
+(defn- recalculate-and-check-completion
+  "Recalculates standings after a match completes. If phases are configured
+   and all matches in all phases are done with no more rounds remaining,
+   auto-completes the tournament. Without phase configuration, no
+   auto-completion occurs."
+  [dependencies tournament-eid]
+  (let [state         (get-tournament-state dependencies tournament-eid)
+        all-matches   (get-matches-for-tournament dependencies tournament-eid)
+        completed     (filter #(= "complete" (:status %)) all-matches)
+        new-standings (rules/recalculate-standings (:standings state) completed)
+        has-phases    (seq (:phases state))
+        complete?     (when has-phases
+                        (let [all-done      (every? #(= "complete" (:status %)) all-matches)
+                              phase-idx     (:current-phase state)
+                              phase         (get-in state [:phases phase-idx])
+                              phase-matches (filter #(= phase-idx (:phase-index %)) all-matches)
+                              max-round     (if (empty? phase-matches) -1 (apply max (map :round-index phase-matches)))
+                              rounds-left   (get-in phase [:rounds (inc max-round)])
+                              last-phase    (nil? (get-in state [:phases (inc phase-idx)]))]
+                          (and all-done (nil? rounds-left) last-phase)))
+        new-state     (cond-> (assoc state :standings new-standings)
+                        complete? (assoc :status "complete"))]
+    (set-tournament-state dependencies tournament-eid new-state)
+    {:standings           new-standings
+     :tournament-complete (boolean complete?)}))
+
 (defn update-match-result
   "Records a match result and recalculates standings in the state blob."
   [dependencies match-eid winner-sub]
@@ -212,13 +238,180 @@
       :else
       (do
         (db/update-match-result (:connection dependencies) match-eid winner-sub)
-        (let [tournament-eid (:tournament-eid match)
-              state          (get-tournament-state dependencies tournament-eid)
-              all-matches    (get-matches-for-tournament dependencies tournament-eid)
-              completed      (filter #(= "complete" (:status %)) all-matches)
-              new-standings  (rules/recalculate-standings (:standings state) completed)
-              new-state      (assoc state :standings new-standings)]
-          (set-tournament-state dependencies tournament-eid new-state)
-          {:type      :tournament/match-result-recorded
-           :match-eid match-eid
-           :standings new-standings})))))
+        (let [{:keys [standings tournament-complete]}
+              (recalculate-and-check-completion dependencies (:tournament-eid match))]
+          (cond-> {:type      :tournament/match-result-recorded
+                   :match-eid match-eid
+                   :standings standings}
+            tournament-complete (assoc :tournament-complete true)))))))
+
+;; ─── Games ───────────────────────────────────────────────────────────────────
+
+(defn record-game-result
+  "Records a game within a match. If the match win threshold is reached,
+   the match auto-completes and standings are recalculated."
+  [dependencies match-eid winner-sub]
+  (let [match (db/get-match-by-eid (:connection dependencies) match-eid)]
+    (cond
+      (nil? match)
+      {:type :tournament/match-error :message "Match not found."}
+
+      (= "complete" (:status match))
+      {:type :tournament/match-error :message "Match is already complete."}
+
+      :else
+      (let [existing-games (db/get-games-for-match (:connection dependencies) match-eid)
+            game-index     (count existing-games)
+            _              (db/create-game (:connection dependencies) match-eid game-index winner-sub)
+            all-games      (conj (vec existing-games) {:winner-sub winner-sub})
+            match-winner   (rules/check-match-complete all-games (:format match))]
+        (if match-winner
+          ;; Match complete — update match, recalculate standings, check tournament completion
+          (do
+            (db/update-match-result (:connection dependencies) match-eid match-winner)
+            (let [{:keys [standings tournament-complete]}
+                  (recalculate-and-check-completion dependencies (:tournament-eid match))]
+              (cond-> {:type         :tournament/match-completed
+                       :match-eid    match-eid
+                       :winner-sub   match-winner
+                       :game-index   game-index
+                       :standings    standings}
+                tournament-complete (assoc :tournament-complete true))))
+          ;; Match still in progress
+          {:type       :tournament/game-recorded
+           :match-eid  match-eid
+           :game-index game-index
+           :winner-sub winner-sub})))))
+
+(defn get-games-for-match
+  "Returns all games for a match."
+  [dependencies match-eid]
+  (db/get-games-for-match (:connection dependencies) match-eid))
+
+;; ─── Phase management ────────────────────────────────────────────────────────
+
+(defn configure-phases
+  "Sets the phase configuration on a tournament. Must be in registration status."
+  [dependencies tournament-eid phase-config player-sub]
+  (let [tournament (get-tournament-by-eid dependencies tournament-eid)]
+    (cond
+      (nil? tournament)
+      {:type :tournament/phase-error :message "Tournament not found."}
+
+      (not= player-sub (:created-by-sub tournament))
+      {:type :tournament/phase-error :message "Only the tournament organizer can configure phases."}
+
+      :else
+      (let [state (get-tournament-state dependencies tournament-eid)]
+        (if (not= "registration" (:status state))
+          {:type :tournament/phase-error :message "Phases can only be configured during registration."}
+          (let [new-state (-> state
+                              (assoc :phases (:phases phase-config))
+                              (assoc :qualifier-count (:qualifier-count phase-config)))]
+            (set-tournament-state dependencies tournament-eid new-state)
+            {:type  :tournament/phase-configured
+             :state new-state}))))))
+
+(defn- generate-pairings
+  "Dispatches pairing generation based on phase type."
+  [phase-type standings all-matches qualified-players]
+  (case phase-type
+    "swiss"              (rules/swiss-pair standings all-matches)
+    "round-robin"        (rules/swiss-pair standings all-matches) ;; same pairing logic, different semantics
+    "single-elimination" (rules/generate-elimination-bracket qualified-players)
+    "double-elimination" (rules/generate-elimination-bracket qualified-players)
+    ;; Default: Swiss-style pairing
+    (rules/swiss-pair standings all-matches)))
+
+(defn- create-round-matches
+  "Creates matches for a round from pairings and returns the match entities.
+   Bye matches (nil player-two-sub) are auto-completed with player-one as winner."
+  [dependencies tournament-eid phase-idx round-index format pairings]
+  (mapv (fn [pairing]
+          (let [match (db/create-match
+                       (:connection dependencies)
+                       tournament-eid
+                       (assoc pairing
+                              :phase-index phase-idx
+                              :round-index round-index
+                              :format format))]
+            (if (nil? (:player-two-sub pairing))
+              (do (db/update-match-result (:connection dependencies) (:eid match) (:player-one-sub pairing))
+                  (assoc match :status "complete" :winner-sub (:player-one-sub pairing)))
+              match)))
+        pairings))
+
+(defn- has-pending-matches?
+  "Returns true if any matches in the given round are still pending."
+  [phase-matches round-index]
+  (some #(= "pending" (:status %))
+        (filter #(= round-index (:round-index %)) phase-matches)))
+
+(defn generate-next-round
+  "Generates the next round of matches for the tournament. If the current
+   phase has no more rounds configured, automatically advances to the next
+   phase and generates its first round. Dispatches pairing strategy based
+   on the phase's phase-type."
+  [dependencies tournament-eid player-sub]
+  (let [tournament (get-tournament-by-eid dependencies tournament-eid)]
+    (cond
+      (nil? tournament)
+      {:type :tournament/phase-error :message "Tournament not found."}
+
+      (not= player-sub (:created-by-sub tournament))
+      {:type :tournament/phase-error :message "Only the tournament organizer can generate rounds."}
+
+      :else
+      (let [state           (get-tournament-state dependencies tournament-eid)
+            phase-idx       (:current-phase state)
+            phase           (get-in state [:phases phase-idx])
+            all-matches     (get-matches-for-tournament dependencies tournament-eid)
+            phase-matches   (filter #(= phase-idx (:phase-index %)) all-matches)
+            next-round      (if (empty? phase-matches)
+                              0
+                              (inc (apply max (map :round-index phase-matches))))
+            rounds          (:rounds phase)
+            round-config    (get rounds next-round)
+            qualifier-count (or (:qualifier-count state) (count (:standings state)))
+            qualified       (->> (:standings state)
+                                 (sort-by :points >)
+                                 (take qualifier-count)
+                                 (mapv :player-sub))]
+        (cond
+          (nil? phase)
+          {:type :tournament/phase-error :message "No active phase configured."}
+
+          ;; Previous round still has pending matches
+          (and (pos? next-round) (has-pending-matches? phase-matches (dec next-round)))
+          {:type :tournament/phase-error :message "Previous round has pending matches."}
+
+          ;; Current phase exhausted — auto-advance to next phase
+          (nil? round-config)
+          (let [next-phase-idx (inc phase-idx)
+                next-phase     (get-in state [:phases next-phase-idx])]
+            (if (nil? next-phase)
+              {:type :tournament/phase-error :message "All phases complete. No more rounds to generate."}
+              (let [format    (or (get-in next-phase [:rounds 0 :format]) 1)
+                    pairings  (generate-pairings (:phase-type next-phase) (:standings state) all-matches qualified)
+                    matches   (create-round-matches dependencies tournament-eid next-phase-idx 0 format pairings)
+                    new-state (assoc state :current-phase next-phase-idx)]
+                (set-tournament-state dependencies tournament-eid new-state)
+                {:type          :tournament/round-generated
+                 :round         0
+                 :phase         next-phase-idx
+                 :phase-advanced true
+                 :matches       matches})))
+
+          ;; Generate next round in current phase
+          :else
+          (let [format   (or (:format round-config) 1)
+                pairings (generate-pairings (:phase-type phase) (:standings state) all-matches qualified)
+                matches  (create-round-matches dependencies tournament-eid phase-idx next-round format pairings)
+                new-state (update-in state [:phases phase-idx :rounds next-round]
+                                     assoc :match-eids (mapv :eid matches)
+                                     :status "active")]
+            (set-tournament-state dependencies tournament-eid new-state)
+            {:type    :tournament/round-generated
+             :round   next-round
+             :phase   phase-idx
+             :matches matches}))))))

@@ -113,6 +113,7 @@
       (:round-index match-spec)
       (:player-one-sub match-spec)
       (:player-two-sub match-spec)
+      (or (:format match-spec) 1)
       now now
       tournament-eid])
     (jdbc.contract/query-for-entity
@@ -140,6 +141,24 @@
   (jdbc.contract/execute-one!
    connection
    [update-match-result-query winner-sub (str (Instant/now)) match-eid]))
+
+;; ─── Game queries ────────────────────────────────────────────────────────────
+
+(def create-game-query (resource/load-query-resource "tournament" "create-game.sql"))
+
+(def get-games-for-match-query (resource/load-query-resource "tournament" "get-games-for-match.sql"))
+
+(defn create-game
+  [connection match-eid game-index winner-sub]
+  (let [eid (str (random-uuid))]
+    (jdbc.contract/execute-one!
+     connection
+     [create-game-query eid game-index winner-sub (str (Instant/now)) (str match-eid)])
+    {:eid (java.util.UUID/fromString eid) :match-eid match-eid :game-index game-index :winner-sub winner-sub}))
+
+(defn get-games-for-match
+  [connection match-eid]
+  (jdbc.contract/query-for-entities connection [get-games-for-match-query (str match-eid)] schema/match-game-entity))
 
 ;; ─── Tournament CRUD ─────────────────────────────────────────────────────────
 

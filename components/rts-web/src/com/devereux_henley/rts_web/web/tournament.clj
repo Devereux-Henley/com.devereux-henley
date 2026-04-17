@@ -191,3 +191,50 @@
       (if (= :tournament/match-error (:type result))
         {:status 422 :body result}
         {:status 200 :body result}))))
+
+;; ─── Game handlers ──────────────────────────────────────────────────────────
+
+(defmethod integrant.core/init-key ::record-game
+  [_init-key dependencies]
+  (fn [{{{:keys [match-eid]}     :path
+         {:keys [winner-sub]} :body} :parameters
+        :as                           _request}]
+    (let [result (domain/record-game-result dependencies match-eid winner-sub)]
+      (if (= :tournament/match-error (:type result))
+        {:status 422 :body result}
+        {:status 200 :body result}))))
+
+(defmethod integrant.core/init-key ::get-games
+  [_init-key dependencies]
+  (fn [{{{:keys [match-eid]} :path} :parameters
+        :as                         _request}]
+    {:status 200
+     :body   {:type  :tournament/games
+              :games (domain/get-games-for-match dependencies match-eid)}}))
+
+;; ─── Phase handlers ─────────────────────────────────────────────────────────
+
+(defmethod integrant.core/init-key ::configure-phases
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]}                          :path
+         {:keys [phases qualifier-count]} :body} :parameters
+        session                                    :ory-session
+        :as                                        _request}]
+    (let [player-sub (get-in session [:identity :id])
+          result     (domain/configure-phases dependencies eid
+                                              {:phases phases :qualifier-count qualifier-count}
+                                              player-sub)]
+      (if (= :tournament/phase-error (:type result))
+        {:status 422 :body result}
+        {:status 200 :body result}))))
+
+(defmethod integrant.core/init-key ::generate-round
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+        session               :ory-session
+        :as                   _request}]
+    (let [player-sub (get-in session [:identity :id])
+          result     (domain/generate-next-round dependencies eid player-sub)]
+      (if (= :tournament/phase-error (:type result))
+        {:status 422 :body result}
+        {:status 200 :body result}))))

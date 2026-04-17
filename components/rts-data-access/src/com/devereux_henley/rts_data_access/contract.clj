@@ -89,6 +89,7 @@
 (def tournament-state-entity schema/tournament-state-entity)
 (def tournament-entry-entity schema/tournament-entry-entity)
 (def match-entity schema/match-entity)
+(def match-game-entity schema/match-game-entity)
 
 ;;; ─── Tournament DB queries ────────────────────────────────────────────────
 
@@ -106,6 +107,8 @@
 (def get-matches-for-tournament query.tournament/get-matches-for-tournament)
 (def get-matches-for-round query.tournament/get-matches-for-round)
 (def update-match-result query.tournament/update-match-result)
+(def create-game query.tournament/create-game)
+(def get-games-for-match query.tournament/get-games-for-match)
 
 ;;; ─── Social Media DB entities ──────────────────────────────────────────────
 

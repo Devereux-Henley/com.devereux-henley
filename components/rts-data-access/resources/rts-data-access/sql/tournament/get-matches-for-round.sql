@@ -8,6 +8,7 @@ SELECT
   m.player_two_sub,
   m.winner_sub,
   m.status,
+  m.format,
   m.created_at,
   m.updated_at
 FROM

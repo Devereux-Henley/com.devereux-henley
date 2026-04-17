@@ -93,6 +93,9 @@
 (def match-resource                               schema/match-resource)
 (def create-match-specification                   schema/create-match-specification)
 (def record-result-specification                  schema/record-result-specification)
+(def update-status-specification                  schema/update-status-specification)
+(def update-registration-specification            schema/update-registration-specification)
+(def configure-phases-specification               schema/configure-phases-specification)
 (def tournament-entries-response                  schema/tournament-entries-response)
 (def tournament-status-response                   schema/tournament-status-response)
 (def tournament-advance-response                  schema/tournament-advance-response)
@@ -109,6 +112,10 @@
 (def get-matches-for-tournament                   handlers.tournament/get-matches-for-tournament)
 (def get-matches-for-round                        handlers.tournament/get-matches-for-round)
 (def update-match-result                          handlers.tournament/update-match-result)
+(def record-game-result                           handlers.tournament/record-game-result)
+(def get-games-for-match                          handlers.tournament/get-games-for-match)
+(def configure-phases                             handlers.tournament/configure-phases)
+(def generate-next-round                          handlers.tournament/generate-next-round)
 
 ;;; ─── Social Media handler functions ────────────────────────────────────────
 

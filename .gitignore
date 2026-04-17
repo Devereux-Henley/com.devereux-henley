@@ -32,6 +32,9 @@ projects/**/pom.xml
 # playwright-cli
 .playwright-cli/
 
+# playwright test results
+test-results/
+
 # clojure-lsp
 .lsp/
 

@@ -313,14 +313,12 @@
              :parameters {:path schema.contract/id-path-parameter}
              :responses  {200 {:body domain/tournament-status-response}}
              :handler    (integrant.core/ref ::web.tournament/get-status)}
-       :put {:summary    "Transition the tournament to a new status."
+       :put {:summary    "Update the tournament status."
              :openapi    {:tags         ["tournament"]
                           :produces     ["application/json"]
                           :operation-id "tournament-status/update"}
              :parameters {:path schema.contract/id-path-parameter
-                          :body (schema.contract/to-schema
-                                 [:map
-                                  [:status [:enum "active" "complete" "cancelled"]]])}
+                          :body domain/update-status-specification}
              :responses  {200 {:body domain/tournament-advance-response}}
              :handler    (integrant.core/ref ::web.tournament/update-status)}}]
      ["/registration"
@@ -331,14 +329,12 @@
                :parameters {:path schema.contract/id-path-parameter}
                :responses  {200 {:body domain/tournament-registration-response}}
                :handler    (integrant.core/ref ::web.tournament/get-registration)}
-       :patch {:summary    "Update the registration window (e.g. close early)."
+       :patch {:summary    "Update the tournament registration window."
                :openapi    {:tags         ["tournament"]
                             :produces     ["application/json"]
                             :operation-id "tournament-registration/update"}
                :parameters {:path schema.contract/id-path-parameter
-                            :body (schema.contract/to-schema
-                                   [:map
-                                    [:closed-early :boolean]])}
+                            :body domain/update-registration-specification}
                :handler    (integrant.core/ref ::web.tournament/update-registration)}}]
      ["/match"
       [""
@@ -379,7 +375,42 @@
                                    [:match-eid :uuid]])
                            :body domain/record-result-specification}
               :responses  {200 {:body domain/tournament-match-result-response}}
-              :handler    (integrant.core/ref ::web.tournament/update-match-result)}}]]]]
+              :handler    (integrant.core/ref ::web.tournament/update-match-result)}}]
+      ["/:match-eid/game"
+       {:get  {:summary    "List games for a match."
+               :openapi    {:tags         ["tournament"]
+                            :produces     ["application/json"]
+                            :operation-id "tournament-game/list"}
+               :parameters {:path (schema.contract/to-schema
+                                   [:map
+                                    [:eid :uuid]
+                                    [:match-eid :uuid]])}
+               :handler    (integrant.core/ref ::web.tournament/get-games)}
+        :post {:summary    "Record a game result within a match."
+               :openapi    {:tags         ["tournament"]
+                            :produces     ["application/json"]
+                            :operation-id "tournament-game/record"}
+               :parameters {:path (schema.contract/to-schema
+                                   [:map
+                                    [:eid :uuid]
+                                    [:match-eid :uuid]])
+                            :body domain/record-result-specification}
+               :handler    (integrant.core/ref ::web.tournament/record-game)}}]]
+     ["/phase"
+      {:put {:summary    "Update the tournament phase configuration."
+             :openapi    {:tags         ["tournament"]
+                          :produces     ["application/json"]
+                          :operation-id "tournament-phase/update"}
+             :parameters {:path schema.contract/id-path-parameter
+                          :body domain/configure-phases-specification}
+             :handler    (integrant.core/ref ::web.tournament/configure-phases)}}]
+     ["/round"
+      {:post {:summary    "Create the next round of matches for the current phase."
+              :openapi    {:tags         ["tournament"]
+                           :produces     ["application/json"]
+                           :operation-id "tournament-round/create"}
+              :parameters {:path schema.contract/id-path-parameter}
+              :handler    (integrant.core/ref ::web.tournament/generate-round)}}]]]
 
    ["/social-media/:eid"
     {:name :social-media/by-eid
