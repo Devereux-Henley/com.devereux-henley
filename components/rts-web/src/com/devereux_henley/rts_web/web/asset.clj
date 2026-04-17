@@ -5,7 +5,7 @@
 (defn standard-asset-handler
   [asset-name _request]
   {:status 200
-   :body (io/input-stream (io/resource (str "rts-web/asset/" asset-name)))})
+   :body   (io/input-stream (io/resource (str "rts-web/asset/" asset-name)))})
 
 (defn match-icon
   [eid]
@@ -18,9 +18,9 @@
   [{{{:keys [eid]} :path} :parameters
     :as                   _request}]
   (if-let [matching-icon (match-icon eid)]
-    {:status 200
+    {:status  200
      :headers {"Content-Type" "image/svg+xml"}
-     :body   matching-icon}
-    {:status 404
+     :body    matching-icon}
+    {:status  404
      :headers {"Content-Type" "image/svg+xml"}
-     :body   nil}))
+     :body    nil}))

@@ -20,7 +20,7 @@
     (selmer.parser/render-file (view-fn (:type data)) {:data data})
     (catch Throwable t
       (log/error t "Template render failure"
-                 {:type (:type data)
+                 {:type     (:type data)
                   :template (try (view-fn (:type data)) (catch Throwable _ nil))})
       fallback-error-fragment)))
 

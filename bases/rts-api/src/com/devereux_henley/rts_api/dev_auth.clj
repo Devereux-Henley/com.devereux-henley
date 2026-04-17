@@ -97,7 +97,7 @@
        :cookies {cookie-name (impersonate-cookie user-id)}
        :body    ""}
       {:status 404
-       :body   {:error (str "Unknown dev user: " user-id)
+       :body   {:error       (str "Unknown dev user: " user-id)
                 :known-users (vec (keys users))}})))
 
 (defmethod integrant.core/init-key ::logout-handler

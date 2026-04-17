@@ -128,13 +128,13 @@
    "armour"          100.0
    "leadership"      100.0
    "speed"           140.0
-   "melee attack"     60.0
-   "melee defence"    60.0
+   "melee attack"    60.0
+   "melee defence"   60.0
    "weapon strength" 700.0
-   "charge bonus"     60.0
+   "charge bonus"    60.0
    "missile damage"  300.0
-   "health"        12000.0
-   "barrier"        1000.0})
+   "health"          12000.0
+   "barrier"         1000.0})
 
 (defn- add-stat-percentage
   "Attaches a :percentage key to a stat map, clamped to [0, 100], relative to known max values."
@@ -312,29 +312,29 @@
    :mount is the mount `type` key (e.g. \"wh2_dlc09_anc_mount_skeleton_chariot\"),
    not a display name. Cost comes from unit_mount.cost via get-mounts-for-unit."
   [unit-hydrated selections conn]
-  (let [base-cost     (or (:cost unit-hydrated) 0)
-        mount-key     (:mount selections)
-        mount-cost    (when mount-key
-                        (:cost (first (filter #(= mount-key (:key %))
-                                              (db/get-mounts-for-unit conn (:eid unit-hydrated))))))
-        ability-keys  (not-empty (:abilities selections []))
-        ability-cost  (when ability-keys
-                        (->> (db/get-abilities-by-keys conn ability-keys)
-                             vals
-                             (map #(or (:cost %) 0))
-                             (reduce + 0)))
-        spell-keys    (not-empty (:spells selections []))
-        spell-cost    (when spell-keys
-                        (->> (db/get-spells-by-keys conn spell-keys)
-                             vals
-                             (map #(or (:cost %) 0))
-                             (reduce + 0)))
-        item-keys     (not-empty (set (:items selections [])))
-        item-cost     (when item-keys
-                        (->> (db/get-items-for-unit conn (:eid unit-hydrated))
-                             (filter #(item-keys (:key %)))
-                             (map #(or (:cost %) 0))
-                             (reduce + 0)))]
+  (let [base-cost    (or (:cost unit-hydrated) 0)
+        mount-key    (:mount selections)
+        mount-cost   (when mount-key
+                       (:cost (first (filter #(= mount-key (:key %))
+                                             (db/get-mounts-for-unit conn (:eid unit-hydrated))))))
+        ability-keys (not-empty (:abilities selections []))
+        ability-cost (when ability-keys
+                       (->> (db/get-abilities-by-keys conn ability-keys)
+                            vals
+                            (map #(or (:cost %) 0))
+                            (reduce + 0)))
+        spell-keys   (not-empty (:spells selections []))
+        spell-cost   (when spell-keys
+                       (->> (db/get-spells-by-keys conn spell-keys)
+                            vals
+                            (map #(or (:cost %) 0))
+                            (reduce + 0)))
+        item-keys    (not-empty (set (:items selections [])))
+        item-cost    (when item-keys
+                       (->> (db/get-items-for-unit conn (:eid unit-hydrated))
+                            (filter #(item-keys (:key %)))
+                            (map #(or (:cost %) 0))
+                            (reduce + 0)))]
     (+ base-cost (or mount-cost 0) (or ability-cost 0) (or spell-cost 0) (or item-cost 0))))
 
 ;; ─── Shared helpers ───────────────────────────────────────────────────────────
@@ -401,30 +401,30 @@
      - passive (cost = 0): always on the character; shown in a readonly section
      - draftable (cost > 0): purchasable options shown in a selectable section"
   [dependencies draft-eid unit-eid]
-  (let [conn                (:connection dependencies)
-        draft               (db/get-draft-by-eid conn draft-eid)
-        game-mode           (db/get-game-mode-by-eid conn (:game-mode-eid draft))
-        unit                (db/get-unit-by-eid conn unit-eid)
+  (let [conn                                                                 (:connection dependencies)
+        draft                                                                (db/get-draft-by-eid conn draft-eid)
+        game-mode                                                            (db/get-game-mode-by-eid conn (:game-mode-eid draft))
+        unit                                                                 (db/get-unit-by-eid conn unit-eid)
         {:keys [stats health barrier abilities draftable-spells attributes]} (parse-unit-statistics (:unit-statistics unit))
-        unit-statistics     (mapv add-stat-percentage stats)
-        ability-by-key      (db/get-abilities-by-keys conn abilities)
-        all-abilities       (into []
-                                  (keep (fn [k]
-                                          (when-let [{:keys [name eid description cost]} (get ability-by-key k)]
-                                            {:key k :name name :eid eid :description description :cost (or cost 0)})))
-                                  abilities)
-        passive-abilities   (filterv #(= 0 (:cost %)) all-abilities)
-        draftable-abilities (filterv #(pos? (:cost %)) all-abilities)
-        spell-by-key        (db/get-spells-by-keys conn draftable-spells)
-        all-spells          (into []
-                                  (keep (fn [k]
-                                          (when-let [{:keys [eid name mana-cost cost]} (get spell-by-key k)]
-                                            {:key k :eid eid :name name :mana-cost (or mana-cost 0) :cost (or cost 0)})))
-                                  draftable-spells)
-        passive-spells      (filterv #(= 0 (:cost %)) all-spells)
-        draftable-spells-v  (filterv #(pos? (:cost %)) all-spells)
-        items               (db/get-items-for-unit conn unit-eid)
-        mounts              (db/get-mounts-for-unit conn unit-eid)]
+        unit-statistics                                                      (mapv add-stat-percentage stats)
+        ability-by-key                                                       (db/get-abilities-by-keys conn abilities)
+        all-abilities                                                        (into []
+                                                                                   (keep (fn [k]
+                                                                                           (when-let [{:keys [name eid description cost]} (get ability-by-key k)]
+                                                                                             {:key k :name name :eid eid :description description :cost (or cost 0)})))
+                                                                                   abilities)
+        passive-abilities                                                    (filterv #(= 0 (:cost %)) all-abilities)
+        draftable-abilities                                                  (filterv #(pos? (:cost %)) all-abilities)
+        spell-by-key                                                         (db/get-spells-by-keys conn draftable-spells)
+        all-spells                                                           (into []
+                                                                                   (keep (fn [k]
+                                                                                           (when-let [{:keys [eid name mana-cost cost]} (get spell-by-key k)]
+                                                                                             {:key k :eid eid :name name :mana-cost (or mana-cost 0) :cost (or cost 0)})))
+                                                                                   draftable-spells)
+        passive-spells                                                       (filterv #(= 0 (:cost %)) all-spells)
+        draftable-spells-v                                                   (filterv #(pos? (:cost %)) all-spells)
+        items                                                                (db/get-items-for-unit conn unit-eid)
+        mounts                                                               (db/get-mounts-for-unit conn unit-eid)]
     (assoc unit
            :type                :draft/unit
            :draft-eid           draft-eid
@@ -574,8 +574,8 @@
 (defn get-draft-entry
   "Returns the state entry matching entry-eid in the given section, or nil."
   [dependencies draft-eid entry-eid section]
-  (let [state    (get-draft-state dependencies draft-eid)
-        entries  (get state (keyword section) [])]
+  (let [state   (get-draft-state dependencies draft-eid)
+        entries (get state (keyword section) [])]
     (some #(when (= entry-eid (:entry-eid %)) %) entries)))
 
 (defn update-unit-in-draft
@@ -606,28 +606,28 @@
       {:type :draft/update-error :message "Unit not found in this faction's roster."}
 
       :else
-      (let [unit           (get unit-by-eid (:unit-eid existing))
-            new-total      (compute-unit-total-cost unit selections conn)
+      (let [unit          (get unit-by-eid (:unit-eid existing))
+            new-total     (compute-unit-total-cost unit selections conn)
             ;; Reduced army: the entry under edit is removed so validate-add
             ;; re-runs as if the unit were being freshly added. For the common
             ;; "same unit, new mount" case this keeps unit-copy counts correct.
-            reduced-state  (update state section-k
-                                   (fn [xs]
-                                     (into [] (concat (subvec xs 0 idx) (subvec xs (inc idx))))))
-            army-entries   (concat
-                            (keep (fn [e] (when-let [u (get unit-by-eid (:unit-eid e))] (assoc u :section "main")))
-                                  (:main reduced-state))
-                            (keep (fn [e] (when-let [u (get unit-by-eid (:unit-eid e))] (assoc u :section "reinforcements")))
-                                  (:reinforcements reduced-state)))
-            section-cost   (reduce (fn [s entry]
-                                     (if-let [u (get unit-by-eid (:unit-eid entry))]
-                                       (+ s (or (:total-cost entry) (:cost u) 0))
-                                       s))
-                                   0
-                                   (get reduced-state section-k []))
-            violation      (rules.draft/validate-add
-                            army-entries unit section
-                            section-cost section-max new-total)]
+            reduced-state (update state section-k
+                                  (fn [xs]
+                                    (into [] (concat (subvec xs 0 idx) (subvec xs (inc idx))))))
+            army-entries  (concat
+                           (keep (fn [e] (when-let [u (get unit-by-eid (:unit-eid e))] (assoc u :section "main")))
+                                 (:main reduced-state))
+                           (keep (fn [e] (when-let [u (get unit-by-eid (:unit-eid e))] (assoc u :section "reinforcements")))
+                                 (:reinforcements reduced-state)))
+            section-cost  (reduce (fn [s entry]
+                                    (if-let [u (get unit-by-eid (:unit-eid entry))]
+                                      (+ s (or (:total-cost entry) (:cost u) 0))
+                                      s))
+                                  0
+                                  (get reduced-state section-k []))
+            violation     (rules.draft/validate-add
+                           army-entries unit section
+                           section-cost section-max new-total)]
         (if violation
           (assoc violation :type :draft/update-error)
           (let [new-entry {:entry-eid  entry-eid

@@ -65,20 +65,20 @@
                               (swap! seen conj pair)
                               (swap! resolved conj [unit-id mount-id diff-cost])))))
                       (swap! unresolved-units conj [unit-name faction]))))))))))
-    (let [rows  (sort @resolved)
-          n     (count rows)]
+    (let [rows (sort @resolved)
+          n    (count rows)]
       (if (zero? n)
         (do (log "  [unit-mounts] no entries resolved; emitting empty seed")
             "-- no unit_mount rows\n")
-        (let [header   ["INSERT OR IGNORE INTO unit_mount(id, unit_id, mount_id, cost, version, created_by_sub, created_at, updated_at, deleted_at)"
-                        "VALUES"]
-              indexed  (map-indexed (fn [i r] [(inc i) r]) rows)
-              row-sql  (fn [[idx [unit-id mount-id cost]]]
-                         (let [comma (if (< idx n) "," ";")]
-                           (format "  (%d, %d, %d, %d, 1, '%s', STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), null)%s"
-                                   idx unit-id mount-id cost seed-author comma)))
-              body     (map row-sql indexed)
-              content  (str (str/join "\n" (concat header body)) "\n")]
+        (let [header  ["INSERT OR IGNORE INTO unit_mount(id, unit_id, mount_id, cost, version, created_by_sub, created_at, updated_at, deleted_at)"
+                       "VALUES"]
+              indexed (map-indexed (fn [i r] [(inc i) r]) rows)
+              row-sql (fn [[idx [unit-id mount-id cost]]]
+                        (let [comma (if (< idx n) "," ";")]
+                          (format "  (%d, %d, %d, %d, 1, '%s', STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), null)%s"
+                                  idx unit-id mount-id cost seed-author comma)))
+              body    (map row-sql indexed)
+              content (str (str/join "\n" (concat header body)) "\n")]
           (log (format "  [unit-mounts] emitted %d rows from units_custom_battle_mounts_tables" n))
           (when (seq @unresolved-mounts)
             (log (format "  [unit-mounts] %d icon stems not in mount table (e.g. %s)"

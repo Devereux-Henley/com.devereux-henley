@@ -34,15 +34,15 @@
 ;;                                        12 out of 20 slots is non-binding in practice
 
 (def ^:private caps
-  {:lord-max             1
-   :hero-max             2
-   :semc-wm-max          4
-   :semc-wm-categories   #{"Hero" "Monster" "War Machine"}
-   :chariot-wm-max       4
+  {:lord-max              1
+   :hero-max              2
+   :semc-wm-max           4
+   :semc-wm-categories    #{"Hero" "Monster" "War Machine"}
+   :chariot-wm-max        4
    :chariot-wm-categories #{"Chariot" "War Machine"}
-   :per-unit-max         4
-   :unique-unit-max      1
-   :section-slot-max     20})
+   :per-unit-max          4
+   :unique-unit-max       1
+   :section-slot-max      20})
 
 ;; ─── Rule keys ────────────────────────────────────────────────────────────────
 ;;
@@ -195,38 +195,38 @@
    section-max   — budget cap for the target section; when nil the budget rule is skipped
    total-cost    — base cost + selected mount + spells + items for the unit being added"
   [army-entries unit-to-add section section-cost section-max total-cost]
-  (let [category       (:unit-category-name unit-to-add)
-        is-unique      (boolean (:is-unique unit-to-add))
-        unit-eid       (:eid unit-to-add)
-        lord-count      (count (filter #(= "Lord" (:unit-category-name %)) army-entries))
-        hero-count      (count (filter #(= "Hero" (:unit-category-name %)) army-entries))
-        semc-wm-count   (count (filter #(contains? (:semc-wm-categories caps)
-                                                   (:unit-category-name %)) army-entries))
+  (let [category         (:unit-category-name unit-to-add)
+        is-unique        (boolean (:is-unique unit-to-add))
+        unit-eid         (:eid unit-to-add)
+        lord-count       (count (filter #(= "Lord" (:unit-category-name %)) army-entries))
+        hero-count       (count (filter #(= "Hero" (:unit-category-name %)) army-entries))
+        semc-wm-count    (count (filter #(contains? (:semc-wm-categories caps)
+                                                    (:unit-category-name %)) army-entries))
         chariot-wm-count (count (filter #(contains? (:chariot-wm-categories caps)
                                                     (:unit-category-name %)) army-entries))
-        unit-copies     (count (filter #(= unit-eid (:eid %)) army-entries))
-        slot-count      (count (filter #(= section (:section %)) army-entries))
-        session        (cond-> (-> base-session
-                                   (o/insert ::army
-                                             {:counts/lords         lord-count
-                                              :counts/heroes        hero-count
-                                              :counts/semc-wm       semc-wm-count
-                                              :counts/chariot-wm    chariot-wm-count
-                                              :counts/unit-copies   unit-copies
-                                              :counts/section-slots slot-count})
-                                   (o/insert ::action
-                                             (cond-> {:action/section    section
-                                                      :action/category   category
-                                                      :action/is-unique  is-unique
-                                                      :action/section-cost (or section-cost 0)
-                                                      :action/total-cost (or total-cost 0)}
-                                               (some? section-max)
-                                               (assoc :action/section-max section-max))))
-                         :always o/fire-rules)
-        violation      (some (fn [rule-key]
-                               (when (seq (o/query-all session rule-key))
-                                 rule-key))
-                             violation-rule-keys)]
+        unit-copies      (count (filter #(= unit-eid (:eid %)) army-entries))
+        slot-count       (count (filter #(= section (:section %)) army-entries))
+        session          (cond-> (-> base-session
+                                     (o/insert ::army
+                                               {:counts/lords         lord-count
+                                                :counts/heroes        hero-count
+                                                :counts/semc-wm       semc-wm-count
+                                                :counts/chariot-wm    chariot-wm-count
+                                                :counts/unit-copies   unit-copies
+                                                :counts/section-slots slot-count})
+                                     (o/insert ::action
+                                               (cond-> {:action/section      section
+                                                        :action/category     category
+                                                        :action/is-unique    is-unique
+                                                        :action/section-cost (or section-cost 0)
+                                                        :action/total-cost   (or total-cost 0)}
+                                                 (some? section-max)
+                                                 (assoc :action/section-max section-max))))
+                           :always o/fire-rules)
+        violation        (some (fn [rule-key]
+                                 (when (seq (o/query-all session rule-key))
+                                   rule-key))
+                               violation-rule-keys)]
     (when violation
       {:type    :draft/add-error
        :message (violation-message violation

@@ -20,9 +20,9 @@
   (fn [{{{:keys [faction-eid game-mode-eid game-eid]} :body
          {:keys [version]}                            :query
          {:keys [eid]}                                :path} :parameters
-        router                                                :reitit.core/router
-        session                                               :ory-session
-        :as                                                   _request}]
+        router                                               :reitit.core/router
+        session                                              :ory-session
+        :as                                                  _request}]
     (let [response (web.core/handle-create-response
                     domain/draft-resource
                     {:hostname (:hostname dependencies) :router router}
@@ -40,7 +40,7 @@
   [_init-key dependencies]
   (fn [{{{:keys [draft-eid eid]} :path} :parameters
         router                          :reitit.core/router
-        :as                              _request}]
+        :as                             _request}]
     (web.core/handle-fetch-response
      domain/draft-unit-resource
      {:hostname (:hostname dependencies) :router router}
@@ -48,10 +48,10 @@
 
 (defmethod integrant.core/init-key ::get-draft-entry
   [_init-key dependencies]
-  (fn [{{{:keys [draft-eid eid]}    :path
-         {:keys [section embed]}    :query} :parameters
-        router                               :reitit.core/router
-        :as                                  _request}]
+  (fn [{{{:keys [draft-eid eid]} :path
+         {:keys [section embed]} :query} :parameters
+        router                           :reitit.core/router
+        :as                              _request}]
     (let [embed-set (parse-embed-set embed)]
       (web.core/handle-fetch-response
        domain/draft-entry-resource
@@ -65,9 +65,9 @@
   (fn [request]
     (let [{{{:keys [draft-eid eid]} :path
             {:keys [section]}       :query
-            body                    :body}  :parameters} request
-          selections (select-keys (or body {}) [:mount :abilities :spells :items])
-          result     (domain/add-unit-to-draft dependencies draft-eid eid section selections)]
+            body                    :body} :parameters} request
+          selections                                    (select-keys (or body {}) [:mount :abilities :spells :items])
+          result                                        (domain/add-unit-to-draft dependencies draft-eid eid section selections)]
       {:status (if (= :draft/add-success (:type result)) 200 422)
        :body   result})))
 
@@ -76,9 +76,9 @@
   (fn [request]
     (let [{{{:keys [draft-eid eid]} :path
             {:keys [section]}       :query
-            body                    :body}  :parameters} request
-          selections (select-keys (or body {}) [:mount :abilities :spells :items])
-          result     (domain/update-unit-in-draft dependencies draft-eid eid section selections)]
+            body                    :body} :parameters} request
+          selections                                    (select-keys (or body {}) [:mount :abilities :spells :items])
+          result                                        (domain/update-unit-in-draft dependencies draft-eid eid section selections)]
       {:status (if (= :draft/update-success (:type result)) 200 422)
        :body   result})))
 

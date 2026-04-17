@@ -14,8 +14,8 @@
       (do (binding [*out* *err*]
             (println "  seed-spells.sql does not have cost column — skipping spell update"))
           content)
-      (let [not-found (atom [])
-            found     (atom 0)
+      (let [not-found   (atom [])
+            found       (atom 0)
             replacer
             (fn [g]
               (let [prefix-str (nth g 1)

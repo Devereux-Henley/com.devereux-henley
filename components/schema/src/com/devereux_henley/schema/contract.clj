@@ -110,18 +110,18 @@
     :timezone-id    timezone-id
     :instant        instant
     :instance       instance
-    :neg-int    (malli.core/-simple-schema
-                 {:type            :neg-int
-                  :type-properties {:decode/string
-                                    (fn [string-value] (Integer/parseInt string-value))}
-                  :pred            neg-int?})
-    :pos-int    (malli.core/-simple-schema
-                 {:type            :pos-int
-                  :type-properties {:json-schema/type "integer"
-                                    :json-schema/format "int64"
-                                    :decode/string
-                                    (fn [string-value] (Integer/parseInt string-value))}
-                  :pred            pos-int?})}))
+    :neg-int        (malli.core/-simple-schema
+                     {:type            :neg-int
+                      :type-properties {:decode/string
+                                        (fn [string-value] (Integer/parseInt string-value))}
+                      :pred            neg-int?})
+    :pos-int        (malli.core/-simple-schema
+                     {:type            :pos-int
+                      :type-properties {:json-schema/type   "integer"
+                                        :json-schema/format "int64"
+                                        :decode/string
+                                        (fn [string-value] (Integer/parseInt string-value))}
+                      :pred            pos-int?})}))
 
 (defn to-schema
   [input-schema]
@@ -290,10 +290,10 @@
 (def sqlite-transformer
   (malli.transform/transformer
    {:name     :sqlite
-    :decoders {:uuid       (fn [uuid-string] (UUID/fromString uuid-string))
-               :bool       (fn [bit] (if bit true false))
-               :local-date (fn [date-string] (when-not (empty? date-string)
-                                               (LocalDate/parse date-string)))
+    :decoders {:uuid           (fn [uuid-string] (UUID/fromString uuid-string))
+               :bool           (fn [bit] (if bit true false))
+               :local-date     (fn [date-string] (when-not (empty? date-string)
+                                                   (LocalDate/parse date-string)))
                :instant        (fn [instant-string] (when-not (empty? instant-string)
                                                       (Instant/parse instant-string)))
                :local-datetime (fn [dt-string] (when-not (empty? dt-string)
@@ -382,10 +382,10 @@
                    (malli.core/children schema))]
     (fn [value]
       (let [{:keys [specification]} value
-            next (next-specification specification)
-            previous (previous-specification specification)
-            first (first-specification specification)
-            last (last-specification specification)]
+            next                    (next-specification specification)
+            previous                (previous-specification specification)
+            first                   (first-specification specification)
+            last                    (last-specification specification)]
         (-> value
             (assoc-in [:_links :self] (to-resource-link route-data link {} specification))
             (assoc-in [:_links :next] (to-resource-link route-data link {} next))

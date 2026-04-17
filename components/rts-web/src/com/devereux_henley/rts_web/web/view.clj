@@ -22,7 +22,7 @@
 (defn standard-entity-view-handler
   [pipeline-fn template-name extra-data-fn request]
   (let [{{{:keys [eid]} :path} :parameters} request
-        data (pipeline-fn eid)]
+        data                                (pipeline-fn eid)]
     (if (= :missing/resource (:type data))
       {:status 404 :body data}
       {:status 200
@@ -83,23 +83,23 @@
            "unit.html"
            (fn [data _request]
              (let [{:keys [stats abilities draftable-spells]} (domain/parse-unit-statistics (:unit-statistics data))
-                   key->spell         (domain/get-spells-by-keys dependencies draftable-spells)
-                   key->ability       (domain/get-abilities-by-keys dependencies abilities)
-                   resolved-spells    (mapv (fn [k]
-                                              (let [spell (get key->spell k)]
-                                                {:name      (or (:name spell) k)
-                                                 :eid       (:eid spell)
-                                                 :mana-cost (:mana-cost spell)
-                                                 :cost      (:cost spell)}))
-                                            draftable-spells)
-                   resolved-abilities (mapv (fn [k]
-                                              (let [a (get key->ability k)]
-                                                {:name        (:name a)
-                                                 :eid         (:eid a)
-                                                 :description (:description a)}))
-                                            abilities)
-                   mounts             (domain/get-mounts-for-unit dependencies (:eid data))
-                   items              (domain/get-items-for-unit dependencies (:eid data))]
+                   key->spell                                 (domain/get-spells-by-keys dependencies draftable-spells)
+                   key->ability                               (domain/get-abilities-by-keys dependencies abilities)
+                   resolved-spells                            (mapv (fn [k]
+                                                                      (let [spell (get key->spell k)]
+                                                                        {:name      (or (:name spell) k)
+                                                                         :eid       (:eid spell)
+                                                                         :mana-cost (:mana-cost spell)
+                                                                         :cost      (:cost spell)}))
+                                                                    draftable-spells)
+                   resolved-abilities                         (mapv (fn [k]
+                                                                      (let [a (get key->ability k)]
+                                                                        {:name        (:name a)
+                                                                         :eid         (:eid a)
+                                                                         :description (:description a)}))
+                                                                    abilities)
+                   mounts                                     (domain/get-mounts-for-unit dependencies (:eid data))
+                   items                                      (domain/get-items-for-unit dependencies (:eid data))]
                {:unit-statistics  stats
                 :abilities        (not-empty resolved-abilities)
                 :draftable-spells (not-empty resolved-spells)
@@ -233,17 +233,17 @@
            (fn [eid] (web.tournament/get-tournament-by-eid dependencies eid))
            "tournament-index.html"
            (fn [data request]
-             (let [tournament-eid  (:eid data)
-                   state           (domain/get-tournament-state dependencies tournament-eid)
-                   entries         (domain/get-entries dependencies tournament-eid)
-                   raw-matches     (domain/get-matches-for-tournament dependencies tournament-eid)
-                   phases          (:phases state)
-                   qualifier-count (or (:qualifier-count state) (count (:standings state)))
-                   player-sub      (get-in request [:ory-session :identity :id])
-                   has-entry       (some #(= player-sub (:player-sub %)) entries)
-                   now             (java.time.Instant/now)
-                   reg-open        (domain/is-registration-open? state now)
-                   is-organizer    (= player-sub (:created-by-sub data))
+             (let [tournament-eid        (:eid data)
+                   state                 (domain/get-tournament-state dependencies tournament-eid)
+                   entries               (domain/get-entries dependencies tournament-eid)
+                   raw-matches           (domain/get-matches-for-tournament dependencies tournament-eid)
+                   phases                (:phases state)
+                   qualifier-count       (or (:qualifier-count state) (count (:standings state)))
+                   player-sub            (get-in request [:ory-session :identity :id])
+                   has-entry             (some #(= player-sub (:player-sub %)) entries)
+                   now                   (java.time.Instant/now)
+                   reg-open              (domain/is-registration-open? state now)
+                   is-organizer          (= player-sub (:created-by-sub data))
                    organizer-has-actions (and is-organizer
                                               (contains? #{"registration" "active"} (:status state)))]
                {:tournament-state      state

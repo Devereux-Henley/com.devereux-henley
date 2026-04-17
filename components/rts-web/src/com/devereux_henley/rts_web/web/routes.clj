@@ -21,7 +21,7 @@
   ["/status"
    {:get {:no-doc  true
           :handler (fn [_request]
-                     {:status 200
+                     {:status  200
                       :headers {"Content-Type" "application/json"}
                       :body    "{\"status\":\"ok\"}"})}}])
 
@@ -32,7 +32,7 @@
                       (.start (Thread. (fn []
                                          (Thread/sleep 100)
                                          (System/exit 0))))
-                      {:status 200
+                      {:status  200
                        :headers {"Content-Type" "application/json"}
                        :body    "{\"status\":\"shutting-down\"}"})}}])
 
@@ -110,11 +110,11 @@
    {:openapi {:security [{"ory" ["openid"]}]}}
    ["/openapi.json"
     {:get {:no-doc  true
-           :openapi {:info {:title       "rts-api"
-                            :description "Rts API"}
-                     :components {:securitySchemes {"ory" {:type :openIdConnect
+           :openapi {:info       {:title       "rts-api"
+                                  :description "Rts API"}
+                     :components {:securitySchemes {"ory" {:type             :openIdConnect
                                                            :openIdConnectUrl (integrant.core/ref ::web.configuration/openid-url)}}}
-                     :tags [{:name "game" :description "game api"}]}
+                     :tags       [{:name "game" :description "game api"}]}
            :handler (integrant.core/ref :com.devereux-henley.rts-api.web/openapi-handler)}}]
 
    ["/game"
@@ -163,10 +163,10 @@
                          :tags         ["draft"]
                          :produces     ["application/json" "application/htmx+html"]
                          :operation-id "draft-unit/get"}
-            :parameters {:path  (schema.contract/to-schema
-                                 [:map
-                                  [:draft-eid :uuid]
-                                  [:eid :uuid]])}
+            :parameters {:path (schema.contract/to-schema
+                                [:map
+                                 [:draft-eid :uuid]
+                                 [:eid :uuid]])}
             :responses  {200 {:body domain/draft-unit-resource}
                          500 {:body domain/draft-error-response}}
             :handler    (integrant.core/ref ::web.draft/get-draft-unit)}
@@ -188,7 +188,7 @@
                          500 {:body domain/draft-error-response}}
             :handler    (integrant.core/ref ::web.draft/draft-add-unit)}}]
    ["/draft/:draft-eid/entry/:eid"
-    {:name :draft-entry/by-eid
+    {:name   :draft-entry/by-eid
      :get    {:produces   ["application/json" "application/htmx+html"]
               :openapi    {:summary      "Gets a placed draft entry with its unit details and selection state."
                            :tags         ["draft"]
@@ -398,20 +398,20 @@
                :handler    (integrant.core/ref ::web.tournament/record-game)}}]]
      ["/phase"
       {:name :tournament/phase
-       :get {:summary    "Form partial for a tournament phase."
-             :openapi    {:tags         ["tournament"]
-                          :produces     ["application/json" "application/htmx+html"]
-                          :operation-id "tournament-phase/get"}
-             :parameters {:path schema.contract/id-path-parameter}
-             :responses  {200 {:body domain/phase-response}}
-             :handler    (integrant.core/ref ::web.tournament/get-phase)}
-       :put {:summary    "Update the tournament phase configuration."
-             :openapi    {:tags         ["tournament"]
-                          :produces     ["application/json"]
-                          :operation-id "tournament-phase/update-configuration"}
-             :parameters {:path schema.contract/id-path-parameter
-                          :body domain/configure-phases-specification}
-             :handler    (integrant.core/ref ::web.tournament/update-phase-configuration)}}]
+       :get  {:summary    "Form partial for a tournament phase."
+              :openapi    {:tags         ["tournament"]
+                           :produces     ["application/json" "application/htmx+html"]
+                           :operation-id "tournament-phase/get"}
+              :parameters {:path schema.contract/id-path-parameter}
+              :responses  {200 {:body domain/phase-response}}
+              :handler    (integrant.core/ref ::web.tournament/get-phase)}
+       :put  {:summary    "Update the tournament phase configuration."
+              :openapi    {:tags         ["tournament"]
+                           :produces     ["application/json"]
+                           :operation-id "tournament-phase/update-configuration"}
+              :parameters {:path schema.contract/id-path-parameter
+                           :body domain/configure-phases-specification}
+              :handler    (integrant.core/ref ::web.tournament/update-phase-configuration)}}]
      ["/round"
       {:name :tournament/round
        :get  {:summary    "Form partial for a tournament round."

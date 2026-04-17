@@ -45,16 +45,16 @@
   stale icon column, and the canonical 7-string-column + cost form."
   [filepath ability-name-map ability-tooltip-map special-ability-map]
   (let [raw-content (slurp filepath)
-        content (-> raw-content
-                    (str/replace
-                     "INSERT OR IGNORE INTO ability(id, eid, key, name, description, ability_type, icon,"
-                     "INSERT OR IGNORE INTO ability(id, eid, key, name, description, ability_type,")
-                    (str/replace
-                     "INSERT OR REPLACE INTO ability(id, eid, key, name, description, ability_type, icon,"
-                     "INSERT OR REPLACE INTO ability(id, eid, key, name, description, ability_type,"))
-        has-cost (str/includes? (subs content 0 (min 500 (count content))) "cost")
-        updated   (atom 0)
-        not-found (atom 0)]
+        content     (-> raw-content
+                        (str/replace
+                         "INSERT OR IGNORE INTO ability(id, eid, key, name, description, ability_type, icon,"
+                         "INSERT OR IGNORE INTO ability(id, eid, key, name, description, ability_type,")
+                        (str/replace
+                         "INSERT OR REPLACE INTO ability(id, eid, key, name, description, ability_type, icon,"
+                         "INSERT OR REPLACE INTO ability(id, eid, key, name, description, ability_type,"))
+        has-cost    (str/includes? (subs content 0 (min 500 (count content))) "cost")
+        updated     (atom 0)
+        not-found   (atom 0)]
     (if has-cost
       (let [update-row-with-cost
             (fn [g]
@@ -76,18 +76,18 @@
                     cost         (get special-ability-map key 0)]
                 (format "(%s, '%s', '%s', '%s', '%s', '%s', %s%s"
                         id-part eid key (sql-escape nm) (sql-escape dc) ability-type cost rest-str)))
-            new-content (str/replace content ability-row-with-cost-re update-row-with-cost)]
+            new-content          (str/replace content ability-row-with-cost-re update-row-with-cost)]
         (binding [*out* *err*]
           (println (format "  [abilities] updated %d rows, %d without loc entry"
                            @updated @not-found)))
         new-content)
-      (let [content (-> content
-                        (str/replace
-                         "INSERT OR IGNORE INTO ability(id, eid, key, name, description, ability_type,"
-                         "INSERT OR IGNORE INTO ability(id, eid, key, name, description, ability_type, cost,")
-                        (str/replace
-                         "INSERT OR REPLACE INTO ability(id, eid, key, name, description, ability_type,"
-                         "INSERT OR REPLACE INTO ability(id, eid, key, name, description, ability_type, cost,"))
+      (let [content     (-> content
+                            (str/replace
+                             "INSERT OR IGNORE INTO ability(id, eid, key, name, description, ability_type,"
+                             "INSERT OR IGNORE INTO ability(id, eid, key, name, description, ability_type, cost,")
+                            (str/replace
+                             "INSERT OR REPLACE INTO ability(id, eid, key, name, description, ability_type,"
+                             "INSERT OR REPLACE INTO ability(id, eid, key, name, description, ability_type, cost,"))
             refresh-row-with-cost
             (fn [g]
               (let [full         (nth g 0)
@@ -120,9 +120,9 @@
                     ability-type (nth g 6)
                     rest-str     (nth g 8)
                     id           (id-part full)
-                    nm (or (get ability-name-map key) (unescape old-name))
-                    dc (or (get ability-tooltip-map key) (unescape old-desc))
-                    cost (get special-ability-map key 0)]
+                    nm           (or (get ability-name-map key) (unescape old-name))
+                    dc           (or (get ability-tooltip-map key) (unescape old-desc))
+                    cost         (get special-ability-map key 0)]
                 (swap! updated inc)
                 (format "(%s, '%s', '%s', '%s', '%s', '%s', %s%s"
                         id eid key (sql-escape nm) (sql-escape dc) ability-type cost rest-str)))

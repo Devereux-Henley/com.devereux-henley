@@ -2,9 +2,9 @@
   "Claude Code dev helpers. Loaded via the :dev alias alongside workspace.clj."
   (:require
    [com.devereux-henley.rts-api.configuration :as configuration]
+   [com.devereux-henley.rts-api.db :as rts-db]
    [com.devereux-henley.rts-api.dev-auth :as dev-auth]
    [com.devereux-henley.rts-data.contract :as rts-data]
-   [com.devereux-henley.rts-api.db :as rts-db]
    [integrant.core]
    [integrant.repl :refer [go halt reset]]
    [migratus.core :as migratus]

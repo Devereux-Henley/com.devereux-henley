@@ -16,15 +16,15 @@
   rows in their original order so that the 'first candidate' tiebreaker
   matches the RPFM table row order (same as Python's dict-insertion order)."
   [land-units-loc main-unit-rows]
-  (let [prefix     "land_units_onscreen_name_"
-        pn         (count prefix)
-        lu-name    (reduce-kv
-                    (fn [m k v]
-                      (if (and k (str/starts-with? k prefix))
-                        (assoc m (subs k pn) (normalize-name v))
-                        m))
-                    {}
-                    land-units-loc)]
+  (let [prefix  "land_units_onscreen_name_"
+        pn      (count prefix)
+        lu-name (reduce-kv
+                 (fn [m k v]
+                   (if (and k (str/starts-with? k prefix))
+                     (assoc m (subs k pn) (normalize-name v))
+                     m))
+                 {}
+                 land-units-loc)]
     (reduce
      (fn [m row]
        (let [unit-key (get row "unit")
@@ -161,10 +161,10 @@
      (let [parts (str/split base #"_")
            n     (count parts)]
        (first
-        (for [drop (range 1 (max 1 (dec n)))
-              :let [shorter (str/join "_" (take (- n drop) parts))
-                    hit     (or (try-with-ch shorter)
-                                (let [sw (strip-stopwords shorter)]
-                                  (when (not= sw shorter) (try-with-ch sw))))]
+        (for [drop  (range 1 (max 1 (dec n)))
+              :let  [shorter (str/join "_" (take (- n drop) parts))
+                     hit     (or (try-with-ch shorter)
+                                 (let [sw (strip-stopwords shorter)]
+                                   (when (not= sw shorter) (try-with-ch sw))))]
               :when hit]
           hit))))))

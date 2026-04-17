@@ -85,6 +85,6 @@
             (format "  (%d, '%s', '%s', '%s', '%s', %d, %s, %d, 1, '%s', STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), null)%s"
                     idx eid (sql-escape key) name category (long cost)
                     icon-sql game-id seed-author comma)))
-        body    (map row-sql indexed)
-        content (str (str/join "\n" (concat header body)) "\n")]
+        body        (map row-sql indexed)
+        content     (str (str/join "\n" (concat header body)) "\n")]
     [content key->id]))

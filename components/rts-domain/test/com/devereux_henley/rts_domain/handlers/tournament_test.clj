@@ -12,12 +12,12 @@
 (def ^:private test-deps {:connection nil})
 
 (def ^:private test-tournament
-  {:id 1 :eid test-tournament-eid :name "Test Tournament" :description "A test."
-   :game-eid test-game-eid :created-by-sub "dev-admin" :version 1})
+  {:id       1             :eid            test-tournament-eid :name    "Test Tournament" :description "A test."
+   :game-eid test-game-eid :created-by-sub "dev-admin"         :version 1})
 
 (def ^:private test-entry
-  {:id 1 :eid (UUID/randomUUID) :tournament-eid test-tournament-eid
-   :player-sub "dev-admin" :created-at (Instant/now) :deleted-at nil})
+  {:id         1           :eid        (UUID/randomUUID) :tournament-eid test-tournament-eid
+   :player-sub "dev-admin" :created-at (Instant/now)     :deleted-at     nil})
 
 ;; ─── get-tournament-by-eid ───────────────────────────────────────────────────
 
@@ -70,47 +70,47 @@
 ;; ─── is-registration-open? ──────────────────────────────────────────────────
 
 (deftest is-registration-open-true-when-within-window
-  (let [state {:status "registration"
-               :registration {:opens-at "2020-01-01T00:00:00Z"
-                              :closes-at "2030-01-01T00:00:00Z"
+  (let [state {:status       "registration"
+               :registration {:opens-at     "2020-01-01T00:00:00Z"
+                              :closes-at    "2030-01-01T00:00:00Z"
                               :closed-early false}}
         now   (Instant/parse "2025-06-01T00:00:00Z")]
     (is (true? (handlers.tournament/is-registration-open? state now)))))
 
 (deftest is-registration-open-false-before-window
-  (let [state {:status "registration"
-               :registration {:opens-at "2026-01-01T00:00:00Z"
-                              :closes-at "2030-01-01T00:00:00Z"
+  (let [state {:status       "registration"
+               :registration {:opens-at     "2026-01-01T00:00:00Z"
+                              :closes-at    "2030-01-01T00:00:00Z"
                               :closed-early false}}
         now   (Instant/parse "2025-06-01T00:00:00Z")]
     (is (false? (handlers.tournament/is-registration-open? state now)))))
 
 (deftest is-registration-open-false-after-window
-  (let [state {:status "registration"
-               :registration {:opens-at "2020-01-01T00:00:00Z"
-                              :closes-at "2025-01-01T00:00:00Z"
+  (let [state {:status       "registration"
+               :registration {:opens-at     "2020-01-01T00:00:00Z"
+                              :closes-at    "2025-01-01T00:00:00Z"
                               :closed-early false}}
         now   (Instant/parse "2025-06-01T00:00:00Z")]
     (is (false? (handlers.tournament/is-registration-open? state now)))))
 
 (deftest is-registration-open-false-when-closed-early
-  (let [state {:status "registration"
-               :registration {:opens-at "2020-01-01T00:00:00Z"
-                              :closes-at "2030-01-01T00:00:00Z"
+  (let [state {:status       "registration"
+               :registration {:opens-at     "2020-01-01T00:00:00Z"
+                              :closes-at    "2030-01-01T00:00:00Z"
                               :closed-early true}}
         now   (Instant/parse "2025-06-01T00:00:00Z")]
     (is (false? (handlers.tournament/is-registration-open? state now)))))
 
 (deftest is-registration-open-false-when-status-not-registration
-  (let [state {:status "active"
-               :registration {:opens-at "2020-01-01T00:00:00Z"
-                              :closes-at "2030-01-01T00:00:00Z"
+  (let [state {:status       "active"
+               :registration {:opens-at     "2020-01-01T00:00:00Z"
+                              :closes-at    "2030-01-01T00:00:00Z"
                               :closed-early false}}
         now   (Instant/parse "2025-06-01T00:00:00Z")]
     (is (false? (handlers.tournament/is-registration-open? state now)))))
 
 (deftest is-registration-open-true-when-no-timestamps
-  (let [state {:status "registration"
+  (let [state {:status       "registration"
                :registration {:opens-at nil :closes-at nil :closed-early false}}
         now   (Instant/parse "2025-06-01T00:00:00Z")]
     (is (true? (handlers.tournament/is-registration-open? state now)))))
@@ -138,7 +138,7 @@
 (deftest delete-entry-returns-success-during-registration
   (with-redefs [data-access.contract/get-tournament-state
                 (fn [_ _] {:id 1 :state "{\"status\":\"registration\"}" :updated-at (Instant/now)})
-                data-access.contract/delete-entry (fn [_ _ _] nil)]
+                data-access.contract/delete-entry         (fn [_ _ _] nil)]
     (let [result (handlers.tournament/delete-entry test-deps test-tournament-eid "dev-admin")]
       (is (= :tournament/entry-deleted (:type result))))))
 
@@ -171,7 +171,7 @@
   "{\"status\":\"registration\",\"registration\":{\"opens-at\":\"2020-01-01T00:00:00Z\",\"closes-at\":\"2030-01-01T00:00:00Z\",\"closed-early\":false},\"standings\":[],\"phases\":[]}")
 
 (deftest advance-tournament-to-active-populates-standings
-  (with-redefs [data-access.contract/get-tournament-by-eid (fn [_ _] test-tournament)
+  (with-redefs [data-access.contract/get-tournament-by-eid   (fn [_ _] test-tournament)
                 data-access.contract/get-tournament-state
                 (fn [_ _] {:id 1 :state registration-state-json :updated-at (Instant/now)})
                 data-access.contract/get-entries-for-tournament
@@ -203,7 +203,7 @@
 ;; ─── close-registration-early ────────────────────────────────────────────────
 
 (deftest close-registration-early-sets-flag
-  (with-redefs [data-access.contract/get-tournament-by-eid (fn [_ _] test-tournament)
+  (with-redefs [data-access.contract/get-tournament-by-eid   (fn [_ _] test-tournament)
                 data-access.contract/get-tournament-state
                 (fn [_ _] {:id 1 :state registration-state-json :updated-at (Instant/now)})
                 data-access.contract/upsert-tournament-state (fn [_ _ _] nil)]
@@ -229,9 +229,9 @@
   "{\"status\":\"active\",\"standings\":[{\"player-sub\":\"p1\",\"wins\":0,\"losses\":0,\"draws\":0,\"points\":0},{\"player-sub\":\"p2\",\"wins\":0,\"losses\":0,\"draws\":0,\"points\":0}],\"phases\":[]}")
 
 (def ^:private test-match
-  {:id 1 :eid (UUID/randomUUID) :tournament-eid test-tournament-eid
-   :phase-index 0 :round-index 0 :player-one-sub "p1" :player-two-sub "p2"
-   :winner-sub nil :status "pending" :created-at (Instant/now) :updated-at (Instant/now)})
+  {:id          1   :eid         (UUID/randomUUID) :tournament-eid test-tournament-eid
+   :phase-index 0   :round-index 0                 :player-one-sub "p1"                :player-two-sub "p2"
+   :winner-sub  nil :status      "pending"         :created-at     (Instant/now)       :updated-at     (Instant/now)})
 
 (deftest create-match-returns-match-when-active
   (with-redefs [data-access.contract/get-tournament-state
@@ -273,8 +273,8 @@
 ;; ─── update-match-result ─────────────────────────────────────────────────────
 
 (deftest update-match-result-updates-standings
-  (with-redefs [data-access.contract/get-match-by-eid (fn [_ _] test-match)
-                data-access.contract/update-match-result (fn [_ _ _] nil)
+  (with-redefs [data-access.contract/get-match-by-eid        (fn [_ _] test-match)
+                data-access.contract/update-match-result     (fn [_ _ _] nil)
                 data-access.contract/get-matches-for-tournament
                 (fn [_ _] [(assoc test-match :status "complete" :winner-sub "p1")])
                 data-access.contract/get-tournament-state

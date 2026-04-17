@@ -29,12 +29,12 @@
 ;;; ─── Per-namespace handler configuration ───────────────────────────────────
 
 (def infrastructure-configuration
-  {::rts-data/migrate   {:db-spec       db/db-spec
-                         :migration-dir rts-data/migration-dir}
-   ::db/connection      {:migrations (integrant.core/ref ::rts-data/migrate)}
+  {::rts-data/migrate    {:db-spec       db/db-spec
+                          :migration-dir rts-data/migration-dir}
+   ::db/connection       {:migrations (integrant.core/ref ::rts-data/migrate)}
    ::web/openapi-handler {}
-   ::web/service        {:handler       (integrant.core/ref ::web/app)
-                         :configuration {:port port, :join? false}}
+   ::web/service         {:handler       (integrant.core/ref ::web/app)
+                          :configuration {:port port, :join? false}}
    :com.devereux-henley.rts-web.web.configuration/configuration
    {:com.devereux-henley.rts-web.web.configuration/openid-url    (str auth-hostname "/" ".well-known/openid-configuration")
     :com.devereux-henley.rts-web.web.configuration/auth-hostname auth-hostname}})

@@ -91,9 +91,9 @@
   [cards-dir asset-dir name-index unit-name-eid-pairs portraits-dir dry-run?]
   (let [available      (png-stems cards-dir)
         available-list (sort available)
-        copied      (atom 0)
-        missing-key (atom [])
-        missing-src (atom [])]
+        copied         (atom 0)
+        missing-key    (atom [])
+        missing-src    (atom [])]
     (doseq [[name eid faction] unit-name-eid-pairs]
       (if (apply-override! name eid cards-dir portraits-dir asset-dir dry-run?)
         (swap! copied inc)
@@ -144,20 +144,20 @@
   "For each unit without an existing card, find a matching portrait and
   copy it. Overrides apply first; faction filter disambiguates."
   [portraits-dir asset-dir name-index unit-name-eid-pairs cards-dir dry-run?]
-  (let [role-map  (build-portrait-role-map portraits-dir)
-        role-list (sort (keys role-map))
-        existing  (png-stems asset-dir)
+  (let [role-map    (build-portrait-role-map portraits-dir)
+        role-list   (sort (keys role-map))
+        existing    (png-stems asset-dir)
         copied      (atom 0)
         missing-key (atom [])
         no-portrait (atom [])]
     (doseq [[name eid faction] unit-name-eid-pairs
-            :when (not (contains? existing eid))]
+            :when              (not (contains? existing eid))]
       (if (apply-override! name eid cards-dir portraits-dir asset-dir dry-run?)
         (swap! copied inc)
         (let [all-candidates (get name-index (nm/normalize-name name) [])]
           (if (empty? all-candidates)
             (swap! missing-key conj name)
-            (let [candidates (filter-by-faction all-candidates faction)
+            (let [candidates    (filter-by-faction all-candidates faction)
                   portrait-file (some (fn [[uk _]]
                                         (nm/find-portrait
                                          (nm/unit-key->portrait-base uk)
@@ -260,8 +260,8 @@
         missing-src (atom [])
         missing-eid (atom [])]
     (doseq [[key info] unit-ability-map
-            :let [icon-name (:icon_name info)]
-            :when (seq icon-name)]
+            :let       [icon-name (:icon_name info)]
+            :when      (seq icon-name)]
       (if-let [eid (get key-eid-map key)]
         (let [src (io/file icons-dir (str icon-name ".png"))]
           (if (.isFile src)
@@ -321,7 +321,7 @@
   (let [stem->src    (atom {})
         missing-type (atom 0)]
     (doseq [[_ item-type] item-key-type-map
-            :let [rel (get type-icon-map item-type)]]
+            :let          [rel (get type-icon-map item-type)]]
       (if-not rel
         (swap! missing-type inc)
         (let [stem (ui-icon-stem rel)]
@@ -347,9 +347,9 @@
   ancillaries. `root` is the extraction directory containing `ui/`."
   [ancillary-icons-root asset-dir ancillary-rows type-icon-map dry-run?]
   (let [stem->src (atom {})]
-    (doseq [a ancillary-rows
+    (doseq [a     ancillary-rows
             :when (= "mount" (get a "category"))
-            :let [rel (get type-icon-map (or (get a "type") ""))]
+            :let  [rel (get type-icon-map (or (get a "type") ""))]
             :when rel]
       (let [stem (ui-icon-stem rel)]
         (when-not (contains? @stem->src stem)

@@ -29,4 +29,7 @@
                    :extra-deps {polyfy/polylith
                                 {:git/url   "https://github.com/polyfy/polylith"
                                  :sha       "dc87aa3b4be5496488d70c78e1db37ad3a9ba52f"
-                                 :deps/root "projects/poly"}}}}}
+                                 :deps/root "projects/poly"}}}
+
+            :cljfmt {:extra-deps {dev.weavejester/cljfmt {:mvn/version "0.16.4"}}
+                     :main-opts ["-m" "cljfmt.main"]}}}
