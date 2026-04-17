@@ -412,7 +412,7 @@
                                                          [:phase-type :string]
                                                          [:rounds [:sequential [:map
                                                                                 [:round-index :int]
-                                                                                [:format {:optional true} :int]]]]]]]
+                                                                                [:format {:optional true} [:enum 1 3 5]]]]]]]]
                                   [:qualifier-count {:optional true} [:maybe :int]]])}
              :handler    (integrant.core/ref ::web.tournament/configure-phases)}}]
      ["/round/generate"
