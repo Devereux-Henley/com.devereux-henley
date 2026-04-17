@@ -371,7 +371,7 @@
                                    [:eid :uuid]
                                    [:match-eid :uuid]])
                            :body domain/record-result-specification}
-              :handler    (integrant.core/ref ::web.tournament/record-match-result)}}]]]]
+              :handler    (integrant.core/ref ::web.tournament/update-match-result)}}]]]]
 
    ["/social-media/:eid"
     {:name :social-media/by-eid

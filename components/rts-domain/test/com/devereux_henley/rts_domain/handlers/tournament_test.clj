@@ -270,9 +270,9 @@
       (is (every? #(= :tournament/match (:type %)) results))
       (is (= 2 (count results))))))
 
-;; ─── record-match-result ─────────────────────────────────────────────────────
+;; ─── update-match-result ─────────────────────────────────────────────────────
 
-(deftest record-match-result-updates-standings
+(deftest update-match-result-updates-standings
   (with-redefs [data-access.contract/get-match-by-eid (fn [_ _] test-match)
                 data-access.contract/update-match-result (fn [_ _ _] nil)
                 data-access.contract/get-matches-for-tournament
@@ -280,17 +280,17 @@
                 data-access.contract/get-tournament-state
                 (fn [_ _] {:id 1 :state active-state-json :updated-at (Instant/now)})
                 data-access.contract/upsert-tournament-state (fn [_ _ _] nil)]
-    (let [result (handlers.tournament/record-match-result test-deps (:eid test-match) "p1")]
+    (let [result (handlers.tournament/update-match-result test-deps (:eid test-match) "p1")]
       (is (= :tournament/match-result-recorded (:type result)))
       (is (= 2 (count (:standings result))))
       (is (= 3 (:points (first (filter #(= "p1" (:player-sub %)) (:standings result)))))))))
 
-(deftest record-match-result-rejects-non-pending
+(deftest update-match-result-rejects-non-pending
   (with-redefs [data-access.contract/get-match-by-eid (fn [_ _] (assoc test-match :status "complete"))]
-    (let [result (handlers.tournament/record-match-result test-deps (:eid test-match) "p1")]
+    (let [result (handlers.tournament/update-match-result test-deps (:eid test-match) "p1")]
       (is (= :tournament/match-error (:type result))))))
 
-(deftest record-match-result-not-found
+(deftest update-match-result-not-found
   (with-redefs [data-access.contract/get-match-by-eid (fn [_ _] nil)]
-    (let [result (handlers.tournament/record-match-result test-deps (UUID/randomUUID) "p1")]
+    (let [result (handlers.tournament/update-match-result test-deps (UUID/randomUUID) "p1")]
       (is (= :tournament/match-error (:type result))))))

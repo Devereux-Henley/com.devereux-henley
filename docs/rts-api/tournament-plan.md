@@ -251,7 +251,7 @@ CREATE TABLE IF NOT EXISTS match (
 
 - **Handlers:**
   - `create-match [deps tournament-eid match-spec]` -- validates tournament is active
-  - `record-match-result [deps match-eid winner-sub]` -- records result, recalculates standings in state blob
+  - `update-match-result [deps match-eid winner-sub]` -- records result, recalculates standings in state blob
   - `get-matches-for-tournament`, `get-matches-for-round`
 - **Resource schema:** `match-resource` with `:type [:= :tournament/match]`
 - **Result flow:** recording a result updates the match row, then recalculates standings and checks round completion in the state blob
@@ -366,7 +366,7 @@ Qualified players from Swiss enter a seeded elimination bracket.
   - `advance-elimination [state match-result]` -- slots winner into next round's matchup
 - **Handlers:**
   - `start-elimination-phase [deps tournament-eid]` -- validates Swiss complete, generates bracket, creates first-round matches
-  - Enhanced `record-match-result` -- after elimination match, advances winner to next round
+  - Enhanced `update-match-result` -- after elimination match, advances winner to next round
   - `complete-tournament [deps tournament-eid]` -- transitions to `"complete"` after final match
 
 ### Web layer

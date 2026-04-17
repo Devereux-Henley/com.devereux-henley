@@ -101,7 +101,7 @@
 (def get-match-by-eid                             handlers.tournament/get-match-by-eid)
 (def get-matches-for-tournament                   handlers.tournament/get-matches-for-tournament)
 (def get-matches-for-round                        handlers.tournament/get-matches-for-round)
-(def record-match-result                          handlers.tournament/record-match-result)
+(def update-match-result                          handlers.tournament/update-match-result)
 
 ;;; ─── Social Media handler functions ────────────────────────────────────────
 

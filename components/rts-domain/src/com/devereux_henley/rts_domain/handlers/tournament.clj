@@ -198,7 +198,7 @@
   (mapv (fn [m] (assoc m :type :tournament/match))
         (db/get-matches-for-round (:connection dependencies) tournament-eid phase-index round-index)))
 
-(defn record-match-result
+(defn update-match-result
   "Records a match result and recalculates standings in the state blob."
   [dependencies match-eid winner-sub]
   (let [match (db/get-match-by-eid (:connection dependencies) match-eid)]

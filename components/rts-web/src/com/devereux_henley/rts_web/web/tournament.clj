@@ -182,12 +182,12 @@
         {:status 422 :body result}
         {:status 201 :body result}))))
 
-(defmethod integrant.core/init-key ::record-match-result
+(defmethod integrant.core/init-key ::update-match-result
   [_init-key dependencies]
   (fn [{{{:keys [match-eid]}     :path
          {:keys [winner-sub]} :body} :parameters
         :as                           _request}]
-    (let [result (domain/record-match-result dependencies match-eid winner-sub)]
+    (let [result (domain/update-match-result dependencies match-eid winner-sub)]
       (if (= :tournament/match-error (:type result))
         {:status 422 :body result}
         {:status 200 :body result}))))
