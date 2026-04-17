@@ -25,3 +25,15 @@ Dashboard layout with sidebar and main content. The sidebar shows registration w
 When a tournament is active, the main area shows the standings table (ranked by points) and match cards grouped by phase and round. Completed matches have a green left border and the winner's name is highlighted in gold. The organizer sidebar shows "Generate Next Round", "Complete Tournament", and "Cancel Tournament" buttons.
 
 ![Active tournament](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/views-active.png)
+
+## Swiss round counter
+
+Swiss and round-robin phases display "Round X of Y" in the round header, showing progress through the phase. Each phase gets its own section heading with the phase type name.
+
+![Swiss rounds](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/views-swiss-rounds.png)
+
+## Elimination bracket
+
+Single and double elimination phases render as a horizontal bracket with round columns. Each match shows two player slots — the winner is highlighted in gold. Bye slots display in italics. The bracket scrolls horizontally for tournaments with many rounds.
+
+![Elimination bracket](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/views-elimination-bracket.png)
