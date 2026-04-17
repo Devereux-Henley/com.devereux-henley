@@ -272,115 +272,87 @@ CREATE TABLE IF NOT EXISTS match (
 
 ---
 
-## MVP 5: Swiss Round Phase Logic
+## MVP 5+6: Phase Management, Swiss Pairing, Game Sub-resource, Elimination
 
-Automated Swiss pairing based on standings after each round. Also introduces the game sub-resource for best-of-N match formats.
+Automated phase progression with Swiss pairing, best-of-N match formats via the game sub-resource, and seeded single-elimination brackets. Phase progression is generic — any sequence of phase types is valid.
 
-### New table
+### New tables
 
-- `000025-create-game-table.up.sql`
+- `000025-create-game-table.up.sql` — `match_game` table for individual game results within matches
+- `000026-add-match-format.up.sql` — adds `format` column to `match` table (default 1 for bo1)
 
-```sql
-CREATE TABLE IF NOT EXISTS game (
-  id INTEGER PRIMARY KEY ASC,
-  eid TEXT NOT NULL,
-  match_id INTEGER NOT NULL,
-  game_index INTEGER NOT NULL,
-  winner_sub TEXT,
-  created_at TEXT NOT NULL,
-  UNIQUE(eid),
-  FOREIGN KEY(match_id) REFERENCES match(id)
-);
-```
+### Phase configuration
 
-Add `format` column to `match` table (default 1 for bo1):
-
-- `000026-add-match-format.up.sql`: `ALTER TABLE match ADD COLUMN format INTEGER NOT NULL DEFAULT 1;`
-
-### Round format configuration
-
-Each round in the phase config specifies a `format` (best-of-N). Matches created for that round inherit the format. The match auto-completes when one player reaches the win threshold (`ceil(format / 2)`).
+Phases are configured during registration via `PUT /api/tournament/:eid/phase`. Each phase has a `phase-type` and a list of rounds with optional format (bo1/bo3/bo5). Any sequence of phase types is valid.
 
 ```clojure
 {:phases [{:phase-type "swiss"
-           :rounds [{:round-index 0 :format 1}    ;; bo1
+           :rounds [{:round-index 0 :format 1}
                     {:round-index 1 :format 1}
-                    {:round-index 2 :format 3}]}  ;; bo3 for final swiss round
+                    {:round-index 2 :format 3}]}
           {:phase-type "single-elimination"
-           :rounds [{:round-index 0 :format 3}    ;; bo3 quarterfinals
-                    {:round-index 1 :format 3}    ;; bo3 semis
-                    {:round-index 2 :format 5}]}]} ;; bo5 grand final
+           :rounds [{:round-index 0 :format 3}
+                    {:round-index 1 :format 5}]}]}
 ```
+
+Enums: `phase-type` is `swiss | round-robin | single-elimination | double-elimination`. `format` is `1 | 3 | 5`.
 
 ### Game sub-resource
 
-Games are individual results within a match. A match with `format=1` (bo1) behaves identically to the current MVP 4 flow (one game = match complete).
+Games are individual results within a match. A match with `format=1` (bo1) completes after one game. The match auto-completes when a player reaches the win threshold (`ceil(format / 2)`). Standings recalculate only on match completion.
 
-- `POST /api/tournament/:eid/match/:match-eid/game` with `{winner-sub}` — records a game result
-- `GET /api/tournament/:eid/match/:match-eid/game` — list games for a match
-- Match auto-completes when a player reaches the win threshold; standings recalculate on match completion
+Bye matches (nil `player-two-sub`) are auto-completed on creation.
 
-### Domain layer
+### Round generation and phase advancement
 
-- **In `rules/tournament.clj`:**
-  - `swiss-pair [standings match-history]` -- pure fn: sort by points, pair adjacent unplayed opponents, handle byes
-  - `generate-swiss-round [state match-history]` -- returns updated state with new round
-  - `match-win-threshold [format]` -- `(inc (quot format 2))`
-  - `check-match-complete [games format]` -- returns winner-sub if threshold reached
-- **Handlers:**
-  - `configure-phases [deps tournament-eid phase-config]` -- sets `:phases` and `:qualifier-count` in state blob (called before advancing to active)
-  - `generate-next-round [deps tournament-eid]` -- validates current round complete, computes pairings, creates match rows with round format, updates state blob
-  - `complete-phase [deps tournament-eid]` -- marks current phase complete, advances `:current-phase`
-  - `record-game-result [deps match-eid winner-sub]` -- records game, checks if match completes, recalculates standings on completion
+`POST /api/tournament/:eid/round` generates the next round for the current phase. Pairing strategy dispatches on `phase-type`:
 
-### Web layer
+| Phase type | Pairing strategy |
+|---|---|
+| `swiss` | Standings-based, avoids repeat matchups, bye for odd count |
+| `round-robin` | Same as Swiss (pairing logic) |
+| `single-elimination` | Seeded bracket (1vN, 2v(N-1)), byes for non-power-of-2 |
+| `double-elimination` | Same bracket generation (losers bracket not yet implemented) |
 
-- **Routes:**
-  - `POST /api/tournament/:eid/configure-phases`
-  - `POST /api/tournament/:eid/generate-round`
-  - `POST /api/tournament/:eid/match/:match-eid/game`
-  - `GET /api/tournament/:eid/match/:match-eid/game`
-- **Templates:** standings table with points, "Generate Next Round" button, game list within match detail
+When the current phase has no more rounds configured, `generate-next-round` auto-advances to the next phase and generates its first round. The response includes `{:phase-advanced true}`.
+
+### Tournament auto-completion
+
+When the last match in the last round of the last phase completes, the tournament status auto-transitions to `"complete"`. Without phase configuration (manual match management), auto-completion does not occur.
+
+### Rules (`rules/tournament.clj`)
+
+- `swiss-pair [standings match-history]` — standings-based pairing avoiding repeats, bye handling
+- `match-win-threshold [format]` — `(inc (quot format 2))`
+- `check-match-complete [games format]` — returns winner-sub if threshold reached
+- `generate-elimination-bracket [qualified-players]` — seeded 1vN bracket with byes
+- `recalculate-standings` — win=3pts, draw=1pt, byes ignored
+
+### Handlers (`handlers/tournament.clj`)
+
+- `configure-phases` — sets phase config during registration (organizer only)
+- `generate-next-round` — generates next round or auto-advances phase (organizer only)
+- `record-game-result` — records game, auto-completes match at threshold, recalculates standings and checks tournament completion
+- `recalculate-and-check-completion` — shared helper for standings + auto-completion
+
+### Routes
+
+| Method | Path | Description |
+|---|---|---|
+| `PUT` | `/api/tournament/:eid/phase` | Update phase configuration |
+| `POST` | `/api/tournament/:eid/round` | Create next round of matches |
+| `POST` | `/api/tournament/:eid/match/:match-eid/game` | Record a game result |
+| `GET` | `/api/tournament/:eid/match/:match-eid/game` | List games for a match |
 
 ### Verification
 
-- Configure a Swiss phase with 3 rounds (bo1, bo1, bo3)
-- Advance to active, generate round 1 pairings
-- Record all results, generate round 2
-- Verify no repeat pairings, verify bye handling for odd player count
+- Configure Swiss (bo1) + elimination (bo3) phases
+- Advance to active, generate rounds, record results
+- Verify no repeat Swiss pairings, bye handling for odd player count
 - Verify bo3 match requires 2 wins to complete
-- Verify standings only update on match completion, not individual games
-
----
-
-## MVP 6: Single Elimination Phase Logic
-
-Qualified players from Swiss enter a seeded elimination bracket.
-
-### No new tables
-
-### Domain layer
-
-- **In `rules/tournament.clj`:**
-  - `generate-elimination-bracket [qualified-players]` -- seed 1 vs N, 2 vs N-1; byes for non-power-of-2
-  - `advance-elimination [state match-result]` -- slots winner into next round's matchup
-- **Handlers:**
-  - `start-elimination-phase [deps tournament-eid]` -- validates Swiss complete, generates bracket, creates first-round matches
-  - Enhanced `update-match-result` -- after elimination match, advances winner to next round
-  - `complete-tournament [deps tournament-eid]` -- transitions to `"complete"` after final match
-
-### Web layer
-
-- **Routes:**
-  - `POST /api/tournament/:eid/start-elimination`
-- **Templates:** bracket view (round-by-round list), final result display
-
-### Verification
-
-- Complete a Swiss phase, start elimination
-- Verify seeding order matches standings
-- Record results through bracket, verify advancement
-- Verify tournament completes after final match
+- Verify standings only update on match completion
+- Verify auto-advance from Swiss to elimination
+- Verify tournament auto-completes after final match
 
 ---
 
