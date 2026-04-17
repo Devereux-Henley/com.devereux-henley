@@ -198,6 +198,32 @@
   (mapv (fn [m] (assoc m :type :tournament/match))
         (db/get-matches-for-round (:connection dependencies) tournament-eid phase-index round-index)))
 
+(defn- recalculate-and-check-completion
+  "Recalculates standings after a match completes. If phases are configured
+   and all matches in all phases are done with no more rounds remaining,
+   auto-completes the tournament. Without phase configuration, no
+   auto-completion occurs."
+  [dependencies tournament-eid]
+  (let [state         (get-tournament-state dependencies tournament-eid)
+        all-matches   (get-matches-for-tournament dependencies tournament-eid)
+        completed     (filter #(= "complete" (:status %)) all-matches)
+        new-standings (rules/recalculate-standings (:standings state) completed)
+        has-phases    (seq (:phases state))
+        complete?     (when has-phases
+                        (let [all-done      (every? #(= "complete" (:status %)) all-matches)
+                              phase-idx     (:current-phase state)
+                              phase         (get-in state [:phases phase-idx])
+                              phase-matches (filter #(= phase-idx (:phase-index %)) all-matches)
+                              max-round     (if (empty? phase-matches) -1 (apply max (map :round-index phase-matches)))
+                              rounds-left   (get-in phase [:rounds (inc max-round)])
+                              last-phase    (nil? (get-in state [:phases (inc phase-idx)]))]
+                          (and all-done (nil? rounds-left) last-phase)))
+        new-state     (cond-> (assoc state :standings new-standings)
+                        complete? (assoc :status "complete"))]
+    (set-tournament-state dependencies tournament-eid new-state)
+    {:standings           new-standings
+     :tournament-complete (boolean complete?)}))
+
 (defn update-match-result
   "Records a match result and recalculates standings in the state blob."
   [dependencies match-eid winner-sub]
@@ -212,16 +238,12 @@
       :else
       (do
         (db/update-match-result (:connection dependencies) match-eid winner-sub)
-        (let [tournament-eid (:tournament-eid match)
-              state          (get-tournament-state dependencies tournament-eid)
-              all-matches    (get-matches-for-tournament dependencies tournament-eid)
-              completed      (filter #(= "complete" (:status %)) all-matches)
-              new-standings  (rules/recalculate-standings (:standings state) completed)
-              new-state      (assoc state :standings new-standings)]
-          (set-tournament-state dependencies tournament-eid new-state)
-          {:type      :tournament/match-result-recorded
-           :match-eid match-eid
-           :standings new-standings})))))
+        (let [{:keys [standings tournament-complete]}
+              (recalculate-and-check-completion dependencies (:tournament-eid match))]
+          (cond-> {:type      :tournament/match-result-recorded
+                   :match-eid match-eid
+                   :standings standings}
+            tournament-complete (assoc :tournament-complete true)))))))
 
 ;; ─── Games ───────────────────────────────────────────────────────────────────
 
@@ -244,21 +266,17 @@
             all-games      (conj (vec existing-games) {:winner-sub winner-sub})
             match-winner   (rules/check-match-complete all-games (:format match))]
         (if match-winner
-          ;; Match complete — update match and recalculate standings
+          ;; Match complete — update match, recalculate standings, check tournament completion
           (do
             (db/update-match-result (:connection dependencies) match-eid match-winner)
-            (let [tournament-eid (:tournament-eid match)
-                  state          (get-tournament-state dependencies tournament-eid)
-                  all-matches    (get-matches-for-tournament dependencies tournament-eid)
-                  completed      (filter #(= "complete" (:status %)) all-matches)
-                  new-standings  (rules/recalculate-standings (:standings state) completed)
-                  new-state      (assoc state :standings new-standings)]
-              (set-tournament-state dependencies tournament-eid new-state)
-              {:type         :tournament/match-completed
-               :match-eid    match-eid
-               :winner-sub   match-winner
-               :game-index   game-index
-               :standings    new-standings}))
+            (let [{:keys [standings tournament-complete]}
+                  (recalculate-and-check-completion dependencies (:tournament-eid match))]
+              (cond-> {:type         :tournament/match-completed
+                       :match-eid    match-eid
+                       :winner-sub   match-winner
+                       :game-index   game-index
+                       :standings    standings}
+                tournament-complete (assoc :tournament-complete true))))
           ;; Match still in progress
           {:type       :tournament/game-recorded
            :match-eid  match-eid
