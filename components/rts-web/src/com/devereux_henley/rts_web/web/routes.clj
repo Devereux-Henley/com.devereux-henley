@@ -334,7 +334,44 @@
                             :body (schema.contract/to-schema
                                    [:map
                                     [:closed-early :boolean]])}
-               :handler    (integrant.core/ref ::web.tournament/update-registration)}}]]]
+               :handler    (integrant.core/ref ::web.tournament/update-registration)}}]
+     ["/match"
+      [""
+       {:get  {:summary    "List matches for a tournament."
+               :openapi    {:tags         ["tournament"]
+                            :produces     ["application/json"]
+                            :operation-id "tournament-match/list"}
+               :parameters {:path schema.contract/id-path-parameter}
+               :handler    (integrant.core/ref ::web.tournament/get-matches)}
+        :post {:summary    "Create a match within a tournament."
+               :openapi    {:tags         ["tournament"]
+                            :produces     ["application/json"]
+                            :operation-id "tournament-match/create"}
+               :parameters {:path schema.contract/id-path-parameter
+                            :body domain/create-match-specification}
+               :handler    (integrant.core/ref ::web.tournament/create-match)}}]
+      ["/:match-eid"
+       {:name :match/by-eid
+        :get  {:summary    "Get a match by eid."
+               :openapi    {:tags         ["tournament"]
+                            :produces     ["application/json"]
+                            :operation-id "tournament-match/get"}
+               :parameters {:path (schema.contract/to-schema
+                                   [:map
+                                    [:eid :uuid]
+                                    [:match-eid :uuid]])}
+               :handler    (integrant.core/ref ::web.tournament/get-match)}}]
+      ["/:match-eid/result"
+       {:put {:summary    "Record a match result."
+              :openapi    {:tags         ["tournament"]
+                           :produces     ["application/json"]
+                           :operation-id "tournament-match/record-result"}
+              :parameters {:path (schema.contract/to-schema
+                                  [:map
+                                   [:eid :uuid]
+                                   [:match-eid :uuid]])
+                           :body domain/record-result-specification}
+              :handler    (integrant.core/ref ::web.tournament/record-match-result)}}]]]]
 
    ["/social-media/:eid"
     {:name :social-media/by-eid

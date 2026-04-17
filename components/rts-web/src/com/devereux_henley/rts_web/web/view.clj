@@ -235,6 +235,7 @@
            (fn [data request]
              (let [state        (domain/get-tournament-state dependencies (:eid data))
                    entries      (domain/get-entries dependencies (:eid data))
+                   matches      (domain/get-matches-for-tournament dependencies (:eid data))
                    player-sub   (get-in request [:ory-session :identity :id])
                    has-entry    (some #(= player-sub (:player-sub %)) entries)
                    now          (java.time.Instant/now)
@@ -242,6 +243,7 @@
                    is-organizer (= player-sub (:created-by-sub data))]
                {:tournament-state  state
                 :entries           entries
+                :matches           matches
                 :has-entry         has-entry
                 :registration-open reg-open
                 :is-organizer      is-organizer}))))

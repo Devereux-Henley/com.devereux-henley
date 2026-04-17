@@ -89,6 +89,58 @@
    [get-entry-by-tournament-and-player-query tournament-eid player-sub]
    schema/tournament-entry-entity))
 
+;; ─── Match queries ───────────────────────────────────────────────────────────
+
+(def create-match-query (resource/load-query-resource "tournament" "create-match.sql"))
+
+(def get-match-by-eid-query (resource/load-query-resource "tournament" "get-match-by-eid.sql"))
+
+(def get-matches-for-tournament-query (resource/load-query-resource "tournament" "get-matches-for-tournament.sql"))
+
+(def get-matches-for-round-query (resource/load-query-resource "tournament" "get-matches-for-round.sql"))
+
+(def update-match-result-query (resource/load-query-resource "tournament" "update-match-result.sql"))
+
+(defn create-match
+  [connection tournament-eid match-spec]
+  (let [eid (str (random-uuid))
+        now (str (Instant/now))]
+    (jdbc.contract/execute-one!
+     connection
+     [create-match-query
+      eid
+      (:phase-index match-spec)
+      (:round-index match-spec)
+      (:player-one-sub match-spec)
+      (:player-two-sub match-spec)
+      now now
+      tournament-eid])
+    (jdbc.contract/query-for-entity
+     connection
+     [get-match-by-eid-query eid]
+     schema/match-entity)))
+
+(defn get-match-by-eid
+  [connection eid]
+  (jdbc.contract/query-for-entity connection [get-match-by-eid-query eid] schema/match-entity))
+
+(defn get-matches-for-tournament
+  [connection tournament-eid]
+  (jdbc.contract/query-for-entities connection [get-matches-for-tournament-query tournament-eid] schema/match-entity))
+
+(defn get-matches-for-round
+  [connection tournament-eid phase-index round-index]
+  (jdbc.contract/query-for-entities
+   connection
+   [get-matches-for-round-query tournament-eid phase-index round-index]
+   schema/match-entity))
+
+(defn update-match-result
+  [connection match-eid winner-sub]
+  (jdbc.contract/execute-one!
+   connection
+   [update-match-result-query winner-sub (str (Instant/now)) match-eid]))
+
 ;; ─── Tournament CRUD ─────────────────────────────────────────────────────────
 
 (defn create-tournament

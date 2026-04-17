@@ -128,6 +128,38 @@
     [:map
      [:type [:= :collection/tournament]]])))
 
+(def match-resource
+  (malli.util/merge
+   schema.contract/base-resource
+   (schema.contract/to-schema
+    [:map
+     [:eid {:model/link :match/by-eid} :uuid]
+     [:type [:= :tournament/match]]
+     [:tournament-eid {:model/link :tournament/by-eid} :uuid]
+     [:phase-index :int]
+     [:round-index :int]
+     [:player-one-sub :string]
+     [:player-two-sub [:maybe :string]]
+     [:winner-sub [:maybe :string]]
+     [:status :string]
+     [:_links
+      [:map
+       [:self :url]
+       [:tournament :url]]]])))
+
+(def create-match-specification
+  (schema.contract/to-schema
+   [:map
+    [:phase-index :int]
+    [:round-index :int]
+    [:player-one-sub :string]
+    [:player-two-sub {:optional true} [:maybe :string]]]))
+
+(def record-result-specification
+  (schema.contract/to-schema
+   [:map
+    [:winner-sub :string]]))
+
 (def tournament-entry-resource
   (malli.util/merge
    schema.contract/base-resource

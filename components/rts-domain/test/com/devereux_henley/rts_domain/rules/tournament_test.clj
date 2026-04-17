@@ -65,3 +65,44 @@
   (let [state  {:status "registration" :standings [] :phases []}
         result (rules/close-registration state [{:player-sub "p1"}])]
     (is (nil? (:current-phase result)))))
+
+;; ─── recalculate-standings ───────────────────────────────────────────────────
+
+(deftest recalculate-standings-win
+  (let [standings [{:player-sub "p1" :wins 0 :losses 0 :draws 0 :points 0}
+                   {:player-sub "p2" :wins 0 :losses 0 :draws 0 :points 0}]
+        matches   [{:player-one-sub "p1" :player-two-sub "p2" :winner-sub "p1"}]
+        result    (rules/recalculate-standings standings matches)]
+    (is (= 1 (:wins (first result))))
+    (is (= 3 (:points (first result))))
+    (is (= 1 (:losses (second result))))
+    (is (= 0 (:points (second result))))))
+
+(deftest recalculate-standings-draw
+  (let [standings [{:player-sub "p1" :wins 0 :losses 0 :draws 0 :points 0}
+                   {:player-sub "p2" :wins 0 :losses 0 :draws 0 :points 0}]
+        matches   [{:player-one-sub "p1" :player-two-sub "p2" :winner-sub "draw"}]
+        result    (rules/recalculate-standings standings matches)]
+    (is (= 1 (:draws (first result))))
+    (is (= 1 (:points (first result))))
+    (is (= 1 (:draws (second result))))
+    (is (= 1 (:points (second result))))))
+
+(deftest recalculate-standings-bye-ignored
+  (let [standings [{:player-sub "p1" :wins 0 :losses 0 :draws 0 :points 0}]
+        matches   [{:player-one-sub "p1" :player-two-sub nil :winner-sub "p1"}]
+        result    (rules/recalculate-standings standings matches)]
+    (is (= 0 (:wins (first result))))))
+
+(deftest recalculate-standings-multiple-matches
+  (let [standings [{:player-sub "p1" :wins 0 :losses 0 :draws 0 :points 0}
+                   {:player-sub "p2" :wins 0 :losses 0 :draws 0 :points 0}]
+        matches   [{:player-one-sub "p1" :player-two-sub "p2" :winner-sub "p1"}
+                   {:player-one-sub "p2" :player-two-sub "p1" :winner-sub "p2"}]
+        result    (rules/recalculate-standings standings matches)]
+    (is (= 1 (:wins (first result))))
+    (is (= 1 (:losses (first result))))
+    (is (= 3 (:points (first result))))
+    (is (= 1 (:wins (second result))))
+    (is (= 1 (:losses (second result))))
+    (is (= 3 (:points (second result))))))

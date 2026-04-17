@@ -90,9 +90,18 @@
 (def delete-entry                                 handlers.tournament/delete-entry)
 (def get-entries                                   handlers.tournament/get-entries)
 (def is-registration-open?                        handlers.tournament/is-registration-open?)
+(def match-resource                               schema/match-resource)
+(def create-match-specification                   schema/create-match-specification)
+(def record-result-specification                  schema/record-result-specification)
+
 (def available-transitions                        handlers.tournament/available-transitions)
 (def advance-tournament                           handlers.tournament/advance-tournament)
 (def close-registration-early                     handlers.tournament/close-registration-early)
+(def create-match                                 handlers.tournament/create-match)
+(def get-match-by-eid                             handlers.tournament/get-match-by-eid)
+(def get-matches-for-tournament                   handlers.tournament/get-matches-for-tournament)
+(def get-matches-for-round                        handlers.tournament/get-matches-for-round)
+(def record-match-result                          handlers.tournament/record-match-result)
 
 ;;; ─── Social Media handler functions ────────────────────────────────────────
 

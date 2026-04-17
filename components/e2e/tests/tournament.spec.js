@@ -325,3 +325,112 @@ test.describe('Tournament Registration Subresource API', () => {
     expect((await entryRes.json()).message).toMatch(/not open/i);
   });
 });
+
+async function createActiveTournament(request) {
+  const eid = await createTournament(request);
+  await request.post(`${BASE}/api/tournament/${eid}/entry/me`, {
+    headers: headers('dev-admin'),
+  });
+  await request.post(`${BASE}/api/tournament/${eid}/entry/me`, {
+    headers: headers('dev-player-one'),
+  });
+  await request.put(`${BASE}/api/tournament/${eid}/status`, {
+    headers: headers('dev-admin'),
+    data: { status: 'active' },
+  });
+  return eid;
+}
+
+test.describe('Tournament Match API', () => {
+  test('create match returns 201 when tournament is active', async ({ request }) => {
+    const eid = await createActiveTournament(request);
+    const res = await request.post(`${BASE}/api/tournament/${eid}/match`, {
+      headers: headers('dev-admin'),
+      data: {
+        'phase-index': 0,
+        'round-index': 0,
+        'player-one-sub': 'dev-admin',
+        'player-two-sub': 'dev-player-one',
+      },
+    });
+    expect(res.status()).toBe(201);
+    const body = await res.json();
+    expect(body.type).toBe('tournament/match');
+    expect(body['player-one-sub']).toBe('dev-admin');
+    expect(body['player-two-sub']).toBe('dev-player-one');
+    expect(body.status).toBe('pending');
+  });
+
+  test('create match rejects when tournament not active', async ({ request }) => {
+    const eid = await createTournament(request);
+    const res = await request.post(`${BASE}/api/tournament/${eid}/match`, {
+      headers: headers('dev-admin'),
+      data: {
+        'phase-index': 0,
+        'round-index': 0,
+        'player-one-sub': 'dev-admin',
+        'player-two-sub': 'dev-player-one',
+      },
+    });
+    expect(res.status()).toBe(422);
+    expect((await res.json()).type).toBe('tournament/match-error');
+  });
+
+  test('list matches for tournament', async ({ request }) => {
+    const eid = await createActiveTournament(request);
+    await request.post(`${BASE}/api/tournament/${eid}/match`, {
+      headers: headers('dev-admin'),
+      data: { 'phase-index': 0, 'round-index': 0, 'player-one-sub': 'dev-admin', 'player-two-sub': 'dev-player-one' },
+    });
+    const res = await request.get(`${BASE}/api/tournament/${eid}/match`, {
+      headers: headers('dev-admin'),
+    });
+    expect(res.status()).toBe(200);
+    const body = await res.json();
+    expect(body.matches).toHaveLength(1);
+  });
+
+  test('record match result updates standings', async ({ request }) => {
+    const eid = await createActiveTournament(request);
+    const createRes = await request.post(`${BASE}/api/tournament/${eid}/match`, {
+      headers: headers('dev-admin'),
+      data: { 'phase-index': 0, 'round-index': 0, 'player-one-sub': 'dev-admin', 'player-two-sub': 'dev-player-one' },
+    });
+    const matchEid = (await createRes.json()).eid;
+
+    const res = await request.put(`${BASE}/api/tournament/${eid}/match/${matchEid}/result`, {
+      headers: headers('dev-admin'),
+      data: { 'winner-sub': 'dev-admin' },
+    });
+    expect(res.status()).toBe(200);
+    const body = await res.json();
+    expect(body.type).toBe('tournament/match-result-recorded');
+
+    const winner = body.standings.find(s => s['player-sub'] === 'dev-admin');
+    expect(winner.wins).toBe(1);
+    expect(winner.points).toBe(3);
+
+    const loser = body.standings.find(s => s['player-sub'] === 'dev-player-one');
+    expect(loser.losses).toBe(1);
+  });
+
+  test('record result on non-pending match returns 422', async ({ request }) => {
+    const eid = await createActiveTournament(request);
+    const createRes = await request.post(`${BASE}/api/tournament/${eid}/match`, {
+      headers: headers('dev-admin'),
+      data: { 'phase-index': 0, 'round-index': 0, 'player-one-sub': 'dev-admin', 'player-two-sub': 'dev-player-one' },
+    });
+    const matchEid = (await createRes.json()).eid;
+
+    await request.put(`${BASE}/api/tournament/${eid}/match/${matchEid}/result`, {
+      headers: headers('dev-admin'),
+      data: { 'winner-sub': 'dev-admin' },
+    });
+    const res = await request.put(`${BASE}/api/tournament/${eid}/match/${matchEid}/result`, {
+      headers: headers('dev-admin'),
+      data: { 'winner-sub': 'dev-admin' },
+    });
+    expect(res.status()).toBe(422);
+    expect((await res.json()).type).toBe('tournament/match-error');
+  });
+});

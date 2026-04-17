@@ -168,3 +168,57 @@
             (set-tournament-state dependencies tournament-eid new-state)
             {:type  :tournament/close-registration-success
              :state new-state}))))))
+
+;; ─── Matches ─────────────────────────────────────────────────────────────────
+
+(defn create-match
+  "Creates a match within a tournament. Tournament must be active."
+  [dependencies tournament-eid match-spec]
+  (let [state (get-tournament-state dependencies tournament-eid)]
+    (if (not= "active" (:status state))
+      {:type :tournament/match-error :message "Tournament must be active to create matches."}
+      (let [match (db/create-match (:connection dependencies) tournament-eid match-spec)]
+        (assoc match :type :tournament/match)))))
+
+(defn get-match-by-eid
+  "Fetches a match by eid."
+  [dependencies match-eid]
+  (some-> (db/get-match-by-eid (:connection dependencies) match-eid)
+          (assoc :type :tournament/match)))
+
+(defn get-matches-for-tournament
+  "Returns all matches for a tournament."
+  [dependencies tournament-eid]
+  (mapv (fn [m] (assoc m :type :tournament/match))
+        (db/get-matches-for-tournament (:connection dependencies) tournament-eid)))
+
+(defn get-matches-for-round
+  "Returns matches for a specific phase and round."
+  [dependencies tournament-eid phase-index round-index]
+  (mapv (fn [m] (assoc m :type :tournament/match))
+        (db/get-matches-for-round (:connection dependencies) tournament-eid phase-index round-index)))
+
+(defn record-match-result
+  "Records a match result and recalculates standings in the state blob."
+  [dependencies match-eid winner-sub]
+  (let [match (db/get-match-by-eid (:connection dependencies) match-eid)]
+    (cond
+      (nil? match)
+      {:type :tournament/match-error :message "Match not found."}
+
+      (not= "pending" (:status match))
+      {:type :tournament/match-error :message "Match is not pending."}
+
+      :else
+      (do
+        (db/update-match-result (:connection dependencies) match-eid winner-sub)
+        (let [tournament-eid (:tournament-eid match)
+              state          (get-tournament-state dependencies tournament-eid)
+              all-matches    (get-matches-for-tournament dependencies tournament-eid)
+              completed      (filter #(= "complete" (:status %)) all-matches)
+              new-standings  (rules/recalculate-standings (:standings state) completed)
+              new-state      (assoc state :standings new-standings)]
+          (set-tournament-state dependencies tournament-eid new-state)
+          {:type      :tournament/match-result-recorded
+           :match-eid match-eid
+           :standings new-standings})))))

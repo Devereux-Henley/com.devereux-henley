@@ -102,6 +102,37 @@
     </section>
     {% endif %}
 
+    {% if matches|not-empty? %}
+    <section aria-labelledby="tournament-matches-heading">
+        <h3 id="tournament-matches-heading">Matches</h3>
+        <div class="table-container">
+            <table class="table" aria-labelledby="tournament-matches-heading">
+                <caption class="sr-only">Tournament matches</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Round</th>
+                        <th scope="col">Player 1</th>
+                        <th scope="col">Player 2</th>
+                        <th scope="col">Winner</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for match in matches %}
+                    <tr>
+                        <td>R{{match.round-index}}</td>
+                        <td>{{match.player-one-sub}}</td>
+                        <td>{% if match.player-two-sub %}{{match.player-two-sub}}{% else %}<em>bye</em>{% endif %}</td>
+                        <td>{% if match.winner-sub %}{{match.winner-sub}}{% else %}—{% endif %}</td>
+                        <td>{{match.status}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% endif %}
+
     <section aria-labelledby="tournament-entries-heading">
         <h3 id="tournament-entries-heading">Entries</h3>
         {% if session %}
