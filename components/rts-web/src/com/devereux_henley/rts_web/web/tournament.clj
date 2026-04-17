@@ -143,3 +143,51 @@
       (case (:type result)
         :tournament/close-registration-success {:status 200 :body result}
         {:status 422 :body result}))))
+
+;; ─── Match handlers ─────────────────────────────────────────────────────────
+
+(defmethod integrant.core/init-key ::get-matches
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+        :as                   _request}]
+    {:status 200
+     :body   {:type    :tournament/matches
+              :matches (domain/get-matches-for-tournament dependencies eid)}}))
+
+(defmethod integrant.core/init-key ::get-match
+  [_init-key dependencies]
+  (fn [{{{:keys [match-eid]} :path} :parameters
+        router                      :reitit.core/router
+        :as                         _request}]
+    (web.core/handle-fetch-response
+     domain/match-resource
+     {:hostname (:hostname dependencies) :router router}
+     #(or (domain/get-match-by-eid dependencies match-eid)
+          {:type :missing/resource :name "match" :id match-eid}))))
+
+(defmethod integrant.core/init-key ::create-match
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]}                                     :path
+         {:keys [phase-index round-index
+                 player-one-sub player-two-sub]} :body} :parameters
+        :as                                                  _request}]
+    (let [result (domain/create-match
+                  dependencies
+                  eid
+                  {:phase-index    phase-index
+                   :round-index    round-index
+                   :player-one-sub player-one-sub
+                   :player-two-sub player-two-sub})]
+      (if (= :tournament/match-error (:type result))
+        {:status 422 :body result}
+        {:status 201 :body result}))))
+
+(defmethod integrant.core/init-key ::update-match-result
+  [_init-key dependencies]
+  (fn [{{{:keys [match-eid]}     :path
+         {:keys [winner-sub]} :body} :parameters
+        :as                           _request}]
+    (let [result (domain/update-match-result dependencies match-eid winner-sub)]
+      (if (= :tournament/match-error (:type result))
+        {:status 422 :body result}
+        {:status 200 :body result}))))

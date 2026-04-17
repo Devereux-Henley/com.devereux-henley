@@ -128,6 +128,38 @@
     [:map
      [:type [:= :collection/tournament]]])))
 
+(def match-resource
+  (malli.util/merge
+   schema.contract/base-resource
+   (schema.contract/to-schema
+    [:map
+     [:eid {:model/link :match/by-eid} :uuid]
+     [:type [:= :tournament/match]]
+     [:tournament-eid {:model/link :tournament/by-eid} :uuid]
+     [:phase-index :int]
+     [:round-index :int]
+     [:player-one-sub :string]
+     [:player-two-sub [:maybe :string]]
+     [:winner-sub [:maybe :string]]
+     [:status :string]
+     [:_links
+      [:map
+       [:self :url]
+       [:tournament :url]]]])))
+
+(def create-match-specification
+  (schema.contract/to-schema
+   [:map
+    [:phase-index :int]
+    [:round-index :int]
+    [:player-one-sub :string]
+    [:player-two-sub {:optional true} [:maybe :string]]]))
+
+(def record-result-specification
+  (schema.contract/to-schema
+   [:map
+    [:winner-sub :string]]))
+
 (def tournament-entry-resource
   (malli.util/merge
    schema.contract/base-resource
@@ -142,6 +174,87 @@
       [:map
        [:self :url]
        [:tournament :url]]]])))
+
+;; ─── Subresource response schemas ───────────────────────────────────────────
+
+(def standing-entry
+  (schema.contract/to-schema
+   [:map
+    [:player-sub :string]
+    [:wins :int]
+    [:losses :int]
+    [:draws :int]
+    [:points :int]]))
+
+(def tournament-entry-summary
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:type [:= :tournament/entry]]
+    [:tournament-eid :uuid]
+    [:player-sub :string]
+    [:created-at :instant]]))
+
+(def tournament-entries-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :tournament/entries]]
+    [:entries [:sequential tournament-entry-summary]]]))
+
+(def tournament-status-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :tournament/status]]
+    [:status :string]
+    [:available-transitions [:sequential :string]]]))
+
+(def tournament-advance-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :tournament/advance-success]]
+    [:state [:map {:closed false}
+             [:status :string]]]]))
+
+(def tournament-registration-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :tournament/registration]]
+    [:opens-at [:maybe :string]]
+    [:closes-at [:maybe :string]]
+    [:timezone [:maybe :string]]
+    [:closed-early :boolean]]))
+
+(def tournament-entry-deleted-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :tournament/entry-deleted]]
+    [:message :string]]))
+
+(def tournament-match-summary
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:type [:= :tournament/match]]
+    [:tournament-eid :uuid]
+    [:phase-index :int]
+    [:round-index :int]
+    [:player-one-sub :string]
+    [:player-two-sub [:maybe :string]]
+    [:winner-sub [:maybe :string]]
+    [:status :string]]))
+
+(def tournament-matches-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :tournament/matches]]
+    [:matches [:sequential tournament-match-summary]]]))
+
+(def tournament-match-result-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :tournament/match-result-recorded]]
+    [:match-eid :uuid]
+    [:standings [:sequential standing-entry]]]))
 
 (def resource-identifier
   [:map

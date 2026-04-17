@@ -102,6 +102,40 @@
     </section>
     {% endif %}
 
+    {% if matches-by-round|not-empty? %}
+    <section aria-labelledby="tournament-matches-heading">
+        <h3 id="tournament-matches-heading">Matches</h3>
+        {% for round-group in matches-by-round %}
+        <section aria-labelledby="round-{{round-group.phase}}-{{round-group.round}}-heading">
+            <h4 id="round-{{round-group.phase}}-{{round-group.round}}-heading">Phase {{round-group.phase}} — Round {{round-group.round}}</h4>
+            <div class="table-container">
+                <table class="table" aria-labelledby="round-{{round-group.phase}}-{{round-group.round}}-heading">
+                    <caption class="sr-only">Phase {{round-group.phase}}, Round {{round-group.round}} matches</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Player 1</th>
+                            <th scope="col">Player 2</th>
+                            <th scope="col">Winner</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for match in round-group.matches %}
+                        <tr>
+                            <td>{{match.player-one-sub}}</td>
+                            <td>{% if match.player-two-sub %}{{match.player-two-sub}}{% else %}<em>bye</em>{% endif %}</td>
+                            <td>{% if match.winner-sub %}{{match.winner-sub}}{% else %}—{% endif %}</td>
+                            <td>{{match.status}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        {% endfor %}
+    </section>
+    {% endif %}
+
     <section aria-labelledby="tournament-entries-heading">
         <h3 id="tournament-entries-heading">Entries</h3>
         {% if session %}

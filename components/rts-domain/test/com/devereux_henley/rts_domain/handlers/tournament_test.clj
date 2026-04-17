@@ -222,3 +222,75 @@
                 (fn [_ _] {:id 1 :state "{\"status\":\"active\"}" :updated-at (Instant/now)})]
     (let [result (handlers.tournament/close-registration-early test-deps test-tournament-eid "dev-admin")]
       (is (= :tournament/advance-error (:type result))))))
+
+;; ─── create-match ────────────────────────────────────────────────────────────
+
+(def ^:private active-state-json
+  "{\"status\":\"active\",\"standings\":[{\"player-sub\":\"p1\",\"wins\":0,\"losses\":0,\"draws\":0,\"points\":0},{\"player-sub\":\"p2\",\"wins\":0,\"losses\":0,\"draws\":0,\"points\":0}],\"phases\":[]}")
+
+(def ^:private test-match
+  {:id 1 :eid (UUID/randomUUID) :tournament-eid test-tournament-eid
+   :phase-index 0 :round-index 0 :player-one-sub "p1" :player-two-sub "p2"
+   :winner-sub nil :status "pending" :created-at (Instant/now) :updated-at (Instant/now)})
+
+(deftest create-match-returns-match-when-active
+  (with-redefs [data-access.contract/get-tournament-state
+                (fn [_ _] {:id 1 :state active-state-json :updated-at (Instant/now)})
+                data-access.contract/create-match
+                (fn [_ _ _] test-match)]
+    (let [result (handlers.tournament/create-match test-deps test-tournament-eid
+                                                   {:phase-index 0 :round-index 0 :player-one-sub "p1" :player-two-sub "p2"})]
+      (is (= :tournament/match (:type result)))
+      (is (= "p1" (:player-one-sub result))))))
+
+(deftest create-match-rejects-when-not-active
+  (with-redefs [data-access.contract/get-tournament-state
+                (fn [_ _] {:id 1 :state registration-state-json :updated-at (Instant/now)})]
+    (let [result (handlers.tournament/create-match test-deps test-tournament-eid
+                                                   {:phase-index 0 :round-index 0 :player-one-sub "p1" :player-two-sub "p2"})]
+      (is (= :tournament/match-error (:type result))))))
+
+;; ─── get-match-by-eid ────────────────────────────────────────────────────────
+
+(deftest get-match-by-eid-assigns-type
+  (with-redefs [data-access.contract/get-match-by-eid (fn [_ _] test-match)]
+    (let [result (handlers.tournament/get-match-by-eid test-deps (:eid test-match))]
+      (is (= :tournament/match (:type result))))))
+
+(deftest get-match-by-eid-returns-nil-when-not-found
+  (with-redefs [data-access.contract/get-match-by-eid (fn [_ _] nil)]
+    (is (nil? (handlers.tournament/get-match-by-eid test-deps (UUID/randomUUID))))))
+
+;; ─── get-matches-for-tournament ──────────────────────────────────────────────
+
+(deftest get-matches-for-tournament-assigns-type
+  (with-redefs [data-access.contract/get-matches-for-tournament
+                (fn [_ _] [test-match (assoc test-match :player-one-sub "p3")])]
+    (let [results (handlers.tournament/get-matches-for-tournament test-deps test-tournament-eid)]
+      (is (every? #(= :tournament/match (:type %)) results))
+      (is (= 2 (count results))))))
+
+;; ─── update-match-result ─────────────────────────────────────────────────────
+
+(deftest update-match-result-updates-standings
+  (with-redefs [data-access.contract/get-match-by-eid (fn [_ _] test-match)
+                data-access.contract/update-match-result (fn [_ _ _] nil)
+                data-access.contract/get-matches-for-tournament
+                (fn [_ _] [(assoc test-match :status "complete" :winner-sub "p1")])
+                data-access.contract/get-tournament-state
+                (fn [_ _] {:id 1 :state active-state-json :updated-at (Instant/now)})
+                data-access.contract/upsert-tournament-state (fn [_ _ _] nil)]
+    (let [result (handlers.tournament/update-match-result test-deps (:eid test-match) "p1")]
+      (is (= :tournament/match-result-recorded (:type result)))
+      (is (= 2 (count (:standings result))))
+      (is (= 3 (:points (first (filter #(= "p1" (:player-sub %)) (:standings result)))))))))
+
+(deftest update-match-result-rejects-non-pending
+  (with-redefs [data-access.contract/get-match-by-eid (fn [_ _] (assoc test-match :status "complete"))]
+    (let [result (handlers.tournament/update-match-result test-deps (:eid test-match) "p1")]
+      (is (= :tournament/match-error (:type result))))))
+
+(deftest update-match-result-not-found
+  (with-redefs [data-access.contract/get-match-by-eid (fn [_ _] nil)]
+    (let [result (handlers.tournament/update-match-result test-deps (UUID/randomUUID) "p1")]
+      (is (= :tournament/match-error (:type result))))))
