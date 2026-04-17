@@ -1700,3 +1700,99 @@ a:hover:has(img) {
   font-size: var(--font-size-sm);
   font-style: italic;
 }
+
+/* ─── Elimination bracket ────────────────────────────────────────────── */
+
+.tourney-bracket {
+  display: flex;
+  gap: var(--space-6);
+  overflow-x: auto;
+  padding: var(--space-4) 0;
+}
+
+.tourney-bracket-round {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  min-width: 14rem;
+  gap: var(--space-3);
+}
+
+.tourney-bracket-round-label {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-neutral-600);
+  text-align: center;
+  margin: 0;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+}
+
+.tourney-bracket-match {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  position: relative;
+}
+
+.tourney-bracket-match--complete {
+  border-color: color-mix(in srgb, var(--color-success-500) 50%, var(--color-border));
+}
+
+.tourney-bracket-slot {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
+  transition: background var(--transition-base);
+}
+
+.tourney-bracket-slot:last-of-type {
+  border-bottom: none;
+}
+
+.tourney-bracket-slot--winner {
+  background: color-mix(in srgb, var(--color-primary-500) 12%, transparent);
+  color: var(--color-primary-700);
+  font-weight: var(--font-weight-bold);
+}
+
+.tourney-bracket-bye {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.tourney-bracket-format {
+  position: absolute;
+  top: var(--space-1);
+  right: var(--space-2);
+  font-size: 0.625rem;
+  font-family: var(--font-family-mono);
+  color: var(--color-text-muted);
+  letter-spacing: 0.05em;
+}
+
+/* Connector lines between bracket rounds */
+.tourney-bracket-round + .tourney-bracket-round {
+  position: relative;
+}
+
+.tourney-bracket-round + .tourney-bracket-round::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--space-6) * -0.5);
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--color-border) 0,
+    var(--color-border) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}

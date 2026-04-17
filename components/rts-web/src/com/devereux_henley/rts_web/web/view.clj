@@ -243,18 +243,35 @@
              (let [state        (domain/get-tournament-state dependencies (:eid data))
                    entries      (domain/get-entries dependencies (:eid data))
                    raw-matches  (domain/get-matches-for-tournament dependencies (:eid data))
+                   phases           (:phases state)
                    matches-by-round (->> raw-matches
                                          (group-by (fn [m] {:phase (:phase-index m) :round (:round-index m)}))
                                          (sort-by (fn [[k _]] [(:phase k) (:round k)]))
-                                         (mapv (fn [[k ms]] {:phase (:phase k) :round (:round k) :matches ms})))
+                                         (mapv (fn [[k ms]]
+                                                 (let [phase-config (get phases (:phase k))
+                                                       total-rounds (count (:rounds phase-config))]
+                                                   {:phase       (:phase k)
+                                                    :round       (:round k)
+                                                    :phase-type  (:phase-type phase-config)
+                                                    :total-rounds total-rounds
+                                                    :matches     ms}))))
                    player-sub   (get-in request [:ory-session :identity :id])
                    has-entry    (some #(= player-sub (:player-sub %)) entries)
                    now          (java.time.Instant/now)
                    reg-open     (domain/is-registration-open? state now)
-                   is-organizer (= player-sub (:created-by-sub data))]
+                   is-organizer (= player-sub (:created-by-sub data))
+                   ;; Group by phase for bracket rendering
+                   matches-by-phase (->> matches-by-round
+                                         (group-by :phase)
+                                         (sort-by first)
+                                         (mapv (fn [[phase-idx rounds]]
+                                                 {:phase      phase-idx
+                                                  :phase-type (:phase-type (first rounds))
+                                                  :rounds     rounds})))]
                {:tournament-state  state
                 :entries           entries
                 :matches-by-round  matches-by-round
+                :matches-by-phase  matches-by-phase
                 :has-entry         has-entry
                 :registration-open reg-open
                 :is-organizer      is-organizer}))))
