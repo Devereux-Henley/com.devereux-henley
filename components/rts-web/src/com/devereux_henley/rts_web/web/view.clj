@@ -198,11 +198,18 @@
   (fn [{game-context :game-context
         session      :ory-session
         :as          _request}]
-    (let [tournaments (domain/get-tournaments-for-game dependencies (:game-eid game-context))]
+    (let [tournaments (domain/get-tournaments-for-game dependencies (:game-eid game-context))
+          enriched    (mapv (fn [t]
+                              (let [state   (domain/get-tournament-state dependencies (:eid t))
+                                    entries (domain/get-entries dependencies (:eid t))]
+                                (assoc t
+                                       :status      (:status state)
+                                       :entry-count (count entries))))
+                            tournaments)]
       {:status 200
        :body   (selmer.parser/render-file
                 "rts-web/view/tournament-list.html"
-                (merge {:tournaments tournaments
+                (merge {:tournaments enriched
                         :session     session}
                        game-context))})))
 
