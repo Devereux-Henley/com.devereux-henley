@@ -289,6 +289,7 @@
                               :produces     ["application/json"]
                               :operation-id "tournament-entry/create-mine"}
                  :parameters {:path schema.contract/id-path-parameter}
+                 :responses  {201 {:body domain/tournament-entry-resource}}
                  :handler    (integrant.core/ref ::web.tournament/create-entry)}
         :delete {:summary    "Remove the current player's tournament entry."
                  :openapi    {:tags         ["tournament"]
@@ -349,6 +350,7 @@
                             :operation-id "tournament-match/create"}
                :parameters {:path schema.contract/id-path-parameter
                             :body domain/create-match-specification}
+               :responses  {201 {:body domain/match-resource}}
                :handler    (integrant.core/ref ::web.tournament/create-match)}}]
       ["/:match-eid"
        {:name :match/by-eid
@@ -360,6 +362,7 @@
                                    [:map
                                     [:eid :uuid]
                                     [:match-eid :uuid]])}
+               :responses  {200 {:body domain/match-resource}}
                :handler    (integrant.core/ref ::web.tournament/get-match)}}]
       ["/:match-eid/result"
        {:put {:summary    "Record a match result."
