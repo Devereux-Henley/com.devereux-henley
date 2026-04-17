@@ -260,6 +260,8 @@
                    now          (java.time.Instant/now)
                    reg-open     (domain/is-registration-open? state now)
                    is-organizer (= player-sub (:created-by-sub data))
+                   organizer-has-actions (and is-organizer
+                                              (contains? #{"registration" "active"} (:status state)))
                    pow2-ceil
                    (fn [n] (loop [s 1] (if (>= s n) s (recur (* s 2)))))
                    ceil-log2
@@ -348,4 +350,5 @@
                 :matches-by-phase  matches-by-phase
                 :has-entry         has-entry
                 :registration-open reg-open
-                :is-organizer      is-organizer}))))
+                :is-organizer      is-organizer
+                :organizer-has-actions organizer-has-actions}))))
