@@ -261,13 +261,46 @@
                    reg-open     (domain/is-registration-open? state now)
                    is-organizer (= player-sub (:created-by-sub data))
                    ;; Group by phase for bracket rendering
-                   matches-by-phase (->> matches-by-round
-                                         (group-by :phase)
-                                         (sort-by first)
-                                         (mapv (fn [[phase-idx rounds]]
-                                                 {:phase      phase-idx
-                                                  :phase-type (:phase-type (first rounds))
-                                                  :rounds     rounds})))]
+                   ;; For elimination phases, build full bracket skeleton from phase config
+                   matches-by-phase
+                   (->> (map-indexed vector phases)
+                        (filter (fn [[idx phase-config]]
+                                  ;; Only include phases that have matches or are elimination
+                                  (or (some #(= idx (:phase-index %)) raw-matches)
+                                      (#{"single-elimination" "double-elimination"} (:phase-type phase-config)))))
+                        (mapv (fn [[phase-idx phase-config]]
+                                (let [phase-type   (:phase-type phase-config)
+                                      total-rounds (count (:rounds phase-config))
+                                      elimination? (#{"single-elimination" "double-elimination"} phase-type)
+                                      phase-matches (filter #(= phase-idx (:phase-index %)) raw-matches)
+                                      matches-grouped (group-by :round-index phase-matches)]
+                                  {:phase      phase-idx
+                                   :phase-type phase-type
+                                   :rounds
+                                   (if elimination?
+                                     ;; Build full bracket with empty slots
+                                     (let [qualifier-count (or (:qualifier-count state) (count (:standings state)))
+                                           first-round-size (loop [s 1] (if (>= s qualifier-count) (quot s 2) (recur (* s 2))))]
+                                       (mapv (fn [round-idx]
+                                               (let [expected-matches (max 1 (quot first-round-size (int (Math/pow 2 round-idx))))
+                                                     actual           (get matches-grouped round-idx [])
+                                                     empty-slots      (max 0 (- expected-matches (count actual)))
+                                                     placeholders     (repeat empty-slots {:placeholder true
+                                                                                           :player-one-sub nil
+                                                                                           :player-two-sub nil
+                                                                                           :winner-sub nil
+                                                                                           :status "tbd"})]
+                                                 {:phase       phase-idx
+                                                  :round       round-idx
+                                                  :phase-type  phase-type
+                                                  :total-rounds total-rounds
+                                                  :matches     (into (vec actual) placeholders)}))
+                                             (range total-rounds)))
+                                     ;; Swiss/round-robin: only show rounds with matches
+                                     (mapv (fn [[_ rounds]] (first rounds))
+                                           (sort-by first
+                                                    (group-by :round
+                                                              (filter #(= phase-idx (:phase %)) matches-by-round)))))}))))]
                {:tournament-state  state
                 :entries           entries
                 :matches-by-round  matches-by-round

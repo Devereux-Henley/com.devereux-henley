@@ -1766,6 +1766,18 @@ a:hover:has(img) {
   font-style: italic;
 }
 
+.tourney-bracket-match--tbd {
+  border-style: dashed;
+  opacity: 0.5;
+}
+
+.tourney-bracket-tbd {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
 .tourney-bracket-format {
   position: absolute;
   top: var(--space-1);

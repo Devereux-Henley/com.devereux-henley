@@ -32,8 +32,14 @@ Swiss and round-robin phases display "Round X of Y" in the round header, showing
 
 ![Swiss rounds](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/views-swiss-rounds.png)
 
-## Elimination bracket
+## Single elimination bracket
 
-Single and double elimination phases render as a horizontal bracket with round columns. Each match shows two player slots — the winner is highlighted in gold. Bye slots display in italics. The bracket scrolls horizontally for tournaments with many rounds.
+Single elimination phases render as a horizontal bracket with round columns. The full bracket skeleton is pre-rendered from the phase config — future rounds show TBD placeholder slots (dashed borders, dimmed) until matches are generated. Completed matches show the winner highlighted in gold.
 
-![Elimination bracket](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/views-elimination-bracket.png)
+![Single elimination bracket](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/bracket-single-elim.png)
+
+## Double elimination bracket
+
+Double elimination uses the same bracket layout. Each round column shows its matches with format badges (Bo1/Bo3/Bo5).
+
+![Double elimination bracket](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/bracket-double-elim.png)
