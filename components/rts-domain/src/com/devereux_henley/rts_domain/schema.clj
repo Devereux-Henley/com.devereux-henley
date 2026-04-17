@@ -124,12 +124,14 @@
   (schema.contract/to-schema
    [:map
     [:type [:= :tournament/phase-row]]
+    [:tournament-eid :uuid]
     [:index :int]]))
 
 (def round-row-response
   (schema.contract/to-schema
    [:map
     [:type [:= :tournament/round-row]]
+    [:tournament-eid :uuid]
     [:index :int]]))
 
 (def configure-phases-specification

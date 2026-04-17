@@ -246,20 +246,26 @@
 
 (defmethod integrant.core/init-key ::get-phase-row
   [_init-key dependencies]
-  (fn [{{{:keys [index]} :query} :parameters
+  (fn [{{{:keys [eid]}    :path
+         {:keys [index]} :query} :parameters
         router                    :reitit.core/router
         :as                       _request}]
     (web.core/handle-fetch-response
      domain/phase-row-response
      {:hostname (:hostname dependencies) :router router}
-     (fn [] {:type :tournament/phase-row :index (or index 0)}))))
+     (fn [] {:type           :tournament/phase-row
+             :tournament-eid eid
+             :index          (or index 0)}))))
 
 (defmethod integrant.core/init-key ::get-round-row
   [_init-key dependencies]
-  (fn [{{{:keys [index]} :query} :parameters
+  (fn [{{{:keys [eid]}    :path
+         {:keys [index]} :query} :parameters
         router                    :reitit.core/router
         :as                       _request}]
     (web.core/handle-fetch-response
      domain/round-row-response
      {:hostname (:hostname dependencies) :router router}
-     (fn [] {:type :tournament/round-row :index (or index 0)}))))
+     (fn [] {:type           :tournament/round-row
+             :tournament-eid eid
+             :index          (or index 0)}))))
