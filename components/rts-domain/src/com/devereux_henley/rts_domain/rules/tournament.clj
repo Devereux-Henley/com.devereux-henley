@@ -162,11 +162,14 @@
     (if (>= s n) k (recur (* s 2) (inc k)))))
 
 (defn losers-bracket-round-count
-  "Returns the number of losers-bracket rounds for N qualified players:
-   2 * (winners-rounds - 1). Returns 0 for trivial brackets (<=1 player)."
+  "Returns the number of losers-bracket rounds for N qualified players.
+   The losers bracket is a single-elimination tree seeded only by WB
+   round-1 losers, so it runs for winners-rounds - 1 rounds. Returns 0
+   for trivial brackets (<=2 players, where WB round 1 is already the
+   final)."
   [n]
   (let [k (winners-bracket-round-count n)]
-    (max 0 (* 2 (dec k)))))
+    (max 0 (dec k))))
 
 (defn winners-from-matches
   "Returns winner-sub of each completed match, in bracket order.
@@ -213,27 +216,15 @@
 (defn generate-losers-bracket-round
   "Generates pairings for losers-bracket round r (0-indexed).
 
-   r = 0             — pair the losers from winners-bracket round 0.
-   r odd  (\"major\") — pair losers-bracket winners against losers from
-                      the winners-bracket round that just finished.
-   r even (>0, \"minor\") — pair losers-bracket winners against each other.
+   r = 0 — pair the losers from winners-bracket round 0.
+   r > 0 — pair losers-bracket winners from the previous LB round.
 
-   wb-round-matches is the winners-bracket round whose losers feed this
-   losers round (unused for minor rounds). lb-prev-matches is losers
-   round r-1 (unused when r=0)."
+   wb-round-matches is only consulted for r = 0. lb-prev-matches is
+   losers round r-1 (unused when r=0)."
   [r wb-round-matches lb-prev-matches]
-  (cond
-    (zero? r)
+  (if (zero? r)
     (pair-sequentially (losers-from-matches wb-round-matches))
-
-    (even? r)
-    (pair-sequentially (winners-from-matches lb-prev-matches))
-
-    :else
-    (let [lb-winners (winners-from-matches lb-prev-matches)
-          wb-losers  (losers-from-matches wb-round-matches)]
-      (mapv (fn [lb wb] {:player-one-sub lb :player-two-sub wb})
-            lb-winners wb-losers))))
+    (pair-sequentially (winners-from-matches lb-prev-matches))))
 
 (defn grand-final-pairing
   "Grand final pairing: winners-bracket champion vs losers-bracket champion."
@@ -242,13 +233,11 @@
 
 (defn winners-source-round-for-losers-round
   "For a losers-bracket round r (0-indexed), returns the 0-indexed
-   winners-bracket round whose losers drop into it, or nil for minor
-   losers rounds that don't pull from WB."
+   winners-bracket round whose losers seed it, or nil. Only LB round 0
+   pulls from WB (round 1 losers); subsequent LB rounds are a pure
+   single-elimination amongst LB survivors."
   [r]
-  (cond
-    (zero? r)   0
-    (odd?  r)   (quot (inc r) 2)
-    :else       nil))
+  (when (zero? r) 0))
 
 (defn next-ready-double-elim-round
   "Given an immutable snapshot of a double-elimination phase's matches,
@@ -334,12 +323,12 @@
                (int (Math/pow 2 round-idx)))))
 
 (defn expected-losers-round-match-count
-  "Match count for losers-bracket round r (0-indexed). LB rounds come in
-   pairs — minor then major — so rounds 0,1 each have P/4 matches, rounds
-   2,3 each have P/8, and so on."
+  "Match count for losers-bracket round r (0-indexed). The LB is a
+   single-elimination tree seeded with WB round-1 losers (P/2 players),
+   so round 0 has P/4 matches and each subsequent round halves."
   [qualifier-count round-idx]
   (let [p     (pow2-ceil qualifier-count)
-        denom (int (Math/pow 2 (+ (quot round-idx 2) 2)))]
+        denom (int (Math/pow 2 (+ round-idx 2)))]
     (max 1 (quot p denom))))
 
 (def ^:private placeholder-match

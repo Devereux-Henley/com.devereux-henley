@@ -152,212 +152,65 @@
         <!-- ═══════════════════════════════════════════════════════════ -->
         <div class="tourney-main">
 
-            <!-- Standings -->
-            {% if tournament-state.standings|not-empty? %}
-            <section class="tourney-section" aria-labelledby="standings-heading">
-                <h3 class="tourney-section-heading" id="standings-heading">Standings</h3>
-                <div class="table-container">
-                    <table class="table table-striped" aria-labelledby="standings-heading">
-                        <caption class="sr-only">Tournament standings sorted by points</caption>
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Player</th>
-                                <th scope="col">W</th>
-                                <th scope="col">L</th>
-                                <th scope="col">D</th>
-                                <th scope="col">Pts</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for standing in tournament-state.standings %}
-                            <tr>
-                                <td class="tourney-rank">{{forloop.counter}}</td>
-                                <td>{{standing.player-sub}}</td>
-                                <td>{{standing.wins}}</td>
-                                <td>{{standing.losses}}</td>
-                                <td>{{standing.draws}}</td>
-                                <td><strong>{{standing.points}}</strong></td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-            {% endif %}
-
-            <!-- Matches by phase -->
-            {% if matches-by-phase|not-empty? %}
-            {% for phase-group in matches-by-phase %}
-            <section class="tourney-section" aria-labelledby="phase-{{phase-group.phase}}-heading">
-
-                {% ifequal phase-group.phase-type "single-elimination" %}
-                <!-- ─── Single elimination bracket ─── -->
-                <h3 class="tourney-section-heading" id="phase-{{phase-group.phase}}-heading">Elimination Bracket</h3>
-                <div class="tourney-bracket" aria-label="Elimination bracket">
-                    {% for round-group in phase-group.winners-bracket %}
-                    <div class="tourney-bracket-round">
-                        <h4 class="tourney-bracket-round-label" id="round-{{round-group.phase}}-w-{{round-group.round}}">
-                            Round {{round-group.round|add:1}}
-                        </h4>
-                        {% for match in round-group.matches %}
-                        <div class="tourney-bracket-match {% ifequal match.status "complete" %}tourney-bracket-match--complete{% endifequal %}{% ifequal match.status "tbd" %}tourney-bracket-match--tbd{% endifequal %}">
-                            <div class="tourney-bracket-slot {% ifequal match.winner-sub match.player-one-sub %}tourney-bracket-slot--winner{% endifequal %}">
-                                {% if match.player-one-sub %}{{match.player-one-sub}}{% else %}<span class="tourney-bracket-tbd">TBD</span>{% endif %}
-                            </div>
-                            <div class="tourney-bracket-slot {% ifequal match.winner-sub match.player-two-sub %}tourney-bracket-slot--winner{% endifequal %}">
-                                {% if match.player-two-sub %}{{match.player-two-sub}}{% elif match.player-one-sub %}<em class="tourney-bracket-bye">bye</em>{% else %}<span class="tourney-bracket-tbd">TBD</span>{% endif %}
-                            </div>
-                            {% if match.format %}
-                            <span class="tourney-bracket-format">Bo{{match.format}}</span>
-                            {% endif %}
-                        </div>
-                        {% endfor %}
-                    </div>
-                    {% endfor %}
-                </div>
-
-                {% else %}
-                {% ifequal phase-group.phase-type "double-elimination" %}
-                <!-- ─── Double elimination brackets ─── -->
-                <h3 class="tourney-section-heading" id="phase-{{phase-group.phase}}-heading">Double Elimination</h3>
-
-                <h4 class="tourney-bracket-heading" id="phase-{{phase-group.phase}}-winners-heading">Winners Bracket</h4>
-                <div class="tourney-bracket" aria-labelledby="phase-{{phase-group.phase}}-winners-heading">
-                    {% for round-group in phase-group.winners-bracket %}
-                    <div class="tourney-bracket-round">
-                        <h5 class="tourney-bracket-round-label" id="round-{{round-group.phase}}-w-{{round-group.round}}">
-                            WB Round {{round-group.round|add:1}}
-                        </h5>
-                        {% for match in round-group.matches %}
-                        <div class="tourney-bracket-match {% ifequal match.status "complete" %}tourney-bracket-match--complete{% endifequal %}{% ifequal match.status "tbd" %}tourney-bracket-match--tbd{% endifequal %}">
-                            <div class="tourney-bracket-slot {% ifequal match.winner-sub match.player-one-sub %}tourney-bracket-slot--winner{% endifequal %}">
-                                {% if match.player-one-sub %}{{match.player-one-sub}}{% else %}<span class="tourney-bracket-tbd">TBD</span>{% endif %}
-                            </div>
-                            <div class="tourney-bracket-slot {% ifequal match.winner-sub match.player-two-sub %}tourney-bracket-slot--winner{% endifequal %}">
-                                {% if match.player-two-sub %}{{match.player-two-sub}}{% elif match.player-one-sub %}<em class="tourney-bracket-bye">bye</em>{% else %}<span class="tourney-bracket-tbd">TBD</span>{% endif %}
-                            </div>
-                            {% if match.format %}
-                            <span class="tourney-bracket-format">Bo{{match.format}}</span>
-                            {% endif %}
-                        </div>
-                        {% endfor %}
-                    </div>
-                    {% endfor %}
-                </div>
-
-                {% if phase-group.losers-bracket|not-empty? %}
-                <h4 class="tourney-bracket-heading" id="phase-{{phase-group.phase}}-losers-heading">Losers Bracket</h4>
-                <div class="tourney-bracket tourney-bracket--losers" aria-labelledby="phase-{{phase-group.phase}}-losers-heading">
-                    {% for round-group in phase-group.losers-bracket %}
-                    <div class="tourney-bracket-round">
-                        <h5 class="tourney-bracket-round-label" id="round-{{round-group.phase}}-l-{{round-group.round}}">
-                            LB Round {{round-group.round|add:1}}
-                        </h5>
-                        {% for match in round-group.matches %}
-                        <div class="tourney-bracket-match {% ifequal match.status "complete" %}tourney-bracket-match--complete{% endifequal %}{% ifequal match.status "tbd" %}tourney-bracket-match--tbd{% endifequal %}">
-                            <div class="tourney-bracket-slot {% ifequal match.winner-sub match.player-one-sub %}tourney-bracket-slot--winner{% endifequal %}">
-                                {% if match.player-one-sub %}{{match.player-one-sub}}{% else %}<span class="tourney-bracket-tbd">TBD</span>{% endif %}
-                            </div>
-                            <div class="tourney-bracket-slot {% ifequal match.winner-sub match.player-two-sub %}tourney-bracket-slot--winner{% endifequal %}">
-                                {% if match.player-two-sub %}{{match.player-two-sub}}{% elif match.player-one-sub %}<em class="tourney-bracket-bye">bye</em>{% else %}<span class="tourney-bracket-tbd">TBD</span>{% endif %}
-                            </div>
-                            {% if match.format %}
-                            <span class="tourney-bracket-format">Bo{{match.format}}</span>
-                            {% endif %}
-                        </div>
-                        {% endfor %}
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-
-                <h4 class="tourney-bracket-heading" id="phase-{{phase-group.phase}}-gf-heading">Grand Final</h4>
-                <div class="tourney-bracket tourney-bracket--grand-final" aria-labelledby="phase-{{phase-group.phase}}-gf-heading">
-                    {% for round-group in phase-group.grand-final %}
-                    <div class="tourney-bracket-round">
-                        {% for match in round-group.matches %}
-                        <div class="tourney-bracket-match {% ifequal match.status "complete" %}tourney-bracket-match--complete{% endifequal %}{% ifequal match.status "tbd" %}tourney-bracket-match--tbd{% endifequal %}">
-                            <div class="tourney-bracket-slot {% ifequal match.winner-sub match.player-one-sub %}tourney-bracket-slot--winner{% endifequal %}">
-                                {% if match.player-one-sub %}{{match.player-one-sub}}{% else %}<span class="tourney-bracket-tbd">TBD</span>{% endif %}
-                            </div>
-                            <div class="tourney-bracket-slot {% ifequal match.winner-sub match.player-two-sub %}tourney-bracket-slot--winner{% endifequal %}">
-                                {% if match.player-two-sub %}{{match.player-two-sub}}{% else %}<span class="tourney-bracket-tbd">TBD</span>{% endif %}
-                            </div>
-                            {% if match.format %}
-                            <span class="tourney-bracket-format">Bo{{match.format}}</span>
-                            {% endif %}
-                        </div>
-                        {% endfor %}
-                    </div>
-                    {% endfor %}
-                </div>
-
-                {% else %}
-                <!-- ─── Swiss / Round Robin list view ─── -->
-                <h3 class="tourney-section-heading" id="phase-{{phase-group.phase}}-heading">
-                    {% if phase-group.phase-type %}{{phase-group.phase-type}}{% else %}Matches{% endif %}
-                </h3>
-                {% for round-group in phase-group.rounds %}
-                <div class="tourney-round-block" aria-labelledby="round-{{round-group.phase}}-{{round-group.round}}">
-                    <h4 class="tourney-round-label" id="round-{{round-group.phase}}-{{round-group.round}}">
-                        Round {{round-group.round|add:1}} of {{round-group.total-rounds}}
-                    </h4>
-                    <div class="tourney-match-list">
-                        {% for match in round-group.matches %}
-                        <div class="tourney-match-card {% ifequal match.status "complete" %}tourney-match-card--complete{% endifequal %}">
-                            <div class="tourney-match-players">
-                                <span class="tourney-match-player {% ifequal match.winner-sub match.player-one-sub %}tourney-match-winner{% endifequal %}">
-                                    {{match.player-one-sub}}
-                                </span>
-                                <span class="tourney-match-vs" aria-hidden="true">vs</span>
-                                <span class="tourney-match-player {% ifequal match.winner-sub match.player-two-sub %}tourney-match-winner{% endifequal %}">
-                                    {% if match.player-two-sub %}{{match.player-two-sub}}{% else %}<em>bye</em>{% endif %}
-                                </span>
-                            </div>
-                            <div class="tourney-match-meta">
-                                <span class="badge {% ifequal match.status "pending" %}badge-warning{% endifequal %}{% ifequal match.status "complete" %}badge-success{% endifequal %}" style="font-size: var(--font-size-xs);">
-                                    {{match.status}}
-                                </span>
-                                {% if match.format %}
-                                <span class="tourney-match-format">Bo{{match.format}}</span>
-                                {% endif %}
-                            </div>
-                            {% if match.winner-sub %}
-                            <div class="tourney-match-result">
-                                Winner: <strong>{{match.winner-sub}}</strong>
-                            </div>
-                            {% endif %}
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
+            <div class="tourney-tabs" role="tablist" aria-label="Tournament sections">
+                <button type="button" role="tab" id="tab-entrants"
+                        aria-selected="true" aria-controls="panel-entrants"
+                        class="tourney-tab"
+                        _="on click
+                           add @hidden to <[role=tabpanel]/> in the closest .tourney-main
+                           then remove @hidden from #panel-entrants
+                           then set @aria-selected of <[role=tab]/> in my parentElement to 'false'
+                           then set my @aria-selected to 'true'">
+                    Entrants
+                </button>
+                {% for phase-group in matches-by-phase %}
+                <button type="button" role="tab" id="tab-phase-{{phase-group.phase}}"
+                        aria-selected="false" aria-controls="panel-phase-{{phase-group.phase}}"
+                        class="tourney-tab"
+                        _="on click
+                           add @hidden to <[role=tabpanel]/> in the closest .tourney-main
+                           then remove @hidden from #panel-phase-{{phase-group.phase}}
+                           then set @aria-selected of <[role=tab]/> in my parentElement to 'false'
+                           then set my @aria-selected to 'true'">
+                    Phase {{phase-group.phase|add:1}}
+                    <span class="tourney-tab-sub">{% ifequal phase-group.phase-type "single-elimination" %}Single Elimination{% endifequal %}{% ifequal phase-group.phase-type "double-elimination" %}Double Elimination{% endifequal %}{% ifequal phase-group.phase-type "swiss" %}Swiss{% endifequal %}{% ifequal phase-group.phase-type "round-robin" %}Round Robin{% endifequal %}</span>
+                </button>
                 {% endfor %}
-                {% endifequal %}
-                {% endifequal %}
+            </div>
 
+            <section id="panel-entrants" role="tabpanel" aria-labelledby="tab-entrants" class="tourney-tab-panel">
+                <section class="tourney-section" aria-labelledby="entries-heading">
+                    <h3 class="tourney-section-heading" id="entries-heading">
+                        Entries
+                        {% if entries %}<span class="tourney-entry-count">{{entries|length}}</span>{% endif %}
+                    </h3>
+                    {% if entries %}
+                    <ul class="tourney-entry-grid">
+                        {% for entry in entries %}
+                        <li class="tourney-entry-chip">
+                            <span class="tourney-entry-name">{{entry.player-sub}}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="tourney-empty-msg">No entries yet.</p>
+                    {% endif %}
+                </section>
+            </section>
+
+            {% for phase-group in matches-by-phase %}
+            <section id="panel-phase-{{phase-group.phase}}" role="tabpanel" aria-labelledby="tab-phase-{{phase-group.phase}}" class="tourney-tab-panel" hidden>
+                {% ifequal phase-group.phase-type "swiss" %}{% include "rts-web/view/tournament/_standings.html" %}{% endifequal %}
+                {% ifequal phase-group.phase-type "round-robin" %}{% include "rts-web/view/tournament/_standings.html" %}{% endifequal %}
+
+                <section class="tourney-section" aria-labelledby="phase-{{phase-group.phase}}-heading">
+                    {% ifequal phase-group.phase-type "single-elimination" %}{% include "rts-web/view/tournament/phase-single-elimination.html" %}{% endifequal %}
+                    {% ifequal phase-group.phase-type "double-elimination" %}{% include "rts-web/view/tournament/phase-double-elimination.html" %}{% endifequal %}
+                    {% ifequal phase-group.phase-type "swiss" %}{% include "rts-web/view/tournament/phase-swiss.html" %}{% endifequal %}
+                    {% ifequal phase-group.phase-type "round-robin" %}{% include "rts-web/view/tournament/phase-round-robin.html" %}{% endifequal %}
+                </section>
             </section>
             {% endfor %}
-            {% endif %}
-
-            <!-- Entries -->
-            <section class="tourney-section" aria-labelledby="entries-heading">
-                <h3 class="tourney-section-heading" id="entries-heading">
-                    Entries
-                    {% if entries %}<span class="tourney-entry-count">{{entries|length}}</span>{% endif %}
-                </h3>
-                {% if entries %}
-                <ul class="tourney-entry-grid">
-                    {% for entry in entries %}
-                    <li class="tourney-entry-chip">
-                        <span class="tourney-entry-name">{{entry.player-sub}}</span>
-                    </li>
-                    {% endfor %}
-                </ul>
-                {% else %}
-                <p class="tourney-empty-msg">No entries yet.</p>
-                {% endif %}
-            </section>
 
         </div>
     </div>

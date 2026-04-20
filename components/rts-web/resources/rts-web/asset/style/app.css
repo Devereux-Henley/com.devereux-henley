@@ -1505,7 +1505,12 @@ a:hover:has(img) {
 /* ─── Create page ────────────────────────────────────────────────────── */
 
 .tournament-create-page {
-  padding: var(--space-6) var(--space-8);
+  height: calc(100vh - 3.25rem);
+  overflow-y: auto;
+  padding: var(--space-6) var(--space-8) var(--space-12);
+}
+
+.tournament-create-page > .resource {
   max-width: 48rem;
 }
 
@@ -1769,6 +1774,78 @@ a:hover:has(img) {
   max-width: 48rem;
 }
 
+.tourney-section:has(.tourney-bracket) {
+  max-width: none;
+}
+
+/* ─── Tournament tabs ────────────────────────────────────────────────── */
+
+.tourney-tabs {
+  display: flex;
+  gap: var(--space-1);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+
+.tourney-tab {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: -1px;
+  white-space: nowrap;
+  transition: color var(--transition-base), border-color var(--transition-base);
+}
+
+.tourney-tab:hover {
+  color: var(--color-text);
+}
+
+.tourney-tab[aria-selected="true"] {
+  color: var(--color-primary-700);
+  border-bottom-color: var(--color-primary-500);
+}
+
+.tourney-tab:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: -2px;
+}
+
+.tourney-tab-sub {
+  font-size: 0.625rem;
+  font-weight: var(--font-weight-regular);
+  letter-spacing: 0.12em;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+.tourney-tab[aria-selected="true"] .tourney-tab-sub {
+  color: color-mix(in srgb, var(--color-primary-700) 75%, var(--color-text-muted));
+}
+
+.tourney-tab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.tourney-tab-panel[hidden] {
+  display: none;
+}
+
 .tourney-section-heading {
   font-size: var(--font-size-sm);
   display: flex;
@@ -1913,8 +1990,15 @@ a:hover:has(img) {
 .tourney-bracket-round {
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
   min-width: 14rem;
+  gap: var(--space-3);
+}
+
+.tourney-bracket-round-matches {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
   gap: var(--space-3);
 }
 
@@ -2024,9 +2108,156 @@ a:hover:has(img) {
   color: var(--color-warning-700);
 }
 
-.tourney-bracket--grand-final {
+.tourney-bracket-round--grand-final {
   border: 1px solid color-mix(in srgb, var(--color-primary-500) 40%, var(--color-border));
   border-radius: var(--radius-md);
   padding: var(--space-3) var(--space-4);
   background: color-mix(in srgb, var(--color-primary-500) 4%, transparent);
+}
+
+.tourney-bracket-round--grand-final .tourney-bracket-round-label {
+  color: var(--color-primary-700);
+}
+
+/* ─── Double-elimination combined layout ─────────────────────────────── */
+
+.tourney-bracket-de {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-8);
+  padding: var(--space-4) 0;
+  overflow-x: auto;
+}
+
+.tourney-bracket-de-brackets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  flex: 1;
+  min-width: 0;
+}
+
+.tourney-bracket-de-brackets .tourney-bracket {
+  overflow: visible;
+  padding: 0;
+}
+
+.tourney-bracket-de-brackets .tourney-bracket-heading {
+  margin: 0 0 var(--space-2);
+}
+
+.tourney-bracket-de-gf {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+  position: relative;
+  padding: 0 var(--space-2);
+}
+
+.tourney-bracket-de-gf-heading {
+  margin: 0 0 var(--space-1);
+  text-align: center;
+  color: var(--color-primary-700);
+}
+
+/* Bracket-shaped connector: two dashed L's meeting at GF's left edge.
+   The upper L reaches up-left to the last WB match, the lower L reaches
+   down-left to the last LB match — visualising the convergence of both
+   brackets into the Grand Final. */
+.tourney-bracket-de-gf::before,
+.tourney-bracket-de-gf::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--space-8) * -1);
+  width: var(--space-8);
+  border-color: color-mix(in srgb, var(--color-primary-500) 55%, transparent);
+  border-style: dashed;
+  pointer-events: none;
+}
+
+.tourney-bracket-de-gf::before {
+  top: 25%;
+  bottom: 50%;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+
+.tourney-bracket-de-gf::after {
+  top: 50%;
+  bottom: 25%;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+}
+
+/* ─── Round-robin dense grid ─────────────────────────────────────────── */
+
+.tourney-round-robin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: var(--space-4);
+}
+
+.tourney-round-robin-round {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  padding: var(--space-3);
+}
+
+.tourney-round-robin-label {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-2);
+}
+
+.tourney-round-robin-pairings {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.tourney-round-robin-pairing {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+}
+
+.tourney-round-robin-pairing--complete {
+  background: color-mix(in srgb, var(--color-success-500) 6%, transparent);
+}
+
+.tourney-round-robin-player {
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tourney-round-robin-player:first-child {
+  text-align: right;
+}
+
+.tourney-round-robin-player--winner {
+  color: var(--color-primary-700);
+  font-weight: var(--font-weight-bold);
+}
+
+.tourney-round-robin-vs {
+  color: var(--color-text-muted);
+  font-family: var(--font-family-mono);
+  font-size: 0.625rem;
 }

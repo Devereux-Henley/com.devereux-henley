@@ -1,0 +1,23 @@
+<h3 class="tourney-section-heading" id="phase-{{phase-group.phase}}-heading">Round Robin</h3>
+<div class="tourney-round-robin-grid">
+    {% for round-group in phase-group.rounds %}
+    <div class="tourney-round-robin-round" aria-labelledby="round-{{round-group.phase}}-{{round-group.round}}-heading">
+        <h4 class="tourney-round-robin-label" id="round-{{round-group.phase}}-{{round-group.round}}-heading">
+            Round {{round-group.round|add:1}}
+        </h4>
+        <ul class="tourney-round-robin-pairings">
+            {% for match in round-group.matches %}
+            <li class="tourney-round-robin-pairing {% ifequal match.status "complete" %}tourney-round-robin-pairing--complete{% endifequal %}">
+                <span class="tourney-round-robin-player {% ifequal match.winner-sub match.player-one-sub %}tourney-round-robin-player--winner{% endifequal %}">
+                    {{match.player-one-sub}}
+                </span>
+                <span class="tourney-round-robin-vs" aria-hidden="true">v</span>
+                <span class="tourney-round-robin-player {% ifequal match.winner-sub match.player-two-sub %}tourney-round-robin-player--winner{% endifequal %}">
+                    {% if match.player-two-sub %}{{match.player-two-sub}}{% else %}<em>bye</em>{% endif %}
+                </span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endfor %}
+</div>

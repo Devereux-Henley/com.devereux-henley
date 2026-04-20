@@ -1,0 +1,15 @@
+<h3 class="tourney-section-heading" id="phase-{{phase-group.phase}}-heading">Elimination Bracket</h3>
+<div class="tourney-bracket tourney-bracket--single" aria-labelledby="phase-{{phase-group.phase}}-heading">
+    {% for round-group in phase-group.winners-bracket %}
+    <div class="tourney-bracket-round">
+        <h4 class="tourney-bracket-round-label" id="round-{{round-group.phase}}-w-{{round-group.round}}">
+            Round {{round-group.round|add:1}}
+        </h4>
+        <div class="tourney-bracket-round-matches">
+            {% for match in round-group.matches %}
+            {% include "rts-web/view/tournament/_bracket-match.html" %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>

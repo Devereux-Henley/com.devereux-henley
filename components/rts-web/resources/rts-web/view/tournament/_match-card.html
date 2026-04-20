@@ -1,0 +1,24 @@
+<div class="tourney-match-card {% ifequal match.status "complete" %}tourney-match-card--complete{% endifequal %}">
+    <div class="tourney-match-players">
+        <span class="tourney-match-player {% ifequal match.winner-sub match.player-one-sub %}tourney-match-winner{% endifequal %}">
+            {{match.player-one-sub}}
+        </span>
+        <span class="tourney-match-vs" aria-hidden="true">vs</span>
+        <span class="tourney-match-player {% ifequal match.winner-sub match.player-two-sub %}tourney-match-winner{% endifequal %}">
+            {% if match.player-two-sub %}{{match.player-two-sub}}{% else %}<em>bye</em>{% endif %}
+        </span>
+    </div>
+    <div class="tourney-match-meta">
+        <span class="badge {% ifequal match.status "pending" %}badge-warning{% endifequal %}{% ifequal match.status "complete" %}badge-success{% endifequal %}" style="font-size: var(--font-size-xs);">
+            {{match.status}}
+        </span>
+        {% if match.format %}
+        <span class="tourney-match-format">Bo{{match.format}}</span>
+        {% endif %}
+    </div>
+    {% if match.winner-sub %}
+    <div class="tourney-match-result">
+        Winner: <strong>{{match.winner-sub}}</strong>
+    </div>
+    {% endif %}
+</div>

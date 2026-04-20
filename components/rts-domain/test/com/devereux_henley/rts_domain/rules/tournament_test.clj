@@ -199,9 +199,9 @@
 
 (deftest losers-bracket-round-count-power-of-two
   (is (= 0 (rules/losers-bracket-round-count 2)))
-  (is (= 2 (rules/losers-bracket-round-count 4)))
-  (is (= 4 (rules/losers-bracket-round-count 8)))
-  (is (= 6 (rules/losers-bracket-round-count 16))))
+  (is (= 1 (rules/losers-bracket-round-count 4)))
+  (is (= 2 (rules/losers-bracket-round-count 8)))
+  (is (= 3 (rules/losers-bracket-round-count 16))))
 
 ;; ─── advance-winners-bracket-round ──────────────────────────────────────────
 
@@ -248,22 +248,10 @@
     (is (= "y" (:player-one-sub (first result))))
     (is (nil? (:player-two-sub (first result))))))
 
-(deftest losers-round-major-mixes-lb-winners-and-wb-losers
-  (let [wb-round-1 [{:status "complete" :winner-sub "a" :player-one-sub "a" :player-two-sub "x"}
-                    {:status "complete" :winner-sub "b" :player-one-sub "b" :player-two-sub "y"}]
-        lb-round-0 [{:status "complete" :winner-sub "l1" :player-one-sub "l1" :player-two-sub "l2"}
-                    {:status "complete" :winner-sub "l3" :player-one-sub "l3" :player-two-sub "l4"}]
-        result     (rules/generate-losers-bracket-round 1 wb-round-1 lb-round-0)]
-    (is (= 2 (count result)))
-    (is (= "l1" (:player-one-sub (first result))))
-    (is (= "x"  (:player-two-sub (first result))))
-    (is (= "l3" (:player-one-sub (second result))))
-    (is (= "y"  (:player-two-sub (second result))))))
-
-(deftest losers-round-minor-pairs-lb-winners
+(deftest losers-round-positive-pairs-lb-winners
   (let [lb-prev [{:status "complete" :winner-sub "w1" :player-one-sub "w1" :player-two-sub "a"}
                  {:status "complete" :winner-sub "w2" :player-one-sub "w2" :player-two-sub "b"}]
-        result  (rules/generate-losers-bracket-round 2 nil lb-prev)]
+        result  (rules/generate-losers-bracket-round 1 nil lb-prev)]
     (is (= 1 (count result)))
     (is (= "w1" (:player-one-sub (first result))))
     (is (= "w2" (:player-two-sub (first result))))))
@@ -272,11 +260,9 @@
 
 (deftest wb-source-for-lb-round
   (is (= 0   (rules/winners-source-round-for-losers-round 0)))
-  (is (= 1   (rules/winners-source-round-for-losers-round 1)))
+  (is (nil? (rules/winners-source-round-for-losers-round 1)))
   (is (nil? (rules/winners-source-round-for-losers-round 2)))
-  (is (= 2   (rules/winners-source-round-for-losers-round 3)))
-  (is (nil? (rules/winners-source-round-for-losers-round 4)))
-  (is (= 3   (rules/winners-source-round-for-losers-round 5))))
+  (is (nil? (rules/winners-source-round-for-losers-round 3))))
 
 ;; ─── grand-final-pairing ────────────────────────────────────────────────────
 
