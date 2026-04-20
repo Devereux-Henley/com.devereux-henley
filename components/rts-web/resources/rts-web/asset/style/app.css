@@ -1415,7 +1415,13 @@ a:hover:has(img) {
 /* ─── List page ──────────────────────────────────────────────────────── */
 
 .tournament-list-page {
-  padding: var(--space-6) var(--space-8);
+  height: calc(100vh - 3.25rem);
+  overflow-y: auto;
+  padding: var(--space-6) var(--space-8) var(--space-12);
+}
+
+.tournament-list-page > .tournament-list-header,
+.tournament-list-page > .tournament-list-grid {
   max-width: 64rem;
 }
 

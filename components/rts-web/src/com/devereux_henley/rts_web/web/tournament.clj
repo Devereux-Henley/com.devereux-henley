@@ -250,6 +250,24 @@
      (fn [] {:type           :tournament/phase
              :tournament-eid eid}))))
 
+(defmethod integrant.core/init-key ::get-phase-panel
+  [_init-key dependencies]
+  (fn [{{{:keys [eid phase-index]} :path} :parameters}]
+    (let [state           (domain/get-tournament-state dependencies eid)
+          phases          (:phases state)
+          raw-matches     (domain/get-matches-for-tournament dependencies eid)
+          qualifier-count (or (:qualifier-count state) (count (:standings state)))
+          grouped         (domain/group-matches-by-phase raw-matches phases qualifier-count)
+          phase-group     (first (filter #(= phase-index (:phase %)) grouped))]
+      (if phase-group
+        {:status 200
+         :body   {:type             :tournament/phase-panel
+                  :tournament-state state
+                  :phase-group      phase-group
+                  :data             {:eid eid}}}
+        {:status 404
+         :body   {:type :missing/resource :name "tournament-phase" :id phase-index}}))))
+
 (defmethod integrant.core/init-key ::get-round
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters

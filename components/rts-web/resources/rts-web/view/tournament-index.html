@@ -167,6 +167,9 @@
                 <button type="button" role="tab" id="tab-phase-{{phase-group.phase}}"
                         aria-selected="false" aria-controls="panel-phase-{{phase-group.phase}}"
                         class="tourney-tab"
+                        hx-get="/api/tournament/{{data.eid}}/phase/{{phase-group.phase}}"
+                        hx-target="#panel-phase-{{phase-group.phase}}"
+                        hx-swap="innerHTML"
                         _="on click
                            add @hidden to <[role=tabpanel]/> in the closest .tourney-main
                            then remove @hidden from #panel-phase-{{phase-group.phase}}
@@ -199,17 +202,7 @@
             </section>
 
             {% for phase-group in matches-by-phase %}
-            <section id="panel-phase-{{phase-group.phase}}" role="tabpanel" aria-labelledby="tab-phase-{{phase-group.phase}}" class="tourney-tab-panel" hidden>
-                {% ifequal phase-group.phase-type "swiss" %}{% include "rts-web/view/tournament/_standings.html" %}{% endifequal %}
-                {% ifequal phase-group.phase-type "round-robin" %}{% include "rts-web/view/tournament/_standings.html" %}{% endifequal %}
-
-                <section class="tourney-section" aria-labelledby="phase-{{phase-group.phase}}-heading">
-                    {% ifequal phase-group.phase-type "single-elimination" %}{% include "rts-web/view/tournament/phase-single-elimination.html" %}{% endifequal %}
-                    {% ifequal phase-group.phase-type "double-elimination" %}{% include "rts-web/view/tournament/phase-double-elimination.html" %}{% endifequal %}
-                    {% ifequal phase-group.phase-type "swiss" %}{% include "rts-web/view/tournament/phase-swiss.html" %}{% endifequal %}
-                    {% ifequal phase-group.phase-type "round-robin" %}{% include "rts-web/view/tournament/phase-round-robin.html" %}{% endifequal %}
-                </section>
-            </section>
+            <section id="panel-phase-{{phase-group.phase}}" role="tabpanel" aria-labelledby="tab-phase-{{phase-group.phase}}" class="tourney-tab-panel" hidden></section>
             {% endfor %}
 
         </div>

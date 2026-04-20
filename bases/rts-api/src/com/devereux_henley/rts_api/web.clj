@@ -40,8 +40,9 @@
     :draft/update-success "rts-web/resource/draft-update-success.html"
     :draft/update-error   "rts-web/resource/draft-add-error.html"
     :draft/remove-success "rts-web/resource/draft-remove-success.html"
-    :tournament/phase     "rts-web/resource/tournament-phase.html"
-    :tournament/round     "rts-web/resource/tournament-round.html"
+    :tournament/phase       "rts-web/resource/tournament-phase.html"
+    :tournament/phase-panel "rts-web/resource/tournament-phase-panel.html"
+    :tournament/round       "rts-web/resource/tournament-round.html"
     :missing/resource     "rts-web/resource/missing.html"
     "exception"           "rts-web/resource/error.html"}
    type

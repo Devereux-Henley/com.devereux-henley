@@ -92,6 +92,7 @@
             :com.devereux-henley.rts-web.web.tournament/update-phase-configuration
             :com.devereux-henley.rts-web.web.tournament/create-round
             :com.devereux-henley.rts-web.web.tournament/get-phase
+            :com.devereux-henley.rts-web.web.tournament/get-phase-panel
             :com.devereux-henley.rts-web.web.tournament/get-round
             :com.devereux-henley.rts-web.web.view/tournament-list-view
             :com.devereux-henley.rts-web.web.view/create-tournament-view
