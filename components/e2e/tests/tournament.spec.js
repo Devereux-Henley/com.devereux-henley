@@ -554,6 +554,140 @@ test.describe('Tournament Phase & Swiss API', () => {
   });
 });
 
+test.describe('Tournament Phase Details API', () => {
+  async function createActiveSwissTournament(request) {
+    const eid = await createTournament(request);
+    await request.put(`${BASE}/api/tournament/${eid}/phase`, {
+      headers: headers('dev-admin'),
+      data: {
+        phases: [{ 'phase-type': 'swiss', rounds: [{ 'round-index': 0, format: 1 }] }],
+      },
+    });
+    await request.post(`${BASE}/api/tournament/${eid}/entry/me`, { headers: headers('dev-admin') });
+    await request.post(`${BASE}/api/tournament/${eid}/entry/me`, { headers: headers('dev-player-one') });
+    await request.put(`${BASE}/api/tournament/${eid}/status`, {
+      headers: headers('dev-admin'),
+      data: { status: 'active' },
+    });
+    await request.post(`${BASE}/api/tournament/${eid}/round`, { headers: headers('dev-admin') });
+    return eid;
+  }
+
+  test('phase details returns swiss phase-group with standings', async ({ request }) => {
+    const eid = await createActiveSwissTournament(request);
+    const res = await request.get(`${BASE}/api/tournament/${eid}/phase/0`, {
+      headers: headers('dev-admin'),
+    });
+    expect(res.status()).toBe(200);
+    const body = await res.json();
+    expect(body.type).toBe('tournament/phase');
+    expect(body['phase-group']['phase-type']).toBe('swiss');
+    // Swiss uses flat :rounds, not winners/losers/grand-final.
+    expect(body['phase-group'].rounds).toBeDefined();
+    expect(body['tournament-state'].standings.length).toBe(2);
+    expect(body.data.eid).toBe(eid);
+  });
+
+  test('phase details returns double-elim phase-group with all three brackets', async ({ request }) => {
+    const eid = await createTournament(request);
+    await request.put(`${BASE}/api/tournament/${eid}/phase`, {
+      headers: headers('dev-admin'),
+      data: {
+        phases: [{
+          'phase-type': 'double-elimination',
+          rounds: [{ 'round-index': 0, format: 1 }, { 'round-index': 1, format: 1 }],
+        }],
+      },
+    });
+    await request.post(`${BASE}/api/tournament/${eid}/entry/me`, { headers: headers('dev-admin') });
+    await request.post(`${BASE}/api/tournament/${eid}/entry/me`, { headers: headers('dev-player-one') });
+    await request.post(`${BASE}/api/tournament/${eid}/entry/me`, { headers: headers('dev-player-two') });
+    await request.put(`${BASE}/api/tournament/${eid}/status`, {
+      headers: headers('dev-admin'),
+      data: { status: 'active' },
+    });
+    await request.post(`${BASE}/api/tournament/${eid}/round`, { headers: headers('dev-admin') });
+
+    const res = await request.get(`${BASE}/api/tournament/${eid}/phase/0`, {
+      headers: headers('dev-admin'),
+    });
+    expect(res.status()).toBe(200);
+    const body = await res.json();
+    const pg = body['phase-group'];
+    expect(pg['phase-type']).toBe('double-elimination');
+    expect(pg['winners-bracket']).toBeDefined();
+    expect(pg['losers-bracket']).toBeDefined();
+    expect(pg['grand-final']).toBeDefined();
+    // LB is a single-elim tree seeded by WB-R1 losers; for 4 players that's 1 round.
+    expect(pg['losers-bracket'].length).toBe(1);
+  });
+
+  test('phase details returns 404 for out-of-range phase index', async ({ request }) => {
+    const eid = await createActiveSwissTournament(request);
+    const res = await request.get(`${BASE}/api/tournament/${eid}/phase/99`, {
+      headers: headers('dev-admin'),
+    });
+    expect(res.status()).toBe(404);
+    expect((await res.json()).type).toBe('missing/resource');
+  });
+
+  test('phase details renders an htmx fragment when accept is htmx+html', async ({ request }) => {
+    const eid = await createActiveSwissTournament(request);
+    const res = await request.get(`${BASE}/api/tournament/${eid}/phase/0`, {
+      headers: {
+        Accept: 'application/htmx+html',
+        Cookie: 'dev_impersonation=dev-admin',
+      },
+    });
+    expect(res.status()).toBe(200);
+    const body = await res.text();
+    // Swiss fragment carries standings + match-list, wrapped in a tourney-section.
+    expect(body).toContain('standings-heading-0');
+    expect(body).toContain('tourney-match-list');
+  });
+});
+
+test.describe('Tournament Detail UI — Tabs', () => {
+  test('entrants tab is selected on initial load', async ({ page, request }) => {
+    const eid = await createTournament(request);
+    await page.goto(`/view/game/${GAME_EID}/tournament/${eid}/index.html`);
+    await expect(page.locator('#tab-entrants')).toHaveAttribute('aria-selected', 'true');
+    await expect(page.locator('#panel-entrants')).toBeVisible();
+  });
+
+  test('clicking a phase tab lazy-loads the phase panel via htmx', async ({ page, request }) => {
+    const eid = await createTournament(request);
+    await request.put(`${BASE}/api/tournament/${eid}/phase`, {
+      headers: headers('dev-admin'),
+      data: {
+        phases: [{ 'phase-type': 'swiss', rounds: [{ 'round-index': 0, format: 1 }] }],
+      },
+    });
+    await request.post(`${BASE}/api/tournament/${eid}/entry/me`, { headers: headers('dev-admin') });
+    await request.post(`${BASE}/api/tournament/${eid}/entry/me`, { headers: headers('dev-player-one') });
+    await request.put(`${BASE}/api/tournament/${eid}/status`, {
+      headers: headers('dev-admin'),
+      data: { status: 'active' },
+    });
+    await request.post(`${BASE}/api/tournament/${eid}/round`, { headers: headers('dev-admin') });
+
+    await page.goto(`/view/game/${GAME_EID}/tournament/${eid}/index.html`);
+    // Panel starts empty.
+    await expect(page.locator('#panel-phase-0')).toBeHidden();
+
+    await page.locator('#tab-phase-0').click();
+
+    await expect(page.locator('#tab-phase-0')).toHaveAttribute('aria-selected', 'true');
+    await expect(page.locator('#panel-phase-0')).toBeVisible();
+    // Htmx-swapped content now present: Swiss phase shows standings table + match list.
+    await expect(page.locator('#panel-phase-0 table')).toBeVisible();
+    await expect(page.locator('#panel-phase-0 .tourney-match-list')).toBeVisible();
+    // Entrants tab de-selected and panel hidden.
+    await expect(page.locator('#tab-entrants')).toHaveAttribute('aria-selected', 'false');
+    await expect(page.locator('#panel-entrants')).toBeHidden();
+  });
+});
+
 test.describe('Tournament Phase Auto-Advancement', () => {
   test('generate-round auto-advances to next phase when current phase exhausted', async ({ request }) => {
     const eid = await createTournamentWithPhases(request);

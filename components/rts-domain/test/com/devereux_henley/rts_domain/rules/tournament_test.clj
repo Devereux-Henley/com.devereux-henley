@@ -271,3 +271,100 @@
     (is (= 1 (count result)))
     (is (= "wb-champ" (:player-one-sub (first result))))
     (is (= "lb-champ" (:player-two-sub (first result))))))
+
+;; ─── expected-losers-round-match-count ──────────────────────────────────────
+
+(deftest lb-match-count-halves-each-round-16
+  ;; 16 players → WB-R1 has 8 matches; LB feeds from WB-R1 losers (8 players)
+  ;; so LB-R1 = P/4 = 4, halving to P/16 = 1 by R2.
+  (is (= 4 (rules/expected-losers-round-match-count 16 0)))
+  (is (= 2 (rules/expected-losers-round-match-count 16 1)))
+  (is (= 1 (rules/expected-losers-round-match-count 16 2))))
+
+(deftest lb-match-count-halves-each-round-8
+  (is (= 2 (rules/expected-losers-round-match-count 8 0)))
+  (is (= 1 (rules/expected-losers-round-match-count 8 1))))
+
+(deftest lb-match-count-floors-at-one
+  ;; Whatever the round, the count can't go below 1 even if the formula
+  ;; would round to zero — that floor is what keeps TBD placeholders from
+  ;; disappearing late in a tiny bracket.
+  (is (= 1 (rules/expected-losers-round-match-count 4 0)))
+  (is (= 1 (rules/expected-losers-round-match-count 4 5))))
+
+;; ─── group-matches-by-phase (double-elim shape) ─────────────────────────────
+
+(deftest group-matches-by-phase-double-elim-lb-is-single-elim-tree
+  ;; For a 16-player double-elim phase with no matches yet, the view
+  ;; shape should expose 4 WB rounds (8/4/2/1), 3 LB rounds (4/2/1) —
+  ;; half of WB rather than the old 2*(wb-1) — plus a single-round GF.
+  (let [phases [{:phase-type "double-elimination"
+                 :rounds     (mapv (fn [r] {:round-index r :format 1}) (range 4))}]
+        result (rules/group-matches-by-phase [] phases 16)
+        de     (first result)]
+    (is (= "double-elimination" (:phase-type de)))
+    (is (= 4 (count (:winners-bracket de))))
+    (is (= [8 4 2 1] (mapv #(count (:matches %)) (:winners-bracket de))))
+    (is (= 3 (count (:losers-bracket de))))
+    (is (= [4 2 1] (mapv #(count (:matches %)) (:losers-bracket de))))
+    (is (= 1 (count (:grand-final de))))))
+
+;; ─── next-ready-double-elim-round ───────────────────────────────────────────
+
+(defn- complete-match
+  [phase-index round-index bracket-type winner loser]
+  {:status         "complete"
+   :phase-index    phase-index
+   :round-index    round-index
+   :bracket-type   bracket-type
+   :winner-sub     winner
+   :player-one-sub winner
+   :player-two-sub loser})
+
+(deftest next-de-round-seeds-wb-round-0-first
+  ;; With no matches at all, the next round is WB-0, seeded from the
+  ;; qualified players.
+  (let [qualified  ["a" "b" "c" "d"]
+        wb-rounds  (rules/winners-bracket-round-count 4)
+        lb-rounds  (rules/losers-bracket-round-count 4)
+        next-round (rules/next-ready-double-elim-round [] qualified wb-rounds lb-rounds)]
+    (is (= "winners" (:bracket next-round)))
+    (is (= 0 (:round next-round)))))
+
+(deftest next-de-round-advances-wb-before-seeding-lb
+  ;; After WB-0 completes the next round to schedule is WB-1 — WB
+  ;; progression outranks LB-0 in the dependency walk because a WB
+  ;; round whose prior is complete is always ready immediately.
+  (let [wb-r0      [(complete-match 0 0 "winners" "a" "x")
+                    (complete-match 0 0 "winners" "b" "y")]
+        next-round (rules/next-ready-double-elim-round wb-r0 ["a" "b" "x" "y"] 2 1)]
+    (is (= "winners" (:bracket next-round)))
+    (is (= 1 (:round next-round)))))
+
+(deftest next-de-round-emits-lb-0-once-wb-round-1-pending
+  ;; Once WB-1 exists (even just pending) and WB-0 is complete, LB-0
+  ;; becomes the next ready round — it pairs the WB-R0 losers against
+  ;; each other with no WB-loser merge step.
+  (let [matches    [(complete-match 0 0 "winners" "a" "x")
+                    (complete-match 0 0 "winners" "b" "y")
+                    {:status         "pending"
+                     :phase-index    0
+                     :round-index    1
+                     :bracket-type   "winners"
+                     :player-one-sub "a"
+                     :player-two-sub "b"}]
+        next-round (rules/next-ready-double-elim-round matches ["a" "b" "x" "y"] 2 1)]
+    (is (= "losers" (:bracket next-round)))
+    (is (= 0 (:round next-round)))
+    (is (= [{:player-one-sub "x" :player-two-sub "y"}] (:pairings next-round)))))
+
+(deftest next-de-round-emits-grand-final-after-both-brackets-complete
+  ;; Minimum case: 4 players, WB has 2 rounds, LB has 1, and GF runs
+  ;; once both bracket finals are decided.
+  (let [matches    [(complete-match 0 0 "winners" "a" "x")
+                    (complete-match 0 0 "winners" "b" "y")
+                    (complete-match 0 1 "winners" "a" "b")   ; WB final
+                    (complete-match 0 0 "losers"  "x" "y")]  ; LB final
+        next-round (rules/next-ready-double-elim-round matches ["a" "b" "x" "y"] 2 1)]
+    (is (= "grand-final" (:bracket next-round)))
+    (is (= [{:player-one-sub "a" :player-two-sub "x"}] (:pairings next-round)))))
