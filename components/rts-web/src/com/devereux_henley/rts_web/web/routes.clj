@@ -419,6 +419,7 @@
                                   [:map
                                    [:eid :uuid]
                                    [:phase-index :int]])}
+              :responses  {200 {:body domain/phase-response}}
               :handler    (integrant.core/ref ::web.tournament/get-phase)}}]
      ["/round"
       {:name :tournament/round

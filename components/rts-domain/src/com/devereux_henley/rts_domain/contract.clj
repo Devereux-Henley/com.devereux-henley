@@ -97,6 +97,7 @@
 (def update-status-specification                  schema/update-status-specification)
 (def update-registration-specification            schema/update-registration-specification)
 (def configure-phases-specification               schema/configure-phases-specification)
+(def phase-response                                schema/phase-response)
 (def round-response                                schema/round-response)
 (def bracket-slot-status-enum                      schema/bracket-slot-status-enum)
 (def bracket-match-slot                            schema/bracket-match-slot)
