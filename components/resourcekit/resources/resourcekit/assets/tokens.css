@@ -1,119 +1,207 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+/* ==========================================================================
+   RTS Hub — Colors & Type  (default theme: "War Room")
+   --------------------------------------------------------------------------
+   Cartographic / strategic-table aesthetic. Dark by default. Parchment
+   neutrals against ink-black, a single terracotta accent, editorial serif
+   display + geometric sans body. Minimum radii. Hairline rules.
+
+   To override (e.g. per-game skins) load this file first, then a skin file
+   from themes/ that redeclares any :root variables it wants to change.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* --- Neutral palette (inverted for dark theme: 50=darkest, 900=lightest) ---
-   *
-   * Component CSS references neutral-100 for hover backgrounds and neutral-900
-   * for tooltip backgrounds. With this inverted scale:
-   *   - neutral-100 hover: a subtle warm lift off the iron-black page    ✓
-   *   - neutral-900 tooltip: aged parchment background with iron text     ✓
-   */
-  --color-neutral-50:  #0d0b08;
-  --color-neutral-100: #181410;
-  --color-neutral-200: #231e18;
-  --color-neutral-300: #352e24;
-  --color-neutral-400: #56493a;
-  --color-neutral-500: #7d6e58;
-  --color-neutral-600: #a39278;
-  --color-neutral-700: #c8b898;
-  --color-neutral-800: #e0d2b4;
-  --color-neutral-900: #f2ecd8;
+  /* ── Neutrals — cool charcoal through warm bone.
+     50 = deep ink, 900 = aged paper. */
+  --color-neutral-50:  #0a0d10;   /* ink — page bg */
+  --color-neutral-100: #11161b;   /* panel */
+  --color-neutral-150: #161c22;   /* raised surface */
+  --color-neutral-200: #1d242b;
+  --color-neutral-300: #2b3640;   /* hairline border */
+  --color-neutral-400: #495763;
+  --color-neutral-500: #6a7885;   /* muted text */
+  --color-neutral-600: #97a3ae;
+  --color-neutral-700: #c2ccd6;
+  --color-neutral-800: #e2e6eb;   /* body text */
+  --color-neutral-900: #f1e9d7;   /* parchment — headings */
 
-  /* --- Primary palette — Heraldic Gold --- */
-  --color-primary-50:  #1a1100;
-  --color-primary-100: #2e1e04;
-  --color-primary-200: #4a3010;
-  --color-primary-300: #6a461a;
-  --color-primary-400: #8e6224;
-  --color-primary-500: #b8852e;
-  --color-primary-600: #c4943a;
-  --color-primary-700: #d6ab58;
-  --color-primary-800: #e8c880;
-  --color-primary-900: #f4e0b0;
+  /* ── Primary — "Aged Brass / Amber"
+     Warm yellow-gold. Reads clearly against ink-black; calmer than Riot gold. */
+  --color-primary-50:  #1a1509;
+  --color-primary-100: #2a220e;
+  --color-primary-200: #433516;
+  --color-primary-300: #6a541f;
+  --color-primary-400: #927628;
+  --color-primary-500: #b8933a;
+  --color-primary-600: #c89850;   /* accent */
+  --color-primary-700: #d9b070;   /* hover */
+  --color-primary-800: #e6c792;
+  --color-primary-900: #f1dcb5;
 
-  /* --- Semantic palettes --- */
-  --color-success-500: #4a7c59;
-  --color-success-600: #3a6248;
-  --color-warning-500: #c4943a;
-  --color-warning-600: #b8852e;
-  --color-danger-400:  #d83030;   /* bright accent border */
-  --color-danger-500:  #b52424;   /* higher-contrast main red */
-  --color-danger-600:  #8a1818;   /* deeper red for hover/recess */
+  /* ── Secondary — "Patinated Teal"  (for tags, map strokes, rank marks) */
+  --color-secondary-500: #3d6b68;
+  --color-secondary-600: #4e8380;
+  --color-secondary-700: #74a19c;
 
-  /* --- Semantic tokens --- */
-  --color-bg:           var(--color-neutral-50);
-  --color-surface:      var(--color-neutral-100);
-  --color-border:       var(--color-neutral-300);
-  --color-text:         var(--color-neutral-800);
-  --color-text-muted:   var(--color-neutral-500);
-  --color-accent:       var(--color-primary-600);
-  --color-accent-hover: var(--color-primary-700);
-  --color-accent-fg:    var(--color-neutral-50);
-  --color-navbar-bg:    #090705;
-  --color-navbar-fg:    var(--color-neutral-800);
+  /* ── Semantic */
+  --color-success-500: #6a8f4e;   /* olive / lichen */
+  --color-success-600: #7ea660;
+  --color-warning-500: #d49528;   /* ochre — NOT the same as primary */
+  --color-warning-600: #e6a944;
+  --color-danger-400:  #d1513d;
+  --color-danger-500:  #a83826;   /* ink-red */
+  --color-danger-600:  #7f2419;
 
-  /* --- Typography --- */
-  --font-family-heading: 'Cinzel', 'Trajan Pro', 'Times New Roman', serif;
-  --font-family-base:    'Crimson Text', 'Garamond', 'Georgia', serif;
-  --font-family-mono:    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  /* ── Aliases — prefer these in product code */
+  --color-bg:            var(--color-neutral-50);
+  --color-surface:       var(--color-neutral-100);
+  --color-surface-raised:var(--color-neutral-150);
+  --color-border:        var(--color-neutral-300);
+  --color-border-strong: var(--color-neutral-400);
+  --color-text:          var(--color-neutral-800);
+  --color-text-strong:   var(--color-neutral-900);
+  --color-text-muted:    var(--color-neutral-500);
+  --color-accent:        var(--color-primary-600);
+  --color-accent-hover:  var(--color-primary-700);
+  --color-accent-fg:     var(--color-neutral-50);
+  --color-accent-subtle: color-mix(in srgb, var(--color-primary-600) 18%, transparent);
+  --color-navbar-bg:     #060809;
+  --color-navbar-fg:     var(--color-neutral-800);
 
-  --font-size-xs:   0.8125rem;
-  --font-size-sm:   0.9375rem;
-  --font-size-base: 1.125rem;
-  --font-size-lg:   1.25rem;
-  --font-size-xl:   1.4375rem;
+  /* Cartographic texture tokens — hairlines + grid used by map backgrounds */
+  --rule-hairline: 1px solid var(--color-neutral-300);
+  --rule-double:   3px double var(--color-neutral-400);
+  --grid-stroke:   color-mix(in srgb, var(--color-neutral-400) 28%, transparent);
+  --contour-stroke:color-mix(in srgb, var(--color-primary-600) 18%, transparent);
+
+  /* ── Type families */
+  --font-family-heading: 'Spectral', 'Source Serif Pro', 'Georgia', serif;
+  --font-family-base:    'Archivo', 'Helvetica Neue', 'Arial', sans-serif;
+  --font-family-mono:    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-family-numeric: 'Spectral', 'Georgia', serif;  /* for coordinates, scores */
+
+  /* ── Type scale — tighter than the old heraldic deck */
+  --font-size-xs:   0.75rem;    /* 12px */
+  --font-size-sm:   0.875rem;   /* 14px */
+  --font-size-base: 1rem;       /* 16px */
+  --font-size-lg:   1.125rem;
+  --font-size-xl:   1.375rem;
   --font-size-2xl:  1.75rem;
-  --font-size-3xl:  2.25rem;
-  --font-size-4xl:  2.875rem;
+  --font-size-3xl:  2.375rem;
+  --font-size-4xl:  3.25rem;
+  --font-size-5xl:  4.5rem;     /* display — map labels, hero */
 
   --font-weight-normal:   400;
-  --font-weight-medium:   600;
+  --font-weight-medium:   500;
   --font-weight-semibold: 600;
   --font-weight-bold:     700;
 
-  --line-height-tight:   1.2;
-  --line-height-base:    1.6;
-  --line-height-relaxed: 1.8;
+  --line-height-tight:   1.15;
+  --line-height-base:    1.55;
+  --line-height-relaxed: 1.75;
 
-  /* --- Spacing (4px base unit) --- */
-  --space-1:  0.25rem;
-  --space-2:  0.5rem;
-  --space-3:  0.75rem;
-  --space-4:  1rem;
-  --space-5:  1.25rem;
-  --space-6:  1.5rem;
-  --space-8:  2rem;
-  --space-10: 2.5rem;
-  --space-12: 3rem;
-  --space-16: 4rem;
-  --space-20: 5rem;
-  --space-24: 6rem;
+  --letter-spacing-tight:  -0.01em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide:   0.08em;  /* eyebrow / all-caps */
+  --letter-spacing-wider:  0.16em;  /* wordmark */
 
-  /* --- Border radius — minimal, architectural --- */
-  --radius-sm:   1px;
-  --radius-md:   2px;
-  --radius-lg:   3px;
-  --radius-xl:   4px;
-  --radius-full: 9999px;
+  /* ── Spacing — 4px base */
+  --space-1:  0.25rem;  --space-2:  0.5rem;   --space-3:  0.75rem;
+  --space-4:  1rem;     --space-5:  1.25rem;  --space-6:  1.5rem;
+  --space-8:  2rem;     --space-10: 2.5rem;   --space-12: 3rem;
+  --space-16: 4rem;     --space-20: 5rem;     --space-24: 6rem;
 
-  /* --- Shadows — warm, candlelit depth --- */
-  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.4);
-  --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.6), 0 2px 4px -1px rgb(0 0 0 / 0.4);
-  --shadow-lg: 0 12px 32px -4px rgb(0 0 0 / 0.7), 0 4px 8px -2px rgb(0 0 0 / 0.5);
-  --shadow-gold: 0 0 0 1px color-mix(in srgb, var(--color-accent) 40%, transparent),
-                 0 4px 16px -2px color-mix(in srgb, var(--color-accent) 20%, transparent);
+  /* ── Radii — near-zero. Maps don't have rounded corners. */
+  --radius-sm:   0px;
+  --radius-md:   1px;
+  --radius-lg:   2px;
+  --radius-xl:   3px;
+  --radius-full: 9999px;        /* only for round map pins / compass */
 
-  /* --- Transitions --- */
-  --transition-fast: 100ms ease;
-  --transition-base: 160ms ease;
-  --transition-slow: 320ms ease;
+  /* ── Shadows — low, diffuse. Think paper lifted off a table, not glow. */
+  --shadow-sm: 0 1px 0 0 rgb(0 0 0 / 0.5);
+  --shadow-md: 0 2px 0 0 rgb(0 0 0 / 0.5), 0 8px 24px -10px rgb(0 0 0 / 0.7);
+  --shadow-lg: 0 2px 0 0 rgb(0 0 0 / 0.6), 0 24px 48px -16px rgb(0 0 0 / 0.8);
+  --shadow-focus: 0 0 0 2px var(--color-bg),
+                  0 0 0 3px var(--color-accent);
 
-  /* --- Z-index scale --- */
-  --z-base:     0;
-  --z-raised:   10;
-  --z-dropdown: 100;
-  --z-sticky:   200;
-  --z-overlay:  300;
-  --z-modal:    400;
-  --z-toast:    500;
+  --transition-fast: 90ms ease-out;
+  --transition-base: 150ms ease-out;
+  --transition-slow: 280ms ease-out;
+
+  --z-base: 0; --z-raised: 10; --z-dropdown: 100;
+  --z-sticky: 200; --z-overlay: 300; --z-modal: 400; --z-toast: 500;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Element-level defaults
+   ────────────────────────────────────────────────────────────────────────── */
+body {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  line-height: var(--line-height-base);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-strong);
+  font-style: normal;
+}
+
+/* Display headings (h1, h2) keep their title-case serif character.
+   Eyebrow/section labels get the uppercase treatment instead — via
+   .eyebrow, not element-level. */
+h1 { font-size: var(--font-size-4xl); font-weight: var(--font-weight-normal); letter-spacing: -0.02em; }
+h2 { font-size: var(--font-size-3xl); font-weight: var(--font-weight-normal); }
+h3 { font-size: var(--font-size-2xl); }
+h4 { font-size: var(--font-size-xl);  }
+h5 { font-size: var(--font-size-lg);  }
+h6 { font-size: var(--font-size-base); }
+
+/* Eyebrow / section-label treatment — use on <span>, <h4>, etc. */
+.eyebrow {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* Numeric / coordinate treatment — scores, budgets, timestamps */
+.numeric {
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+p        { line-height: var(--line-height-relaxed); max-width: 68ch; }
+a        { color: var(--color-accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover  { color: var(--color-accent-hover); }
+small    { font-size: var(--font-size-sm); color: var(--color-text-muted); }
+code, kbd, samp, pre { font-family: var(--font-family-mono); font-size: 0.9em; }
+hr       { border: none; border-top: var(--rule-hairline); margin: var(--space-6) 0; }
+
+/* Utility: topographic contour background applied via .bg-contour */
+.bg-contour {
+  background-image:
+    radial-gradient(ellipse 140% 100% at 30% 20%, transparent 35%, var(--contour-stroke) 35.5%, transparent 36%),
+    radial-gradient(ellipse 140% 100% at 30% 20%, transparent 50%, var(--contour-stroke) 50.5%, transparent 51%),
+    radial-gradient(ellipse 140% 100% at 30% 20%, transparent 68%, var(--contour-stroke) 68.5%, transparent 69%),
+    radial-gradient(ellipse 140% 100% at 30% 20%, transparent 84%, var(--contour-stroke) 84.5%, transparent 85%);
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(to right,  var(--grid-stroke) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-stroke) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
