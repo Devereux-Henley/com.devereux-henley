@@ -241,17 +241,6 @@
 
 (defmethod integrant.core/init-key ::get-phase
   [_init-key dependencies]
-  (fn [{{{:keys [eid]} :path} :parameters
-        router                :reitit.core/router
-        :as                   _request}]
-    (web.core/handle-fetch-response
-     domain/phase-response
-     {:hostname (:hostname dependencies) :router router}
-     (fn [] {:type           :tournament/phase
-             :tournament-eid eid}))))
-
-(defmethod integrant.core/init-key ::get-phase-panel
-  [_init-key dependencies]
   (fn [{{{:keys [eid phase-index]} :path} :parameters}]
     (let [state           (domain/get-tournament-state dependencies eid)
           phases          (:phases state)
@@ -261,7 +250,7 @@
           phase-group     (first (filter #(= phase-index (:phase %)) grouped))]
       (if phase-group
         {:status 200
-         :body   {:type             :tournament/phase-panel
+         :body   {:type             :tournament/phase
                   :tournament-state state
                   :phase-group      phase-group
                   :data             {:eid eid}}}

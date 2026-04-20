@@ -59,11 +59,11 @@
                     Phases define the tournament structure. You can configure phases now or update them later before starting the tournament.
                 </p>
                 <div id="phases-container">
-                    <!-- Phases added dynamically via htmx (GET /api/tournament/:eid/phase) -->
+                    <!-- Phases added dynamically via htmx (GET /view/game/:game-eid/tournament/:eid/phase.html) -->
                 </div>
                 <div class="cluster cluster-2" style="margin-top: var(--space-3);">
                     <button type="button" class="btn btn-ghost btn-sm"
-                            hx-get="/api/tournament/{{tournament-eid}}/phase"
+                            hx-get="/view/game/{{game-eid}}/tournament/{{tournament-eid}}/phase.html"
                             hx-target="#phases-container"
                             hx-swap="beforeend">
                         + Add Phase

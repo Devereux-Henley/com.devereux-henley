@@ -227,6 +227,18 @@
                       :default-timezone domain/default-timezone}
                      game-context))}))
 
+(defmethod integrant.core/init-key ::tournament-phase-form-view
+  [_init-key _dependencies]
+  (fn [request]
+    (let [eid (get-in request [:parameters :path :eid])]
+      {:status  200
+       :headers {"Content-Type" "text/html; charset=utf-8"}
+       :body    (selmer.parser/render-file
+                 "rts-web/view/tournament-phase-row.html"
+                 (merge {:session        (:ory-session request)
+                         :tournament-eid eid}
+                        (:game-context request)))})))
+
 (defmethod integrant.core/init-key ::tournament-view
   [_init-key dependencies]
   (partial standard-entity-view-handler
