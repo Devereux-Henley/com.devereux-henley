@@ -1885,6 +1885,9 @@ a:hover:has(img) {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .tourney-entry-chip {
