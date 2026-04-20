@@ -36,8 +36,9 @@
   --color-success-600: #3a6248;
   --color-warning-500: #c4943a;
   --color-warning-600: #b8852e;
-  --color-danger-500:  #8b2020;
-  --color-danger-600:  #6e1818;
+  --color-danger-400:  #d83030;   /* bright accent border */
+  --color-danger-500:  #b52424;   /* higher-contrast main red */
+  --color-danger-600:  #8a1818;   /* deeper red for hover/recess */
 
   /* --- Semantic tokens --- */
   --color-bg:           var(--color-neutral-50);

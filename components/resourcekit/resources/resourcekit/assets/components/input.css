@@ -19,6 +19,8 @@
 .input::placeholder,
 .textarea::placeholder {
   color: var(--color-text-muted);
+  font-style: italic;
+  opacity: 0.85;
 }
 
 .input:focus,

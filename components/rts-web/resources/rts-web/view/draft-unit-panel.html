@@ -14,7 +14,20 @@
                  alt="{{unit.name}}"
                  onerror="this.style.display='none'">
             <div class="draft-stats-meta">
-                <h3 class="draft-stats-name">{{unit.name}}</h3>
+                <h3 class="draft-stats-name">
+                    <span class="draft-stats-name-text">{{unit.name}}</span>
+                    <span class="draft-editing-indicator-slot">
+                        {% if data.section %}
+                        <span class="draft-editing-indicator{% ifequal data.section "main" %} draft-editing-indicator--main{% else %} draft-editing-indicator--reinf{% endifequal %}"
+                              role="status"
+                              aria-label="Editing {% ifequal data.section "main" %}Main Army{% else %}Reinforcements{% endifequal %}"
+                              title="Changes save automatically">
+                            {% with class="draft-editing-icon" size="14" %}{% include "rts-web/view/icon/pencil.html" %}{% endwith %}
+                            <span class="sr-only">Editing {% ifequal data.section "main" %}Main Army{% else %}Reinforcements{% endifequal %}. Changes save automatically.</span>
+                        </span>
+                        {% endif %}
+                    </span>
+                </h3>
                 <div class="draft-stats-badges">
                     <span class="badge badge-primary">{{unit.unit-type-name}}</span>
                     <span class="badge badge-neutral">{{unit.unit-category-name}}</span>
@@ -29,12 +42,12 @@
         <div class="draft-stats-actions">
             <div id="draft-action-error" role="alert" aria-live="polite" hidden></div>
             {% if data.section %}
-            <p class="draft-editing-hint">Editing {% ifequal data.section "main" %}Main Army{% else %}Reinforcements{% endifequal %} &mdash; changes save automatically.</p>
             {% else %}
             <button class="btn btn-primary draft-add-btn"
                     type="button"
                     hx-post="/api/draft/{{data.draft-eid}}/unit/{{unit.eid}}?section=main"
                     hx-swap="none">
+                {% with class="btn-icon-inline icon-sword" %}{% include "rts-web/view/icon/sword.html" %}{% endwith %}
                 Add to Main Army
             </button>
             {% if unit.validation.can-add-to-reinforcements? %}
@@ -43,6 +56,7 @@
                     type="button"
                     hx-post="/api/draft/{{data.draft-eid}}/unit/{{unit.eid}}?section=reinforcements"
                     hx-swap="none">
+                {% with class="btn-icon-inline icon-sword" %}{% include "rts-web/view/icon/sword.html" %}{% endwith %}
                 Add to Reinforcements
             </button>
             {% endifunequal %}

@@ -17,7 +17,7 @@
 <div id="game-nav" hx-swap-oob="true" class="cluster cluster-2">
     {% if data._embedded.factions %}
     <div class="dropdown">
-        <button class="nav-item game-nav-item"
+        <button class="nav-item game-nav-item nav-item-with-icon"
                 id="factions-dropdown-btn"
                 aria-haspopup="true"
                 aria-expanded="false"
@@ -30,6 +30,7 @@
                    end
                    on click elsewhere add @hidden to #factions-menu
                    then set my @aria-expanded to 'false'">
+            {% include "rts-web/view/icon/sword.html" %}
             Factions
         </button>
         <div class="dropdown-menu" id="factions-menu" role="menu" hidden>
@@ -62,7 +63,10 @@
 </div>
 
 <div id="game-drafts-link" hx-swap-oob="true">
-    <a class="nav-item" href="/view/game/{{data.eid}}/draft/me.html">My Drafts</a>
+    <a class="nav-item nav-item-with-icon" href="/view/game/{{data.eid}}/draft/me.html">
+        {% include "rts-web/view/icon/drafts.html" %}
+        My Drafts
+    </a>
 </div>
 
 <section id="game-browser" class="resource game-resource" aria-labelledby="game-heading">

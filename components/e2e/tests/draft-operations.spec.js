@@ -107,7 +107,7 @@ test.describe.serial('Draft unit operations', () => {
     await expect(lordSlot).toHaveAttribute('aria-label', /Balthasar Gelt/i, { timeout: 5000 });
 
     await lordSlot.locator('.draft-slot-card-button').click();
-    await expect(page.locator('.draft-editing-hint')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('.draft-editing-indicator')).toBeVisible({ timeout: 5000 });
 
     const checkbox = page.locator('.draft-spell-check, .draft-ability-check, .draft-item-check').first();
     if (await checkbox.count() > 0) {
