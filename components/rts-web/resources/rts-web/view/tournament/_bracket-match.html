@@ -1,0 +1,11 @@
+<div class="tourney-bracket-match {% ifequal match.status "complete" %}tourney-bracket-match--complete{% endifequal %}{% ifequal match.status "tbd" %}tourney-bracket-match--tbd{% endifequal %}">
+    <div class="tourney-bracket-slot {% ifequal match.winner-sub match.player-one-sub %}tourney-bracket-slot--winner{% endifequal %}">
+        {% if match.player-one-sub %}{{match.player-one-sub}}{% else %}<span class="tourney-bracket-tbd">TBD</span>{% endif %}
+    </div>
+    <div class="tourney-bracket-slot {% ifequal match.winner-sub match.player-two-sub %}tourney-bracket-slot--winner{% endifequal %}">
+        {% if match.player-two-sub %}{{match.player-two-sub}}{% elif match.player-one-sub %}<em class="tourney-bracket-bye">bye</em>{% else %}<span class="tourney-bracket-tbd">TBD</span>{% endif %}
+    </div>
+    {% if match.format %}
+    <span class="tourney-bracket-format">Bo{{match.format}}</span>
+    {% endif %}
+</div>

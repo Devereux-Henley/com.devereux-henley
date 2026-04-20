@@ -241,14 +241,21 @@
 
 (defmethod integrant.core/init-key ::get-phase
   [_init-key dependencies]
-  (fn [{{{:keys [eid]} :path} :parameters
-        router                :reitit.core/router
-        :as                   _request}]
-    (web.core/handle-fetch-response
-     domain/phase-response
-     {:hostname (:hostname dependencies) :router router}
-     (fn [] {:type           :tournament/phase
-             :tournament-eid eid}))))
+  (fn [{{{:keys [eid phase-index]} :path} :parameters}]
+    (let [state           (domain/get-tournament-state dependencies eid)
+          phases          (:phases state)
+          raw-matches     (domain/get-matches-for-tournament dependencies eid)
+          qualifier-count (or (:qualifier-count state) (count (:standings state)))
+          grouped         (domain/group-matches-by-phase raw-matches phases qualifier-count)
+          phase-group     (first (filter #(= phase-index (:phase %)) grouped))]
+      (if phase-group
+        {:status 200
+         :body   {:type             :tournament/phase
+                  :tournament-state state
+                  :phase-group      phase-group
+                  :data             {:eid eid}}}
+        {:status 404
+         :body   {:type :missing/resource :name "tournament-phase" :id phase-index}}))))
 
 (defmethod integrant.core/init-key ::get-round
   [_init-key dependencies]

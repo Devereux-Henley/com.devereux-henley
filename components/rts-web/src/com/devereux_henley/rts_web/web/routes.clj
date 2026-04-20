@@ -103,7 +103,11 @@
      ["/:eid/index.html"
       {:get {:produces   ["application/htmx+html"]
              :parameters {:path schema.contract/game-and-id-path-parameter}
-             :handler    (integrant.core/ref ::web.view/tournament-view)}}]]]])
+             :handler    (integrant.core/ref ::web.view/tournament-view)}}]
+     ["/:eid/phase.html"
+      {:get {:produces   ["application/htmx+html"]
+             :parameters {:path schema.contract/game-and-id-path-parameter}
+             :handler    (integrant.core/ref ::web.view/tournament-phase-form-view)}}]]]])
 
 (def api-routes
   ["/api"
@@ -397,14 +401,7 @@
                             :body domain/record-result-specification}
                :handler    (integrant.core/ref ::web.tournament/record-game)}}]]
      ["/phase"
-      {:name :tournament/phase
-       :get  {:summary    "Form partial for a tournament phase."
-              :openapi    {:tags         ["tournament"]
-                           :produces     ["application/json" "application/htmx+html"]
-                           :operation-id "tournament-phase/get"}
-              :parameters {:path schema.contract/id-path-parameter}
-              :responses  {200 {:body domain/phase-response}}
-              :handler    (integrant.core/ref ::web.tournament/get-phase)}
+      {:name :tournament/phase-configuration
        :put  {:summary    "Update the tournament phase configuration."
               :openapi    {:tags         ["tournament"]
                            :produces     ["application/json"]
@@ -412,6 +409,18 @@
               :parameters {:path schema.contract/id-path-parameter
                            :body domain/configure-phases-specification}
               :handler    (integrant.core/ref ::web.tournament/update-phase-configuration)}}]
+     ["/phase/:phase-index"
+      {:name :tournament/phase
+       :get  {:summary    "Phase details (standings + bracket / rounds)."
+              :openapi    {:tags         ["tournament"]
+                           :produces     ["application/json" "application/htmx+html"]
+                           :operation-id "tournament-phase/get"}
+              :parameters {:path (schema.contract/to-schema
+                                  [:map
+                                   [:eid :uuid]
+                                   [:phase-index :int]])}
+              :responses  {200 {:body domain/phase-response}}
+              :handler    (integrant.core/ref ::web.tournament/get-phase)}}]
      ["/round"
       {:name :tournament/round
        :get  {:summary    "Form partial for a tournament round."

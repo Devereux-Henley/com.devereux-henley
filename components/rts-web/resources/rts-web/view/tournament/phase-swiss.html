@@ -1,0 +1,13 @@
+<h3 class="tourney-section-heading" id="phase-{{phase-group.phase}}-heading">Swiss</h3>
+{% for round-group in phase-group.rounds %}
+<div class="tourney-round-block" aria-labelledby="round-{{round-group.phase}}-{{round-group.round}}-heading">
+    <h4 class="tourney-round-label" id="round-{{round-group.phase}}-{{round-group.round}}-heading">
+        Round {{round-group.round|add:1}} of {{round-group.total-rounds}}
+    </h4>
+    <div class="tourney-match-list">
+        {% for match in round-group.matches %}
+        {% include "rts-web/view/tournament/_match-card.html" %}
+        {% endfor %}
+    </div>
+</div>
+{% endfor %}

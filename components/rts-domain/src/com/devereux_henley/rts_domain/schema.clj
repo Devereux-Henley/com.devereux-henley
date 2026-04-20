@@ -120,12 +120,6 @@
     [:phase-type data-access.contract/phase-type-enum]
     [:rounds [:sequential phase-round-specification]]]))
 
-(def phase-response
-  (schema.contract/to-schema
-   [:map
-    [:type [:= :tournament/phase]]
-    [:tournament-eid :uuid]]))
-
 (def round-response
   (schema.contract/to-schema
    [:map
@@ -343,6 +337,19 @@
     [:winners-bracket {:optional true} [:sequential bracket-round]]
     [:losers-bracket {:optional true} [:sequential bracket-round]]
     [:grand-final {:optional true} [:sequential bracket-round]]]))
+
+(def phase-response
+  "Response for GET /api/tournament/:eid/phase/:phase-index — the phase
+   details panel. Carries just what the Selmer template needs: the
+   focused phase group plus the tournament-wide standings that back
+   the swiss / round-robin view."
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :tournament/phase]]
+    [:phase-group phase-group]
+    [:tournament-state [:map {:closed false}
+                        [:standings [:sequential standing-entry]]]]
+    [:data [:map [:eid :uuid]]]]))
 
 (def tournament-match-result-response
   (schema.contract/to-schema

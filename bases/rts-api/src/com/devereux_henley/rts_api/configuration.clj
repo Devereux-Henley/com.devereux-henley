@@ -95,7 +95,8 @@
             :com.devereux-henley.rts-web.web.tournament/get-round
             :com.devereux-henley.rts-web.web.view/tournament-list-view
             :com.devereux-henley.rts-web.web.view/create-tournament-view
-            :com.devereux-henley.rts-web.web.view/tournament-view))
+            :com.devereux-henley.rts-web.web.view/tournament-view
+            :com.devereux-henley.rts-web.web.view/tournament-phase-form-view))
 
 ;;; ─── Routes ────────────────────────────────────────────────────────────────
 

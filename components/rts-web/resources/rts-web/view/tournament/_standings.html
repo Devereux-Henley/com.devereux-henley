@@ -1,0 +1,32 @@
+{% if tournament-state.standings|not-empty? %}
+<section class="tourney-section" aria-labelledby="standings-heading-{{phase-group.phase}}">
+    <h3 class="tourney-section-heading" id="standings-heading-{{phase-group.phase}}">Standings</h3>
+    <div class="table-container">
+        <table class="table table-striped" aria-labelledby="standings-heading-{{phase-group.phase}}">
+            <caption class="sr-only">Tournament standings sorted by points</caption>
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Player</th>
+                    <th scope="col">W</th>
+                    <th scope="col">L</th>
+                    <th scope="col">D</th>
+                    <th scope="col">Pts</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for standing in tournament-state.standings %}
+                <tr>
+                    <td class="tourney-rank">{{forloop.counter}}</td>
+                    <td>{{standing.player-sub}}</td>
+                    <td>{{standing.wins}}</td>
+                    <td>{{standing.losses}}</td>
+                    <td>{{standing.draws}}</td>
+                    <td><strong>{{standing.points}}</strong></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endif %}
