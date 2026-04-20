@@ -54,6 +54,31 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #090705;
 }
 
+/* --- Navbar item icons --- */
+
+.nav-item-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.nav-icon {
+  flex-shrink: 0;
+  color: var(--color-primary-600);
+  transition: color var(--transition-fast);
+}
+
+.nav-item-with-icon:hover .nav-icon,
+.nav-item-with-icon:focus-visible .nav-icon,
+.nav-item-with-icon[aria-expanded="true"] .nav-icon {
+  color: var(--color-primary-800);
+}
+
+/* Sword icon — rotated 45° clockwise wherever it appears (navbar + action buttons). */
+.icon-sword {
+  transform: rotate(45deg);
+}
+
 /* --- Accent links --- */
 
 a:hover:has(img) {
@@ -184,13 +209,32 @@ a:hover:has(img) {
 /* ─── Panel (card with banner header) ────────────────────────────────────── */
 
 .unit-panel {
+  position: relative;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   overflow: hidden;
 }
 
+/* Gold filigree corner trim — layered L strokes emerging from the corner,
+ * flush to the top-left. Shared across the unit-panel, draft-section-header,
+ * and draft-category-header so every banner carries the same accent. */
+.unit-panel::before,
+.draft-section-header::before,
+.draft-category-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  background: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%23d6ab58' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M0 1.5 L 38 1.5' stroke-width='1.8'/%3E%3Cpath d='M1.5 0 L 1.5 38' stroke-width='1.8'/%3E%3Cpath d='M4.5 5.5 L 28 5.5' stroke-width='1.3' opacity='0.85'/%3E%3Cpath d='M5.5 4.5 L 5.5 28' stroke-width='1.3' opacity='0.85'/%3E%3Cpath d='M8.5 9.5 L 20 9.5' stroke-width='0.9' opacity='0.65'/%3E%3Cpath d='M9.5 8.5 L 9.5 20' stroke-width='0.9' opacity='0.65'/%3E%3Ccircle cx='2.8' cy='2.8' r='1.3' fill='%23d6ab58' stroke='none'/%3E%3C/g%3E%3C/svg%3E") no-repeat top left/contain;
+  pointer-events: none;
+  z-index: 2;
+}
+
 .unit-panel-heading {
+  position: relative;
   margin: 0;
   padding: var(--space-2) var(--space-4);
   font-size: var(--font-size-xs);
@@ -199,8 +243,11 @@ a:hover:has(img) {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-neutral-900);
-  background-color: color-mix(in srgb, var(--color-danger-600) 70%, var(--color-neutral-100));
-  border-bottom: 1px solid color-mix(in srgb, var(--color-danger-500) 60%, var(--color-border));
+  background: linear-gradient(90deg,
+                              color-mix(in srgb, var(--color-danger-500) 80%, var(--color-neutral-100)) 0%,
+                              color-mix(in srgb, var(--color-danger-600) 55%, var(--color-neutral-100)) 70%,
+                              color-mix(in srgb, var(--color-neutral-200) 100%, transparent) 100%);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-danger-400) 45%, var(--color-border));
 }
 
 /* ─── Stat list ──────────────────────────────────────────────────────────── */
@@ -397,12 +444,15 @@ a:hover:has(img) {
 }
 
 .draft-section-header {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-2) var(--space-4);
-  background: linear-gradient(90deg, #5c1010 0%, #3a0a0a 60%, #220606 100%);
-  border-bottom: 1px solid color-mix(in srgb, #8a6030 30%, transparent);
+  background: linear-gradient(90deg, #a82020 0%, #6e1414 55%, #2a0808 100%);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-danger-400) 45%, transparent);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08),
+              inset 0 -1px 0 color-mix(in srgb, var(--color-danger-400) 35%, transparent);
 }
 
 .draft-section-title {
@@ -446,8 +496,8 @@ a:hover:has(img) {
   transform-origin: center;
   animation: budget-used-strike 560ms cubic-bezier(.2, .7, .1, 1) both;
 }
-.draft-budget-sep  { color: #5a4830; margin: 0 2px; }
-.draft-budget-max  { color: #7a6040; }
+.draft-budget-sep  { color: #c8a84b; margin: 0 2px; }
+.draft-budget-max  { color: #d6ab58; }
 
 .draft-budget-track {
   height: 5px;
@@ -464,9 +514,9 @@ a:hover:has(img) {
   position: relative;
   height: 100%;
   width: var(--pct, 0%);
-  background: linear-gradient(180deg, #a82828 0%, #8b2020 55%, #5a0e0e 100%);
+  background: linear-gradient(180deg, #e8c880 0%, #c4943a 55%, #7a5a1a 100%);
   border-radius: 3px;
-  box-shadow: inset 0 1px 0 #ff606033, inset 0 -2px 0 #3a0808;
+  box-shadow: inset 0 1px 0 #f4dca855, inset 0 -2px 0 #3a2a08;
   animation: budget-fill 680ms cubic-bezier(.2, .65, .1, 1) both;
 }
 
@@ -753,7 +803,7 @@ a:hover:has(img) {
   overflow: hidden;
   cursor: pointer;
   padding: 0;
-  transition: border-color 120ms, transform 120ms;
+  transition: border-color 120ms ease, transform 120ms ease, filter 140ms ease, box-shadow 140ms ease;
 }
 
 .draft-unit-card img {
@@ -762,18 +812,32 @@ a:hover:has(img) {
   object-fit: cover;
   display: block;
   pointer-events: none;
+  filter: saturate(0.55) brightness(0.72);
+  transition: filter 140ms ease;
 }
 
 .draft-unit-card::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: transparent;
-  transition: background 120ms;
+  background: color-mix(in srgb, #110d0a 45%, transparent);
+  transition: background 140ms ease;
+  pointer-events: none;
 }
 
-.draft-unit-card:hover::after {
-  background: color-mix(in srgb, #c8a84b 18%, transparent);
+.draft-unit-card:hover:not(.draft-unit-card--dimmed) img,
+.draft-unit-card--selected img {
+  filter: saturate(1.1) brightness(1.05);
+}
+
+.draft-unit-card:hover:not(.draft-unit-card--dimmed)::after {
+  background: transparent;
+}
+
+.draft-unit-card:hover:not(.draft-unit-card--dimmed) {
+  border-color: color-mix(in srgb, var(--color-primary-600) 70%, transparent);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px -3px rgb(0 0 0 / 0.55);
 }
 
 .draft-unit-card:focus-visible {
@@ -782,35 +846,43 @@ a:hover:has(img) {
 }
 
 .draft-unit-card--selected {
-  border-color: #c8a84b;
+  border-color: var(--color-primary-700);
   transform: translateY(-2px);
+  box-shadow: 0 0 0 1px var(--color-primary-500), 0 6px 18px -4px rgb(0 0 0 / 0.65);
 }
 
 .draft-unit-card--selected::after {
-  background: color-mix(in srgb, #c8a84b 12%, transparent);
+  background: transparent;
+}
+
+.draft-unit-card--dimmed img {
+  filter: saturate(0.15) brightness(0.4);
 }
 
 .draft-unit-card--dimmed {
-  opacity: 0.28;
   cursor: not-allowed;
 }
 
 .draft-unit-card--dimmed::after {
-  background: rgba(0,0,0,0.3);
+  background: rgba(0,0,0,0.55);
 }
 
 .draft-unit-card-cost {
   position: absolute;
-  bottom: 2px;
-  left: 0;
-  right: 0;
+  bottom: 3px;
+  left: 3px;
+  right: 3px;
   text-align: center;
-  font-size: 0.6rem;
+  font-size: 0.65rem;
   font-weight: 700;
   font-family: var(--font-family-heading);
   letter-spacing: 0.04em;
-  color: #e8c870;
-  text-shadow: 0 1px 4px #000, 0 0 8px #000;
+  color: var(--color-primary-800);
+  background: rgb(0 0 0 / 0.45);
+  border: 1px solid color-mix(in srgb, var(--color-primary-500) 60%, transparent);
+  border-radius: 2px;
+  padding: 2px 0;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.85);
   pointer-events: none;
   z-index: 1;
 }
@@ -825,6 +897,33 @@ a:hover:has(img) {
   scrollbar-color: #3a2010 transparent;
   display: flex;
   flex-direction: column;
+}
+
+/* Empty-state placeholder — centered in the stats column, with a gilt
+ * horizontal rule above and below and heading-font letter-spaced copy. */
+.draft-stats-placeholder {
+  margin: auto 0;
+  padding: var(--space-12) var(--space-6);
+  text-align: center;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  line-height: 1.8;
+  color: color-mix(in srgb, var(--color-primary-700) 90%, transparent);
+}
+
+.draft-stats-placeholder::before,
+.draft-stats-placeholder::after {
+  content: "";
+  display: block;
+  width: 64px;
+  height: 1px;
+  margin: var(--space-4) auto;
+  background: linear-gradient(90deg,
+                              transparent 0%,
+                              var(--color-primary-600) 50%,
+                              transparent 100%);
 }
 
 .draft-stats-inner {
@@ -862,6 +961,10 @@ a:hover:has(img) {
 }
 
 .draft-stats-name {
+  display: grid;
+  grid-template-columns: 1fr 1.25rem;
+  column-gap: var(--space-2);
+  align-items: start;
   font-size: var(--font-size-sm);
   font-family: var(--font-family-heading);
   letter-spacing: 0.06em;
@@ -869,6 +972,19 @@ a:hover:has(img) {
   color: var(--color-neutral-900);
   margin: 0;
   line-height: var(--line-height-tight);
+}
+
+.draft-stats-name-text {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.draft-editing-indicator-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .draft-stats-badges {
@@ -1096,12 +1212,41 @@ a:hover:has(img) {
   vertical-align: middle;
 }
 
-.draft-future-msg {
+/* Unified hint/info text language: muted, italic, xs.
+ * Shared by .draft-future-msg, .tourney-closed-msg, .tourney-empty-msg,
+ * and any similar informational prose. */
+.draft-future-msg,
+.tourney-closed-msg,
+.tourney-empty-msg,
+.hint-text {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
-  padding: var(--space-2) var(--space-4);
-  margin: 0;
   font-style: italic;
+  line-height: var(--line-height-base);
+  margin: 0;
+}
+
+/* Compact "edit mode" indicator — sits inside a fixed-width slot in the unit
+ * name header so it keeps its placement when the name wraps. The full
+ * reminder lives in the title attribute so it surfaces on hover. */
+.draft-editing-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: help;
+  color: var(--color-primary-700);
+}
+
+.draft-editing-indicator--reinf {
+  color: var(--color-danger-400);
+}
+
+.draft-editing-icon {
+  flex-shrink: 0;
+}
+
+.draft-future-msg {
+  padding: var(--space-2) var(--space-4);
 }
 
 /* Action buttons */
@@ -1114,30 +1259,54 @@ a:hover:has(img) {
 
 .draft-add-btn {
   width: 100%;
+  background: linear-gradient(180deg, var(--color-danger-500) 0%, var(--color-danger-600) 100%);
+  color: var(--color-neutral-900);
+  border: 1px solid var(--color-danger-400);
+  box-shadow: inset 0 1px 0 rgb(255 160 140 / 0.25),
+              0 0 0 1px color-mix(in srgb, var(--color-danger-400) 35%, transparent),
+              0 2px 6px rgb(138 24 24 / 0.35);
+  text-shadow: 0 1px 0 rgb(0 0 0 / 0.45);
+  letter-spacing: 0.08em;
 }
-
+.draft-add-btn:hover {
+  background: linear-gradient(180deg, var(--color-danger-400) 0%, var(--color-danger-500) 100%);
+  border-color: var(--color-danger-400);
+  box-shadow: inset 0 1px 0 rgb(255 180 160 / 0.35),
+              0 0 0 1px var(--color-danger-400),
+              0 3px 10px rgb(216 48 48 / 0.45);
+}
+.draft-add-btn:focus-visible {
+  outline: 2px solid var(--color-danger-400);
+  outline-offset: 2px;
+}
+.draft-add-btn--reinf {
+  background: linear-gradient(180deg, var(--color-danger-600) 0%, var(--color-danger-500) 100%);
+  opacity: 0.92;
+}
 
 .draft-action-error {
   font-size: var(--font-size-xs);
-  color: var(--color-danger-400, #e05050);
+  color: var(--color-danger-400);
   padding: var(--space-1) var(--space-2);
-  background: color-mix(in srgb, var(--color-danger-700) 15%, transparent);
+  background: color-mix(in srgb, var(--color-danger-600) 18%, transparent);
   border-radius: var(--radius-sm);
-  border: 1px solid color-mix(in srgb, var(--color-danger-600) 30%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-danger-500) 40%, transparent);
 }
 
 .draft-details-link {
   font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
+  color: var(--color-primary-700);
   text-align: center;
   text-decoration: none;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
   padding: var(--space-1);
+  font-weight: var(--font-weight-semibold);
 }
 
 .draft-details-link:hover {
-  color: var(--color-accent);
+  color: var(--color-primary-900);
   text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 /* ─── Draft option list (abilities, spells, items) ──────────────────────── */
@@ -1347,20 +1516,36 @@ a:hover:has(img) {
 }
 
 .tournament-fieldset {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-5);
+  border: none;
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+  border-radius: 0;
+  padding: var(--space-5) 0;
   margin: 0;
 }
 
 .tournament-fieldset-legend {
+  position: relative;
   font-family: var(--font-family-heading);
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-neutral-700);
-  padding: 0 var(--space-2);
+  color: var(--color-primary-800);
+  padding: 0 var(--space-3) 0 calc(var(--space-3) + 10px);
+  background: transparent;
+}
+
+.tournament-fieldset-legend::before {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 1em;
+  background: linear-gradient(180deg, var(--color-danger-400) 0%, var(--color-danger-500) 55%, var(--color-danger-600) 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 40% 50%);
 }
 
 #phases-container {
@@ -1369,10 +1554,11 @@ a:hover:has(img) {
 
 .tournament-phase-block {
   counter-increment: phase-counter;
-  background: var(--color-neutral-100);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-4);
+  background: color-mix(in srgb, var(--color-neutral-100) 50%, transparent);
+  border: none;
+  border-left: 2px solid var(--color-danger-400);
+  border-radius: 0;
+  padding: var(--space-3) var(--space-4);
   margin-bottom: var(--space-3);
 }
 
@@ -1478,35 +1664,43 @@ a:hover:has(img) {
   gap: var(--space-4);
 }
 
+/* Info cards: no boxed borders — section dividers only, header establishes hierarchy */
 .tourney-info-card {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  overflow: hidden;
+  border: none;
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+  border-radius: 0;
+  background: transparent;
+}
+
+.tourney-info-card:first-child {
+  border-top: none;
 }
 
 .tourney-info-card-header {
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-3) var(--space-3) var(--space-1);
   font-family: var(--font-family-heading);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-neutral-700);
-  background: linear-gradient(90deg, #1a1410 0%, var(--color-surface) 100%);
-  border-bottom: 1px solid color-mix(in srgb, var(--color-primary-400) 15%, transparent);
+  color: var(--color-text-muted);
+  background: transparent;
+  border-bottom: none;
 }
 
 .tourney-info-card-body {
-  padding: var(--space-3);
+  padding: var(--space-1) var(--space-3) var(--space-3);
 }
 
+/* Organizer card keeps a stronger accent — it's actionable, not informational */
 .tourney-organizer-card {
-  border-color: color-mix(in srgb, var(--color-primary-400) 30%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--color-primary-500) 45%, transparent);
+  box-shadow: inset 2px 0 0 var(--color-primary-600);
+  padding-left: var(--space-2);
+  margin-left: calc(var(--space-2) * -1);
 }
 
 .tourney-organizer-card .tourney-info-card-header {
-  background: linear-gradient(90deg, #2a1a04 0%, var(--color-surface) 100%);
-  border-bottom-color: color-mix(in srgb, var(--color-primary-400) 25%, transparent);
   color: var(--color-primary-700);
 }
 
@@ -1528,12 +1722,6 @@ a:hover:has(img) {
   margin: var(--space-1) 0 0;
   color: var(--color-text);
   word-break: break-all;
-}
-
-.tourney-closed-msg {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  font-style: italic;
 }
 
 .tourney-phase-item {
@@ -1697,6 +1885,9 @@ a:hover:has(img) {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .tourney-entry-chip {
@@ -1708,12 +1899,6 @@ a:hover:has(img) {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
-}
-
-.tourney-empty-msg {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-  font-style: italic;
 }
 
 /* ─── Elimination bracket ────────────────────────────────────────────── */

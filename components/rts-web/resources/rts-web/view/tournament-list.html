@@ -21,7 +21,7 @@
                 <span class="tournament-card-status badge
                     {% ifequal tournament.status "registration" %}badge-primary{% endifequal %}
                     {% ifequal tournament.status "active" %}badge-success{% endifequal %}
-                    {% ifequal tournament.status "complete" %}badge-neutral{% endifequal %}
+                    {% ifequal tournament.status "complete" %}badge-danger{% endifequal %}
                     {% ifequal tournament.status "cancelled" %}badge-danger{% endifequal %}
                 ">{{tournament.status}}</span>
             </div>
@@ -33,7 +33,7 @@
             </div>
             <div class="tournament-card-footer">
                 <span class="tournament-card-meta">
-                    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    {% include "rts-web/view/icon/users.html" %}
                     {{tournament.entry-count}} entries
                 </span>
                 <span class="tournament-card-meta">by {{tournament.created-by-sub}}</span>

@@ -19,7 +19,7 @@
                     <img id="game-icon-img" alt="" style="width:2rem;height:2rem;object-fit:contain;display:none;" />
                 </div>
                 <div class="dropdown">
-                    <button class="btn btn-ghost btn-sm"
+                    <button class="btn btn-ghost btn-sm nav-item-with-icon"
                             aria-haspopup="true"
                             aria-expanded="false"
                             aria-controls="game-menu"
@@ -31,6 +31,7 @@
                                end
                                on click elsewhere add @hidden to #game-menu
                                then set my @aria-expanded to 'false'">
+                        {% include "rts-web/view/icon/games.html" %}
                         Games
                     </button>
                     <div class="dropdown-menu" id="game-menu" role="menu" hidden>
@@ -50,7 +51,7 @@
                     {% block game-nav %}
                     {% if factions %}
                     <div class="dropdown">
-                        <button class="nav-item game-nav-item"
+                        <button class="nav-item game-nav-item nav-item-with-icon"
                                 id="factions-dropdown-btn"
                                 aria-haspopup="true"
                                 aria-expanded="false"
@@ -63,6 +64,7 @@
                                    end
                                    on click elsewhere add @hidden to #factions-menu
                                    then set my @aria-expanded to 'false'">
+                            {% include "rts-web/view/icon/sword.html" %}
                             Factions
                         </button>
                         <div class="dropdown-menu" id="factions-menu" role="menu" hidden>
@@ -83,14 +85,16 @@
                 </div>
                 <div id="game-drafts-link">
                     {% if all session game-eid %}
-                    <a class="nav-item" href="/view/game/{{game-eid}}/draft/me.html">
+                    <a class="nav-item nav-item-with-icon" href="/view/game/{{game-eid}}/draft/me.html">
+                        {% include "rts-web/view/icon/drafts.html" %}
                         My Drafts
                     </a>
                     {% endif %}
                 </div>
                 <div id="game-tournaments-link">
                     {% if game-eid %}
-                    <a class="nav-item" href="/view/game/{{game-eid}}/tournament/index.html">
+                    <a class="nav-item nav-item-with-icon" href="/view/game/{{game-eid}}/tournament/index.html">
+                        {% include "rts-web/view/icon/tournaments.html" %}
                         Tournaments
                     </a>
                     {% endif %}

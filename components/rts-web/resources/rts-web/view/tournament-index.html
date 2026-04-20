@@ -16,7 +16,7 @@
                     <span class="badge
                         {% ifequal tournament-state.status "registration" %}badge-primary{% endifequal %}
                         {% ifequal tournament-state.status "active" %}badge-success{% endifequal %}
-                        {% ifequal tournament-state.status "complete" %}badge-neutral{% endifequal %}
+                        {% ifequal tournament-state.status "complete" %}badge-danger{% endifequal %}
                         {% ifequal tournament-state.status "cancelled" %}badge-danger{% endifequal %}
                     ">{{tournament-state.status}}</span>
                 </div>
@@ -347,13 +347,13 @@
                     {% if entries %}<span class="tourney-entry-count">{{entries|length}}</span>{% endif %}
                 </h3>
                 {% if entries %}
-                <div class="tourney-entry-grid">
+                <ul class="tourney-entry-grid">
                     {% for entry in entries %}
-                    <div class="tourney-entry-chip">
+                    <li class="tourney-entry-chip">
                         <span class="tourney-entry-name">{{entry.player-sub}}</span>
-                    </div>
+                    </li>
                     {% endfor %}
-                </div>
+                </ul>
                 {% else %}
                 <p class="tourney-empty-msg">No entries yet.</p>
                 {% endif %}
