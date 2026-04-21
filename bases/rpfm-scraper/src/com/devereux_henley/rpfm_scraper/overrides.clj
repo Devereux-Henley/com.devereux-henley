@@ -166,7 +166,7 @@
    "The Konigstein Stalkers (Skeleton Warriors)"                "wh_main_vmp_skeleton_warrior_sword"
    "Demigryph Knights (Halberds)"                               "wh_main_emp_demigryph_knights_halberd"
    "The Royal Altdorf Gryphites (Demigryph Knights)"            "wh_dlc04_emp_royal_gryphites"
-   "War Wargons (Mortars)"                                      "wh2_dlc13_emp_war_wagon_mortar"
+   "War Wagons (Mortars)"                                       "wh2_dlc13_emp_war_wagon_mortar"
    "The Umbral Tide (Salamander Hunting Pack)"                  "wh2_dlc12_lzd_mon_salamander_hunting_pack_ror"
    "Tzar Guard"                                                 "wh3_twa06_ksl_inf_tzar_guard_ror_0"
    "Tzar Guard (Great Weapons)"                                 "wh3_twa06_ksl_inf_tzar_guard_ror_0"
