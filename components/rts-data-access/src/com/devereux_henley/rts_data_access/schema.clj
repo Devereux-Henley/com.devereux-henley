@@ -25,6 +25,7 @@
   (schema.contract/to-schema
    [:map
     [:eid :uuid]
+    [:name {:optional true} [:maybe :string]]
     [:game-mode-eid :uuid]
     [:faction-eid :uuid]
     [:player-sub :string]
@@ -38,8 +39,11 @@
    [:map
     [:id :int]
     [:eid :uuid]
+    [:name {:optional true} [:maybe :string]]
     [:game-mode-eid :uuid]
     [:faction-eid :uuid]
+    [:faction-name {:optional true} :string]
+    [:created-at-display {:optional true} :string]
     [:player-sub :string]
     [:version :int]
     [:created-at :instant]

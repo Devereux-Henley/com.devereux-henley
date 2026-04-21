@@ -31,12 +31,12 @@
 
 (defmethod integrant.core/init-key ::create-draft
   [_init-key dependencies]
-  (fn [{{{:keys [faction-eid game-mode-eid game-eid]} :body
-         {:keys [version]}                            :query
-         {:keys [eid]}                                :path} :parameters
-        router                                               :reitit.core/router
-        session                                              :ory-session
-        :as                                                  _request}]
+  (fn [{{{:keys [faction-eid game-mode-eid game-eid name]} :body
+         {:keys [version]}                                 :query
+         {:keys [eid]}                                     :path} :parameters
+        router                                                    :reitit.core/router
+        session                                                   :ory-session
+        :as                                                       _request}]
     (let [response (web.core/handle-create-response
                     domain/draft-resource
                     {:hostname (:hostname dependencies) :router router}
@@ -44,11 +44,23 @@
                       dependencies
                       {:faction-eid    faction-eid
                        :game-mode-eid  game-mode-eid
+                       :name           name
                        :player-sub     (get-in session [:identity :id])
                        :created-by-sub (get-in session [:identity :id])
                        :eid            eid
                        :version        version}))]
       (assoc-in response [:headers "HX-Redirect"] (str "/view/game/" game-eid "/draft/" eid "/index.html")))))
+
+(defmethod integrant.core/init-key ::update-draft
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path
+         body          :body} :parameters
+        router                :reitit.core/router
+        :as                   _request}]
+    (web.core/handle-fetch-response
+     domain/draft-resource
+     {:hostname (:hostname dependencies) :router router}
+     #(domain/update-draft dependencies eid (select-keys (or body {}) [:name])))))
 
 (defmethod integrant.core/init-key ::get-draft-unit
   [_init-key dependencies]

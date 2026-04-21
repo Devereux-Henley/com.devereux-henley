@@ -372,6 +372,8 @@
      [:type [:= :game/draft]]
      [:game-mode-eid {:model/link :game-mode/by-eid} :uuid]
      [:faction-eid {:model/link :game/faction-by-eid} :uuid]
+     [:name {:optional true} [:maybe :string]]
+     [:display-name {:optional true} :string]
      [:player-sub :string]])))
 
 (def create-draft-specification
@@ -379,7 +381,16 @@
    [:map
     [:game-eid :uuid]
     [:game-mode-eid :uuid]
-    [:faction-eid :uuid]]))
+    [:faction-eid :uuid]
+    [:name {:optional true} [:maybe [:string {:max 60}]]]]))
+
+(def update-draft-specification
+  "Partial update on a draft. Currently only the custom :name is mutable
+  — empty string clears the stored name so the default (faction + date)
+  renders again."
+  (schema.contract/to-schema
+   [:map
+    [:name {:optional true} [:maybe [:string {:max 60}]]]]))
 
 (def draft-error-response
   (schema.contract/to-schema

@@ -34,6 +34,7 @@
 (def get-drafts-for-player-by-game query.game/get-drafts-for-player-by-game)
 
 (def create-draft query.game/create-draft)
+(def update-draft query.game/update-draft)
 
 (def get-game-mode-by-eid query.game/get-game-mode-by-eid)
 

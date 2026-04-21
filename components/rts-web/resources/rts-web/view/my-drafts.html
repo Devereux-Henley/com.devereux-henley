@@ -13,7 +13,7 @@
         <ul>
             {% for draft in drafts %}
             <li>
-                <a href="/view/game/{{game-eid}}/draft/{{draft.eid}}/index.html">{{draft.faction-name}} draft {{draft.created-at-display}}</a>
+                <a href="/view/game/{{game-eid}}/draft/{{draft.eid}}/index.html">{{draft.display-name}}</a>
             </li>
             {% endfor %}
         </ul>

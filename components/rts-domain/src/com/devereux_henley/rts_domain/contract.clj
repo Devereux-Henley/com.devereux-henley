@@ -17,6 +17,7 @@
 (def draft-resource schema/draft-resource)
 
 (def create-draft-specification       schema/create-draft-specification)
+(def update-draft-specification       schema/update-draft-specification)
 (def add-unit-to-draft-specification  schema/add-unit-to-draft-specification)
 
 (def draft-error-response schema/draft-error-response)
@@ -58,6 +59,7 @@
 (def get-drafts-for-player                      handlers.draft/get-drafts-for-player)
 (def get-drafts-for-player-by-game              handlers.draft/get-drafts-for-player-by-game)
 (def create-draft                               handlers.draft/create-draft)
+(def update-draft                               handlers.draft/update-draft)
 (def get-draft-state                            handlers.draft/get-draft-state)
 (def set-draft-state                            handlers.draft/set-draft-state)
 (def parse-unit-statistics                      handlers.draft/parse-unit-statistics)

@@ -55,6 +55,7 @@
 (def get-mount-by-key-query (resource/load-query-resource "game" "get-mount-by-key.sql"))
 
 (def upsert-draft-state-query (resource/load-query-resource "game" "upsert-draft-state.sql"))
+(def update-draft-query (resource/load-query-resource "game" "update-draft.sql"))
 
 (defn get-game-by-eid
   {:malli/schema (schema.contract/to-schema
@@ -279,3 +280,13 @@
                                  (assoc :game-mode-id (:id game-mode))
                                  (assoc :faction-id (:id faction))))
       (get-draft-by-eid connection (:eid specification)))))
+
+(defn update-draft
+  "Applies a partial update to a draft. Currently the only mutable field
+  is :name (nil clears the custom name and lets the default render).
+  Returns the refreshed entity."
+  [connection draft-eid {:keys [name]}]
+  (jdbc.contract/execute-one!
+   connection
+   [update-draft-query name (str (Instant/now)) draft-eid])
+  (get-draft-by-eid connection draft-eid))

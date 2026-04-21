@@ -1,11 +1,37 @@
 {% extends "rts-web/template/entrypoint.html" %}
 
-{% block title %}{{faction.name}} Draft | {{game.name}} | RTS-UI{% endblock %}
+{% block title %}{{data.display-name}} | {{game.name}} | RTS-UI{% endblock %}
 
 {% block content %}
-<title id="page-title" hx-swap-oob="true">{{faction.name}} Draft | {{game.name}} | RTS-UI</title>
+<title id="page-title" hx-swap-oob="true">{{data.display-name}} | {{game.name}} | RTS-UI</title>
 
 <div class="draft-page">
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- Campaign nameplate — renames the draft                      -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <header class="draft-nameplate" aria-label="Draft name">
+        <label class="draft-nameplate-field" for="draft-name-input">
+            <span class="sr-only">Draft name</span>
+            <input id="draft-name-input"
+                   class="draft-nameplate-input"
+                   type="text"
+                   name="name"
+                   maxlength="60"
+                   value="{{data.name}}"
+                   placeholder="{{data.faction-name}} draft {{data.created-at-display}}"
+                   autocomplete="off"
+                   spellcheck="false"
+                   aria-describedby="draft-nameplate-hint"
+                   hx-patch="/api/draft/{{data.eid}}"
+                   hx-ext="json-enc"
+                   hx-trigger="input changed delay:500ms, blur changed"
+                   hx-swap="none"
+                   hx-on::after-request="this.closest('.draft-nameplate').classList.toggle('draft-nameplate--saved', event.detail.successful)">
+            <span id="draft-nameplate-hint" class="sr-only">Up to 60 characters. Leave blank to restore the default name.</span>
+            <span class="draft-nameplate-saved" role="status" aria-live="polite">Saved</span>
+        </label>
+    </header>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
     <!-- Army Builder                                               -->

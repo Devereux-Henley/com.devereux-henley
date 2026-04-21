@@ -205,32 +205,63 @@
 
 ;; ─── Draft state ──────────────────────────────────────────────────────────────
 
+(defn- draft-default-name
+  "Fallback display name when a draft hasn't been renamed: 'Faction draft
+  mm/dd/yyyy'. Both inputs come from the SQL projection (faction-name +
+  created-at-display)."
+  [{:keys [faction-name created-at-display]}]
+  (when (and faction-name created-at-display)
+    (str faction-name " draft " created-at-display)))
+
+(defn- with-display-name
+  "Attaches :display-name — the custom :name (trimmed, ignored when
+  blank) when set, else the faction/date default. Templates read
+  :display-name so they never need to know which side of the OR they
+  got."
+  [draft]
+  (let [trimmed (some-> (:name draft) str/trim not-empty)]
+    (assoc draft :display-name (or trimmed (draft-default-name draft)))))
+
 (defn get-draft-by-eid
-  "Fetches a draft by eid and attaches :type :game/draft."
+  "Fetches a draft by eid and attaches :type :game/draft + :display-name."
   [dependencies eid]
-  (assoc (db/get-draft-by-eid (:connection dependencies) eid) :type :game/draft))
+  (-> (db/get-draft-by-eid (:connection dependencies) eid)
+      with-display-name
+      (assoc :type :game/draft)))
 
 (defn create-draft
   "Creates a new draft, stamping :created-at and :updated-at, and attaches :type :game/draft."
   [dependencies create-specification]
   (let [created-at (Instant/now)
         updated-at created-at]
-    (assoc (db/create-draft (:connection dependencies)
-                            (-> create-specification
-                                (assoc :created-at created-at)
-                                (assoc :updated-at updated-at)))
-           :type :game/draft)))
+    (-> (db/create-draft (:connection dependencies)
+                         (-> create-specification
+                             (assoc :created-at created-at)
+                             (assoc :updated-at updated-at)))
+        with-display-name
+        (assoc :type :game/draft))))
+
+(defn update-draft
+  "Applies a partial update to a draft. Currently only :name is
+  mutable — empty/whitespace-only clears the stored name so the default
+  (faction + date) renders again. Returns the refreshed draft with
+  :display-name recomputed."
+  [dependencies eid {:keys [name] :as _updates}]
+  (let [normalised (when name (not-empty (str/trim name)))]
+    (-> (db/update-draft (:connection dependencies) eid {:name normalised})
+        with-display-name
+        (assoc :type :game/draft))))
 
 (defn get-drafts-for-player
   "Returns all drafts for a player, each tagged with :type :game/draft."
   [dependencies player-sub]
-  (mapv (fn [draft] (assoc draft :type :game/draft))
+  (mapv (fn [draft] (-> draft with-display-name (assoc :type :game/draft)))
         (db/get-drafts-for-player (:connection dependencies) player-sub)))
 
 (defn get-drafts-for-player-by-game
   "Returns all drafts for a player scoped to a specific game, each tagged with :type :game/draft."
   [dependencies player-sub game-eid]
-  (mapv (fn [draft] (assoc draft :type :game/draft))
+  (mapv (fn [draft] (-> draft with-display-name (assoc :type :game/draft)))
         (db/get-drafts-for-player-by-game (:connection dependencies) player-sub game-eid)))
 
 (def ^:private state-entry-schema
