@@ -563,7 +563,8 @@
    [:entry-eid :uuid]
    [:name :string]
    [:total-cost [:maybe :int]]
-   [:is-lord {:optional true} :boolean]])
+   [:is-lord {:optional true} :boolean]
+   [:lore-portrait-key {:optional true} [:maybe :string]]])
 
 (def draft-section-budget
   "The meter-only projection of a section context: enough to render the
@@ -646,5 +647,6 @@
     [:type [:= :draft/update-success]]
     [:entry-eid :uuid]
     [:total-cost [:maybe :int]]
+    [:slot-portrait-key :string]
     [:budget draft-section-budget]
     [:entry {:optional true} [:maybe draft-entry-resource]]]))

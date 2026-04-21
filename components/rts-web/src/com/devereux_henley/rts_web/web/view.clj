@@ -170,12 +170,17 @@
                           (mapv (fn [g] {:category (:unit-category-name (first g))
                                          :units    (vec (sort-by :cost g))})))
         state        (domain/get-draft-state dependencies (:eid draft))
+        lore-portrait-key (fn [unit-eid lore-key]
+                            (when lore-key
+                              (->> (domain/get-lores-for-unit dependencies unit-eid)
+                                   (some #(when (= lore-key (:key %)) (:portrait-key %))))))
         hydrate      (fn [entries]
                        (vec (keep (fn [entry]
                                     (when-let [u (get unit-by-eid (:unit-eid entry))]
                                       (assoc u
-                                             :total-cost (or (:total-cost entry) (:cost u))
-                                             :entry-eid  (:entry-eid entry))))
+                                             :total-cost        (or (:total-cost entry) (:cost u))
+                                             :entry-eid         (:entry-eid entry)
+                                             :lore-portrait-key (lore-portrait-key (:unit-eid entry) (:lore entry)))))
                                   entries)))
         main-units   (hydrate (:main state))
         reinf-units  (hydrate (:reinforcements state))
