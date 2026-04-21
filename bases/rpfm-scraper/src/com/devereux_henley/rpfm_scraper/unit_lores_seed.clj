@@ -221,23 +221,23 @@
                                         (str/ends-with? % "-units.sql")))
                           sort)
         total-groups (atom 0)
-        total-rows   (atom 0)]
-    (let [records
-          (reduce
-           (fn [acc filename]
-             (let [path                     (str (io/file seed-dir filename))
-                   {:keys [content groups]} (consolidate-file path lore-suffix->id)]
-               (when (seq groups)
-                 (swap! total-groups + (count groups))
-                 (swap! total-rows + (reduce + (map #(count (:variants %)) groups)))
-                 (when-not dry-run?
-                   (spit path content)))
-               (into acc (map #(assoc % :faction-file filename) groups))))
-           []
-           files)]
-      (log (format "  [unit-lores] consolidated %d dispatch groups (%d variants) across %d faction files"
-                   @total-groups @total-rows (count files)))
-      records)))
+        total-rows   (atom 0)
+        records
+        (reduce
+         (fn [acc filename]
+           (let [path                     (str (io/file seed-dir filename))
+                 {:keys [content groups]} (consolidate-file path lore-suffix->id)]
+             (when (seq groups)
+               (swap! total-groups + (count groups))
+               (swap! total-rows + (reduce + (map #(count (:variants %)) groups)))
+               (when-not dry-run?
+                 (spit path content)))
+             (into acc (map #(assoc % :faction-file filename) groups))))
+         []
+         files)]
+    (log (format "  [unit-lores] consolidated %d dispatch groups (%d variants) across %d faction files"
+                 @total-groups @total-rows (count files)))
+    records))
 
 (defn generate-unit-lore-seed
   "Builds seed-unit-lores.sql content from the aggregated consolidation
