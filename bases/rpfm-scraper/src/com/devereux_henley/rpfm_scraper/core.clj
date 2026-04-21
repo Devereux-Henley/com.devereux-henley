@@ -140,6 +140,10 @@
           custom-battle-mount-rows               (:rows (rpfm/parse-rpfm-table (p "units_custom_battle_mounts_tables.json")))
           _                                      (logf "  custom battle mounts (MP): %d" (count custom-battle-mount-rows))
 
+          land-unit-ability-map                  (tables/build-land-unit-ability-map
+                                                  (:rows (rpfm/parse-rpfm-table (p "land_units_to_unit_abilites_junctions_tables.json"))))
+          _                                      (logf "  land_unit → abilities: %d entries" (count land-unit-ability-map))
+
           ua-loc                                 (rpfm/parse-loc-file (p "unit_abilities_loc.json"))
           [ability-name-map ability-tooltip-map] (tables/build-ability-loc-maps ua-loc)
           _                                      (logf "  ability loc: %d names, %d tooltips"
@@ -154,6 +158,7 @@
       {:main-unit-rows           main-unit-rows
        :main-unit-map            main-unit-map
        :land-unit-stats          land-unit-stats
+       :land-unit-ability-map    land-unit-ability-map
        :special-ability-map      special-ability-map
        :land-units-loc           land-units-loc
        :agent-subtype-map        agent-subtype-map
@@ -261,7 +266,8 @@
                  (:land-unit-stats data)
                  (:agent-subtype-map data)
                  (:equipment-map data)
-                 (:ancillary-cost-map data))]
+                 (:ancillary-cost-map data)
+                 (:land-unit-ability-map data))]
     (when-not dry-run?
       (spit (io/file seed-dir "seed-unit-mounts.sql") content))))
 

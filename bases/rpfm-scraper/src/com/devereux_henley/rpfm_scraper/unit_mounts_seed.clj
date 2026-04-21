@@ -1,6 +1,7 @@
 (ns com.devereux-henley.rpfm-scraper.unit-mounts-seed
   (:require
    [clojure.data.json :as json]
+   [clojure.set :as set]
    [clojure.string :as str]
    [com.devereux-henley.rpfm-scraper.overrides :as overrides]
    [com.devereux-henley.rpfm-scraper.stats :as stats]))
@@ -31,16 +32,35 @@
                                 :escape-slash false
                                 :escape-js-separators false))))
 
+(defn- granted-keys
+  "Returns the sorted vec of ability keys present on the mounted variant's
+  land_unit but not on the base variant's land_unit, or nil when the
+  mounted variant grants nothing new."
+  [base-lu mounted-lu land-unit-ability-map]
+  (let [mounted-abilities (get land-unit-ability-map mounted-lu #{})
+        base-abilities    (get land-unit-ability-map base-lu #{})
+        diff              (sort (set/difference mounted-abilities base-abilities))]
+    (when (seq diff) (vec diff))))
+
+(defn- granted-json
+  [diff]
+  (when diff
+    (sql-escape (json/write-str diff
+                                :escape-slash false
+                                :escape-js-separators false))))
+
 (defn generate-unit-mount-seed
   "Full seed-unit-mounts.sql regen from units_custom_battle_mounts_tables.
   Each row resolves base/mounted unit keys against main_units_tables and
   land_units loc, infers faction from the unit key, looks up unit-id via
   seed id map, and emits cost = max(0, mounted_cost - base_cost) plus a
   stats_override JSON blob computed from the mounted variant's land_units
-  entry. granted_ability_keys is left NULL pending scrape of the unit ↔
-  ability junction table."
+  entry and a granted_ability_keys JSON array carrying the abilities the
+  mounted variant adds on top of the base unit (from the
+  land_units_to_unit_abilites_junctions_tables diff)."
   [custom-battle-mount-rows main-unit-rows land-units-loc stem->mount-id unit-id-map
-   main-unit-map land-unit-stats agent-subtype-map equipment-map ancillary-cost-map]
+   main-unit-map land-unit-stats agent-subtype-map equipment-map ancillary-cost-map
+   land-unit-ability-map]
   (let [mu-by-unit        (into {}
                                 (keep (fn [r]
                                         (when-let [u (get r "unit")]
@@ -60,7 +80,8 @@
         unresolved-mounts (atom #{})
         unresolved-units  (atom #{})
         missing-main      (atom #{})
-        missing-stats     (atom #{})]
+        missing-stats     (atom #{})
+        granted-total     (atom 0)]
     (doseq [entry custom-battle-mount-rows]
       (let [base-key    (or (get entry "base_unit") "")
             mounted-key (or (get entry "mounted_unit") "")
@@ -70,9 +91,10 @@
                 mounted (get mu-by-unit mounted-key)]
             (if-not (and base mounted)
               (swap! missing-main conj [base-key mounted-key])
-              (let [lu-key    (get base "land_unit")
-                    unit-name (when lu-key
-                                (get land-units-loc (str "land_units_onscreen_name_" lu-key)))]
+              (let [lu-key     (get base "land_unit")
+                    mounted-lu (get mounted "land_unit")
+                    unit-name  (when lu-key
+                                 (get land-units-loc (str "land_units_onscreen_name_" lu-key)))]
                 (when unit-name
                   (when-let [faction (faction-for base-key)]
                     (if-let [unit-id (get unit-id-map [unit-name faction])]
@@ -80,18 +102,22 @@
                             mount-id (get stem->mount-id stem)]
                         (if-not mount-id
                           (swap! unresolved-mounts conj stem)
-                          (let [diff-cost (max 0 (- (or (get mounted "multiplayer_cost") 0)
-                                                    (or (get base "multiplayer_cost") 0)))
-                                stats-str (stats-json mounted-key main-unit-map land-unit-stats
-                                                      agent-subtype-map equipment-map ancillary-cost-map)
-                                pair      [unit-id mount-id]]
+                          (let [diff-cost   (max 0 (- (or (get mounted "multiplayer_cost") 0)
+                                                      (or (get base "multiplayer_cost") 0)))
+                                stats-str   (stats-json mounted-key main-unit-map land-unit-stats
+                                                        agent-subtype-map equipment-map ancillary-cost-map)
+                                granted     (granted-keys lu-key mounted-lu land-unit-ability-map)
+                                granted-str (granted-json granted)
+                                pair        [unit-id mount-id]]
                             (when-not (contains? @seen pair)
                               (swap! seen conj pair)
                               (when-not stats-str
                                 (swap! missing-stats conj mounted-key))
-                              (swap! resolved conj [unit-id mount-id diff-cost stats-str])))))
+                              (when granted
+                                (swap! granted-total + (count granted)))
+                              (swap! resolved conj [unit-id mount-id diff-cost stats-str granted-str])))))
                       (swap! unresolved-units conj [unit-name faction]))))))))))
-    (let [rows (sort-by (fn [[u m _ _]] [u m]) @resolved)
+    (let [rows (sort-by (fn [[u m _ _ _]] [u m]) @resolved)
           n    (count rows)]
       (if (zero? n)
         (do (log "  [unit-mounts] no entries resolved; emitting empty seed")
@@ -99,14 +125,16 @@
         (let [header  ["INSERT OR IGNORE INTO unit_mount(id, unit_id, mount_id, cost, stats_override, granted_ability_keys, version, created_by_sub, created_at, updated_at, deleted_at)"
                        "VALUES"]
               indexed (map-indexed (fn [i r] [(inc i) r]) rows)
-              row-sql (fn [[idx [unit-id mount-id cost stats-str]]]
-                        (let [comma      (if (< idx n) "," ";")
-                              stats-cell (if stats-str (format "'%s'" stats-str) "null")]
-                          (format "  (%d, %d, %d, %d, %s, null, 1, '%s', STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), null)%s"
-                                  idx unit-id mount-id cost stats-cell seed-author comma)))
+              row-sql (fn [[idx [unit-id mount-id cost stats-str granted-str]]]
+                        (let [comma        (if (< idx n) "," ";")
+                              stats-cell   (if stats-str (format "'%s'" stats-str) "null")
+                              granted-cell (if granted-str (format "'%s'" granted-str) "null")]
+                          (format "  (%d, %d, %d, %d, %s, %s, 1, '%s', STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), null)%s"
+                                  idx unit-id mount-id cost stats-cell granted-cell seed-author comma)))
               body    (map row-sql indexed)
               content (str (str/join "\n" (concat header body)) "\n")]
-          (log (format "  [unit-mounts] emitted %d rows from units_custom_battle_mounts_tables" n))
+          (log (format "  [unit-mounts] emitted %d rows from units_custom_battle_mounts_tables (%d granted-ability entries total)"
+                       n @granted-total))
           (when (seq @unresolved-mounts)
             (log (format "  [unit-mounts] %d icon stems not in mount table (e.g. %s)"
                          (count @unresolved-mounts) (pr-str (take 4 (sort @unresolved-mounts))))))

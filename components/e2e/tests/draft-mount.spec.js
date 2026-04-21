@@ -75,6 +75,16 @@ test.describe.serial('Mount-selection overrides', () => {
     expect(Number(costAfter)).toBeGreaterThan(Number(costBefore));
     expect(healthAfter).not.toBe(healthBefore);
     await expect(page.locator(`#draft-unit-form input[name="mount"][value="${mountKey}"]`)).toBeChecked();
+
+    // Karl Franz on any mount that grants Bloodroar should surface the
+    // "Mount Abilities" section. We don't assert the specific ability in
+    // case the seed changes — just that the list is populated.
+    const grantedNames = await page
+      .locator('[aria-labelledby="panel-mount-abilities-heading"] .draft-passive-name')
+      .allTextContents();
+    if (mountKey === 'mount_deathclaw') {
+      expect(grantedNames.map(n => n.trim())).toContain('Bloodroar');
+    }
   });
 
   test('preview-mode mount toggle re-renders the unit panel and persists on add', async ({ page }) => {
