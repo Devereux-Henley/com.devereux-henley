@@ -893,7 +893,7 @@
                                  (assoc (vec section-list) idx new-entry))]
             (set-draft-state dependencies draft-eid new-state)
             (let [section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)
-                  lore-pk    (lore-portrait-key-for conn (:unit-eid existing) (:lore selections))]
+                  lore-pk     (lore-portrait-key-for conn (:unit-eid existing) (:lore selections))]
               {:type              :draft/update-success
                :entry-eid         entry-eid
                :total-cost        new-total
