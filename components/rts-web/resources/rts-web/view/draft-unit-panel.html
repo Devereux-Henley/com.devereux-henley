@@ -3,7 +3,8 @@
           id="draft-unit-form"
           onsubmit="return false"
           {% if data.section %}
-          hx-get="/api/draft/{{data.draft-eid}}/entry/{{data.eid}}?section={{data.section}}&embed=unit"
+          hx-patch="/api/draft/{{data.draft-eid}}/entry/{{data.eid}}?section={{data.section}}"
+          hx-ext="json-enc"
           {% else %}
           hx-get="/api/draft/{{unit.draft-eid}}/unit/{{unit.eid}}"
           {% endif %}
@@ -333,14 +334,5 @@
         </section>
         {% endif %}
 
-        {% if data.section %}
-        <span hidden
-              aria-hidden="true"
-              hx-patch="/api/draft/{{data.draft-eid}}/entry/{{data.eid}}?section={{data.section}}"
-              hx-trigger="change from:#draft-unit-form delay:100ms"
-              hx-include="#draft-unit-form"
-              hx-ext="json-enc"
-              hx-swap="none"></span>
-        {% endif %}
     </form>
 </aside>

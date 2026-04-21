@@ -131,11 +131,16 @@ test.describe.serial('Mount-selection overrides', () => {
     }
 
     const mountKey = await mountRadios.nth(1).getAttribute('value');
-    const entryGet = await page.locator('#draft-unit-form').getAttribute('hx-get');
-    expect(entryGet).toBeTruthy();
+    const entryPatch = await page.locator('#draft-unit-form').getAttribute('hx-patch');
+    expect(entryPatch).toBeTruthy();
 
-    const previewUrl = new URL(entryGet, page.url());
+    // Build the GET equivalent from the same path (the form PATCHes to persist;
+    // the GET version accepts ?mount= as an override for preview renders).
+    const baseEntryUrl = new URL(entryPatch, page.url());
+    baseEntryUrl.searchParams.set('embed', 'unit');
+    const previewUrl = new URL(baseEntryUrl);
     previewUrl.searchParams.set('mount', mountKey);
+
     const response = await request.get(previewUrl.toString(), {
       headers: { Accept: 'application/json' },
     });
@@ -145,7 +150,7 @@ test.describe.serial('Mount-selection overrides', () => {
 
     // Persisted state on the draft was NOT touched — reloading the entry with
     // no query params should still show no mount selected.
-    const baseResponse = await request.get(entryGet, {
+    const baseResponse = await request.get(baseEntryUrl.toString(), {
       headers: { Accept: 'application/json' },
     });
     const baseBody = await baseResponse.json();

@@ -615,4 +615,5 @@
     [:type [:= :draft/update-success]]
     [:entry-eid :uuid]
     [:total-cost [:maybe :int]]
-    [:budget draft-section-budget]]))
+    [:budget draft-section-budget]
+    [:entry {:optional true} [:maybe draft-entry-resource]]]))
