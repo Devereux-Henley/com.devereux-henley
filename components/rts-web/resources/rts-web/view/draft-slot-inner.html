@@ -7,7 +7,8 @@
         hx-target="#draft-unit"
         hx-swap="outerHTML">
     <img class="draft-slot-card"
-         src="/card/unit/{{unit.eid}}.png"
+         id="draft-slot-card-img-{{unit.entry-eid}}"
+         src="/card/unit/{% if unit.lore-portrait-key %}{{unit.lore-portrait-key}}{% else %}{{unit.eid}}{% endif %}.png"
          alt="{{unit.name}}"
          onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;">
 </button>

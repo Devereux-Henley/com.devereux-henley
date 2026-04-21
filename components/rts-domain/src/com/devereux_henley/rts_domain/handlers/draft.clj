@@ -270,6 +270,7 @@
     [:entry-eid  {:optional true} [:maybe :uuid]]
     [:unit-eid :uuid]
     [:mount      {:optional true} [:maybe :string]]
+    [:lore       {:optional true} [:maybe :string]]
     [:abilities  {:optional true, :default []} [:sequential :string]]
     [:spells     {:optional true, :default []} [:sequential :string]]
     [:items      {:optional true, :default []} [:sequential :string]]
@@ -465,23 +466,35 @@
   [conn faction-eid]
   (into {} (map (juxt :eid identity) (hydrate-units-with-stats (db/get-units-for-faction conn faction-eid)))))
 
+(defn- lore-portrait-key-for
+  "Resolves the unit_lore.portrait_key for a unit-eid + selected lore key,
+   or nil when the unit has no such lore. Returns nil for a nil lore key
+   so callers can skip the query entirely."
+  [conn unit-eid lore-key]
+  (when lore-key
+    (->> (db/get-lores-for-unit conn unit-eid)
+         (some #(when (= lore-key (:key %)) (:portrait-key %))))))
+
 (defn- hydrate-section
-  "Resolves state entries to their hydrated units, attaching :total-cost and
-   the entry's :entry-eid so templates can target the specific placed copy."
-  [unit-by-eid entries]
+  "Resolves state entries to their hydrated units, attaching :total-cost,
+   the entry's :entry-eid, and (when the entry has a selected lore) the
+   :lore-portrait-key from unit_lore so slot fragments render the
+   lore-specific card."
+  [conn unit-by-eid entries]
   (mapv (fn [entry]
           (when-let [u (get unit-by-eid (:unit-eid entry))]
             (assoc u
-                   :total-cost (or (:total-cost entry) (:cost u))
-                   :entry-eid  (:entry-eid entry))))
+                   :total-cost        (or (:total-cost entry) (:cost u))
+                   :entry-eid         (:entry-eid entry)
+                   :lore-portrait-key (lore-portrait-key-for conn (:unit-eid entry) (:lore entry)))))
         entries))
 
 (defn- hydrated-section-context
   "Hydrates `state`'s entries for `section` and wraps them in a
    build-section-context result."
-  [unit-by-eid state section draft-eid game-mode]
+  [conn unit-by-eid state section draft-eid game-mode]
   (build-section-context section
-                         (hydrate-section unit-by-eid (get state (keyword section) []))
+                         (hydrate-section conn unit-by-eid (get state (keyword section) []))
                          draft-eid
                          game-mode))
 
@@ -503,12 +516,13 @@
 (defn- slot-unit
   "Projects a hydrated unit to the draft-section-unit shape rendered by
    slot fragments."
-  [unit entry-eid total-cost]
-  {:eid        (:eid unit)
-   :entry-eid  entry-eid
-   :name       (:name unit)
-   :total-cost total-cost
-   :is-lord    (boolean (:is-lord unit))})
+  [unit entry-eid total-cost lore-portrait-key]
+  {:eid               (:eid unit)
+   :entry-eid         entry-eid
+   :name              (:name unit)
+   :total-cost        total-cost
+   :is-lord           (boolean (:is-lord unit))
+   :lore-portrait-key lore-portrait-key})
 
 ;; ─── Composite domain operations ──────────────────────────────────────────────
 
@@ -762,10 +776,11 @@
                                        :items      (or (:items selections) [])
                                        :total-cost total-cost})]
             (set-draft-state dependencies draft-eid new-state)
-            (let [section-ctx (hydrated-section-context unit-by-eid new-state section draft-eid game-mode)]
+            (let [section-ctx       (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)
+                  lore-portrait-key (lore-portrait-key-for conn unit-eid (:lore selections))]
               {:type     :draft/add-success
                :section  (section-ref section-ctx)
-               :new-unit (slot-unit unit new-entry-eid total-cost)
+               :new-unit (slot-unit unit new-entry-eid total-cost lore-portrait-key)
                :budget   (section-budget section-ctx)})))))))
 
 (defn- find-entry-index
@@ -794,7 +809,7 @@
                                (into [] (concat (subvec old-list 0 idx) (subvec old-list (inc idx))))
                                old-list))]
     (set-draft-state dependencies draft-eid new-state)
-    (let [section-ctx (hydrated-section-context unit-by-eid new-state section draft-eid game-mode)]
+    (let [section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)]
       {:type              :draft/remove-success
        :removed-entry-eid entry-eid
        :removed-is-lord   (boolean (:is-lord removed-unit))
@@ -877,8 +892,10 @@
                 new-state (assoc state section-k
                                  (assoc (vec section-list) idx new-entry))]
             (set-draft-state dependencies draft-eid new-state)
-            (let [section-ctx (hydrated-section-context unit-by-eid new-state section draft-eid game-mode)]
-              {:type       :draft/update-success
-               :entry-eid  entry-eid
-               :total-cost new-total
-               :budget     (section-budget section-ctx)})))))))
+            (let [section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)
+                  lore-pk     (lore-portrait-key-for conn (:unit-eid existing) (:lore selections))]
+              {:type              :draft/update-success
+               :entry-eid         entry-eid
+               :total-cost        new-total
+               :slot-portrait-key (or lore-pk (str (:unit-eid existing)))
+               :budget            (section-budget section-ctx)})))))))
