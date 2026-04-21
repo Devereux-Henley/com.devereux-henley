@@ -77,6 +77,7 @@
 
 (def lore-entity schema/lore-entity)
 (def get-lores-for-unit query.game/get-lores-for-unit)
+(def get-spells-for-lore query.game/get-spells-for-lore)
 
 (def draft-state-entity schema/draft-state-entity)
 (def get-draft-state-by-draft query.game/get-draft-state-by-draft)

@@ -192,8 +192,7 @@
     [:key :string]
     [:name :string]
     [:cost :int]
-    [:portrait-key {:optional true} [:maybe :string]]
-    [:draftable-spell-keys {:optional true} [:maybe :string]]]))
+    [:portrait-key {:optional true} [:maybe :string]]]))
 
 (def draft-state-entity
   (schema.contract/to-schema

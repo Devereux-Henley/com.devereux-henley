@@ -243,7 +243,8 @@
   "Builds seed-unit-lores.sql content from the aggregated consolidation
   records + lore-suffix→lore-id map. Each group contributes one row per
   (unit, lore-variant) pair — carrying the variant's eid-stem as
-  portrait_key and the variant's draftable-spell keys as JSON."
+  portrait_key. The spell list for a lore is invariant across units and
+  lives on the spell_lore junction; we don't duplicate it here."
   [records lore-suffix->id]
   (let [rows   (for [r     records
                      v     (:variants r)
@@ -251,25 +252,21 @@
                      :when lore-id]
                  {:unit-id      (:survivor-id r)
                   :lore-id      lore-id
-                  :portrait-key (:eid v)
-                  :spell-keys   (:spell-keys v)})
+                  :portrait-key (:eid v)})
         sorted (sort-by (juxt :unit-id :lore-id) rows)
         n      (count sorted)]
     (if (zero? n)
       "-- no unit_lore rows\n"
-      (let [header  ["INSERT OR IGNORE INTO unit_lore(id, unit_id, lore_id, cost, portrait_key, draftable_spell_keys, version, created_by_sub, created_at, updated_at, deleted_at)"
+      (let [header  ["INSERT OR IGNORE INTO unit_lore(id, unit_id, lore_id, cost, portrait_key, version, created_by_sub, created_at, updated_at, deleted_at)"
                      "VALUES"]
             indexed (map-indexed (fn [i r] [(inc i) r]) sorted)
-            row-sql (fn [[idx {:keys [unit-id lore-id portrait-key spell-keys]}]]
-                      (let [comma       (if (< idx n) "," ";")
-                            portrait    (if portrait-key
-                                          (format "'%s'" (sql-escape portrait-key))
-                                          "null")
-                            spells-json (sql-escape (json/write-str spell-keys
-                                                                    :escape-slash false
-                                                                    :escape-js-separators false))]
-                        (format "  (%d, %d, %d, 0, %s, '%s', 1, '%s', STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), null)%s"
-                                idx unit-id lore-id portrait spells-json seed-author comma)))
+            row-sql (fn [[idx {:keys [unit-id lore-id portrait-key]}]]
+                      (let [comma    (if (< idx n) "," ";")
+                            portrait (if portrait-key
+                                       (format "'%s'" (sql-escape portrait-key))
+                                       "null")]
+                        (format "  (%d, %d, %d, 0, %s, 1, '%s', STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), null)%s"
+                                idx unit-id lore-id portrait seed-author comma)))
             body    (map row-sql indexed)]
         (log (format "  [unit-lores] emitted %d unit_lore rows" n))
         (str (str/join "\n" (concat header body)) "\n")))))

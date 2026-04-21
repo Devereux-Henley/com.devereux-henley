@@ -449,9 +449,11 @@
     [:granted-abilities {:optional true} [:sequential draft-ability]]]))
 
 (def draft-lore
-  "Per-(unit, lore) row. :portrait-key aliases the eid-stem of an on-disk
-  `/card/unit/<stem>.png`; :draftable-spell-keys is the raw JSON from the
-  unit_lore seed (resolved lazily when the lore is selected)."
+  "Per-(unit, lore) access row. :portrait-key aliases the eid-stem of an
+  on-disk `/card/unit/<stem>.png` that should render when this lore is
+  active. The spell pool itself is NOT stored here — it's fetched from
+  the spell_lore junction when the lore is selected, because the pool
+  is invariant across every unit that can access the lore."
   (schema.contract/to-schema
    [:map
     [:eid :uuid]
@@ -459,8 +461,7 @@
     [:name :string]
     [:cost :int]
     [:selected {:optional true} :boolean]
-    [:portrait-key {:optional true} [:maybe :string]]
-    [:draftable-spell-keys {:optional true} [:maybe [:sequential :string]]]]))
+    [:portrait-key {:optional true} [:maybe :string]]]))
 
 (def draft-unit-resource
   "A unit viewed in the context of a specific draft — the full game-unit

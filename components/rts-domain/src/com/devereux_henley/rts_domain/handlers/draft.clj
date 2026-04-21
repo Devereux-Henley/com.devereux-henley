@@ -309,6 +309,11 @@
   [dependencies unit-eid]
   (db/get-lores-for-unit (:connection dependencies) unit-eid))
 
+(defn get-spells-for-lore
+  "Returns the canonical spell list for the given lore key."
+  [dependencies lore-key]
+  (db/get-spells-for-lore (:connection dependencies) lore-key))
+
 ;; ─── Mount overrides ──────────────────────────────────────────────────────────
 
 (defn- parse-granted-ability-keys
@@ -358,22 +363,6 @@
 
 ;; ─── Lore overrides ──────────────────────────────────────────────────────────
 
-(defn- parse-draftable-spell-keys
-  "Parses the raw draftable_spell_keys TEXT column (JSON array or null)
-  into a vector of key strings. Returns nil for an empty/absent column;
-  invalid JSON propagates (seed pipeline contract)."
-  [raw]
-  (when (and raw (seq raw))
-    (vec (jsonista/read-value raw))))
-
-(defn hydrate-lore
-  "Attaches :draftable-spell-keys parsed from the lore row's TEXT column.
-  The hydrated keys are resolved to full spell records only when the lore
-  is actually selected (via apply-lore-overrides) to avoid a per-lore
-  spell query when the panel first loads."
-  [lore]
-  (assoc lore :draftable-spell-keys (parse-draftable-spell-keys (:draftable-spell-keys lore))))
-
 (defn- hydrate-spell-keys
   "Resolves a seq of spell keys against the spell table into the
   {:key :eid :name :mana-cost :cost} shape the draft-unit resource uses.
@@ -390,6 +379,20 @@
                        :mana-cost (or mana-cost 0)
                        :cost      (or cost 0)})))
             spell-keys))))
+
+(defn- lore-spells
+  "Canonical draftable-spell list for a lore, as {:key :eid :name :mana-cost :cost}
+  records. The pool is invariant across all units that can access the lore,
+  so we fetch it from spell_lore (the source of truth) rather than storing
+  a redundant copy per (unit, lore)."
+  [conn lore-key]
+  (mapv (fn [{:keys [key eid name mana-cost cost]}]
+          {:key       key
+           :eid       eid
+           :name      name
+           :mana-cost (or mana-cost 0)
+           :cost      (or cost 0)})
+        (db/get-spells-for-lore conn lore-key)))
 
 ;; ─── Cost calculation ─────────────────────────────────────────────────────────
 
@@ -538,7 +541,7 @@
         passive-spells                                                       (filterv #(= 0 (:cost %)) all-spells)
         draftable-spells-v                                                   (filterv #(pos? (:cost %)) all-spells)
         items                                                                (db/get-items-for-unit conn unit-eid)
-        lores                                                                (mapv hydrate-lore (db/get-lores-for-unit conn unit-eid))]
+        lores                                                                (vec (db/get-lores-for-unit conn unit-eid))]
     (assoc unit
            :type                :draft/unit
            :draft-eid           draft-eid
@@ -593,11 +596,15 @@
 
 (defn- apply-lore-overrides
   "If lore-key identifies one of the unit's lores, replace
-  :draftable-spells with the spells resolved from that lore's
-  :draftable-spell-keys, assoc :lore-portrait-key to the lore's
-  portrait_key (so the template portrait URL swaps), and mark :selected
-  on each lore. Always assocs :lore (raw key) so the template can
-  pre-check the radio."
+  :draftable-spells with the canonical spell pool for that lore (fetched
+  from spell_lore), assoc :lore-portrait-key to the lore's portrait_key
+  (so the template portrait URL swaps), and mark :selected on each lore.
+  Always assocs :lore (raw key) so the template can pre-check the radio.
+
+  The spell pool for a lore is invariant across units — every unit that
+  can access Lore of Fire drafts from the same six Fire spells. Units
+  that historically drafted a reduced subset are modeled as accessing a
+  different (character-specific) lore, not a sub-selection of the main."
   [conn unit lore-key]
   (let [lores    (or (:lores unit) [])
         marked   (mapv (fn [l] (assoc l :selected (= lore-key (:key l)))) lores)
@@ -605,8 +612,7 @@
         unit'    (assoc unit :lores marked :lore lore-key)]
     (if-not selected
       unit'
-      (let [spell-keys (:draftable-spell-keys selected)
-            spells     (or (hydrate-spell-keys conn spell-keys) [])]
+      (let [spells (lore-spells conn lore-key)]
         (assoc unit'
                :draftable-spells  (filterv #(pos? (:cost %)) spells)
                :passive-spells    (filterv #(= 0 (:cost %)) spells)

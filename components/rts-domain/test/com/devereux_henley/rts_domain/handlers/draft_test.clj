@@ -661,22 +661,32 @@
 ;; --- lore overrides ----------------------------------------------------------
 
 (def ^:private fire-lore
-  {:id                   94
-   :eid                  (UUID/fromString "f100005e-0000-0000-0000-000000000000")
-   :key                  "wh_main_lore_fire"
-   :name                 "Lore of Fire"
-   :cost                 0
-   :portrait-key         "000a0006-0000-4000-8000-000000000000"
-   :draftable-spell-keys "[\"fire_spell_a\",\"fire_spell_b\"]"})
+  {:id           94
+   :eid          (UUID/fromString "f100005e-0000-0000-0000-000000000000")
+   :key          "wh_main_lore_fire"
+   :name         "Lore of Fire"
+   :cost         0
+   :portrait-key "000a0006-0000-4000-8000-000000000000"})
 
 (def ^:private life-lore
-  {:id                   84
-   :eid                  (UUID/fromString "f1000054-0000-0000-0000-000000000000")
-   :key                  "wh_dlc05_lore_life"
-   :name                 "Lore of Life"
-   :cost                 0
-   :portrait-key         "000a0009-0000-4000-8000-000000000000"
-   :draftable-spell-keys "[\"life_spell_a\",\"life_spell_b\"]"})
+  {:id           84
+   :eid          (UUID/fromString "f1000054-0000-0000-0000-000000000000")
+   :key          "wh_dlc05_lore_life"
+   :name         "Lore of Life"
+   :cost         0
+   :portrait-key "000a0009-0000-4000-8000-000000000000"})
+
+;; Stub the canonical lore→spells lookup used by apply-lore-overrides.
+;; Each lore returns two fake spells with positive cost so they end up
+;; classified as :draftable-spells.
+(def ^:private lore-spell-map
+  {"wh_main_lore_fire"  ["fire_spell_a" "fire_spell_b"]
+   "wh_dlc05_lore_life" ["life_spell_a" "life_spell_b"]})
+
+(defn- stub-lore-spells
+  [_ lore-key]
+  (mapv (fn [k] {:key k :eid (UUID/randomUUID) :name k :mana-cost 8 :cost 60})
+        (get lore-spell-map lore-key [])))
 
 (def ^:private lore-unit
   {:eid                (UUID/fromString "000a0004-0000-4000-8000-000000000000")
@@ -703,7 +713,8 @@
                 data-access.contract/get-spells-by-keys    stub-spell-lookup
                 data-access.contract/get-items-for-unit    (fn [_ _] [])
                 data-access.contract/get-mounts-for-unit   (fn [_ _] [])
-                data-access.contract/get-lores-for-unit    (fn [_ _] [fire-lore life-lore])]
+                data-access.contract/get-lores-for-unit    (fn [_ _] [fire-lore life-lore])
+                data-access.contract/get-spells-for-lore   stub-lore-spells]
     (let [unit (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)]
       (is (= [] (:draftable-spells unit)))
       (is (nil? (:lore-portrait-key unit)))
@@ -718,7 +729,8 @@
                 data-access.contract/get-spells-by-keys    stub-spell-lookup
                 data-access.contract/get-items-for-unit    (fn [_ _] [])
                 data-access.contract/get-mounts-for-unit   (fn [_ _] [])
-                data-access.contract/get-lores-for-unit    (fn [_ _] [fire-lore life-lore])]
+                data-access.contract/get-lores-for-unit    (fn [_ _] [fire-lore life-lore])
+                data-access.contract/get-spells-for-lore   stub-lore-spells]
     (let [result (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid
                                                         {:mount     nil
                                                          :lore      "wh_main_lore_fire"
@@ -753,7 +765,8 @@
                   data-access.contract/get-abilities-by-keys    (fn [_ _] {})
                   data-access.contract/get-items-for-unit       (fn [_ _] [])
                   data-access.contract/get-mounts-for-unit      (fn [_ _] [])
-                  data-access.contract/get-lores-for-unit       (fn [_ _] [fire-lore life-lore])]
+                  data-access.contract/get-lores-for-unit       (fn [_ _] [fire-lore life-lore])
+                  data-access.contract/get-spells-for-lore      stub-lore-spells]
       (let [result    (handlers.draft/update-unit-in-draft test-deps test-draft-eid entry-eid "main"
                                                            {:mount     nil
                                                             :lore      "wh_dlc05_lore_life"

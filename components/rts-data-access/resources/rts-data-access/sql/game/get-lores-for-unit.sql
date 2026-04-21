@@ -4,8 +4,7 @@ SELECT
   l.key,
   l.name,
   ul.cost,
-  ul.portrait_key,
-  ul.draftable_spell_keys
+  ul.portrait_key
   FROM lore l
   JOIN unit_lore ul ON ul.lore_id = l.id
   JOIN unit u ON u.id = ul.unit_id

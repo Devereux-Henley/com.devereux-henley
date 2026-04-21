@@ -109,25 +109,33 @@
            "unit.html"
            (fn [data request]
              (let [{:keys [stats abilities draftable-spells]} (domain/parse-unit-statistics (:unit-statistics data))
-                   lores                                      (mapv domain/hydrate-lore
-                                                                    (domain/get-lores-for-unit dependencies (:eid data)))
+                   lores                                      (vec (domain/get-lores-for-unit dependencies (:eid data)))
                    ;; ?lore=<key> toggles which lore's spell pool + portrait
                    ;; render; nil → base unit's draftable-spells + default portrait.
                    selected-lore-key                          (not-empty (get-in request [:parameters :query :lore]))
                    selected-lore                              (when selected-lore-key
                                                                 (first (filter #(= selected-lore-key (:key %)) lores)))
-                   lore-spell-keys                            (when selected-lore
-                                                                (:draftable-spell-keys selected-lore))
-                   spell-keys-to-show                         (or lore-spell-keys draftable-spells)
-                   key->spell                                 (domain/get-spells-by-keys dependencies spell-keys-to-show)
+                   ;; When a lore is selected, derive spells from the canonical
+                   ;; spell_lore junction (one source of truth for the whole
+                   ;; lore). Otherwise fall back to the unit's own
+                   ;; draftable-spells from unit_statistics.
+                   resolved-spells                            (if selected-lore
+                                                                (mapv (fn [{:keys [key eid name mana-cost cost]}]
+                                                                        {:name      name
+                                                                         :key       key
+                                                                         :eid       eid
+                                                                         :mana-cost mana-cost
+                                                                         :cost      cost})
+                                                                      (domain/get-spells-for-lore dependencies selected-lore-key))
+                                                                (let [key->spell (domain/get-spells-by-keys dependencies draftable-spells)]
+                                                                  (mapv (fn [k]
+                                                                          (let [spell (get key->spell k)]
+                                                                            {:name      (or (:name spell) k)
+                                                                             :eid       (:eid spell)
+                                                                             :mana-cost (:mana-cost spell)
+                                                                             :cost      (:cost spell)}))
+                                                                        draftable-spells)))
                    key->ability                               (domain/get-abilities-by-keys dependencies abilities)
-                   resolved-spells                            (mapv (fn [k]
-                                                                      (let [spell (get key->spell k)]
-                                                                        {:name      (or (:name spell) k)
-                                                                         :eid       (:eid spell)
-                                                                         :mana-cost (:mana-cost spell)
-                                                                         :cost      (:cost spell)}))
-                                                                    spell-keys-to-show)
                    resolved-abilities                         (mapv (fn [k]
                                                                       (let [a (get key->ability k)]
                                                                         {:name        (:name a)
