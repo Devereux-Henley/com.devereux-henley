@@ -1,6 +1,7 @@
 SELECT
   d.id,
   d.eid,
+  d.name,
   gm.eid AS game_mode_eid,
   f.eid AS faction_eid,
   d.player_sub,

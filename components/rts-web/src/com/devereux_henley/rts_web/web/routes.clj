@@ -263,16 +263,25 @@
                            500 {:body domain/draft-error-response}}
               :handler    (integrant.core/ref ::web.draft/draft-remove-unit)}}]
    ["/draft/:eid"
-    {:name :draft/by-eid
-     :put  {:summary    "Creates a draft with the given eid and version."
-            :openapi    {:tags         ["draft"]
-                         :produces     ["application/json" "application/htmx+html"]
-                         :operation-id "draft/create"}
-            :parameters {:path  schema.contract/id-path-parameter
-                         :query schema.contract/version-query-parameter
-                         :body  domain/create-draft-specification}
-            :responses  {201 {:body domain/draft-resource}}
-            :handler    (integrant.core/ref ::web.draft/create-draft)}}]
+    {:name  :draft/by-eid
+     :put   {:summary    "Creates a draft with the given eid and version."
+             :openapi    {:tags         ["draft"]
+                          :produces     ["application/json" "application/htmx+html"]
+                          :operation-id "draft/create"}
+             :parameters {:path  schema.contract/id-path-parameter
+                          :query schema.contract/version-query-parameter
+                          :body  domain/create-draft-specification}
+             :responses  {201 {:body domain/draft-resource}}
+             :handler    (integrant.core/ref ::web.draft/create-draft)}
+     :patch {:summary    "Applies a partial update to a draft (currently only :name)."
+             :openapi    {:tags         ["draft"]
+                          :produces     ["application/json" "application/htmx+html"]
+                          :operation-id "draft/update"}
+             :parameters {:path schema.contract/id-path-parameter
+                          :body domain/update-draft-specification}
+             :responses  {200 {:body domain/draft-resource}
+                          500 {:body domain/draft-error-response}}
+             :handler    (integrant.core/ref ::web.draft/update-draft)}}]
 
    ["/tournament"
     [""

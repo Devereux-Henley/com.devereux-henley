@@ -429,7 +429,8 @@ a:hover:has(img) {
 /* Page layout: army builder (fixed top) + roster/panel (scrollable bottom) */
 .draft-page {
   display: grid;
-  grid-template-rows: auto 1fr;
+  /* Campaign nameplate + Army Builder + scrollable roster/stats column. */
+  grid-template-rows: auto auto 1fr;
   /* Fill the full scroll height app-content offers us. app-content owns
      the viewport-minus-navbar sizing now, so taking 100% here prevents a
      4px overflow (which would otherwise show a hairline app-content
@@ -437,6 +438,143 @@ a:hover:has(img) {
   height: 100%;
   overflow: hidden;
   background-color: #0a0806;
+}
+
+/* ─── Campaign nameplate ────────────────────────────────────────────────
+   Single-row bronze plaque above the Army Builder. The draft's identity
+   is the first thing the eye lands on after the navbar. Input reads as
+   a heading; the entire surface stays restrained so it doesn't fight
+   the red-gradient section banners below it. */
+
+.draft-nameplate {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  min-height: 2.75rem;
+  padding: 0 var(--space-6);
+  background:
+    linear-gradient(180deg,
+                    color-mix(in srgb, var(--color-neutral-200) 65%, transparent) 0%,
+                    color-mix(in srgb, var(--color-neutral-100) 90%, transparent) 100%);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary-500) 30%, var(--color-border));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-primary-700) 12%, transparent);
+}
+
+.draft-nameplate::before,
+.draft-nameplate::after {
+  /* Top + bottom hairlines — a drafted double rule that echoes the
+     navbar's own ::after treatment elsewhere in the shell. */
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  pointer-events: none;
+}
+.draft-nameplate::before {
+  top: 0;
+  background: linear-gradient(90deg,
+                              transparent 0%,
+                              color-mix(in srgb, var(--color-primary-600) 55%, transparent) 40%,
+                              color-mix(in srgb, var(--color-primary-600) 55%, transparent) 60%,
+                              transparent 100%);
+}
+.draft-nameplate::after {
+  bottom: -3px;
+  background: color-mix(in srgb, var(--color-primary-500) 18%, transparent);
+}
+
+.draft-nameplate-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding-left: var(--space-4);
+}
+
+.draft-nameplate-field::before {
+  /* Heraldic gold bookmark — matches .lore-select-field::before so the
+     two themed controls feel like siblings. */
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  background: linear-gradient(180deg,
+                              color-mix(in srgb, var(--color-primary-700) 90%, transparent),
+                              color-mix(in srgb, var(--color-primary-500) 45%, transparent));
+}
+
+.draft-nameplate-input {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-2) 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font-family: var(--font-family-heading);
+  font-size: 1rem;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-primary-800) 85%, var(--color-neutral-900));
+  line-height: 1.3;
+  caret-color: var(--color-primary-600);
+  outline: none;
+  /* Gold underline that grows in on focus. */
+  background-image: linear-gradient(90deg,
+                                    color-mix(in srgb, var(--color-primary-600) 80%, transparent),
+                                    color-mix(in srgb, var(--color-primary-500) 30%, transparent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0 1px;
+  transition: background-size 180ms ease-out, color 140ms ease;
+}
+
+.draft-nameplate-input::placeholder {
+  font-family: var(--font-family-base);
+  font-style: italic;
+  font-weight: var(--font-weight-normal);
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: color-mix(in srgb, var(--color-text-muted) 80%, var(--color-neutral-900));
+  opacity: 1;
+}
+
+.draft-nameplate-input:hover {
+  color: var(--color-primary-800);
+}
+
+.draft-nameplate-input:focus-visible {
+  color: var(--color-primary-800);
+  background-size: 100% 1px;
+}
+
+.draft-nameplate-saved {
+  flex-shrink: 0;
+  font-family: var(--font-family-heading);
+  font-size: 0.7rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-success-600) 85%, var(--color-neutral-900));
+  opacity: 0;
+  transform: translateY(0);
+  pointer-events: none;
+}
+
+.draft-nameplate--saved .draft-nameplate-saved {
+  animation: draft-nameplate-saved-pulse 1.4s ease forwards;
+}
+
+@keyframes draft-nameplate-saved-pulse {
+  0%   { opacity: 0;   transform: translateY(2px); }
+  18%  { opacity: 1;   transform: translateY(0); }
+  70%  { opacity: 1;   transform: translateY(0); }
+  100% { opacity: 0;   transform: translateY(-2px); }
 }
 
 /* ─── Army Builder ───────────────────────────────────────────────────────── */

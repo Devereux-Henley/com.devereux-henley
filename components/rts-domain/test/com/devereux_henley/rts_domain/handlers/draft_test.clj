@@ -185,6 +185,65 @@
       (handlers.draft/create-draft test-deps test-draft)
       (is (= (:created-at @captured) (:updated-at @captured))))))
 
+;; --- display name ---
+
+(def ^:private named-draft
+  (assoc test-draft
+         :name               "Teclis Expeditionary Force"
+         :faction-name       "High Elves"
+         :created-at-display "04/21/2026"))
+
+(def ^:private unnamed-draft
+  (assoc test-draft
+         :name               nil
+         :faction-name       "High Elves"
+         :created-at-display "04/21/2026"))
+
+(deftest get-draft-by-eid-uses-custom-name-for-display
+  (with-redefs [data-access.contract/get-draft-by-eid (fn [_ _] named-draft)]
+    (is (= "Teclis Expeditionary Force"
+           (:display-name (handlers.draft/get-draft-by-eid test-deps test-draft-eid))))))
+
+(deftest get-draft-by-eid-falls-back-to-faction-date-default
+  (with-redefs [data-access.contract/get-draft-by-eid (fn [_ _] unnamed-draft)]
+    (is (= "High Elves draft 04/21/2026"
+           (:display-name (handlers.draft/get-draft-by-eid test-deps test-draft-eid))))))
+
+(deftest get-draft-by-eid-treats-blank-name-as-default
+  (with-redefs [data-access.contract/get-draft-by-eid (fn [_ _] (assoc unnamed-draft :name "   "))]
+    (is (= "High Elves draft 04/21/2026"
+           (:display-name (handlers.draft/get-draft-by-eid test-deps test-draft-eid))))))
+
+(deftest get-drafts-for-player-by-game-attaches-display-name-to-each
+  (with-redefs [data-access.contract/get-drafts-for-player-by-game
+                (fn [_ _ _] [named-draft unnamed-draft])]
+    (let [results (handlers.draft/get-drafts-for-player-by-game test-deps test-player-sub (UUID/randomUUID))]
+      (is (= ["Teclis Expeditionary Force" "High Elves draft 04/21/2026"]
+             (mapv :display-name results))))))
+
+;; --- update-draft ---
+
+(deftest update-draft-persists-trimmed-name-and-recomputes-display
+  (let [captured (atom nil)]
+    (with-redefs [data-access.contract/update-draft
+                  (fn [_ _eid updates]
+                    (reset! captured updates)
+                    (assoc unnamed-draft :name (:name updates)))]
+      (let [result (handlers.draft/update-draft test-deps test-draft-eid {:name "  Avelorn Corps  "})]
+        (is (= "Avelorn Corps" (:name @captured)))
+        (is (= "Avelorn Corps" (:display-name result)))
+        (is (= :game/draft (:type result)))))))
+
+(deftest update-draft-with-empty-name-clears-the-column
+  (let [captured (atom :sentinel)]
+    (with-redefs [data-access.contract/update-draft
+                  (fn [_ _eid updates]
+                    (reset! captured updates)
+                    (assoc unnamed-draft :name nil))]
+      (let [result (handlers.draft/update-draft test-deps test-draft-eid {:name "   "})]
+        (is (nil? (:name @captured)))
+        (is (= "High Elves draft 04/21/2026" (:display-name result)))))))
+
 ;; --- get-drafts-for-player ---
 
 (deftest get-drafts-for-player-assigns-type-to-each-draft

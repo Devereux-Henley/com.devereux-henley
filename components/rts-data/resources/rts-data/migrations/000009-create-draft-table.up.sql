@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS draft (
   id INTEGER PRIMARY KEY ASC,
   eid TEXT NOT NULL,
+  name TEXT,
   game_mode_id INTEGER NOT NULL,
   faction_id INTEGER NOT NULL,
   player_sub TEXT NOT NULL,
