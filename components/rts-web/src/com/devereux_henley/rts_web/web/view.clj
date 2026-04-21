@@ -1,13 +1,33 @@
 (ns com.devereux-henley.rts-web.web.view
   (:require
    [clojure.java.io :as io]
+   [clojure.string :as string]
    [com.devereux-henley.rts-domain.contract :as domain]
+   [com.devereux-henley.rts-web.skin :as skin]
    [com.devereux-henley.rts-web.web.game :as web.game]
    [com.devereux-henley.rts-web.web.tournament :as web.tournament]
    [integrant.core]
    [selmer.filters]
    [selmer.parser]
    [taoensso.timbre :as log]))
+
+(defn- active-nav
+  "Derive the navbar section label for the given request URI."
+  [uri]
+  (cond
+    (nil? uri)                        nil
+    (string/includes? uri "/draft")      "drafts"
+    (string/includes? uri "/tournament") "tournaments"
+    (string/includes? uri "/faction")    "atlas"
+    :else                                nil))
+
+(defn base-context
+  "Template context shared across every view — session, active navbar section,
+   and any game-context assembled by the middleware."
+  [request]
+  (merge {:session    (:ory-session request)
+          :active-nav (active-nav (:uri request))}
+         (:game-context request)))
 
 (selmer.filters/add-filter! :not-empty? (comp boolean seq))
 
@@ -16,8 +36,7 @@
   {:status 200
    :body   (selmer.parser/render-file
             (str "rts-web/view/" view-name)
-            (merge {:session (:ory-session request)}
-                   (:game-context request)))})
+            (base-context request))})
 
 (defn standard-entity-view-handler
   [pipeline-fn template-name extra-data-fn request]
@@ -28,9 +47,8 @@
       {:status 200
        :body   (selmer.parser/render-file
                 (str "rts-web/view/" template-name)
-                (merge {:data    data
-                        :session (:ory-session request)}
-                       (:game-context request)
+                (merge (base-context request)
+                       {:data data}
                        (extra-data-fn data request)))})))
 
 (defmethod integrant.core/init-key ::game-context-middleware
@@ -41,14 +59,22 @@
             game     (domain/get-game-by-eid dependencies game-eid)]
         (if game
           (handler (assoc request :game-context {:game-eid game-eid
-                                                 :game     game
+                                                 :game     (assoc game :logo (skin/logo-for-game game-eid))
                                                  :factions (domain/get-factions-for-game dependencies game-eid)
-                                                 :socials  (domain/get-socials-for-game dependencies game-eid)}))
+                                                 :socials  (domain/get-socials-for-game dependencies game-eid)
+                                                 :skin     (skin/skin-for-game game-eid)}))
           {:status 404 :body {:type :missing/resource :name "game" :id game-eid}})))))
 
-(defmethod integrant.core/init-key ::dashboard-view
-  [_init-key _dependencies]
-  (partial standard-view-handler "dashboard.html"))
+(defmethod integrant.core/init-key ::game-selector-view
+  [_init-key dependencies]
+  (fn [request]
+    (let [games (mapv (fn [game]
+                        (assoc game :logo (skin/logo-for-game (:eid game))))
+                      (domain/get-games dependencies))]
+      {:status 200
+       :body   (selmer.parser/render-file
+                "rts-web/view/game-selector.html"
+                (assoc (base-context request) :games games))})))
 
 (defmethod integrant.core/init-key ::game-view
   [_init-key _dependencies]
@@ -150,42 +176,39 @@
 
 (defmethod integrant.core/init-key ::my-drafts-view
   [_init-key dependencies]
-  (fn [{session      :ory-session
-        game-context :game-context
-        :as          _request}]
-    (let [player-sub (get-in session [:identity :id])]
+  (fn [{session :ory-session :as request}]
+    (let [player-sub (get-in session [:identity :id])
+          game-eid   (:game-eid (:game-context request))]
       {:status 200
        :body   (selmer.parser/render-file
                 "rts-web/view/my-drafts.html"
-                (merge {:drafts  (domain/get-drafts-for-player-by-game dependencies player-sub (:game-eid game-context))
-                        :session session}
-                       game-context))})))
+                (assoc (base-context request)
+                       :drafts (domain/get-drafts-for-player-by-game dependencies player-sub game-eid)))})))
+
+(defmethod integrant.core/init-key ::faction-list-view
+  [_init-key _dependencies]
+  (partial standard-view-handler "faction-list.html"))
 
 (defmethod integrant.core/init-key ::game-index-view
   [_init-key _dependencies]
-  (fn [{game-context :game-context
-        session      :ory-session
-        :as          _request}]
+  (fn [request]
     {:status 200
      :body   (selmer.parser/render-file
               "rts-web/view/game-index.html"
-              (merge {:data    (:game game-context)
-                      :session session}
-                     game-context))}))
+              (assoc (base-context request)
+                     :data (:game (:game-context request))))}))
 
 (defmethod integrant.core/init-key ::create-draft-view
   [_init-key dependencies]
-  (fn [{game-context :game-context
-        session      :ory-session
-        :as          _request}]
-    (let [game-modes (domain/get-game-modes-for-game dependencies (:game-eid game-context))]
+  (fn [request]
+    (let [game-eid   (:game-eid (:game-context request))
+          game-modes (domain/get-game-modes-for-game dependencies game-eid)]
       {:status 200
        :body   (selmer.parser/render-file
                 "rts-web/view/create-draft.html"
-                (merge {:game-modes game-modes
-                        :session    session
-                        :draft-eid  (random-uuid)}
-                       game-context))})))
+                (assoc (base-context request)
+                       :game-modes game-modes
+                       :draft-eid  (random-uuid)))})))
 
 (defmethod integrant.core/init-key ::logout-view
   [_init-key {:keys [auth-hostname]}]
@@ -195,10 +218,9 @@
 
 (defmethod integrant.core/init-key ::tournament-list-view
   [_init-key dependencies]
-  (fn [{game-context :game-context
-        session      :ory-session
-        :as          _request}]
-    (let [tournaments (domain/get-tournaments-for-game dependencies (:game-eid game-context))
+  (fn [request]
+    (let [game-eid    (:game-eid (:game-context request))
+          tournaments (domain/get-tournaments-for-game dependencies game-eid)
           enriched    (mapv (fn [t]
                               (let [state   (domain/get-tournament-state dependencies (:eid t))
                                     entries (domain/get-entries dependencies (:eid t))]
@@ -209,23 +231,18 @@
       {:status 200
        :body   (selmer.parser/render-file
                 "rts-web/view/tournament-list.html"
-                (merge {:tournaments enriched
-                        :session     session}
-                       game-context))})))
+                (assoc (base-context request) :tournaments enriched))})))
 
 (defmethod integrant.core/init-key ::create-tournament-view
   [_init-key _dependencies]
-  (fn [{game-context :game-context
-        session      :ory-session
-        :as          _request}]
+  (fn [request]
     {:status 200
      :body   (selmer.parser/render-file
               "rts-web/view/create-tournament.html"
-              (merge {:session          session
-                      :tournament-eid   (random-uuid)
-                      :timezones        domain/common-timezones
-                      :default-timezone domain/default-timezone}
-                     game-context))}))
+              (assoc (base-context request)
+                     :tournament-eid   (random-uuid)
+                     :timezones        domain/common-timezones
+                     :default-timezone domain/default-timezone))}))
 
 (defmethod integrant.core/init-key ::tournament-phase-form-view
   [_init-key _dependencies]
@@ -235,9 +252,7 @@
        :headers {"Content-Type" "text/html; charset=utf-8"}
        :body    (selmer.parser/render-file
                  "rts-web/view/tournament-phase-row.html"
-                 (merge {:session        (:ory-session request)
-                         :tournament-eid eid}
-                        (:game-context request)))})))
+                 (assoc (base-context request) :tournament-eid eid))})))
 
 (defmethod integrant.core/init-key ::tournament-view
   [_init-key dependencies]

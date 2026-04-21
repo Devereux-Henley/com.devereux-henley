@@ -1,0 +1,36 @@
+{% extends "rts-web/template/entrypoint.html" %}
+
+{% block title %}Factions | {{game.name}} | RTS-UI{% endblock %}
+
+{% block content %}
+<div class="faction-list-page">
+    <header class="faction-list-header">
+        <h2 id="faction-list-heading">Factions</h2>
+        <p class="faction-list-lede">Pick a faction to browse its units, lords, and abilities.</p>
+    </header>
+
+    <section class="faction-list-grid" aria-labelledby="faction-list-heading">
+        {% if factions %}
+        {% for faction in factions %}
+        <a class="faction-card"
+           hx-get="/api/game/faction/{{faction.eid}}?embed=units-by-category"
+           hx-target="#content"
+           hx-push-url="/view/game/{{game-eid}}/faction/{{faction.eid}}/index.html"
+           href="/view/game/{{game-eid}}/faction/{{faction.eid}}/index.html"
+           aria-label="{{faction.name}}">
+            <div class="faction-card-body">
+                <h3 class="faction-card-name">{{faction.name}}</h3>
+                {% if faction.description %}
+                <p class="faction-card-desc">{{faction.description}}</p>
+                {% endif %}
+            </div>
+        </a>
+        {% endfor %}
+        {% else %}
+        <div class="faction-list-empty">
+            <p>No factions are configured for this game.</p>
+        </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+/* ==========================================================================
+   Warhammer III skin — optional override for the War Room default theme.
+   Load AFTER colors_and_type.css to take effect.
+
+     <link rel="stylesheet" href="../colors_and_type.css">
+     <link rel="stylesheet" href="../themes/warhammer3.css">
+
+   Restores the heraldic-gold palette + Cinzel/Crimson type pairing that
+   the original rts-web app used. Palette only — cartographic textures
+   (bg-contour, bg-grid) still work underneath.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+
+:root {
+  /* Iron-black & parchment — warmer than the default War Room ink */
+  --color-neutral-50:  #0d0b08;
+  --color-neutral-100: #181410;
+  --color-neutral-150: #1d1812;
+  --color-neutral-200: #231e18;
+  --color-neutral-300: #352e24;
+  --color-neutral-400: #56493a;
+  --color-neutral-500: #7d6e58;
+  --color-neutral-600: #a39278;
+  --color-neutral-700: #c8b898;
+  --color-neutral-800: #e0d2b4;
+  --color-neutral-900: #f2ecd8;
+
+  /* Heraldic gold primary */
+  --color-primary-50:  #1a1100;
+  --color-primary-100: #2e1e04;
+  --color-primary-200: #4a3010;
+  --color-primary-300: #6a461a;
+  --color-primary-400: #8e6224;
+  --color-primary-500: #b8852e;
+  --color-primary-600: #c4943a;
+  --color-primary-700: #d6ab58;
+  --color-primary-800: #e8c880;
+  --color-primary-900: #f4e0b0;
+
+  /* Field-green secondary, blood-red danger */
+  --color-secondary-500: #4a7c59;
+  --color-secondary-600: #5d9670;
+  --color-secondary-700: #7fb58f;
+
+  --color-success-500: #4a7c59;
+  --color-success-600: #5d9670;
+  --color-warning-500: #c4943a;
+  --color-warning-600: #d6ab58;
+  --color-danger-400:  #d83030;
+  --color-danger-500:  #b52424;
+  --color-danger-600:  #8a1818;
+
+  --color-navbar-bg: #090705;
+
+  /* Heraldic type pairing */
+  --font-family-heading: 'Cinzel', 'Trajan Pro', 'Times New Roman', serif;
+  --font-family-base:    'Crimson Text', 'Garamond', 'Georgia', serif;
+  --font-family-numeric: 'Cinzel', 'Georgia', serif;
+
+  /* Slightly larger type for the more ornate serifs */
+  --font-size-base: 1.0625rem;
+
+  /* Gold focus glow instead of ink-black outline */
+  --shadow-focus: 0 0 0 1px color-mix(in srgb, var(--color-primary-600) 40%, transparent),
+                  0 0 0 4px color-mix(in srgb, var(--color-primary-600) 15%, transparent);
+}
+
+/* Headings all-caps + wide tracking for the heraldic treatment */
+:root h1, :root h2, :root h3, :root h4, :root h5, :root h6 {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}

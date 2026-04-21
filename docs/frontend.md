@@ -491,10 +491,9 @@ HTMX navigations that swap only `#content` do not update `document.title` automa
 <section id="game-browser" …>…</section>
 ```
 
-`hx-boost` navigations (plain `<a>` tags within `<main hx-boost="true">`) return the full page HTML; HTMX 1.x extracts `<title>` from the response automatically, so no OOB element is needed for those.
+Plain `<a>` tags trigger a browser-native navigation and render the full entrypoint, so `{% block title %}` in the view template handles the title.
 
 | Navigation type | Title update mechanism |
 |---|---|
 | Explicit `hx-get` + `hx-target="#content"` | OOB `<title id="page-title" hx-swap-oob="true">` in the fragment |
-| `hx-boost` link (full-page response) | HTMX extracts `<title>` from the response automatically |
-| Direct URL load | `{% block title %}` in the view template |
+| Plain `<a>` / full-page load | `{% block title %}` in the view template |

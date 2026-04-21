@@ -41,13 +41,14 @@
 
 (def view-configuration
   (merge
-   (handlers :com.devereux-henley.rts-web.web.view/dashboard-view
+   (handlers :com.devereux-henley.rts-web.web.view/game-selector-view
              :com.devereux-henley.rts-web.web.view/game-view
              :com.devereux-henley.rts-web.web.view/about-view
              :com.devereux-henley.rts-web.web.view/contact-view
              :com.devereux-henley.rts-web.web.view/game-context-middleware
              :com.devereux-henley.rts-web.web.view/game-index-view
              :com.devereux-henley.rts-web.web.view/faction-view
+             :com.devereux-henley.rts-web.web.view/faction-list-view
              :com.devereux-henley.rts-web.web.view/unit-view
              :com.devereux-henley.rts-web.web.view/draft-view
              :com.devereux-henley.rts-web.web.view/my-drafts-view

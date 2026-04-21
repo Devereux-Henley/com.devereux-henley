@@ -8,76 +8,59 @@
         <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/json-enc.js"></script>
         <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
         <link rel="stylesheet" href="/resourcekit/assets/tokens.css"/>
+        <link rel="stylesheet" href="/resourcekit/assets/reset.css"/>
+        <link rel="stylesheet" href="/resourcekit/assets/base.css"/>
         <link rel="stylesheet" href="/resourcekit/assets/framework.css"/>
         <link rel="stylesheet" href="/style/app.css"/>
+        {% ifequal skin "warhammer3" %}
+        <link rel="stylesheet" href="/style/themes/warhammer3.css"/>
+        <link rel="stylesheet" href="/style/themes/warhammer3-app.css"/>
+        {% endifequal %}
     </head>
     <body class="app-shell" hx-headers='{"Accept": "application/htmx+html"}'>
         <a class="skip-link sr-only" href="#content">Skip to main content</a>
         <nav class="navbar" aria-label="Main navigation">
+            <div class="navbar-brand-cluster">
+                <a class="navbar-brand" href="/" aria-label="RTS-Hub home">
+                    <img src="/image/rts-hub-wordmark.svg" class="navbar-brand-mark" alt="RTS-Hub"/>
+                </a>
+                {% if game-eid %}
+                <a class="navbar-game" href="/view/game/{{game-eid}}/index.html" aria-label="Go to {{game.name}} home">
+                    {% if game.logo %}
+                    <img class="navbar-game-logo" src="/image/{{game.logo}}" alt=""/>
+                    {% endif %}
+                    <span class="navbar-game-name">{{game.name}}</span>
+                </a>
+                {% endif %}
+            </div>
             <div class="cluster cluster-2">
-                <div id="game-icon" style="width:2rem;height:2rem;flex-shrink:0;">
-                    <img id="game-icon-img" alt="" style="width:2rem;height:2rem;object-fit:contain;display:none;" />
-                </div>
-                <div class="dropdown">
-                    <button class="btn btn-ghost btn-sm nav-item-with-icon"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                            aria-controls="game-menu"
-                            _="on click toggle @hidden on #game-menu
-                               then if #game-menu does not match [hidden]
-                                 set my @aria-expanded to 'true'
-                               else
-                                 set my @aria-expanded to 'false'
-                               end
-                               on click elsewhere add @hidden to #game-menu
-                               then set my @aria-expanded to 'false'">
-                        {% include "rts-web/view/icon/games.html" %}
-                        Games
-                    </button>
-                    <div class="dropdown-menu" id="game-menu" role="menu" hidden>
-                        <a class="dropdown-item"
-                           role="menuitem"
-                           id="game-link-eea787d7-1065-45eb-a3f6-e26f32c294a1"
-                           data-icon="/image/wh3_logo.webp"
-                           hx-get="/api/game/eea787d7-1065-45eb-a3f6-e26f32c294a1?embed=factions&amp;embed=socials"
-                           hx-target="#content"
-                           hx-push-url="/view/game/eea787d7-1065-45eb-a3f6-e26f32c294a1/index.html"
-                           href="/view/game/eea787d7-1065-45eb-a3f6-e26f32c294a1/index.html">
-                            Total War: Warhammer III
-                        </a>
-                    </div>
-                </div>
                 <div id="game-nav" class="cluster cluster-2">
                     {% block game-nav %}
                     {% if factions %}
                     <div class="dropdown">
-                        <button class="nav-item game-nav-item nav-item-with-icon"
-                                id="factions-dropdown-btn"
+                        <button class="nav-item game-nav-item nav-item-with-icon{% ifequal active-nav "atlas" %} active{% endifequal %}"
+                                id="atlas-dropdown-btn"
                                 aria-haspopup="true"
                                 aria-expanded="false"
-                                aria-controls="factions-menu"
-                                _="on click toggle @hidden on #factions-menu
-                                   then if #factions-menu does not match [hidden]
+                                aria-controls="atlas-menu"
+                                _="on click toggle @hidden on #atlas-menu
+                                   then if #atlas-menu does not match [hidden]
                                      set my @aria-expanded to 'true'
                                    else
                                      set my @aria-expanded to 'false'
                                    end
-                                   on click elsewhere add @hidden to #factions-menu
+                                   on click elsewhere add @hidden to #atlas-menu
                                    then set my @aria-expanded to 'false'">
-                            {% include "rts-web/view/icon/sword.html" %}
-                            Factions
+                            {% include "rts-web/view/icon/book.html" %}
+                            Atlas
                         </button>
-                        <div class="dropdown-menu" id="factions-menu" role="menu" hidden>
-                            {% for faction in factions %}
-                            <a class="dropdown-item"
+                        <div class="dropdown-menu" id="atlas-menu" role="menu" hidden>
+                            <a class="dropdown-item dropdown-item-with-icon"
                                role="menuitem"
-                               hx-get="/api/game/faction/{{faction.eid}}?embed=units-by-category"
-                               hx-target="#content"
-                               hx-push-url="/view/game/{{game-eid}}/faction/{{faction.eid}}/index.html"
-                               href="/view/game/{{game-eid}}/faction/{{faction.eid}}/index.html">
-                                {{faction.name}}
+                               href="/view/game/{{game-eid}}/faction/index.html">
+                                {% include "rts-web/view/icon/sword.html" %}
+                                Factions
                             </a>
-                            {% endfor %}
                         </div>
                     </div>
                     {% endif %}
@@ -85,7 +68,7 @@
                 </div>
                 <div id="game-drafts-link">
                     {% if all session game-eid %}
-                    <a class="nav-item nav-item-with-icon" href="/view/game/{{game-eid}}/draft/me.html">
+                    <a class="nav-item nav-item-with-icon{% ifequal active-nav "drafts" %} active{% endifequal %}" href="/view/game/{{game-eid}}/draft/me.html">
                         {% include "rts-web/view/icon/drafts.html" %}
                         My Drafts
                     </a>
@@ -93,7 +76,7 @@
                 </div>
                 <div id="game-tournaments-link">
                     {% if game-eid %}
-                    <a class="nav-item nav-item-with-icon" href="/view/game/{{game-eid}}/tournament/index.html">
+                    <a class="nav-item nav-item-with-icon{% ifequal active-nav "tournaments" %} active{% endifequal %}" href="/view/game/{{game-eid}}/tournament/index.html">
                         {% include "rts-web/view/icon/tournaments.html" %}
                         Tournaments
                     </a>
@@ -144,15 +127,7 @@
         </nav>
         {% block header %}
         {% endblock %}
-        <main class="app-content" id="content" hx-boost="true">
-            {% if game-eid %}
-            <div aria-hidden="true" hidden _="on load
-                           set gameLink to #game-link-{{game-eid}}
-                           if gameLink
-                             set @src of #game-icon-img to gameLink's @data-icon
-                             set the style.display of #game-icon-img to 'block'
-                           end"></div>
-            {% endif %}
+        <main class="app-content" id="content">
             {% block content %}
             {% endblock %}
         </main>

@@ -1,18 +1,18 @@
 # Flow: Game Browsing
 
-Covers navigating from the game index through factions and unit rosters. Tested by `components/e2e/tests/game-browsing.spec.js`.
+Covers navigating from the game selector through a game's home, factions list, faction detail, and unit rosters. Tested by `components/e2e/tests/game-browsing.spec.js`.
 
 ## Game index
 
-Selecting a game from the Games dropdown navigates to the game index page. The navbar populates with game-context items: the Factions dropdown, My Drafts link, and Tournaments link.
+Selecting a game from the game selector at `/view/game/index.html` navigates to that game's home at `/view/game/:game-eid/index.html`. The navbar brand cluster picks up the active game's logo and name, and the game-scoped nav items (Atlas, My Drafts, Tournaments) become active links. If the game is configured with a skin (see `docs/skins.md`), the Warhammer-style theme CSS loads on this and every other route under `/view/game/:game-eid/`.
 
 ![Game index](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/game-index.png)
 
-## Factions dropdown
+## Factions list
 
-The Factions dropdown lists all factions for the selected game. Each entry navigates to the faction detail page with its unit roster.
+The Atlas dropdown in the navbar exposes a single **Factions** entry, which navigates to `/view/game/:game-eid/faction/index.html`. The page renders a card grid of every faction for the active game, each card linking to its detail page.
 
-![Factions dropdown](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/game-factions-dropdown.png)
+![Factions list](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/game-factions-list.png)
 
 ## Faction page
 
