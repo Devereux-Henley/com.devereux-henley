@@ -55,6 +55,8 @@ body,
   align-items: center;
   padding: 0 var(--space-6);
   height: 3.5rem;
+  flex-shrink: 0;
+  margin: 0;
   background-color: var(--color-navbar-bg);
   border-bottom: 1px solid var(--color-border);
   position: relative;
@@ -85,6 +87,57 @@ body,
   flex-shrink: 0;
   display: block;
 }
+
+.navbar-brand-cluster {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding-right: var(--space-4);
+  border-right: var(--rule-hairline);
+  min-width: 28rem;
+}
+
+.navbar-game {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast);
+}
+
+.navbar-game:hover { color: var(--color-text-strong); }
+
+.navbar-game-logo {
+  width: 1.5rem;
+  height: 1.5rem;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.navbar-game-name {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Reserve width for conditional nav slots so navigating between pages with or
+   without a game context doesn't reflow the navbar. */
+#game-nav              { min-width: 7rem; }
+#game-drafts-link      { min-width: 9rem; }
+#game-tournaments-link { min-width: 10rem; }
+#game-socials          { min-width: 3.5rem; }
+
+.dropdown-label-with-icon,
+.dropdown-item-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.dropdown-label-with-icon .nav-icon,
+.dropdown-item-with-icon .nav-icon { color: var(--color-accent); }
 
 /* Navbar — product rules win over resourcekit nav.css via specificity + !important
    for the subset we intentionally reskin. */
@@ -964,6 +1017,210 @@ h3.draft-category-header {
 }
 .draft-add-btn:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
 .draft-add-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ════════════════════════════════════════════════════════════════════════ */
+/* Game selector                                                            */
+/* ════════════════════════════════════════════════════════════════════════ */
+
+.game-selector-page {
+  height: calc(100vh - 3.5rem);
+  overflow-y: auto;
+  padding: var(--space-8);
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.game-selector-header {
+  margin-bottom: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.game-selector-header h2 {
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-normal);
+  margin: 0;
+  color: var(--color-text-strong);
+}
+
+.game-selector-lede {
+  margin: 0;
+  color: var(--color-text-muted);
+  max-width: 60ch;
+}
+
+.game-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: var(--space-4);
+}
+
+.game-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  position: relative;
+  transition: border-color var(--transition-base), transform var(--transition-base);
+}
+
+.game-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 0; height: 0;
+  border-top: 14px solid var(--color-accent);
+  border-right: 14px solid transparent;
+}
+
+.game-card:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-1px);
+}
+
+.game-card-art {
+  height: 8rem;
+  background:
+    radial-gradient(ellipse at 30% 20%, color-mix(in srgb, var(--color-primary-500) 12%, transparent), transparent 60%),
+    var(--color-neutral-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: var(--rule-hairline);
+}
+
+.game-card-logo {
+  max-width: 70%;
+  max-height: 5rem;
+  object-fit: contain;
+  filter: saturate(0.9);
+}
+
+.game-card-body { padding: var(--space-4); flex: 1; }
+
+.game-card-name {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-normal);
+  margin: 0 0 var(--space-2);
+  line-height: 1.2;
+  color: var(--color-text-strong);
+}
+
+.game-card-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.game-selector-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--space-12) var(--space-4);
+  color: var(--color-text-muted);
+}
+
+/* ════════════════════════════════════════════════════════════════════════ */
+/* Faction list                                                             */
+/* ════════════════════════════════════════════════════════════════════════ */
+
+.faction-list-page {
+  height: calc(100vh - 3.5rem);
+  overflow-y: auto;
+  padding: var(--space-6) var(--space-8) var(--space-12);
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.faction-list-header {
+  margin-bottom: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.faction-list-header h2 {
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-normal);
+  margin: 0;
+  color: var(--color-text-strong);
+}
+
+.faction-list-lede {
+  margin: 0;
+  color: var(--color-text-muted);
+  max-width: 60ch;
+}
+
+.faction-list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: var(--space-4);
+}
+
+.faction-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--transition-base), transform var(--transition-base);
+}
+
+.faction-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 0; height: 0;
+  border-top: 14px solid var(--color-accent);
+  border-right: 14px solid transparent;
+}
+
+.faction-card:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-1px);
+}
+
+.faction-card-body { padding: var(--space-4); flex: 1; }
+
+.faction-card-name {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-normal);
+  margin: 0 0 var(--space-2);
+  line-height: 1.2;
+  color: var(--color-text-strong);
+}
+
+.faction-card-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.faction-list-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--space-12) var(--space-4);
+  color: var(--color-text-muted);
+}
 
 /* ════════════════════════════════════════════════════════════════════════ */
 /* Tournament pages                                                         */

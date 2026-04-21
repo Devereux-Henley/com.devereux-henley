@@ -1,0 +1,39 @@
+{% extends "rts-web/template/entrypoint.html" %}
+
+{% block title %}Choose a game | RTS-UI{% endblock %}
+
+{% block content %}
+<div class="game-selector-page">
+    <header class="game-selector-header">
+        <h2 id="game-selector-heading">Choose a game</h2>
+        <p class="game-selector-lede">Pick a game to browse factions, build armies, and run tournaments.</p>
+    </header>
+
+    <section class="game-selector-grid" aria-labelledby="game-selector-heading">
+        {% if games %}
+        {% for game in games %}
+        <a class="game-card"
+           href="/view/game/{{game.eid}}/index.html"
+           aria-label="{{game.name}}">
+            <div class="game-card-art">
+                <img class="game-card-logo"
+                     src="/image/{{game.logo}}"
+                     alt=""
+                     onerror="this.style.display='none'">
+            </div>
+            <div class="game-card-body">
+                <h3 class="game-card-name">{{game.name}}</h3>
+                {% if game.description %}
+                <p class="game-card-desc">{{game.description}}</p>
+                {% endif %}
+            </div>
+        </a>
+        {% endfor %}
+        {% else %}
+        <div class="game-selector-empty">
+            <p>No games are configured yet.</p>
+        </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

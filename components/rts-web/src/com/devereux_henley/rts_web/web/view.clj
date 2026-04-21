@@ -59,15 +59,22 @@
             game     (domain/get-game-by-eid dependencies game-eid)]
         (if game
           (handler (assoc request :game-context {:game-eid game-eid
-                                                 :game     game
+                                                 :game     (assoc game :logo (skin/logo-for-game game-eid))
                                                  :factions (domain/get-factions-for-game dependencies game-eid)
                                                  :socials  (domain/get-socials-for-game dependencies game-eid)
                                                  :skin     (skin/skin-for-game game-eid)}))
           {:status 404 :body {:type :missing/resource :name "game" :id game-eid}})))))
 
-(defmethod integrant.core/init-key ::dashboard-view
-  [_init-key _dependencies]
-  (partial standard-view-handler "dashboard.html"))
+(defmethod integrant.core/init-key ::game-selector-view
+  [_init-key dependencies]
+  (fn [request]
+    (let [games (mapv (fn [game]
+                        (assoc game :logo (skin/logo-for-game (:eid game))))
+                      (domain/get-games dependencies))]
+      {:status 200
+       :body   (selmer.parser/render-file
+                "rts-web/view/game-selector.html"
+                (assoc (base-context request) :games games))})))
 
 (defmethod integrant.core/init-key ::game-view
   [_init-key _dependencies]
@@ -177,6 +184,10 @@
                 "rts-web/view/my-drafts.html"
                 (assoc (base-context request)
                        :drafts (domain/get-drafts-for-player-by-game dependencies player-sub game-eid)))})))
+
+(defmethod integrant.core/init-key ::faction-list-view
+  [_init-key _dependencies]
+  (partial standard-view-handler "faction-list.html"))
 
 (defmethod integrant.core/init-key ::game-index-view
   [_init-key _dependencies]

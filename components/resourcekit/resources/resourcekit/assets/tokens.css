@@ -26,18 +26,19 @@
   --color-neutral-800: #e2e6eb;   /* body text */
   --color-neutral-900: #f1e9d7;   /* parchment — headings */
 
-  /* ── Primary — "Aged Brass / Amber"
-     Warm yellow-gold. Reads clearly against ink-black; calmer than Riot gold. */
-  --color-primary-50:  #1a1509;
-  --color-primary-100: #2a220e;
-  --color-primary-200: #433516;
-  --color-primary-300: #6a541f;
-  --color-primary-400: #927628;
-  --color-primary-500: #b8933a;
-  --color-primary-600: #c89850;   /* accent */
-  --color-primary-700: #d9b070;   /* hover */
-  --color-primary-800: #e6c792;
-  --color-primary-900: #f1dcb5;
+  /* ── Primary — "Oxidized Copper / Terracotta"
+     Distinctive vs. Blizzard blue & Riot gold. Warm, slightly tacky on
+     purpose. Works on both ink-dark and parchment-light backgrounds. */
+  --color-primary-50:  #1a0f0a;
+  --color-primary-100: #2a180e;
+  --color-primary-200: #432312;
+  --color-primary-300: #6a3a1d;
+  --color-primary-400: #925028;
+  --color-primary-500: #b8613a;
+  --color-primary-600: #c5704a;   /* accent */
+  --color-primary-700: #d58967;   /* hover */
+  --color-primary-800: #e4a98b;
+  --color-primary-900: #f1c9b2;
 
   /* ── Secondary — "Patinated Teal"  (for tags, map strokes, rank marks) */
   --color-secondary-500: #3d6b68;
@@ -73,7 +74,7 @@
   --rule-hairline: 1px solid var(--color-neutral-300);
   --rule-double:   3px double var(--color-neutral-400);
   --grid-stroke:   color-mix(in srgb, var(--color-neutral-400) 28%, transparent);
-  --contour-stroke:color-mix(in srgb, var(--color-primary-600) 18%, transparent);
+  --contour-stroke:color-mix(in srgb, var(--color-primary-600) 22%, transparent);
 
   /* ── Type families */
   --font-family-heading: 'Spectral', 'Source Serif Pro', 'Georgia', serif;

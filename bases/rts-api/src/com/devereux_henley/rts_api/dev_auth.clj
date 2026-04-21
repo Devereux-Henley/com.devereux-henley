@@ -93,7 +93,7 @@
   (fn [{{{:keys [user-id]} :path} :parameters :as _request}]
     (if (contains? users user-id)
       {:status  303
-       :headers {"Location" "/view/dashboard.html"}
+       :headers {"Location" "/view/game/index.html"}
        :cookies {cookie-name (impersonate-cookie user-id)}
        :body    ""}
       {:status 404
@@ -104,7 +104,7 @@
   [_init-key _dependencies]
   (fn [_request]
     {:status  303
-     :headers {"Location" "/view/dashboard.html"}
+     :headers {"Location" "/view/game/index.html"}
      :cookies {cookie-name clear-cookie}
      :body    ""}))
 

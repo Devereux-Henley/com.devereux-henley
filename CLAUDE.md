@@ -184,7 +184,7 @@ Target: **WCAG 2.1 AA**. See `docs/frontend.md` for full patterns with examples.
 
 **HTMX partial swaps (`hx-target="#content"`):**
 - Include `<title id="page-title" hx-swap-oob="true">…</title>` in every resource fragment
-- Full-page responses (hx-boost) pick up the `<title>` automatically
+- Plain `<a>` navigations trigger a full-page load; `{% block title %}` handles the title
 
 **Error fragments:** `role="alert"` on the root element so screen readers announce immediately.
 

@@ -15,7 +15,7 @@
   ["/"
    {:get {:no-doc   true
           :produces ["text/html"]
-          :handler  (fn [_request] {:status 301 :headers {"Location" "/view/dashboard.html"}})}}])
+          :handler  (fn [_request] {:status 301 :headers {"Location" "/view/game/index.html"}})}}])
 
 (def status-route
   ["/status"
@@ -46,9 +46,9 @@
 (def view-routes
   ["/view"
    {:no-doc true}
-   ["/dashboard.html"
+   ["/game/index.html"
     {:get {:produces ["text/html"]
-           :handler  (integrant.core/ref ::web.view/dashboard-view)}}]
+           :handler  (integrant.core/ref ::web.view/game-selector-view)}}]
    ["/game.html"
     {:get {:produces ["text/html"]
            :handler  (integrant.core/ref ::web.view/game-view)}}]
@@ -70,6 +70,10 @@
      {:get {:produces   ["application/htmx+html"]
             :parameters {:path schema.contract/game-id-path-parameter}
             :handler    (integrant.core/ref ::web.view/game-index-view)}}]
+    ["/faction/index.html"
+     {:get {:produces   ["application/htmx+html"]
+            :parameters {:path schema.contract/game-id-path-parameter}
+            :handler    (integrant.core/ref ::web.view/faction-list-view)}}]
     ["/faction/:eid/index.html"
      {:get {:produces   ["application/htmx+html"]
             :parameters {:path schema.contract/game-and-id-path-parameter}
