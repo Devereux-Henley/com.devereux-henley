@@ -60,7 +60,8 @@
    "seed-items.sql"
    "seed-unit-items.sql"
    "seed-mounts.sql"
-   "seed-unit-mounts.sql"])
+   "seed-unit-mounts.sql"
+   "seed-unit-lores.sql"])
 
 (defn seed-db
   "Seeds the database with baseline data. Reads each seed file on every call so

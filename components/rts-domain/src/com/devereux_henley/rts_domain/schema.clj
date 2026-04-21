@@ -448,6 +448,21 @@
                            [:label :string]]]]]
     [:granted-abilities {:optional true} [:sequential draft-ability]]]))
 
+(def draft-lore
+  "Per-(unit, lore) access row. :portrait-key aliases the eid-stem of an
+  on-disk `/card/unit/<stem>.png` that should render when this lore is
+  active. The spell pool itself is NOT stored here — it's fetched from
+  the spell_lore junction when the lore is selected, because the pool
+  is invariant across every unit that can access the lore."
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:key :string]
+    [:name :string]
+    [:cost :int]
+    [:selected {:optional true} :boolean]
+    [:portrait-key {:optional true} [:maybe :string]]]))
+
 (def draft-unit-resource
   "A unit viewed in the context of a specific draft — the full game-unit
    fields (name, stats, abilities, attributes, health/barrier) merged with
@@ -470,6 +485,8 @@
      [:cost [:maybe :int]]
      [:total-cost {:optional true} [:maybe :int]]
      [:mount {:optional true} [:maybe :string]]
+     [:lore {:optional true} [:maybe :string]]
+     [:lore-portrait-key {:optional true} [:maybe :string]]
      [:health {:optional true} [:maybe :int]]
      [:barrier {:optional true} [:maybe :int]]
      [:unit-statistics [:sequential draft-unit-stat]]
@@ -484,6 +501,7 @@
      [:mount-granted-abilities {:optional true} [:sequential draft-ability]]
      [:items {:optional true} [:sequential draft-item]]
      [:mounts {:optional true} [:sequential draft-mount]]
+     [:lores {:optional true} [:sequential draft-lore]]
      [:passive-spells {:optional true} [:sequential draft-spell]]
      [:draftable-spells {:optional true} [:sequential draft-spell]]
      [:has-passives {:optional true} :boolean]
@@ -513,6 +531,7 @@
      [:unit-eid {:model/link :draft-unit/by-eid} :uuid]
      [:section [:enum "main" "reinforcements"]]
      [:mount {:optional true} [:maybe :string]]
+     [:lore {:optional true} [:maybe :string]]
      [:abilities {:optional true} [:sequential :string]]
      [:spells {:optional true} [:sequential :string]]
      [:items {:optional true} [:sequential :string]]
@@ -589,6 +608,7 @@
   (schema.contract/to-schema
    [:map
     [:mount     {:optional true} [:maybe :string]]
+    [:lore      {:optional true} [:maybe :string]]
     [:abilities {:optional true :decode/json scalar-or-seq->vec} [:sequential :string]]
     [:spells    {:optional true :decode/json scalar-or-seq->vec} [:sequential :string]]
     [:items     {:optional true :decode/json scalar-or-seq->vec} [:sequential :string]]]))

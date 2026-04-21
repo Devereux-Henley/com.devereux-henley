@@ -26,6 +26,34 @@
   [rows]
   (into {} (map (juxt #(get % "key") #(get % "entity"))) rows))
 
+(defn- canonical-lore-suffix
+  "Strip the 'Lore of ' prefix and any trailing ' Magic' from a lore's
+  display name so the remaining token matches the suffix used inside unit
+  names (e.g. 'Lore of High Magic' → 'High', 'Lore of Dark Magic' → 'Dark',
+  'Lore of Beasts' → 'Beasts')."
+  [display-name]
+  (-> display-name
+      (clojure.string/replace #"^Lore of the " "")
+      (clojure.string/replace #"^Lore of " "")
+      (clojure.string/replace #" Magic$" "")))
+
+(defn build-lore-name->id-map
+  "Parse seed-lores.sql (or a string) and return {suffix → lore-id} keyed
+  by canonicalised display names (see canonical-lore-suffix). When
+  multiple lore rows share a suffix (e.g. upgraded variants) the lowest
+  id wins."
+  [seed-lores-sql]
+  (let [tuple-re #"(?ms)^\s+\((\d+),\s*'[0-9a-f\-]+',\s*'([^']+)',\s*'([^']+)',"]
+    (reduce
+     (fn [m [_ id-str _lore-key display-name]]
+       (let [id (Long/parseLong id-str)
+             k  (canonical-lore-suffix display-name)]
+         (if (or (clojure.string/blank? k) (contains? m k))
+           m
+           (assoc m k id))))
+     {}
+     (re-seq tuple-re seed-lores-sql))))
+
 (defn build-land-unit-ability-map
   "land_unit key → #{ability keys}, from
   land_units_to_unit_abilites_junctions_tables (note the CA typo in the

@@ -80,7 +80,10 @@
             :handler    (integrant.core/ref ::web.view/faction-view)}}]
     ["/unit/:eid/index.html"
      {:get {:produces   ["application/htmx+html"]
-            :parameters {:path schema.contract/game-and-id-path-parameter}
+            :parameters {:path  schema.contract/game-and-id-path-parameter
+                         :query (schema.contract/to-schema
+                                 [:map
+                                  [:lore {:optional true} [:maybe :string]]])}
             :handler    (integrant.core/ref ::web.view/unit-view)}}]
     ["/draft"
      ["/create.html"
@@ -178,6 +181,7 @@
                          :query (schema.contract/to-schema
                                  [:map
                                   [:mount     {:optional true} [:maybe :string]]
+                                  [:lore      {:optional true} [:maybe :string]]
                                   [:items     {:optional true} [:or :string [:sequential :string]]]
                                   [:spells    {:optional true} [:or :string [:sequential :string]]]
                                   [:abilities {:optional true} [:or :string [:sequential :string]]]])}
@@ -218,6 +222,7 @@
                                     [:embed     {:optional true} [:or [:enum "unit"]
                                                                   [:sequential [:enum "unit"]]]]
                                     [:mount     {:optional true} [:maybe :string]]
+                                    [:lore      {:optional true} [:maybe :string]]
                                     [:items     {:optional true} [:or :string [:sequential :string]]]
                                     [:spells    {:optional true} [:or :string [:sequential :string]]]
                                     [:abilities {:optional true} [:or :string [:sequential :string]]]])}

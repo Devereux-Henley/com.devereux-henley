@@ -1,4 +1,5 @@
 <aside class="draft-stats-panel" id="draft-unit" role="complementary" aria-label="Unit statistics for {{unit.name}}">
+    <div id="draft-unit-body">
     <form class="draft-stats-inner"
           id="draft-unit-form"
           onsubmit="return false"
@@ -9,13 +10,14 @@
           hx-get="/api/draft/{{unit.draft-eid}}/unit/{{unit.eid}}"
           {% endif %}
           hx-trigger="change delay:300ms"
-          hx-target="#draft-unit"
+          hx-target="#draft-unit-body"
+          hx-select="#draft-unit-body"
           hx-swap="outerHTML"
           hx-headers='{"Accept": "application/htmx+html"}'>
 
         <div class="draft-stats-header">
             <img class="draft-stats-portrait"
-                 src="/card/unit/{{unit.eid}}.png"
+                 src="/card/unit/{% if unit.lore-portrait-key %}{{unit.lore-portrait-key}}{% else %}{{unit.eid}}{% endif %}.png"
                  alt="{{unit.name}}"
                  onerror="this.style.display='none'">
             <div class="draft-stats-meta">
@@ -213,6 +215,24 @@
         </section>
         {% endif %}
 
+        {% if unit.lores|not-empty? %}
+        <section class="draft-stats-section unit-panel" aria-labelledby="panel-lores-heading">
+            <h4 class="unit-panel-heading" id="panel-lores-heading">Lore of Magic</h4>
+            <label class="lore-select-field" for="draft-lore-select">
+                <span class="sr-only">Select lore for {{unit.name}}</span>
+                <select class="lore-select"
+                        id="draft-lore-select"
+                        name="lore"
+                        aria-labelledby="panel-lores-heading">
+                    <option value=""{% if not data.lore %} selected{% endif %}>Select a lore&hellip;</option>
+                    {% for lore in unit.lores %}
+                    <option value="{{lore.key}}"{% if lore.selected %} selected{% endif %}>{{lore.name}}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </section>
+        {% endif %}
+
         {% if unit.draftable-spells|not-empty? %}
         <section class="draft-stats-section unit-panel" aria-labelledby="panel-spells-heading">
             <h4 class="unit-panel-heading" id="panel-spells-heading">Spells</h4>
@@ -335,4 +355,5 @@
         {% endif %}
 
     </form>
+    </div>
 </aside>

@@ -49,6 +49,8 @@
 (def get-items-for-unit-query (resource/load-query-resource "game" "get-items-for-unit.sql"))
 
 (def get-mounts-for-unit-query (resource/load-query-resource "game" "get-mounts-for-unit.sql"))
+(def get-lores-for-unit-query (resource/load-query-resource "game" "get-lores-for-unit.sql"))
+(def get-spells-for-lore-query (resource/load-query-resource "game" "get-spells-for-lore.sql"))
 
 (def get-mount-by-key-query (resource/load-query-resource "game" "get-mount-by-key.sql"))
 
@@ -230,6 +232,25 @@
   "Returns a single mount row by its ancillary `type` key, or nil."
   [connection mount-key]
   (jdbc.contract/query-for-entity connection [get-mount-by-key-query mount-key] schema/mount-entity))
+
+(defn get-lores-for-unit
+  "Returns all active lores linked to the given unit EID via the unit_lore
+  join table. Each row carries the lore's eid/key/name and the per-(unit,
+  lore) cost + portrait_key. Sorted by unit_lore.id so the 'first lore
+  in scrape order' convention is preserved.
+
+  The draftable spell pool for a lore is NOT per-unit — it's invariant
+  for the lore across every unit that can access it. Fetch it separately
+  via get-spells-for-lore at selection time."
+  [connection unit-eid]
+  (jdbc.contract/query-for-entities connection [get-lores-for-unit-query unit-eid] schema/lore-entity))
+
+(defn get-spells-for-lore
+  "Returns the canonical spell list for a lore (by its stable key) via
+  the spell_lore junction. One source of truth — every unit with access
+  to this lore drafts from this same pool."
+  [connection lore-key]
+  (jdbc.contract/query-for-entities connection [get-spells-for-lore-query lore-key] schema/spell-entity))
 
 (defn get-draft-state-by-draft
   [connection draft-eid]

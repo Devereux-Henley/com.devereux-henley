@@ -107,17 +107,35 @@
   (partial standard-entity-view-handler
            (fn [eid] (web.game/get-unit-by-eid dependencies eid))
            "unit.html"
-           (fn [data _request]
+           (fn [data request]
              (let [{:keys [stats abilities draftable-spells]} (domain/parse-unit-statistics (:unit-statistics data))
-                   key->spell                                 (domain/get-spells-by-keys dependencies draftable-spells)
+                   lores                                      (vec (domain/get-lores-for-unit dependencies (:eid data)))
+                   ;; ?lore=<key> toggles which lore's spell pool + portrait
+                   ;; render; nil → base unit's draftable-spells + default portrait.
+                   selected-lore-key                          (not-empty (get-in request [:parameters :query :lore]))
+                   selected-lore                              (when selected-lore-key
+                                                                (first (filter #(= selected-lore-key (:key %)) lores)))
+                   ;; When a lore is selected, derive spells from the canonical
+                   ;; spell_lore junction (one source of truth for the whole
+                   ;; lore). Otherwise fall back to the unit's own
+                   ;; draftable-spells from unit_statistics.
+                   resolved-spells                            (if selected-lore
+                                                                (mapv (fn [{:keys [key eid name mana-cost cost]}]
+                                                                        {:name      name
+                                                                         :key       key
+                                                                         :eid       eid
+                                                                         :mana-cost mana-cost
+                                                                         :cost      cost})
+                                                                      (domain/get-spells-for-lore dependencies selected-lore-key))
+                                                                (let [key->spell (domain/get-spells-by-keys dependencies draftable-spells)]
+                                                                  (mapv (fn [k]
+                                                                          (let [spell (get key->spell k)]
+                                                                            {:name      (or (:name spell) k)
+                                                                             :eid       (:eid spell)
+                                                                             :mana-cost (:mana-cost spell)
+                                                                             :cost      (:cost spell)}))
+                                                                        draftable-spells)))
                    key->ability                               (domain/get-abilities-by-keys dependencies abilities)
-                   resolved-spells                            (mapv (fn [k]
-                                                                      (let [spell (get key->spell k)]
-                                                                        {:name      (or (:name spell) k)
-                                                                         :eid       (:eid spell)
-                                                                         :mana-cost (:mana-cost spell)
-                                                                         :cost      (:cost spell)}))
-                                                                    draftable-spells)
                    resolved-abilities                         (mapv (fn [k]
                                                                       (let [a (get key->ability k)]
                                                                         {:name        (:name a)
@@ -125,15 +143,20 @@
                                                                          :description (:description a)}))
                                                                     abilities)
                    mounts                                     (domain/get-mounts-for-unit dependencies (:eid data))
-                   items                                      (domain/get-items-for-unit dependencies (:eid data))]
-               {:unit-statistics  stats
-                :abilities        (not-empty resolved-abilities)
-                :draftable-spells (not-empty resolved-spells)
-                :mounts           (not-empty mounts)
-                :items            (not-empty items)
-                :unit-card        (when (io/resource
-                                         (str "rts-web/asset/card/unit/" (:eid data) ".png"))
-                                    (str "/card/unit/" (:eid data) ".png"))}))))
+                   items                                      (domain/get-items-for-unit dependencies (:eid data))
+                   portrait-stem                              (or (:portrait-key selected-lore) (:eid data))
+                   lores-marked                               (mapv #(assoc % :selected (= selected-lore-key (:key %))) lores)]
+               {:unit-statistics   stats
+                :abilities         (not-empty resolved-abilities)
+                :draftable-spells  (not-empty resolved-spells)
+                :mounts            (not-empty mounts)
+                :items             (not-empty items)
+                :lores             (not-empty lores-marked)
+                :lore              selected-lore-key
+                :lore-portrait-key (:portrait-key selected-lore)
+                :unit-card         (when (io/resource
+                                          (str "rts-web/asset/card/unit/" portrait-stem ".png"))
+                                     (str "/card/unit/" portrait-stem ".png"))}))))
 
 (defn ^:private build-draft-context
   [dependencies draft request]

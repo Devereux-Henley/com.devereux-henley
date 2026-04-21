@@ -97,7 +97,14 @@
                                  (get land-units-loc (str "land_units_onscreen_name_" lu-key)))]
                 (when unit-name
                   (when-let [faction (faction-for base-key)]
-                    (if-let [unit-id (get unit-id-map [unit-name faction])]
+                    ;; After lore consolidation, RPFM loc still yields
+                    ;; per-lore names like "Archmage (Beasts)" but the
+                    ;; seed only has the consolidated "Archmage" row. Fall
+                    ;; back to a suffix-stripped lookup so mount data
+                    ;; attaches to the survivor.
+                    (if-let [unit-id (or (get unit-id-map [unit-name faction])
+                                         (when-let [m (re-matches #"(.+?) \([A-Za-z ]+\)" unit-name)]
+                                           (get unit-id-map [(nth m 1) faction])))]
                       (let [stem     (stem-of icon-name)
                             mount-id (get stem->mount-id stem)]
                         (if-not mount-id
