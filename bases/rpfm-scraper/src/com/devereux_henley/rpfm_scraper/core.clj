@@ -14,6 +14,7 @@
    [com.devereux-henley.rpfm-scraper.stats :as stats]
    [com.devereux-henley.rpfm-scraper.tables :as tables]
    [com.devereux-henley.rpfm-scraper.unit-items-seed :as unit-items-seed]
+   [com.devereux-henley.rpfm-scraper.unit-lores-seed :as unit-lores-seed]
    [com.devereux-henley.rpfm-scraper.unit-mounts-seed :as unit-mounts-seed])
   (:gen-class))
 
@@ -254,6 +255,37 @@
       (spit (io/file seed-dir "seed-mounts.sql") content))
     stem->id))
 
+(defn- load-lore-suffix->id []
+  (let [path (io/file seed-dir "seed-lores.sql")]
+    (tables/build-lore-name->id-map (slurp path))))
+
+(defn- consolidate-lores! [dry-run?]
+  (log "Consolidating lore-dispatch unit variants...")
+  (let [lore-suffix->id (load-lore-suffix->id)
+        _               (logf "  lore suffix->id map: %d entries" (count lore-suffix->id))
+        records         (unit-lores-seed/consolidate-lore-variants! seed-dir lore-suffix->id dry-run?)]
+    {:records         records
+     :lore-suffix->id lore-suffix->id}))
+
+(defn- generate-unit-lore-seed! [{:keys [records lore-suffix->id]} dry-run?]
+  (log "Generating unit-lore seed...")
+  (let [path     (io/file seed-dir "seed-unit-lores.sql")
+        content  (unit-lores-seed/generate-unit-lore-seed records lore-suffix->id)
+        empty?   (str/starts-with? content "-- no unit_lore rows")
+        existing (when (.exists path) (slurp path))]
+    (cond
+      dry-run?
+      :ok
+
+      ;; Preserve an existing, populated seed when the current run found
+      ;; no groups (re-runs of the scraper are idempotent — suffixed unit
+      ;; rows were already collapsed on a prior run).
+      (and empty? (seq existing) (not (str/starts-with? existing "-- no unit_lore rows")))
+      (log "  [unit-lores] preserving existing seed-unit-lores.sql (no new groups this run)")
+
+      :else
+      (spit path content))))
+
 (defn- generate-unit-mount-seed! [data stem->mount-id unit-id-map dry-run?]
   (log "Generating unit-mount seed...")
   (let [content (unit-mounts-seed/generate-unit-mount-seed
@@ -316,12 +348,14 @@
       (log "  [stat icons] --stat-icons-dir not provided, skipping stat icon copy"))))
 
 (defn- run [opts]
-  (let [data (load-tables (:data-dir opts))
-        dry? (:dry-run opts)]
+  (let [data             (load-tables (:data-dir opts))
+        dry?             (:dry-run opts)
+        lore-consolidate (consolidate-lores! dry?)]
     (update-unit-seeds! data dry?)
     (update-abilities-seed! data dry?)
     (copy-assets! data opts)
     (update-spell-seed! data dry?)
+    (generate-unit-lore-seed! lore-consolidate dry?)
     (let [item-key->id (generate-item-seed! data dry?)
           unit-id-map  (generate-unit-item-seed! data item-key->id dry?)
           stem->id     (generate-mount-seed! data dry?)]

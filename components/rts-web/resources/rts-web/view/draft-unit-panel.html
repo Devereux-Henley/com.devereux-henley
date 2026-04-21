@@ -15,7 +15,7 @@
 
         <div class="draft-stats-header">
             <img class="draft-stats-portrait"
-                 src="/card/unit/{{unit.eid}}.png"
+                 src="/card/unit/{% if unit.lore-portrait-key %}{{unit.lore-portrait-key}}{% else %}{{unit.eid}}{% endif %}.png"
                  alt="{{unit.name}}"
                  onerror="this.style.display='none'">
             <div class="draft-stats-meta">
@@ -232,6 +232,27 @@
                              onerror="this.style.display='none'">
                         <span class="draft-option-name">{{spell.name}}</span>
                         <span class="badge badge-secondary draft-option-cost">+{{spell.cost}}</span>
+                    </label>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
+        {% if unit.lores|not-empty? %}
+        <section class="draft-stats-section unit-panel" aria-labelledby="panel-lores-heading">
+            <h4 class="unit-panel-heading" id="panel-lores-heading">Lore of Magic</h4>
+            <ul class="draft-option-list" aria-label="Available lores for {{unit.name}}">
+                {% for lore in unit.lores %}
+                <li class="draft-option-row draft-option-row--selectable">
+                    <label class="draft-option-label">
+                        <input class="draft-lore-radio"
+                               type="radio"
+                               name="lore"
+                               value="{{lore.key}}"
+                               {% if lore.selected %}checked{% endif %}
+                               aria-label="{{lore.name}}">
+                        <span class="draft-option-name">{{lore.name}}</span>
                     </label>
                 </li>
                 {% endfor %}

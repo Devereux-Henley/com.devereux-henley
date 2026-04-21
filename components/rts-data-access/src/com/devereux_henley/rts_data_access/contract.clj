@@ -75,6 +75,9 @@
 (def get-mounts-for-unit query.game/get-mounts-for-unit)
 (def get-mount-by-key query.game/get-mount-by-key)
 
+(def lore-entity schema/lore-entity)
+(def get-lores-for-unit query.game/get-lores-for-unit)
+
 (def draft-state-entity schema/draft-state-entity)
 (def get-draft-state-by-draft query.game/get-draft-state-by-draft)
 (def upsert-draft-state query.game/upsert-draft-state)

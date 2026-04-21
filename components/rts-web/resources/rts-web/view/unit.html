@@ -66,6 +66,35 @@
 
         <div class="unit-panels-right stack stack-4">
 
+            {% if lores %}
+            <section class="unit-panel" id="unit-lores" aria-labelledby="unit-lores-heading">
+                <h3 class="unit-panel-heading" id="unit-lores-heading">Lore of Magic</h3>
+                <form class="unit-lore-form"
+                      hx-get="/view/game/{{game.eid}}/unit/{{data.eid}}/index.html"
+                      hx-trigger="change delay:200ms"
+                      hx-target="#unit-page"
+                      hx-swap="outerHTML"
+                      hx-select="#unit-page"
+                      hx-headers='{"Accept": "application/htmx+html"}'>
+                    <ul class="unit-lore-list" aria-label="Available lores for {{data.name}}">
+                        {% for lore in lores %}
+                        <li class="unit-lore-row">
+                            <label class="unit-lore-label">
+                                <input class="unit-lore-radio"
+                                       type="radio"
+                                       name="lore"
+                                       value="{{lore.key}}"
+                                       {% if lore.selected %}checked{% endif %}
+                                       aria-label="{{lore.name}}">
+                                <span class="unit-lore-name">{{lore.name}}</span>
+                            </label>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </form>
+            </section>
+            {% endif %}
+
             {% if draftable-spells %}
             <section class="unit-panel" id="unit-spells" aria-labelledby="unit-spells-heading">
                 <h3 class="unit-panel-heading" id="unit-spells-heading">Spells</h3>

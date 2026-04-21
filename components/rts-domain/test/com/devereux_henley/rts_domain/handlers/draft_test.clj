@@ -452,7 +452,8 @@
                 data-access.contract/get-abilities-by-keys (fn [_ _] {})
                 data-access.contract/get-spells-by-keys    (fn [_ _] {})
                 data-access.contract/get-items-for-unit    (fn [_ _] [])
-                data-access.contract/get-mounts-for-unit   (fn [_ _] [])]
+                data-access.contract/get-mounts-for-unit   (fn [_ _] [])
+                data-access.contract/get-lores-for-unit    (fn [_ _] [])]
     (let [result (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)]
       (is (= :draft/unit (:type result))))))
 
@@ -463,7 +464,8 @@
                 data-access.contract/get-abilities-by-keys (fn [_ _] {})
                 data-access.contract/get-spells-by-keys    (fn [_ _] {})
                 data-access.contract/get-items-for-unit    (fn [_ _] [])
-                data-access.contract/get-mounts-for-unit   (fn [_ _] [])]
+                data-access.contract/get-mounts-for-unit   (fn [_ _] [])
+                data-access.contract/get-lores-for-unit    (fn [_ _] [])]
     (let [result (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)]
       (is (= test-draft-eid (:draft-eid result))))))
 
@@ -474,7 +476,8 @@
                 data-access.contract/get-abilities-by-keys (fn [_ _] {})
                 data-access.contract/get-spells-by-keys    (fn [_ _] {})
                 data-access.contract/get-items-for-unit    (fn [_ _] [])
-                data-access.contract/get-mounts-for-unit   (fn [_ _] [])]
+                data-access.contract/get-mounts-for-unit   (fn [_ _] [])
+                data-access.contract/get-lores-for-unit    (fn [_ _] [])]
     (is (true? (get-in (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)
                        [:validation :can-add-to-reinforcements?])))))
 
@@ -485,7 +488,8 @@
                 data-access.contract/get-abilities-by-keys (fn [_ _] {})
                 data-access.contract/get-spells-by-keys    (fn [_ _] {})
                 data-access.contract/get-items-for-unit    (fn [_ _] [])
-                data-access.contract/get-mounts-for-unit   (fn [_ _] [])]
+                data-access.contract/get-mounts-for-unit   (fn [_ _] [])
+                data-access.contract/get-lores-for-unit    (fn [_ _] [])]
     (is (false? (get-in (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)
                         [:validation :can-add-to-reinforcements?])))))
 
@@ -576,7 +580,8 @@
                 data-access.contract/get-abilities-by-keys (fn [_ _] {})
                 data-access.contract/get-spells-by-keys    (fn [_ _] {})
                 data-access.contract/get-items-for-unit    (fn [_ _] [])
-                data-access.contract/get-mounts-for-unit   (fn [_ _] [mount-with-overrides])]
+                data-access.contract/get-mounts-for-unit   (fn [_ _] [mount-with-overrides])
+                data-access.contract/get-lores-for-unit    (fn [_ _] [])]
     (let [entry-resource {:eid       (:entry-eid test-entry)
                           :draft-eid test-draft-eid
                           :unit-eid  test-lord-eid
@@ -618,7 +623,8 @@
                                                                      ks))
                   data-access.contract/get-spells-by-keys    (fn [_ _] {})
                   data-access.contract/get-items-for-unit    (fn [_ _] [])
-                  data-access.contract/get-mounts-for-unit   (fn [_ _] [mount])]
+                  data-access.contract/get-mounts-for-unit   (fn [_ _] [mount])
+                  data-access.contract/get-lores-for-unit    (fn [_ _] [])]
       (let [result             (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)
             draftable-keys     (set (map :key (:draftable-abilities result)))
             passive-keys       (set (map :key (:passive-abilities result)))
@@ -636,7 +642,8 @@
                 data-access.contract/get-abilities-by-keys (fn [_ _] {})
                 data-access.contract/get-spells-by-keys    (fn [_ _] {})
                 data-access.contract/get-items-for-unit    (fn [_ _] [])
-                data-access.contract/get-mounts-for-unit   (fn [_ _] [mount-with-overrides])]
+                data-access.contract/get-mounts-for-unit   (fn [_ _] [mount-with-overrides])
+                data-access.contract/get-lores-for-unit    (fn [_ _] [])]
     (let [entry-resource {:eid       (:entry-eid test-entry)
                           :draft-eid test-draft-eid
                           :unit-eid  test-lord-eid
@@ -650,3 +657,111 @@
       (is (= 4288 (:health unit)))
       (is (= 200 (:total-cost unit)))
       (is (= [] (:mount-granted-abilities unit))))))
+
+;; --- lore overrides ----------------------------------------------------------
+
+(def ^:private fire-lore
+  {:id                   94
+   :eid                  (UUID/fromString "f100005e-0000-0000-0000-000000000000")
+   :key                  "wh_main_lore_fire"
+   :name                 "Lore of Fire"
+   :cost                 0
+   :portrait-key         "000a0006-0000-4000-8000-000000000000"
+   :draftable-spell-keys "[\"fire_spell_a\",\"fire_spell_b\"]"})
+
+(def ^:private life-lore
+  {:id                   84
+   :eid                  (UUID/fromString "f1000054-0000-0000-0000-000000000000")
+   :key                  "wh_dlc05_lore_life"
+   :name                 "Lore of Life"
+   :cost                 0
+   :portrait-key         "000a0009-0000-4000-8000-000000000000"
+   :draftable-spell-keys "[\"life_spell_a\",\"life_spell_b\"]"})
+
+(def ^:private lore-unit
+  {:eid                (UUID/fromString "000a0004-0000-4000-8000-000000000000")
+   :name               "Archmage"
+   :cost               450
+   :unit-category-name "Lord"
+   :unit-statistics    "{\"cost\":450,\"health\":3820,\"draftable-spells\":[]}"})
+
+(defn- stub-spell-lookup
+  "Returns {key → spell record} for any key — cost 60, mana 8 — so the
+  resolved :draftable-spells are non-empty."
+  [_ keys]
+  (into {} (map (fn [k] [k {:eid       (UUID/randomUUID)
+                            :name      k
+                            :mana-cost 8
+                            :cost      60}]))
+        keys))
+
+(deftest apply-lore-overrides-without-lore-leaves-base-fields
+  (with-redefs [data-access.contract/get-draft-by-eid      (fn [_ _] test-draft)
+                data-access.contract/get-game-mode-by-eid  (fn [_ _] test-game-mode)
+                data-access.contract/get-unit-by-eid       (fn [_ _] lore-unit)
+                data-access.contract/get-abilities-by-keys (fn [_ _] {})
+                data-access.contract/get-spells-by-keys    stub-spell-lookup
+                data-access.contract/get-items-for-unit    (fn [_ _] [])
+                data-access.contract/get-mounts-for-unit   (fn [_ _] [])
+                data-access.contract/get-lores-for-unit    (fn [_ _] [fire-lore life-lore])]
+    (let [unit (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)]
+      (is (= [] (:draftable-spells unit)))
+      (is (nil? (:lore-portrait-key unit)))
+      (is (= 2 (count (:lores unit))))
+      (is (every? (complement :selected) (:lores unit))))))
+
+(deftest apply-lore-overrides-with-selected-lore-swaps-spells-and-portrait
+  (with-redefs [data-access.contract/get-draft-by-eid      (fn [_ _] test-draft)
+                data-access.contract/get-game-mode-by-eid  (fn [_ _] test-game-mode)
+                data-access.contract/get-unit-by-eid       (fn [_ _] lore-unit)
+                data-access.contract/get-abilities-by-keys (fn [_ _] {})
+                data-access.contract/get-spells-by-keys    stub-spell-lookup
+                data-access.contract/get-items-for-unit    (fn [_ _] [])
+                data-access.contract/get-mounts-for-unit   (fn [_ _] [])
+                data-access.contract/get-lores-for-unit    (fn [_ _] [fire-lore life-lore])]
+    (let [result (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid
+                                                        {:mount     nil
+                                                         :lore      "wh_main_lore_fire"
+                                                         :abilities []
+                                                         :spells    []
+                                                         :items     []})
+          spells (:draftable-spells result)]
+      (is (= "wh_main_lore_fire" (:lore result)))
+      (is (= "000a0006-0000-4000-8000-000000000000" (:lore-portrait-key result)))
+      (is (= #{"fire_spell_a" "fire_spell_b"} (set (map :key spells))))
+      (is (true? (:selected (first (filter #(= "wh_main_lore_fire" (:key %)) (:lores result))))))
+      (is (false? (:selected (first (filter #(= "wh_dlc05_lore_life" (:key %)) (:lores result)))))))))
+
+(deftest update-unit-in-draft-clears-spells-when-lore-changes
+  (let [entry-eid (UUID/fromString "e0000000-0000-0000-0000-0000000000bb")
+        existing  {:entry-eid entry-eid
+                   :unit-eid  (:eid lore-unit)
+                   :mount     nil
+                   :lore      "wh_main_lore_fire"
+                   :abilities []
+                   :spells    ["fire_spell_a"]
+                   :items     []}
+        state-map {:main [existing] :reinforcements []}
+        captured  (atom nil)]
+    (with-redefs [data-access.contract/get-draft-by-eid         (fn [_ _] test-draft)
+                  data-access.contract/get-game-mode-by-eid     (fn [_ _] test-game-mode)
+                  data-access.contract/get-draft-state-by-draft (fn [_ _] {:state (jsonista.core/write-value-as-string state-map)})
+                  data-access.contract/upsert-draft-state       (fn [_ _ json] (reset! captured (jsonista.core/read-value json (jsonista.core/object-mapper {:decode-key-fn keyword}))))
+                  data-access.contract/get-units-for-faction    (fn [_ _] [lore-unit])
+                  data-access.contract/get-unit-by-eid          (fn [_ _] lore-unit)
+                  data-access.contract/get-spells-by-keys       stub-spell-lookup
+                  data-access.contract/get-abilities-by-keys    (fn [_ _] {})
+                  data-access.contract/get-items-for-unit       (fn [_ _] [])
+                  data-access.contract/get-mounts-for-unit      (fn [_ _] [])
+                  data-access.contract/get-lores-for-unit       (fn [_ _] [fire-lore life-lore])]
+      (let [result    (handlers.draft/update-unit-in-draft test-deps test-draft-eid entry-eid "main"
+                                                           {:mount     nil
+                                                            :lore      "wh_dlc05_lore_life"
+                                                            :abilities []
+                                                         ;; Client re-sends the old Fire spell — must be dropped.
+                                                            :spells    ["fire_spell_a"]
+                                                            :items     []})
+            new-entry (-> @captured :main first)]
+        (is (= :draft/update-success (:type result)))
+        (is (= "wh_dlc05_lore_life" (:lore new-entry)))
+        (is (= [] (:spells new-entry)))))))

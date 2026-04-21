@@ -304,6 +304,11 @@
   [dependencies unit-eid]
   (db/get-mounts-for-unit (:connection dependencies) unit-eid))
 
+(defn get-lores-for-unit
+  "Returns all active lores linked to the given unit EID."
+  [dependencies unit-eid]
+  (db/get-lores-for-unit (:connection dependencies) unit-eid))
+
 ;; ─── Mount overrides ──────────────────────────────────────────────────────────
 
 (defn- parse-granted-ability-keys
@@ -350,6 +355,41 @@
                     :health-override     (:health parsed)
                     :barrier-override    (:barrier parsed)
                     :attributes-override (vec (:attributes parsed))))))
+
+;; ─── Lore overrides ──────────────────────────────────────────────────────────
+
+(defn- parse-draftable-spell-keys
+  "Parses the raw draftable_spell_keys TEXT column (JSON array or null)
+  into a vector of key strings. Returns nil for an empty/absent column;
+  invalid JSON propagates (seed pipeline contract)."
+  [raw]
+  (when (and raw (seq raw))
+    (vec (jsonista/read-value raw))))
+
+(defn hydrate-lore
+  "Attaches :draftable-spell-keys parsed from the lore row's TEXT column.
+  The hydrated keys are resolved to full spell records only when the lore
+  is actually selected (via apply-lore-overrides) to avoid a per-lore
+  spell query when the panel first loads."
+  [lore]
+  (assoc lore :draftable-spell-keys (parse-draftable-spell-keys (:draftable-spell-keys lore))))
+
+(defn- hydrate-spell-keys
+  "Resolves a seq of spell keys against the spell table into the
+  {:key :eid :name :mana-cost :cost} shape the draft-unit resource uses.
+  Skips unknown keys; preserves the order of `spell-keys`."
+  [conn spell-keys]
+  (when (seq spell-keys)
+    (let [by-key (db/get-spells-by-keys conn spell-keys)]
+      (into []
+            (keep (fn [k]
+                    (when-let [{:keys [eid name mana-cost cost]} (get by-key k)]
+                      {:key       k
+                       :eid       eid
+                       :name      name
+                       :mana-cost (or mana-cost 0)
+                       :cost      (or cost 0)})))
+            spell-keys))))
 
 ;; ─── Cost calculation ─────────────────────────────────────────────────────────
 
@@ -494,15 +534,11 @@
                                                                                    base-ability-keys)
         passive-abilities                                                    (filterv #(= 0 (:cost %)) all-abilities)
         draftable-abilities                                                  (filterv #(pos? (:cost %)) all-abilities)
-        spell-by-key                                                         (db/get-spells-by-keys conn draftable-spells)
-        all-spells                                                           (into []
-                                                                                   (keep (fn [k]
-                                                                                           (when-let [{:keys [eid name mana-cost cost]} (get spell-by-key k)]
-                                                                                             {:key k :eid eid :name name :mana-cost (or mana-cost 0) :cost (or cost 0)})))
-                                                                                   draftable-spells)
+        all-spells                                                           (or (hydrate-spell-keys conn draftable-spells) [])
         passive-spells                                                       (filterv #(= 0 (:cost %)) all-spells)
         draftable-spells-v                                                   (filterv #(pos? (:cost %)) all-spells)
-        items                                                                (db/get-items-for-unit conn unit-eid)]
+        items                                                                (db/get-items-for-unit conn unit-eid)
+        lores                                                                (mapv hydrate-lore (db/get-lores-for-unit conn unit-eid))]
     (assoc unit
            :type                :draft/unit
            :draft-eid           draft-eid
@@ -515,6 +551,7 @@
            :draftable-abilities draftable-abilities
            :items               items
            :mounts              mounts
+           :lores               lores
            :passive-spells      passive-spells
            :draftable-spells    draftable-spells-v
            :has-passives        (boolean (or (seq passive-abilities) (seq passive-spells)))
@@ -549,9 +586,31 @@
         :unit-eid  (:unit-eid entry)
         :section   section
         :mount     (:mount source)
+        :lore      (:lore source)
         :abilities (vec (:abilities source))
         :spells    (vec (:spells source))
         :items     (vec (:items source))}))))
+
+(defn- apply-lore-overrides
+  "If lore-key identifies one of the unit's lores, replace
+  :draftable-spells with the spells resolved from that lore's
+  :draftable-spell-keys, assoc :lore-portrait-key to the lore's
+  portrait_key (so the template portrait URL swaps), and mark :selected
+  on each lore. Always assocs :lore (raw key) so the template can
+  pre-check the radio."
+  [conn unit lore-key]
+  (let [lores    (or (:lores unit) [])
+        marked   (mapv (fn [l] (assoc l :selected (= lore-key (:key l)))) lores)
+        selected (when lore-key (first (filter #(= lore-key (:key %)) lores)))
+        unit'    (assoc unit :lores marked :lore lore-key)]
+    (if-not selected
+      unit'
+      (let [spell-keys (:draftable-spell-keys selected)
+            spells     (or (hydrate-spell-keys conn spell-keys) [])]
+        (assoc unit'
+               :draftable-spells  (filterv #(pos? (:cost %)) spells)
+               :passive-spells    (filterv #(= 0 (:cost %)) spells)
+               :lore-portrait-key (:portrait-key selected))))))
 
 (defn- apply-mount-overrides
   "If mount-key identifies one of the unit's mounts, overlay its stats /
@@ -579,16 +638,20 @@
   exposes granted abilities as :mount-granted-abilities, surfaces the raw
   :mount key so the template can pre-check its radio, and assocs
   :total-cost reflecting base + mount + item + spell + ability costs."
-  [conn unit {:keys [mount items spells abilities] :as selections}]
+  [conn unit {:keys [mount lore items spells abilities] :as selections}]
   (let [ability-set (set abilities)
         spell-set   (set spells)
         item-set    (set items)
-        overlaid    (-> unit
-                        (assoc :mount mount)
-                        (update :draftable-abilities mark-selected ability-set)
-                        (update :draftable-spells mark-selected spell-set)
-                        (update :items mark-selected item-set)
-                        (apply-mount-overrides mount))
+        ;; apply-lore-overrides replaces :draftable-spells, so it must run
+        ;; BEFORE spell-selection marking. apply-mount-overrides is
+        ;; orthogonal and can run alongside.
+        overlaid    (as-> unit $
+                      (assoc $ :mount mount)
+                      (apply-lore-overrides conn $ lore)
+                      (apply-mount-overrides $ mount)
+                      (update $ :draftable-abilities mark-selected ability-set)
+                      (update $ :draftable-spells mark-selected spell-set)
+                      (update $ :items mark-selected item-set))
         total       (compute-unit-total-cost overlaid selections conn)]
     (assoc overlaid :total-cost total)))
 
@@ -603,6 +666,7 @@
    result under [:_embedded :unit]."
   [dependencies entry-resource]
   (let [selections {:mount     (:mount entry-resource)
+                    :lore      (:lore entry-resource)
                     :abilities (:abilities entry-resource)
                     :spells    (:spells entry-resource)
                     :items     (:items entry-resource)}
@@ -655,6 +719,7 @@
                                       {:entry-eid  new-entry-eid
                                        :unit-eid   unit-eid
                                        :mount      (:mount selections)
+                                       :lore       (:lore selections)
                                        :abilities  (or (:abilities selections) [])
                                        :spells     (or (:spells selections) [])
                                        :items      (or (:items selections) [])
@@ -712,7 +777,7 @@
    Returns {:type :draft/update-success …} on success or
    {:type :draft/update-error …} on violation or missing entry."
   [dependencies draft-eid entry-eid section selections]
-  (let [selections   (update selections :mount not-empty)
+  (let [selections-0 (update selections :mount not-empty)
         conn         (:connection dependencies)
         draft        (db/get-draft-by-eid conn draft-eid)
         game-mode    (db/get-game-mode-by-eid conn (:game-mode-eid draft))
@@ -724,7 +789,14 @@
         unit-by-eid  (faction-unit-index conn (:faction-eid draft))
         section-max  (if (= section "main")
                        (:draft-value game-mode)
-                       (:reinforcement-value game-mode))]
+                       (:reinforcement-value game-mode))
+        ;; Changing lore invalidates the old spell pool — drop any carried
+        ;; spell selections so the client can't persist stale keys.
+        selections   (if (and (contains? selections-0 :lore)
+                              existing
+                              (not= (:lore selections-0) (:lore existing)))
+                       (assoc selections-0 :spells [])
+                       selections-0)]
     (cond
       (nil? existing)
       {:type :draft/update-error :message "Unit not found in this section."}
@@ -760,6 +832,7 @@
           (let [new-entry {:entry-eid  entry-eid
                            :unit-eid   (:unit-eid existing)
                            :mount      (:mount selections)
+                           :lore       (:lore selections)
                            :abilities  (or (:abilities selections) [])
                            :spells     (or (:spells selections) [])
                            :items      (or (:items selections) [])
