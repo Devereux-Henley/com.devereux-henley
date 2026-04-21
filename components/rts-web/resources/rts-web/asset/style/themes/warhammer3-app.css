@@ -430,7 +430,11 @@ a:hover:has(img) {
 .draft-page {
   display: grid;
   grid-template-rows: auto 1fr;
-  height: calc(100vh - 3.25rem); /* offset navbar */
+  /* Fill the full scroll height app-content offers us. app-content owns
+     the viewport-minus-navbar sizing now, so taking 100% here prevents a
+     4px overflow (which would otherwise show a hairline app-content
+     scrollbar on the builder). */
+  height: 100%;
   overflow: hidden;
   background-color: #0a0806;
 }

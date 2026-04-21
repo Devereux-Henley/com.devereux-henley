@@ -244,6 +244,18 @@ body,
 
 /* --- Generic containers & rules ----------------------------------------- */
 
+/* Body is locked to 100vh with overflow:hidden (so the draft builder can
+   own its own internal scroll). That leaves resource pages (My Drafts,
+   About, Factions, Tournaments, etc.) unscrollable by default — their
+   content gets clipped. Give .app-content its own scroll and reset
+   flex-min-height so the overflow actually kicks in inside a flex
+   column. Pages that manage their own height (e.g. .draft-page) clip
+   their own overflow internally and show no scrollbar here. */
+.app-content {
+  overflow-y: auto;
+  min-height: 0;
+}
+
 .resource { padding: var(--space-8); max-width: 72rem; margin: 0 auto; }
 
 table.table {
