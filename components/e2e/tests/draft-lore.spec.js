@@ -120,6 +120,24 @@ test.describe.serial('Lore-of-magic selection', () => {
       .toHaveValue(FIRE_LORE_KEY, { timeout: 5000 });
   });
 
+  test('toggling a lore preserves the stats panel scroll position', async ({ page }) => {
+    await createHighElvesDraft(page);
+    await selectArchmage(page);
+
+    // Scroll the aside down — simulates the user hunting through mounts/items.
+    await page.evaluate(() => { document.getElementById('draft-unit').scrollTop = 220; });
+    const before = await page.evaluate(() => document.getElementById('draft-unit').scrollTop);
+    expect(before).toBeGreaterThan(100);
+
+    // Toggle the lore — the form's inner-body swap should leave the aside
+    // (the scroll container) in place.
+    await page.locator('#draft-unit-form select[name="lore"]').selectOption(FIRE_LORE_KEY);
+    await expect(page.locator('#draft-unit-form input[name="spells"]')).toHaveCount(6, { timeout: 5000 });
+
+    const after = await page.evaluate(() => document.getElementById('draft-unit').scrollTop);
+    expect(after).toBe(before);
+  });
+
   test('unit page with ?lore= renders the lore-specific spell table and portrait', async ({ page }) => {
     await page.goto(`/view/game/${GAME_EID}/unit/${ARCHMAGE_EID}/index.html?lore=${FIRE_LORE_KEY}`);
     await expect(page.locator('select[name="lore"]')).toHaveValue(FIRE_LORE_KEY);

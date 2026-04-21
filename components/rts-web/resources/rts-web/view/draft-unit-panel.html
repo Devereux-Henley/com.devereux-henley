@@ -1,4 +1,5 @@
 <aside class="draft-stats-panel" id="draft-unit" role="complementary" aria-label="Unit statistics for {{unit.name}}">
+    <div id="draft-unit-body">
     <form class="draft-stats-inner"
           id="draft-unit-form"
           onsubmit="return false"
@@ -9,7 +10,8 @@
           hx-get="/api/draft/{{unit.draft-eid}}/unit/{{unit.eid}}"
           {% endif %}
           hx-trigger="change delay:300ms"
-          hx-target="#draft-unit"
+          hx-target="#draft-unit-body"
+          hx-select="#draft-unit-body"
           hx-swap="outerHTML"
           hx-headers='{"Accept": "application/htmx+html"}'>
 
@@ -216,9 +218,9 @@
         {% if unit.lores|not-empty? %}
         <section class="draft-stats-section unit-panel" aria-labelledby="panel-lores-heading">
             <h4 class="unit-panel-heading" id="panel-lores-heading">Lore of Magic</h4>
-            <label class="draft-lore-label" for="draft-lore-select">
+            <label class="lore-select-field" for="draft-lore-select">
                 <span class="sr-only">Select lore for {{unit.name}}</span>
-                <select class="draft-lore-select"
+                <select class="lore-select"
                         id="draft-lore-select"
                         name="lore"
                         aria-labelledby="panel-lores-heading">
@@ -353,4 +355,5 @@
         {% endif %}
 
     </form>
+    </div>
 </aside>
