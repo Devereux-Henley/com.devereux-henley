@@ -324,7 +324,7 @@
       (into []
             (keep (fn [k]
                     (when-let [{:keys [name eid description cost]} (get by-key k)]
-                      {:key k :name name :eid eid
+                      {:key         k           :name name        :eid eid
                        :description description :cost (or cost 0)})))
             ability-keys))))
 
@@ -339,13 +339,13 @@
   Mounts without override data pass through untouched except for an empty
   :granted-abilities."
   [conn mount]
-  (let [raw-stats      (:stats-override mount)
-        raw-granted    (:granted-ability-keys mount)
-        parsed         (when (and raw-stats (seq raw-stats))
-                         (try (parse-unit-statistics raw-stats)
-                              (catch Exception _ nil)))
-        granted-keys   (parse-granted-ability-keys raw-granted)
-        granted        (hydrate-granted-abilities conn granted-keys)]
+  (let [raw-stats    (:stats-override mount)
+        raw-granted  (:granted-ability-keys mount)
+        parsed       (when (and raw-stats (seq raw-stats))
+                       (try (parse-unit-statistics raw-stats)
+                            (catch Exception _ nil)))
+        granted-keys (parse-granted-ability-keys raw-granted)
+        granted      (hydrate-granted-abilities conn granted-keys)]
     (cond-> (assoc mount :granted-abilities (or granted []))
       parsed (assoc :stats-override      (mapv add-stat-percentage (:stats parsed))
                     :health-override     (:health parsed)
@@ -550,10 +550,10 @@
   Returns the unit with :selected flags set on mounts and the overlay
   applied."
   [unit mount-key]
-  (let [mounts     (or (:mounts unit) [])
-        marked     (mapv (fn [m] (assoc m :selected (= mount-key (:key m)))) mounts)
-        selected   (when mount-key (first (filter #(= mount-key (:key %)) mounts)))
-        unit'      (assoc unit :mounts marked)]
+  (let [mounts   (or (:mounts unit) [])
+        marked   (mapv (fn [m] (assoc m :selected (= mount-key (:key m)))) mounts)
+        selected (when mount-key (first (filter #(= mount-key (:key %)) mounts)))
+        unit'    (assoc unit :mounts marked)]
     (if-not selected
       (assoc unit' :mount-granted-abilities [])
       (cond-> (assoc unit' :mount-granted-abilities (or (:granted-abilities selected) []))

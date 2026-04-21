@@ -72,10 +72,10 @@
 
 (defmethod integrant.core/init-key ::get-draft-entry
   [_init-key dependencies]
-  (fn [{{{:keys [draft-eid eid]} :path
+  (fn [{{{:keys [draft-eid eid]}           :path
          {:keys [section embed] :as query} :query} :parameters
-        router                            :reitit.core/router
-        :as                               _request}]
+        router                                     :reitit.core/router
+        :as                                        _request}]
     (let [embed-set (parse-embed-set embed)
           overrides (selection-overrides query)]
       (web.core/handle-fetch-response
