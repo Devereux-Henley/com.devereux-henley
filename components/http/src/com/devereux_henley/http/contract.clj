@@ -40,3 +40,15 @@
        ((get registry embed-key) dependencies acc))
      model
      (or embed-keys #{}))))
+
+(defn query-param->vec
+  "Normalises a reitit query parameter that may arrive as nil, a single
+   string, or a collection of strings into a vector of strings. Returns
+   nil when the input is nil so callers can distinguish an absent param
+   from one explicitly set to an empty list."
+  [v]
+  (cond
+    (nil? v)        nil
+    (string? v)     [v]
+    (sequential? v) (vec v)
+    :else           nil))

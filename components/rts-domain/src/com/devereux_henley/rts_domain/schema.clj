@@ -437,7 +437,16 @@
     [:name :string]
     [:cost :int]
     [:selected {:optional true} :boolean]
-    [:icon-key {:optional true} [:maybe :string]]]))
+    [:icon-key {:optional true} [:maybe :string]]
+    [:stats-override {:optional true} [:maybe [:sequential draft-unit-stat]]]
+    [:health-override {:optional true} [:maybe :int]]
+    [:barrier-override {:optional true} [:maybe :int]]
+    [:attributes-override {:optional true}
+     [:maybe [:sequential [:map
+                           [:key :string]
+                           [:icon :string]
+                           [:label :string]]]]]
+    [:granted-abilities {:optional true} [:sequential draft-ability]]]))
 
 (def draft-unit-resource
   "A unit viewed in the context of a specific draft — the full game-unit
@@ -459,6 +468,8 @@
      [:unit-type-name :string]
      [:unit-category-name :string]
      [:cost [:maybe :int]]
+     [:total-cost {:optional true} [:maybe :int]]
+     [:mount {:optional true} [:maybe :string]]
      [:health {:optional true} [:maybe :int]]
      [:barrier {:optional true} [:maybe :int]]
      [:unit-statistics [:sequential draft-unit-stat]]
@@ -470,6 +481,7 @@
      [:parsed-abilities {:optional true} [:sequential draft-ability]]
      [:passive-abilities {:optional true} [:sequential draft-ability]]
      [:draftable-abilities {:optional true} [:sequential draft-ability]]
+     [:mount-granted-abilities {:optional true} [:sequential draft-ability]]
      [:items {:optional true} [:sequential draft-item]]
      [:mounts {:optional true} [:sequential draft-mount]]
      [:passive-spells {:optional true} [:sequential draft-spell]]
@@ -603,4 +615,5 @@
     [:type [:= :draft/update-success]]
     [:entry-eid :uuid]
     [:total-cost [:maybe :int]]
-    [:budget draft-section-budget]]))
+    [:budget draft-section-budget]
+    [:entry {:optional true} [:maybe draft-entry-resource]]]))

@@ -26,6 +26,20 @@
   [rows]
   (into {} (map (juxt #(get % "key") #(get % "entity"))) rows))
 
+(defn build-land-unit-ability-map
+  "land_unit key → #{ability keys}, from
+  land_units_to_unit_abilites_junctions_tables (note the CA typo in the
+  table name)."
+  [rows]
+  (reduce (fn [m r]
+            (let [lu  (get r "land_unit")
+                  abk (get r "ability")]
+              (if (and lu abk)
+                (update m lu (fnil conj #{}) abk)
+                m)))
+          {}
+          rows))
+
 (defn build-engine-entity-map
   "engine key → battle_entity key, from battlefield_engines_tables."
   [rows]

@@ -13,7 +13,20 @@
   "Normalises the `embed` query param (string, sequence of strings, or nil)
    into a set of keywords that apply-embeds can consume."
   [embed]
-  (some-> embed (as-> e (set (map keyword (if (string? e) [e] e))))))
+  (when-let [v (web.core/query-param->vec embed)]
+    (into #{} (map keyword) v)))
+
+(defn- selection-overrides
+  "Builds a selection-override map from the GET query params, or nil when
+  the caller provided none of the selection keys. When at least one is
+  present the result is a complete snapshot — missing keys default to nil
+  or empty so the render reflects exactly what the URL specifies."
+  [{:keys [mount items spells abilities] :as query}]
+  (when (some #(contains? query %) [:mount :items :spells :abilities])
+    {:mount     (not-empty mount)
+     :items     (or (web.core/query-param->vec items) [])
+     :spells    (or (web.core/query-param->vec spells) [])
+     :abilities (or (web.core/query-param->vec abilities) [])}))
 
 (defmethod integrant.core/init-key ::create-draft
   [_init-key dependencies]
@@ -38,25 +51,28 @@
 
 (defmethod integrant.core/init-key ::get-draft-unit
   [_init-key dependencies]
-  (fn [{{{:keys [draft-eid eid]} :path} :parameters
-        router                          :reitit.core/router
-        :as                             _request}]
-    (web.core/handle-fetch-response
-     domain/draft-unit-resource
-     {:hostname (:hostname dependencies) :router router}
-     #(domain/get-draft-unit-details dependencies draft-eid eid))))
+  (fn [{{{:keys [draft-eid eid]} :path
+         query                   :query} :parameters
+        router                           :reitit.core/router
+        :as                              _request}]
+    (let [overrides (selection-overrides query)]
+      (web.core/handle-fetch-response
+       domain/draft-unit-resource
+       {:hostname (:hostname dependencies) :router router}
+       #(domain/get-draft-unit-details dependencies draft-eid eid overrides)))))
 
 (defmethod integrant.core/init-key ::get-draft-entry
   [_init-key dependencies]
-  (fn [{{{:keys [draft-eid eid]} :path
-         {:keys [section embed]} :query} :parameters
-        router                           :reitit.core/router
-        :as                              _request}]
-    (let [embed-set (parse-embed-set embed)]
+  (fn [{{{:keys [draft-eid eid]}           :path
+         {:keys [section embed] :as query} :query} :parameters
+        router                                     :reitit.core/router
+        :as                                        _request}]
+    (let [embed-set (parse-embed-set embed)
+          overrides (selection-overrides query)]
       (web.core/handle-fetch-response
        domain/draft-entry-resource
        {:hostname (:hostname dependencies) :router router}
-       #(if-let [details (domain/get-draft-entry-details dependencies draft-eid eid section)]
+       #(if-let [details (domain/get-draft-entry-details dependencies draft-eid eid section overrides)]
           (web.core/apply-embeds draft-entry-embed-registry dependencies embed-set details)
           {:type :missing/resource :name "draft-entry" :id eid})))))
 
@@ -73,14 +89,25 @@
 
 (defmethod integrant.core/init-key ::draft-update-unit
   [_init-key dependencies]
-  (fn [request]
-    (let [{{{:keys [draft-eid eid]} :path
-            {:keys [section]}       :query
-            body                    :body} :parameters} request
-          selections                                    (select-keys (or body {}) [:mount :abilities :spells :items])
-          result                                        (domain/update-unit-in-draft dependencies draft-eid eid section selections)]
-      {:status (if (= :draft/update-success (:type result)) 200 422)
-       :body   result})))
+  (fn [{{{:keys [draft-eid eid]} :path
+         {:keys [section]}       :query
+         body                    :body} :parameters
+        router                          :reitit.core/router
+        :as                             _request}]
+    (let [selections (select-keys (or body {}) [:mount :abilities :spells :items])
+          result     (domain/update-unit-in-draft dependencies draft-eid eid section selections)]
+      (if (= :draft/update-success (:type result))
+        ;; Enrich the response with the freshly-persisted entry (+ embedded
+        ;; unit) so the same round-trip re-renders the panel via HTMX. The
+        ;; OOB fragments in draft-update-success.html handle the sidebar
+        ;; slot/budget updates.
+        (let [entry (some->> (domain/get-draft-entry-details dependencies draft-eid eid section)
+                             (domain/embed-unit-for-entry dependencies))]
+          (web.core/handle-fetch-response
+           domain/draft-update-response
+           {:hostname (:hostname dependencies) :router router}
+           (constantly (assoc result :entry entry))))
+        {:status 422 :body result}))))
 
 (defmethod integrant.core/init-key ::draft-remove-unit
   [_init-key dependencies]

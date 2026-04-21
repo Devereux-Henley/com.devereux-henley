@@ -488,3 +488,165 @@
                 data-access.contract/get-mounts-for-unit   (fn [_ _] [])]
     (is (false? (get-in (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)
                         [:validation :can-add-to-reinforcements?])))))
+
+;; --- mount overrides on embed-unit-for-entry ---
+
+(def ^:private mount-stats-json
+  "Mount override JSON: 800 cost, 6828 health, higher speed/charge."
+  "{\"cost\":800,\"is_large\":true,\"unit_size\":1,\"health\":6828,\"barrier\":0,\"armor\":100,\"leadership\":85,\"speed\":92,\"melee_attack\":60,\"charge_bonus\":70,\"attributes\":[\"flying\",\"large\"]}")
+
+(def ^:private mount-with-overrides
+  {:id                   11
+   :eid                  (UUID/fromString "11110000-0000-0000-0000-000000000001")
+   :key                  "mount_deathclaw"
+   :name                 "Deathclaw"
+   :icon-key             "mount_deathclaw"
+   :cost                 800
+   :stats-override       mount-stats-json
+   :granted-ability-keys "[\"ability_fiery_roar\"]"})
+
+(def ^:private lord-with-mount-stats
+  (assoc lord-unit
+         :unit-statistics
+         "{\"cost\":1100,\"is_large\":false,\"health\":4288,\"armor\":100,\"leadership\":80,\"speed\":34,\"melee_attack\":65,\"charge_bonus\":65,\"attributes\":[\"encourages\"]}"))
+
+(def ^:private test-entry
+  {:entry-eid (UUID/fromString "e0000000-0000-0000-0000-0000000000aa")
+   :unit-eid  test-lord-eid
+   :mount     "mount_deathclaw"
+   :abilities []
+   :spells    []
+   :items     []})
+
+(deftest get-draft-entry-details-falls-back-to-persisted-entry-when-no-overrides
+  (with-redefs [handlers.draft/get-draft-entry (fn [_ _ _ _] test-entry)]
+    (let [result (handlers.draft/get-draft-entry-details test-deps test-draft-eid (:entry-eid test-entry) "main")]
+      (is (= "mount_deathclaw" (:mount result)))
+      (is (= [] (:items result))))))
+
+(deftest get-draft-entry-details-applies-selection-overrides-when-provided
+  (with-redefs [handlers.draft/get-draft-entry (fn [_ _ _ _] test-entry)]
+    (let [overrides {:mount "mount_barded_warhorse" :items ["wh_talisman_ss"] :spells [] :abilities []}
+          result    (handlers.draft/get-draft-entry-details test-deps test-draft-eid (:entry-eid test-entry) "main" overrides)]
+      (is (= "mount_barded_warhorse" (:mount result)))
+      (is (= ["wh_talisman_ss"] (:items result))))))
+
+(deftest get-draft-entry-details-nil-overrides-equivalent-to-no-overrides
+  (with-redefs [handlers.draft/get-draft-entry (fn [_ _ _ _] test-entry)]
+    (let [with    (handlers.draft/get-draft-entry-details test-deps test-draft-eid (:entry-eid test-entry) "main" nil)
+          without (handlers.draft/get-draft-entry-details test-deps test-draft-eid (:entry-eid test-entry) "main")]
+      (is (= with without)))))
+
+(deftest hydrate-mount-overrides-parses-stats-override-into-draft-unit-stats
+  (with-redefs [data-access.contract/get-abilities-by-keys (fn [_ _] {})]
+    (let [hydrated (handlers.draft/hydrate-mount-overrides nil mount-with-overrides)]
+      (is (= 6828 (:health-override hydrated)))
+      (is (seq (:stats-override hydrated)))
+      (is (every? (fn [s] (and (contains? s :stat) (contains? s :percentage))) (:stats-override hydrated))))))
+
+(deftest hydrate-mount-overrides-exposes-attributes-override
+  (with-redefs [data-access.contract/get-abilities-by-keys (fn [_ _] {})]
+    (let [hydrated (handlers.draft/hydrate-mount-overrides nil mount-with-overrides)]
+      (is (seq (:attributes-override hydrated)))
+      (is (= #{"flying" "large"} (set (map :key (:attributes-override hydrated))))))))
+
+(deftest hydrate-mount-overrides-resolves-granted-ability-keys-to-records
+  (with-redefs [data-access.contract/get-abilities-by-keys
+                (fn [_ _]
+                  {"ability_fiery_roar" {:eid         (UUID/fromString "aaaa0000-0000-0000-0000-000000000001")
+                                         :name        "Fiery Roar"
+                                         :description "Roars menacingly."
+                                         :cost        0}})]
+    (let [hydrated (handlers.draft/hydrate-mount-overrides nil mount-with-overrides)
+          [g]      (:granted-abilities hydrated)]
+      (is (= "ability_fiery_roar" (:key g)))
+      (is (= "Fiery Roar" (:name g))))))
+
+(deftest hydrate-mount-overrides-leaves-base-fields-when-stats-override-missing
+  (let [bare     (dissoc mount-with-overrides :stats-override :granted-ability-keys)
+        hydrated (handlers.draft/hydrate-mount-overrides nil bare)]
+    (is (nil? (:stats-override hydrated)))
+    (is (nil? (:health-override hydrated)))
+    (is (= [] (:granted-abilities hydrated)))))
+
+(deftest embed-unit-for-entry-overlays-mount-health-when-mount-selected
+  (with-redefs [data-access.contract/get-draft-by-eid      (fn [_ _] test-draft)
+                data-access.contract/get-game-mode-by-eid  (fn [_ _] test-game-mode)
+                data-access.contract/get-unit-by-eid       (fn [_ _] lord-with-mount-stats)
+                data-access.contract/get-abilities-by-keys (fn [_ _] {})
+                data-access.contract/get-spells-by-keys    (fn [_ _] {})
+                data-access.contract/get-items-for-unit    (fn [_ _] [])
+                data-access.contract/get-mounts-for-unit   (fn [_ _] [mount-with-overrides])]
+    (let [entry-resource {:eid       (:entry-eid test-entry)
+                          :draft-eid test-draft-eid
+                          :unit-eid  test-lord-eid
+                          :section   "main"
+                          :mount     "mount_deathclaw"
+                          :abilities []
+                          :spells    []
+                          :items     []}
+          result         (handlers.draft/embed-unit-for-entry test-deps entry-resource)
+          unit           (get-in result [:_embedded :unit])]
+      (is (= 6828 (:health unit)))
+      (is (= 1000 (:total-cost unit)))
+      (is (true? (:selected (first (:mounts unit))))))))
+
+(deftest get-draft-unit-details-excludes-mount-only-abilities-from-base-list
+  ;; Karl-Franz-style fixture: unit_statistics lists Bloodroar in abilities,
+  ;; and the Deathclaw mount grants Bloodroar. Bloodroar should be suppressed
+  ;; from the unit's base draftable list — it only surfaces under
+  ;; :mount-granted-abilities when Deathclaw is selected.
+  (let [unit  (assoc lord-unit
+                     :unit-statistics
+                     "{\"abilities\":[\"hold_the_line\",\"bloodroar\",\"foe_seeker\"]}")
+        mount {:id                   11
+               :eid                  (UUID/fromString "11110000-0000-0000-0000-000000000002")
+               :key                  "mount_deathclaw"
+               :name                 "Deathclaw"
+               :icon-key             "mount_deathclaw"
+               :cost                 800
+               :stats-override       nil
+               :granted-ability-keys "[\"bloodroar\"]"}]
+    (with-redefs [data-access.contract/get-draft-by-eid      (fn [_ _] test-draft)
+                  data-access.contract/get-game-mode-by-eid  (fn [_ _] test-game-mode)
+                  data-access.contract/get-unit-by-eid       (fn [_ _] unit)
+                  data-access.contract/get-abilities-by-keys (fn [_ ks]
+                                                               (into {}
+                                                                     (map (fn [k] [k {:eid  (UUID/randomUUID)
+                                                                                      :name k
+                                                                                      :cost (if (= k "bloodroar") 150 0)}]))
+                                                                     ks))
+                  data-access.contract/get-spells-by-keys    (fn [_ _] {})
+                  data-access.contract/get-items-for-unit    (fn [_ _] [])
+                  data-access.contract/get-mounts-for-unit   (fn [_ _] [mount])]
+      (let [result             (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)
+            draftable-keys     (set (map :key (:draftable-abilities result)))
+            passive-keys       (set (map :key (:passive-abilities result)))
+            mount-granted-keys (set (map :key (:granted-abilities (first (:mounts result)))))]
+        (is (not (contains? draftable-keys "bloodroar")))
+        (is (not (contains? passive-keys "bloodroar")))
+        (is (contains? mount-granted-keys "bloodroar"))
+        (is (= #{"hold_the_line" "foe_seeker"}
+               (into draftable-keys passive-keys)))))))
+
+(deftest embed-unit-for-entry-leaves-base-stats-when-no-mount-selected
+  (with-redefs [data-access.contract/get-draft-by-eid      (fn [_ _] test-draft)
+                data-access.contract/get-game-mode-by-eid  (fn [_ _] test-game-mode)
+                data-access.contract/get-unit-by-eid       (fn [_ _] lord-with-mount-stats)
+                data-access.contract/get-abilities-by-keys (fn [_ _] {})
+                data-access.contract/get-spells-by-keys    (fn [_ _] {})
+                data-access.contract/get-items-for-unit    (fn [_ _] [])
+                data-access.contract/get-mounts-for-unit   (fn [_ _] [mount-with-overrides])]
+    (let [entry-resource {:eid       (:entry-eid test-entry)
+                          :draft-eid test-draft-eid
+                          :unit-eid  test-lord-eid
+                          :section   "main"
+                          :mount     nil
+                          :abilities []
+                          :spells    []
+                          :items     []}
+          result         (handlers.draft/embed-unit-for-entry test-deps entry-resource)
+          unit           (get-in result [:_embedded :unit])]
+      (is (= 4288 (:health unit)))
+      (is (= 200 (:total-cost unit)))
+      (is (= [] (:mount-granted-abilities unit))))))

@@ -3,6 +3,8 @@ CREATE TABLE IF NOT EXISTS unit_mount (
   unit_id INTEGER NOT NULL,
   mount_id INTEGER NOT NULL,
   cost INTEGER NOT NULL DEFAULT 0,
+  stats_override TEXT,
+  granted_ability_keys TEXT,
   version INT NOT NULL,
   created_by_sub TEXT NOT NULL,
   created_at TEXT NOT NULL,

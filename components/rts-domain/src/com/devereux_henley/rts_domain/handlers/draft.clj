@@ -304,6 +304,53 @@
   [dependencies unit-eid]
   (db/get-mounts-for-unit (:connection dependencies) unit-eid))
 
+;; ─── Mount overrides ──────────────────────────────────────────────────────────
+
+(defn- parse-granted-ability-keys
+  "Parses the raw granted_ability_keys TEXT column (a JSON array or null)
+  into a vector of key strings. Returns nil when the column is empty;
+  invalid JSON propagates as an exception since that would mean the seed
+  pipeline wrote garbage."
+  [raw]
+  (when (and raw (seq raw))
+    (vec (jsonista/read-value raw))))
+
+(defn- hydrate-granted-abilities
+  "Resolves a seq of ability keys against the ability table, dropping any
+  keys that don't exist. Returned maps match draft-ability shape."
+  [conn ability-keys]
+  (when (seq ability-keys)
+    (let [by-key (db/get-abilities-by-keys conn ability-keys)]
+      (into []
+            (keep (fn [k]
+                    (when-let [{:keys [name eid description cost]} (get by-key k)]
+                      {:key         k           :name name        :eid eid
+                       :description description :cost (or cost 0)})))
+            ability-keys))))
+
+(defn hydrate-mount-overrides
+  "Parses a mount row's stats_override + granted_ability_keys TEXT columns
+  and attaches:
+    :stats-override       — [draft-unit-stat] with percentages
+    :health-override      — int or nil
+    :barrier-override     — int or nil
+    :attributes-override  — vec of {:key :icon :label} or nil
+    :granted-abilities    — vec of draft-ability (resolved from key list)
+  Mounts without override data pass through untouched except for an empty
+  :granted-abilities."
+  [conn mount]
+  (let [raw-stats    (:stats-override mount)
+        raw-granted  (:granted-ability-keys mount)
+        parsed       (when (and raw-stats (seq raw-stats))
+                       (parse-unit-statistics raw-stats))
+        granted-keys (parse-granted-ability-keys raw-granted)
+        granted      (hydrate-granted-abilities conn granted-keys)]
+    (cond-> (assoc mount :granted-abilities (or granted []))
+      parsed (assoc :stats-override      (mapv add-stat-percentage (:stats parsed))
+                    :health-override     (:health parsed)
+                    :barrier-override    (:barrier parsed)
+                    :attributes-override (vec (:attributes parsed))))))
+
 ;; ─── Cost calculation ─────────────────────────────────────────────────────────
 
 (defn- compute-unit-total-cost
@@ -391,6 +438,8 @@
 
 ;; ─── Composite domain operations ──────────────────────────────────────────────
 
+(declare apply-selections-to-unit build-draft-unit-resource)
+
 (defn get-draft-unit-details
   "Returns a flat :draft/unit resource for a unit in the context of a draft:
    unit identity/stats/abilities merged with the per-draft option catalog
@@ -399,7 +448,31 @@
 
    Abilities and spells are split into two groups by cost:
      - passive (cost = 0): always on the character; shown in a readonly section
-     - draftable (cost > 0): purchasable options shown in a selectable section"
+     - draftable (cost > 0): purchasable options shown in a selectable section
+
+   When `selections` is a map ({:mount :items :spells :abilities}) the
+   catalog is marked with :selected flags, the chosen mount's stats /
+   health / barrier / attributes overlay the base unit, granted abilities
+   surface as :mount-granted-abilities, and :total-cost reflects the live
+   combination. In preview mode callers pass nil."
+  ([dependencies draft-eid unit-eid]
+   (get-draft-unit-details dependencies draft-eid unit-eid nil))
+  ([dependencies draft-eid unit-eid selections]
+   (let [unit (build-draft-unit-resource dependencies draft-eid unit-eid)]
+     (if selections
+       (apply-selections-to-unit (:connection dependencies) unit selections)
+       unit))))
+
+(defn- build-draft-unit-resource
+  "The original unit-detail assembler, now private. Returns the draft-unit
+  resource without any selection overlay applied.
+
+  Abilities granted by any of the unit's mounts are excluded from the
+  base passive/draftable lists — they only surface under
+  :mount-granted-abilities when the corresponding mount is selected.
+  This prevents the hand-curated seed's habit of folding mount-only
+  abilities (e.g. Bloodroar on Karl Franz) into the foot unit's
+  draftable pool."
   [dependencies draft-eid unit-eid]
   (let [conn                                                                 (:connection dependencies)
         draft                                                                (db/get-draft-by-eid conn draft-eid)
@@ -407,12 +480,18 @@
         unit                                                                 (db/get-unit-by-eid conn unit-eid)
         {:keys [stats health barrier abilities draftable-spells attributes]} (parse-unit-statistics (:unit-statistics unit))
         unit-statistics                                                      (mapv add-stat-percentage stats)
-        ability-by-key                                                       (db/get-abilities-by-keys conn abilities)
+        mounts                                                               (mapv #(hydrate-mount-overrides conn %)
+                                                                                   (db/get-mounts-for-unit conn unit-eid))
+        mount-only-keys                                                      (into #{}
+                                                                                   (mapcat (fn [m] (map :key (:granted-abilities m))))
+                                                                                   mounts)
+        base-ability-keys                                                    (remove mount-only-keys abilities)
+        ability-by-key                                                       (db/get-abilities-by-keys conn base-ability-keys)
         all-abilities                                                        (into []
                                                                                    (keep (fn [k]
                                                                                            (when-let [{:keys [name eid description cost]} (get ability-by-key k)]
                                                                                              {:key k :name name :eid eid :description description :cost (or cost 0)})))
-                                                                                   abilities)
+                                                                                   base-ability-keys)
         passive-abilities                                                    (filterv #(= 0 (:cost %)) all-abilities)
         draftable-abilities                                                  (filterv #(pos? (:cost %)) all-abilities)
         spell-by-key                                                         (db/get-spells-by-keys conn draftable-spells)
@@ -423,8 +502,7 @@
                                                                                    draftable-spells)
         passive-spells                                                       (filterv #(= 0 (:cost %)) all-spells)
         draftable-spells-v                                                   (filterv #(pos? (:cost %)) all-spells)
-        items                                                                (db/get-items-for-unit conn unit-eid)
-        mounts                                                               (db/get-mounts-for-unit conn unit-eid)]
+        items                                                                (db/get-items-for-unit conn unit-eid)]
     (assoc unit
            :type                :draft/unit
            :draft-eid           draft-eid
@@ -450,40 +528,89 @@
 (declare get-draft-entry)
 
 (defn get-draft-entry-details
-  "Returns a truly slim :draft/entry resource for a placed entry: just
-   addressing fields (eid, draft-eid, unit-eid, section) and the selection
-   state the player has stored on the entry as raw key lists (:mount,
-   :abilities, :spells, :items). Clients that want the unit's catalog
-   fetch it via `?embed=unit`, which runs embed-unit-for-entry."
-  [dependencies draft-eid entry-eid section]
-  (when-let [entry (get-draft-entry dependencies draft-eid entry-eid section)]
-    {:type      :draft/entry
-     :eid       (:entry-eid entry)
-     :draft-eid draft-eid
-     :unit-eid  (:unit-eid entry)
-     :section   section
-     :mount     (:mount entry)
-     :abilities (vec (:abilities entry))
-     :spells    (vec (:spells entry))
-     :items     (vec (:items entry))}))
+  "Returns a :draft/entry resource for a placed entry: addressing fields
+   (eid, draft-eid, unit-eid, section) and the selection state as raw key
+   lists (:mount, :abilities, :spells, :items). Clients that want the
+   unit's catalog fetch it via `?embed=unit`, which runs
+   embed-unit-for-entry.
+
+   When `overrides` is a map it fully replaces the entry's persisted
+   selection for rendering purposes only (it's not written back). This is
+   how the GET endpoint renders a live preview of the panel as the user
+   toggles mounts/items/etc. on the form."
+  ([dependencies draft-eid entry-eid section]
+   (get-draft-entry-details dependencies draft-eid entry-eid section nil))
+  ([dependencies draft-eid entry-eid section overrides]
+   (when-let [entry (get-draft-entry dependencies draft-eid entry-eid section)]
+     (let [source (or overrides entry)]
+       {:type      :draft/entry
+        :eid       (:entry-eid entry)
+        :draft-eid draft-eid
+        :unit-eid  (:unit-eid entry)
+        :section   section
+        :mount     (:mount source)
+        :abilities (vec (:abilities source))
+        :spells    (vec (:spells source))
+        :items     (vec (:items source))}))))
+
+(defn- apply-mount-overrides
+  "If mount-key identifies one of the unit's mounts, overlay its stats /
+  health / barrier / attributes and expose its granted abilities on the
+  unit. Mounts without override data leave the base fields untouched.
+  Returns the unit with :selected flags set on mounts and the overlay
+  applied."
+  [unit mount-key]
+  (let [mounts   (or (:mounts unit) [])
+        marked   (mapv (fn [m] (assoc m :selected (= mount-key (:key m)))) mounts)
+        selected (when mount-key (first (filter #(= mount-key (:key %)) mounts)))
+        unit'    (assoc unit :mounts marked)]
+    (if-not selected
+      (assoc unit' :mount-granted-abilities [])
+      (cond-> (assoc unit' :mount-granted-abilities (or (:granted-abilities selected) []))
+        (:stats-override selected)      (assoc :unit-statistics (:stats-override selected))
+        (:health-override selected)     (assoc :health (:health-override selected))
+        (:barrier-override selected)    (assoc :barrier (:barrier-override selected))
+        (:attributes-override selected) (assoc :attributes (:attributes-override selected))))))
+
+(defn apply-selections-to-unit
+  "Given a hydrated draft-unit resource and a selection map
+  ({:mount :items :spells :abilities}), marks :selected on draftable
+  options, overlays the chosen mount's stats/health/barrier/attributes,
+  exposes granted abilities as :mount-granted-abilities, surfaces the raw
+  :mount key so the template can pre-check its radio, and assocs
+  :total-cost reflecting base + mount + item + spell + ability costs."
+  [conn unit {:keys [mount items spells abilities] :as selections}]
+  (let [ability-set (set abilities)
+        spell-set   (set spells)
+        item-set    (set items)
+        overlaid    (-> unit
+                        (assoc :mount mount)
+                        (update :draftable-abilities mark-selected ability-set)
+                        (update :draftable-spells mark-selected spell-set)
+                        (update :items mark-selected item-set)
+                        (apply-mount-overrides mount))
+        total       (compute-unit-total-cost overlaid selections conn)]
+    (assoc overlaid :total-cost total)))
 
 (defn embed-unit-for-entry
   "Embed function for the `unit` embed on a draft-entry-resource. Loads the
    draft-scoped unit resource for the entry's unit-eid and marks :selected
    on draftable abilities, draftable spells, items, and mounts based on the
-   entry's stored selection key lists, then assocs the result under
-   [:_embedded :unit]."
+   entry's stored selection key lists. When a mount is selected, overlays
+   the mount's stats/health/barrier/attributes and exposes its granted
+   abilities as :mount-granted-abilities. Adds :total-cost reflecting the
+   live selection (base + mount + items + spells + abilities). Assocs the
+   result under [:_embedded :unit]."
   [dependencies entry-resource]
-  (let [ability-set (set (:abilities entry-resource))
-        spell-set   (set (:spells entry-resource))
-        item-set    (set (:items entry-resource))
-        unit        (-> (get-draft-unit-details dependencies
-                                                (:draft-eid entry-resource)
-                                                (:unit-eid entry-resource))
-                        (update :draftable-abilities mark-selected ability-set)
-                        (update :draftable-spells mark-selected spell-set)
-                        (update :items mark-selected item-set))]
-    (assoc-in entry-resource [:_embedded :unit] unit)))
+  (let [selections {:mount     (:mount entry-resource)
+                    :abilities (:abilities entry-resource)
+                    :spells    (:spells entry-resource)
+                    :items     (:items entry-resource)}
+        unit       (build-draft-unit-resource dependencies
+                                              (:draft-eid entry-resource)
+                                              (:unit-eid entry-resource))]
+    (assoc-in entry-resource [:_embedded :unit]
+              (apply-selections-to-unit (:connection dependencies) unit selections))))
 
 (defn add-unit-to-draft
   "Validates and adds a unit to the specified section of a draft.

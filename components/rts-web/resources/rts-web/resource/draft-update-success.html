@@ -1,3 +1,4 @@
 <div id="draft-action-error" role="alert" aria-live="polite" hidden hx-swap-oob="true"></div>
 <div id="draft-slot-cost-{{data.entry-eid}}" class="draft-slot-cost" aria-hidden="true" hx-swap-oob="true">{{data.total-cost}}</div>
 {% with budget=data.budget oob="oob" %}{% include "rts-web/view/draft-budget-group.html" %}{% endwith %}
+{% with unit=data.entry._embedded.unit data=data.entry %}{% include "rts-web/view/draft-unit-panel.html" %}{% endwith %}
