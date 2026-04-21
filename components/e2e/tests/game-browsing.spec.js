@@ -4,11 +4,11 @@ const GAME_EID = 'eea787d7-1065-45eb-a3f6-e26f32c294a1';
 const EMPIRE_FACTION_EID = '35dd38fa-2bcc-4492-8f58-a106d0d02cbb';
 
 test.describe('Game browsing', () => {
-  test('game index page loads with factions', async ({ page }) => {
+  test('game index page loads with atlas dropdown', async ({ page }) => {
     await page.goto(`/view/game/${GAME_EID}/index.html`);
     await expect(page).toHaveTitle(/Warhammer III/);
     await expect(page.locator('main#content')).toBeVisible();
-    await expect(page.locator('#factions-dropdown-btn')).toBeVisible();
+    await expect(page.locator('#atlas-dropdown-btn')).toBeVisible();
   });
 
   test('faction page loads with units', async ({ page }) => {
@@ -17,34 +17,31 @@ test.describe('Game browsing', () => {
     await expect(page.locator('main#content')).toBeVisible();
   });
 
-  test('factions dropdown populates after selecting a game', async ({ page }) => {
+  test('atlas dropdown links to the faction list', async ({ page }) => {
     await page.goto(`/view/game/${GAME_EID}/index.html`);
 
-    const factionsButton = page.locator('#factions-dropdown-btn');
-    await expect(factionsButton).toBeVisible();
-    await factionsButton.click();
+    const atlasButton = page.locator('#atlas-dropdown-btn');
+    await expect(atlasButton).toBeVisible();
+    await atlasButton.click();
 
-    const factionsMenu = page.locator('#factions-menu');
-    await expect(factionsMenu).toBeVisible();
+    const atlasMenu = page.locator('#atlas-menu');
+    await expect(atlasMenu).toBeVisible();
 
-    const factionLinks = factionsMenu.locator('a.dropdown-item');
-    const count = await factionLinks.count();
-    expect(count).toBeGreaterThan(0);
-
-    await expect(factionLinks.first()).toBeVisible();
+    const factionsLink = atlasMenu.locator('a.dropdown-item', { hasText: 'Factions' });
+    await expect(factionsLink).toBeVisible();
   });
 
-  test('clicking a faction link navigates to faction page', async ({ page }) => {
-    await page.goto(`/view/game/${GAME_EID}/index.html`);
+  test('clicking a faction card navigates to faction page', async ({ page }) => {
+    await page.goto(`/view/game/${GAME_EID}/faction/index.html`);
 
-    const factionsButton = page.locator('#factions-dropdown-btn');
-    await factionsButton.click();
+    const factionCards = page.locator('a.faction-card');
+    await expect(factionCards.first()).toBeVisible();
 
-    const firstFaction = page.locator('#factions-menu a.dropdown-item').first();
-    const factionName = await firstFaction.textContent();
+    const firstFaction = factionCards.first();
+    const factionName = (await firstFaction.locator('.faction-card-name').textContent()).trim();
     await firstFaction.click();
 
     await expect(page.locator('main#content')).toBeVisible();
-    await expect(page).toHaveTitle(new RegExp(factionName.trim()));
+    await expect(page).toHaveTitle(new RegExp(factionName));
   });
 });
