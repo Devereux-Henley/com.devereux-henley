@@ -11,6 +11,7 @@
    "Amethyst Outriders"                                         "wh_main_emp_outriders"
    "Armoured Squig Hoppers"                                     "wh_dlc06_grn_squig_hoppers"
    "Beastslayers of Bastonne (Foot Squires)"                    "wh_dlc07_brt_foot_squires"
+   "Black-Horn's Ravagers (Gor Herd - Shields)"                 "wh_pro04_bst_ror_gor_herd_shields"
    "Blackhole Flayers (Doom-Flayers)"                           "wh2_dlc12_skv_doom_flayers_ror"
    "Blessed Razordon Hunting Pack"                              "wh2_dlc13_lzd_razordon_blessed"
    "Blessed Sacred Kroxigor"                                    "wh2_dlc13_lzd_sacred_kroxigors_blessed"
