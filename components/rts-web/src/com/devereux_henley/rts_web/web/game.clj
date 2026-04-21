@@ -96,7 +96,7 @@
          {:keys [embed]} :query} :parameters
         router                   :reitit.core/router
         :as                      _request}]
-    (let [embed-set (some-> embed (as-> e (set (map keyword (if (string? e) [e] e)))))]
+    (let [embed-set (some->> (web.core/query-param->vec embed) (into #{} (map keyword)))]
       (web.core/handle-fetch-response
        domain/faction-resource
        {:hostname (:hostname dependencies) :router router}
@@ -119,7 +119,7 @@
          {:keys [embed]} :query} :parameters
         router                   :reitit.core/router
         :as                      _request}]
-    (let [embed-set (some-> embed (as-> e (set (map keyword (if (string? e) [e] e)))))]
+    (let [embed-set (some->> (web.core/query-param->vec embed) (into #{} (map keyword)))]
       (web.core/handle-fetch-response
        domain/game-resource
        {:hostname (:hostname dependencies) :router router}

@@ -13,17 +13,8 @@
   "Normalises the `embed` query param (string, sequence of strings, or nil)
    into a set of keywords that apply-embeds can consume."
   [embed]
-  (some-> embed (as-> e (set (map keyword (if (string? e) [e] e))))))
-
-(defn- ->vec
-  "Coerces a query param that may arrive as nil, a single string, or a
-  collection of strings into a (possibly empty) vector of strings."
-  [v]
-  (cond
-    (nil? v)        nil
-    (string? v)     [v]
-    (sequential? v) (vec v)
-    :else           nil))
+  (when-let [v (web.core/query-param->vec embed)]
+    (into #{} (map keyword) v)))
 
 (defn- selection-overrides
   "Builds a selection-override map from the GET query params, or nil when
@@ -33,9 +24,9 @@
   [{:keys [mount items spells abilities] :as query}]
   (when (some #(contains? query %) [:mount :items :spells :abilities])
     {:mount     (not-empty mount)
-     :items     (or (->vec items) [])
-     :spells    (or (->vec spells) [])
-     :abilities (or (->vec abilities) [])}))
+     :items     (or (web.core/query-param->vec items) [])
+     :spells    (or (web.core/query-param->vec spells) [])
+     :abilities (or (web.core/query-param->vec abilities) [])}))
 
 (defmethod integrant.core/init-key ::create-draft
   [_init-key dependencies]
