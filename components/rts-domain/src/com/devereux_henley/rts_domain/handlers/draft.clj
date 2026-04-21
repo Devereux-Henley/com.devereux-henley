@@ -308,12 +308,12 @@
 
 (defn- parse-granted-ability-keys
   "Parses the raw granted_ability_keys TEXT column (a JSON array or null)
-  into a vector of key strings. Invalid JSON returns []."
+  into a vector of key strings. Returns nil when the column is empty;
+  invalid JSON propagates as an exception since that would mean the seed
+  pipeline wrote garbage."
   [raw]
   (when (and raw (seq raw))
-    (try
-      (vec (jsonista/read-value raw))
-      (catch Exception _ []))))
+    (vec (jsonista/read-value raw))))
 
 (defn- hydrate-granted-abilities
   "Resolves a seq of ability keys against the ability table, dropping any
@@ -342,8 +342,7 @@
   (let [raw-stats    (:stats-override mount)
         raw-granted  (:granted-ability-keys mount)
         parsed       (when (and raw-stats (seq raw-stats))
-                       (try (parse-unit-statistics raw-stats)
-                            (catch Exception _ nil)))
+                       (parse-unit-statistics raw-stats))
         granted-keys (parse-granted-ability-keys raw-granted)
         granted      (hydrate-granted-abilities conn granted-keys)]
     (cond-> (assoc mount :granted-abilities (or granted []))
