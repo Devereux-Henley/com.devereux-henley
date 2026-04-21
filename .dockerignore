@@ -1,0 +1,32 @@
+# VCS
+.git
+.gitignore
+.github
+
+# Build outputs / caches
+**/target
+**/.cpcache
+**/.clj-kondo/.cache
+**/.lsp
+.dir-locals.el
+
+# Local dev state
+db
+tmp-data
+deploy/.env
+
+# Editors / OS
+.vscode
+.idea
+.DS_Store
+
+# Node / Playwright
+**/node_modules
+components/e2e/test-results
+components/e2e/playwright-report
+components/e2e/playwright/.cache
+
+# Docs + deploy state not needed in image
+docs
+deploy/Caddyfile
+deploy/docker-compose.yml

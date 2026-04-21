@@ -51,3 +51,7 @@ db/*
 # (regenerated from game files via RPFM MCP, not committed)
 bases/rpfm-scraper/data/
 bases/rpfm-scraper/assets/
+
+# Deploy secrets + local smoke-test data
+deploy/.env
+deploy/data/
