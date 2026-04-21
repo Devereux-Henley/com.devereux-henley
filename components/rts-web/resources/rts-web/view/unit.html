@@ -76,21 +76,18 @@
                       hx-swap="outerHTML"
                       hx-select="#unit-page"
                       hx-headers='{"Accept": "application/htmx+html"}'>
-                    <ul class="unit-lore-list" aria-label="Available lores for {{data.name}}">
-                        {% for lore in lores %}
-                        <li class="unit-lore-row">
-                            <label class="unit-lore-label">
-                                <input class="unit-lore-radio"
-                                       type="radio"
-                                       name="lore"
-                                       value="{{lore.key}}"
-                                       {% if lore.selected %}checked{% endif %}
-                                       aria-label="{{lore.name}}">
-                                <span class="unit-lore-name">{{lore.name}}</span>
-                            </label>
-                        </li>
-                        {% endfor %}
-                    </ul>
+                    <label class="unit-lore-label" for="unit-lore-select">
+                        <span class="sr-only">Select lore for {{data.name}}</span>
+                        <select class="unit-lore-select"
+                                id="unit-lore-select"
+                                name="lore"
+                                aria-labelledby="unit-lores-heading">
+                            <option value=""{% if not lore %} selected{% endif %}>Select a lore&hellip;</option>
+                            {% for l in lores %}
+                            <option value="{{l.key}}"{% if l.selected %} selected{% endif %}>{{l.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
                 </form>
             </section>
             {% endif %}

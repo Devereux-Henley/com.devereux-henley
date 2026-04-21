@@ -213,6 +213,24 @@
         </section>
         {% endif %}
 
+        {% if unit.lores|not-empty? %}
+        <section class="draft-stats-section unit-panel" aria-labelledby="panel-lores-heading">
+            <h4 class="unit-panel-heading" id="panel-lores-heading">Lore of Magic</h4>
+            <label class="draft-lore-label" for="draft-lore-select">
+                <span class="sr-only">Select lore for {{unit.name}}</span>
+                <select class="draft-lore-select"
+                        id="draft-lore-select"
+                        name="lore"
+                        aria-labelledby="panel-lores-heading">
+                    <option value=""{% if not data.lore %} selected{% endif %}>Select a lore&hellip;</option>
+                    {% for lore in unit.lores %}
+                    <option value="{{lore.key}}"{% if lore.selected %} selected{% endif %}>{{lore.name}}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </section>
+        {% endif %}
+
         {% if unit.draftable-spells|not-empty? %}
         <section class="draft-stats-section unit-panel" aria-labelledby="panel-spells-heading">
             <h4 class="unit-panel-heading" id="panel-spells-heading">Spells</h4>
@@ -232,27 +250,6 @@
                              onerror="this.style.display='none'">
                         <span class="draft-option-name">{{spell.name}}</span>
                         <span class="badge badge-secondary draft-option-cost">+{{spell.cost}}</span>
-                    </label>
-                </li>
-                {% endfor %}
-            </ul>
-        </section>
-        {% endif %}
-
-        {% if unit.lores|not-empty? %}
-        <section class="draft-stats-section unit-panel" aria-labelledby="panel-lores-heading">
-            <h4 class="unit-panel-heading" id="panel-lores-heading">Lore of Magic</h4>
-            <ul class="draft-option-list" aria-label="Available lores for {{unit.name}}">
-                {% for lore in unit.lores %}
-                <li class="draft-option-row draft-option-row--selectable">
-                    <label class="draft-option-label">
-                        <input class="draft-lore-radio"
-                               type="radio"
-                               name="lore"
-                               value="{{lore.key}}"
-                               {% if lore.selected %}checked{% endif %}
-                               aria-label="{{lore.name}}">
-                        <span class="draft-option-name">{{lore.name}}</span>
                     </label>
                 </li>
                 {% endfor %}

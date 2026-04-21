@@ -52,13 +52,15 @@ test.describe.serial('Lore-of-magic selection', () => {
     await expect(cards.first()).toHaveAttribute('aria-label', /Archmage,/);
   });
 
-  test('preview panel renders 9 lore radios and no spells when no lore selected', async ({ page }) => {
+  test('preview panel renders a lore dropdown (9 lores + placeholder) and no spells when unselected', async ({ page }) => {
     await createHighElvesDraft(page);
     await selectArchmage(page);
 
-    const loreRadios = page.locator('#draft-unit-form input[name="lore"]');
-    await expect(loreRadios).toHaveCount(9);
-    await expect(loreRadios.filter({ has: page.locator(':checked') })).toHaveCount(0);
+    const loreSelect = page.locator('#draft-unit-form select[name="lore"]');
+    await expect(loreSelect).toBeVisible();
+    await expect(loreSelect.locator('option')).toHaveCount(10); // placeholder + 9 lores
+    // Placeholder is the selected option on initial render.
+    await expect(loreSelect).toHaveValue('');
     await expect(page.locator('#draft-unit-form input[name="spells"]')).toHaveCount(0);
   });
 
@@ -66,12 +68,11 @@ test.describe.serial('Lore-of-magic selection', () => {
     await createHighElvesDraft(page);
     await selectArchmage(page);
 
-    await page.locator(`#draft-unit-form input[name="lore"][value="${FIRE_LORE_KEY}"]`).check();
+    await page.locator('#draft-unit-form select[name="lore"]').selectOption(FIRE_LORE_KEY);
 
     // Wait for the HTMX swap to land: 6 spell checkboxes appear + portrait swaps.
     await expect(page.locator('#draft-unit-form input[name="spells"]')).toHaveCount(6, { timeout: 5000 });
-    await expect(page.locator(`#draft-unit-form input[name="lore"][value="${FIRE_LORE_KEY}"]`))
-      .toBeChecked();
+    await expect(page.locator('#draft-unit-form select[name="lore"]')).toHaveValue(FIRE_LORE_KEY);
     await expect(page.locator('.draft-stats-portrait')).toHaveAttribute('src', /000a0006/);
   });
 
@@ -79,9 +80,9 @@ test.describe.serial('Lore-of-magic selection', () => {
     await createHighElvesDraft(page);
     await selectArchmage(page);
 
-    await page.locator(`#draft-unit-form input[name="lore"][value="${FIRE_LORE_KEY}"]`).check();
-    await expect(page.locator(`#draft-unit-form input[name="lore"][value="${FIRE_LORE_KEY}"]`))
-      .toBeChecked({ timeout: 5000 });
+    await page.locator('#draft-unit-form select[name="lore"]').selectOption(FIRE_LORE_KEY);
+    await expect(page.locator('#draft-unit-form select[name="lore"]'))
+      .toHaveValue(FIRE_LORE_KEY, { timeout: 5000 });
 
     // Pick two Fire spells.
     const fireCheckboxes = page.locator('#draft-unit-form input[name="spells"]');
@@ -92,21 +93,21 @@ test.describe.serial('Lore-of-magic selection', () => {
 
     // Switch to Life lore — the preview GET serves the new pool without
     // persisted state, and no spells should carry over.
-    await page.locator(`#draft-unit-form input[name="lore"][value="${LIFE_LORE_KEY}"]`).check();
-    await expect(page.locator(`#draft-unit-form input[name="lore"][value="${LIFE_LORE_KEY}"]`))
-      .toBeChecked({ timeout: 5000 });
+    await page.locator('#draft-unit-form select[name="lore"]').selectOption(LIFE_LORE_KEY);
+    await expect(page.locator('#draft-unit-form select[name="lore"]'))
+      .toHaveValue(LIFE_LORE_KEY, { timeout: 5000 });
     await expect(page.locator('#draft-unit-form input[name="spells"]:checked')).toHaveCount(0);
 
     const portraitSrc = await page.locator('.draft-stats-portrait').getAttribute('src');
     expect(portraitSrc).toContain('000a0009');
   });
 
-  test('add-to-main persists the selected lore, and edit-mode reopens with it checked', async ({ page }) => {
+  test('add-to-main persists the selected lore, and edit-mode reopens with it selected', async ({ page }) => {
     await createHighElvesDraft(page);
     await selectArchmage(page);
-    await page.locator(`#draft-unit-form input[name="lore"][value="${FIRE_LORE_KEY}"]`).check();
-    await expect(page.locator(`#draft-unit-form input[name="lore"][value="${FIRE_LORE_KEY}"]`))
-      .toBeChecked({ timeout: 5000 });
+    await page.locator('#draft-unit-form select[name="lore"]').selectOption(FIRE_LORE_KEY);
+    await expect(page.locator('#draft-unit-form select[name="lore"]'))
+      .toHaveValue(FIRE_LORE_KEY, { timeout: 5000 });
 
     await addToMain(page);
 
@@ -115,13 +116,13 @@ test.describe.serial('Lore-of-magic selection', () => {
     await lordSlot.locator('.draft-slot-card-button').click();
 
     await expect(page.locator('.draft-editing-indicator')).toBeVisible({ timeout: 5000 });
-    await expect(page.locator(`#draft-unit-form input[name="lore"][value="${FIRE_LORE_KEY}"]`))
-      .toBeChecked({ timeout: 5000 });
+    await expect(page.locator('#draft-unit-form select[name="lore"]'))
+      .toHaveValue(FIRE_LORE_KEY, { timeout: 5000 });
   });
 
   test('unit page with ?lore= renders the lore-specific spell table and portrait', async ({ page }) => {
     await page.goto(`/view/game/${GAME_EID}/unit/${ARCHMAGE_EID}/index.html?lore=${FIRE_LORE_KEY}`);
-    await expect(page.locator(`input[name="lore"][value="${FIRE_LORE_KEY}"]`)).toBeChecked();
+    await expect(page.locator('select[name="lore"]')).toHaveValue(FIRE_LORE_KEY);
 
     const portraitSrc = await page.locator('.unit-hero-card').getAttribute('src');
     expect(portraitSrc).toContain('000a0006');
