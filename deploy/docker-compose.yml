@@ -1,0 +1,41 @@
+name: rts-api
+
+services:
+  app:
+    image: ${APP_IMAGE:?APP_IMAGE must be set in .env (e.g. ghcr.io/devereux-henley/com.devereux-henley:latest)}
+    restart: unless-stopped
+    environment:
+      RTS_API_PORT: "3001"
+      RTS_API_HOSTNAME: ${RTS_API_HOSTNAME:?set RTS_API_HOSTNAME in .env}
+      AUTH_HOSTNAME:    ${AUTH_HOSTNAME:?set AUTH_HOSTNAME in .env}
+      AUTH_SLUG:        ${AUTH_SLUG:?set AUTH_SLUG in .env}
+      RTS_DB_CONNECTION_URI: jdbc:sqlite:/data/database.db
+    volumes:
+      - ${DATA_DIR:-./data}:/data
+    expose:
+      - "3001"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3001/status || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - app
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:?set APP_DOMAIN in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:

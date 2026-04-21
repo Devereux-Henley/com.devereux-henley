@@ -1,0 +1,13 @@
+{$APP_DOMAIN} {
+    encode gzip zstd
+
+    reverse_proxy app:3001 {
+        header_up X-Forwarded-Proto {scheme}
+        header_up X-Forwarded-Host  {host}
+    }
+
+    log {
+        output stdout
+        format console
+    }
+}

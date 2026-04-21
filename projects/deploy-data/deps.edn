@@ -2,5 +2,7 @@
         mono/rts-data        {:local/root "../../components/rts-data"}
         mono/rts-data-deploy {:local/root "../../bases/rts-data-deploy"}}
  :aliases {:build {:extra-paths ["."]
-                   :extra-deps  {org.clojure/tools.build {:mvn/version "0.9.4"}}
+                   :extra-deps  {io.github.clojure/tools.build
+                                 {:git/tag "v0.10.13"
+                                  :git/sha "ae52edfedef4ca72e699e9c86abfe0940e97dc26"}}
                    :ns-default  build}}}
