@@ -465,7 +465,14 @@
 
 (defn- build-draft-unit-resource
   "The original unit-detail assembler, now private. Returns the draft-unit
-  resource without any selection overlay applied."
+  resource without any selection overlay applied.
+
+  Abilities granted by any of the unit's mounts are excluded from the
+  base passive/draftable lists — they only surface under
+  :mount-granted-abilities when the corresponding mount is selected.
+  This prevents the hand-curated seed's habit of folding mount-only
+  abilities (e.g. Bloodroar on Karl Franz) into the foot unit's
+  draftable pool."
   [dependencies draft-eid unit-eid]
   (let [conn                                                                 (:connection dependencies)
         draft                                                                (db/get-draft-by-eid conn draft-eid)
@@ -473,12 +480,18 @@
         unit                                                                 (db/get-unit-by-eid conn unit-eid)
         {:keys [stats health barrier abilities draftable-spells attributes]} (parse-unit-statistics (:unit-statistics unit))
         unit-statistics                                                      (mapv add-stat-percentage stats)
-        ability-by-key                                                       (db/get-abilities-by-keys conn abilities)
+        mounts                                                               (mapv #(hydrate-mount-overrides conn %)
+                                                                                   (db/get-mounts-for-unit conn unit-eid))
+        mount-only-keys                                                      (into #{}
+                                                                                   (mapcat (fn [m] (map :key (:granted-abilities m))))
+                                                                                   mounts)
+        base-ability-keys                                                    (remove mount-only-keys abilities)
+        ability-by-key                                                       (db/get-abilities-by-keys conn base-ability-keys)
         all-abilities                                                        (into []
                                                                                    (keep (fn [k]
                                                                                            (when-let [{:keys [name eid description cost]} (get ability-by-key k)]
                                                                                              {:key k :name name :eid eid :description description :cost (or cost 0)})))
-                                                                                   abilities)
+                                                                                   base-ability-keys)
         passive-abilities                                                    (filterv #(= 0 (:cost %)) all-abilities)
         draftable-abilities                                                  (filterv #(pos? (:cost %)) all-abilities)
         spell-by-key                                                         (db/get-spells-by-keys conn draftable-spells)
@@ -489,9 +502,7 @@
                                                                                    draftable-spells)
         passive-spells                                                       (filterv #(= 0 (:cost %)) all-spells)
         draftable-spells-v                                                   (filterv #(pos? (:cost %)) all-spells)
-        items                                                                (db/get-items-for-unit conn unit-eid)
-        mounts                                                               (mapv #(hydrate-mount-overrides conn %)
-                                                                                   (db/get-mounts-for-unit conn unit-eid))]
+        items                                                                (db/get-items-for-unit conn unit-eid)]
     (assoc unit
            :type                :draft/unit
            :draft-eid           draft-eid

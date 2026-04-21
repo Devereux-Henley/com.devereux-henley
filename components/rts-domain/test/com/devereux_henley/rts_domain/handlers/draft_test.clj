@@ -591,6 +591,44 @@
       (is (= 1000 (:total-cost unit)))
       (is (true? (:selected (first (:mounts unit))))))))
 
+(deftest get-draft-unit-details-excludes-mount-only-abilities-from-base-list
+  ;; Karl-Franz-style fixture: unit_statistics lists Bloodroar in abilities,
+  ;; and the Deathclaw mount grants Bloodroar. Bloodroar should be suppressed
+  ;; from the unit's base draftable list — it only surfaces under
+  ;; :mount-granted-abilities when Deathclaw is selected.
+  (let [unit  (assoc lord-unit
+                     :unit-statistics
+                     "{\"abilities\":[\"hold_the_line\",\"bloodroar\",\"foe_seeker\"]}")
+        mount {:id                   11
+               :eid                  (UUID/fromString "11110000-0000-0000-0000-000000000002")
+               :key                  "mount_deathclaw"
+               :name                 "Deathclaw"
+               :icon-key             "mount_deathclaw"
+               :cost                 800
+               :stats-override       nil
+               :granted-ability-keys "[\"bloodroar\"]"}]
+    (with-redefs [data-access.contract/get-draft-by-eid      (fn [_ _] test-draft)
+                  data-access.contract/get-game-mode-by-eid  (fn [_ _] test-game-mode)
+                  data-access.contract/get-unit-by-eid       (fn [_ _] unit)
+                  data-access.contract/get-abilities-by-keys (fn [_ ks]
+                                                               (into {}
+                                                                     (map (fn [k] [k {:eid  (UUID/randomUUID)
+                                                                                      :name k
+                                                                                      :cost (if (= k "bloodroar") 150 0)}]))
+                                                                     ks))
+                  data-access.contract/get-spells-by-keys    (fn [_ _] {})
+                  data-access.contract/get-items-for-unit    (fn [_ _] [])
+                  data-access.contract/get-mounts-for-unit   (fn [_ _] [mount])]
+      (let [result             (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)
+            draftable-keys     (set (map :key (:draftable-abilities result)))
+            passive-keys       (set (map :key (:passive-abilities result)))
+            mount-granted-keys (set (map :key (:granted-abilities (first (:mounts result)))))]
+        (is (not (contains? draftable-keys "bloodroar")))
+        (is (not (contains? passive-keys "bloodroar")))
+        (is (contains? mount-granted-keys "bloodroar"))
+        (is (= #{"hold_the_line" "foe_seeker"}
+               (into draftable-keys passive-keys)))))))
+
 (deftest embed-unit-for-entry-leaves-base-stats-when-no-mount-selected
   (with-redefs [data-access.contract/get-draft-by-eid      (fn [_ _] test-draft)
                 data-access.contract/get-game-mode-by-eid  (fn [_ _] test-game-mode)
