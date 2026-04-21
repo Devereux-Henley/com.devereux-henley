@@ -171,10 +171,16 @@
                          :tags         ["draft"]
                          :produces     ["application/json" "application/htmx+html"]
                          :operation-id "draft-unit/get"}
-            :parameters {:path (schema.contract/to-schema
-                                [:map
-                                 [:draft-eid :uuid]
-                                 [:eid :uuid]])}
+            :parameters {:path  (schema.contract/to-schema
+                                 [:map
+                                  [:draft-eid :uuid]
+                                  [:eid :uuid]])
+                         :query (schema.contract/to-schema
+                                 [:map
+                                  [:mount     {:optional true} [:maybe :string]]
+                                  [:items     {:optional true} [:or :string [:sequential :string]]]
+                                  [:spells    {:optional true} [:or :string [:sequential :string]]]
+                                  [:abilities {:optional true} [:or :string [:sequential :string]]]])}
             :responses  {200 {:body domain/draft-unit-resource}
                          500 {:body domain/draft-error-response}}
             :handler    (integrant.core/ref ::web.draft/get-draft-unit)}
@@ -208,9 +214,13 @@
                                     [:eid :uuid]])
                            :query (schema.contract/to-schema
                                    [:map
-                                    [:section [:enum "main" "reinforcements"]]
-                                    [:embed   {:optional true} [:or [:enum "unit"]
-                                                                [:sequential [:enum "unit"]]]]])}
+                                    [:section   [:enum "main" "reinforcements"]]
+                                    [:embed     {:optional true} [:or [:enum "unit"]
+                                                                  [:sequential [:enum "unit"]]]]
+                                    [:mount     {:optional true} [:maybe :string]]
+                                    [:items     {:optional true} [:or :string [:sequential :string]]]
+                                    [:spells    {:optional true} [:or :string [:sequential :string]]]
+                                    [:abilities {:optional true} [:or :string [:sequential :string]]]])}
               :responses  {200 {:body domain/draft-entry-resource}
                            404 {:body domain/draft-error-response}
                            500 {:body domain/draft-error-response}}

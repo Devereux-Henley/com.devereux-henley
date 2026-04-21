@@ -180,7 +180,9 @@
     [:key :string]
     [:name :string]
     [:icon-key [:maybe :string]]
-    [:cost :int]]))
+    [:cost :int]
+    [:stats-override {:optional true} [:maybe :string]]
+    [:granted-ability-keys {:optional true} [:maybe :string]]]))
 
 (def draft-state-entity
   (schema.contract/to-schema

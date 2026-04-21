@@ -256,7 +256,12 @@
                  (:main-unit-rows data)
                  (:land-units-loc data)
                  stem->mount-id
-                 unit-id-map)]
+                 unit-id-map
+                 (:main-unit-map data)
+                 (:land-unit-stats data)
+                 (:agent-subtype-map data)
+                 (:equipment-map data)
+                 (:ancillary-cost-map data))]
     (when-not dry-run?
       (spit (io/file seed-dir "seed-unit-mounts.sql") content))))
 
