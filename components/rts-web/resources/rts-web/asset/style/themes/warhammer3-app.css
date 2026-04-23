@@ -1715,7 +1715,16 @@ a:hover:has(img) {
   background: linear-gradient(90deg, #1a1410 0%, #0d0906 100%);
   border-bottom: 1px solid color-mix(in srgb, var(--color-primary-400) 20%, transparent);
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* Status badge stays anchored left so the league badge can extend to the
+   right edge without colliding with it. */
+.tournament-card-header .tournament-card-status {
+  margin-right: auto;
 }
 
 .tournament-card-body {
@@ -2293,4 +2302,621 @@ a:hover:has(img) {
   border-radius: var(--radius-md);
   padding: var(--space-3) var(--space-4);
   background: color-mix(in srgb, var(--color-primary-500) 4%, transparent);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════ */
+/* Competitive — Leagues, Seasons, Faction Stats                         */
+/* ─────────────────────────────────────────────────────────────────────── */
+/*                                                                       */
+/*  Concept: The Campaign Ledger.                                        */
+/*                                                                       */
+/*  Leagues are long-running heraldic standards above tournaments.       */
+/*  Seasons are dated chapters within a league. Faction stats are a      */
+/*  war ledger ranked by victories. The visual vocabulary is parchment   */
+/*  + iron-black + heraldic gold leaf, matching the existing tournament  */
+/*  cards' header gradient and the broader Warhammer III skin.           */
+/* ═══════════════════════════════════════════════════════════════════════ */
+
+/* ─── Page shells ────────────────────────────────────────────────────── */
+
+.competitive-page,
+.league-create-page,
+.season-create-page,
+.league-index-page,
+.season-index-page {
+  padding: var(--space-6) var(--space-8);
+  max-width: 64rem;
+}
+
+/* ─── Tablist on the Competitive landing ─────────────────────────────── */
+
+.competitive-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin-bottom: var(--space-6);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary-500) 24%, var(--color-border));
+  position: relative;
+}
+
+/* Hairline gold underline below the tablist edge — restates the
+   "ruled parchment" feel of the section dividers in the rest of the app. */
+.competitive-tabs::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--color-primary-500) 35%, transparent) 12%,
+    color-mix(in srgb, var(--color-primary-500) 35%, transparent) 88%,
+    transparent 100%);
+  pointer-events: none;
+}
+
+.competitive-tab {
+  position: relative;
+  background: transparent;
+  border: 0;
+  padding: var(--space-3) var(--space-6);
+  cursor: pointer;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-neutral-700) 55%, transparent);
+  transition: color var(--transition-fast);
+}
+
+.competitive-tab:hover,
+.competitive-tab:focus-visible {
+  color: var(--color-primary-700);
+}
+
+.competitive-tab[aria-selected="true"] {
+  color: var(--color-primary-800);
+}
+
+/* Gold underline glyph for the selected tab — wider than the text so it
+   reads as a banner rule rather than a generic underline. */
+.competitive-tab[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: -1px;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent,
+    var(--color-primary-600) 20%,
+    var(--color-accent) 50%,
+    var(--color-primary-600) 80%,
+    transparent);
+  z-index: 1;
+}
+
+/* Hairline diamond between tabs — heraldic flourish, decorative only. */
+.competitive-tab + .competitive-tab::before {
+  content: "◆";
+  position: absolute;
+  left: -0.4em;
+  top: 50%;
+  transform: translateY(-50%);
+  color: color-mix(in srgb, var(--color-primary-500) 35%, transparent);
+  font-size: 0.5rem;
+  pointer-events: none;
+}
+
+.competitive-tab-panel {
+  outline: none;
+}
+
+/* ─── League cards — heraldic standards ──────────────────────────────── */
+
+.league-list-header {
+  margin-bottom: var(--space-6);
+}
+
+.league-list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  gap: var(--space-4);
+}
+
+.league-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-fast);
+  overflow: hidden;
+  position: relative;
+  /* Inset gold trim near the top edge — the "banner header" device. */
+  box-shadow: inset 0 1px 0 0 color-mix(in srgb, var(--color-primary-500) 30%, transparent);
+}
+
+.league-card::before {
+  /* Vertical gold stripe down the left side — heraldic standard pole. */
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--color-primary-500) 60%, transparent) 0%,
+    color-mix(in srgb, var(--color-primary-500) 30%, transparent) 50%,
+    color-mix(in srgb, var(--color-primary-500) 10%, transparent) 100%);
+  pointer-events: none;
+}
+
+.league-card:hover {
+  border-color: var(--color-primary-500);
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 0 color-mix(in srgb, var(--color-primary-500) 50%, transparent),
+    0 4px 16px color-mix(in srgb, var(--color-primary-500) 18%, transparent);
+}
+
+.league-card-body {
+  padding: var(--space-5) var(--space-5) var(--space-3) calc(var(--space-5) + 4px);
+  flex: 1;
+  /* Subtle inner gradient evoking parchment held against iron. */
+  background:
+    radial-gradient(ellipse at 0% 0%, color-mix(in srgb, var(--color-primary-500) 6%, transparent) 0%, transparent 60%),
+    transparent;
+}
+
+.league-card-name {
+  font-size: var(--font-size-lg);
+  margin: 0 0 var(--space-2);
+  line-height: var(--line-height-tight);
+  color: var(--color-primary-800);
+  letter-spacing: 0.06em;
+}
+
+.league-card-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.league-card-footer {
+  padding: var(--space-3) var(--space-5) var(--space-3) calc(var(--space-5) + 4px);
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--font-size-xs);
+  background: linear-gradient(180deg, transparent 0%, #0a0805 100%);
+}
+
+.league-card-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-family-heading);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-neutral-700);
+}
+
+/* First meta slot — current season — gets a small banner ribbon dot. */
+.league-card-footer .league-card-meta:first-child::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-primary-600);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--color-primary-500) 60%, transparent);
+}
+
+.league-list-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--space-12) var(--space-4);
+  color: var(--color-text-muted);
+}
+
+.league-list-empty p {
+  margin-bottom: var(--space-4);
+}
+
+/* ─── League badge on tournament cards / hero ────────────────────────── */
+
+.badge-league {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.25em 0.6em;
+  font-family: var(--font-family-heading);
+  font-size: 0.6875rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-primary-800);
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--color-primary-500) 14%, #15100a) 0%,
+    color-mix(in srgb, var(--color-primary-500) 6%, #0c0805) 100%);
+  border: 1px solid color-mix(in srgb, var(--color-primary-500) 45%, transparent);
+  border-radius: 2px;
+  text-decoration: none;
+  /* Double hairline inner shadow — embossed brass tag. */
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--color-primary-500) 25%, transparent),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.badge-league::before {
+  /* Tiny lozenge prefix — heraldic flourish. */
+  content: "❖";
+  font-size: 0.7em;
+  color: var(--color-accent);
+  opacity: 0.8;
+}
+
+.badge-league:hover {
+  color: var(--color-primary-900);
+  border-color: var(--color-primary-600);
+}
+
+/* ─── Standings table — the war ledger ───────────────────────────────── */
+
+.standings-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(180deg, #110d09 0%, #0a0805 100%);
+  border: 1px solid color-mix(in srgb, var(--color-primary-500) 22%, var(--color-border));
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  /* Counter for roman numeral rank — auto-numbers tbody rows. */
+  counter-reset: ledger-rank;
+}
+
+.standings-table thead tr {
+  background: linear-gradient(180deg, #1a140e 0%, #0e0906 100%);
+}
+
+.standings-table th {
+  font-family: var(--font-family-heading);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-primary-700);
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary-500) 35%, transparent);
+}
+
+.standings-table th:not(:first-child) {
+  text-align: right;
+  width: 4.5rem;
+}
+
+.standings-table td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+  color: var(--color-neutral-800);
+  font-size: var(--font-size-sm);
+  vertical-align: middle;
+}
+
+.standings-table td:first-child {
+  font-family: var(--font-family-heading);
+  letter-spacing: 0.04em;
+  /* Roman-numeral rank seal beside the faction name. */
+  position: relative;
+  padding-left: calc(var(--space-4) + 1.6rem);
+}
+
+.standings-table tbody tr {
+  counter-increment: ledger-rank;
+  transition: background-color var(--transition-fast);
+}
+
+.standings-table tbody tr td:first-child::before {
+  content: counter(ledger-rank, upper-roman);
+  position: absolute;
+  left: var(--space-4);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.4rem;
+  font-size: 0.6875rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--color-primary-700) 70%, transparent);
+  text-align: right;
+}
+
+/* Top-ranked row — gold leaf treatment. */
+.standings-table tbody tr:first-child {
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--color-primary-500) 14%, transparent) 0%,
+    color-mix(in srgb, var(--color-primary-500) 4%, transparent) 60%,
+    transparent 100%);
+}
+
+.standings-table tbody tr:first-child td:first-child {
+  color: var(--color-primary-900);
+}
+
+.standings-table tbody tr:first-child td:first-child::before {
+  color: var(--color-accent);
+  text-shadow: 0 0 4px color-mix(in srgb, var(--color-accent) 50%, transparent);
+}
+
+/* Subtle alt-row tint for the rest. */
+.standings-table tbody tr:nth-child(even):not(:first-child) {
+  background: color-mix(in srgb, var(--color-primary-500) 2%, transparent);
+}
+
+.standings-table tbody tr:hover:not(:first-child) {
+  background: color-mix(in srgb, var(--color-primary-500) 6%, transparent);
+}
+
+.standings-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.standings-table td:not(:first-child) {
+  text-align: right;
+  font-family: var(--font-family-numeric);
+  letter-spacing: 0.04em;
+}
+
+.standings-table td.text-muted {
+  color: var(--color-text-muted);
+  font-style: italic;
+  text-align: center !important;
+}
+
+/* When the table is empty, the muted "No matches recorded yet" cell
+   spans all columns and shouldn't carry the rank pseudo-element. */
+.standings-table tbody tr:only-child td.text-muted {
+  padding: var(--space-6) var(--space-4);
+}
+
+.standings-table tbody tr:only-child td.text-muted::before {
+  content: none;
+}
+
+/* ─── Season list — chronicle entries ────────────────────────────────── */
+
+.season-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.season-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: color-mix(in srgb, var(--color-primary-500) 3%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+  border-left: 3px solid color-mix(in srgb, var(--color-primary-500) 35%, transparent);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.season-list li:hover {
+  border-left-color: var(--color-primary-600);
+  background: color-mix(in srgb, var(--color-primary-500) 7%, transparent);
+}
+
+.season-list li a {
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-primary-800);
+  text-decoration: none;
+}
+
+.season-list li a:hover,
+.season-list li a:focus-visible {
+  color: var(--color-primary-900);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-primary-500) 50%, transparent);
+  text-underline-offset: 3px;
+}
+
+.season-dates {
+  font-family: var(--font-family-numeric);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin-left: auto;
+}
+
+/* ─── Tournament list inside league/season detail pages ──────────────── */
+
+.league-index-page .tournament-list,
+.season-index-page .tournament-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.league-index-page .tournament-list li,
+.season-index-page .tournament-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-primary-500) 2%, transparent);
+}
+
+.league-index-page .tournament-list li a,
+.season-index-page .tournament-list li a {
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.06em;
+  color: var(--color-primary-800);
+  text-decoration: none;
+}
+
+.league-index-page .tournament-list li a:hover,
+.season-index-page .tournament-list li a:hover {
+  color: var(--color-primary-900);
+}
+
+/* The trailing status pill on tournament list items — quieter than the
+   primary tournament-card status badge but uses the same vocabulary. */
+.league-index-page .tournament-list li .badge,
+.season-index-page .tournament-list li .badge {
+  margin-left: auto;
+  font-family: var(--font-family-heading);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.2em 0.6em;
+  border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+  background: transparent;
+  color: var(--color-text-muted);
+  border-radius: 2px;
+}
+
+/* ─── Resource header treatment shared across new pages ──────────────── */
+
+.league-index-page .resource,
+.season-index-page .resource,
+.league-create-page .resource,
+.season-create-page .resource {
+  margin-bottom: var(--space-6);
+}
+
+.league-index-page .resource-description,
+.season-index-page .resource-description {
+  font-size: var(--font-size-base);
+  color: var(--color-neutral-800);
+  margin: var(--space-2) 0 var(--space-1);
+  font-style: italic;
+}
+
+.league-index-page .resource-meta,
+.season-index-page .resource-meta {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+/* ─── Match draft picker (sidebar card) ──────────────────────────────── */
+
+.my-match-row + .my-match-row {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px dashed color-mix(in srgb, var(--color-border) 70%, transparent);
+}
+
+.my-match-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-neutral-700);
+  margin-bottom: var(--space-2);
+}
+
+/* The "Draft set" status badge inside the picker — green wax seal feel. */
+.my-match-header .badge-success {
+  font-family: var(--font-family-heading);
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  padding: 0.15em 0.45em;
+  border-radius: 2px;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--color-success-500) 30%, #0a0805) 0%,
+    color-mix(in srgb, var(--color-success-500) 14%, #0a0805) 100%);
+  color: var(--color-secondary-700);
+  border: 1px solid color-mix(in srgb, var(--color-success-500) 50%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-success-500) 25%, transparent);
+}
+
+/* ─── League/season form fieldsets — match the tournament create form ── */
+
+.league-fieldset,
+.season-fieldset {
+  border: none;
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+  border-radius: 0;
+  padding: var(--space-5) 0;
+  margin: 0;
+}
+
+.league-fieldset-legend,
+.season-fieldset-legend {
+  position: relative;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-primary-800);
+  padding: 0 var(--space-3) 0 calc(var(--space-3) + 10px);
+  background: transparent;
+}
+
+.league-fieldset-legend::before,
+.season-fieldset-legend::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  background: var(--color-primary-600);
+  border-radius: 50%;
+  box-shadow: 0 0 6px color-mix(in srgb, var(--color-primary-500) 70%, transparent);
+}
+
+.league-form,
+.season-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ─── Subtle scroll containment on the new pages ─────────────────────── */
+
+.competitive-page,
+.league-index-page,
+.season-index-page {
+  height: calc(100vh - 3.25rem);
+  overflow-y: auto;
 }
