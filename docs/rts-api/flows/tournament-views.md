@@ -1,25 +1,22 @@
 # Flow: Tournament Views
 
-Covers the tournament UI pages — list, create, and detail views.
-
-## Tournament list
-
-Card-based grid showing all tournaments for the current game. Each card displays the tournament name, status badge (color-coded by state), description, entry count, and creator. The page itself is a bounded `height: calc(100vh - 3.25rem); overflow-y: auto` container so long lists scroll without the rest of the app shell moving.
-
-![Tournament list](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/views-list.png)
+Covers the tournament create + detail UI pages. The standalone tournament list page has been replaced by the **Competitive** landing — see [`competitive.md`](competitive.md) for the league/season-aware tournament list and the league/season pages above tournaments.
 
 ## Create tournament
 
-Form with fieldset-grouped sections: tournament details, registration window, and optional phase configuration. The page wrapper is `overflow-y: auto` with bottom padding so the Create Tournament submit button keeps a minimum distance from the viewport bottom as the phase configurator grows (one row added per "+ Add Phase" click).
+Form with fieldset-grouped sections: tournament details, optional **League** picker (standalone vs. attach to a league/season), registration window, and optional phase configuration. The page wrapper is `overflow-y: auto` with bottom padding so the Create Tournament submit button keeps a minimum distance from the viewport bottom as the phase configurator grows (one row added per "+ Add Phase" click).
 
-![Create tournament](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/views-create.png)
+When a league is chosen, an `hx-get` swaps a season `<select>` into a placeholder `<div>` so the user can also pick a season. Selecting a season populates `:season-eid` in the create payload — the domain layer derives `:league-eid` from the season server-side.
+
+![Create tournament with league dropdown](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/views-create-tournament-league-dropdown.png)
 
 ## Tournament detail — tab-based layout
 
 The detail view uses a persistent sidebar plus a tabbed main panel:
 
-- **Sidebar** (always visible): registration window, "Your Entry" action, phase overview, and organizer controls.
+- **Sidebar** (always visible): registration window, "Your Entry" action, **My Matches — Draft Selection** card (only when the current user is a participant in any match — see [`competitive.md`](competitive.md)), phase overview, and organizer controls.
 - **Tabs** across the top of the main panel — **Entrants** first, then one tab per configured phase (labelled `Phase N` with the phase type as a subtitle).
+- **League badge** in the hero (when the tournament is attached to a league) — links to the league detail page.
 
 The Entrants tab ships its content server-rendered on initial load. Phase tabs start empty; the first click on a phase tab fires `GET /api/tournament/:eid/phase/:phase-index` and swaps the response into the panel. Subsequent clicks refetch — the response shape is a typed map dispatched through the `application/htmx+html` view-fn to `rts-web/resource/tournament-phase-panel.html`, which reuses the same per-phase-type partials the initial page-render uses (`phase-single-elimination.html`, `phase-double-elimination.html`, `phase-swiss.html`, `phase-round-robin.html`). Standings (`_standings.html`) render inside the phase panel for Swiss and round-robin only — elimination phases have no meaningful points ladder.
 

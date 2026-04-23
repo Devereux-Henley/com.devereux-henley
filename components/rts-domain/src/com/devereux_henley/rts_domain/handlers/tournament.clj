@@ -13,16 +13,36 @@
   ^Instant [^LocalDateTime local-dt ^ZoneId zone]
   (-> local-dt (.atZone zone) .toInstant))
 
+(defn- dissoc-nil-keys
+  "Removes keys whose values are nil. The model-transformer's :model/link
+   resolution can't handle nil eids; absent keys are skipped, but nil-valued
+   keys would crash route lookup."
+  [m & ks]
+  (reduce (fn [acc k] (if (nil? (get acc k)) (dissoc acc k) acc)) m ks))
+
+(defn- tag-tournament
+  [tournament]
+  (when tournament
+    (-> tournament
+        (assoc :type :tournament/tournament)
+        (dissoc-nil-keys :league-eid :season-eid))))
+
+(defn- tag-match
+  [match]
+  (when match
+    (-> match
+        (assoc :type :tournament/match)
+        (dissoc-nil-keys :player-one-draft-eid :player-two-draft-eid))))
+
 (defn get-tournament-by-eid
   "Fetches a tournament by eid and attaches :type :tournament/tournament."
   [dependencies eid]
-  (some-> (db/get-tournament-by-eid (:connection dependencies) eid)
-          (assoc :type :tournament/tournament)))
+  (tag-tournament (db/get-tournament-by-eid (:connection dependencies) eid)))
 
 (defn get-tournaments-for-game
   "Returns all tournaments for a game, each tagged with :type :tournament/tournament."
   [dependencies game-eid]
-  (mapv (fn [t] (assoc t :type :tournament/tournament))
+  (mapv tag-tournament
         (db/get-tournaments-for-game (:connection dependencies) game-eid)))
 
 (defn get-tournament-state
@@ -46,30 +66,51 @@
    (jsonista/write-value-as-string state)))
 
 (defn create-tournament
-  "Creates a new tournament with an initial state blob."
+  "Creates a new tournament with an initial state blob. When :season-eid is
+   supplied, derives :league-eid from the season server-side and rejects
+   any caller-supplied :league-eid that disagrees. Both keys are optional —
+   tournaments may stand alone."
   [dependencies create-specification]
-  (let [created-at    (Instant/now)
-        updated-at    created-at
-        tz            (:timezone create-specification)
-        opens-at      (to-utc-instant (:registration-opens-at create-specification) tz)
-        closes-at     (to-utc-instant (:registration-closes-at create-specification) tz)
-        tournament    (db/create-tournament
-                       (:connection dependencies)
-                       (-> create-specification
-                           (dissoc :registration-opens-at :registration-closes-at :timezone)
-                           (assoc :created-at created-at)
-                           (assoc :updated-at updated-at)))
-        initial-state {:status          "registration"
-                       :registration    {:opens-at     (str opens-at)
-                                         :closes-at    (str closes-at)
-                                         :timezone     (str tz)
-                                         :closed-early false}
-                       :phases          []
-                       :current-phase   nil
-                       :standings       []
-                       :qualifier-count nil}]
-    (set-tournament-state dependencies (:eid tournament) initial-state)
-    (assoc tournament :type :tournament/tournament)))
+  (let [conn       (:connection dependencies)
+        season     (when-let [seid (:season-eid create-specification)]
+                     (db/get-season-by-eid conn seid))
+        derived-le (cond
+                     season                            (:league-eid season)
+                     (:league-eid create-specification) (:league-eid create-specification)
+                     :else                              nil)]
+    (cond
+      (and (:season-eid create-specification) (nil? season))
+      {:type :tournament/create-error :message "Season not found."}
+
+      (and (:league-eid create-specification)
+           (:season-eid create-specification)
+           (not= (:league-eid create-specification) (:league-eid season)))
+      {:type :tournament/create-error :message "Provided league does not match the season's league."}
+
+      :else
+      (let [created-at    (Instant/now)
+            updated-at    created-at
+            tz            (:timezone create-specification)
+            opens-at      (to-utc-instant (:registration-opens-at create-specification) tz)
+            closes-at     (to-utc-instant (:registration-closes-at create-specification) tz)
+            spec          (-> create-specification
+                              (dissoc :registration-opens-at :registration-closes-at :timezone)
+                              (assoc :created-at created-at)
+                              (assoc :updated-at updated-at)
+                              (cond-> derived-le (assoc :league-eid derived-le))
+                              (cond-> (not derived-le) (dissoc :league-eid)))
+            tournament    (db/create-tournament conn spec)
+            initial-state {:status          "registration"
+                           :registration    {:opens-at     (str opens-at)
+                                             :closes-at    (str closes-at)
+                                             :timezone     (str tz)
+                                             :closed-early false}
+                           :phases          []
+                           :current-phase   nil
+                           :standings       []
+                           :qualifier-count nil}]
+        (set-tournament-state dependencies (:eid tournament) initial-state)
+        (tag-tournament tournament)))))
 
 ;; ─── Registration ────────────────────────────────────────────────────────────
 
@@ -177,26 +218,59 @@
   (let [state (get-tournament-state dependencies tournament-eid)]
     (if (not= "active" (:status state))
       {:type :tournament/match-error :message "Tournament must be active to create matches."}
-      (let [match (db/create-match (:connection dependencies) tournament-eid match-spec)]
-        (assoc match :type :tournament/match)))))
+      (tag-match (db/create-match (:connection dependencies) tournament-eid match-spec)))))
 
 (defn get-match-by-eid
   "Fetches a match by eid."
   [dependencies match-eid]
-  (some-> (db/get-match-by-eid (:connection dependencies) match-eid)
-          (assoc :type :tournament/match)))
+  (tag-match (db/get-match-by-eid (:connection dependencies) match-eid)))
 
 (defn get-matches-for-tournament
   "Returns all matches for a tournament."
   [dependencies tournament-eid]
-  (mapv (fn [m] (assoc m :type :tournament/match))
+  (mapv tag-match
         (db/get-matches-for-tournament (:connection dependencies) tournament-eid)))
 
 (defn get-matches-for-round
   "Returns matches for a specific phase and round."
   [dependencies tournament-eid phase-index round-index]
-  (mapv (fn [m] (assoc m :type :tournament/match))
+  (mapv tag-match
         (db/get-matches-for-round (:connection dependencies) tournament-eid phase-index round-index)))
+
+(defn set-match-player-draft
+  "Sets the requesting player's draft for a match. Verifies the player is
+   one of the match participants and that the draft belongs to the player
+   and to the same game as the tournament. Returns {:type :match/draft-set}
+   on success or {:type :match/draft-error :message ...} on validation failure."
+  [dependencies match-eid player-sub draft-eid]
+  (let [conn  (:connection dependencies)
+        match (db/get-match-by-eid conn match-eid)]
+    (cond
+      (nil? match)
+      {:type :match/draft-error :message "Match not found."}
+
+      (and (not= player-sub (:player-one-sub match))
+           (not= player-sub (:player-two-sub match)))
+      {:type :match/draft-error :message "You are not a participant in this match."}
+
+      :else
+      (let [draft (db/get-draft-by-eid conn draft-eid)]
+        (cond
+          (nil? draft)
+          {:type :match/draft-error :message "Draft not found."}
+
+          (not= player-sub (:player-sub draft))
+          {:type :match/draft-error :message "Draft does not belong to you."}
+
+          :else
+          (do
+            (if (= player-sub (:player-one-sub match))
+              (db/set-match-player-one-draft conn match-eid draft-eid)
+              (db/set-match-player-two-draft conn match-eid draft-eid))
+            {:type       :match/draft-set
+             :match-eid  match-eid
+             :player-sub player-sub
+             :draft-eid  draft-eid}))))))
 
 (defn- double-elim-complete?
   "Returns true when a double-elimination phase has a completed grand-final

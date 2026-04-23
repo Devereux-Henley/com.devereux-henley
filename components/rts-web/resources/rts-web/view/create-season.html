@@ -1,0 +1,55 @@
+{% extends "rts-web/template/entrypoint.html" %}
+
+{% block title %}Create Season | {{league.name}} | {{game.name}} | RTS-UI{% endblock %}
+
+{% block content %}
+<div class="season-create-page">
+    <section class="resource" aria-labelledby="create-season-heading">
+        <h2 id="create-season-heading">Create Season for {{league.name}}</h2>
+
+        <form id="create-season-form"
+              class="form season-form"
+              aria-labelledby="create-season-heading"
+              hx-put="/api/season/{{league-eid}}/{{season-eid}}"
+              hx-ext="json-enc"
+              hx-target="#content"
+              hx-swap="innerHTML">
+
+            <fieldset class="season-fieldset">
+                <legend class="season-fieldset-legend">Season Details</legend>
+                <div class="form-group">
+                    <label class="form-label" for="season-name">Custom name <span class="form-hint">(optional — defaults to "Season N")</span></label>
+                    <input id="season-name" name="name" type="text" class="input" placeholder="e.g. Spring 2026"/>
+                </div>
+            </fieldset>
+
+            <fieldset class="season-fieldset">
+                <legend class="season-fieldset-legend">Season Window</legend>
+                <div class="form-group">
+                    <label class="form-label required" for="timezone">Timezone</label>
+                    <select id="timezone" name="timezone" class="select" required aria-required="true">
+                        {% for tz in timezones %}
+                        <option value="{{tz}}" {% ifequal tz default-timezone %}selected{% endifequal %}>{{tz}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label required" for="start-at">Start</label>
+                        <input id="start-at" name="start-at" type="datetime-local" class="input" required aria-required="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label required" for="end-at">End</label>
+                        <input id="end-at" name="end-at" type="datetime-local" class="input" required aria-required="true"/>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create Season</button>
+            </div>
+            <div id="create-season-error" class="form-error" role="alert" aria-live="assertive" hidden></div>
+        </form>
+    </section>
+</div>
+{% endblock %}

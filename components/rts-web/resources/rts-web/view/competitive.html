@@ -1,0 +1,38 @@
+{% extends "rts-web/template/entrypoint.html" %}
+
+{% block title %}Competitive | {{game.name}} | RTS-UI{% endblock %}
+
+{% block content %}
+<div class="competitive-page">
+    <div class="competitive-tabs" role="tablist" aria-label="Competitive sections">
+        <button type="button" role="tab" id="tab-tournaments"
+                aria-selected="true" aria-controls="panel-tournaments"
+                class="competitive-tab"
+                _="on click
+                   add @hidden to <[role=tabpanel]/> in the closest .competitive-page
+                   then remove @hidden from #panel-tournaments
+                   then set @aria-selected of <[role=tab]/> in my parentElement to 'false'
+                   then set my @aria-selected to 'true'">
+            Tournaments
+        </button>
+        <button type="button" role="tab" id="tab-leagues"
+                aria-selected="false" aria-controls="panel-leagues"
+                class="competitive-tab"
+                _="on click
+                   add @hidden to <[role=tabpanel]/> in the closest .competitive-page
+                   then remove @hidden from #panel-leagues
+                   then set @aria-selected of <[role=tab]/> in my parentElement to 'false'
+                   then set my @aria-selected to 'true'">
+            Leagues
+        </button>
+    </div>
+
+    <section id="panel-tournaments" role="tabpanel" aria-labelledby="tab-tournaments" class="competitive-tab-panel">
+        {% include "rts-web/view/_partial/tournament-list-section.html" %}
+    </section>
+
+    <section id="panel-leagues" role="tabpanel" aria-labelledby="tab-leagues" class="competitive-tab-panel" hidden>
+        {% include "rts-web/view/_partial/league-list-section.html" %}
+    </section>
+</div>
+{% endblock %}

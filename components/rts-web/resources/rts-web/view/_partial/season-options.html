@@ -1,0 +1,9 @@
+<div class="form-group">
+    <label class="form-label" for="season-select">Season <span class="form-hint">(optional)</span></label>
+    <select id="season-select" name="season-eid" class="select">
+        <option value="">— Whole league (no season) —</option>
+        {% for season in seasons %}
+        <option value="{{season.eid}}">{{season.display-name}}</option>
+        {% endfor %}
+    </select>
+</div>

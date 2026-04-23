@@ -213,6 +213,8 @@
     [:name {:min 1} :string]
     [:description {:min 1} :string]
     [:game-eid :uuid]
+    [:league-eid {:optional true} [:maybe :uuid]]
+    [:season-eid {:optional true} [:maybe :uuid]]
     [:created-by-sub :string]
     [:version :int]
     [:created-at :instant]
@@ -224,6 +226,8 @@
    [:map
     [:eid :uuid]
     [:game-eid :uuid]
+    [:league-eid {:optional true} [:maybe :uuid]]
+    [:season-eid {:optional true} [:maybe :uuid]]
     [:name {:min 1} :string]
     [:description {:min 1} :string]
     [:created-by-sub :string]
@@ -273,6 +277,8 @@
     [:bracket-type bracket-type-enum]
     [:player-one-sub :string]
     [:player-two-sub [:maybe :string]]
+    [:player-one-draft-eid {:optional true} [:maybe :uuid]]
+    [:player-two-draft-eid {:optional true} [:maybe :uuid]]
     [:winner-sub [:maybe :string]]
     [:status match-status-enum]
     [:format match-format-enum]
@@ -288,6 +294,77 @@
     [:game-index :int]
     [:winner-sub [:maybe :string]]
     [:created-at :instant]]))
+
+;; ─── League / Season entities ────────────────────────────────────────────────
+
+(def league-entity
+  (schema.contract/to-schema
+   [:map
+    [:id :int]
+    [:eid :uuid]
+    [:game-eid :uuid]
+    [:name {:min 1} :string]
+    [:description {:min 1} :string]
+    [:created-by-sub :string]
+    [:version :int]
+    [:created-at :instant]
+    [:updated-at :instant]
+    [:deleted-at [:maybe :instant]]]))
+
+(def create-league-params
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:game-eid :uuid]
+    [:name {:min 1} :string]
+    [:description {:min 1} :string]
+    [:created-by-sub :string]
+    [:version :int]
+    [:created-at :instant]
+    [:updated-at :instant]]))
+
+(def season-entity
+  (schema.contract/to-schema
+   [:map
+    [:id :int]
+    [:eid :uuid]
+    [:league-eid :uuid]
+    [:ordinal :int]
+    [:name [:maybe :string]]
+    [:start-at :instant]
+    [:end-at :instant]
+    [:version :int]
+    [:created-at :instant]
+    [:updated-at :instant]
+    [:deleted-at [:maybe :instant]]]))
+
+(def create-season-params
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:league-eid :uuid]
+    [:ordinal :int]
+    [:name {:optional true} [:maybe :string]]
+    [:start-at :instant]
+    [:end-at :instant]
+    [:version :int]
+    [:created-at :instant]
+    [:updated-at :instant]]))
+
+(def faction-standings-row-entity
+  (schema.contract/to-schema
+   [:map
+    [:faction-eid :uuid]
+    [:faction-name :string]
+    [:matches-played :int]
+    [:wins :int]
+    [:losses :int]
+    [:draws :int]]))
+
+(def max-ordinal-entity
+  (schema.contract/to-schema
+   [:map
+    [:max-ordinal :int]]))
 
 ;; Schema for the known structured fields in the raw unit-statistics JSON (string keys).
 ;; :closed false allows the extra dynamic stat keys to pass through.

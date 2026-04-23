@@ -169,11 +169,37 @@
                    [:cat [:instance Connection] schema/create-tournament-params]
                    schema/tournament-entity])}
   [connection specification]
-  (let [game (jdbc.contract/entity-by-eid connection :game (:game-eid specification) schema/game-entity)]
+  (let [game      (jdbc.contract/entity-by-eid connection :game (:game-eid specification) schema/game-entity)
+        league-id (when-let [leid (:league-eid specification)]
+                    (:id (jdbc.contract/entity-by-eid connection :league leid schema/league-entity)))
+        season-id (when-let [seid (:season-eid specification)]
+                    (:id (jdbc.contract/entity-by-eid connection :season seid schema/season-entity)))]
     (jdbc/with-transaction [tx connection]
       (jdbc.contract/insert! tx
                              :tournament
                              (-> specification
-                                 (dissoc :game-eid)
-                                 (assoc :game-id (:id game))))
+                                 (dissoc :game-eid :league-eid :season-eid)
+                                 (assoc :game-id (:id game))
+                                 (cond-> league-id (assoc :league-id league-id))
+                                 (cond-> season-id (assoc :season-id season-id))))
       (get-tournament-by-eid connection (:eid specification)))))
+
+;; ─── Match draft assignment ─────────────────────────────────────────────────
+
+(def set-match-player-one-draft-query
+  (resource/load-query-resource "tournament" "set-match-player-one-draft.sql"))
+
+(def set-match-player-two-draft-query
+  (resource/load-query-resource "tournament" "set-match-player-two-draft.sql"))
+
+(defn set-match-player-one-draft
+  [connection match-eid draft-eid]
+  (jdbc.contract/execute-one!
+   connection
+   [set-match-player-one-draft-query (str draft-eid) (str (Instant/now)) (str match-eid)]))
+
+(defn set-match-player-two-draft
+  [connection match-eid draft-eid]
+  (jdbc.contract/execute-one!
+   connection
+   [set-match-player-two-draft-query (str draft-eid) (str (Instant/now)) (str match-eid)]))

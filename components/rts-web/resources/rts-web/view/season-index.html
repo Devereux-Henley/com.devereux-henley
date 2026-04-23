@@ -1,0 +1,38 @@
+{% extends "rts-web/template/entrypoint.html" %}
+
+{% block title %}{{data.display-name}} | {{league.name}} | {{game.name}} | RTS-UI{% endblock %}
+
+{% block content %}
+<div class="season-index-page">
+    <section class="resource" aria-labelledby="season-heading">
+        <h2 id="season-heading">{{data.display-name}}</h2>
+        <p class="resource-meta">
+            <a href="/view/game/{{game-eid}}/league/{{league.eid}}/index.html">{{league.name}}</a>
+            · {{data.start-at}} → {{data.end-at}}
+        </p>
+    </section>
+
+    <section class="resource" aria-labelledby="season-standings-heading">
+        <h3 id="season-standings-heading">Faction Standings</h3>
+        {% include "rts-web/view/_partial/faction-standings-table.html" %}
+    </section>
+
+    <section class="resource" aria-labelledby="season-tournaments-heading">
+        <h3 id="season-tournaments-heading">Tournaments in this Season</h3>
+        {% if tournaments|not-empty? %}
+        <ul class="tournament-list">
+            {% for tournament in tournaments %}
+            <li>
+                <a href="/view/game/{{game-eid}}/tournament/{{tournament.eid}}/index.html">
+                    {{tournament.name}}
+                </a>
+                <span class="badge">{{tournament.status}}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted">No tournaments in this season yet.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

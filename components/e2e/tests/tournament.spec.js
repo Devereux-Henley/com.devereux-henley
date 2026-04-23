@@ -175,10 +175,12 @@ test.describe('Tournament UI', () => {
     ]);
   });
 
-  test('tournament list page loads', async ({ page }) => {
-    await page.goto(`/view/game/${GAME_EID}/tournament/index.html`);
-    await expect(page).toHaveTitle(/Tournaments/);
+  test('competitive landing replaces the old tournament list', async ({ page }) => {
+    await page.goto(`/view/game/${GAME_EID}/competitive/index.html`);
+    await expect(page).toHaveTitle(/Competitive/);
     await expect(page.locator('main#content')).toBeVisible();
+    await expect(page.locator('[role="tab"]', { hasText: 'Tournaments' })).toBeVisible();
+    await expect(page.locator('[role="tab"]', { hasText: 'Leagues' })).toBeVisible();
   });
 
   test('create tournament page loads with form', async ({ page }) => {

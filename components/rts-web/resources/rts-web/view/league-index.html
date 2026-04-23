@@ -1,0 +1,67 @@
+{% extends "rts-web/template/entrypoint.html" %}
+
+{% block title %}{{data.name}} | {{game.name}} | RTS-UI{% endblock %}
+
+{% block content %}
+<div class="league-index-page">
+    <section class="resource" aria-labelledby="league-heading">
+        <div class="cluster cluster-2" style="justify-content: space-between; align-items: baseline;">
+            <h2 id="league-heading">{{data.name}}</h2>
+            {% if is-organizer %}
+            <a class="btn btn-primary btn-sm"
+               href="/view/game/{{game-eid}}/league/{{data.eid}}/season/create.html">
+                Create Season
+            </a>
+            {% endif %}
+        </div>
+        <p class="resource-description">{{data.description}}</p>
+        <p class="resource-meta">Organized by {{data.created-by-sub}}</p>
+    </section>
+
+    <section class="resource" aria-labelledby="league-seasons-heading">
+        <h3 id="league-seasons-heading">Seasons</h3>
+        {% if seasons|not-empty? %}
+        <ul class="season-list">
+            {% for season in seasons %}
+            <li>
+                <a href="/view/game/{{game-eid}}/league/{{data.eid}}/season/{{season.eid}}/index.html">
+                    {{season.display-name}}
+                </a>
+                <span class="season-dates">{{season.start-at}} → {{season.end-at}}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted">No seasons yet.</p>
+        {% endif %}
+    </section>
+
+    <section class="resource" aria-labelledby="league-standings-heading">
+        <h3 id="league-standings-heading">Faction Standings</h3>
+        {% include "rts-web/view/_partial/faction-standings-table.html" %}
+    </section>
+
+    <section class="resource" aria-labelledby="league-tournaments-heading">
+        <h3 id="league-tournaments-heading">Tournaments in this League</h3>
+        {% if tournaments|not-empty? %}
+        <ul class="tournament-list">
+            {% for tournament in tournaments %}
+            <li>
+                <a href="/view/game/{{game-eid}}/tournament/{{tournament.eid}}/index.html">
+                    {{tournament.name}}
+                </a>
+                {% if tournament.season-display-name %}
+                <span class="text-muted">— {{tournament.season-display-name}}</span>
+                {% else %}
+                <span class="text-muted">— (no season)</span>
+                {% endif %}
+                <span class="badge">{{tournament.status}}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted">No tournaments attached to this league yet.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

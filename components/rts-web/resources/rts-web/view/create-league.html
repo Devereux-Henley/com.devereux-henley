@@ -1,0 +1,40 @@
+{% extends "rts-web/template/entrypoint.html" %}
+
+{% block title %}Create League | {{game.name}} | RTS-UI{% endblock %}
+
+{% block content %}
+<div class="league-create-page">
+    <section class="resource" aria-labelledby="create-league-heading">
+        <h2 id="create-league-heading">Create League</h2>
+
+        <form id="create-league-form"
+              class="form league-form"
+              aria-labelledby="create-league-heading"
+              hx-put="/api/league/{{league-eid}}?version=1"
+              hx-ext="json-enc"
+              hx-target="#content"
+              hx-swap="innerHTML">
+            <input type="hidden" name="game-eid" value="{{game-eid}}"/>
+
+            <fieldset class="league-fieldset">
+                <legend class="league-fieldset-legend">League Details</legend>
+                <div class="form-group">
+                    <label class="form-label required" for="league-name">Name</label>
+                    <input id="league-name" name="name" type="text" class="input" required aria-required="true"
+                           placeholder="e.g. Spring Showdown League"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required" for="league-description">Description</label>
+                    <textarea id="league-description" name="description" class="input" required aria-required="true" rows="3"
+                              placeholder="Describe the league's format, season cadence, and prizes"></textarea>
+                </div>
+            </fieldset>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create League</button>
+            </div>
+            <div id="create-league-error" class="form-error" role="alert" aria-live="assertive" hidden></div>
+        </form>
+    </section>
+</div>
+{% endblock %}

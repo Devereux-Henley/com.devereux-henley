@@ -42,29 +42,34 @@
 
 (defmethod integrant.core/init-key ::create-tournament
   [_init-key dependencies]
-  (fn [{{{:keys [name description game-eid timezone
+  (fn [{{{:keys [name description game-eid league-eid season-eid timezone
                  registration-opens-at registration-closes-at]} :body
          {:keys [version]}                                      :query
          {:keys [eid]}                                          :path} :parameters
         router                                                         :reitit.core/router
         session                                                        :ory-session
         :as                                                            _request}]
-    (let [response (web.core/handle-create-response
-                    domain/tournament-resource
-                    {:hostname (:hostname dependencies) :router router}
-                    #(domain/create-tournament
-                      dependencies
-                      {:eid                    eid
-                       :game-eid               game-eid
-                       :name                   name
-                       :description            description
-                       :timezone               timezone
-                       :registration-opens-at  registration-opens-at
-                       :registration-closes-at registration-closes-at
-                       :created-by-sub         (get-in session [:identity :id])
-                       :version                version}))]
-      (assoc-in response [:headers "HX-Redirect"]
-                (str "/view/game/" game-eid "/tournament/" eid "/index.html")))))
+    (let [result (domain/create-tournament
+                  dependencies
+                  (cond-> {:eid                    eid
+                           :game-eid               game-eid
+                           :name                   name
+                           :description            description
+                           :timezone               timezone
+                           :registration-opens-at  registration-opens-at
+                           :registration-closes-at registration-closes-at
+                           :created-by-sub         (get-in session [:identity :id])
+                           :version                version}
+                    league-eid (assoc :league-eid league-eid)
+                    season-eid (assoc :season-eid season-eid)))]
+      (if (= :tournament/create-error (:type result))
+        {:status 422 :body result}
+        (let [response (web.core/handle-create-response
+                        domain/tournament-resource
+                        {:hostname (:hostname dependencies) :router router}
+                        (constantly result))]
+          (assoc-in response [:headers "HX-Redirect"]
+                    (str "/view/game/" game-eid "/tournament/" eid "/index.html")))))))
 
 (defmethod integrant.core/init-key ::create-entry
   [_init-key dependencies]
@@ -201,6 +206,18 @@
         :as                          _request}]
     (let [result (domain/record-game-result dependencies match-eid winner-sub)]
       (if (= :tournament/match-error (:type result))
+        {:status 422 :body result}
+        {:status 200 :body result}))))
+
+(defmethod integrant.core/init-key ::set-match-draft
+  [_init-key dependencies]
+  (fn [{{{:keys [match-eid]} :path
+         {:keys [draft-eid]} :body} :parameters
+        session                     :ory-session
+        :as                         _request}]
+    (let [player-sub (get-in session [:identity :id])
+          result     (domain/set-match-player-draft dependencies match-eid player-sub draft-eid)]
+      (if (= :match/draft-error (:type result))
         {:status 422 :body result}
         {:status 200 :body result}))))
 

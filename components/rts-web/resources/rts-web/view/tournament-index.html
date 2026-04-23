@@ -19,6 +19,13 @@
                         {% ifequal tournament-state.status "complete" %}badge-danger{% endifequal %}
                         {% ifequal tournament-state.status "cancelled" %}badge-danger{% endifequal %}
                     ">{{tournament-state.status}}</span>
+                    {% if league %}
+                    <a class="badge badge-league"
+                       href="/view/game/{{game-eid}}/league/{{league.eid}}/index.html"
+                       title="Part of league {{league.name}}">
+                        {{league.name}}{% if season %} · {{season.display-name}}{% endif %}
+                    </a>
+                    {% endif %}
                 </div>
                 <p class="tourney-hero-desc">{{data.description}}</p>
             </div>
@@ -56,6 +63,45 @@
                     </dl>
                 </div>
             </div>
+
+            <!-- My match drafts (set draft per match for faction stats) -->
+            {% if my-matches|not-empty? %}
+            <div class="tourney-info-card">
+                <div class="tourney-info-card-header">My Matches — Draft Selection</div>
+                <div class="tourney-info-card-body">
+                    <p class="form-hint" style="margin-bottom: var(--space-3);">
+                        Pick the draft you'll use for each match. Faction stats are computed from these picks.
+                    </p>
+                    {% for match in my-matches %}
+                    <div class="my-match-row" style="margin-bottom: var(--space-3);">
+                        <div class="my-match-header">
+                            Phase {{match.phase-index|add:1}} · Round {{match.round-index|add:1}}
+                            {% if match.my-draft-eid %}
+                            <span class="badge badge-success">Draft set</span>
+                            {% endif %}
+                        </div>
+                        <form hx-put="/api/tournament/{{data.eid}}/match/{{match.eid}}/draft"
+                              hx-ext="json-enc"
+                              hx-target="this"
+                              hx-swap="outerHTML">
+                            <div class="cluster cluster-2" style="gap: var(--space-2);">
+                                <select name="draft-eid" class="select" required aria-required="true">
+                                    <option value="">— Select a draft —</option>
+                                    {% for draft in player-drafts %}
+                                    <option value="{{draft.eid}}"
+                                            {% ifequal draft.eid match.my-draft-eid %}selected{% endifequal %}>
+                                        {{draft.name|default:draft.faction-name}}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
 
             <!-- Player action -->
             {% if session %}

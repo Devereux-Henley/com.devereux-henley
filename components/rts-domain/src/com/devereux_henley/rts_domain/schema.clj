@@ -144,16 +144,22 @@
      [:name {:min 1} :string]
      [:description {:min 1} :string]
      [:game-eid {:model/link :game/by-eid} :uuid]
+     [:league-eid {:optional true :model/link :league/by-eid} :uuid]
+     [:season-eid {:optional true :model/link :season/by-eid} :uuid]
      [:created-by-sub :string]
      [:_links
       [:map
        [:self :url]
-       [:game :url]]]])))
+       [:game :url]
+       [:league {:optional true} :url]
+       [:season {:optional true} :url]]]])))
 
 (def create-tournament-specification
   (schema.contract/to-schema
    [:map
     [:game-eid :uuid]
+    [:league-eid {:optional true} [:maybe :uuid]]
+    [:season-eid {:optional true} [:maybe :uuid]]
     [:name {:min 1} :string]
     [:description {:min 1} :string]
     [:timezone :timezone-id]
@@ -180,13 +186,17 @@
      [:bracket-type data-access.contract/bracket-type-enum]
      [:player-one-sub :string]
      [:player-two-sub [:maybe :string]]
+     [:player-one-draft-eid {:optional true :model/link :draft/by-eid} :uuid]
+     [:player-two-draft-eid {:optional true :model/link :draft/by-eid} :uuid]
      [:winner-sub [:maybe :string]]
      [:status data-access.contract/match-status-enum]
      [:format data-access.contract/match-format-enum]
      [:_links
       [:map
        [:self :url]
-       [:tournament :url]]]])))
+       [:tournament :url]
+       [:player-one-draft {:optional true} :url]
+       [:player-two-draft {:optional true} :url]]]])))
 
 (def create-match-specification
   (schema.contract/to-schema
@@ -650,3 +660,114 @@
     [:slot-portrait-key :string]
     [:budget draft-section-budget]
     [:entry {:optional true} [:maybe draft-entry-resource]]]))
+
+;; ─── League / Season / Stats resources ──────────────────────────────────────
+
+(def league-resource
+  (malli.util/merge
+   schema.contract/base-resource
+   (schema.contract/to-schema
+    [:map
+     [:eid {:model/link :league/by-eid} :uuid]
+     [:type [:= :league/league]]
+     [:name {:min 1} :string]
+     [:description {:min 1} :string]
+     [:game-eid {:model/link :game/by-eid} :uuid]
+     [:created-by-sub :string]
+     [:_links
+      [:map
+       [:self :url]
+       [:game :url]]]])))
+
+(def league-collection-resource
+  (malli.util/merge
+   (schema.contract/make-collection-resource league-resource)
+   (schema.contract/to-schema
+    [:map
+     [:type [:= :collection/league]]])))
+
+(def create-league-specification
+  (schema.contract/to-schema
+   [:map
+    [:game-eid :uuid]
+    [:name {:min 1} :string]
+    [:description {:min 1} :string]]))
+
+(def league-error-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :league/error]]
+    [:message :string]]))
+
+(def season-resource
+  (malli.util/merge
+   schema.contract/base-resource
+   (schema.contract/to-schema
+    [:map
+     [:eid {:model/link :season/by-eid} :uuid]
+     [:type [:= :season/season]]
+     [:league-eid {:model/link :league/by-eid} :uuid]
+     [:ordinal :int]
+     [:display-name :string]
+     [:name [:maybe :string]]
+     [:start-at :instant]
+     [:end-at :instant]
+     [:_links
+      [:map
+       [:self :url]
+       [:league :url]]]])))
+
+(def season-collection-resource
+  (malli.util/merge
+   (schema.contract/make-collection-resource season-resource)
+   (schema.contract/to-schema
+    [:map
+     [:type [:= :collection/season]]])))
+
+(def create-season-specification
+  (schema.contract/to-schema
+   [:map
+    [:league-eid {:optional true} :uuid]
+    [:name {:optional true} [:maybe :string]]
+    [:timezone :timezone-id]
+    [:start-at :local-datetime]
+    [:end-at :local-datetime]]))
+
+(def season-error-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :season/error]]
+    [:message :string]]))
+
+(def faction-standings-row-resource
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :stats/faction-row]]
+    [:faction-eid :uuid]
+    [:faction-name :string]
+    [:matches-played :int]
+    [:wins :int]
+    [:losses :int]
+    [:draws :int]]))
+
+(def faction-standings-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:enum :stats/game-faction-standings :stats/league-faction-standings :stats/season-faction-standings]]
+    [:scope [:enum "game" "league" "season"]]
+    [:scope-eid :uuid]
+    [:rows [:sequential faction-standings-row-resource]]]))
+
+(def set-match-draft-specification
+  (schema.contract/to-schema
+   [:map
+    [:draft-eid :uuid]]))
+
+(def set-match-draft-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:enum :match/draft-set :match/draft-error]]
+    [:match-eid {:optional true} :uuid]
+    [:player-sub {:optional true} :string]
+    [:draft-eid {:optional true} :uuid]
+    [:message {:optional true} :string]]))

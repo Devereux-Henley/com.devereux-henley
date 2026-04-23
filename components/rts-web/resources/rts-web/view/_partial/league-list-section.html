@@ -1,0 +1,34 @@
+<div class="league-list-header">
+    <div class="cluster cluster-2" style="justify-content: space-between; align-items: baseline;">
+        <h2 id="leagues-heading">Leagues</h2>
+        <a class="btn btn-primary btn-sm" href="/view/game/{{game-eid}}/league/create.html">Create League</a>
+    </div>
+</div>
+
+<div class="league-list-grid" aria-labelledby="leagues-heading">
+    {% if leagues|not-empty? %}
+    {% for league in leagues %}
+    <a class="league-card"
+       href="/view/game/{{game-eid}}/league/{{league.eid}}/index.html"
+       aria-label="{{league.name}}">
+        <div class="league-card-body">
+            <h3 class="league-card-name">{{league.name}}</h3>
+            {% if league.description %}
+            <p class="league-card-desc">{{league.description}}</p>
+            {% endif %}
+        </div>
+        <div class="league-card-footer">
+            <span class="league-card-meta">
+                {% if league.current-season %}Current: {{league.current-season.display-name}}{% else %}Between seasons{% endif %}
+            </span>
+            <span class="league-card-meta">{{league.tournament-count}} tournaments</span>
+        </div>
+    </a>
+    {% endfor %}
+    {% else %}
+    <div class="league-list-empty">
+        <p>No leagues yet.</p>
+        <a class="btn btn-primary" href="/view/game/{{game-eid}}/league/create.html">Create the first league</a>
+    </div>
+    {% endif %}
+</div>

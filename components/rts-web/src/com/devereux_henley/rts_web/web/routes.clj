@@ -5,7 +5,10 @@
    [com.devereux-henley.rts-web.web.configuration :as web.configuration]
    [com.devereux-henley.rts-web.web.draft :as web.draft]
    [com.devereux-henley.rts-web.web.game :as web.game]
+   [com.devereux-henley.rts-web.web.league :as web.league]
+   [com.devereux-henley.rts-web.web.season :as web.season]
    [com.devereux-henley.rts-web.web.social-media :as web.social-media]
+   [com.devereux-henley.rts-web.web.stats :as web.stats]
    [com.devereux-henley.rts-web.web.tournament :as web.tournament]
    [com.devereux-henley.rts-web.web.view :as web.view]
    [com.devereux-henley.schema.contract :as schema.contract]
@@ -99,10 +102,6 @@
              :parameters {:path schema.contract/game-and-id-path-parameter}
              :handler    (integrant.core/ref ::web.view/draft-view)}}]]
     ["/tournament"
-     ["/index.html"
-      {:get {:produces   ["application/htmx+html"]
-             :parameters {:path schema.contract/game-id-path-parameter}
-             :handler    (integrant.core/ref ::web.view/tournament-list-view)}}]
      ["/create.html"
       {:get {:produces   ["application/htmx+html"]
              :parameters {:path schema.contract/game-id-path-parameter}
@@ -114,7 +113,44 @@
      ["/:eid/phase.html"
       {:get {:produces   ["application/htmx+html"]
              :parameters {:path schema.contract/game-and-id-path-parameter}
-             :handler    (integrant.core/ref ::web.view/tournament-phase-form-view)}}]]]])
+             :handler    (integrant.core/ref ::web.view/tournament-phase-form-view)}}]]
+    ["/competitive"
+     ["/index.html"
+      {:get {:produces   ["application/htmx+html"]
+             :parameters {:path schema.contract/game-id-path-parameter}
+             :handler    (integrant.core/ref ::web.view/competitive-view)}}]
+     ["/season-options.html"
+      {:get {:produces   ["application/htmx+html"]
+             :parameters {:path  schema.contract/game-id-path-parameter
+                          :query (schema.contract/to-schema
+                                  [:map
+                                   [:league-eid {:optional true} [:maybe :uuid]]])}
+             :handler    (integrant.core/ref ::web.view/season-options-fragment-view)}}]]
+    ["/league"
+     ["/create.html"
+      {:get {:produces   ["application/htmx+html"]
+             :parameters {:path schema.contract/game-id-path-parameter}
+             :handler    (integrant.core/ref ::web.view/create-league-view)}}]
+     ["/:eid/index.html"
+      {:get {:produces   ["application/htmx+html"]
+             :parameters {:path schema.contract/game-and-id-path-parameter}
+             :handler    (integrant.core/ref ::web.view/league-view)}}]
+     ["/:league-eid/season"
+      ["/create.html"
+       {:get {:produces   ["application/htmx+html"]
+              :parameters {:path (schema.contract/to-schema
+                                  [:map
+                                   [:game-eid :uuid]
+                                   [:league-eid :uuid]])}
+              :handler    (integrant.core/ref ::web.view/create-season-view)}}]
+      ["/:eid/index.html"
+       {:get {:produces   ["application/htmx+html"]
+              :parameters {:path (schema.contract/to-schema
+                                  [:map
+                                   [:game-eid :uuid]
+                                   [:league-eid :uuid]
+                                   [:eid :uuid]])}
+              :handler    (integrant.core/ref ::web.view/season-view)}}]]]]])
 
 (def api-routes
   ["/api"
@@ -427,7 +463,20 @@
                                     [:eid :uuid]
                                     [:match-eid :uuid]])
                             :body domain/record-result-specification}
-               :handler    (integrant.core/ref ::web.tournament/record-game)}}]]
+               :handler    (integrant.core/ref ::web.tournament/record-game)}}]
+      ["/:match-eid/draft"
+       {:put {:summary    "Sets the requesting player's draft for a match."
+              :openapi    {:tags         ["tournament"]
+                           :produces     ["application/json"]
+                           :operation-id "tournament-match/set-draft"}
+              :parameters {:path (schema.contract/to-schema
+                                  [:map
+                                   [:eid :uuid]
+                                   [:match-eid :uuid]])
+                           :body domain/set-match-draft-specification}
+              :responses  {200 {:body domain/set-match-draft-response}
+                           422 {:body domain/set-match-draft-response}}
+              :handler    (integrant.core/ref ::web.tournament/set-match-draft)}}]]
      ["/phase"
       {:name :tournament/phase-configuration
        :put  {:summary    "Update the tournament phase configuration."
@@ -464,6 +513,99 @@
                            :operation-id "tournament-round/create"}
               :parameters {:path schema.contract/id-path-parameter}
               :handler    (integrant.core/ref ::web.tournament/create-round)}}]]]
+
+   ["/league"
+    [""
+     {:name :league/for-game
+      :get  {:summary    "Fetches leagues for a game."
+             :openapi    {:tags         ["league"]
+                          :produces     ["application/json"]
+                          :operation-id "league/for-game"}
+             :parameters {:query (schema.contract/to-schema
+                                  [:map
+                                   [:game-eid :uuid]])}
+             :responses  {200 {:body domain/league-collection-resource}}
+             :handler    (integrant.core/ref ::web.league/get-leagues)}}]
+    ["/:eid"
+     {:name :league/by-eid
+      :get  {:summary    "Fetches a league by eid."
+             :openapi    {:tags         ["league"]
+                          :produces     ["application/json"]
+                          :operation-id "league/by-eid"}
+             :parameters {:path schema.contract/id-path-parameter}
+             :responses  {200 {:body domain/league-resource}}
+             :handler    (integrant.core/ref ::web.league/get-league)}
+      :put  {:summary    "Creates a league with the given eid."
+             :openapi    {:tags         ["league"]
+                          :produces     ["application/json"]
+                          :operation-id "league/create"}
+             :parameters {:path  schema.contract/id-path-parameter
+                          :query schema.contract/version-query-parameter
+                          :body  domain/create-league-specification}
+             :responses  {201 {:body domain/league-resource}}
+             :handler    (integrant.core/ref ::web.league/create-league)}}]
+    ["/:league-eid/season"
+     {:name :season/for-league
+      :get  {:summary    "Fetches seasons for a league."
+             :openapi    {:tags         ["league"]
+                          :produces     ["application/json"]
+                          :operation-id "season/for-league"}
+             :parameters {:path (schema.contract/to-schema
+                                 [:map [:league-eid :uuid]])}
+             :responses  {200 {:body domain/season-collection-resource}}
+             :handler    (integrant.core/ref ::web.season/get-seasons-for-league)}}]]
+   ["/season/:eid"
+    {:name :season/by-eid
+     :get  {:summary    "Fetches a season by eid."
+            :openapi    {:tags         ["season"]
+                         :produces     ["application/json"]
+                         :operation-id "season/by-eid"}
+            :parameters {:path schema.contract/id-path-parameter}
+            :responses  {200 {:body domain/season-resource}}
+            :handler    (integrant.core/ref ::web.season/get-season)}}]
+   ["/season/:league-eid/:eid"
+    {:put {:summary    "Creates a season under a league."
+           :openapi    {:tags         ["season"]
+                        :produces     ["application/json"]
+                        :operation-id "season/create"}
+           :parameters {:path (schema.contract/to-schema
+                               [:map
+                                [:league-eid :uuid]
+                                [:eid :uuid]])
+                        :body domain/create-season-specification}
+           :responses  {201 {:body domain/season-resource}
+                        422 {:body domain/season-error-response}}
+           :handler    (integrant.core/ref ::web.season/create-season)}}]
+   ["/stats/game/:game-eid/faction"
+    {:name :stats/game-faction
+     :get  {:summary    "Faction win/loss standings across all matches for a game."
+            :openapi    {:tags         ["stats"]
+                         :produces     ["application/json"]
+                         :operation-id "stats/game-faction"}
+            :parameters {:path (schema.contract/to-schema
+                                [:map [:game-eid :uuid]])}
+            :responses  {200 {:body domain/faction-standings-response}}
+            :handler    (integrant.core/ref ::web.stats/get-game-faction-standings)}}]
+   ["/stats/league/:league-eid/faction"
+    {:name :stats/league-faction
+     :get  {:summary    "Faction win/loss standings across all matches in a league."
+            :openapi    {:tags         ["stats"]
+                         :produces     ["application/json"]
+                         :operation-id "stats/league-faction"}
+            :parameters {:path (schema.contract/to-schema
+                                [:map [:league-eid :uuid]])}
+            :responses  {200 {:body domain/faction-standings-response}}
+            :handler    (integrant.core/ref ::web.stats/get-league-faction-standings)}}]
+   ["/stats/season/:season-eid/faction"
+    {:name :stats/season-faction
+     :get  {:summary    "Faction win/loss standings across all matches in a season."
+            :openapi    {:tags         ["stats"]
+                         :produces     ["application/json"]
+                         :operation-id "stats/season-faction"}
+            :parameters {:path (schema.contract/to-schema
+                                [:map [:season-eid :uuid]])}
+            :responses  {200 {:body domain/faction-standings-response}}
+            :handler    (integrant.core/ref ::web.stats/get-season-faction-standings)}}]
 
    ["/social-media/:eid"
     {:name :social-media/by-eid
