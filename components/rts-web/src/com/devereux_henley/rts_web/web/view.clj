@@ -258,18 +258,18 @@
 (defmethod integrant.core/init-key ::competitive-view
   [_init-key dependencies]
   (fn [request]
-    (let [game-eid    (:game-eid (:game-context request))
-          tournaments (domain/get-tournaments-for-game dependencies game-eid)
-          leagues     (domain/get-leagues-for-game dependencies game-eid)
-          eid->league (into {} (map (juxt :eid identity) leagues))
+    (let [game-eid             (:game-eid (:game-context request))
+          tournaments          (domain/get-tournaments-for-game dependencies game-eid)
+          leagues              (domain/get-leagues-for-game dependencies game-eid)
+          eid->league          (into {} (map (juxt :eid identity) leagues))
           ;; Pre-fetch the seasons for every league referenced by tournaments so we
           ;; can label tournament cards without N+1 calls.
-          referenced-leagues (distinct (keep :league-eid tournaments))
-          eid->season (into {}
-                            (mapcat (fn [leid]
-                                      (map (juxt :eid identity)
-                                           (domain/get-seasons-for-league dependencies leid)))
-                                    referenced-leagues))
+          referenced-leagues   (distinct (keep :league-eid tournaments))
+          eid->season          (into {}
+                                     (mapcat (fn [leid]
+                                               (map (juxt :eid identity)
+                                                    (domain/get-seasons-for-league dependencies leid)))
+                                             referenced-leagues))
           enriched-tournaments (mapv (fn [t]
                                        (let [state   (domain/get-tournament-state dependencies (:eid t))
                                              entries (domain/get-entries dependencies (:eid t))]
@@ -333,17 +333,17 @@
     (let [league (domain/get-league-by-eid dependencies eid)]
       (if (nil? league)
         {:status 404 :body {:type :missing/resource :name "league" :id eid}}
-        (let [seasons          (domain/get-seasons-for-league dependencies eid)
-              all-tournaments  (domain/get-tournaments-for-game dependencies (:game-eid league))
-              league-tourneys  (filter #(= eid (:league-eid %)) all-tournaments)
-              eid->season      (into {} (map (juxt :eid identity) seasons))
+        (let [seasons           (domain/get-seasons-for-league dependencies eid)
+              all-tournaments   (domain/get-tournaments-for-game dependencies (:game-eid league))
+              league-tourneys   (filter #(= eid (:league-eid %)) all-tournaments)
+              eid->season       (into {} (map (juxt :eid identity) seasons))
               enriched-tourneys (mapv (fn [t]
                                         (let [state (domain/get-tournament-state dependencies (:eid t))]
                                           (cond-> (assoc t :status (:status state))
                                             (:season-eid t) (assoc :season-display-name (get-in eid->season [(:season-eid t) :display-name])))))
                                       league-tourneys)
-              standings        (domain/get-league-faction-standings dependencies eid)
-              player-sub       (get-in request [:ory-session :identity :id])]
+              standings         (domain/get-league-faction-standings dependencies eid)
+              player-sub        (get-in request [:ory-session :identity :id])]
           {:status 200
            :body   (selmer.parser/render-file
                     "rts-web/view/league-index.html"
@@ -432,8 +432,8 @@
                    player-drafts         (when player-sub
                                            (domain/get-drafts-for-player-by-game dependencies player-sub (:game-eid data)))
                    matches-with-picker   (mapv (fn [m]
-                                                 (let [is-p1 (= player-sub (:player-one-sub m))
-                                                       is-p2 (= player-sub (:player-two-sub m))
+                                                 (let [is-p1        (= player-sub (:player-one-sub m))
+                                                       is-p2        (= player-sub (:player-two-sub m))
                                                        my-draft-eid (cond is-p1 (:player-one-draft-eid m)
                                                                           is-p2 (:player-two-draft-eid m))]
                                                    (assoc m

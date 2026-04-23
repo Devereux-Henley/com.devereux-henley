@@ -43,12 +43,12 @@
 (defmethod integrant.core/init-key ::create-tournament
   [_init-key dependencies]
   (fn [{{{:keys [name description game-eid league-eid season-eid timezone
-                 registration-opens-at registration-closes-at]} :body
-         {:keys [version]}                                      :query
-         {:keys [eid]}                                          :path} :parameters
-        router                                                         :reitit.core/router
-        session                                                        :ory-session
-        :as                                                            _request}]
+                 registration-opens-at registration-closes-at]}           :body
+         {:keys [version]}                                                :query
+         {:keys [eid]}                                                    :path} :parameters
+        router                                                                   :reitit.core/router
+        session                                                                  :ory-session
+        :as                                                                      _request}]
     (let [result (domain/create-tournament
                   dependencies
                   (cond-> {:eid                    eid

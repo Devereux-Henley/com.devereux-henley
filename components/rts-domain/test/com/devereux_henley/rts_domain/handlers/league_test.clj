@@ -12,11 +12,11 @@
 (def ^:private test-deps {:connection nil})
 
 (def ^:private test-league
-  {:id 1 :eid test-league-eid :game-eid test-game-eid
-   :name "Test League" :description "A test league."
-   :created-by-sub "dev-admin" :version 1
-   :created-at (Instant/now) :updated-at (Instant/now)
-   :deleted-at nil})
+  {:id             1             :eid         test-league-eid  :game-eid test-game-eid
+   :name           "Test League" :description "A test league."
+   :created-by-sub "dev-admin"   :version     1
+   :created-at     (Instant/now) :updated-at  (Instant/now)
+   :deleted-at     nil})
 
 (deftest get-league-by-eid-tags-type
   (with-redefs [data-access.contract/get-league-by-eid (fn [_ _] test-league)]

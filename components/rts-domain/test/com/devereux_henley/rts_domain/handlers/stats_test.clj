@@ -10,10 +10,10 @@
 (def ^:private test-eid (UUID/randomUUID))
 
 (def ^:private rows
-  [{:faction-eid (UUID/randomUUID) :faction-name "Empire"
-    :matches-played 3 :wins 2 :losses 1 :draws 0}
-   {:faction-eid (UUID/randomUUID) :faction-name "Beastmen"
-    :matches-played 2 :wins 1 :losses 1 :draws 0}])
+  [{:faction-eid    (UUID/randomUUID) :faction-name "Empire"
+    :matches-played 3                 :wins         2        :losses 1 :draws 0}
+   {:faction-eid    (UUID/randomUUID) :faction-name "Beastmen"
+    :matches-played 2                 :wins         1          :losses 1 :draws 0}])
 
 (deftest game-faction-standings-tags-rows
   (with-redefs [data-access.contract/get-faction-standings-for-game (fn [_ _] rows)]

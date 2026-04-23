@@ -117,8 +117,8 @@
                       :pred            neg-int?})
     :pos-int        (malli.core/-simple-schema
                      {:type            :pos-int
-                      :type-properties {:json-schema/type                                   "integer"
-                                        :json-schema/format                                 "int64"
+                      :type-properties {:json-schema/type   "integer"
+                                        :json-schema/format "int64"
                                         :decode/string
                                         (fn [string-value] (Integer/parseInt string-value))}
                       :pred            pos-int?})}))
@@ -222,7 +222,7 @@
     base-create-collection-request
     [:map
      [:specification
-      {:json-schema/title                                                "Resource Specification"
+      {:json-schema/title "Resource Specification"
        :json-schema/description
        "The specification for which resources to return in your search."}
       specification-schema]])))

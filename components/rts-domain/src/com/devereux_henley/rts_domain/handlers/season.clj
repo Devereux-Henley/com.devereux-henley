@@ -55,18 +55,18 @@
             end-instant   (to-utc-instant end-at timezone)]
         (if-not (.isBefore start-instant end-instant)
           {:type :season/error :message "Season start must be before end."}
-          (let [now                       (Instant/now)
+          (let [now                        (Instant/now)
                 {max-ordinal :max-ordinal} (db/get-max-ordinal-for-league conn league-eid)
-                next-ordinal              (inc max-ordinal)
-                season                    (db/create-season
-                                           conn
-                                           (cond-> {:eid        (or eid (random-uuid))
-                                                    :league-eid league-eid
-                                                    :ordinal    next-ordinal
-                                                    :start-at   start-instant
-                                                    :end-at     end-instant
-                                                    :version    1
-                                                    :created-at now
-                                                    :updated-at now}
-                                             name (assoc :name name)))]
+                next-ordinal               (inc max-ordinal)
+                season                     (db/create-season
+                                            conn
+                                            (cond-> {:eid        (or eid (random-uuid))
+                                                     :league-eid league-eid
+                                                     :ordinal    next-ordinal
+                                                     :start-at   start-instant
+                                                     :end-at     end-instant
+                                                     :version    1
+                                                     :created-at now
+                                                     :updated-at now}
+                                              name (assoc :name name)))]
             (tag-season season)))))))

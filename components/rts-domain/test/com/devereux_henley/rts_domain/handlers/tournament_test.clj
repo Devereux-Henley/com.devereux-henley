@@ -317,11 +317,11 @@
        {:eid                    (UUID/randomUUID)
         :game-eid               test-game-eid
         :season-eid             test-season-eid
-        :name                   "Spring Cup" :description "x"
+        :name                   "Spring Cup"                                          :description "x"
         :timezone               (java.time.ZoneId/of "UTC")
         :registration-opens-at  (java.time.LocalDateTime/parse "2026-04-01T00:00:00")
         :registration-closes-at (java.time.LocalDateTime/parse "2030-04-30T23:59:00")
-        :created-by-sub         "dev-admin" :version 1})
+        :created-by-sub         "dev-admin"                                           :version     1})
       (is (= test-league-eid (:league-eid @captured))
           "league-eid should be derived server-side from the season"))))
 
@@ -334,11 +334,11 @@
                    :game-eid               test-game-eid
                    :league-eid             (UUID/fromString "33333333-3333-3333-3333-333333333333")
                    :season-eid             test-season-eid
-                   :name                   "x" :description "x"
+                   :name                   "x"                                                      :description "x"
                    :timezone               (java.time.ZoneId/of "UTC")
                    :registration-opens-at  (java.time.LocalDateTime/parse "2026-04-01T00:00:00")
                    :registration-closes-at (java.time.LocalDateTime/parse "2030-04-30T23:59:00")
-                   :created-by-sub         "dev-admin" :version 1})]
+                   :created-by-sub         "dev-admin"                                              :version     1})]
       (is (= :tournament/create-error (:type result))))))
 
 ;; ─── set-match-player-draft ──────────────────────────────────────────────────

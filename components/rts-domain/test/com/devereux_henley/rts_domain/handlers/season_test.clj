@@ -11,9 +11,9 @@
 (def ^:private test-deps {:connection nil})
 
 (def ^:private test-league
-  {:id 1 :eid test-league-eid :game-eid (UUID/randomUUID)
-   :name "L" :description "d" :created-by-sub "dev-admin"
-   :version 1 :created-at (Instant/now) :updated-at (Instant/now)})
+  {:id      1   :eid         test-league-eid :game-eid       (UUID/randomUUID)
+   :name    "L" :description "d"             :created-by-sub "dev-admin"
+   :version 1   :created-at  (Instant/now)   :updated-at     (Instant/now)})
 
 (def ^:private valid-spec
   {:eid        (UUID/randomUUID)
@@ -26,10 +26,10 @@
 
 (deftest get-season-by-eid-tags-and-derives-display-name
   (with-redefs [data-access.contract/get-season-by-eid
-                (fn [_ _] {:id 1 :eid (UUID/randomUUID) :league-eid test-league-eid
-                           :ordinal 3 :name nil
-                           :start-at (Instant/now) :end-at (Instant/now)
-                           :version 1 :created-at (Instant/now) :updated-at (Instant/now)
+                (fn [_ _] {:id         1             :eid        (UUID/randomUUID) :league-eid test-league-eid
+                           :ordinal    3             :name       nil
+                           :start-at   (Instant/now) :end-at     (Instant/now)
+                           :version    1             :created-at (Instant/now)     :updated-at (Instant/now)
                            :deleted-at nil})]
     (let [s (handlers.season/get-season-by-eid test-deps (UUID/randomUUID))]
       (is (= :season/season (:type s)))
@@ -37,10 +37,10 @@
 
 (deftest get-season-display-name-uses-override
   (with-redefs [data-access.contract/get-season-by-eid
-                (fn [_ _] {:id 1 :eid (UUID/randomUUID) :league-eid test-league-eid
-                           :ordinal 1 :name "Spring 2026"
-                           :start-at (Instant/now) :end-at (Instant/now)
-                           :version 1 :created-at (Instant/now) :updated-at (Instant/now)
+                (fn [_ _] {:id         1             :eid        (UUID/randomUUID) :league-eid test-league-eid
+                           :ordinal    1             :name       "Spring 2026"
+                           :start-at   (Instant/now) :end-at     (Instant/now)
+                           :version    1             :created-at (Instant/now)     :updated-at (Instant/now)
                            :deleted-at nil})]
     (is (= "Spring 2026" (:display-name (handlers.season/get-season-by-eid test-deps (UUID/randomUUID)))))))
 
