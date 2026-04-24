@@ -9,26 +9,13 @@
 
 (def ^:private json-mapper (jsonista/object-mapper {:decode-key-fn keyword}))
 
-(defn- dissoc-nil-keys
-  "Removes keys whose values are nil. The model-transformer's :model/link
-   resolution can't handle nil eids; absent keys are skipped, but nil-valued
-   keys would crash route lookup."
-  [m & ks]
-  (reduce (fn [acc k] (if (nil? (get acc k)) (dissoc acc k) acc)) m ks))
-
 (defn- tag-tournament
   [tournament]
-  (when tournament
-    (-> tournament
-        (assoc :type :tournament/tournament)
-        (dissoc-nil-keys :league-eid :season-eid))))
+  (some-> tournament (assoc :type :tournament/tournament)))
 
 (defn- tag-match
   [match]
-  (when match
-    (-> match
-        (assoc :type :tournament/match)
-        (dissoc-nil-keys :player-one-draft-eid :player-two-draft-eid))))
+  (some-> match (assoc :type :tournament/match)))
 
 (defn get-tournament-by-eid
   "Fetches a tournament by eid and attaches :type :tournament/tournament."
