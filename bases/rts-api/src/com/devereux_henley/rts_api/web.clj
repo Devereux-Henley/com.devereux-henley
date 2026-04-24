@@ -5,6 +5,7 @@
    [com.devereux-henley.content-negotiation.contract :as content-negotiation]
    [com.devereux-henley.resourcekit.contract :as resourcekit]
    [com.devereux-henley.rts-api.extensions.clj-http] ;; Patches multimethod for clj-http
+   [com.devereux-henley.rts-web.contract :as rts-web]
    [integrant.core]
    [malli.util]
    [muuntaja.core :as m]
@@ -22,7 +23,6 @@
    [reitit.swagger-ui :as swagger-ui]
    [ring.adapter.jetty :as jetty]
    [ring.middleware.cookies]
-   [selmer.parser]
    [taoensso.timbre :as log])
   (:import
    [java.net ConnectException]))
@@ -84,11 +84,10 @@
   [status status-text message request]
   {:status  status
    :headers {"Content-Type" "text/html; charset=utf-8"}
-   :body    (selmer.parser/render-file
-             "rts-web/view/error.html"
-             {:status-text status-text
-              :message     message
-              :session     (:ory-session request)})})
+   :body    (rts-web/render-view "error.html"
+                                 {:status-text status-text
+                                  :message     message
+                                  :session     (:ory-session request)})})
 
 (defn ^:private render-error-fragment
   [status message]

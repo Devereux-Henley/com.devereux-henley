@@ -2,16 +2,12 @@
   (:require
    [com.devereux-henley.rts-data-access.contract :as db]
    [com.devereux-henley.rts-domain.rules.tournament :as rules]
+   [com.devereux-henley.rts-domain.time :as time]
    [jsonista.core :as jsonista])
   (:import
-   [java.time Instant LocalDateTime ZoneId]))
+   [java.time Instant]))
 
 (def ^:private json-mapper (jsonista/object-mapper {:decode-key-fn keyword}))
-
-(defn- to-utc-instant
-  "Converts a LocalDateTime in the given ZoneId to a UTC Instant."
-  ^Instant [^LocalDateTime local-dt ^ZoneId zone]
-  (-> local-dt (.atZone zone) .toInstant))
 
 (defn- dissoc-nil-keys
   "Removes keys whose values are nil. The model-transformer's :model/link
@@ -91,8 +87,8 @@
       (let [created-at    (Instant/now)
             updated-at    created-at
             tz            (:timezone create-specification)
-            opens-at      (to-utc-instant (:registration-opens-at create-specification) tz)
-            closes-at     (to-utc-instant (:registration-closes-at create-specification) tz)
+            opens-at      (time/to-utc-instant (:registration-opens-at create-specification) tz)
+            closes-at     (time/to-utc-instant (:registration-closes-at create-specification) tz)
             spec          (-> create-specification
                               (dissoc :registration-opens-at :registration-closes-at :timezone)
                               (assoc :created-at created-at)
@@ -167,13 +163,13 @@
 (defn advance-tournament
   "Advances a tournament to the target status. Only the organizer (created-by-sub)
    can advance. When transitioning to 'active', populates standings from entries."
-  [dependencies tournament-eid target-status player-sub]
+  [dependencies tournament-eid target-status user-sub]
   (let [tournament (get-tournament-by-eid dependencies tournament-eid)]
     (cond
       (nil? tournament)
       {:type :tournament/advance-error :message "Tournament not found."}
 
-      (not= player-sub (:created-by-sub tournament))
+      (not= user-sub (:created-by-sub tournament))
       {:type :tournament/advance-error :message "Only the tournament organizer can advance the tournament."}
 
       :else
@@ -192,13 +188,13 @@
 (defn close-registration-early
   "Sets the closed-early flag on the tournament state, preventing new entries.
    Only the organizer can close registration early."
-  [dependencies tournament-eid player-sub]
+  [dependencies tournament-eid user-sub]
   (let [tournament (get-tournament-by-eid dependencies tournament-eid)]
     (cond
       (nil? tournament)
       {:type :tournament/advance-error :message "Tournament not found."}
 
-      (not= player-sub (:created-by-sub tournament))
+      (not= user-sub (:created-by-sub tournament))
       {:type :tournament/advance-error :message "Only the tournament organizer can close registration."}
 
       :else
@@ -347,13 +343,13 @@
 
 (defn configure-phases
   "Sets the phase configuration on a tournament. Must be in registration status."
-  [dependencies tournament-eid phase-config player-sub]
+  [dependencies tournament-eid phase-config user-sub]
   (let [tournament (get-tournament-by-eid dependencies tournament-eid)]
     (cond
       (nil? tournament)
       {:type :tournament/phase-error :message "Tournament not found."}
 
-      (not= player-sub (:created-by-sub tournament))
+      (not= user-sub (:created-by-sub tournament))
       {:type :tournament/phase-error :message "Only the tournament organizer can configure phases."}
 
       :else
@@ -455,13 +451,13 @@
    phase has no more rounds configured, automatically advances to the next
    phase and generates its first round. Dispatches pairing strategy based
    on the phase's phase-type."
-  [dependencies tournament-eid player-sub]
+  [dependencies tournament-eid user-sub]
   (let [tournament (get-tournament-by-eid dependencies tournament-eid)]
     (cond
       (nil? tournament)
       {:type :tournament/phase-error :message "Tournament not found."}
 
-      (not= player-sub (:created-by-sub tournament))
+      (not= user-sub (:created-by-sub tournament))
       {:type :tournament/phase-error :message "Only the tournament organizer can generate rounds."}
 
       :else

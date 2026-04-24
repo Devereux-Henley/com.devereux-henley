@@ -73,6 +73,6 @@ Three faction-stats endpoints, identical response shape — only the WHERE filte
 - `GET /api/stats/league/:league-eid/faction`
 - `GET /api/stats/season/:season-eid/faction`
 
-Each returns `{:type :stats/<scope>-faction-standings, :scope <"game"|"league"|"season">, :scope-eid …, :rows [{:type :stats/faction-row, :faction-eid …, :faction-name …, :matches-played, :wins, :losses, :win-percentage} …]}`. `:win-percentage` is computed in the domain handler (rounded integer, 0–100) since the underlying SQL only aggregates wins/losses. The aggregation SQL lives in `components/rts-data-access/resources/rts-data-access/sql/stats/get-faction-standings-for-{game,league,season}.sql`.
+Each returns `{:type :stats/<scope>-faction-standings, :scope <"game"|"league"|"season">, :scope-eid …, :rows [{:type :stats/faction, :faction-eid …, :faction-name …, :matches-played, :wins, :losses, :win-percentage} …]}`. `:win-percentage` is computed in the domain handler (rounded integer, 0–100) since the underlying SQL only aggregates wins/losses. The aggregation SQL lives in `components/rts-data-access/resources/rts-data-access/sql/stats/get-faction-standings-for-{game,league,season}.sql`.
 
 Matches with NULL `player_*_draft_id` (legacy or never-set) simply don't contribute to faction aggregates — they're filtered in the SQL `WHERE` clause.

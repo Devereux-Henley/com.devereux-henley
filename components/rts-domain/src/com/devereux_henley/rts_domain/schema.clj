@@ -742,7 +742,7 @@
 (def faction-standings-row-resource
   (schema.contract/to-schema
    [:map
-    [:type [:= :stats/faction-row]]
+    [:type [:= :stats/faction]]
     [:faction-eid :uuid]
     [:faction-name :string]
     [:matches-played :int]

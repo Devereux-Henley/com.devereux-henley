@@ -117,8 +117,8 @@
          {:keys [status]} :body} :parameters
         session                  :ory-session
         :as                      _request}]
-    (let [player-sub (get-in session [:identity :id])
-          result     (domain/advance-tournament dependencies eid status player-sub)]
+    (let [user-sub (get-in session [:identity :id])
+          result   (domain/advance-tournament dependencies eid status user-sub)]
       (case (:type result)
         :tournament/advance-success {:status 200 :body result}
         {:status 422 :body result}))))
@@ -141,10 +141,10 @@
          {:keys [closed-early]} :body} :parameters
         session                        :ory-session
         :as                            _request}]
-    (let [player-sub (get-in session [:identity :id])
-          result     (if closed-early
-                       (domain/close-registration-early dependencies eid player-sub)
-                       {:type :tournament/registration-error :message "No updates specified."})]
+    (let [user-sub (get-in session [:identity :id])
+          result   (if closed-early
+                     (domain/close-registration-early dependencies eid user-sub)
+                     {:type :tournament/registration-error :message "No updates specified."})]
       (case (:type result)
         :tournament/close-registration-success {:status 200 :body result}
         {:status 422 :body result}))))
@@ -225,10 +225,10 @@
          {:keys [phases qualifier-count]} :body} :parameters
         session                                  :ory-session
         :as                                      _request}]
-    (let [player-sub (get-in session [:identity :id])
-          result     (domain/configure-phases dependencies eid
-                                              {:phases phases :qualifier-count qualifier-count}
-                                              player-sub)]
+    (let [user-sub (get-in session [:identity :id])
+          result   (domain/configure-phases dependencies eid
+                                            {:phases phases :qualifier-count qualifier-count}
+                                            user-sub)]
       (if (= :tournament/phase-error (:type result))
         {:status 422 :body result}
         {:status 200 :body result}))))
@@ -238,8 +238,8 @@
   (fn [{{{:keys [eid]} :path} :parameters
         session               :ory-session
         :as                   _request}]
-    (let [player-sub (get-in session [:identity :id])
-          result     (domain/generate-next-round dependencies eid player-sub)]
+    (let [user-sub (get-in session [:identity :id])
+          result   (domain/generate-next-round dependencies eid user-sub)]
       (if (= :tournament/phase-error (:type result))
         {:status 422 :body result}
         {:status 200 :body result}))))

@@ -22,14 +22,14 @@
       (is (= "game" (:scope resp)))
       (is (= test-eid (:scope-eid resp)))
       (is (= 2 (count (:rows resp))))
-      (is (every? #(= :stats/faction-row (:type %)) (:rows resp))))))
+      (is (every? #(= :stats/faction (:type %)) (:rows resp))))))
 
 (deftest league-faction-standings-tags-rows
   (with-redefs [data-access.contract/get-faction-standings-for-league (fn [_ _] rows)]
     (let [resp (handlers.stats/get-league-faction-standings test-deps test-eid)]
       (is (= :stats/league-faction-standings (:type resp)))
       (is (= "league" (:scope resp)))
-      (is (every? #(= :stats/faction-row (:type %)) (:rows resp))))))
+      (is (every? #(= :stats/faction (:type %)) (:rows resp))))))
 
 (deftest season-faction-standings-tags-rows
   (with-redefs [data-access.contract/get-faction-standings-for-season (fn [_ _] rows)]

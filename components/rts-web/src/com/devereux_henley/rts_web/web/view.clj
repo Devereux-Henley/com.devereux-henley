@@ -3,12 +3,12 @@
    [clojure.java.io :as io]
    [clojure.string :as string]
    [com.devereux-henley.rts-domain.contract :as domain]
+   [com.devereux-henley.rts-web.render :as render]
    [com.devereux-henley.rts-web.skin :as skin]
    [com.devereux-henley.rts-web.web.game :as web.game]
    [com.devereux-henley.rts-web.web.tournament :as web.tournament]
    [integrant.core]
    [selmer.filters]
-   [selmer.parser]
    [taoensso.timbre :as log]))
 
 (defn- active-nav
@@ -37,9 +37,7 @@
 (defn standard-view-handler
   [view-name request]
   {:status 200
-   :body   (selmer.parser/render-file
-            (str "rts-web/view/" view-name)
-            (base-context request))})
+   :body   (render/render view-name (base-context request))})
 
 (defn standard-entity-view-handler
   [pipeline-fn template-name extra-data-fn request]
@@ -48,11 +46,10 @@
     (if (= :missing/resource (:type data))
       {:status 404 :body data}
       {:status 200
-       :body   (selmer.parser/render-file
-                (str "rts-web/view/" template-name)
-                (merge (base-context request)
-                       {:data data}
-                       (extra-data-fn data request)))})))
+       :body   (render/render template-name
+                              (merge (base-context request)
+                                     {:data data}
+                                     (extra-data-fn data request)))})))
 
 (defmethod integrant.core/init-key ::game-context-middleware
   [_init-key dependencies]
@@ -75,9 +72,8 @@
                         (assoc game :logo (skin/logo-for-game (:eid game))))
                       (domain/get-games dependencies))]
       {:status 200
-       :body   (selmer.parser/render-file
-                "rts-web/view/game-selector.html"
-                (assoc (base-context request) :games games))})))
+       :body   (render/render "game-selector.html"
+                              (assoc (base-context request) :games games))})))
 
 (defmethod integrant.core/init-key ::game-view
   [_init-key _dependencies]
@@ -211,10 +207,9 @@
     (let [player-sub (get-in session [:identity :id])
           game-eid   (:game-eid (:game-context request))]
       {:status 200
-       :body   (selmer.parser/render-file
-                "rts-web/view/my-drafts.html"
-                (assoc (base-context request)
-                       :drafts (domain/get-drafts-for-player-by-game dependencies player-sub game-eid)))})))
+       :body   (render/render "my-drafts.html"
+                              (assoc (base-context request)
+                                     :drafts (domain/get-drafts-for-player-by-game dependencies player-sub game-eid)))})))
 
 (defmethod integrant.core/init-key ::faction-list-view
   [_init-key _dependencies]
@@ -224,10 +219,9 @@
   [_init-key _dependencies]
   (fn [request]
     {:status 200
-     :body   (selmer.parser/render-file
-              "rts-web/view/game-index.html"
-              (assoc (base-context request)
-                     :data (:game (:game-context request))))}))
+     :body   (render/render "game-index.html"
+                            (assoc (base-context request)
+                                   :data (:game (:game-context request))))}))
 
 (defmethod integrant.core/init-key ::create-draft-view
   [_init-key dependencies]
@@ -235,11 +229,10 @@
     (let [game-eid   (:game-eid (:game-context request))
           game-modes (domain/get-game-modes-for-game dependencies game-eid)]
       {:status 200
-       :body   (selmer.parser/render-file
-                "rts-web/view/create-draft.html"
-                (assoc (base-context request)
-                       :game-modes game-modes
-                       :draft-eid  (random-uuid)))})))
+       :body   (render/render "create-draft.html"
+                              (assoc (base-context request)
+                                     :game-modes game-modes
+                                     :draft-eid  (random-uuid)))})))
 
 (defmethod integrant.core/init-key ::logout-view
   [_init-key {:keys [auth-hostname]}]
@@ -286,11 +279,10 @@
                                                 :tournament-count tcount)))
                                      leagues)]
       {:status 200
-       :body   (selmer.parser/render-file
-                "rts-web/view/competitive.html"
-                (assoc (base-context request)
-                       :tournaments enriched-tournaments
-                       :leagues enriched-leagues))})))
+       :body   (render/render "competitive.html"
+                              (assoc (base-context request)
+                                     :tournaments enriched-tournaments
+                                     :leagues enriched-leagues))})))
 
 (defmethod integrant.core/init-key ::create-tournament-view
   [_init-key dependencies]
@@ -298,13 +290,12 @@
     (let [game-eid (:game-eid (:game-context request))
           leagues  (domain/get-leagues-for-game dependencies game-eid)]
       {:status 200
-       :body   (selmer.parser/render-file
-                "rts-web/view/create-tournament.html"
-                (assoc (base-context request)
-                       :tournament-eid   (random-uuid)
-                       :leagues          leagues
-                       :timezones        domain/common-timezones
-                       :default-timezone domain/default-timezone))})))
+       :body   (render/render "create-tournament.html"
+                              (assoc (base-context request)
+                                     :tournament-eid   (random-uuid)
+                                     :leagues          leagues
+                                     :timezones        domain/common-timezones
+                                     :default-timezone domain/default-timezone))})))
 
 (defmethod integrant.core/init-key ::season-options-fragment-view
   [_init-key dependencies]
@@ -314,18 +305,16 @@
                        (domain/get-seasons-for-league dependencies league-eid))]
       {:status  200
        :headers {"Content-Type" "text/html; charset=utf-8"}
-       :body    (selmer.parser/render-file
-                 "rts-web/view/_partial/season-options.html"
-                 (assoc (base-context request) :seasons seasons))})))
+       :body    (render/render "_partial/season-options.html"
+                               (assoc (base-context request) :seasons seasons))})))
 
 (defmethod integrant.core/init-key ::create-league-view
   [_init-key _dependencies]
   (fn [request]
     {:status 200
-     :body   (selmer.parser/render-file
-              "rts-web/view/create-league.html"
-              (assoc (base-context request)
-                     :league-eid (random-uuid)))}))
+     :body   (render/render "create-league.html"
+                            (assoc (base-context request)
+                                   :league-eid (random-uuid)))}))
 
 (defmethod integrant.core/init-key ::league-view
   [_init-key dependencies]
@@ -343,16 +332,15 @@
                                             (:season-eid t) (assoc :season-display-name (get-in eid->season [(:season-eid t) :display-name])))))
                                       league-tourneys)
               standings         (domain/get-league-faction-standings dependencies eid)
-              player-sub        (get-in request [:ory-session :identity :id])]
+              user-sub          (get-in request [:ory-session :identity :id])]
           {:status 200
-           :body   (selmer.parser/render-file
-                    "rts-web/view/league-index.html"
-                    (assoc (base-context request)
-                           :data league
-                           :seasons seasons
-                           :tournaments enriched-tourneys
-                           :standings standings
-                           :is-organizer (= player-sub (:created-by-sub league))))})))))
+           :body   (render/render "league-index.html"
+                                  (assoc (base-context request)
+                                         :data league
+                                         :seasons seasons
+                                         :tournaments enriched-tourneys
+                                         :standings standings
+                                         :is-organizer (= user-sub (:created-by-sub league))))})))))
 
 (defmethod integrant.core/init-key ::create-season-view
   [_init-key dependencies]
@@ -362,14 +350,13 @@
       (if (nil? league)
         {:status 404 :body {:type :missing/resource :name "league" :id league-eid}}
         {:status 200
-         :body   (selmer.parser/render-file
-                  "rts-web/view/create-season.html"
-                  (assoc (base-context request)
-                         :league league
-                         :league-eid league-eid
-                         :season-eid (random-uuid)
-                         :timezones domain/common-timezones
-                         :default-timezone domain/default-timezone))}))))
+         :body   (render/render "create-season.html"
+                                (assoc (base-context request)
+                                       :league league
+                                       :league-eid league-eid
+                                       :season-eid (random-uuid)
+                                       :timezones domain/common-timezones
+                                       :default-timezone domain/default-timezone))}))))
 
 (defmethod integrant.core/init-key ::season-view
   [_init-key dependencies]
@@ -386,13 +373,12 @@
                                     season-tourneys)
               standings       (domain/get-season-faction-standings dependencies eid)]
           {:status 200
-           :body   (selmer.parser/render-file
-                    "rts-web/view/season-index.html"
-                    (assoc (base-context request)
-                           :data season
-                           :league league
-                           :tournaments enriched
-                           :standings standings))})))))
+           :body   (render/render "season-index.html"
+                                  (assoc (base-context request)
+                                         :data season
+                                         :league league
+                                         :tournaments enriched
+                                         :standings standings))})))))
 
 (defmethod integrant.core/init-key ::tournament-phase-form-view
   [_init-key _dependencies]
@@ -400,9 +386,8 @@
     (let [eid (get-in request [:parameters :path :eid])]
       {:status  200
        :headers {"Content-Type" "text/html; charset=utf-8"}
-       :body    (selmer.parser/render-file
-                 "rts-web/view/tournament-phase-row.html"
-                 (assoc (base-context request) :tournament-eid eid))})))
+       :body    (render/render "tournament-phase-row.html"
+                               (assoc (base-context request) :tournament-eid eid))})))
 
 (defmethod integrant.core/init-key ::tournament-view
   [_init-key dependencies]
@@ -416,11 +401,11 @@
                    raw-matches           (domain/get-matches-for-tournament dependencies tournament-eid)
                    phases                (:phases state)
                    qualifier-count       (or (:qualifier-count state) (count (:standings state)))
-                   player-sub            (get-in request [:ory-session :identity :id])
-                   has-entry             (some #(= player-sub (:player-sub %)) entries)
+                   user-sub              (get-in request [:ory-session :identity :id])
+                   has-entry             (some #(= user-sub (:player-sub %)) entries)
                    now                   (java.time.Instant/now)
                    reg-open              (domain/is-registration-open? state now)
-                   is-organizer          (= player-sub (:created-by-sub data))
+                   is-organizer          (= user-sub (:created-by-sub data))
                    organizer-has-actions (and is-organizer
                                               (contains? #{"registration" "active"} (:status state)))
                    league                (when (:league-eid data)

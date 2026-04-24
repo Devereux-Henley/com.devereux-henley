@@ -1,13 +1,9 @@
 (ns com.devereux-henley.rts-domain.handlers.season
   (:require
-   [com.devereux-henley.rts-data-access.contract :as db])
+   [com.devereux-henley.rts-data-access.contract :as db]
+   [com.devereux-henley.rts-domain.time :as time])
   (:import
-   [java.time Instant LocalDateTime ZoneId]))
-
-(defn- to-utc-instant
-  "Converts a LocalDateTime in the given ZoneId to a UTC Instant."
-  ^Instant [^LocalDateTime local-dt ^ZoneId zone]
-  (-> local-dt (.atZone zone) .toInstant))
+   [java.time Instant]))
 
 (defn- display-name
   "Derives the display name for a season — explicit :name override or 'Season N'."
@@ -40,19 +36,19 @@
   "Creates a season under a league. Auto-assigns ordinal as MAX(ordinal)+1.
    Validates that the caller owns the league and that start-at < end-at.
    Returns the created season or {:type :season/error :message ...}."
-  [dependencies {:keys [eid league-eid name timezone start-at end-at] :as _spec} player-sub]
+  [dependencies {:keys [eid league-eid name timezone start-at end-at] :as _spec} user-sub]
   (let [conn   (:connection dependencies)
         league (db/get-league-by-eid conn league-eid)]
     (cond
       (nil? league)
       {:type :season/error :message "League not found."}
 
-      (not= player-sub (:created-by-sub league))
+      (not= user-sub (:created-by-sub league))
       {:type :season/error :message "Only the league owner can create seasons."}
 
       :else
-      (let [start-instant (to-utc-instant start-at timezone)
-            end-instant   (to-utc-instant end-at timezone)]
+      (let [start-instant (time/to-utc-instant start-at timezone)
+            end-instant   (time/to-utc-instant end-at timezone)]
         (if-not (.isBefore start-instant end-instant)
           {:type :season/error :message "Season start must be before end."}
           (let [now                        (Instant/now)

@@ -1,5 +1,6 @@
 (ns com.devereux-henley.rts-web.contract
   (:require
+   [com.devereux-henley.rts-web.render :as render]
    [com.devereux-henley.rts-web.web.draft]
    [com.devereux-henley.rts-web.web.game]
    [com.devereux-henley.rts-web.web.routes :as web.routes]
@@ -13,3 +14,6 @@
 (def icon-routes web.routes/icon-routes)
 (def view-routes web.routes/view-routes)
 (def api-routes web.routes/api-routes)
+
+(def render-view render/render)
+(def view-path render/view-path)

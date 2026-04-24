@@ -11,7 +11,7 @@
 (defn- tag-rows
   [rows]
   (mapv #(assoc %
-                :type :stats/faction-row
+                :type :stats/faction
                 :win-percentage (win-percentage %))
         rows))
 

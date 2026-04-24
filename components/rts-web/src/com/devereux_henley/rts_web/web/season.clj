@@ -47,16 +47,16 @@
         router                                          :reitit.core/router
         session                                         :ory-session
         :as                                             _request}]
-    (let [player-sub (get-in session [:identity :id])
-          result     (domain/create-season
-                      dependencies
-                      {:eid        eid
-                       :league-eid league-eid
-                       :name       name
-                       :timezone   timezone
-                       :start-at   start-at
-                       :end-at     end-at}
-                      player-sub)]
+    (let [user-sub (get-in session [:identity :id])
+          result   (domain/create-season
+                    dependencies
+                    {:eid        eid
+                     :league-eid league-eid
+                     :name       name
+                     :timezone   timezone
+                     :start-at   start-at
+                     :end-at     end-at}
+                    user-sub)]
       (if (= :season/error (:type result))
         {:status 422 :body result}
         (let [response (web.core/handle-create-response
