@@ -136,8 +136,6 @@
 (def group-matches-by-round                       rules.tournament/group-matches-by-round)
 (def group-matches-by-phase                       rules.tournament/group-matches-by-phase)
 
-(def set-match-player-draft                       handlers.tournament/set-match-player-draft)
-
 ;;; ─── League / Season / Stats schemas ───────────────────────────────────────
 
 (def league-resource                              schema/league-resource)
@@ -152,9 +150,6 @@
 
 (def faction-standings-row-resource               schema/faction-standings-row-resource)
 (def faction-standings-response                   schema/faction-standings-response)
-
-(def set-match-draft-specification                schema/set-match-draft-specification)
-(def set-match-draft-response                     schema/set-match-draft-response)
 
 ;;; ─── League / Season / Stats handler functions ────────────────────────────
 

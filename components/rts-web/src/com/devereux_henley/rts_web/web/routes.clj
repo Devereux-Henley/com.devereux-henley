@@ -463,20 +463,7 @@
                                     [:eid :uuid]
                                     [:match-eid :uuid]])
                             :body domain/record-result-specification}
-               :handler    (integrant.core/ref ::web.tournament/record-game)}}]
-      ["/:match-eid/draft"
-       {:put {:summary    "Sets the requesting player's draft for a match."
-              :openapi    {:tags         ["tournament"]
-                           :produces     ["application/json"]
-                           :operation-id "tournament-match/set-draft"}
-              :parameters {:path (schema.contract/to-schema
-                                  [:map
-                                   [:eid :uuid]
-                                   [:match-eid :uuid]])
-                           :body domain/set-match-draft-specification}
-              :responses  {200 {:body domain/set-match-draft-response}
-                           422 {:body domain/set-match-draft-response}}
-              :handler    (integrant.core/ref ::web.tournament/set-match-draft)}}]]
+               :handler    (integrant.core/ref ::web.tournament/record-game)}}]]
      ["/phase"
       {:name :tournament/phase-configuration
        :put  {:summary    "Update the tournament phase configuration."

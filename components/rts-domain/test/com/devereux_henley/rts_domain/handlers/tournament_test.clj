@@ -341,54 +341,6 @@
                    :created-by-sub         "dev-admin"                                              :version     1})]
       (is (= :tournament/create-error (:type result))))))
 
-;; ─── set-match-player-draft ──────────────────────────────────────────────────
-
-(def ^:private p1-draft-eid (UUID/randomUUID))
-
-(deftest set-match-player-draft-rejects-non-participant
-  (with-redefs [data-access.contract/get-match-by-eid (fn [_ _] test-match)]
-    (let [result (handlers.tournament/set-match-player-draft
-                  test-deps (:eid test-match) "not-a-player" p1-draft-eid)]
-      (is (= :match/draft-error (:type result))))))
-
-(deftest set-match-player-draft-rejects-when-draft-not-owned
-  (with-redefs [data-access.contract/get-match-by-eid (fn [_ _] test-match)
-                data-access.contract/get-draft-by-eid (fn [_ _] {:eid p1-draft-eid :player-sub "someone-else"})]
-    (let [result (handlers.tournament/set-match-player-draft
-                  test-deps (:eid test-match) "p1" p1-draft-eid)]
-      (is (= :match/draft-error (:type result))))))
-
-(deftest set-match-player-draft-success-for-player-one
-  (let [calls (atom [])]
-    (with-redefs [data-access.contract/get-match-by-eid           (fn [_ _] test-match)
-                  data-access.contract/get-draft-by-eid           (fn [_ _] {:eid p1-draft-eid :player-sub "p1"})
-                  data-access.contract/set-match-player-one-draft (fn [_ meid deid]
-                                                                    (swap! calls conj [:p1 meid deid]))
-                  data-access.contract/set-match-player-two-draft (fn [_ _ _] (swap! calls conj :p2))]
-      (let [result (handlers.tournament/set-match-player-draft
-                    test-deps (:eid test-match) "p1" p1-draft-eid)]
-        (is (= :match/draft-set (:type result)))
-        (is (= 1 (count @calls)))
-        (is (= :p1 (first (first @calls))))))))
-
-(deftest set-match-player-draft-success-for-player-two
-  (let [calls (atom [])]
-    (with-redefs [data-access.contract/get-match-by-eid           (fn [_ _] test-match)
-                  data-access.contract/get-draft-by-eid           (fn [_ _] {:eid p1-draft-eid :player-sub "p2"})
-                  data-access.contract/set-match-player-one-draft (fn [_ _ _] (swap! calls conj :p1))
-                  data-access.contract/set-match-player-two-draft (fn [_ meid deid]
-                                                                    (swap! calls conj [:p2 meid deid]))]
-      (let [result (handlers.tournament/set-match-player-draft
-                    test-deps (:eid test-match) "p2" p1-draft-eid)]
-        (is (= :match/draft-set (:type result)))
-        (is (= :p2 (first (first @calls))))))))
-
-(deftest set-match-player-draft-not-found
-  (with-redefs [data-access.contract/get-match-by-eid (fn [_ _] nil)]
-    (let [result (handlers.tournament/set-match-player-draft
-                  test-deps (UUID/randomUUID) "p1" p1-draft-eid)]
-      (is (= :match/draft-error (:type result))))))
-
 ;; ─── tag-tournament strips nil league/season-eid ────────────────────────────
 
 (deftest get-tournament-omits-nil-league-season-eids

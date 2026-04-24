@@ -34,7 +34,7 @@ The legacy `/view/game/:game-eid/tournament/index.html` URL is removed (404). Al
 
 1. **Header** — name, description, organizer; only the league owner sees the **Create Season** CTA.
 2. **Seasons list** — every season in ordinal order, linking to season detail pages.
-3. **Faction Standings** — `GET /api/stats/league/:eid/faction` results rendered as an accessible `<table>` (`<th scope="col">`, `<caption class="sr-only">`). Aggregates wins / losses / draws across every completed match in every season-attached and season-less tournament under the league.
+3. **Faction Standings** — `GET /api/stats/league/:eid/faction` results rendered as an accessible `<table>` (`<th scope="col">`, `<caption class="sr-only">`). Aggregates wins, losses, and win % across every completed match in every season-attached and season-less tournament under the league. Draws are not tracked — they are vanishingly rare in Warhammer matches and are typically replayed or omitted rather than recorded.
 4. **Tournaments in this League** — flat list grouped visually by season (or `(no season)` for league-but-no-season tournaments).
 
 ![League detail with faction standings](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/views-league-detail.png)
@@ -59,13 +59,11 @@ The create-tournament form has a new optional **League** fieldset above the regi
 
 ![Create tournament with league dropdown](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/views-create-tournament-league-dropdown.png)
 
-### Tournament detail shows league badge + match draft picker
+### Tournament detail shows league badge
 
 Tournaments attached to a league render a small badge in the hero (`Spring Showdown · Season 1`) that links to the league detail page. Standalone tournaments render no badge.
 
-For matches where the current user is a participant, a **My Matches — Draft Selection** sidebar card appears. Players pick which of their drafts they're using for that specific match — the faction comes from the draft, and the assignment is what powers the faction-stats roll-ups. Setting a draft is a `PUT /api/tournament/:eid/match/:match-eid/draft` with `{:draft-eid …}`; the domain layer verifies the requesting player is one of the match participants and that the draft belongs to them and to the same game as the tournament.
-
-![Tournament detail with league badge and match draft picker](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/views-match-draft-picker.png)
+> The per-match **draft picker** that previously lived in the tournament sidebar — the assignment that powers faction-stats roll-ups — has been removed for now and will be re-introduced in a follow-up branch. Until then, the standings tables exist but stay empty because no `match.player_*_draft_id` is ever recorded through the UI.
 
 ## Stats endpoints
 
@@ -75,6 +73,6 @@ Three faction-stats endpoints, identical response shape — only the WHERE filte
 - `GET /api/stats/league/:league-eid/faction`
 - `GET /api/stats/season/:season-eid/faction`
 
-Each returns `{:type :stats/<scope>-faction-standings, :scope <"game"|"league"|"season">, :scope-eid …, :rows [{:type :stats/faction-row, :faction-eid …, :faction-name …, :matches-played, :wins, :losses, :draws} …]}`. The aggregation SQL lives in `components/rts-data-access/resources/rts-data-access/sql/stats/get-faction-standings-for-{game,league,season}.sql`.
+Each returns `{:type :stats/<scope>-faction-standings, :scope <"game"|"league"|"season">, :scope-eid …, :rows [{:type :stats/faction-row, :faction-eid …, :faction-name …, :matches-played, :wins, :losses, :win-percentage} …]}`. `:win-percentage` is computed in the domain handler (rounded integer, 0–100) since the underlying SQL only aggregates wins/losses. The aggregation SQL lives in `components/rts-data-access/resources/rts-data-access/sql/stats/get-faction-standings-for-{game,league,season}.sql`.
 
 Matches with NULL `player_*_draft_id` (legacy or never-set) simply don't contribute to faction aggregates — they're filtered in the SQL `WHERE` clause.

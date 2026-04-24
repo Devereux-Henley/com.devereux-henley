@@ -209,18 +209,6 @@
         {:status 422 :body result}
         {:status 200 :body result}))))
 
-(defmethod integrant.core/init-key ::set-match-draft
-  [_init-key dependencies]
-  (fn [{{{:keys [match-eid]} :path
-         {:keys [draft-eid]} :body} :parameters
-        session                     :ory-session
-        :as                         _request}]
-    (let [player-sub (get-in session [:identity :id])
-          result     (domain/set-match-player-draft dependencies match-eid player-sub draft-eid)]
-      (if (= :match/draft-error (:type result))
-        {:status 422 :body result}
-        {:status 200 :body result}))))
-
 (defmethod integrant.core/init-key ::get-games
   [_init-key dependencies]
   (fn [{{{:keys [match-eid]} :path} :parameters

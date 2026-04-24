@@ -748,7 +748,7 @@
     [:matches-played :int]
     [:wins :int]
     [:losses :int]
-    [:draws :int]]))
+    [:win-percentage :int]]))
 
 (def faction-standings-response
   (schema.contract/to-schema
@@ -757,17 +757,3 @@
     [:scope [:enum "game" "league" "season"]]
     [:scope-eid :uuid]
     [:rows [:sequential faction-standings-row-resource]]]))
-
-(def set-match-draft-specification
-  (schema.contract/to-schema
-   [:map
-    [:draft-eid :uuid]]))
-
-(def set-match-draft-response
-  (schema.contract/to-schema
-   [:map
-    [:type [:enum :match/draft-set :match/draft-error]]
-    [:match-eid {:optional true} :uuid]
-    [:player-sub {:optional true} :string]
-    [:draft-eid {:optional true} :uuid]
-    [:message {:optional true} :string]]))

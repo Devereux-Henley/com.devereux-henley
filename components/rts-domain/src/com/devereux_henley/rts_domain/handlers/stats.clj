@@ -2,9 +2,18 @@
   (:require
    [com.devereux-henley.rts-data-access.contract :as db]))
 
+(defn- win-percentage
+  [{:keys [matches-played wins]}]
+  (if (zero? matches-played)
+    0
+    (int (Math/round (* 100.0 (/ wins (double matches-played)))))))
+
 (defn- tag-rows
   [rows]
-  (mapv #(assoc % :type :stats/faction-row) rows))
+  (mapv #(assoc %
+                :type :stats/faction-row
+                :win-percentage (win-percentage %))
+        rows))
 
 (defn get-game-faction-standings
   [dependencies game-eid]

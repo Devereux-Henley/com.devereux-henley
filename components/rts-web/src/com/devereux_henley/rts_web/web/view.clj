@@ -426,25 +426,10 @@
                    league                (when (:league-eid data)
                                            (domain/get-league-by-eid dependencies (:league-eid data)))
                    season                (when (:season-eid data)
-                                           (domain/get-season-by-eid dependencies (:season-eid data)))
-                   ;; For each match where the current player is a participant, surface
-                   ;; their drafts for this game so the template can render a picker.
-                   player-drafts         (when player-sub
-                                           (domain/get-drafts-for-player-by-game dependencies player-sub (:game-eid data)))
-                   matches-with-picker   (mapv (fn [m]
-                                                 (let [is-p1        (= player-sub (:player-one-sub m))
-                                                       is-p2        (= player-sub (:player-two-sub m))
-                                                       my-draft-eid (cond is-p1 (:player-one-draft-eid m)
-                                                                          is-p2 (:player-two-draft-eid m))]
-                                                   (assoc m
-                                                          :is-my-match (or is-p1 is-p2)
-                                                          :my-draft-eid my-draft-eid)))
-                                               raw-matches)]
+                                           (domain/get-season-by-eid dependencies (:season-eid data)))]
                {:tournament-state      state
                 :entries               entries
                 :matches-by-phase      (domain/group-matches-by-phase raw-matches phases qualifier-count)
-                :my-matches            (filterv :is-my-match matches-with-picker)
-                :player-drafts         player-drafts
                 :league                league
                 :season                season
                 :has-entry             has-entry

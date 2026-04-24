@@ -358,8 +358,7 @@
     [:faction-name :string]
     [:matches-played :int]
     [:wins :int]
-    [:losses :int]
-    [:draws :int]]))
+    [:losses :int]]))
 
 (def max-ordinal-entity
   (schema.contract/to-schema

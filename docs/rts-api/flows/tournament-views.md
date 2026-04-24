@@ -14,7 +14,7 @@ When a league is chosen, an `hx-get` swaps a season `<select>` into a placeholde
 
 The detail view uses a persistent sidebar plus a tabbed main panel:
 
-- **Sidebar** (always visible): registration window, "Your Entry" action, **My Matches — Draft Selection** card (only when the current user is a participant in any match — see [`competitive.md`](competitive.md)), phase overview, and organizer controls.
+- **Sidebar** (always visible): registration window, "Your Entry" action, phase overview, and organizer controls.
 - **Tabs** across the top of the main panel — **Entrants** first, then one tab per configured phase (labelled `Phase N` with the phase type as a subtitle).
 - **League badge** in the hero (when the tournament is attached to a league) — links to the league detail page.
 

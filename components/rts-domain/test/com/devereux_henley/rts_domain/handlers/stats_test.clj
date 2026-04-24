@@ -11,9 +11,9 @@
 
 (def ^:private rows
   [{:faction-eid    (UUID/randomUUID) :faction-name "Empire"
-    :matches-played 3                 :wins         2        :losses 1 :draws 0}
+    :matches-played 3                 :wins         2        :losses 1}
    {:faction-eid    (UUID/randomUUID) :faction-name "Beastmen"
-    :matches-played 2                 :wins         1          :losses 1 :draws 0}])
+    :matches-played 2                 :wins         1          :losses 1}])
 
 (deftest game-faction-standings-tags-rows
   (with-redefs [data-access.contract/get-faction-standings-for-game (fn [_ _] rows)]
@@ -41,3 +41,16 @@
   (with-redefs [data-access.contract/get-faction-standings-for-game (fn [_ _] [])]
     (let [resp (handlers.stats/get-game-faction-standings test-deps test-eid)]
       (is (= [] (:rows resp))))))
+
+(deftest faction-standings-includes-win-percentage
+  (with-redefs [data-access.contract/get-faction-standings-for-game (fn [_ _] rows)]
+    (let [{[empire beastmen] :rows} (handlers.stats/get-game-faction-standings test-deps test-eid)]
+      (is (= 67 (:win-percentage empire)))
+      (is (= 50 (:win-percentage beastmen))))))
+
+(deftest faction-standings-win-percentage-handles-zero-matches
+  (with-redefs [data-access.contract/get-faction-standings-for-game
+                (fn [_ _] [{:faction-eid    (UUID/randomUUID) :faction-name "Ghost"
+                            :matches-played 0                 :wins         0       :losses 0}])]
+    (let [{[row] :rows} (handlers.stats/get-game-faction-standings test-deps test-eid)]
+      (is (= 0 (:win-percentage row))))))

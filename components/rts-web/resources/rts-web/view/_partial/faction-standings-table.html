@@ -6,7 +6,7 @@
             <th scope="col">Played</th>
             <th scope="col">Wins</th>
             <th scope="col">Losses</th>
-            <th scope="col">Draws</th>
+            <th scope="col">Win %</th>
         </tr>
     </thead>
     <tbody>
@@ -17,7 +17,7 @@
             <td>{{row.matches-played}}</td>
             <td>{{row.wins}}</td>
             <td>{{row.losses}}</td>
-            <td>{{row.draws}}</td>
+            <td>{{row.win-percentage}}%</td>
         </tr>
         {% endfor %}
         {% else %}

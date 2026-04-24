@@ -2,9 +2,6 @@ const { test, expect } = require('@playwright/test');
 
 const BASE = 'http://127.0.0.1:3001';
 const GAME_EID = 'eea787d7-1065-45eb-a3f6-e26f32c294a1';
-const FACTION_EMPIRE = '35dd38fa-2bcc-4492-8f58-a106d0d02cbb';
-const FACTION_BEASTMEN = 'f0000002-0000-4000-8000-000000000000';
-const GAME_MODE = 'a1b2c3d4-0001-4000-8000-000000000001';
 
 function headers(user) {
   return {
@@ -40,20 +37,6 @@ async function createSeason(request, leagueEid, opts = {}) {
   });
   expect(res.status()).toBe(201);
   return await res.json();
-}
-
-async function createDraft(request, user, factionEid) {
-  const eid = crypto.randomUUID();
-  const res = await request.put(`${BASE}/api/draft/${eid}?version=1`, {
-    headers: headers(user),
-    data: {
-      'game-eid': GAME_EID,
-      'game-mode-eid': GAME_MODE,
-      'faction-eid': factionEid,
-    },
-  });
-  expect(res.status()).toBe(201);
-  return eid;
 }
 
 test.describe('League API', () => {
@@ -188,108 +171,19 @@ test.describe('Tournament integration with league/season', () => {
   });
 });
 
-test.describe('Match draft assignment', () => {
-  // Helper that walks a tournament from creation through to a recorded
-  // match result with both players' drafts captured.
-  async function runFullFlow(request, leagueEid, season) {
-    const tournEid = crypto.randomUUID();
-    let res = await request.put(`${BASE}/api/tournament/${tournEid}?version=1`, {
-      headers: headers('dev-admin'),
-      data: {
-        'game-eid': GAME_EID,
-        'season-eid': season.eid,
-        name: `E2E Stats ${tournEid.slice(0, 8)}`,
-        description: 'Stats test tournament',
-        timezone: 'UTC',
-        'registration-opens-at': '2020-01-01T00:00',
-        'registration-closes-at': '2030-01-01T00:00',
-      },
-    });
-    expect(res.status()).toBe(201);
-
-    res = await request.post(`${BASE}/api/tournament/${tournEid}/entry/me`, {
-      headers: headers('dev-player-one'),
-    });
-    expect(res.status()).toBe(201);
-    res = await request.post(`${BASE}/api/tournament/${tournEid}/entry/me`, {
-      headers: headers('dev-player-two'),
-    });
-    expect(res.status()).toBe(201);
-
-    res = await request.put(`${BASE}/api/tournament/${tournEid}/phase`, {
-      headers: headers('dev-admin'),
-      data: { phases: [{ 'phase-type': 'single-elimination', rounds: [{ 'round-index': 0, format: 1 }] }] },
-    });
-    expect(res.status()).toBe(200);
-
-    res = await request.put(`${BASE}/api/tournament/${tournEid}/status`, {
-      headers: headers('dev-admin'),
-      data: { status: 'active' },
-    });
-    expect(res.status()).toBe(200);
-
-    res = await request.post(`${BASE}/api/tournament/${tournEid}/round`, {
-      headers: headers('dev-admin'),
-    });
-    expect(res.status()).toBe(200);
-
-    const matches = (await (await request.get(`${BASE}/api/tournament/${tournEid}/match`, {
-      headers: headers('dev-admin'),
-    })).json()).matches;
-    expect(matches.length).toBe(1);
-    const matchEid = matches[0].eid;
-
-    const p1Draft = await createDraft(request, 'dev-player-one', FACTION_EMPIRE);
-    const p2Draft = await createDraft(request, 'dev-player-two', FACTION_BEASTMEN);
-
-    res = await request.put(`${BASE}/api/tournament/${tournEid}/match/${matchEid}/draft`, {
-      headers: headers('dev-player-one'),
-      data: { 'draft-eid': p1Draft },
-    });
-    expect(res.status()).toBe(200);
-    expect((await res.json()).type).toBe('match/draft-set');
-
-    res = await request.put(`${BASE}/api/tournament/${tournEid}/match/${matchEid}/draft`, {
-      headers: headers('dev-player-two'),
-      data: { 'draft-eid': p2Draft },
-    });
-    expect(res.status()).toBe(200);
-
-    // Find which player is player-one in the match (pairing order is
-    // unspecified) and award them the win so we can assert their faction.
-    const matchAfterDrafts = (await (await request.get(`${BASE}/api/tournament/${tournEid}/match`, {
-      headers: headers('dev-admin'),
-    })).json()).matches[0];
-    const winnerSub = matchAfterDrafts['player-one-sub'];
-    const winnerFaction = winnerSub === 'dev-player-one' ? 'The Empire' : 'Beastmen';
-    const loserFaction  = winnerSub === 'dev-player-one' ? 'Beastmen' : 'The Empire';
-
-    res = await request.post(`${BASE}/api/tournament/${tournEid}/match/${matchEid}/game`, {
-      headers: headers('dev-admin'),
-      data: { 'winner-sub': winnerSub },
-    });
-    expect(res.status()).toBe(200);
-
-    return { tournEid, winnerFaction, loserFaction };
-  }
-
-  test('faction stats roll up at game / league / season scopes', async ({ request }) => {
+test.describe('Faction stats endpoints', () => {
+  test('league + season scopes return well-formed empty rows when no matches recorded', async ({ request }) => {
     const leagueEid = await createLeague(request);
     const season    = await createSeason(request, leagueEid);
-    const { winnerFaction, loserFaction } = await runFullFlow(request, leagueEid, season);
-
-    for (const url of [
-      `${BASE}/api/stats/season/${season.eid}/faction`,
-      `${BASE}/api/stats/league/${leagueEid}/faction`,
-      `${BASE}/api/stats/game/${GAME_EID}/faction`,
+    for (const [url, scope] of [
+      [`${BASE}/api/stats/season/${season.eid}/faction`, 'season'],
+      [`${BASE}/api/stats/league/${leagueEid}/faction`,  'league'],
     ]) {
       const res = await request.get(url, { headers: headers('dev-admin') });
       expect(res.status()).toBe(200);
       const body = await res.json();
-      const winnerRow = body.rows.find(r => r['faction-name'] === winnerFaction);
-      const loserRow  = body.rows.find(r => r['faction-name'] === loserFaction);
-      expect(winnerRow.wins).toBeGreaterThanOrEqual(1);
-      expect(loserRow.losses).toBeGreaterThanOrEqual(1);
+      expect(body.scope).toBe(scope);
+      expect(Array.isArray(body.rows)).toBe(true);
     }
   });
 });

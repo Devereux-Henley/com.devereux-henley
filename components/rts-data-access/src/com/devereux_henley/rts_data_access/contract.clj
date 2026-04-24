@@ -123,8 +123,6 @@
 (def update-match-result query.tournament/update-match-result)
 (def create-game query.tournament/create-game)
 (def get-games-for-match query.tournament/get-games-for-match)
-(def set-match-player-one-draft query.tournament/set-match-player-one-draft)
-(def set-match-player-two-draft query.tournament/set-match-player-two-draft)
 
 ;;; ─── League / Season DB entities ───────────────────────────────────────────
 

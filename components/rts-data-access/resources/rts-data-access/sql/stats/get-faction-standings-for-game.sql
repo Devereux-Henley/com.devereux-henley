@@ -3,20 +3,17 @@ SELECT
   f.name             AS faction_name,
   COUNT(*)           AS matches_played,
   SUM(CASE WHEN player_won = 1 THEN 1 ELSE 0 END) AS wins,
-  SUM(CASE WHEN player_drew = 1 THEN 0 WHEN player_won = 1 THEN 0 ELSE 1 END) AS losses,
-  SUM(CASE WHEN player_drew = 1 THEN 1 ELSE 0 END) AS draws
+  SUM(CASE WHEN player_won = 1 THEN 0 ELSE 1 END) AS losses
 FROM (
   SELECT m.player_one_draft_id AS draft_id,
-         (CASE WHEN m.winner_sub = m.player_one_sub THEN 1 ELSE 0 END) AS player_won,
-         (CASE WHEN m.winner_sub = 'draw' THEN 1 ELSE 0 END)           AS player_drew
+         (CASE WHEN m.winner_sub = m.player_one_sub THEN 1 ELSE 0 END) AS player_won
   FROM match m
     INNER JOIN tournament t ON t.id = m.tournament_id
     INNER JOIN game g       ON g.id = t.game_id
   WHERE g.eid = ? AND m.status = 'complete' AND m.player_one_draft_id IS NOT NULL
   UNION ALL
   SELECT m.player_two_draft_id,
-         (CASE WHEN m.winner_sub = m.player_two_sub THEN 1 ELSE 0 END),
-         (CASE WHEN m.winner_sub = 'draw' THEN 1 ELSE 0 END)
+         (CASE WHEN m.winner_sub = m.player_two_sub THEN 1 ELSE 0 END)
   FROM match m
     INNER JOIN tournament t ON t.id = m.tournament_id
     INNER JOIN game g       ON g.id = t.game_id

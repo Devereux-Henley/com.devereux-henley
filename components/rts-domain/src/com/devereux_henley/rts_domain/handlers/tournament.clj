@@ -237,41 +237,6 @@
   (mapv tag-match
         (db/get-matches-for-round (:connection dependencies) tournament-eid phase-index round-index)))
 
-(defn set-match-player-draft
-  "Sets the requesting player's draft for a match. Verifies the player is
-   one of the match participants and that the draft belongs to the player
-   and to the same game as the tournament. Returns {:type :match/draft-set}
-   on success or {:type :match/draft-error :message ...} on validation failure."
-  [dependencies match-eid player-sub draft-eid]
-  (let [conn  (:connection dependencies)
-        match (db/get-match-by-eid conn match-eid)]
-    (cond
-      (nil? match)
-      {:type :match/draft-error :message "Match not found."}
-
-      (and (not= player-sub (:player-one-sub match))
-           (not= player-sub (:player-two-sub match)))
-      {:type :match/draft-error :message "You are not a participant in this match."}
-
-      :else
-      (let [draft (db/get-draft-by-eid conn draft-eid)]
-        (cond
-          (nil? draft)
-          {:type :match/draft-error :message "Draft not found."}
-
-          (not= player-sub (:player-sub draft))
-          {:type :match/draft-error :message "Draft does not belong to you."}
-
-          :else
-          (do
-            (if (= player-sub (:player-one-sub match))
-              (db/set-match-player-one-draft conn match-eid draft-eid)
-              (db/set-match-player-two-draft conn match-eid draft-eid))
-            {:type       :match/draft-set
-             :match-eid  match-eid
-             :player-sub player-sub
-             :draft-eid  draft-eid}))))))
-
 (defn- double-elim-complete?
   "Returns true when a double-elimination phase has a completed grand-final
    match. Double-elim tournaments end when the grand-final resolves."
