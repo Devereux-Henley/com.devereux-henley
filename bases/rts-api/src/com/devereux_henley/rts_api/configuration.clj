@@ -95,10 +95,26 @@
             :com.devereux-henley.rts-web.web.tournament/create-round
             :com.devereux-henley.rts-web.web.tournament/get-phase
             :com.devereux-henley.rts-web.web.tournament/get-round
-            :com.devereux-henley.rts-web.web.view/tournament-list-view
             :com.devereux-henley.rts-web.web.view/create-tournament-view
             :com.devereux-henley.rts-web.web.view/tournament-view
             :com.devereux-henley.rts-web.web.view/tournament-phase-form-view))
+
+(def league-configuration
+  (handlers :com.devereux-henley.rts-web.web.league/get-league
+            :com.devereux-henley.rts-web.web.league/get-leagues
+            :com.devereux-henley.rts-web.web.league/create-league
+            :com.devereux-henley.rts-web.web.season/get-season
+            :com.devereux-henley.rts-web.web.season/get-seasons-for-league
+            :com.devereux-henley.rts-web.web.season/create-season
+            :com.devereux-henley.rts-web.web.stats/get-game-faction-standings
+            :com.devereux-henley.rts-web.web.stats/get-league-faction-standings
+            :com.devereux-henley.rts-web.web.stats/get-season-faction-standings
+            :com.devereux-henley.rts-web.web.view/competitive-view
+            :com.devereux-henley.rts-web.web.view/season-options-fragment-view
+            :com.devereux-henley.rts-web.web.view/create-league-view
+            :com.devereux-henley.rts-web.web.view/league-view
+            :com.devereux-henley.rts-web.web.view/create-season-view
+            :com.devereux-henley.rts-web.web.view/season-view))
 
 ;;; ─── Routes ────────────────────────────────────────────────────────────────
 
@@ -120,7 +136,8 @@
          game-configuration
          draft-configuration
          social-media-configuration
-         tournament-configuration))
+         tournament-configuration
+         league-configuration))
 
 (def core-configuration
   "Production profile. Uses Ory for authentication."

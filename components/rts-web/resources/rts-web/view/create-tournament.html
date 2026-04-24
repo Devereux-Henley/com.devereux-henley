@@ -29,6 +29,27 @@
                 </div>
             </fieldset>
 
+            <!-- ─── League / Season (optional) ─────────────────────── -->
+            <fieldset class="tournament-fieldset">
+                <legend class="tournament-fieldset-legend">League <span class="form-hint">(optional)</span></legend>
+                <div class="form-group">
+                    <label class="form-label" for="league-select">Add to a league</label>
+                    <select id="league-select" name="league-eid" class="select"
+                            hx-get="/view/game/{{game-eid}}/competitive/season-options.html"
+                            hx-trigger="change"
+                            hx-target="#season-options-wrapper"
+                            hx-swap="innerHTML">
+                        <option value="">— Standalone (no league) —</option>
+                        {% for league in leagues %}
+                        <option value="{{league.eid}}">{{league.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div id="season-options-wrapper">
+                    <!-- Populated via hx-get when a league is selected. -->
+                </div>
+            </fieldset>
+
             <!-- ─── Registration Window ────────────────────────────── -->
             <fieldset class="tournament-fieldset">
                 <legend class="tournament-fieldset-legend">Registration Window</legend>

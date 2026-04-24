@@ -42,29 +42,34 @@
 
 (defmethod integrant.core/init-key ::create-tournament
   [_init-key dependencies]
-  (fn [{{{:keys [name description game-eid timezone
-                 registration-opens-at registration-closes-at]} :body
-         {:keys [version]}                                      :query
-         {:keys [eid]}                                          :path} :parameters
-        router                                                         :reitit.core/router
-        session                                                        :ory-session
-        :as                                                            _request}]
-    (let [response (web.core/handle-create-response
-                    domain/tournament-resource
-                    {:hostname (:hostname dependencies) :router router}
-                    #(domain/create-tournament
-                      dependencies
-                      {:eid                    eid
-                       :game-eid               game-eid
-                       :name                   name
-                       :description            description
-                       :timezone               timezone
-                       :registration-opens-at  registration-opens-at
-                       :registration-closes-at registration-closes-at
-                       :created-by-sub         (get-in session [:identity :id])
-                       :version                version}))]
-      (assoc-in response [:headers "HX-Redirect"]
-                (str "/view/game/" game-eid "/tournament/" eid "/index.html")))))
+  (fn [{{{:keys [name description game-eid league-eid season-eid timezone
+                 registration-opens-at registration-closes-at]}           :body
+         {:keys [version]}                                                :query
+         {:keys [eid]}                                                    :path} :parameters
+        router                                                                   :reitit.core/router
+        session                                                                  :ory-session
+        :as                                                                      _request}]
+    (let [result (domain/create-tournament
+                  dependencies
+                  (cond-> {:eid                    eid
+                           :game-eid               game-eid
+                           :name                   name
+                           :description            description
+                           :timezone               timezone
+                           :registration-opens-at  registration-opens-at
+                           :registration-closes-at registration-closes-at
+                           :created-by-sub         (get-in session [:identity :id])
+                           :version                version}
+                    league-eid (assoc :league-eid league-eid)
+                    season-eid (assoc :season-eid season-eid)))]
+      (if (= :tournament/create-error (:type result))
+        {:status 422 :body result}
+        (let [response (web.core/handle-create-response
+                        domain/tournament-resource
+                        {:hostname (:hostname dependencies) :router router}
+                        (constantly result))]
+          (assoc-in response [:headers "HX-Redirect"]
+                    (str "/view/game/" game-eid "/tournament/" eid "/index.html")))))))
 
 (defmethod integrant.core/init-key ::create-entry
   [_init-key dependencies]
@@ -112,8 +117,8 @@
          {:keys [status]} :body} :parameters
         session                  :ory-session
         :as                      _request}]
-    (let [player-sub (get-in session [:identity :id])
-          result     (domain/advance-tournament dependencies eid status player-sub)]
+    (let [user-sub (get-in session [:identity :id])
+          result   (domain/advance-tournament dependencies eid status user-sub)]
       (case (:type result)
         :tournament/advance-success {:status 200 :body result}
         {:status 422 :body result}))))
@@ -136,10 +141,10 @@
          {:keys [closed-early]} :body} :parameters
         session                        :ory-session
         :as                            _request}]
-    (let [player-sub (get-in session [:identity :id])
-          result     (if closed-early
-                       (domain/close-registration-early dependencies eid player-sub)
-                       {:type :tournament/registration-error :message "No updates specified."})]
+    (let [user-sub (get-in session [:identity :id])
+          result   (if closed-early
+                     (domain/close-registration-early dependencies eid user-sub)
+                     {:type :tournament/registration-error :message "No updates specified."})]
       (case (:type result)
         :tournament/close-registration-success {:status 200 :body result}
         {:status 422 :body result}))))
@@ -220,10 +225,10 @@
          {:keys [phases qualifier-count]} :body} :parameters
         session                                  :ory-session
         :as                                      _request}]
-    (let [player-sub (get-in session [:identity :id])
-          result     (domain/configure-phases dependencies eid
-                                              {:phases phases :qualifier-count qualifier-count}
-                                              player-sub)]
+    (let [user-sub (get-in session [:identity :id])
+          result   (domain/configure-phases dependencies eid
+                                            {:phases phases :qualifier-count qualifier-count}
+                                            user-sub)]
       (if (= :tournament/phase-error (:type result))
         {:status 422 :body result}
         {:status 200 :body result}))))
@@ -233,8 +238,8 @@
   (fn [{{{:keys [eid]} :path} :parameters
         session               :ory-session
         :as                   _request}]
-    (let [player-sub (get-in session [:identity :id])
-          result     (domain/generate-next-round dependencies eid player-sub)]
+    (let [user-sub (get-in session [:identity :id])
+          result   (domain/generate-next-round dependencies eid user-sub)]
       (if (= :tournament/phase-error (:type result))
         {:status 422 :body result}
         {:status 200 :body result}))))

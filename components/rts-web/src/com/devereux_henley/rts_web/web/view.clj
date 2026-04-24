@@ -3,23 +3,26 @@
    [clojure.java.io :as io]
    [clojure.string :as string]
    [com.devereux-henley.rts-domain.contract :as domain]
+   [com.devereux-henley.rts-web.render :as render]
    [com.devereux-henley.rts-web.skin :as skin]
    [com.devereux-henley.rts-web.web.game :as web.game]
    [com.devereux-henley.rts-web.web.tournament :as web.tournament]
    [integrant.core]
    [selmer.filters]
-   [selmer.parser]
    [taoensso.timbre :as log]))
 
 (defn- active-nav
   "Derive the navbar section label for the given request URI."
   [uri]
   (cond
-    (nil? uri)                        nil
-    (string/includes? uri "/draft")      "drafts"
-    (string/includes? uri "/tournament") "tournaments"
-    (string/includes? uri "/faction")    "atlas"
-    :else                                nil))
+    (nil? uri)                            nil
+    (string/includes? uri "/draft")       "drafts"
+    (string/includes? uri "/competitive") "competitive"
+    (string/includes? uri "/league")      "competitive"
+    (string/includes? uri "/season")      "competitive"
+    (string/includes? uri "/tournament")  "competitive"
+    (string/includes? uri "/faction")     "atlas"
+    :else                                 nil))
 
 (defn base-context
   "Template context shared across every view — session, active navbar section,
@@ -34,9 +37,7 @@
 (defn standard-view-handler
   [view-name request]
   {:status 200
-   :body   (selmer.parser/render-file
-            (str "rts-web/view/" view-name)
-            (base-context request))})
+   :body   (render/render view-name (base-context request))})
 
 (defn standard-entity-view-handler
   [pipeline-fn template-name extra-data-fn request]
@@ -45,11 +46,10 @@
     (if (= :missing/resource (:type data))
       {:status 404 :body data}
       {:status 200
-       :body   (selmer.parser/render-file
-                (str "rts-web/view/" template-name)
-                (merge (base-context request)
-                       {:data data}
-                       (extra-data-fn data request)))})))
+       :body   (render/render template-name
+                              (merge (base-context request)
+                                     {:data data}
+                                     (extra-data-fn data request)))})))
 
 (defmethod integrant.core/init-key ::game-context-middleware
   [_init-key dependencies]
@@ -72,9 +72,8 @@
                         (assoc game :logo (skin/logo-for-game (:eid game))))
                       (domain/get-games dependencies))]
       {:status 200
-       :body   (selmer.parser/render-file
-                "rts-web/view/game-selector.html"
-                (assoc (base-context request) :games games))})))
+       :body   (render/render "game-selector.html"
+                              (assoc (base-context request) :games games))})))
 
 (defmethod integrant.core/init-key ::game-view
   [_init-key _dependencies]
@@ -208,10 +207,9 @@
     (let [player-sub (get-in session [:identity :id])
           game-eid   (:game-eid (:game-context request))]
       {:status 200
-       :body   (selmer.parser/render-file
-                "rts-web/view/my-drafts.html"
-                (assoc (base-context request)
-                       :drafts (domain/get-drafts-for-player-by-game dependencies player-sub game-eid)))})))
+       :body   (render/render "my-drafts.html"
+                              (assoc (base-context request)
+                                     :drafts (domain/get-drafts-for-player-by-game dependencies player-sub game-eid)))})))
 
 (defmethod integrant.core/init-key ::faction-list-view
   [_init-key _dependencies]
@@ -221,10 +219,9 @@
   [_init-key _dependencies]
   (fn [request]
     {:status 200
-     :body   (selmer.parser/render-file
-              "rts-web/view/game-index.html"
-              (assoc (base-context request)
-                     :data (:game (:game-context request))))}))
+     :body   (render/render "game-index.html"
+                            (assoc (base-context request)
+                                   :data (:game (:game-context request))))}))
 
 (defmethod integrant.core/init-key ::create-draft-view
   [_init-key dependencies]
@@ -232,11 +229,10 @@
     (let [game-eid   (:game-eid (:game-context request))
           game-modes (domain/get-game-modes-for-game dependencies game-eid)]
       {:status 200
-       :body   (selmer.parser/render-file
-                "rts-web/view/create-draft.html"
-                (assoc (base-context request)
-                       :game-modes game-modes
-                       :draft-eid  (random-uuid)))})))
+       :body   (render/render "create-draft.html"
+                              (assoc (base-context request)
+                                     :game-modes game-modes
+                                     :draft-eid  (random-uuid)))})))
 
 (defmethod integrant.core/init-key ::logout-view
   [_init-key {:keys [auth-hostname]}]
@@ -244,33 +240,145 @@
     (log/info (:ory-session request))
     {:status 301 :headers {"Location" (str auth-hostname "/self-service/logout?token=")}}))
 
-(defmethod integrant.core/init-key ::tournament-list-view
+(defn- enrich-tournament-with-league
+  "Adds :league-name and :season-display-name to a tournament when it carries
+   a :league-eid / :season-eid, by reading from the supplied lookup maps."
+  [eid->league eid->season tournament]
+  (cond-> tournament
+    (:league-eid tournament) (assoc :league-name (get-in eid->league [(:league-eid tournament) :name]))
+    (:season-eid tournament) (assoc :season-display-name (get-in eid->season [(:season-eid tournament) :display-name]))))
+
+(defmethod integrant.core/init-key ::competitive-view
   [_init-key dependencies]
   (fn [request]
-    (let [game-eid    (:game-eid (:game-context request))
-          tournaments (domain/get-tournaments-for-game dependencies game-eid)
-          enriched    (mapv (fn [t]
-                              (let [state   (domain/get-tournament-state dependencies (:eid t))
-                                    entries (domain/get-entries dependencies (:eid t))]
-                                (assoc t
-                                       :status      (:status state)
-                                       :entry-count (count entries))))
-                            tournaments)]
+    (let [game-eid             (:game-eid (:game-context request))
+          tournaments          (domain/get-tournaments-for-game dependencies game-eid)
+          leagues              (domain/get-leagues-for-game dependencies game-eid)
+          eid->league          (into {} (map (juxt :eid identity) leagues))
+          ;; Pre-fetch the seasons for every league referenced by tournaments so we
+          ;; can label tournament cards without N+1 calls.
+          referenced-leagues   (distinct (keep :league-eid tournaments))
+          eid->season          (into {}
+                                     (mapcat (fn [leid]
+                                               (map (juxt :eid identity)
+                                                    (domain/get-seasons-for-league dependencies leid)))
+                                             referenced-leagues))
+          enriched-tournaments (mapv (fn [t]
+                                       (let [state   (domain/get-tournament-state dependencies (:eid t))
+                                             entries (domain/get-entries dependencies (:eid t))]
+                                         (->> (assoc t
+                                                     :status      (:status state)
+                                                     :entry-count (count entries))
+                                              (enrich-tournament-with-league eid->league eid->season))))
+                                     tournaments)
+          enriched-leagues     (mapv (fn [l]
+                                       (let [current-season (domain/get-current-season-for-league dependencies (:eid l))
+                                             tcount         (count (filter #(= (:eid l) (:league-eid %)) tournaments))]
+                                         (assoc l
+                                                :current-season current-season
+                                                :tournament-count tcount)))
+                                     leagues)]
       {:status 200
-       :body   (selmer.parser/render-file
-                "rts-web/view/tournament-list.html"
-                (assoc (base-context request) :tournaments enriched))})))
+       :body   (render/render "competitive.html"
+                              (assoc (base-context request)
+                                     :tournaments enriched-tournaments
+                                     :leagues enriched-leagues))})))
 
 (defmethod integrant.core/init-key ::create-tournament-view
+  [_init-key dependencies]
+  (fn [request]
+    (let [game-eid (:game-eid (:game-context request))
+          leagues  (domain/get-leagues-for-game dependencies game-eid)]
+      {:status 200
+       :body   (render/render "create-tournament.html"
+                              (assoc (base-context request)
+                                     :tournament-eid   (random-uuid)
+                                     :leagues          leagues
+                                     :timezones        domain/common-timezones
+                                     :default-timezone domain/default-timezone))})))
+
+(defmethod integrant.core/init-key ::season-options-fragment-view
+  [_init-key dependencies]
+  (fn [request]
+    (let [league-eid (get-in request [:parameters :query :league-eid])
+          seasons    (when league-eid
+                       (domain/get-seasons-for-league dependencies league-eid))]
+      {:status  200
+       :headers {"Content-Type" "text/html; charset=utf-8"}
+       :body    (render/render "_partial/season-options.html"
+                               (assoc (base-context request) :seasons seasons))})))
+
+(defmethod integrant.core/init-key ::create-league-view
   [_init-key _dependencies]
   (fn [request]
     {:status 200
-     :body   (selmer.parser/render-file
-              "rts-web/view/create-tournament.html"
-              (assoc (base-context request)
-                     :tournament-eid   (random-uuid)
-                     :timezones        domain/common-timezones
-                     :default-timezone domain/default-timezone))}))
+     :body   (render/render "create-league.html"
+                            (assoc (base-context request)
+                                   :league-eid (random-uuid)))}))
+
+(defmethod integrant.core/init-key ::league-view
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters :as request}]
+    (let [league (domain/get-league-by-eid dependencies eid)]
+      (if (nil? league)
+        {:status 404 :body {:type :missing/resource :name "league" :id eid}}
+        (let [seasons           (domain/get-seasons-for-league dependencies eid)
+              all-tournaments   (domain/get-tournaments-for-game dependencies (:game-eid league))
+              league-tourneys   (filter #(= eid (:league-eid %)) all-tournaments)
+              eid->season       (into {} (map (juxt :eid identity) seasons))
+              enriched-tourneys (mapv (fn [t]
+                                        (let [state (domain/get-tournament-state dependencies (:eid t))]
+                                          (cond-> (assoc t :status (:status state))
+                                            (:season-eid t) (assoc :season-display-name (get-in eid->season [(:season-eid t) :display-name])))))
+                                      league-tourneys)
+              standings         (domain/get-league-faction-standings dependencies eid)
+              user-sub          (get-in request [:ory-session :identity :id])]
+          {:status 200
+           :body   (render/render "league-index.html"
+                                  (assoc (base-context request)
+                                         :data league
+                                         :seasons seasons
+                                         :tournaments enriched-tourneys
+                                         :standings standings
+                                         :is-organizer (= user-sub (:created-by-sub league))))})))))
+
+(defmethod integrant.core/init-key ::create-season-view
+  [_init-key dependencies]
+  (fn [request]
+    (let [league-eid (get-in request [:parameters :path :league-eid])
+          league     (domain/get-league-by-eid dependencies league-eid)]
+      (if (nil? league)
+        {:status 404 :body {:type :missing/resource :name "league" :id league-eid}}
+        {:status 200
+         :body   (render/render "create-season.html"
+                                (assoc (base-context request)
+                                       :league league
+                                       :league-eid league-eid
+                                       :season-eid (random-uuid)
+                                       :timezones domain/common-timezones
+                                       :default-timezone domain/default-timezone))}))))
+
+(defmethod integrant.core/init-key ::season-view
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters :as request}]
+    (let [season (domain/get-season-by-eid dependencies eid)]
+      (if (nil? season)
+        {:status 404 :body {:type :missing/resource :name "season" :id eid}}
+        (let [league          (domain/get-league-by-eid dependencies (:league-eid season))
+              all-tournaments (domain/get-tournaments-for-game dependencies (:game-eid league))
+              season-tourneys (filter #(= eid (:season-eid %)) all-tournaments)
+              enriched        (mapv (fn [t]
+                                      (let [state (domain/get-tournament-state dependencies (:eid t))]
+                                        (assoc t :status (:status state))))
+                                    season-tourneys)
+              standings       (domain/get-season-faction-standings dependencies eid)]
+          {:status 200
+           :body   (render/render "season-index.html"
+                                  (assoc (base-context request)
+                                         :data season
+                                         :league league
+                                         :tournaments enriched
+                                         :standings standings))})))))
 
 (defmethod integrant.core/init-key ::tournament-phase-form-view
   [_init-key _dependencies]
@@ -278,9 +386,8 @@
     (let [eid (get-in request [:parameters :path :eid])]
       {:status  200
        :headers {"Content-Type" "text/html; charset=utf-8"}
-       :body    (selmer.parser/render-file
-                 "rts-web/view/tournament-phase-row.html"
-                 (assoc (base-context request) :tournament-eid eid))})))
+       :body    (render/render "tournament-phase-row.html"
+                               (assoc (base-context request) :tournament-eid eid))})))
 
 (defmethod integrant.core/init-key ::tournament-view
   [_init-key dependencies]
@@ -294,16 +401,22 @@
                    raw-matches           (domain/get-matches-for-tournament dependencies tournament-eid)
                    phases                (:phases state)
                    qualifier-count       (or (:qualifier-count state) (count (:standings state)))
-                   player-sub            (get-in request [:ory-session :identity :id])
-                   has-entry             (some #(= player-sub (:player-sub %)) entries)
+                   user-sub              (get-in request [:ory-session :identity :id])
+                   has-entry             (some #(= user-sub (:player-sub %)) entries)
                    now                   (java.time.Instant/now)
                    reg-open              (domain/is-registration-open? state now)
-                   is-organizer          (= player-sub (:created-by-sub data))
+                   is-organizer          (= user-sub (:created-by-sub data))
                    organizer-has-actions (and is-organizer
-                                              (contains? #{"registration" "active"} (:status state)))]
+                                              (contains? #{"registration" "active"} (:status state)))
+                   league                (when (:league-eid data)
+                                           (domain/get-league-by-eid dependencies (:league-eid data)))
+                   season                (when (:season-eid data)
+                                           (domain/get-season-by-eid dependencies (:season-eid data)))]
                {:tournament-state      state
                 :entries               entries
                 :matches-by-phase      (domain/group-matches-by-phase raw-matches phases qualifier-count)
+                :league                league
+                :season                season
                 :has-entry             has-entry
                 :registration-open     reg-open
                 :is-organizer          is-organizer

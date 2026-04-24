@@ -294,3 +294,66 @@
   (with-redefs [data-access.contract/get-match-by-eid (fn [_ _] nil)]
     (let [result (handlers.tournament/update-match-result test-deps (UUID/randomUUID) "p1")]
       (is (= :tournament/match-error (:type result))))))
+
+;; ─── league/season resolution on create-tournament ──────────────────────────
+
+(def ^:private test-league-eid (UUID/fromString "11111111-1111-1111-1111-111111111111"))
+(def ^:private test-season-eid (UUID/fromString "22222222-2222-2222-2222-222222222222"))
+
+(deftest create-tournament-resolves-league-from-season-eid
+  (let [captured (atom nil)]
+    (with-redefs [data-access.contract/get-season-by-eid
+                  (fn [_ _] {:eid test-season-eid :league-eid test-league-eid})
+                  data-access.contract/create-tournament
+                  (fn [_ spec]
+                    (reset! captured spec)
+                    (assoc test-tournament :eid (:eid spec)
+                           :league-eid test-league-eid
+                           :season-eid test-season-eid))
+                  data-access.contract/upsert-tournament-state (fn [_ _ _] nil)
+                  data-access.contract/get-tournament-by-eid   (fn [_ _] test-tournament)]
+      (handlers.tournament/create-tournament
+       test-deps
+       {:eid                    (UUID/randomUUID)
+        :game-eid               test-game-eid
+        :season-eid             test-season-eid
+        :name                   "Spring Cup"                                          :description "x"
+        :timezone               (java.time.ZoneId/of "UTC")
+        :registration-opens-at  (java.time.LocalDateTime/parse "2026-04-01T00:00:00")
+        :registration-closes-at (java.time.LocalDateTime/parse "2030-04-30T23:59:00")
+        :created-by-sub         "dev-admin"                                           :version     1})
+      (is (= test-league-eid (:league-eid @captured))
+          "league-eid should be derived server-side from the season"))))
+
+(deftest create-tournament-rejects-mismatched-league-and-season
+  (with-redefs [data-access.contract/get-season-by-eid
+                (fn [_ _] {:eid test-season-eid :league-eid test-league-eid})]
+    (let [result (handlers.tournament/create-tournament
+                  test-deps
+                  {:eid                    (UUID/randomUUID)
+                   :game-eid               test-game-eid
+                   :league-eid             (UUID/fromString "33333333-3333-3333-3333-333333333333")
+                   :season-eid             test-season-eid
+                   :name                   "x"                                                      :description "x"
+                   :timezone               (java.time.ZoneId/of "UTC")
+                   :registration-opens-at  (java.time.LocalDateTime/parse "2026-04-01T00:00:00")
+                   :registration-closes-at (java.time.LocalDateTime/parse "2030-04-30T23:59:00")
+                   :created-by-sub         "dev-admin"                                              :version     1})]
+      (is (= :tournament/create-error (:type result))))))
+
+;; ─── tag-tournament strips nil league/season-eid ────────────────────────────
+
+(deftest get-tournament-omits-nil-league-season-eids
+  (with-redefs [data-access.contract/get-tournament-by-eid
+                (fn [_ _] (assoc test-tournament :league-eid nil :season-eid nil))]
+    (let [result (handlers.tournament/get-tournament-by-eid test-deps test-tournament-eid)]
+      (is (not (contains? result :league-eid))
+          "nil :league-eid must be dissoc'd so the model-transformer doesn't crash on link resolution")
+      (is (not (contains? result :season-eid))))))
+
+(deftest get-tournament-keeps-non-nil-league-season-eids
+  (with-redefs [data-access.contract/get-tournament-by-eid
+                (fn [_ _] (assoc test-tournament :league-eid test-league-eid :season-eid test-season-eid))]
+    (let [result (handlers.tournament/get-tournament-by-eid test-deps test-tournament-eid)]
+      (is (= test-league-eid (:league-eid result)))
+      (is (= test-season-eid (:season-eid result))))))

@@ -7,11 +7,15 @@ CREATE TABLE IF NOT EXISTS match (
   bracket_type TEXT NOT NULL DEFAULT 'winners',
   player_one_sub TEXT NOT NULL,
   player_two_sub TEXT,
+  player_one_draft_id INTEGER,
+  player_two_draft_id INTEGER,
   winner_sub TEXT,
   status TEXT NOT NULL DEFAULT 'pending',
   format INTEGER NOT NULL DEFAULT 1,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL,
   UNIQUE(eid),
-  FOREIGN KEY(tournament_id) REFERENCES tournament(id)
+  FOREIGN KEY(tournament_id) REFERENCES tournament(id),
+  FOREIGN KEY(player_one_draft_id) REFERENCES draft(id),
+  FOREIGN KEY(player_two_draft_id) REFERENCES draft(id)
 );

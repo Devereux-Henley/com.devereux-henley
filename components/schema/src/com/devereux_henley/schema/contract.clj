@@ -290,7 +290,8 @@
 (def sqlite-transformer
   (malli.transform/transformer
    {:name     :sqlite
-    :decoders {:uuid           (fn [uuid-string] (UUID/fromString uuid-string))
+    :decoders {:uuid           (fn [uuid-string] (when-not (empty? uuid-string)
+                                                   (UUID/fromString uuid-string)))
                :bool           (fn [bit] (if bit true false))
                :local-date     (fn [date-string] (when-not (empty? date-string)
                                                    (LocalDate/parse date-string)))

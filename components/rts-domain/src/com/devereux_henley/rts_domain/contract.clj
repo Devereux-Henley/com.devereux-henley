@@ -2,7 +2,10 @@
   (:require
    [com.devereux-henley.rts-domain.handlers.draft :as handlers.draft]
    [com.devereux-henley.rts-domain.handlers.game :as handlers.game]
+   [com.devereux-henley.rts-domain.handlers.league :as handlers.league]
+   [com.devereux-henley.rts-domain.handlers.season :as handlers.season]
    [com.devereux-henley.rts-domain.handlers.social-media :as handlers.social-media]
+   [com.devereux-henley.rts-domain.handlers.stats :as handlers.stats]
    [com.devereux-henley.rts-domain.handlers.tournament :as handlers.tournament]
    [com.devereux-henley.rts-domain.rules.tournament :as rules.tournament]
    [com.devereux-henley.rts-domain.schema :as schema]
@@ -132,6 +135,36 @@
 (def default-timezone                             rules.tournament/default-timezone)
 (def group-matches-by-round                       rules.tournament/group-matches-by-round)
 (def group-matches-by-phase                       rules.tournament/group-matches-by-phase)
+
+;;; ─── League / Season / Stats schemas ───────────────────────────────────────
+
+(def league-resource                              schema/league-resource)
+(def league-collection-resource                   schema/league-collection-resource)
+(def create-league-specification                  schema/create-league-specification)
+(def league-error-response                        schema/league-error-response)
+
+(def season-resource                              schema/season-resource)
+(def season-collection-resource                   schema/season-collection-resource)
+(def create-season-specification                  schema/create-season-specification)
+(def season-error-response                        schema/season-error-response)
+
+(def faction-standings-row-resource               schema/faction-standings-row-resource)
+(def faction-standings-response                   schema/faction-standings-response)
+
+;;; ─── League / Season / Stats handler functions ────────────────────────────
+
+(def get-league-by-eid                            handlers.league/get-league-by-eid)
+(def get-leagues-for-game                         handlers.league/get-leagues-for-game)
+(def create-league                                handlers.league/create-league)
+
+(def get-season-by-eid                            handlers.season/get-season-by-eid)
+(def get-seasons-for-league                       handlers.season/get-seasons-for-league)
+(def get-current-season-for-league                handlers.season/get-current-season-for-league)
+(def create-season                                handlers.season/create-season)
+
+(def get-game-faction-standings                   handlers.stats/get-game-faction-standings)
+(def get-league-faction-standings                 handlers.stats/get-league-faction-standings)
+(def get-season-faction-standings                 handlers.stats/get-season-faction-standings)
 
 ;;; ─── Social Media handler functions ────────────────────────────────────────
 

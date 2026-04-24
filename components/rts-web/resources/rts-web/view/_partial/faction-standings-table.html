@@ -1,0 +1,27 @@
+<table class="standings-table">
+    <caption class="sr-only">Faction win/loss standings</caption>
+    <thead>
+        <tr>
+            <th scope="col">Faction</th>
+            <th scope="col">Played</th>
+            <th scope="col">Wins</th>
+            <th scope="col">Losses</th>
+            <th scope="col">Win %</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if standings.rows|not-empty? %}
+        {% for row in standings.rows %}
+        <tr>
+            <td>{{row.faction-name}}</td>
+            <td>{{row.matches-played}}</td>
+            <td>{{row.wins}}</td>
+            <td>{{row.losses}}</td>
+            <td>{{row.win-percentage}}%</td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr><td colspan="5" class="text-muted">No matches recorded yet.</td></tr>
+        {% endif %}
+    </tbody>
+</table>

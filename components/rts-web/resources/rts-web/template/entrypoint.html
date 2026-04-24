@@ -74,11 +74,11 @@
                     </a>
                     {% endif %}
                 </div>
-                <div id="game-tournaments-link">
+                <div id="game-competitive-link">
                     {% if game-eid %}
-                    <a class="nav-item nav-item-with-icon{% ifequal active-nav "tournaments" %} active{% endifequal %}" href="/view/game/{{game-eid}}/tournament/index.html">
+                    <a class="nav-item nav-item-with-icon{% ifequal active-nav "competitive" %} active{% endifequal %}" href="/view/game/{{game-eid}}/competitive/index.html">
                         {% include "rts-web/view/icon/tournaments.html" %}
-                        Tournaments
+                        Competitive
                     </a>
                     {% endif %}
                 </div>

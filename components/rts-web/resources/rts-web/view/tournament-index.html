@@ -19,6 +19,13 @@
                         {% ifequal tournament-state.status "complete" %}badge-danger{% endifequal %}
                         {% ifequal tournament-state.status "cancelled" %}badge-danger{% endifequal %}
                     ">{{tournament-state.status}}</span>
+                    {% if league %}
+                    <a class="badge badge-league"
+                       href="/view/game/{{game-eid}}/league/{{league.eid}}/index.html"
+                       title="Part of league {{league.name}}">
+                        {{league.name}}{% if season %} · {{season.display-name}}{% endif %}
+                    </a>
+                    {% endif %}
                 </div>
                 <p class="tourney-hero-desc">{{data.description}}</p>
             </div>

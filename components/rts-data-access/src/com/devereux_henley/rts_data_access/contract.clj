@@ -1,7 +1,10 @@
 (ns com.devereux-henley.rts-data-access.contract
   (:require
    [com.devereux-henley.rts-data-access.query.game :as query.game]
+   [com.devereux-henley.rts-data-access.query.league :as query.league]
+   [com.devereux-henley.rts-data-access.query.season :as query.season]
    [com.devereux-henley.rts-data-access.query.social-media :as query.social-media]
+   [com.devereux-henley.rts-data-access.query.stats :as query.stats]
    [com.devereux-henley.rts-data-access.query.tournament :as query.tournament]
    [com.devereux-henley.rts-data-access.schema :as schema]))
 
@@ -120,6 +123,36 @@
 (def update-match-result query.tournament/update-match-result)
 (def create-game query.tournament/create-game)
 (def get-games-for-match query.tournament/get-games-for-match)
+
+;;; ─── League / Season DB entities ───────────────────────────────────────────
+
+(def league-entity schema/league-entity)
+(def create-league-params schema/create-league-params)
+(def season-entity schema/season-entity)
+(def create-season-params schema/create-season-params)
+(def faction-standings-row-entity schema/faction-standings-row-entity)
+(def max-ordinal-entity schema/max-ordinal-entity)
+
+;;; ─── League DB queries ─────────────────────────────────────────────────────
+
+(def get-league-by-eid query.league/get-league-by-eid)
+(def get-leagues-for-game query.league/get-leagues-for-game)
+(def create-league query.league/create-league)
+(def update-league query.league/update-league)
+
+;;; ─── Season DB queries ─────────────────────────────────────────────────────
+
+(def get-season-by-eid query.season/get-season-by-eid)
+(def get-seasons-for-league query.season/get-seasons-for-league)
+(def get-current-season-for-league query.season/get-current-season-for-league)
+(def get-max-ordinal-for-league query.season/get-max-ordinal-for-league)
+(def create-season query.season/create-season)
+
+;;; ─── Stats DB queries ──────────────────────────────────────────────────────
+
+(def get-faction-standings-for-game query.stats/get-faction-standings-for-game)
+(def get-faction-standings-for-league query.stats/get-faction-standings-for-league)
+(def get-faction-standings-for-season query.stats/get-faction-standings-for-season)
 
 ;;; ─── Social Media DB entities ──────────────────────────────────────────────
 
