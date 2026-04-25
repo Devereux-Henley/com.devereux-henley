@@ -341,17 +341,12 @@
                    :created-by-sub         "dev-admin"                                              :version     1})]
       (is (= :tournament/create-error (:type result))))))
 
-;; ─── tag-tournament strips nil league/season-eid ────────────────────────────
+;; ─── tag-tournament passes nil league/season-eid through ──────────────────
+;; Stripping happens in the schema model-transformer at the response boundary
+;; (see com.devereux-henley.schema.contract/handle-model-transform); the
+;; handler just preserves whatever the data layer hands it.
 
-(deftest get-tournament-omits-nil-league-season-eids
-  (with-redefs [data-access.contract/get-tournament-by-eid
-                (fn [_ _] (assoc test-tournament :league-eid nil :season-eid nil))]
-    (let [result (handlers.tournament/get-tournament-by-eid test-deps test-tournament-eid)]
-      (is (not (contains? result :league-eid))
-          "nil :league-eid must be dissoc'd so the model-transformer doesn't crash on link resolution")
-      (is (not (contains? result :season-eid))))))
-
-(deftest get-tournament-keeps-non-nil-league-season-eids
+(deftest get-tournament-passes-non-nil-league-season-eids-through
   (with-redefs [data-access.contract/get-tournament-by-eid
                 (fn [_ _] (assoc test-tournament :league-eid test-league-eid :season-eid test-season-eid))]
     (let [result (handlers.tournament/get-tournament-by-eid test-deps test-tournament-eid)]

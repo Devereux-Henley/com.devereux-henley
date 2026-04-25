@@ -303,14 +303,16 @@
                                                  (ZoneId/of tz-string)))}}))
 
 (defn- parent-eid-params
-  "Collects every `*-eid` keyed field from the map into a path-params map
-   keyed by field name. Enables nested resources to self-link via routes
+  "Collects every non-nil `*-eid` keyed field from the map into a path-params
+   map keyed by field name. Enables nested resources to self-link via routes
    whose path requires more than one eid (e.g. `/draft/:draft-eid/entry/:eid`).
    Reitit silently drops extras, so passing this set alongside `{:eid v}` is
-   safe for single-param routes as well."
+   safe for single-param routes as well. Nil values are skipped so optional
+   foreign-key eids don't poison link resolution."
   [value]
   (reduce-kv (fn [acc k v]
                (if (and (keyword? k)
+                        (some? v)
                         (clojure.string/ends-with? (name k) "-eid"))
                  (assoc acc k v)
                  acc))
@@ -324,7 +326,15 @@
       (let [parent-params (parent-eid-params value)]
         (reduce-kv
          (fn [acc k v]
-           (if-let [link (get mapping k)]
+           (cond
+             ;; Linked key with a nil value (e.g. an optional foreign-key eid
+             ;; that wasn't set): skip both the field and its link entry so
+             ;; the response stays clean and reitit.core/match->path doesn't
+             ;; receive a nil :eid.
+             (and (contains? mapping k) (nil? v))
+             acc
+
+             (contains? mapping k)
              (-> acc
                  (assoc k v)
                  (assoc-in [:_links
@@ -334,8 +344,10 @@
                                (clojure.string/replace (name k) #"-eid" "")))]
                            (to-resource-link
                             route-data
-                            link
+                            (get mapping k)
                             (assoc parent-params :eid v))))
+
+             :else
              (assoc acc k v)))
          (vary-meta {}
                     assoc
