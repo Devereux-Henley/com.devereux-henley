@@ -1,0 +1,43 @@
+{% extends "rts-web/template/entrypoint.html" %}
+
+{% block title %}My Replays | RTS-UI{% endblock %}
+
+{% block content %}
+<section class="resource" aria-labelledby="my-replays-heading">
+    <div class="cluster cluster-2" style="justify-content: space-between; align-items: baseline;">
+        <h2 id="my-replays-heading">My Replays</h2>
+        <a class="btn btn-primary" href="/view/replay/upload.html">Upload Replay</a>
+    </div>
+    {% if replays|not-empty? %}
+    <table class="resource-table">
+        <caption class="sr-only">Replays you have uploaded, most recent first.</caption>
+        <thead>
+            <tr>
+                <th scope="col">Played</th>
+                <th scope="col">Match</th>
+                <th scope="col">Winner declared</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for replay in replays %}
+            <tr>
+                <td>{{replay.played-at}}</td>
+                <td>{{replay.match-id}}</td>
+                <td>
+                    {% if replay.winning-alliance-idx %}
+                    Alliance {{replay.winning-alliance-idx}}
+                    {% else %}
+                    <em>—</em>
+                    {% endif %}
+                </td>
+                <td><a href="/view/replay/{{replay.eid}}/index.html">View</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No replays uploaded yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

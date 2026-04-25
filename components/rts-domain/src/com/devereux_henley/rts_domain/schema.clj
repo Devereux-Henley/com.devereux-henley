@@ -771,3 +771,59 @@
     [:player-sub {:optional true} :string]
     [:draft-eid {:optional true} :uuid]
     [:message {:optional true} :string]]))
+
+;; ─── Replay ─────────────────────────────────────────────────────────────────
+;; Inline value-object shapes inside replay-resource. No _links because
+;; alliances/armies/units are not individually addressable.
+
+(def replay-unit-entry
+  [:map
+   [:key :string]])
+
+(def replay-army-entry
+  [:map
+   [:index :int]
+   [:is-reinforcement :boolean]
+   [:commander-display :string]
+   [:commander-portrait :string]
+   [:faction-flag :string]
+   [:force-value :int]
+   [:units [:sequential replay-unit-entry]]])
+
+(def replay-alliance-entry
+  [:map
+   [:index :int]
+   [:faction-key [:maybe :string]]
+   [:model-count :int]
+   [:armies [:sequential replay-army-entry]]])
+
+(def replay-resource
+  (malli.util/merge
+   schema.contract/base-resource
+   (schema.contract/to-schema
+    [:map
+     [:eid {:model/link :replay/by-eid} :uuid]
+     [:type [:= :replay/replay]]
+     [:match-id :string]
+     [:played-at :string]
+     [:victory-condition [:maybe :string]]
+     [:parser-format :string]
+     [:winning-alliance-idx [:maybe :int]]
+     [:uploaded-by-sub :string]
+     [:uploaded-at :string]
+     [:alliances [:sequential replay-alliance-entry]]
+     [:_links [:map [:self :url]]]])))
+
+(def replay-collection-resource
+  (malli.util/merge
+   (schema.contract/make-collection-resource replay-resource)
+   (schema.contract/to-schema
+    [:map
+     [:type [:= :collection/replay]]])))
+
+(def declare-winner-specification
+  "Body for PUT /api/replay/:eid/winner. `winning-alliance-idx` may be 0, 1,
+  or -1 (draw). Absent or nil clears the declaration."
+  (schema.contract/to-schema
+   [:map
+    [:winning-alliance-idx {:optional true} [:maybe :int]]]))

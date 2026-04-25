@@ -1,6 +1,13 @@
 # syntax=docker/dockerfile:1.7
 
-# ---- Builder ----------------------------------------------------------------
+# ---- Rust builder (tw-replay-parser) ---------------------------------------
+FROM docker.io/library/rust:1.81-bookworm-slim AS rust-builder
+
+WORKDIR /app
+COPY tools/replay-parser/ tools/replay-parser/
+RUN cd tools/replay-parser && cargo build --release
+
+# ---- Clojure builder (rts-api.jar) -----------------------------------------
 FROM docker.io/library/clojure:temurin-21-tools-deps-bookworm-slim AS builder
 
 WORKDIR /app
@@ -39,12 +46,14 @@ RUN groupadd --system --gid 10001 app \
  && chown -R app:app /app /data
 
 WORKDIR /app
-COPY --from=builder --chown=app:app /app/projects/api/target/rts-api.jar /app/rts-api.jar
+COPY --from=builder      --chown=app:app /app/projects/api/target/rts-api.jar /app/rts-api.jar
+COPY --from=rust-builder --chown=app:app /app/tools/replay-parser/target/release/tw-replay-parser /app/tw-replay-parser
 
 USER app
 
 ENV RTS_API_PORT=3001 \
-    RTS_DB_CONNECTION_URI=jdbc:sqlite:/data/database.db
+    RTS_DB_CONNECTION_URI=jdbc:sqlite:/data/database.db \
+    REPLAY_PARSER_BIN=/app/tw-replay-parser
 
 EXPOSE 3001
 VOLUME ["/data"]

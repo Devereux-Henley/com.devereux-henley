@@ -3,6 +3,7 @@
    [com.devereux-henley.rts-domain.handlers.draft :as handlers.draft]
    [com.devereux-henley.rts-domain.handlers.game :as handlers.game]
    [com.devereux-henley.rts-domain.handlers.league :as handlers.league]
+   [com.devereux-henley.rts-domain.handlers.replay :as handlers.replay]
    [com.devereux-henley.rts-domain.handlers.season :as handlers.season]
    [com.devereux-henley.rts-domain.handlers.social-media :as handlers.social-media]
    [com.devereux-henley.rts-domain.handlers.stats :as handlers.stats]
@@ -174,3 +175,14 @@
 ;;; ─── Social Media handler functions ────────────────────────────────────────
 
 (def get-platform-by-eid                        handlers.social-media/get-platform-by-eid)
+
+;;; ─── Replay ────────────────────────────────────────────────────────────────
+
+(def replay-resource             schema/replay-resource)
+(def replay-collection-resource  schema/replay-collection-resource)
+(def declare-winner-specification schema/declare-winner-specification)
+
+(def get-replay-by-eid           handlers.replay/get-replay-by-eid)
+(def get-replays-for-uploader    handlers.replay/get-replays-for-uploader)
+(def create-replay               handlers.replay/create-replay)
+(def declare-winner              handlers.replay/declare-winner)

@@ -1,0 +1,77 @@
+<section id="replay-detail"
+         class="resource replay-resource"
+         aria-labelledby="replay-heading">
+    <title id="page-title" hx-swap-oob="true">Replay {{data.match-id}} | RTS-UI</title>
+
+    <header>
+        <h2 id="replay-heading">Replay {{data.match-id}}</h2>
+        <dl class="resource-metadata">
+            <dt>Played at</dt><dd>{{data.played-at}}</dd>
+            <dt>Victory condition</dt><dd>{{data.victory-condition|default:"—"}}</dd>
+            <dt>Parser format</dt><dd>{{data.parser-format}}</dd>
+            <dt>Declared winner</dt>
+            <dd>
+                {% if data.winning-alliance-idx %}
+                  {% ifequal data.winning-alliance-idx -1 %}
+                  Draw
+                  {% else %}
+                  Alliance {{data.winning-alliance-idx}}
+                  {% endifequal %}
+                {% else %}
+                <em>Not yet declared</em>
+                {% endif %}
+            </dd>
+        </dl>
+    </header>
+
+    <section aria-labelledby="declare-winner-heading">
+        <h3 id="declare-winner-heading">Declare Winner</h3>
+        <form class="form"
+              aria-labelledby="declare-winner-heading"
+              hx-put="/api/replay/{{data.eid}}/winner"
+              hx-ext="json-enc"
+              hx-target="#replay-detail"
+              hx-swap="outerHTML">
+            <div class="form-group">
+                <label class="form-label" for="winning-alliance-idx">Winner</label>
+                <select id="winning-alliance-idx" name="winning-alliance-idx" class="select">
+                    <option value="">— not declared —</option>
+                    {% for alliance in data.alliances %}
+                    <option value="{{alliance.index}}">Alliance {{alliance.index}} ({{alliance.faction-key|default:"?"}})</option>
+                    {% endfor %}
+                    <option value="-1">Draw</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </section>
+
+    {% for alliance in data.alliances %}
+    <section class="replay-alliance" aria-labelledby="alliance-{{alliance.index}}-heading">
+        <h3 id="alliance-{{alliance.index}}-heading">
+            Alliance {{alliance.index}} — {{alliance.faction-key|default:"unknown faction"}}
+            <small>({{alliance.model-count}} models)</small>
+        </h3>
+        {% for army in alliance.armies %}
+        <article class="replay-army" aria-labelledby="alliance-{{alliance.index}}-army-{{army.index}}-heading">
+            <h4 id="alliance-{{alliance.index}}-army-{{army.index}}-heading">
+                {% if army.is-reinforcement %}Reinforcement{% else %}Main{% endif %} army
+                — {{army.commander-display|default:"(no lord)"}}
+                <small>(force value {{army.force-value}})</small>
+            </h4>
+            {% if army.units|not-empty? %}
+            <ul class="replay-unit-list">
+                {% for unit in army.units %}
+                <li><code>{{unit.key}}</code></li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p><em>No units drafted.</em></p>
+            {% endif %}
+        </article>
+        {% endfor %}
+    </section>
+    {% endfor %}
+</section>

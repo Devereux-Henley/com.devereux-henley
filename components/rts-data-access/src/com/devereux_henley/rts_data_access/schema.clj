@@ -380,3 +380,36 @@
 
 (def unit-statistics-transformer
   (mt/default-value-transformer {::mt/add-optional-keys true}))
+
+;;; ─── Replay ─────────────────────────────────────────────────────────────────
+
+(def replay-entity
+  (schema.contract/to-schema
+   [:map
+    [:id :int]
+    [:eid :uuid]
+    [:match-id :string]
+    [:played-at :string]
+    [:victory-condition [:maybe :string]]
+    [:parser-format :string]
+    [:parsed-json :string]
+    [:winning-alliance-idx [:maybe :int]]
+    [:uploaded-by-sub :string]
+    [:version :int]
+    [:created-at :instant]
+    [:updated-at :instant]
+    [:deleted-at [:maybe :instant]]]))
+
+(def create-replay-params
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:match-id :string]
+    [:played-at :string]
+    [:victory-condition {:optional true} [:maybe :string]]
+    [:parser-format :string]
+    [:parsed-json :string]
+    [:uploaded-by-sub :string]
+    [:version :int]
+    [:created-at :instant]
+    [:updated-at :instant]]))

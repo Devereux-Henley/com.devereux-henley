@@ -6,13 +6,15 @@
    [com.devereux-henley.rts-web.web.draft :as web.draft]
    [com.devereux-henley.rts-web.web.game :as web.game]
    [com.devereux-henley.rts-web.web.league :as web.league]
+   [com.devereux-henley.rts-web.web.replay :as web.replay]
    [com.devereux-henley.rts-web.web.season :as web.season]
    [com.devereux-henley.rts-web.web.social-media :as web.social-media]
    [com.devereux-henley.rts-web.web.stats :as web.stats]
    [com.devereux-henley.rts-web.web.tournament :as web.tournament]
    [com.devereux-henley.rts-web.web.view :as web.view]
    [com.devereux-henley.schema.contract :as schema.contract]
-   [integrant.core]))
+   [integrant.core]
+   [reitit.ring.malli]))
 
 (def root-route
   ["/"
@@ -67,6 +69,17 @@
    ["/logout.html"
     {:get {:produces ["text/html"]
            :handler  (integrant.core/ref ::web.view/logout-view)}}]
+   ["/replay"
+    ["/upload.html"
+     {:get {:produces ["text/html"]
+            :handler  (integrant.core/ref ::web.view/upload-replay-view)}}]
+    ["/me.html"
+     {:get {:produces ["text/html"]
+            :handler  (integrant.core/ref ::web.view/my-replays-view)}}]
+    ["/:eid/index.html"
+     {:get {:produces   ["text/html" "application/htmx+html"]
+            :parameters {:path schema.contract/id-path-parameter}
+            :handler    (integrant.core/ref ::web.view/replay-view)}}]]
    ["/game/:game-eid"
     {:middleware [(integrant.core/ref ::web.view/game-context-middleware)]}
     ["/index.html"
@@ -616,7 +629,37 @@
             :parameters {:path  schema.contract/id-path-parameter
                          :query schema.contract/version-query-parameter}
             :responses  {200 {:body domain/social-media-platform-resource}}
-            :handler    (integrant.core/ref ::web.social-media/get-platform)}}]])
+            :handler    (integrant.core/ref ::web.social-media/get-platform)}}]
+
+   ["/replay/:eid"
+    {:name :replay/by-eid
+     :get  {:summary    "Fetches a replay by eid."
+            :openapi    {:tags         ["replay"]
+                         :produces     ["application/json" "application/htmx+html"]
+                         :operation-id "replay/by-eid"}
+            :parameters {:path schema.contract/id-path-parameter}
+            :responses  {200 {:body domain/replay-resource}}
+            :handler    (integrant.core/ref ::web.replay/get-replay)}
+     :put  {:summary    "Uploads a .replay file at the given eid. Multipart form field name must be 'file'."
+            :openapi    {:tags         ["replay"]
+                         :produces     ["application/json" "application/htmx+html"]
+                         :consumes     ["multipart/form-data"]
+                         :operation-id "replay/upload"}
+            :parameters {:path      schema.contract/id-path-parameter
+                         :multipart {:file reitit.ring.malli/temp-file-part}}
+            :responses  {201 {:body domain/replay-resource}}
+            :handler    (integrant.core/ref ::web.replay/create-replay)}}]
+
+   ["/replay/:eid/winner"
+    {:name :replay/declare-winner
+     :put  {:summary    "Records the user-declared winning alliance for a replay."
+            :openapi    {:tags         ["replay"]
+                         :produces     ["application/json"]
+                         :operation-id "replay/declare-winner"}
+            :parameters {:path schema.contract/id-path-parameter
+                         :body domain/declare-winner-specification}
+            :responses  {200 {:body domain/replay-resource}}
+            :handler    (integrant.core/ref ::web.replay/declare-winner)}}]])
 
 (defmethod integrant.core/init-key ::routes
   [_init-key routes]

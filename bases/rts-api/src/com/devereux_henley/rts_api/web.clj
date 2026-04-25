@@ -42,6 +42,8 @@
     :draft/remove-success "rts-web/resource/draft-remove-success.html"
     :tournament/phase     "rts-web/resource/tournament-phase.html"
     :tournament/round     "rts-web/resource/tournament-round.html"
+    :replay/replay        "rts-web/resource/replay.html"
+    :replay/upload-error  "rts-web/resource/replay-upload-error.html"
     :missing/resource     "rts-web/resource/missing.html"
     "exception"           "rts-web/resource/error.html"}
    type

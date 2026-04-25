@@ -1,0 +1,11 @@
+{% extends "rts-web/template/entrypoint.html" %}
+
+{% block title %}Replay not found | RTS-UI{% endblock %}
+
+{% block content %}
+<section class="resource missing-resource" role="alert" aria-labelledby="missing-replay-heading">
+    <h2 id="missing-replay-heading">Replay not found</h2>
+    <p>No replay exists at id <code>{{eid}}</code>.</p>
+    <p><a href="/view/replay/me.html">Back to my replays</a></p>
+</section>
+{% endblock %}

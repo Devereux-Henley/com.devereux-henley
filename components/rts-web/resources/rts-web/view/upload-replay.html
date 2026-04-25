@@ -1,0 +1,31 @@
+{% extends "rts-web/template/entrypoint.html" %}
+
+{% block title %}Upload Replay | RTS-UI{% endblock %}
+
+{% block content %}
+<section class="resource" aria-labelledby="upload-replay-heading">
+    <h2 id="upload-replay-heading">Upload Replay</h2>
+    <p>Drop a Total War: Warhammer 3 <code>.replay</code> file. We extract the drafted unit lists, factions, and match metadata — the winner is something you declare on the next screen.</p>
+
+    <form id="upload-replay-form"
+          class="form"
+          aria-labelledby="upload-replay-heading"
+          action="/api/replay/{{replay-eid}}"
+          method="put"
+          enctype="multipart/form-data">
+        <div class="form-group">
+            <label class="form-label required" for="replay-file">Replay file</label>
+            <input id="replay-file"
+                   name="file"
+                   type="file"
+                   accept=".replay,application/octet-stream"
+                   required
+                   aria-required="true"/>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </div>
+        <div id="upload-replay-error" class="form-error" role="alert" aria-live="assertive" hidden></div>
+    </form>
+</section>
+{% endblock %}

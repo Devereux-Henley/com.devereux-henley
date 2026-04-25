@@ -451,3 +451,38 @@
                 :registration-open     reg-open
                 :is-organizer          is-organizer
                 :organizer-has-actions organizer-has-actions}))))
+
+;; ─── Replay views ───────────────────────────────────────────────────────────
+
+(defmethod integrant.core/init-key ::upload-replay-view
+  [_init-key _dependencies]
+  (fn [request]
+    {:status 200
+     :body   (selmer.parser/render-file
+              "rts-web/view/upload-replay.html"
+              (assoc (base-context request)
+                     :replay-eid (random-uuid)))}))
+
+(defmethod integrant.core/init-key ::my-replays-view
+  [_init-key dependencies]
+  (fn [{session :ory-session :as request}]
+    (let [player-sub (get-in session [:identity :id])]
+      {:status 200
+       :body   (selmer.parser/render-file
+                "rts-web/view/my-replays.html"
+                (assoc (base-context request)
+                       :replays (domain/get-replays-for-uploader dependencies player-sub)))})))
+
+(defmethod integrant.core/init-key ::replay-view
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters :as request}]
+    (let [data (domain/get-replay-by-eid dependencies eid)]
+      (if (nil? data)
+        {:status 404
+         :body   (selmer.parser/render-file
+                  "rts-web/view/missing-replay.html"
+                  (assoc (base-context request) :eid eid))}
+        {:status 200
+         :body   (selmer.parser/render-file
+                  "rts-web/view/replay.html"
+                  (assoc (base-context request) :data data))}))))
