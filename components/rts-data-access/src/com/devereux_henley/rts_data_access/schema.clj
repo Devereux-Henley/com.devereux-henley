@@ -44,6 +44,7 @@
     [:faction-eid :uuid]
     [:faction-name {:optional true} :string]
     [:created-at-display {:optional true} :string]
+    [:updated-at-display {:optional true} :string]
     [:player-sub :string]
     [:version :int]
     [:created-at :instant]

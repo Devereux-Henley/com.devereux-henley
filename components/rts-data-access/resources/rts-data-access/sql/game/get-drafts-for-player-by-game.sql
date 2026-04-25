@@ -6,6 +6,7 @@ SELECT
   f.eid AS faction_eid,
   f.name AS faction_name,
   strftime('%m/%d/%Y', d.created_at) AS created_at_display,
+  strftime('%m/%d/%Y', d.updated_at) AS updated_at_display,
   d.player_sub,
   d.version,
   d.created_at,
@@ -18,4 +19,4 @@ FROM
   INNER JOIN faction f ON f.id = d.faction_id
 WHERE d.player_sub = ?
   AND g.eid = ?
-ORDER BY d.id
+ORDER BY d.updated_at DESC, d.id

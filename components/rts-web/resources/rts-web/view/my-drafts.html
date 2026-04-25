@@ -3,21 +3,57 @@
 {% block title %}My Drafts | {{game.name}} | RTS-UI{% endblock %}
 
 {% block content %}
-<section class="resource" aria-labelledby="my-drafts-heading">
-    <div class="cluster cluster-2" style="justify-content: space-between; align-items: baseline;">
+<section class="resource drafts-page" aria-labelledby="my-drafts-heading">
+    <header class="drafts-toolbar">
         <h2 id="my-drafts-heading">My Drafts</h2>
         <a class="btn btn-primary" href="/view/game/{{game-eid}}/draft/create.html">Create Draft</a>
-    </div>
-    {% if drafts %}
-    <nav aria-label="Your drafts">
-        <ul>
+    </header>
+
+    {% if total-count %}
+    <div class="drafts-content">
+        {% if faction-counts|not-empty? %}
+        <div class="drafts-filters" role="group" aria-label="Filter drafts by faction">
+            <button type="button" class="drafts-filter"
+                    aria-pressed="{% if active-faction %}false{% else %}true{% endif %}"
+                    hx-get="/view/game/{{game-eid}}/draft/me.html"
+                    hx-target=".drafts-content"
+                    hx-select=".drafts-content"
+                    hx-swap="outerHTML">
+                All<span class="count">{{total-count}}</span>
+            </button>
+            {% for f in faction-counts %}
+            <button type="button" class="drafts-filter"
+                    aria-pressed="{% ifequal active-faction f.name %}true{% else %}false{% endifequal %}"
+                    hx-get="/view/game/{{game-eid}}/draft/me.html?faction={{f.name|url-encode}}"
+                    hx-target=".drafts-content"
+                    hx-select=".drafts-content"
+                    hx-swap="outerHTML">
+                {{f.name}}<span class="count">{{f.count}}</span>
+            </button>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if drafts|not-empty? %}
+        <ul class="drafts-list" aria-label="Your drafts">
             {% for draft in drafts %}
             <li>
-                <a href="/view/game/{{game-eid}}/draft/{{draft.eid}}/index.html">{{draft.display-name}}</a>
+                <span class="draft-icon" aria-hidden="true">
+                    {% include "rts-web/view/icon/sword.html" %}
+                </span>
+                <a class="draft-name"
+                   href="/view/game/{{game-eid}}/draft/{{draft.eid}}/index.html">
+                    {{draft.display-name}}
+                </a>
+                <span class="draft-faction">{{draft.faction-name}}</span>
+                <span class="draft-date">{{draft.updated-at-display}}</span>
             </li>
             {% endfor %}
         </ul>
-    </nav>
+        {% else %}
+        <p class="drafts-empty">No drafts match this filter.</p>
+        {% endif %}
+    </div>
     {% else %}
     <p>No drafts found.</p>
     {% endif %}

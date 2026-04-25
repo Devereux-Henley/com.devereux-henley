@@ -4,7 +4,7 @@ Covers the full draft lifecycle — creation, unit selection, adding/removing un
 
 ## My Drafts
 
-The "My Drafts" page lists all drafts for the authenticated user within the current game. A "Create Draft" button navigates to the creation form.
+The "My Drafts" page lists all drafts for the authenticated user within the current game, sorted by `updated-at` descending so recently-edited drafts surface first. Each row carries an icon, the draft display-name, a faction pill, and the last-edited date. A faction filter strip above the list (rendered when at least one draft exists) lets the user narrow the list to a single faction; the count chips reflect the unfiltered totals so the surface stays stable as filters toggle. The strip uses `hx-get` against the same `/draft/me.html` route with a `?faction=<name>` query param, swapping only the `.drafts-list` element. A "Create Draft" button in the header navigates to the creation form.
 
 ![My Drafts](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/draft-my-drafts.png)
 
