@@ -97,30 +97,54 @@ body,
   min-width: 28rem;
 }
 
-.navbar-game {
+/* Game-scope pill — promoted from a small dim label so it reads as a
+   control. The dot + caret signal "this opens a switcher"; the click
+   currently navigates to the game-selector page. */
+.navbar .game-pill {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
+  padding: 0.375rem 0.625rem 0.375rem 0.75rem;
+  background: color-mix(in srgb, var(--color-primary-600) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary-600) 35%, transparent);
+  border-left: 2px solid var(--color-primary-600);
+  border-radius: 1px;
+  font-family: var(--font-heading);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-strong);
   text-decoration: none;
-  color: var(--color-text-muted);
-  transition: color var(--transition-fast);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
 }
 
-.navbar-game:hover { color: var(--color-text-strong); }
-
-.navbar-game-logo {
-  width: 1.5rem;
-  height: 1.5rem;
-  object-fit: contain;
+.navbar .game-pill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: var(--color-primary-600);
+  border-radius: 50%;
   flex-shrink: 0;
 }
 
-.navbar-game-name {
-  font-family: var(--font-family-heading);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  letter-spacing: 0.02em;
-  white-space: nowrap;
+.navbar .game-pill::after {
+  content: "▾";
+  font-size: 0.625rem;
+  color: var(--color-primary-600);
+  margin-left: var(--space-1);
+}
+
+.navbar .game-pill:hover {
+  background: color-mix(in srgb, var(--color-primary-600) 14%, transparent);
+  border-color: color-mix(in srgb, var(--color-primary-600) 55%, transparent);
+}
+
+.navbar .game-pill:focus-visible {
+  outline: 2px solid var(--color-primary-600);
+  outline-offset: 2px;
 }
 
 /* Reserve width for conditional nav slots so navigating between pages with or

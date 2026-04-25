@@ -13,7 +13,7 @@
                    then remove @hidden from #panel-tournaments
                    then set @aria-selected of <[role=tab]/> in my parentElement to 'false'
                    then set my @aria-selected to 'true'">
-            Tournaments
+            Tournaments<span class="count">{{tournaments|length}}</span>
         </button>
         <button type="button" role="tab" id="tab-leagues"
                 aria-selected="false" aria-controls="panel-leagues"
@@ -23,7 +23,7 @@
                    then remove @hidden from #panel-leagues
                    then set @aria-selected of <[role=tab]/> in my parentElement to 'false'
                    then set my @aria-selected to 'true'">
-            Leagues
+            Leagues<span class="count">{{leagues|length}}</span>
         </button>
     </div>
 

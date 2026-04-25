@@ -25,11 +25,11 @@
                     <img src="/image/rts-hub-wordmark.svg" class="navbar-brand-mark" alt="RTS-Hub"/>
                 </a>
                 {% if game-eid %}
-                <a class="navbar-game" href="/view/game/{{game-eid}}/index.html" aria-label="Go to {{game.name}} home">
-                    {% if game.logo %}
-                    <img class="navbar-game-logo" src="/image/{{game.logo}}" alt=""/>
-                    {% endif %}
-                    <span class="navbar-game-name">{{game.name}}</span>
+                <a class="game-pill"
+                   href="/view/game/index.html"
+                   aria-haspopup="listbox"
+                   aria-label="Switch game (currently {{game.name}})">
+                    {{game.name}}
                 </a>
                 {% endif %}
             </div>
