@@ -1,0 +1,85 @@
+(ns com.devereux-henley.rts-web.web.draft.view
+  (:require
+   [com.devereux-henley.rts-domain.contract :as domain]
+   [com.devereux-henley.rts-web.render :as render]
+   [com.devereux-henley.rts-web.web.game.api :as web.game.api]
+   [com.devereux-henley.rts-web.web.view :as web.view]
+   [integrant.core]))
+
+(defn- build-draft-context
+  [dependencies draft request]
+  (let [game-mode         (domain/get-game-mode-by-eid dependencies (:game-mode-eid draft))
+        faction           (domain/get-faction-by-eid dependencies (:faction-eid draft))
+        units             (domain/hydrate-units-with-stats
+                           (domain/get-units-for-faction dependencies (:faction-eid draft)))
+        unit-by-eid       (into {} (map (juxt :eid identity) units))
+        units-by-cat      (->> units
+                               (partition-by :unit-category-name)
+                               (mapv (fn [g] {:category (:unit-category-name (first g))
+                                              :units    (vec (sort-by :cost g))})))
+        state             (domain/get-draft-state dependencies (:eid draft))
+        lore-portrait-key (fn [unit-eid lore-key]
+                            (when lore-key
+                              (->> (domain/get-lores-for-unit dependencies unit-eid)
+                                   (some #(when (= lore-key (:key %)) (:portrait-key %))))))
+        hydrate           (fn [entries]
+                            (vec (keep (fn [entry]
+                                         (when-let [u (get unit-by-eid (:unit-eid entry))]
+                                           (assoc u
+                                                  :total-cost        (or (:total-cost entry) (:cost u))
+                                                  :entry-eid         (:entry-eid entry)
+                                                  :lore-portrait-key (lore-portrait-key (:unit-eid entry) (:lore entry)))))
+                                       entries)))
+        main-units        (hydrate (:main state))
+        reinf-units       (hydrate (:reinforcements state))
+        main-ctx          (domain/build-section-context "main" main-units (:eid draft) game-mode)
+        reinf-ctx         (domain/build-section-context "reinforcements" reinf-units (:eid draft) game-mode)]
+    {:faction                faction
+     :game-mode              game-mode
+     :reinforcements-enabled (= 1 (:reinforcements-enabled game-mode))
+     :units-by-category      units-by-cat
+     :main-section           main-ctx
+     :reinf-section          reinf-ctx
+     :game                   (:game (:game-context request))
+     :draft-eid              (:eid draft)}))
+
+(defmethod integrant.core/init-key ::draft-view
+  [_init-key dependencies]
+  (partial web.view/standard-entity-view-handler
+           (fn [eid] (web.game.api/get-draft-by-eid dependencies eid))
+           "draft-index.html"
+           (partial build-draft-context dependencies)))
+
+(defmethod integrant.core/init-key ::my-drafts-view
+  [_init-key dependencies]
+  (fn [{session :ory-session :as request}]
+    (let [player-sub     (get-in session [:identity :id])
+          game-eid       (:game-eid (:game-context request))
+          active-faction (not-empty (get-in request [:parameters :query :faction]))
+          all-drafts     (domain/get-drafts-for-player-by-game dependencies player-sub game-eid)
+          faction-counts (->> all-drafts
+                              (group-by :faction-name)
+                              (mapv (fn [[name drafts]] {:name name :count (count drafts)}))
+                              (sort-by (juxt (comp - :count) :name))
+                              vec)
+          drafts         (if active-faction
+                           (filterv #(= active-faction (:faction-name %)) all-drafts)
+                           all-drafts)]
+      {:status 200
+       :body   (render/render "my-drafts.html"
+                              (assoc (web.view/base-context request)
+                                     :drafts drafts
+                                     :faction-counts faction-counts
+                                     :active-faction active-faction
+                                     :total-count (count all-drafts)))})))
+
+(defmethod integrant.core/init-key ::create-draft-view
+  [_init-key dependencies]
+  (fn [request]
+    (let [game-eid   (:game-eid (:game-context request))
+          game-modes (domain/get-game-modes-for-game dependencies game-eid)]
+      {:status 200
+       :body   (render/render "create-draft.html"
+                              (assoc (web.view/base-context request)
+                                     :game-modes game-modes
+                                     :draft-eid  (random-uuid)))})))

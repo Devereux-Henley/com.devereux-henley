@@ -1,11 +1,19 @@
 (ns com.devereux-henley.rts-web.contract
   (:require
    [com.devereux-henley.rts-web.render :as render]
-   [com.devereux-henley.rts-web.web.draft]
-   [com.devereux-henley.rts-web.web.game]
+   [com.devereux-henley.rts-web.web.draft.api]
+   [com.devereux-henley.rts-web.web.draft.view]
+   [com.devereux-henley.rts-web.web.game.api]
+   [com.devereux-henley.rts-web.web.game.view]
+   [com.devereux-henley.rts-web.web.league.api]
+   [com.devereux-henley.rts-web.web.league.view]
    [com.devereux-henley.rts-web.web.routes :as web.routes]
-   [com.devereux-henley.rts-web.web.social-media]
-   [com.devereux-henley.rts-web.web.tournament]
+   [com.devereux-henley.rts-web.web.season.api]
+   [com.devereux-henley.rts-web.web.season.view]
+   [com.devereux-henley.rts-web.web.social-media.api]
+   [com.devereux-henley.rts-web.web.stats.api]
+   [com.devereux-henley.rts-web.web.tournament.api]
+   [com.devereux-henley.rts-web.web.tournament.view]
    [com.devereux-henley.rts-web.web.view]))
 
 (def root-route web.routes/root-route)

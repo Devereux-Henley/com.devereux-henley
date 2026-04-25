@@ -1,4 +1,4 @@
-(ns com.devereux-henley.rts-web.web.league
+(ns com.devereux-henley.rts-web.web.league.api
   (:require
    [com.devereux-henley.http.contract :as web.core]
    [com.devereux-henley.rts-domain.contract :as domain]

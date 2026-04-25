@@ -1,4 +1,4 @@
-(ns com.devereux-henley.rts-web.web.asset
+(ns com.devereux-henley.rts-web.web.asset.api
   (:require
    [clojure.java.io :as io]))
 

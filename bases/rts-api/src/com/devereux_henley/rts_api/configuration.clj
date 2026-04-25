@@ -48,80 +48,80 @@
              :com.devereux-henley.rts-web.web.view/about-view
              :com.devereux-henley.rts-web.web.view/contact-view
              :com.devereux-henley.rts-web.web.view/game-context-middleware
-             :com.devereux-henley.rts-web.web.view/game-index-view
-             :com.devereux-henley.rts-web.web.view/faction-view
-             :com.devereux-henley.rts-web.web.view/faction-list-view
-             :com.devereux-henley.rts-web.web.view/unit-view
-             :com.devereux-henley.rts-web.web.view/draft-view
-             :com.devereux-henley.rts-web.web.view/my-drafts-view
-             :com.devereux-henley.rts-web.web.view/create-draft-view)
+             :com.devereux-henley.rts-web.web.game.view/game-index-view
+             :com.devereux-henley.rts-web.web.game.view/faction-view
+             :com.devereux-henley.rts-web.web.game.view/faction-list-view
+             :com.devereux-henley.rts-web.web.game.view/unit-view
+             :com.devereux-henley.rts-web.web.draft.view/draft-view
+             :com.devereux-henley.rts-web.web.draft.view/my-drafts-view
+             :com.devereux-henley.rts-web.web.draft.view/create-draft-view)
    {:com.devereux-henley.rts-web.web.view/login-view  {:auth-hostname auth-hostname}
     :com.devereux-henley.rts-web.web.view/logout-view {:auth-hostname auth-hostname}}))
 
 (def game-configuration
-  (handlers :com.devereux-henley.rts-web.web.game/get-game
-            :com.devereux-henley.rts-web.web.game/get-games
-            :com.devereux-henley.rts-web.web.game/get-faction
-            :com.devereux-henley.rts-web.web.game/get-game-social-link))
+  (handlers :com.devereux-henley.rts-web.web.game.api/get-game
+            :com.devereux-henley.rts-web.web.game.api/get-games
+            :com.devereux-henley.rts-web.web.game.api/get-faction
+            :com.devereux-henley.rts-web.web.game.api/get-game-social-link))
 
 (def draft-configuration
-  (handlers :com.devereux-henley.rts-web.web.draft/get-draft-unit
-            :com.devereux-henley.rts-web.web.draft/get-draft-entry
-            :com.devereux-henley.rts-web.web.draft/draft-add-unit
-            :com.devereux-henley.rts-web.web.draft/draft-update-unit
-            :com.devereux-henley.rts-web.web.draft/draft-remove-unit
-            :com.devereux-henley.rts-web.web.draft/create-draft
-            :com.devereux-henley.rts-web.web.draft/update-draft))
+  (handlers :com.devereux-henley.rts-web.web.draft.api/get-draft-unit
+            :com.devereux-henley.rts-web.web.draft.api/get-draft-entry
+            :com.devereux-henley.rts-web.web.draft.api/draft-add-unit
+            :com.devereux-henley.rts-web.web.draft.api/draft-update-unit
+            :com.devereux-henley.rts-web.web.draft.api/draft-remove-unit
+            :com.devereux-henley.rts-web.web.draft.api/create-draft
+            :com.devereux-henley.rts-web.web.draft.api/update-draft))
 
 (def social-media-configuration
-  (handlers :com.devereux-henley.rts-web.web.social-media/get-platform))
+  (handlers :com.devereux-henley.rts-web.web.social-media.api/get-platform))
 
 (def tournament-configuration
-  (handlers :com.devereux-henley.rts-web.web.tournament/get-tournament
-            :com.devereux-henley.rts-web.web.tournament/get-tournaments
-            :com.devereux-henley.rts-web.web.tournament/create-tournament
-            :com.devereux-henley.rts-web.web.tournament/create-entry
-            :com.devereux-henley.rts-web.web.tournament/delete-entry
-            :com.devereux-henley.rts-web.web.tournament/get-entries
-            :com.devereux-henley.rts-web.web.tournament/get-status
-            :com.devereux-henley.rts-web.web.tournament/update-status
-            :com.devereux-henley.rts-web.web.tournament/get-registration
-            :com.devereux-henley.rts-web.web.tournament/update-registration
-            :com.devereux-henley.rts-web.web.tournament/get-matches
-            :com.devereux-henley.rts-web.web.tournament/get-match
-            :com.devereux-henley.rts-web.web.tournament/create-match
-            :com.devereux-henley.rts-web.web.tournament/update-match-result
-            :com.devereux-henley.rts-web.web.tournament/record-game
-            :com.devereux-henley.rts-web.web.tournament/get-games
-            :com.devereux-henley.rts-web.web.tournament/update-phase-configuration
-            :com.devereux-henley.rts-web.web.tournament/create-round
-            :com.devereux-henley.rts-web.web.tournament/get-phase
-            :com.devereux-henley.rts-web.web.tournament/get-round
-            :com.devereux-henley.rts-web.web.view/create-tournament-view
-            :com.devereux-henley.rts-web.web.view/tournament-view
-            :com.devereux-henley.rts-web.web.view/tournament-phase-form-view))
+  (handlers :com.devereux-henley.rts-web.web.tournament.api/get-tournament
+            :com.devereux-henley.rts-web.web.tournament.api/get-tournaments
+            :com.devereux-henley.rts-web.web.tournament.api/create-tournament
+            :com.devereux-henley.rts-web.web.tournament.api/create-entry
+            :com.devereux-henley.rts-web.web.tournament.api/delete-entry
+            :com.devereux-henley.rts-web.web.tournament.api/get-entries
+            :com.devereux-henley.rts-web.web.tournament.api/get-status
+            :com.devereux-henley.rts-web.web.tournament.api/update-status
+            :com.devereux-henley.rts-web.web.tournament.api/get-registration
+            :com.devereux-henley.rts-web.web.tournament.api/update-registration
+            :com.devereux-henley.rts-web.web.tournament.api/get-matches
+            :com.devereux-henley.rts-web.web.tournament.api/get-match
+            :com.devereux-henley.rts-web.web.tournament.api/create-match
+            :com.devereux-henley.rts-web.web.tournament.api/update-match-result
+            :com.devereux-henley.rts-web.web.tournament.api/record-game
+            :com.devereux-henley.rts-web.web.tournament.api/get-games
+            :com.devereux-henley.rts-web.web.tournament.api/update-phase-configuration
+            :com.devereux-henley.rts-web.web.tournament.api/create-round
+            :com.devereux-henley.rts-web.web.tournament.api/get-phase
+            :com.devereux-henley.rts-web.web.tournament.api/get-round
+            :com.devereux-henley.rts-web.web.tournament.view/create-tournament-view
+            :com.devereux-henley.rts-web.web.tournament.view/tournament-view
+            :com.devereux-henley.rts-web.web.tournament.view/tournament-phase-form-view))
 
 (def match-record-configuration
-  (handlers :com.devereux-henley.rts-web.web.view.tournament/modal-view
-            :com.devereux-henley.rts-web.web.view.tournament/parse-replays-fragment
-            :com.devereux-henley.rts-web.web.view.tournament/record-match-fragment))
+  (handlers :com.devereux-henley.rts-web.web.tournament.view/modal-view
+            :com.devereux-henley.rts-web.web.tournament.view/parse-replays-fragment
+            :com.devereux-henley.rts-web.web.tournament.view/record-match-fragment))
 
 (def league-configuration
-  (handlers :com.devereux-henley.rts-web.web.league/get-league
-            :com.devereux-henley.rts-web.web.league/get-leagues
-            :com.devereux-henley.rts-web.web.league/create-league
-            :com.devereux-henley.rts-web.web.season/get-season
-            :com.devereux-henley.rts-web.web.season/get-seasons-for-league
-            :com.devereux-henley.rts-web.web.season/create-season
-            :com.devereux-henley.rts-web.web.stats/get-game-faction-standings
-            :com.devereux-henley.rts-web.web.stats/get-league-faction-standings
-            :com.devereux-henley.rts-web.web.stats/get-season-faction-standings
-            :com.devereux-henley.rts-web.web.view/competitive-view
-            :com.devereux-henley.rts-web.web.view/season-options-fragment-view
-            :com.devereux-henley.rts-web.web.view/create-league-view
-            :com.devereux-henley.rts-web.web.view/league-view
-            :com.devereux-henley.rts-web.web.view/create-season-view
-            :com.devereux-henley.rts-web.web.view/season-view))
+  (handlers :com.devereux-henley.rts-web.web.league.api/get-league
+            :com.devereux-henley.rts-web.web.league.api/get-leagues
+            :com.devereux-henley.rts-web.web.league.api/create-league
+            :com.devereux-henley.rts-web.web.season.api/get-season
+            :com.devereux-henley.rts-web.web.season.api/get-seasons-for-league
+            :com.devereux-henley.rts-web.web.season.api/create-season
+            :com.devereux-henley.rts-web.web.stats.api/get-game-faction-standings
+            :com.devereux-henley.rts-web.web.stats.api/get-league-faction-standings
+            :com.devereux-henley.rts-web.web.stats.api/get-season-faction-standings
+            :com.devereux-henley.rts-web.web.tournament.view/competitive-view
+            :com.devereux-henley.rts-web.web.season.view/season-options-fragment-view
+            :com.devereux-henley.rts-web.web.league.view/create-league-view
+            :com.devereux-henley.rts-web.web.league.view/league-view
+            :com.devereux-henley.rts-web.web.season.view/create-season-view
+            :com.devereux-henley.rts-web.web.season.view/season-view))
 
 ;;; ─── Routes ────────────────────────────────────────────────────────────────
 
