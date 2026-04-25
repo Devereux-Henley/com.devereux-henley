@@ -3,11 +3,9 @@ SELECT
   te.eid,
   t.eid AS tournament_eid,
   te.player_sub,
-  te.created_at,
-  te.deleted_at
+  te.created_at
 FROM
   tournament_entry te
   INNER JOIN tournament t ON t.id = te.tournament_id
 WHERE t.eid = ?
   AND te.player_sub = ?
-  AND te.deleted_at IS NULL
