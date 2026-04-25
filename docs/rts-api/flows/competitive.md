@@ -34,7 +34,7 @@ The legacy `/view/game/:game-eid/tournament/index.html` URL is removed (404). Al
 
 1. **Header** — name, description, organizer; only the league owner sees the **Create Season** CTA.
 2. **Seasons list** — every season in ordinal order, linking to season detail pages.
-3. **Faction Standings** — `GET /api/stats/league/:eid/faction` results rendered as an accessible `<table>` (`<th scope="col">`, `<caption class="sr-only">`). Aggregates wins, losses, and win % across every completed match in every season-attached and season-less tournament under the league. Draws are not tracked — they are vanishingly rare in Warhammer matches and are typically replayed or omitted rather than recorded.
+3. **Faction Standings** — `GET /api/stats/league/:eid/faction` results rendered as an accessible `<table>` (`<th scope="col">`, `<caption class="sr-only">`). Aggregates wins, losses, and win % across every completed match in every season-attached and season-less tournament under the league. The first column carries a `.rank` ordinal prefix; the win-% column renders a thin `.winbar` proportional to the row's percentage so ladder shape scans at a glance. Draws are not tracked — they are vanishingly rare in Warhammer matches and are typically replayed or omitted rather than recorded.
 4. **Tournaments in this League** — flat list grouped visually by season (or `(no season)` for league-but-no-season tournaments).
 
 ![League detail with faction standings](https://raw.githubusercontent.com/Devereux-Henley/images.com.devereux-henley/main/flows/rts-api/views-league-detail.png)

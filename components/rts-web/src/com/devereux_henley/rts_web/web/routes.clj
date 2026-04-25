@@ -95,7 +95,10 @@
              :handler    (integrant.core/ref ::web.view/create-draft-view)}}]
      ["/me.html"
       {:get {:produces   ["application/htmx+html"]
-             :parameters {:path schema.contract/game-id-path-parameter}
+             :parameters {:path  schema.contract/game-id-path-parameter
+                          :query (schema.contract/to-schema
+                                  [:map
+                                   [:faction {:optional true} :string]])}
              :handler    (integrant.core/ref ::web.view/my-drafts-view)}}]
      ["/:eid/index.html"
       {:get {:produces   ["application/htmx+html"]

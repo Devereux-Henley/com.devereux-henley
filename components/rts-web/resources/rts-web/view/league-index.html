@@ -51,9 +51,7 @@
                     {{tournament.name}}
                 </a>
                 {% if tournament.season-display-name %}
-                <span class="text-muted">— {{tournament.season-display-name}}</span>
-                {% else %}
-                <span class="text-muted">— (no season)</span>
+                <span class="tournament-meta">{{tournament.season-display-name}}</span>
                 {% endif %}
                 <span class="badge">{{tournament.status}}</span>
             </li>
