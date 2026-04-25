@@ -757,3 +757,32 @@
     [:scope [:enum "game" "league" "season"]]
     [:scope-eid :uuid]
     [:rows [:sequential faction-standings-row-resource]]]))
+
+;; ─── Match record (post-match modal) ────────────────────────────────────────
+;; Submitting the modal POSTs N replay files via multipart and a JSON body
+;; carrying per-game winner subs. The response describes what was persisted
+;; and whether the series is now complete.
+
+(def match-record-game-result
+  (schema.contract/to-schema
+   [:map
+    [:game-index :int]
+    [:replay-eid :uuid]
+    [:winner-sub :string]
+    [:uploader-local-alliance-idx [:maybe :int]]]))
+
+(def match-record-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:enum :match-record/recorded :match-record/error]]
+    [:match-eid {:optional true} :uuid]
+    [:winner-sub {:optional true} [:maybe :string]]
+    [:complete? {:optional true} :boolean]
+    [:games {:optional true} [:sequential match-record-game-result]]
+    [:message {:optional true} :string]]))
+
+(def declare-winners-specification
+  "JSON sidecar to the multipart upload — array of winner subs in series order."
+  (schema.contract/to-schema
+   [:map
+    [:winners [:vector :string]]]))

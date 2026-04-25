@@ -150,12 +150,24 @@
 (def get-games-for-match-query (resource/load-query-resource "tournament" "get-games-for-match.sql"))
 
 (defn create-game
-  [connection match-eid game-index winner-sub]
-  (let [eid (str (random-uuid))]
-    (jdbc.contract/execute-one!
-     connection
-     [create-game-query eid game-index winner-sub (str (Instant/now)) (str match-eid)])
-    {:eid (java.util.UUID/fromString eid) :match-eid match-eid :game-index game-index :winner-sub winner-sub}))
+  "Records a per-game result for a match. `opts` may carry `:replay-id` and
+  `:uploader-local-alliance-idx` to bind a parsed replay to this game."
+  ([connection match-eid game-index winner-sub]
+   (create-game connection match-eid game-index winner-sub {}))
+  ([connection match-eid game-index winner-sub
+    {:keys [replay-id uploader-local-alliance-idx]}]
+   (let [eid (str (random-uuid))]
+     (jdbc.contract/execute-one!
+      connection
+      [create-game-query eid game-index winner-sub
+       replay-id uploader-local-alliance-idx
+       (str (Instant/now)) (str match-eid)])
+     {:eid                         (java.util.UUID/fromString eid)
+      :match-eid                   match-eid
+      :game-index                  game-index
+      :winner-sub                  winner-sub
+      :replay-id                   replay-id
+      :uploader-local-alliance-idx uploader-local-alliance-idx})))
 
 (defn get-games-for-match
   [connection match-eid]

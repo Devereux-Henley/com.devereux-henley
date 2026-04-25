@@ -1,5 +1,6 @@
 {:paths ["src" "resources"]
- :deps {integrant/integrant   {:mvn/version "1.0.1"}
+ :deps {camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}
+        integrant/integrant   {:mvn/version "1.0.1"}
         metosin/jsonista      {:mvn/version "0.3.5"}
         metosin/reitit        {:mvn/version "0.5.18"}
         com.taoensso/timbre   {:mvn/version "6.0.4"}

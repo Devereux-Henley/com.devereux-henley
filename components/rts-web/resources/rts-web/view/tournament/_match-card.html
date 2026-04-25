@@ -8,13 +8,30 @@
             {% if match.player-two-sub %}{{match.player-two-sub}}{% else %}<em>bye</em>{% endif %}
         </span>
     </div>
-    <div class="tourney-match-meta">
+    <div class="tourney-match-meta tourney-match-actions">
         <span class="badge {% ifequal match.status "pending" %}badge-warning{% endifequal %}{% ifequal match.status "complete" %}badge-success{% endifequal %}" style="font-size: var(--font-size-xs);">
             {{match.status}}
         </span>
         {% if match.format %}
         <span class="tourney-match-format">Bo{{match.format}}</span>
         {% endif %}
+        {% ifequal match.status "pending" %}
+        {% if match.player-two-sub %}
+        <button type="button"
+                class="pm-record-btn"
+                aria-label="Record match for {{match.player-one-sub}} vs {{match.player-two-sub}}"
+                hx-get="/view/match-record/{{match.eid}}/index.html"
+                hx-target="body"
+                hx-swap="beforeend"
+                hx-headers='{"Accept":"text/html"}'>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/>
+                <circle cx="12" cy="12" r="3" fill="currentColor"/>
+            </svg>
+            Record Match
+        </button>
+        {% endif %}
+        {% endifequal %}
     </div>
     {% if match.winner-sub %}
     <div class="tourney-match-result">

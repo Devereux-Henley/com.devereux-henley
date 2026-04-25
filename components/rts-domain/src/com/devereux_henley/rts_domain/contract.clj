@@ -3,6 +3,7 @@
    [com.devereux-henley.rts-domain.handlers.draft :as handlers.draft]
    [com.devereux-henley.rts-domain.handlers.game :as handlers.game]
    [com.devereux-henley.rts-domain.handlers.league :as handlers.league]
+   [com.devereux-henley.rts-domain.handlers.replay :as handlers.replay]
    [com.devereux-henley.rts-domain.handlers.season :as handlers.season]
    [com.devereux-henley.rts-domain.handlers.social-media :as handlers.social-media]
    [com.devereux-henley.rts-domain.handlers.stats :as handlers.stats]
@@ -169,3 +170,14 @@
 ;;; ─── Social Media handler functions ────────────────────────────────────────
 
 (def get-platform-by-eid                        handlers.social-media/get-platform-by-eid)
+
+;;; ─── Match record (replay-driven) ──────────────────────────────────────────
+
+(def match-record-response          schema/match-record-response)
+(def match-record-game-result       schema/match-record-game-result)
+(def declare-winners-specification  schema/declare-winners-specification)
+
+(def parse-replay-file              handlers.replay/parse-replay-file)
+(def parse-replay-files             handlers.replay/parse-replay-files)
+(def record-match-from-parsed       handlers.replay/record-match-from-parsed)
+(def get-record-context             handlers.replay/get-record-context)

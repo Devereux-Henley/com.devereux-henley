@@ -2,6 +2,7 @@
   (:require
    [com.devereux-henley.rts-data-access.query.game :as query.game]
    [com.devereux-henley.rts-data-access.query.league :as query.league]
+   [com.devereux-henley.rts-data-access.query.replay :as query.replay]
    [com.devereux-henley.rts-data-access.query.season :as query.season]
    [com.devereux-henley.rts-data-access.query.social-media :as query.social-media]
    [com.devereux-henley.rts-data-access.query.stats :as query.stats]
@@ -161,3 +162,11 @@
 ;;; ─── Social Media DB queries ──────────────────────────────────────────────
 
 (def get-platform-by-eid query.social-media/get-platform-by-eid)
+
+;;; ─── Replay ────────────────────────────────────────────────────────────────
+
+(def replay-entity        schema/replay-entity)
+(def create-replay-params schema/create-replay-params)
+
+(def get-replay-by-eid query.replay/get-replay-by-eid)
+(def create-replay     query.replay/create-replay)
