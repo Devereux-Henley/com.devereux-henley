@@ -92,42 +92,59 @@
 (def stats-block-re
   #"(\(\d+,\s*'[0-9a-f\-]+',\s*'((?:[^']|'')*)',\s*'(?:[^']|'')*',\s*\n\s*\d+,\s*\d+,\s*\d+,\s*\d+,\s*')(\{[^']*(?:''[^']*)*\})(')")
 
+(def ^:private eid-in-prefix-re
+  "Pulls the unit's eid out of a prefix string captured by `stats-block-re`.
+  The prefix has the shape `(N, '<eid>', '<name>', …`, so the first quoted
+  segment after the integer id is the eid."
+  #"\(\s*\d+\s*,\s*'([0-9a-f\-]+)'")
+
 (defn update-unit-seed-file
   "Rewrite the stats blob for every INSERT row in `filepath` using RPFM data.
-  Returns the new file contents as a string and logs per-faction counts to
-  stderr."
+  Returns `{:content <new file string>, :pairs [[eid unit-key] …]}` for the
+  rows that were successfully resolved, and logs per-faction counts to
+  stderr.  The pairs feed the cross-faction `seed-unit-keys.sql` emitted by
+  `core/generate-unit-keys-seed!`."
   [filepath faction-name faction-prefixes name-index main-unit-map land-unit-stats
    agent-subtype-map equipment-map ancillary-cost-map ability-name->key]
   (let [content     (slurp filepath)
         not-found   (atom [])
         no-data     (atom [])
         found       (atom 0)
+        pairs       (atom [])
         replacer
         (fn [m]
           (let [prefix-str     (nth m 1)
                 raw-name       (str/replace (nth m 2) "''" "'")
                 old-stats-str  (nth m 3)
                 suffix         (nth m 4)
+                eid            (second (re-find eid-in-prefix-re prefix-str))
                 [unit-key _lu] (nm/find-unit-key raw-name faction-prefixes name-index)]
             (cond
               (nil? unit-key)
               (do (swap! not-found conj raw-name) (nth m 0))
 
               :else
-              (if-let [^java.util.LinkedHashMap new-stats
-                       (extract-stats unit-key main-unit-map land-unit-stats
-                                      agent-subtype-map equipment-map ancillary-cost-map)]
-                (let [old-json  (str/replace old-stats-str "''" "'")
-                      old-stats (try (json/read-str old-json) (catch Exception _ {}))]
-                  (apply-preserved new-stats old-stats ability-name->key)
-                  (swap! found inc)
-                  (str prefix-str
-                       (-> (json/write-str new-stats
-                                           :escape-slash false
-                                           :escape-js-separators false)
-                           (str/replace "'" "''"))
-                       suffix))
-                (do (swap! no-data conj raw-name) (nth m 0))))))
+              (do
+                ;; Record the eid → unit-key pair regardless of whether
+                ;; RPFM produced fresh stats — we want every resolvable
+                ;; unit to carry its engine key, even if its stats blob
+                ;; couldn't be rebuilt this run.
+                (when (and eid unit-key)
+                  (swap! pairs conj [eid unit-key]))
+                (if-let [^java.util.LinkedHashMap new-stats
+                         (extract-stats unit-key main-unit-map land-unit-stats
+                                        agent-subtype-map equipment-map ancillary-cost-map)]
+                  (let [old-json  (str/replace old-stats-str "''" "'")
+                        old-stats (try (json/read-str old-json) (catch Exception _ {}))]
+                    (apply-preserved new-stats old-stats ability-name->key)
+                    (swap! found inc)
+                    (str prefix-str
+                         (-> (json/write-str new-stats
+                                             :escape-slash false
+                                             :escape-js-separators false)
+                             (str/replace "'" "''"))
+                         suffix))
+                  (do (swap! no-data conj raw-name) (nth m 0)))))))
         new-content (str/replace content stats-block-re replacer)]
     (binding [*out* *err*]
       (when (seq @not-found)
@@ -138,5 +155,6 @@
       (when (seq @no-data)
         (println (format "  [%s] %d units matched but no game data: %s"
                          faction-name (count @no-data) (pr-str (take 5 @no-data)))))
-      (println (format "  [%s] updated %d units" faction-name @found)))
-    new-content))
+      (println (format "  [%s] updated %d units, captured %d unit-key pairs"
+                       faction-name @found (count @pairs))))
+    {:content new-content :pairs @pairs}))
