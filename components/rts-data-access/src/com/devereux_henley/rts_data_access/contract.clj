@@ -170,3 +170,4 @@
 
 (def get-replay-by-eid query.replay/get-replay-by-eid)
 (def create-replay     query.replay/create-replay)
+(def get-units-by-keys query.replay/get-units-by-keys)

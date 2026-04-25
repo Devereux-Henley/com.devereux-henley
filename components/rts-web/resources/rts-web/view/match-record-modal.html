@@ -401,10 +401,48 @@
         });
       }
 
+      function escHtml(s) {
+        return String(s == null ? '' : s)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      }
+
+      function renderUnitCard(u) {
+        // Enriched units carry name/cost/unit_category_name from the
+        // unit-table join.  Fall back to a prettified key when the engine
+        // key wasn't matched (some units aren't in seed-unit-keys yet).
+        const enriched = !!u.name;
+        const display  = enriched ? u.name : u.key;
+        const cost     = enriched && u.cost != null ? u.cost : '';
+        const isLord   = (u.unit_category_name || '').toLowerCase() === 'lord';
+        const cls      = ['pm-draft-unit'];
+        if (isLord) cls.push('pm-draft-unit--lord');
+        return `
+          <div class="${cls.join(' ')}" title="${escHtml(u.key)}">
+            <div class="pm-draft-unit-name">${escHtml(display)}</div>
+            ${cost !== '' ? `<span class="pm-draft-unit-cost">${cost}</span>` : ''}
+            <div class="pm-draft-unit-tooltip">
+              <strong>${escHtml(display)}</strong>
+              <span>${escHtml(u.unit_category_name || u.unit_type_name || '—')}${cost !== '' ? ` · ${cost} pts` : ''}</span>
+            </div>
+          </div>`;
+      }
+
       function renderDraftCard(handle, draft, isWinner, isLoser) {
         const armies = (draft.armies || []);
-        const total = armies.reduce((s, a) => s + (a.force_value || 0), 0);
-        const units = armies.flatMap(a => a.units || []);
+        const units  = armies.flatMap(a => a.units || []);
+        // Total cost from enriched units when available; otherwise fall back
+        // to total models so the header isn't blank.
+        const enrichedCount = units.filter((u) => u.cost != null).length;
+        let totalNum, totalLabel;
+        if (enrichedCount === units.length && enrichedCount > 0) {
+          totalNum   = units.reduce((s, u) => s + (u.cost || 0), 0);
+          totalLabel = 'pts';
+        } else {
+          totalNum   = draft.model_count
+                       || armies.reduce((s, a) => s + (a.force_value || 0), 0);
+          totalLabel = 'models';
+        }
         const cls = ['pm-draft-card'];
         if (isWinner) cls.push('pm-draft-card--winner');
         if (isLoser)  cls.push('pm-draft-card--loser');
@@ -412,23 +450,20 @@
           <div class="${cls.join(' ')}">
             <div class="pm-draft-head">
               <div class="pm-draft-handle">
-                <span class="pm-draft-handle-name">${handle}</span>
-                <span class="pm-draft-handle-faction">${draft.faction_key || ''}</span>
+                <span class="pm-draft-handle-name">${escHtml(handle)}</span>
+                <span class="pm-draft-handle-faction">${escHtml(draft.faction_key || '')}</span>
               </div>
               <div class="pm-draft-cost">
-                <span class="pm-draft-cost-num">${total.toLocaleString()}</span>
-                <span class="pm-draft-cost-unit">pts</span>
+                <span class="pm-draft-cost-num">${totalNum.toLocaleString()}</span>
+                <span class="pm-draft-cost-unit">${totalLabel}</span>
               </div>
             </div>
             <div class="pm-draft-units">
-              ${units.map(u => `
-                <div class="pm-draft-unit" title="${u.key}">
-                  <span class="pm-draft-unit-cost">${u.key.split('_').slice(-2).join(' ')}</span>
-                </div>`).join('')}
+              ${units.map(renderUnitCard).join('')}
             </div>
             <div class="pm-draft-foot">
-              <span>${units.length} entries</span>
-              <strong>${(armies[0]||{}).commander_display || ''}</strong>
+              <span>${units.length} units across ${armies.length} ${armies.length === 1 ? 'army' : 'armies'}</span>
+              <strong>${escHtml((armies[0]||{}).commander_display || '')}</strong>
             </div>
           </div>`;
       }
@@ -490,7 +525,7 @@
           if (!w) continue;
           const parsed = state.parsed[i];
           const winnerSub = w === 'p1' ? p1 : p2;
-          games.push({winner_sub: winnerSub, parsed: parsed});
+          games.push({'winner-sub': winnerSub, parsed: parsed});
         }
         const resp = await fetch(`/api/match/${matchEid}/record`, {
           method: 'POST',
@@ -511,20 +546,21 @@
 
       function renderSubmitted(result, games) {
         const counts = games.reduce((acc, g) => {
-          if (g.winner_sub === p1) acc.p1++;
-          if (g.winner_sub === p2) acc.p2++;
+          const w = g['winner-sub'];
+          if (w === p1) acc.p1++;
+          if (w === p2) acc.p2++;
           return acc;
         }, {p1: 0, p2: 0});
-        const winnerHandle = result.winner_sub || (counts.p1 > counts.p2 ? p1 : p2);
+        const winnerHandle = result['winner-sub'] || (counts.p1 > counts.p2 ? p1 : p2);
         $('[data-pm-summary]').textContent =
           `${winnerHandle} takes the series ${counts.p1}–${counts.p2}.`;
         const rows = $('[data-pm-result-rows]');
         rows.innerHTML = games.map((g, i) => `
           <div class="pm-result-row">
             <span class="pm-result-game">Game ${i + 1}</span>
-            <span class="pm-result-name ${g.winner_sub === p1 ? 'pm-result-name--winner' : ''}">${p1}</span>
+            <span class="pm-result-name ${g['winner-sub'] === p1 ? 'pm-result-name--winner' : ''}">${p1}</span>
             <span class="pm-result-vs">vs</span>
-            <span class="pm-result-name pm-result-name--right ${g.winner_sub === p2 ? 'pm-result-name--winner' : ''}">${p2}</span>
+            <span class="pm-result-name pm-result-name--right ${g['winner-sub'] === p2 ? 'pm-result-name--winner' : ''}">${p2}</span>
           </div>`).join('');
       }
 

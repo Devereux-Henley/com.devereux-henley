@@ -2,7 +2,8 @@
   "Web handlers for the post-match modal. Two-phase flow:
 
     1. POST /api/match/:match-eid/parse — multipart with N `.replay` files,
-       parses each via the Rust binary, returns parsed JSON. No DB writes.
+       parses each via the Rust binary, returns parsed JSON enriched with
+       per-unit name + cost lookups.  No DB writes.
     2. POST /api/match/:match-eid/record — JSON body with the parsed data
        (echoed back from phase 1) plus per-game declared winner subs.
        Persists replays + match_game rows + match completion.
@@ -11,6 +12,8 @@
   (:require
    [camel-snake-kebab.core :as csk]
    [camel-snake-kebab.extras :as cske]
+   [clojure.set :as set]
+   [com.devereux-henley.rts-data-access.contract :as db]
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.render :as render]
    [integrant.core]))
@@ -21,6 +24,55 @@
   JSON natural for the JS modal and to match the Rust binary's wire format."
   [parsed]
   (cske/transform-keys csk/->snake_case_string parsed))
+
+(defn- collect-unit-keys
+  "Walks a parsed map's alliances → armies → units and returns the set of
+  every non-blank engine key."
+  [parsed]
+  (->> (:alliances parsed)
+       (mapcat :armies)
+       (mapcat :units)
+       (keep :key)
+       (remove empty?)
+       set))
+
+(defn- enrich-unit
+  "Adds resolved unit data (name, cost, category) to a unit map when its
+  engine key has a matching DB row.  Leaves the map unchanged otherwise so
+  the client can fall back to the raw key."
+  [key->row {:keys [key] :as unit}]
+  (if-let [row (get key->row key)]
+    (assoc unit
+           :name               (:name row)
+           :cost               (:cost row)
+           :unit-category-name (:unit-category-name row)
+           :unit-type-name     (:unit-type-name row)
+           :unit-eid           (:eid row))
+    unit))
+
+(defn- enrich-parsed
+  "Threads `enrich-unit` through every unit in the parsed structure."
+  [key->row parsed]
+  (update parsed :alliances
+          (fn [alliances]
+            (mapv (fn [alliance]
+                    (update alliance :armies
+                            (fn [armies]
+                              (mapv (fn [army]
+                                      (update army :units
+                                              (fn [units]
+                                                (mapv (partial enrich-unit key->row) units))))
+                                    armies))))
+                  alliances))))
+
+(defn- resolve-units
+  "Builds a `key → row` map for every unit key referenced by the parsed games."
+  [dependencies parsed-vec]
+  (let [keys (apply set/union (map collect-unit-keys parsed-vec))]
+    (if (empty? keys)
+      {}
+      (->> (db/get-units-by-keys (:connection dependencies) keys)
+           (into {} (map (juxt :key identity)))))))
 
 (defn- collect-game-files
   "Pulls multipart parts named `game-0`, `game-1`, … in order, up to but
@@ -48,7 +100,9 @@
 
         :else
         (try
-          (let [parsed (domain/parse-replay-files dependencies (mapv :file-path files))]
+          (let [parsed   (domain/parse-replay-files dependencies (mapv :file-path files))
+                key->row (resolve-units dependencies parsed)
+                enriched (mapv #(enrich-parsed key->row %) parsed)]
             {:status 200
              :body   {:type      :match-record/parsed
                       :match-eid match-eid
@@ -56,7 +110,7 @@
                                          {:source-name source-name
                                           :parsed      (parsed->snake parsed-map)})
                                        files
-                                       parsed)}})
+                                       enriched)}})
           (catch Exception e
             {:status 422
              :body   {:type    :match-record/error
