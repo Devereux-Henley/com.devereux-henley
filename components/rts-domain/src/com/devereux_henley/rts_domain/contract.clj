@@ -175,7 +175,7 @@
 
 (def match-record-response          schema/match-record-response)
 (def match-record-game-result       schema/match-record-game-result)
-(def declare-winners-specification  schema/declare-winners-specification)
+(def record-match-specification     schema/record-match-specification)
 
 (def parse-replay-file              handlers.replay/parse-replay-file)
 (def parse-replay-files             handlers.replay/parse-replay-files)

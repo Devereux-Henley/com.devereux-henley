@@ -633,11 +633,7 @@
                          :produces     ["application/json"]
                          :operation-id "match-record/submit"}
             :parameters {:path (schema.contract/to-schema [:map [:match-eid :uuid]])
-                         :body (schema.contract/to-schema
-                                [:map
-                                 [:games [:vector [:map {:closed false}
-                                                   [:winner-sub :string]
-                                                   [:parsed [:map {:closed false}]]]]]])}
+                         :body domain/record-match-specification}
             :responses  {201 {:body domain/match-record-response}
                          422 {:body domain/match-record-response}}
             :handler    (integrant.core/ref ::web.match-record/record-match)}}]])

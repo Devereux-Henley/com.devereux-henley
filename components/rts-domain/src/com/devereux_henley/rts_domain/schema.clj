@@ -781,8 +781,17 @@
     [:games {:optional true} [:sequential match-record-game-result]]
     [:message {:optional true} :string]]))
 
-(def declare-winners-specification
-  "JSON sidecar to the multipart upload — array of winner subs in series order."
+(def record-match-game-submission
+  "Per-game payload posted to /api/match/:eid/record: the parsed map echoed
+  back from the parse phase plus the user-declared winner."
   (schema.contract/to-schema
    [:map
-    [:winners [:vector :string]]]))
+    [:winner-sub :string]
+    [:parsed [:map {:closed false}]]]))
+
+(def record-match-specification
+  "Body schema for POST /api/match/:eid/record — the array of per-game
+  submissions in series order."
+  (schema.contract/to-schema
+   [:map
+    [:games [:vector record-match-game-submission]]]))
