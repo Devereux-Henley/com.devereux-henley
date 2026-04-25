@@ -12,7 +12,7 @@ The root URL (`/`) redirects to `/view/game/index.html`. The game selector is th
 
 The navbar is emitted by `rts-web/template/entrypoint.html` and has three regions:
 
-1. **Brand cluster** (`.navbar-brand-cluster`) — the RTS-Hub wordmark + an optional game indicator (the active game's logo and name), separated by a hairline divider. Clicking the wordmark returns to `/`. Clicking the game indicator navigates to that game's home.
+1. **Brand cluster** (`.navbar-brand-cluster`) — the RTS-Hub wordmark + an optional **game-scope pill** showing the active game's name, separated by a hairline divider. The pill (`.game-pill`) renders with a 2px gold left rule, a leading dot, and a trailing caret so it reads as a switcher control rather than passive metadata; `aria-haspopup="listbox"` flags the affordance to assistive tech. Clicking the wordmark returns to `/`. Clicking the pill navigates to the game selector at `/view/game/index.html`.
 2. **Main nav** — Atlas (dropdown), My Drafts (game-scoped), Competitive (game-scoped). The per-slot widths are pinned in CSS so the row doesn't reflow when a game enters or leaves context.
 3. **Account menu** — game socials cluster + the signed-in user's name with a logout affordance.
 

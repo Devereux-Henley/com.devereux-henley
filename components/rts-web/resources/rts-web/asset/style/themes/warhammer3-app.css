@@ -2414,6 +2414,26 @@ a:hover:has(img) {
   outline: none;
 }
 
+/* Per-tab count chip — small tabular-nums badge nestled to the right of
+   the label so the user can see how many tournaments / leagues each tab
+   holds before clicking through. */
+.competitive-tab .count {
+  font-family: var(--font-family-heading);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--font-size-xs);
+  margin-left: var(--space-2);
+  padding: 0.125rem 0.4rem;
+  background: color-mix(in srgb, var(--color-primary-600) 18%, transparent);
+  color: var(--color-primary-700);
+  border-radius: 1px;
+  letter-spacing: 0.04em;
+}
+
+.competitive-tab[aria-selected="false"] .count {
+  background: var(--color-neutral-200);
+  color: var(--color-text-muted);
+}
+
 /* ─── League cards — heraldic standards ──────────────────────────────── */
 
 .league-list-header {
