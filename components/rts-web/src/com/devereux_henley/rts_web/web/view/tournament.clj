@@ -169,13 +169,13 @@
                      display   (if enriched? name key)
                      category  (or unit-category-name unit-type-name "—")
                      is-lord?  (= "lord" (some-> unit-category-name str/lower-case))]
-                 {:key      key
-                  :display  display
-                  :cost     cost
-                  :is-lord  is-lord?
-                  :tooltip  (if cost
-                              (str category " · " cost " pts")
-                              category)})))))
+                 {:key     key
+                  :display display
+                  :cost    cost
+                  :is-lord is-lord?
+                  :tooltip (if cost
+                             (str category " · " cost " pts")
+                             category)})))))
 
 (defn- alliance-totals
   "Returns the {:total-num … :total-unit …} pair shown in the draft head.
@@ -195,10 +195,10 @@
   "Builds the per-player side struct for one game (handle, faction-key,
   unit list, totals, commander, army count)."
   [handle alliance]
-  (let [armies      (vec (:armies alliance))
-        units       (alliance->units alliance)
-        totals      (alliance-totals alliance units)
-        commander   (:commander-display (first armies))]
+  (let [armies    (vec (:armies alliance))
+        units     (alliance->units alliance)
+        totals    (alliance-totals alliance units)
+        commander (:commander-display (first armies))]
     (merge totals
            {:handle            handle
             :faction-key       (:faction-key alliance)
@@ -314,22 +314,22 @@
               result     (domain/record-match-from-parsed dependencies match-eid submission)]
           (case (:type result)
             :match-record/recorded
-            (let [p1            (:player-one-sub match)
-                  p2            (:player-two-sub match)
-                  win-counts    (frequencies (keep :winner-sub (:games result)))
-                  result-rows   (mapv (fn [g]
-                                        {:game-num (inc (:game-index g))
-                                         :p1-sub   p1
-                                         :p2-sub   p2
-                                         :p1-won   (= p1 (:winner-sub g))
-                                         :p2-won   (= p2 (:winner-sub g))})
-                                      (:games result))]
+            (let [p1          (:player-one-sub match)
+                  p2          (:player-two-sub match)
+                  win-counts  (frequencies (keep :winner-sub (:games result)))
+                  result-rows (mapv (fn [g]
+                                      {:game-num (inc (:game-index g))
+                                       :p1-sub   p1
+                                       :p2-sub   p2
+                                       :p1-won   (= p1 (:winner-sub g))
+                                       :p2-won   (= p2 (:winner-sub g))})
+                                    (:games result))]
               {:status  201
                :headers {"Content-Type" "text/html; charset=utf-8"}
                :body    (render/render "match-record-submitted-fragment.html"
-                                       {:winner-sub (:winner-sub result)
-                                        :p1-wins    (get win-counts p1 0)
-                                        :p2-wins    (get win-counts p2 0)
+                                       {:winner-sub  (:winner-sub result)
+                                        :p1-wins     (get win-counts p1 0)
+                                        :p2-wins     (get win-counts p2 0)
                                         :result-rows result-rows})})
 
             :match-record/error

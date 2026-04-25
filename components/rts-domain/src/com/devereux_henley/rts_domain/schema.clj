@@ -757,5 +757,3 @@
     [:scope [:enum "game" "league" "season"]]
     [:scope-eid :uuid]
     [:rows [:sequential faction-standings-row-resource]]]))
-
-
