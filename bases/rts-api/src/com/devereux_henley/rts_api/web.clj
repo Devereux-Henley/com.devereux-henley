@@ -30,20 +30,23 @@
 (defn view-by-type
   [type]
   (get
-   {:game/game            "rts-web/resource/game.html"
-    :game/faction         "rts-web/resource/faction.html"
-    :game/draft           "rts-web/resource/draft.html"
-    :draft/unit           "rts-web/resource/draft-unit.html"
-    :draft/entry          "rts-web/resource/draft-entry.html"
-    :draft/add-success    "rts-web/resource/draft-add-success.html"
-    :draft/add-error      "rts-web/resource/draft-add-error.html"
-    :draft/update-success "rts-web/resource/draft-update-success.html"
-    :draft/update-error   "rts-web/resource/draft-add-error.html"
-    :draft/remove-success "rts-web/resource/draft-remove-success.html"
-    :tournament/phase     "rts-web/resource/tournament-phase.html"
-    :tournament/round     "rts-web/resource/tournament-round.html"
-    :missing/resource     "rts-web/resource/missing.html"
-    "exception"           "rts-web/resource/error.html"}
+   {:game/game                "rts-web/resource/game.html"
+    :game/faction             "rts-web/resource/faction.html"
+    :game/draft               "rts-web/resource/draft.html"
+    :draft/unit               "rts-web/resource/draft-unit.html"
+    :draft/entry              "rts-web/resource/draft-entry.html"
+    :draft/add-success        "rts-web/resource/draft-add-success.html"
+    :draft/add-error          "rts-web/resource/draft-add-error.html"
+    :draft/update-success     "rts-web/resource/draft-update-success.html"
+    :draft/update-error       "rts-web/resource/draft-add-error.html"
+    :draft/remove-success     "rts-web/resource/draft-remove-success.html"
+    :tournament/phase         "rts-web/resource/tournament-phase.html"
+    :tournament/round         "rts-web/resource/tournament-round.html"
+    :tournament/entry         "rts-web/resource/tournament-entry.html"
+    :tournament/entry-deleted "rts-web/resource/tournament-entry-deleted.html"
+    :tournament/entry-error   "rts-web/resource/tournament-entry-error.html"
+    :missing/resource         "rts-web/resource/missing.html"
+    "exception"               "rts-web/resource/error.html"}
    type
    "rts-web/resource/unknown.html"))
 

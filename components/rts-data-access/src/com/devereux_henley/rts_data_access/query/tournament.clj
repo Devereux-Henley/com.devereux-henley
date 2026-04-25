@@ -73,7 +73,7 @@
   [connection tournament-eid player-sub]
   (jdbc.contract/execute-one!
    connection
-   [delete-entry-query (str (Instant/now)) tournament-eid player-sub]))
+   [delete-entry-query tournament-eid player-sub]))
 
 (defn get-entries-for-tournament
   [connection tournament-eid]

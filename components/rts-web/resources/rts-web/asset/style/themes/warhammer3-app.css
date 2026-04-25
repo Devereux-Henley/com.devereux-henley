@@ -1430,13 +1430,18 @@ a:hover:has(img) {
   opacity: 0.92;
 }
 
-.draft-action-error {
+.draft-action-error,
+.entry-error {
   font-size: var(--font-size-xs);
   color: var(--color-danger-400);
   padding: var(--space-1) var(--space-2);
   background: color-mix(in srgb, var(--color-danger-600) 18%, transparent);
   border-radius: var(--radius-sm);
   border: 1px solid color-mix(in srgb, var(--color-danger-500) 40%, transparent);
+}
+
+.entry-error {
+  margin-top: var(--space-3);
 }
 
 .draft-details-link {
