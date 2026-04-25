@@ -6,7 +6,7 @@
    [com.devereux-henley.rts-web.web.draft :as web.draft]
    [com.devereux-henley.rts-web.web.game :as web.game]
    [com.devereux-henley.rts-web.web.league :as web.league]
-   [com.devereux-henley.rts-web.web.match-record :as web.match-record]
+   [com.devereux-henley.rts-web.web.view.tournament :as web.view.tournament]
    [com.devereux-henley.rts-web.web.season :as web.season]
    [com.devereux-henley.rts-web.web.social-media :as web.social-media]
    [com.devereux-henley.rts-web.web.stats :as web.stats]
@@ -72,7 +72,7 @@
     ["/index.html"
      {:get {:produces   ["text/html" "application/htmx+html"]
             :parameters {:path (schema.contract/to-schema [:map [:match-eid :uuid]])}
-            :handler    (integrant.core/ref ::web.match-record/modal-view)}}]
+            :handler    (integrant.core/ref ::web.view.tournament/modal-view)}}]
     ["/parse"
      {:post {:summary    "Parse uploaded replays and return the review-step fragment."
              :openapi    {:tags         ["match-record"]
@@ -81,7 +81,7 @@
                           :operation-id "match-record/parse-fragment"}
              :parameters {:path      (schema.contract/to-schema [:map [:match-eid :uuid]])
                           :multipart (schema.contract/to-schema [:map {:closed false}])}
-             :handler    (integrant.core/ref ::web.match-record/parse-replays-fragment)}}]
+             :handler    (integrant.core/ref ::web.view.tournament/parse-replays-fragment)}}]
     ["/submit"
      {:post {:summary    "Commit a parsed-replay submission and return the submitted-step fragment."
              :openapi    {:tags         ["match-record"]
@@ -89,7 +89,7 @@
                           :produces     ["text/html"]
                           :operation-id "match-record/submit-fragment"}
              :parameters {:path (schema.contract/to-schema [:map [:match-eid :uuid]])}
-             :handler    (integrant.core/ref ::web.match-record/record-match-fragment)}}]]
+             :handler    (integrant.core/ref ::web.view.tournament/record-match-fragment)}}]]
    ["/game/:game-eid"
     {:middleware [(integrant.core/ref ::web.view/game-context-middleware)]}
     ["/index.html"

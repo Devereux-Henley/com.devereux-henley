@@ -102,9 +102,9 @@
             :com.devereux-henley.rts-web.web.view/tournament-phase-form-view))
 
 (def match-record-configuration
-  (handlers :com.devereux-henley.rts-web.web.match-record/modal-view
-            :com.devereux-henley.rts-web.web.match-record/parse-replays-fragment
-            :com.devereux-henley.rts-web.web.match-record/record-match-fragment))
+  (handlers :com.devereux-henley.rts-web.web.view.tournament/modal-view
+            :com.devereux-henley.rts-web.web.view.tournament/parse-replays-fragment
+            :com.devereux-henley.rts-web.web.view.tournament/record-match-fragment))
 
 (def league-configuration
   (handlers :com.devereux-henley.rts-web.web.league/get-league

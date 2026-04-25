@@ -1,4 +1,4 @@
-(ns com.devereux-henley.rts-web.web.match-record
+(ns com.devereux-henley.rts-web.web.view.tournament
   "Web handlers for the post-match modal. HTMX-driven two-phase flow:
 
     1. POST /view/match-record/:match-eid/parse — multipart with N
