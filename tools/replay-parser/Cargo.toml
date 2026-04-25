@@ -2,7 +2,10 @@
 name = "tw-replay-parser"
 version = "0.1.0"
 edition = "2021"
-rust-version = "1.81"
+# Bumped from 1.81 because a transitive dep (`avif-serialize` ≥ 0.8.8, pulled
+# in via `image` from rpfm_lib) ships its Cargo.toml with `edition = "2024"`,
+# which only stabilised in 1.85.
+rust-version = "1.85"
 
 [dependencies]
 rpfm_lib = "=4.7.4"
