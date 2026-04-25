@@ -302,6 +302,61 @@ table.table tbody tr:hover td { background: color-mix(in srgb, var(--color-accen
 .badge-warning { color: var(--color-warning-600); }
 .badge-danger  { color: var(--color-danger-400); }
 
+/* Semantic status pills.
+   The colour carries the meaning, not just the palette family — `complete`
+   is a successful end state and so renders neutral, while `cancelled` is
+   the only true failure mode and keeps the danger red. Pair with the
+   tournament-card-status positioning rule in the WH3 theme. */
+.status-badge {
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.125rem 0.5rem;
+  border: 1px solid;
+  border-radius: 1px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  white-space: nowrap;
+}
+
+.status-badge::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.status-badge--registration {
+  color: var(--color-primary-700);
+  border-color: color-mix(in srgb, var(--color-primary-600) 50%, transparent);
+  background: color-mix(in srgb, var(--color-primary-600) 14%, transparent);
+}
+
+.status-badge--active {
+  color: #7fb58f;
+  border-color: color-mix(in srgb, var(--color-success-500) 60%, transparent);
+  background: color-mix(in srgb, var(--color-success-500) 16%, transparent);
+}
+
+.status-badge--complete {
+  color: var(--color-text-muted);
+  border-color: var(--color-border-strong);
+  background: var(--color-neutral-200);
+}
+
+.status-badge--complete::before { background: var(--color-text-muted); }
+
+.status-badge--cancelled {
+  color: var(--color-danger-400);
+  border-color: color-mix(in srgb, var(--color-danger-500) 60%, transparent);
+  background: color-mix(in srgb, var(--color-danger-500) 14%, transparent);
+}
+
 /* ════════════════════════════════════════════════════════════════════════ */
 /* Faction / game browser                                                   */
 /* ════════════════════════════════════════════════════════════════════════ */
