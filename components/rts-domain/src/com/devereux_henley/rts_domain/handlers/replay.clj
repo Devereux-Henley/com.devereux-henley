@@ -142,15 +142,8 @@
                                  (db/create-game
                                   (:connection dependencies)
                                   match-eid game-idx winner-sub
-                                  {:replay-id                   (:id replay)
-                                   :uploader-local-alliance-idx (:uploader-local-alliance-idx replay)})
-                                 ;; Public response uses the replay's eid (uuid)
-                                 ;; rather than its DB id (int) so callers don't
-                                 ;; see internal identifiers.
-                                 {:game-index                  game-idx
-                                  :winner-sub                  winner-sub
-                                  :replay-eid                  (:eid replay)
-                                  :uploader-local-alliance-idx (:uploader-local-alliance-idx replay)}))
+                                  {:replay-eid                  (:eid replay)
+                                   :uploader-local-alliance-idx (:uploader-local-alliance-idx replay)})))
                              (range)
                              (:games submission))]
             (db/update-match-result (:connection dependencies) match-eid match-winner)

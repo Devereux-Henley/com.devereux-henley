@@ -2,6 +2,11 @@
 
 {% block title %}{{data.name}} | {{game.name}} | RTS-UI{% endblock %}
 
+{% block page-styles %}
+<link rel="preload" href="/style/post-match.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
+<noscript><link rel="stylesheet" href="/style/post-match.css"/></noscript>
+{% endblock %}
+
 {% block content %}
 <div class="tourney-page">
 

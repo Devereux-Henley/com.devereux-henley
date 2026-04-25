@@ -132,11 +132,11 @@
                   data-access.contract/get-games-for-match (fn [_ _] [])
                   data-access.contract/create-replay       (fn [_ spec]
                                                              (swap! stored-replays conj spec)
-                                                             (assoc spec :id (count @stored-replays)))
+                                                             spec)
                   data-access.contract/create-game         (fn [_ _meid game-idx winner-sub opts]
                                                              (let [g {:game-index game-idx
                                                                       :winner-sub winner-sub
-                                                                      :replay-id  (:replay-id opts)}]
+                                                                      :replay-eid (:replay-eid opts)}]
                                                                (swap! stored-games conj g)
                                                                g))
                   data-access.contract/update-match-result (fn [_ _ winner] (reset! match-completed winner))]
@@ -145,9 +145,9 @@
         (testing "two replay rows persisted, in submission order"
           (is (= 2 (count @stored-replays)))
           (is (every? #(= "sigmar_42" (:uploaded-by-sub %)) @stored-replays)))
-        (testing "two match_game rows persisted, linked to the replays"
+        (testing "two match_game rows persisted, linked by replay eid"
           (is (= [0 1] (mapv :game-index @stored-games)))
-          (is (= [1 2] (mapv :replay-id @stored-games))))
+          (is (every? uuid? (mapv :replay-eid @stored-games))))
         (testing "Bo3 winner crowned after 2 game wins"
           (is (= "sigmar_42" @match-completed))
           (is (= "sigmar_42" (:winner-sub result)))

@@ -293,7 +293,6 @@
     [:match-eid :uuid]
     [:game-index :int]
     [:winner-sub [:maybe :string]]
-    [:replay-id {:optional true} [:maybe :int]]
     [:replay-eid {:optional true} [:maybe :uuid]]
     [:uploader-local-alliance-idx {:optional true} [:maybe :int]]
     [:created-at :instant]]))

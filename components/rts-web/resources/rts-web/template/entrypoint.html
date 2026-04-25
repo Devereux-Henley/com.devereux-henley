@@ -12,11 +12,11 @@
         <link rel="stylesheet" href="/resourcekit/assets/base.css"/>
         <link rel="stylesheet" href="/resourcekit/assets/framework.css"/>
         <link rel="stylesheet" href="/style/app.css"/>
-        <link rel="stylesheet" href="/style/post-match.css"/>
         {% ifequal skin "warhammer3" %}
         <link rel="stylesheet" href="/style/themes/warhammer3.css"/>
         <link rel="stylesheet" href="/style/themes/warhammer3-app.css"/>
         {% endifequal %}
+        {% block page-styles %}{% endblock %}
     </head>
     <body class="app-shell" hx-headers='{"Accept": "application/htmx+html"}' data-viewer-sub="{{session.identity.id}}">
         <a class="skip-link sr-only" href="#content">Skip to main content</a>
