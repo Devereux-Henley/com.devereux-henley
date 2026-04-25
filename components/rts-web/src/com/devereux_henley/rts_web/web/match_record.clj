@@ -96,18 +96,36 @@
   modal as snake_case (matching the Rust binary's wire format)."
   [m] (cske/transform-keys csk/->kebab-case-keyword m))
 
-(defn- parse-log-labels
-  "Builds the staggered Step-2 log lines (5 per game). The animation that
-  reveals them is pure CSS (per-row animation-delay)."
+(def ^:private parse-log-row-stagger-ms
+  "Per-row delay between the staggered Step-2 log lines. Matches the
+  cadence of the original JS-driven animation."
+  280)
+
+(defn- parse-log-rows
+  "Builds the staggered Step-2 log lines (5 per game) with their inline
+  CSS animation-delay so the parsing overlay reveals them at a steady
+  280ms cadence."
   [game-count]
   (vec
-   (for [game (range 1 (inc game-count))
-         label ["Reading replay {n}"
-                "Verifying header"
-                "Detecting players & factions"
-                "Resolving draft compositions"
-                "Reading map & duration"]]
-     (str/replace label "{n}" (str game)))))
+   (map-indexed
+    (fn [idx [game-num label]]
+      {:label    (str/replace label "{n}" (str game-num))
+       :delay-ms (* idx parse-log-row-stagger-ms)})
+    (for [game-num (range 1 (inc game-count))
+          label    ["Reading replay {n}"
+                    "Verifying header"
+                    "Detecting players & factions"
+                    "Resolving draft compositions"
+                    "Reading map & duration"]]
+      [game-num label]))))
+
+(defn- parse-swap-delay-ms
+  "Defers the HTMX swap so the parse-log animation gets time to play
+  even when the parser returns before it finishes. We hold back a few
+  rows' worth of stagger so the response can land during the last leg
+  of the animation rather than after it."
+  [game-count]
+  (max 0 (* (- (* game-count 5) 3) parse-log-row-stagger-ms)))
 
 (defmethod integrant.core/init-key ::modal-view
   [_init-key dependencies]
@@ -118,12 +136,13 @@
              (domain/get-record-context dependencies match-eid)]
       {:status 200
        :body   (render/render "match-record-modal.html"
-                              {:match             match
-                               :games             games
-                               :viewer-sub        (get-in session [:identity :id])
-                               :game-count        (:format match)
-                               :game-indexes      (vec (range (:format match)))
-                               :parse-log-labels  (parse-log-labels (:format match))})}
+                              {:match               match
+                               :games               games
+                               :viewer-sub          (get-in session [:identity :id])
+                               :game-count          (:format match)
+                               :game-indexes        (vec (range (:format match)))
+                               :parse-log-rows      (parse-log-rows (:format match))
+                               :parse-swap-delay-ms (parse-swap-delay-ms (:format match))})}
       {:status 404
        :body   {:type :missing/resource :name "match" :id match-eid}})))
 
