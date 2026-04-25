@@ -80,7 +80,9 @@
           result     (domain/create-entry dependencies eid player-sub)]
       (if (= :tournament/entry-error (:type result))
         {:status 422 :body result}
-        {:status 201 :body result}))))
+        {:status  201
+         :headers {"HX-Refresh" "true"}
+         :body    result}))))
 
 (defmethod integrant.core/init-key ::delete-entry
   [_init-key dependencies]
@@ -91,7 +93,9 @@
           result     (domain/delete-entry dependencies eid player-sub)]
       (if (= :tournament/entry-error (:type result))
         {:status 422 :body result}
-        {:status 200 :body result}))))
+        {:status  200
+         :headers {"HX-Refresh" "true"}
+         :body    result}))))
 
 (defmethod integrant.core/init-key ::get-entries
   [_init-key dependencies]

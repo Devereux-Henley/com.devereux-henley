@@ -250,8 +250,7 @@
     [:eid :uuid]
     [:tournament-eid :uuid]
     [:player-sub :string]
-    [:created-at :instant]
-    [:deleted-at [:maybe :instant]]]))
+    [:created-at :instant]]))
 
 ;; ─── Tournament / match enums ───────────────────────────────────────────────
 ;; These mirror CHECK-constrained values (or the closed sets the domain layer

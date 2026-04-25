@@ -1,5 +1,3 @@
-UPDATE tournament_entry
-SET deleted_at = ?
+DELETE FROM tournament_entry
 WHERE tournament_id = (SELECT id FROM tournament WHERE eid = ?)
   AND player_sub = ?
-  AND deleted_at IS NULL

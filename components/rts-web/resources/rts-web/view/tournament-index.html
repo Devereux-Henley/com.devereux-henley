@@ -72,18 +72,17 @@
                 <div class="tourney-info-card-body">
                     {% if has-entry %}
                     <p style="margin-bottom: var(--space-3);">You are registered.</p>
-                    <form hx-delete="/api/tournament/{{data.eid}}/entry/me"
-                          hx-target="#content" hx-swap="innerHTML">
+                    <form hx-delete="/api/tournament/{{data.eid}}/entry/me" hx-swap="none">
                         <button type="submit" class="btn btn-danger btn-sm" style="width:100%;">Withdraw</button>
                     </form>
                     {% elif registration-open %}
-                    <form hx-post="/api/tournament/{{data.eid}}/entry/me"
-                          hx-target="#content" hx-swap="innerHTML">
+                    <form hx-post="/api/tournament/{{data.eid}}/entry/me" hx-swap="none">
                         <button type="submit" class="btn btn-primary" style="width:100%;">Enter Tournament</button>
                     </form>
                     {% else %}
                     <p class="tourney-closed-msg">Registration is closed.</p>
                     {% endif %}
+                    <div id="entry-error" class="entry-error" role="alert" aria-live="assertive" hidden></div>
                 </div>
             </div>
             {% endifequal %}
