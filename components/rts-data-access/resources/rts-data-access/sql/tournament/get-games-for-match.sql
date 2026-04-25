@@ -5,7 +5,7 @@ SELECT
   g.game_index,
   g.winner_sub,
   r.eid AS replay_eid,
-  g.uploader_local_alliance_idx,
+  g.uploader_local_alliance_index,
   g.created_at
 FROM
   match_game g

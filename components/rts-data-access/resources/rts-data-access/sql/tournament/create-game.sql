@@ -1,4 +1,4 @@
-INSERT INTO match_game (eid, match_id, game_index, winner_sub, replay_id, uploader_local_alliance_idx, created_at)
+INSERT INTO match_game (eid, match_id, game_index, winner_sub, replay_id, uploader_local_alliance_index, created_at)
 SELECT
   ?,
   m.id,

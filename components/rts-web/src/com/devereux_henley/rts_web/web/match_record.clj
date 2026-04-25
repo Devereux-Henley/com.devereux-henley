@@ -79,9 +79,9 @@
   not including the first index that has no part. Returns a vector of
   {:source-name <original filename> :file-path <tempfile abs path>}."
   [multipart-params]
-  (loop [idx 0 acc []]
-    (if-let [part (get multipart-params (str "game-" idx))]
-      (recur (inc idx)
+  (loop [index 0 acc []]
+    (if-let [part (get multipart-params (str "game-" index))]
+      (recur (inc index)
              (conj acc {:source-name (:filename part)
                         :file-path   (.getAbsolutePath (:tempfile part))}))
       acc)))

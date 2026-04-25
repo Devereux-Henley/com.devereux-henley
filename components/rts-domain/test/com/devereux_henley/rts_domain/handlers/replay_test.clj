@@ -23,14 +23,14 @@
 
 (def ^:private sample-parser-output
   "Mirrors what the Rust binary emits — snake_case keys."
-  {:schema_version              1
-   :format                      "CBAB"
-   :match_id                    "7801776992105"
-   :played_at                   {:year 2026 :month 4 :day 24 :hour 3 :minute 55 :second 5}
-   :victory_condition           "BATTLE_SETUP_VICTORY_CONDITION_CAPTURE_LOCATION_SCORE"
-   :uploader_local_alliance_idx 0
-   :alliances                   [{:index 0 :faction_key "wh_main_emp_empire" :model_count 1957 :armies []}
-                                 {:index 1 :faction_key "wh3_dlc23_chd_legion_of_azgorh" :model_count 1816 :armies []}]})
+  {:schema_version                1
+   :format                        "CBAB"
+   :match_id                      "7801776992105"
+   :played_at                     {:year 2026 :month 4 :day 24 :hour 3 :minute 55 :second 5}
+   :victory_condition             "BATTLE_SETUP_VICTORY_CONDITION_CAPTURE_LOCATION_SCORE"
+   :uploader_local_alliance_index 0
+   :alliances                     [{:index 0 :faction_key "wh_main_emp_empire" :model_count 1957 :armies []}
+                                   {:index 1 :faction_key "wh3_dlc23_chd_legion_of_azgorh" :model_count 1816 :armies []}]})
 
 (defn- mock-shell-success [parsed]
   (fn [& _] {:exit 0 :out (jsonista/write-value-as-string parsed) :err ""}))
@@ -45,7 +45,7 @@
     (let [result (handlers.replay/parse-replay-file deps "/tmp/x.replay")]
       (is (= "7801776992105" (:match-id result)))
       (is (= "CBAB" (:format result)))
-      (is (= 0 (:uploader-local-alliance-idx result)))
+      (is (= 0 (:uploader-local-alliance-index result)))
       (is (= "wh_main_emp_empire" (get-in result [:alliances 0 :faction-key]))))))
 
 (deftest parse-replay-file-throws-on-non-zero-exit
@@ -133,8 +133,8 @@
                   data-access.contract/create-replay       (fn [_ spec]
                                                              (swap! stored-replays conj spec)
                                                              spec)
-                  data-access.contract/create-game         (fn [_ _meid game-idx winner-sub opts]
-                                                             (let [g {:game-index game-idx
+                  data-access.contract/create-game         (fn [_ _meid game-index winner-sub opts]
+                                                             (let [g {:game-index game-index
                                                                       :winner-sub winner-sub
                                                                       :replay-eid (:replay-eid opts)}]
                                                                (swap! stored-games conj g)

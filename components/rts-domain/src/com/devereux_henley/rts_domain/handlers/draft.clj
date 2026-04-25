@@ -800,13 +800,13 @@
         state         (get-draft-state dependencies draft-eid)
         section-k     (keyword section)
         old-list      (get state section-k [])
-        idx           (find-entry-index old-list entry-eid)
-        removed-entry (when idx (nth old-list idx))
+        index         (find-entry-index old-list entry-eid)
+        removed-entry (when index (nth old-list index))
         unit-by-eid   (faction-unit-index conn (:faction-eid draft))
         removed-unit  (when removed-entry (get unit-by-eid (:unit-eid removed-entry)))
         new-state     (assoc state section-k
-                             (if (some? idx)
-                               (into [] (concat (subvec old-list 0 idx) (subvec old-list (inc idx))))
+                             (if (some? index)
+                               (into [] (concat (subvec old-list 0 index) (subvec old-list (inc index))))
                                old-list))]
     (set-draft-state dependencies draft-eid new-state)
     (let [section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)]
@@ -836,8 +836,8 @@
         state        (get-draft-state dependencies draft-eid)
         section-k    (keyword section)
         section-list (get state section-k [])
-        idx          (find-entry-index section-list entry-eid)
-        existing     (when idx (nth section-list idx))
+        index        (find-entry-index section-list entry-eid)
+        existing     (when index (nth section-list index))
         unit-by-eid  (faction-unit-index conn (:faction-eid draft))
         section-max  (if (= section "main")
                        (:draft-value game-mode)
@@ -864,7 +864,7 @@
             ;; "same unit, new mount" case this keeps unit-copy counts correct.
             reduced-state (update state section-k
                                   (fn [xs]
-                                    (into [] (concat (subvec xs 0 idx) (subvec xs (inc idx))))))
+                                    (into [] (concat (subvec xs 0 index) (subvec xs (inc index))))))
             army-entries  (concat
                            (keep (fn [e] (when-let [u (get unit-by-eid (:unit-eid e))] (assoc u :section "main")))
                                  (:main reduced-state))
@@ -890,7 +890,7 @@
                            :items      (or (:items selections) [])
                            :total-cost new-total}
                 new-state (assoc state section-k
-                                 (assoc (vec section-list) idx new-entry))]
+                                 (assoc (vec section-list) index new-entry))]
             (set-draft-state dependencies draft-eid new-state)
             (let [section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)
                   lore-pk     (lore-portrait-key-for conn (:unit-eid existing) (:lore selections))]

@@ -294,7 +294,7 @@
     [:game-index :int]
     [:winner-sub [:maybe :string]]
     [:replay-eid {:optional true} [:maybe :uuid]]
-    [:uploader-local-alliance-idx {:optional true} [:maybe :int]]
+    [:uploader-local-alliance-index {:optional true} [:maybe :int]]
     [:created-at :instant]]))
 
 (def replay-entity
@@ -307,7 +307,7 @@
     [:victory-condition [:maybe :string]]
     [:parser-format :string]
     [:parsed-json :string]
-    [:uploader-local-alliance-idx [:maybe :int]]
+    [:uploader-local-alliance-index [:maybe :int]]
     [:uploaded-by-sub :string]
     [:created-at :instant]
     [:updated-at :instant]
@@ -322,7 +322,7 @@
     [:victory-condition {:optional true} [:maybe :string]]
     [:parser-format :string]
     [:parsed-json :string]
-    [:uploader-local-alliance-idx {:optional true} [:maybe :int]]
+    [:uploader-local-alliance-index {:optional true} [:maybe :int]]
     [:uploaded-by-sub :string]
     [:created-at :instant]
     [:updated-at :instant]]))

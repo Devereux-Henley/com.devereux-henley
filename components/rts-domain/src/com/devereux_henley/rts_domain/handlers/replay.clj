@@ -51,19 +51,19 @@
   (let [now (Instant/now)]
     (db/create-replay
      (:connection dependencies)
-     {:eid                         (random-uuid)
-      :match-id-external           (or (:match-id parsed)
-                                       source-name
-                                       "unknown")
-      :played-at                   (or (iso-played-at (:played-at parsed))
-                                       (str now))
-      :victory-condition           (:victory-condition parsed)
-      :parser-format               (:format parsed)
-      :parsed-json                 (jsonista/write-value-as-string parsed)
-      :uploader-local-alliance-idx (:uploader-local-alliance-idx parsed)
-      :uploaded-by-sub             uploaded-by-sub
-      :created-at                  now
-      :updated-at                  now})))
+     {:eid                           (random-uuid)
+      :match-id-external             (or (:match-id parsed)
+                                         source-name
+                                         "unknown")
+      :played-at                     (or (iso-played-at (:played-at parsed))
+                                         (str now))
+      :victory-condition             (:victory-condition parsed)
+      :parser-format                 (:format parsed)
+      :parsed-json                   (jsonista/write-value-as-string parsed)
+      :uploader-local-alliance-index (:uploader-local-alliance-index parsed)
+      :uploaded-by-sub               uploaded-by-sub
+      :created-at                    now
+      :updated-at                    now})))
 
 (defn- valid-winner?
   "A declared winner-sub must equal one of the match's player subs."
@@ -134,16 +134,16 @@
                    (:format match)))
 
           :else
-          (let [stored (mapv (fn [game-idx {:keys [parsed winner-sub source-name]}]
+          (let [stored (mapv (fn [game-index {:keys [parsed winner-sub source-name]}]
                                (let [replay (persist-replay dependencies
                                                             {:parsed          parsed
                                                              :source-name     source-name
                                                              :uploaded-by-sub (:uploaded-by-sub submission)})]
                                  (db/create-game
                                   (:connection dependencies)
-                                  match-eid game-idx winner-sub
-                                  {:replay-eid                  (:eid replay)
-                                   :uploader-local-alliance-idx (:uploader-local-alliance-idx replay)})))
+                                  match-eid game-index winner-sub
+                                  {:replay-eid                    (:eid replay)
+                                   :uploader-local-alliance-index (:uploader-local-alliance-index replay)})))
                              (range)
                              (:games submission))]
             (db/update-match-result (:connection dependencies) match-eid match-winner)

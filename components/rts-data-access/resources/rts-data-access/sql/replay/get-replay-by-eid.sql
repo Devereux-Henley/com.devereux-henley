@@ -6,7 +6,7 @@ SELECT
   victory_condition,
   parser_format,
   parsed_json,
-  uploader_local_alliance_idx,
+  uploader_local_alliance_index,
   uploaded_by_sub,
   created_at,
   updated_at,

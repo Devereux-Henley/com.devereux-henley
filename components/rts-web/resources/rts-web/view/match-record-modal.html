@@ -99,10 +99,10 @@
                 </div>
 
                 <ul class="pm-game-list" style="list-style:none; margin:0; padding:0;">
-                    {% for idx in game-indexes %}
-                    <li class="pm-game-row" data-game-row="{{idx}}">
+                    {% for game-index in game-indexes %}
+                    <li class="pm-game-row" data-game-row="{{game-index}}">
                         <div class="pm-game-tag">
-                            <span class="pm-game-tag-num">{{idx|add:1}}</span>
+                            <span class="pm-game-tag-num">{{game-index|add:1}}</span>
                             <span class="pm-game-tag-label">Game</span>
                         </div>
                         <label class="pm-game-drop">
@@ -120,13 +120,13 @@
                                 <span class="pm-drop-secondary" data-file-meta hidden></span>
                             </div>
                             <button type="button" class="pm-drop-clear" hidden
-                                    _="on click halt the event then call clearGameSlot({{idx}})">
+                                    _="on click halt the event then call clearGameSlot({{game-index}})">
                                 Clear
                             </button>
                             <input type="file"
                                    accept=".replay"
-                                   data-pm-file="{{idx}}"
-                                   _="on change call onPmFilePicked({{idx}}, my files[0])"/>
+                                   data-pm-file="{{game-index}}"
+                                   _="on change call onPmFilePicked({{game-index}}, my files[0])"/>
                         </label>
                     </li>
                     {% endfor %}
@@ -223,7 +223,7 @@
       const state = {
         files:    new Array(gameCount).fill(null),
         parsed:   new Array(gameCount).fill(null),
-        winners:  {} // {gameIdx: 'p1' | 'p2'}
+        winners:  {} // {gameIndex: 'p1' | 'p2'}
       };
 
       function $(sel)  { return root.querySelector(sel); }
@@ -237,10 +237,10 @@
           : `${state.files.filter(Boolean).length} of ${gameCount} replays uploaded.`;
       }
 
-      window.onPmFilePicked = function (idx, file) {
+      window.onPmFilePicked = function (index, file) {
         if (!file) return;
-        state.files[idx] = file;
-        const row = root.querySelector(`[data-game-row="${idx}"]`);
+        state.files[index] = file;
+        const row = root.querySelector(`[data-game-row="${index}"]`);
         row.classList.add('pm-game-row--has-file');
         row.querySelector('[data-empty-label]').hidden = true;
         row.querySelector('[data-empty-meta]').hidden = true;
@@ -255,10 +255,10 @@
         refreshUploadStep();
       };
 
-      window.clearGameSlot = function (idx) {
-        state.files[idx] = null;
-        state.parsed[idx] = null;
-        const row = root.querySelector(`[data-game-row="${idx}"]`);
+      window.clearGameSlot = function (index) {
+        state.files[index] = null;
+        state.parsed[index] = null;
+        const row = root.querySelector(`[data-game-row="${index}"]`);
         row.classList.remove('pm-game-row--has-file');
         row.querySelector('[data-empty-label]').hidden = false;
         row.querySelector('[data-empty-meta]').hidden = false;
@@ -346,7 +346,7 @@
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.className = 'pm-game-tab' + (i === 0 ? ' pm-game-tab--active' : '');
-          btn.dataset.gameIdx = i;
+          btn.dataset.gameIndex = i;
           btn.innerHTML = `<span class="pm-game-tab-num">G${i + 1}</span> <span>Game ${i + 1}</span>`;
           btn.addEventListener('click', () => showGame(i));
           tabs.appendChild(btn);
@@ -355,20 +355,20 @@
         refreshSubmitState();
       }
 
-      function showGame(idx) {
+      function showGame(index) {
         $$('[data-pm-tabs] .pm-game-tab').forEach((b, i) => {
-          b.classList.toggle('pm-game-tab--active', i === idx);
+          b.classList.toggle('pm-game-tab--active', i === index);
         });
-        const parsed = state.parsed[idx];
+        const parsed = state.parsed[index];
         if (!parsed) return;
-        const winner = state.winners[idx];
+        const winner = state.winners[index];
         const a0 = parsed.alliances[0] || {};
         const a1 = parsed.alliances[1] || {};
-        // Map alliances → players using uploader_local_alliance_idx and
+        // Map alliances → players using uploader_local_alliance_index and
         // assuming the uploader is the viewer (matches handoff scope).
-        const viewerLocalIdx = parsed.uploader_local_alliance_idx;
+        const viewerLocalIndex = parsed.uploader_local_alliance_index;
         const viewerIsP1 = root.dataset.p1 === document.body.dataset.viewerSub;
-        const draftP1 = (viewerLocalIdx === 0) === viewerIsP1 ? a0 : a1;
+        const draftP1 = (viewerLocalIndex === 0) === viewerIsP1 ? a0 : a1;
         const draftP2 = draftP1 === a0 ? a1 : a0;
 
         const body = $('[data-pm-review-body]');
@@ -384,15 +384,15 @@
             ${renderDraftCard(p2, draftP2, winner === 'p2', winner === 'p1')}
           </div>
           <div class="pm-winner-step">
-            <p class="pm-winner-prompt">Who won game ${idx + 1}?</p>
+            <p class="pm-winner-prompt">Who won game ${index + 1}?</p>
             <div class="pm-winner-pair">
-              ${renderWinnerBtn(idx, 'p1', p1, draftP1, winner === 'p1')}
-              ${renderWinnerBtn(idx, 'p2', p2, draftP2, winner === 'p2')}
+              ${renderWinnerBtn(index, 'p1', p1, draftP1, winner === 'p1')}
+              ${renderWinnerBtn(index, 'p2', p2, draftP2, winner === 'p2')}
             </div>
           </div>`;
         body.querySelectorAll('[data-winner-btn]').forEach((btn) => {
           btn.addEventListener('click', () => {
-            const gi = parseInt(btn.dataset.gameIdx, 10);
+            const gi = parseInt(btn.dataset.gameIndex, 10);
             const who = btn.dataset.who;
             state.winners[gi] = who;
             showGame(gi);
@@ -468,14 +468,14 @@
           </div>`;
       }
 
-      function renderWinnerBtn(gameIdx, who, handle, draft, selected) {
+      function renderWinnerBtn(gameIndex, who, handle, draft, selected) {
         const cls = ['pm-winner-btn'];
         if (who === 'p2') cls.push('pm-winner-btn--right');
         if (selected) cls.push('pm-winner-btn--selected');
         return `
           <button type="button"
                   data-winner-btn
-                  data-game-idx="${gameIdx}"
+                  data-game-index="${gameIndex}"
                   data-who="${who}"
                   class="${cls.join(' ')}">
             <span class="pm-winner-trophy" aria-hidden="true">

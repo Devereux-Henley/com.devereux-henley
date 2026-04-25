@@ -146,7 +146,7 @@ fn extract(tree: &Value) -> Result<Value, String> {
     // BATTLE_SETUP_LOCAL.field[0] — which alliance the local player (= the
     // player who saved this replay) was on. Used by the server to map the
     // uploader's identity to a specific alliance when recording results.
-    let uploader_local_alliance_idx = find_record(tree, "BATTLE_SETUP_LOCAL")
+    let uploader_local_alliance_index = find_record(tree, "BATTLE_SETUP_LOCAL")
         .and_then(|r| flat_children(r).into_iter().next().cloned())
         .as_ref()
         .and_then(as_u32);
@@ -170,9 +170,9 @@ fn extract(tree: &Value) -> Result<Value, String> {
     let alliances = setup_alliances
         .iter()
         .enumerate()
-        .map(|(idx, setup_alliance)| {
-            let result_alliance = result_alliances.get(idx).copied();
-            extract_alliance(idx, setup_alliance, result_alliance)
+        .map(|(index, setup_alliance)| {
+            let result_alliance = result_alliances.get(index).copied();
+            extract_alliance(index, setup_alliance, result_alliance)
         })
         .collect::<Vec<_>>();
 
@@ -183,7 +183,7 @@ fn extract(tree: &Value) -> Result<Value, String> {
         "match_id": match_id,
         "played_at": played_at,
         "victory_condition": victory_condition,
-        "uploader_local_alliance_idx": uploader_local_alliance_idx,
+        "uploader_local_alliance_index": uploader_local_alliance_index,
         "alliances": alliances,
     }))
 }

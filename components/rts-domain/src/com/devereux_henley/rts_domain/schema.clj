@@ -769,7 +769,7 @@
     [:game-index :int]
     [:replay-eid :uuid]
     [:winner-sub :string]
-    [:uploader-local-alliance-idx [:maybe :int]]]))
+    [:uploader-local-alliance-index [:maybe :int]]]))
 
 (def match-record-response
   (schema.contract/to-schema

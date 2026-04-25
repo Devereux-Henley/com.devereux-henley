@@ -119,16 +119,16 @@
                         result    []]
                    (if (< (count remaining) 2)
                      result
-                     (let [p1   (first remaining)
-                           rest (vec (rest remaining))
+                     (let [p1    (first remaining)
+                           rest  (vec (rest remaining))
                         ;; Find first opponent p1 hasn't played
-                           idx  (or (first (keep-indexed
-                                            (fn [i p2]
-                                              (when-not (contains? played #{p1 p2}) i))
-                                            rest))
-                                    0) ;; fallback: pair anyway if all played
-                           p2   (nth rest idx)
-                           rest (into (subvec rest 0 idx) (subvec rest (inc idx)))]
+                           index (or (first (keep-indexed
+                                             (fn [i p2]
+                                               (when-not (contains? played #{p1 p2}) i))
+                                             rest))
+                                     0) ;; fallback: pair anyway if all played
+                           p2    (nth rest index)
+                           rest  (into (subvec rest 0 index) (subvec rest (inc index)))]
                        (recur rest (conj result {:player-one-sub p1 :player-two-sub p2})))))]
     (cond-> pairs
       bye-player (conj {:player-one-sub bye-player :player-two-sub nil}))))
@@ -318,17 +318,17 @@
 (defn expected-winners-round-match-count
   "Match count for winners-bracket round r (0-indexed) seeded from P
    qualifying players: P/2 in round 0, P/4 in round 1, and so on."
-  [qualifier-count round-idx]
+  [qualifier-count round-index]
   (max 1 (quot (quot (pow2-ceil qualifier-count) 2)
-               (int (Math/pow 2 round-idx)))))
+               (int (Math/pow 2 round-index)))))
 
 (defn expected-losers-round-match-count
   "Match count for losers-bracket round r (0-indexed). The LB is a
    single-elimination tree seeded with WB round-1 losers (P/2 players),
    so round 0 has P/4 matches and each subsequent round halves."
-  [qualifier-count round-idx]
+  [qualifier-count round-index]
   (let [p     (pow2-ceil qualifier-count)
-        denom (int (Math/pow 2 (+ round-idx 2)))]
+        denom (int (Math/pow 2 (+ round-index 2)))]
     (max 1 (quot p denom))))
 
 (def ^:private placeholder-match
@@ -343,15 +343,15 @@
   "Builds a vector of round groupings for one bracket (winners, losers,
    or grand final). Each round is padded with TBD placeholders so the
    skeleton renders even when matches haven't been generated."
-  [phase-idx phase-type total-rounds bracket-type bracket-matches round-count expected-count-fn]
+  [phase-index phase-type total-rounds bracket-type bracket-matches round-count expected-count-fn]
   (let [grouped (group-by :round-index bracket-matches)]
-    (mapv (fn [round-idx]
-            (let [expected     (expected-count-fn round-idx)
-                  actual       (get grouped round-idx [])
+    (mapv (fn [round-index]
+            (let [expected     (expected-count-fn round-index)
+                  actual       (get grouped round-index [])
                   empty-slots  (max 0 (- expected (count actual)))
                   placeholders (repeat empty-slots placeholder-match)]
-              {:phase        phase-idx
-               :round        round-idx
+              {:phase        phase-index
+               :round        round-index
                :phase-type   phase-type
                :bracket-type bracket-type
                :total-rounds total-rounds
@@ -377,13 +377,13 @@
 (defn- swiss-phase-rounds
   "Builds the :rounds vector for a non-elimination phase from its own
    matches — sorted by round-index, one entry per round that has matches."
-  [phase-idx phase-type total-rounds phase-matches]
+  [phase-index phase-type total-rounds phase-matches]
   (->> phase-matches
        (group-by :round-index)
        (sort-by first)
-       (mapv (fn [[round-idx ms]]
-               {:phase        phase-idx
-                :round        round-idx
+       (mapv (fn [[round-index ms]]
+               {:phase        phase-index
+                :round        round-index
                 :phase-type   phase-type
                 :total-rounds total-rounds
                 :matches      ms}))))
@@ -397,23 +397,23 @@
    qualifier-count is the expected bracket size; it controls how many
    rounds / matches each bracket skeleton contains."
   [raw-matches phases qualifier-count]
-  (let [matches-by-phase-idx (group-by :phase-index raw-matches)]
+  (let [matches-by-phase-index (group-by :phase-index raw-matches)]
     (->> (map-indexed vector phases)
-         (filter (fn [[idx phase-config]]
-                   (or (contains? matches-by-phase-idx idx)
+         (filter (fn [[index phase-config]]
+                   (or (contains? matches-by-phase-index index)
                        (#{"single-elimination" "double-elimination"}
                         (:phase-type phase-config)))))
          (mapv
-          (fn [[phase-idx phase-config]]
+          (fn [[phase-index phase-config]]
             (let [phase-type    (:phase-type phase-config)
                   total-rounds  (count (:rounds phase-config))
-                  phase-matches (get matches-by-phase-idx phase-idx [])]
+                  phase-matches (get matches-by-phase-index phase-index [])]
               (cond
                 (= "single-elimination" phase-type)
-                {:phase           phase-idx
+                {:phase           phase-index
                  :phase-type      phase-type
                  :winners-bracket (build-bracket-rounds
-                                   phase-idx phase-type total-rounds "winners"
+                                   phase-index phase-type total-rounds "winners"
                                    phase-matches total-rounds
                                    #(expected-winners-round-match-count qualifier-count %))}
 
@@ -421,21 +421,21 @@
                 (let [wb-rounds  (winners-bracket-round-count qualifier-count)
                       lb-rounds  (losers-bracket-round-count qualifier-count)
                       by-bracket (group-by #(or (:bracket-type %) "winners") phase-matches)]
-                  {:phase           phase-idx
+                  {:phase           phase-index
                    :phase-type      phase-type
                    :winners-bracket (build-bracket-rounds
-                                     phase-idx phase-type wb-rounds "winners"
+                                     phase-index phase-type wb-rounds "winners"
                                      (get by-bracket "winners" []) wb-rounds
                                      #(expected-winners-round-match-count qualifier-count %))
                    :losers-bracket  (build-bracket-rounds
-                                     phase-idx phase-type lb-rounds "losers"
+                                     phase-index phase-type lb-rounds "losers"
                                      (get by-bracket "losers" []) lb-rounds
                                      #(expected-losers-round-match-count qualifier-count %))
                    :grand-final     (build-bracket-rounds
-                                     phase-idx phase-type 1 "grand-final"
+                                     phase-index phase-type 1 "grand-final"
                                      (get by-bracket "grand-final" []) 1 (constantly 1))})
 
                 :else
-                {:phase      phase-idx
+                {:phase      phase-index
                  :phase-type phase-type
-                 :rounds     (swiss-phase-rounds phase-idx phase-type total-rounds phase-matches)})))))))
+                 :rounds     (swiss-phase-rounds phase-index phase-type total-rounds phase-matches)})))))))
