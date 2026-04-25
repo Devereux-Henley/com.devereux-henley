@@ -9,43 +9,51 @@
         <a class="btn btn-primary" href="/view/game/{{game-eid}}/draft/create.html">Create Draft</a>
     </header>
 
-    {% if drafts|not-empty? %}
-    {% if faction-counts|not-empty? %}
-    <div class="drafts-filters" role="group" aria-label="Filter drafts by faction">
-        <button type="button" class="drafts-filter"
-                aria-pressed="{% if active-faction %}false{% else %}true{% endif %}"
-                hx-get="/view/game/{{game-eid}}/draft/me.html"
-                hx-target=".drafts-list"
-                hx-select=".drafts-list">
-            All<span class="count">{{total-count}}</span>
-        </button>
-        {% for f in faction-counts %}
-        <button type="button" class="drafts-filter"
-                aria-pressed="{% ifequal active-faction f.name %}true{% else %}false{% endifequal %}"
-                hx-get="/view/game/{{game-eid}}/draft/me.html?faction={{f.name|url-encode}}"
-                hx-target=".drafts-list"
-                hx-select=".drafts-list">
-            {{f.name}}<span class="count">{{f.count}}</span>
-        </button>
-        {% endfor %}
-    </div>
-    {% endif %}
+    {% if total-count %}
+    <div class="drafts-content">
+        {% if faction-counts|not-empty? %}
+        <div class="drafts-filters" role="group" aria-label="Filter drafts by faction">
+            <button type="button" class="drafts-filter"
+                    aria-pressed="{% if active-faction %}false{% else %}true{% endif %}"
+                    hx-get="/view/game/{{game-eid}}/draft/me.html"
+                    hx-target=".drafts-content"
+                    hx-select=".drafts-content"
+                    hx-swap="outerHTML">
+                All<span class="count">{{total-count}}</span>
+            </button>
+            {% for f in faction-counts %}
+            <button type="button" class="drafts-filter"
+                    aria-pressed="{% ifequal active-faction f.name %}true{% else %}false{% endifequal %}"
+                    hx-get="/view/game/{{game-eid}}/draft/me.html?faction={{f.name|url-encode}}"
+                    hx-target=".drafts-content"
+                    hx-select=".drafts-content"
+                    hx-swap="outerHTML">
+                {{f.name}}<span class="count">{{f.count}}</span>
+            </button>
+            {% endfor %}
+        </div>
+        {% endif %}
 
-    <ul class="drafts-list" aria-label="Your drafts">
-        {% for draft in drafts %}
-        <li>
-            <span class="draft-icon" aria-hidden="true">
-                {% include "rts-web/view/icon/sword.html" %}
-            </span>
-            <a class="draft-name"
-               href="/view/game/{{game-eid}}/draft/{{draft.eid}}/index.html">
-                {{draft.display-name}}
-            </a>
-            <span class="draft-faction">{{draft.faction-name}}</span>
-            <span class="draft-date">{{draft.updated-at-display}}</span>
-        </li>
-        {% endfor %}
-    </ul>
+        {% if drafts|not-empty? %}
+        <ul class="drafts-list" aria-label="Your drafts">
+            {% for draft in drafts %}
+            <li>
+                <span class="draft-icon" aria-hidden="true">
+                    {% include "rts-web/view/icon/sword.html" %}
+                </span>
+                <a class="draft-name"
+                   href="/view/game/{{game-eid}}/draft/{{draft.eid}}/index.html">
+                    {{draft.display-name}}
+                </a>
+                <span class="draft-faction">{{draft.faction-name}}</span>
+                <span class="draft-date">{{draft.updated-at-display}}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="drafts-empty">No drafts match this filter.</p>
+        {% endif %}
+    </div>
     {% else %}
     <p>No drafts found.</p>
     {% endif %}
