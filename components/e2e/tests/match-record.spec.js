@@ -6,7 +6,7 @@ const BASE = process.env.RTS_API_BASE_URL || 'http://127.0.0.1:3001';
 const GAME_EID = 'eea787d7-1065-45eb-a3f6-e26f32c294a1';
 const SAMPLE_REPLAY = path.resolve(__dirname, '../fixtures/sample-battle.replay');
 
-function headers(user) {
+function jsonHeaders(user) {
   return {
     Accept: 'application/json',
     'Content-Type': 'application/json',
@@ -17,7 +17,7 @@ function headers(user) {
 async function createTournament(request) {
   const eid = crypto.randomUUID();
   const res = await request.put(`${BASE}/api/tournament/${eid}?version=1`, {
-    headers: headers('dev-admin'),
+    headers: jsonHeaders('dev-admin'),
     data: {
       'game-eid': GAME_EID,
       name: 'Match Record E2E',
@@ -34,7 +34,7 @@ async function createTournament(request) {
 async function createActiveTournament(request) {
   const eid = await createTournament(request);
   await request.put(`${BASE}/api/tournament/${eid}/status?version=1`, {
-    headers: headers('dev-admin'),
+    headers: jsonHeaders('dev-admin'),
     data: { status: 'active' },
   });
   return eid;
@@ -42,7 +42,7 @@ async function createActiveTournament(request) {
 
 async function createMatch(request, tournamentEid, format = 3) {
   const res = await request.post(`${BASE}/api/tournament/${tournamentEid}/match`, {
-    headers: headers('dev-admin'),
+    headers: jsonHeaders('dev-admin'),
     data: {
       'phase-index': 0,
       'round-index': 0,
@@ -55,7 +55,7 @@ async function createMatch(request, tournamentEid, format = 3) {
   return (await res.json()).eid;
 }
 
-async function parseReplays(request, matchEid, count) {
+async function postParseFragment(request, matchEid, count) {
   const buffer = fs.readFileSync(SAMPLE_REPLAY);
   const multipart = {};
   for (let i = 0; i < count; i++) {
@@ -65,143 +65,26 @@ async function parseReplays(request, matchEid, count) {
       buffer,
     };
   }
-  const res = await request.post(`${BASE}/api/match/${matchEid}/parse`, {
+  return request.post(`${BASE}/view/match-record/${matchEid}/parse`, {
     headers: { Cookie: 'dev_impersonation=dev-admin' },
     multipart,
   });
-  return { status: res.status(), body: await res.json() };
 }
 
-async function recordMatch(request, matchEid, games) {
-  const res = await request.post(`${BASE}/api/match/${matchEid}/record`, {
-    headers: headers('dev-admin'),
-    data: { games },
+async function postSubmitFragment(request, matchEid, fields) {
+  const params = new URLSearchParams();
+  for (const [k, v] of Object.entries(fields)) params.append(k, v);
+  return request.post(`${BASE}/view/match-record/${matchEid}/submit`, {
+    headers: {
+      Cookie: 'dev_impersonation=dev-admin',
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    data: params.toString(),
   });
-  return { status: res.status(), body: await res.json() };
 }
-
-test.describe('Match-record parse endpoint', () => {
-  test('returns parsed JSON in series order with snake_case keys', async ({ request }) => {
-    const tournamentEid = await createActiveTournament(request);
-    const matchEid = await createMatch(request, tournamentEid, 3);
-
-    const { status, body } = await parseReplays(request, matchEid, 3);
-
-    expect(status).toBe(200);
-    expect(body.type).toBe('match-record/parsed');
-    expect(body.games).toHaveLength(3);
-
-    const first = body.games[0];
-    expect(first['source-name']).toBe('g0.replay');
-    expect(first.parsed.match_id).toBe('7801776992105');
-    expect(first.parsed.format).toBe('CBAB');
-    expect(first.parsed.alliances).toHaveLength(2);
-    expect(first.parsed.alliances[0].faction_key).toBe('wh_main_emp_empire');
-  });
-
-  test('rejects empty submission', async ({ request }) => {
-    const tournamentEid = await createActiveTournament(request);
-    const matchEid = await createMatch(request, tournamentEid, 1);
-
-    const res = await request.post(`${BASE}/api/match/${matchEid}/parse`, {
-      headers: { Cookie: 'dev_impersonation=dev-admin' },
-      multipart: {}, // no files
-    });
-    expect(res.status()).toBe(400);
-    const body = await res.json();
-    expect(body.type).toBe('match-record/error');
-  });
-});
-
-test.describe('Match-record commit endpoint', () => {
-  test('records a Bo1 match and completes it', async ({ request }) => {
-    const tournamentEid = await createActiveTournament(request);
-    const matchEid = await createMatch(request, tournamentEid, 1);
-
-    const { body: parsed } = await parseReplays(request, matchEid, 1);
-    const games = [{
-      'winner-sub': 'dev-admin',
-      parsed: parsed.games[0].parsed,
-      'source-name': parsed.games[0]['source-name'],
-    }];
-
-    const { status, body } = await recordMatch(request, matchEid, games);
-    expect(status).toBe(201);
-    expect(body.type).toBe('match-record/recorded');
-    expect(body['winner-sub']).toBe('dev-admin');
-    expect(body['complete?']).toBe(true);
-  });
-
-  test('records a Bo3 clinched at 2-0', async ({ request }) => {
-    const tournamentEid = await createActiveTournament(request);
-    const matchEid = await createMatch(request, tournamentEid, 3);
-
-    const { body: parsed } = await parseReplays(request, matchEid, 2);
-    const games = parsed.games.map((g) => ({
-      'winner-sub': 'dev-admin',
-      parsed: g.parsed,
-      'source-name': g['source-name'],
-    }));
-
-    const { status, body } = await recordMatch(request, matchEid, games);
-    expect(status).toBe(201);
-    expect(body['winner-sub']).toBe('dev-admin');
-  });
-
-  test('rejects undecided submission', async ({ request }) => {
-    const tournamentEid = await createActiveTournament(request);
-    const matchEid = await createMatch(request, tournamentEid, 3);
-
-    // Bo3 with a 1-1 split — undecided.
-    const { body: parsed } = await parseReplays(request, matchEid, 2);
-    const games = [
-      { 'winner-sub': 'dev-admin',      parsed: parsed.games[0].parsed, 'source-name': 'g0.replay' },
-      { 'winner-sub': 'dev-player-one', parsed: parsed.games[1].parsed, 'source-name': 'g1.replay' },
-    ];
-
-    const { status, body } = await recordMatch(request, matchEid, games);
-    expect(status).toBe(422);
-    expect(body.message).toMatch(/do not decide the series/);
-  });
-
-  test('rejects unknown winner sub', async ({ request }) => {
-    const tournamentEid = await createActiveTournament(request);
-    const matchEid = await createMatch(request, tournamentEid, 1);
-
-    const { body: parsed } = await parseReplays(request, matchEid, 1);
-    const games = [{
-      'winner-sub': 'someone-else',
-      parsed: parsed.games[0].parsed,
-      'source-name': 'g0.replay',
-    }];
-
-    const { status, body } = await recordMatch(request, matchEid, games);
-    expect(status).toBe(422);
-    expect(body.message).toMatch(/one of the match's players/);
-  });
-
-  test('records winner once and rejects re-submission', async ({ request }) => {
-    const tournamentEid = await createActiveTournament(request);
-    const matchEid = await createMatch(request, tournamentEid, 1);
-
-    const { body: parsed } = await parseReplays(request, matchEid, 1);
-    const games = [{
-      'winner-sub': 'dev-admin',
-      parsed: parsed.games[0].parsed,
-      'source-name': 'g0.replay',
-    }];
-
-    const first = await recordMatch(request, matchEid, games);
-    expect(first.status).toBe(201);
-
-    const second = await recordMatch(request, matchEid, games);
-    expect(second.status).toBe(422);
-    expect(second.body.message).toMatch(/already complete/);
-  });
-});
 
 test.describe('Match-record modal view', () => {
-  test('returns the modal HTML fragment for a real match', async ({ request }) => {
+  test('returns the modal HTML for a real match', async ({ request }) => {
     const tournamentEid = await createActiveTournament(request);
     const matchEid = await createMatch(request, tournamentEid, 3);
 
@@ -214,7 +97,7 @@ test.describe('Match-record modal view', () => {
     expect(html).toContain('data-pm-step="upload"');
     expect(html).toContain(`data-match-eid="${matchEid}"`);
     expect(html).toContain('data-format="3"');
-    expect(html).toContain('Record Match');
+    expect(html).toContain(`hx-post="/view/match-record/${matchEid}/parse"`);
   });
 
   test('returns 404 for unknown match-eid', async ({ request }) => {
@@ -223,5 +106,93 @@ test.describe('Match-record modal view', () => {
       headers: { Accept: 'text/html', Cookie: 'dev_impersonation=dev-admin' },
     });
     expect(res.status()).toBe(404);
+  });
+});
+
+test.describe('Parse fragment endpoint', () => {
+  test('returns the Step-3 review fragment HTML with hidden parsed JSON', async ({ request }) => {
+    const tournamentEid = await createActiveTournament(request);
+    const matchEid = await createMatch(request, tournamentEid, 3);
+
+    const res = await postParseFragment(request, matchEid, 3);
+    expect(res.status()).toBe(200);
+    const html = await res.text();
+    expect(html).toContain('id="pm-form-submit"');
+    expect(html).toContain(`hx-post="/view/match-record/${matchEid}/submit"`);
+    expect(html).toContain('name="parsed-0"');
+    expect(html).toContain('name="parsed-1"');
+    expect(html).toContain('name="parsed-2"');
+    expect(html).toContain('name="winner-sub-0"');
+    // Inline script flips data-pm-step to review.
+    expect(html).toContain("dataset.pmStep = 'review'");
+  });
+
+  test('rejects empty submission with an inline error fragment', async ({ request }) => {
+    const tournamentEid = await createActiveTournament(request);
+    const matchEid = await createMatch(request, tournamentEid, 1);
+
+    const res = await request.post(`${BASE}/view/match-record/${matchEid}/parse`, {
+      headers: { Cookie: 'dev_impersonation=dev-admin' },
+      multipart: {},
+    });
+    expect(res.status()).toBe(422);
+    const html = await res.text();
+    expect(html).toContain('class="pm-error"');
+    expect(html).toContain('No replay files');
+  });
+});
+
+test.describe('Submit fragment endpoint', () => {
+  test('records a Bo1 match and returns the Step-4 submitted fragment', async ({ request }) => {
+    const tournamentEid = await createActiveTournament(request);
+    const matchEid = await createMatch(request, tournamentEid, 1);
+
+    // Run the parse step to obtain a valid hidden parsed JSON.
+    const parseRes = await postParseFragment(request, matchEid, 1);
+    const parseHtml = await parseRes.text();
+    // Extract the hidden parsed-0 value (the template HTML-escapes it, so we
+    // unescape the &quot; sequences before sending it back).
+    const match = parseHtml.match(/name="parsed-0"\s+value="([^"]*)"/);
+    expect(match).not.toBeNull();
+    const parsedJson = match[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&');
+
+    const submitRes = await postSubmitFragment(request, matchEid, {
+      'parsed-0': parsedJson,
+      'source-name-0': 'g0.replay',
+      'winner-sub-0': 'dev-admin',
+    });
+    expect(submitRes.status()).toBe(201);
+    const html = await submitRes.text();
+    expect(html).toContain('Match recorded');
+    expect(html).toContain('dev-admin takes the series 1–0');
+    expect(html).toContain("dataset.pmStep = 'submitted'");
+  });
+
+  test('rejects an undecided Bo3 submission with the inline error fragment', async ({ request }) => {
+    const tournamentEid = await createActiveTournament(request);
+    const matchEid = await createMatch(request, tournamentEid, 3);
+
+    const parseRes = await postParseFragment(request, matchEid, 3);
+    const parseHtml = await parseRes.text();
+    const matches = [...parseHtml.matchAll(/name="parsed-(\d+)"\s+value="([^"]*)"/g)];
+    expect(matches).toHaveLength(3);
+    const parsed = (i) => matches[i][2].replace(/&quot;/g, '"').replace(/&amp;/g, '&');
+
+    // 1-1 split — series undecided.
+    const submitRes = await postSubmitFragment(request, matchEid, {
+      'parsed-0': parsed(0),
+      'source-name-0': 'g0.replay',
+      'winner-sub-0': 'dev-admin',
+      'parsed-1': parsed(1),
+      'source-name-1': 'g1.replay',
+      'winner-sub-1': 'dev-player-one',
+      'parsed-2': parsed(2),
+      'source-name-2': 'g2.replay',
+      // no winner declared for game 2
+    });
+    expect(submitRes.status()).toBe(422);
+    const html = await submitRes.text();
+    expect(html).toContain('class="pm-error"');
+    expect(html).toMatch(/do not decide the series/);
   });
 });

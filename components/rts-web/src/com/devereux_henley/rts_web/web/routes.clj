@@ -68,10 +68,28 @@
    ["/logout.html"
     {:get {:produces ["text/html"]
            :handler  (integrant.core/ref ::web.view/logout-view)}}]
-   ["/match-record/:match-eid/index.html"
-    {:get {:produces   ["text/html" "application/htmx+html"]
-           :parameters {:path (schema.contract/to-schema [:map [:match-eid :uuid]])}
-           :handler    (integrant.core/ref ::web.match-record/modal-view)}}]
+   ["/match-record/:match-eid"
+    ["/index.html"
+     {:get {:produces   ["text/html" "application/htmx+html"]
+            :parameters {:path (schema.contract/to-schema [:map [:match-eid :uuid]])}
+            :handler    (integrant.core/ref ::web.match-record/modal-view)}}]
+    ["/parse"
+     {:post {:summary    "Parse uploaded replays and return the review-step fragment."
+             :openapi    {:tags         ["match-record"]
+                          :consumes     ["multipart/form-data"]
+                          :produces     ["text/html"]
+                          :operation-id "match-record/parse-fragment"}
+             :parameters {:path      (schema.contract/to-schema [:map [:match-eid :uuid]])
+                          :multipart (schema.contract/to-schema [:map {:closed false}])}
+             :handler    (integrant.core/ref ::web.match-record/parse-replays-fragment)}}]
+    ["/submit"
+     {:post {:summary    "Commit a parsed-replay submission and return the submitted-step fragment."
+             :openapi    {:tags         ["match-record"]
+                          :consumes     ["application/x-www-form-urlencoded"]
+                          :produces     ["text/html"]
+                          :operation-id "match-record/submit-fragment"}
+             :parameters {:path (schema.contract/to-schema [:map [:match-eid :uuid]])}
+             :handler    (integrant.core/ref ::web.match-record/record-match-fragment)}}]]
    ["/game/:game-eid"
     {:middleware [(integrant.core/ref ::web.view/game-context-middleware)]}
     ["/index.html"
@@ -611,32 +629,7 @@
             :parameters {:path  schema.contract/id-path-parameter
                          :query schema.contract/version-query-parameter}
             :responses  {200 {:body domain/social-media-platform-resource}}
-            :handler    (integrant.core/ref ::web.social-media/get-platform)}}]
-
-   ["/match/:match-eid/parse"
-    {:name :match-record/parse
-     :post {:summary    "Parse N uploaded replays for a match (no DB writes)."
-            :openapi    {:tags         ["match-record"]
-                         :consumes     ["multipart/form-data"]
-                         :produces     ["application/json"]
-                         :operation-id "match-record/parse"}
-            :parameters {:path      (schema.contract/to-schema [:map [:match-eid :uuid]])
-                         ;; Permissive multipart — fields are `game-0`,
-                         ;; `game-1`, … containing the .replay files.
-                         :multipart (schema.contract/to-schema [:map {:closed false}])}
-            :handler    (integrant.core/ref ::web.match-record/parse-replays)}}]
-
-   ["/match/:match-eid/record"
-    {:name :match-record/by-match
-     :post {:summary    "Commit a parsed-replay submission with declared winners."
-            :openapi    {:tags         ["match-record"]
-                         :produces     ["application/json"]
-                         :operation-id "match-record/submit"}
-            :parameters {:path (schema.contract/to-schema [:map [:match-eid :uuid]])
-                         :body domain/record-match-specification}
-            :responses  {201 {:body domain/match-record-response}
-                         422 {:body domain/match-record-response}}
-            :handler    (integrant.core/ref ::web.match-record/record-match)}}]])
+            :handler    (integrant.core/ref ::web.social-media/get-platform)}}]])
 
 (defmethod integrant.core/init-key ::routes
   [_init-key routes]

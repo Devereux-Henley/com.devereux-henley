@@ -1,15 +1,16 @@
 <!--
-    Post-match modal — 4-step Hyperscript state machine.
+    Post-match modal — HTMX-driven 4-step flow.
 
-    Steps progress via the `data-pm-step` attribute on the modal root:
-      1. upload   — pick N replay files
-      2. parsing  — animated parse log while POST /api/match/:eid/parse runs
-      3. review   — per-game tabs + side-by-side drafts + winner buttons
-      4. submitted — confirmation after POST /api/match/:eid/record commits
+    The modal root carries `data-pm-step`, which CSS uses to flip which
+    step panel is visible:
+      1. upload    — initial Step 1 form (multipart upload)
+      2. parsing   — overlay panel with the animated parse log
+      3. review    — Step 3 fragment swapped into #pm-modal-body by /parse
+      4. submitted — Step 4 fragment swapped into #pm-modal-body by /submit
 
-    The match-eid, format, and player subs come from the server-rendered
-    Selmer context. Per-game parsed JSON is stashed in client state on the
-    modal root after Phase 1 returns; it's POSTed back at Phase 2 commit.
+    Server-rendered fragments push the step transition by setting
+    data-pm-step in an inline <script>. Step 1 → Step 2 is driven by the
+    form's htmx:before-request listener.
 -->
 <div id="pm-modal-root"
      class="pm-overlay"
@@ -19,8 +20,6 @@
      data-pm-step="upload"
      data-match-eid="{{match.eid}}"
      data-format="{{match.format}}"
-     data-p1="{{match.player-one-sub}}"
-     data-p2="{{match.player-two-sub}}"
      _="on closeMatchRecordModal remove me
         on keydown[key=='Escape'] from <body/> trigger closeMatchRecordModal">
     <div class="pm-modal">
@@ -74,66 +73,10 @@
         </div>
 
         <div class="pm-body">
-            <!-- ───────────── Step 1: Upload ───────────── -->
-            <div class="pm-step-panel pm-panel--upload">
-                <header class="pm-section-head">
-                    <p class="pm-section-eyebrow">Step 1 · Replay Upload</p>
-                    <h3 class="pm-section-title">Upload one replay per game</h3>
-                    <p class="pm-section-desc">Replays will be parsed automatically — drafts, factions, map and duration are read from the file. Either player can upload; the other will confirm.</p>
-                </header>
 
-                <div class="pm-upload-meta">
-                    <div class="pm-upload-player">
-                        <span class="pm-upload-handle">{{match.player-one-sub}}</span>
-                        <span class="pm-upload-role {% ifequal match.player-one-sub viewer-sub %}pm-upload-role--you{% endifequal %}">
-                            {% ifequal match.player-one-sub viewer-sub %}You{% else %}Opponent{% endifequal %}
-                        </span>
-                    </div>
-                    <span class="pm-vs-mark">VS</span>
-                    <div class="pm-upload-player pm-upload-player--right">
-                        <span class="pm-upload-handle">{{match.player-two-sub}}</span>
-                        <span class="pm-upload-role {% ifequal match.player-two-sub viewer-sub %}pm-upload-role--you{% endifequal %}">
-                            {% ifequal match.player-two-sub viewer-sub %}You{% else %}Opponent{% endifequal %}
-                        </span>
-                    </div>
-                </div>
-
-                <ul class="pm-game-list" style="list-style:none; margin:0; padding:0;">
-                    {% for game-index in game-indexes %}
-                    <li class="pm-game-row" data-game-row="{{game-index}}">
-                        <div class="pm-game-tag">
-                            <span class="pm-game-tag-num">{{game-index|add:1}}</span>
-                            <span class="pm-game-tag-label">Game</span>
-                        </div>
-                        <label class="pm-game-drop">
-                            <span class="pm-drop-icon" aria-hidden="true">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                    <polyline points="17 8 12 3 7 8"/>
-                                    <line x1="12" y1="3" x2="12" y2="15"/>
-                                </svg>
-                            </span>
-                            <div class="pm-drop-info">
-                                <span class="pm-drop-primary pm-drop-primary--placeholder" data-empty-label>Drop replay file or click to browse</span>
-                                <span class="pm-drop-secondary" data-empty-meta>.replay · max 16 MB</span>
-                                <span class="pm-drop-primary" data-file-label hidden></span>
-                                <span class="pm-drop-secondary" data-file-meta hidden></span>
-                            </div>
-                            <button type="button" class="pm-drop-clear" hidden
-                                    _="on click halt the event then call clearGameSlot({{game-index}})">
-                                Clear
-                            </button>
-                            <input type="file"
-                                   accept=".replay"
-                                   data-pm-file="{{game-index}}"
-                                   _="on change call onPmFilePicked({{game-index}}, my files[0])"/>
-                        </label>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-
-            <!-- ───────────── Step 2: Parsing ───────────── -->
+            <!-- ───────────── Always-on: Parsing overlay (Step 2) ───────────── -->
+            {# Lives outside #pm-modal-body so the swap doesn't blow it away.   #}
+            {# data-pm-step="parsing" on the root flips it visible via CSS.     #}
             <div class="pm-step-panel pm-panel--parsing">
                 <div class="pm-parsing">
                     <div class="pm-parsing-spinner" aria-hidden="true">
@@ -152,446 +95,152 @@
                         <span class="pm-parsing-spinner-inner">Reading</span>
                     </div>
                     <div class="pm-parse-status">Parsing replay archives</div>
-                    <ul class="pm-parse-log" data-parse-log>
-                        <!-- rows injected by client JS during step transition -->
+                    <ul class="pm-parse-log">
+                        {% for label in parse-log-labels %}
+                        <li class="pm-log--done" style="animation-delay: {{forloop.counter0}}00ms;">
+                            <span class="pm-log-mark">
+                                <svg class="pm-log-mark--done" width="14" height="14" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="3"
+                                     stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m5 12 5 5L20 7"/>
+                                </svg>
+                            </span>
+                            <span>{{label}}</span>
+                            <span class="pm-log-result"></span>
+                        </li>
+                        {% endfor %}
                     </ul>
                 </div>
             </div>
 
-            <!-- ───────────── Step 3: Review ───────────── -->
-            <div class="pm-step-panel pm-panel--review">
-                <header class="pm-section-head">
-                    <p class="pm-section-eyebrow">Step 3 · Review &amp; Declare</p>
-                    <h3 class="pm-section-title">Confirm parsed drafts and pick winner</h3>
-                    <p class="pm-section-desc">Drafts are read directly from each replay and are final. Pick the winner of each game; results lock once submitted.</p>
-                </header>
-                <div class="pm-game-tabs" role="tablist" data-pm-tabs></div>
-                <div data-pm-review-body><!-- per-game review pane injected here --></div>
-            </div>
+            <!-- ───────────── HTMX swap target: Steps 1, 3, 4 ───────────── -->
+            <div id="pm-modal-body">
+                <!-- Step 1: Upload form -->
+                <form class="pm-step-panel pm-panel--upload"
+                      hx-post="/view/match-record/{{match.eid}}/parse"
+                      hx-encoding="multipart/form-data"
+                      hx-target="#pm-modal-body"
+                      hx-swap="innerHTML"
+                      hx-on::before-request="document.getElementById('pm-modal-root').dataset.pmStep = 'parsing'"
+                      hx-on::response-error="document.getElementById('pm-modal-root').dataset.pmStep = 'upload'">
+                    <header class="pm-section-head">
+                        <p class="pm-section-eyebrow">Step 1 · Replay Upload</p>
+                        <h3 class="pm-section-title">Upload one replay per game</h3>
+                        <p class="pm-section-desc">Replays will be parsed automatically — drafts, factions, map and duration are read from the file. Either player can upload; the other will confirm.</p>
+                    </header>
 
-            <!-- ───────────── Step 4: Submitted ───────────── -->
-            <div class="pm-step-panel pm-panel--submitted">
-                <div class="pm-submitted">
-                    <div class="pm-submitted-mark">
-                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m5 12 5 5L20 7"/>
-                        </svg>
+                    <div class="pm-upload-meta">
+                        <div class="pm-upload-player">
+                            <span class="pm-upload-handle">{{match.player-one-sub}}</span>
+                            <span class="pm-upload-role {% ifequal match.player-one-sub viewer-sub %}pm-upload-role--you{% endifequal %}">
+                                {% ifequal match.player-one-sub viewer-sub %}You{% else %}Opponent{% endifequal %}
+                            </span>
+                        </div>
+                        <span class="pm-vs-mark">VS</span>
+                        <div class="pm-upload-player pm-upload-player--right">
+                            <span class="pm-upload-handle">{{match.player-two-sub}}</span>
+                            <span class="pm-upload-role {% ifequal match.player-two-sub viewer-sub %}pm-upload-role--you{% endifequal %}">
+                                {% ifequal match.player-two-sub viewer-sub %}You{% else %}Opponent{% endifequal %}
+                            </span>
+                        </div>
                     </div>
-                    <h3 class="pm-submitted-title">Match recorded</h3>
-                    <p class="pm-submitted-desc" data-pm-summary>
-                        <!-- filled by client JS with "{handle} takes the series N–M." -->
-                    </p>
-                    <div class="pm-result-summary" data-pm-result-rows>
-                        <!-- per-game rows injected by client JS -->
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="pm-footer">
-            <span class="pm-footer-hint" data-pm-hint>Pick a replay file for each game.</span>
-            <div class="pm-footer-actions">
-                <!-- Buttons toggle visibility based on current step via the [data-pm-step] selector below -->
-                <button type="button" class="pm-btn pm-btn--secondary" data-pm-action="cancel"
-                        _="on click trigger closeMatchRecordModal">Cancel</button>
-                <button type="button" class="pm-btn pm-btn--primary" data-pm-action="parse" disabled
-                        _="on click call advanceToParsing()">Parse Replays →</button>
-                <button type="button" class="pm-btn pm-btn--secondary" data-pm-action="back" hidden
-                        _="on click set #pm-modal-root@data-pm-step to 'upload'">← Back to upload</button>
-                <button type="button" class="pm-btn pm-btn--primary" data-pm-action="submit" hidden disabled
-                        _="on click call submitMatchRecord()">Submit Match →</button>
-                <button type="button" class="pm-btn pm-btn--primary" data-pm-action="finish" hidden
-                        _="on click trigger closeMatchRecordModal">Return to Tournament</button>
+                    <ul class="pm-game-list" style="list-style:none; margin:0; padding:0;">
+                        {% for game-index in game-indexes %}
+                        <li class="pm-game-row" data-game-row="{{game-index}}">
+                            <div class="pm-game-tag">
+                                <span class="pm-game-tag-num">{{game-index|add:1}}</span>
+                                <span class="pm-game-tag-label">Game</span>
+                            </div>
+                            <label class="pm-game-drop">
+                                <span class="pm-drop-icon" aria-hidden="true">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="17 8 12 3 7 8"/>
+                                        <line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
+                                </span>
+                                <div class="pm-drop-info">
+                                    <span class="pm-drop-primary pm-drop-primary--placeholder" data-empty-label>Drop replay file or click to browse</span>
+                                    <span class="pm-drop-secondary" data-empty-meta>.replay · max 16 MB</span>
+                                    <span class="pm-drop-primary" data-file-label hidden></span>
+                                    <span class="pm-drop-secondary" data-file-meta hidden></span>
+                                </div>
+                                <button type="button"
+                                        class="pm-drop-clear"
+                                        hidden
+                                        _="on click halt the event
+                                           set row to closest .pm-game-row
+                                           set input to <input[type=file]/> in row
+                                           set input.value to ''
+                                           remove .pm-game-row--has-file from row
+                                           remove @hidden from <[data-empty-label]/> in row
+                                           remove @hidden from <[data-empty-meta]/> in row
+                                           add @hidden to <[data-file-label]/> in row
+                                           add @hidden to <[data-file-meta]/> in row
+                                           add @hidden to me
+                                           send pmFileChange to closest <form/>">
+                                    Clear
+                                </button>
+                                <input type="file"
+                                       name="game-{{game-index}}"
+                                       accept=".replay"
+                                       _="on change
+                                          if my files.length is 0 exit end
+                                          set row to closest .pm-game-row
+                                          set f to my files[0]
+                                          add .pm-game-row--has-file to row
+                                          add @hidden to <[data-empty-label]/> in row
+                                          add @hidden to <[data-empty-meta]/> in row
+                                          set lbl to <[data-file-label]/> in row
+                                          set lbl.textContent to f.name
+                                          remove @hidden from lbl
+                                          set meta to <[data-file-meta]/> in row
+                                          set sizeMb to (f.size / 1048576).toFixed(1)
+                                          set meta.textContent to sizeMb + ' MB · just now'
+                                          remove @hidden from meta
+                                          remove @hidden from <.pm-drop-clear/> in row
+                                          send pmFileChange to closest <form/>"/>
+                            </label>
+                        </li>
+                        {% endfor %}
+                    </ul>
+
+                    <div class="pm-footer">
+                        <span class="pm-footer-hint" data-pm-hint>Pick a replay file for each game.</span>
+                        <div class="pm-footer-actions">
+                            <button type="button"
+                                    class="pm-btn pm-btn--secondary"
+                                    _="on click trigger closeMatchRecordModal">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                    class="pm-btn pm-btn--primary"
+                                    disabled
+                                    _="on pmFileChange from closest <form/>
+                                       set inputs to (closest <form/>).querySelectorAll('input[type=file]')
+                                       set picked to 0
+                                       repeat in inputs
+                                         if its.files.length > 0 then increment picked end
+                                       end
+                                       set total to inputs.length
+                                       if picked < total
+                                         add @disabled to me
+                                       else
+                                         remove @disabled from me
+                                       end
+                                       set hint to <[data-pm-hint]/> in closest <form/>
+                                       if picked is total
+                                         set hint.textContent to total + ' of ' + total + ' replays ready.'
+                                       else
+                                         set hint.textContent to picked + ' of ' + total + ' replays uploaded.'
+                                       end">
+                                Parse Replays →
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-
-    {# Inline state machine + AJAX bridge for the modal. Loaded as a block #}
-    {# rather than a separate file because it needs literal access to the   #}
-    {# server-rendered match metadata and renders quickly inline.           #}
-    <script>
-    (function () {
-      const root = document.getElementById('pm-modal-root');
-      if (!root) return;
-
-      const matchEid = root.dataset.matchEid;
-      const gameCount = parseInt(root.dataset.format, 10);
-      const p1 = root.dataset.p1;
-      const p2 = root.dataset.p2;
-
-      // Slot state — files chosen, parse results returned, winners declared.
-      const state = {
-        files:    new Array(gameCount).fill(null),
-        parsed:   new Array(gameCount).fill(null),
-        winners:  {} // {gameIndex: 'p1' | 'p2'}
-      };
-
-      function $(sel)  { return root.querySelector(sel); }
-      function $$(sel) { return Array.from(root.querySelectorAll(sel)); }
-
-      function refreshUploadStep() {
-        const ready = state.files.every(Boolean);
-        $('[data-pm-action="parse"]').disabled = !ready;
-        $('[data-pm-hint]').textContent = ready
-          ? `${gameCount} of ${gameCount} replays ready.`
-          : `${state.files.filter(Boolean).length} of ${gameCount} replays uploaded.`;
-      }
-
-      window.onPmFilePicked = function (index, file) {
-        if (!file) return;
-        state.files[index] = file;
-        const row = root.querySelector(`[data-game-row="${index}"]`);
-        row.classList.add('pm-game-row--has-file');
-        row.querySelector('[data-empty-label]').hidden = true;
-        row.querySelector('[data-empty-meta]').hidden = true;
-        const sizeMb = (file.size / 1048576).toFixed(1);
-        const fileLabel = row.querySelector('[data-file-label]');
-        const fileMeta = row.querySelector('[data-file-meta]');
-        fileLabel.textContent = file.name;
-        fileLabel.hidden = false;
-        fileMeta.textContent = `${sizeMb} MB · just now`;
-        fileMeta.hidden = false;
-        row.querySelector('.pm-drop-clear').hidden = false;
-        refreshUploadStep();
-      };
-
-      window.clearGameSlot = function (index) {
-        state.files[index] = null;
-        state.parsed[index] = null;
-        const row = root.querySelector(`[data-game-row="${index}"]`);
-        row.classList.remove('pm-game-row--has-file');
-        row.querySelector('[data-empty-label]').hidden = false;
-        row.querySelector('[data-empty-meta]').hidden = false;
-        row.querySelector('[data-file-label]').hidden = true;
-        row.querySelector('[data-file-meta]').hidden = true;
-        row.querySelector('.pm-drop-clear').hidden = true;
-        const input = row.querySelector('input[type="file"]');
-        if (input) input.value = '';
-        refreshUploadStep();
-      };
-
-      // ── Step 1 → Step 2 ──────────────────────────────────────────────────
-      window.advanceToParsing = async function () {
-        root.dataset.pmStep = 'parsing';
-        toggleFooter('parsing');
-
-        // Build the parse-log rows (5 per game) before kicking off the
-        // request so the user sees them populate as we go.
-        const log = $('[data-parse-log]');
-        log.innerHTML = '';
-        const labels = (i) => [
-          `Reading ${state.files[i].name}`,
-          'Verifying header',
-          'Detecting players & factions',
-          'Resolving draft compositions',
-          'Reading map & duration'
-        ];
-        const rows = [];
-        for (let i = 0; i < gameCount; i++) {
-          for (const label of labels(i)) {
-            const li = document.createElement('li');
-            li.innerHTML = `
-              <span class="pm-log-mark">
-                <span style="width:6px;height:6px;border-radius:50%;background:var(--color-border-strong);display:inline-block"></span>
-              </span>
-              <span>${label}</span>
-              <span class="pm-log-result"></span>`;
-            log.appendChild(li);
-            rows.push({li, label});
-          }
-        }
-
-        // Kick off the actual parse in parallel with the animation.
-        const fd = new FormData();
-        state.files.forEach((f, i) => fd.append(`game-${i}`, f, f.name));
-        const parsePromise = fetch(`/api/match/${matchEid}/parse`, {
-          method: 'POST', body: fd, credentials: 'include'
-        }).then(r => r.json()).catch(err => ({error: err.message}));
-
-        // Animate. 280ms per row.
-        for (let i = 0; i < rows.length; i++) {
-          await sleep(280);
-          rows[i].li.classList.remove('pm-log--working');
-          rows[i].li.classList.add('pm-log--done');
-          const mark = rows[i].li.querySelector('.pm-log-mark');
-          mark.innerHTML = `<svg class="pm-log-mark--done" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>`;
-          if (i + 1 < rows.length) {
-            rows[i + 1].li.classList.add('pm-log--working');
-          }
-        }
-
-        const parseResult = await parsePromise;
-        if (parseResult && parseResult.error) {
-          // Fallback — show error in the log section.
-          $('[data-pm-hint]').textContent = `Parse failed: ${parseResult.error}`;
-          $('[data-pm-hint]').style.color = 'var(--color-danger-500)';
-          return;
-        }
-        // parseResult.games[i].parsed is the parsed map for game i
-        parseResult.games.forEach((g, i) => { state.parsed[i] = g.parsed; });
-
-        await sleep(360);
-        renderReview();
-        root.dataset.pmStep = 'review';
-        toggleFooter('review');
-      };
-
-      function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-      // ── Step 3: render per-game tabs + review pane ───────────────────────
-      function renderReview() {
-        const tabs = $('[data-pm-tabs]');
-        tabs.innerHTML = '';
-        for (let i = 0; i < gameCount; i++) {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'pm-game-tab' + (i === 0 ? ' pm-game-tab--active' : '');
-          btn.dataset.gameIndex = i;
-          btn.innerHTML = `<span class="pm-game-tab-num">G${i + 1}</span> <span>Game ${i + 1}</span>`;
-          btn.addEventListener('click', () => showGame(i));
-          tabs.appendChild(btn);
-        }
-        showGame(0);
-        refreshSubmitState();
-      }
-
-      function showGame(index) {
-        $$('[data-pm-tabs] .pm-game-tab').forEach((b, i) => {
-          b.classList.toggle('pm-game-tab--active', i === index);
-        });
-        const parsed = state.parsed[index];
-        if (!parsed) return;
-        const winner = state.winners[index];
-        const a0 = parsed.alliances[0] || {};
-        const a1 = parsed.alliances[1] || {};
-        // Map alliances → players using uploader_local_alliance_index and
-        // assuming the uploader is the viewer (matches handoff scope).
-        const viewerLocalIndex = parsed.uploader_local_alliance_index;
-        const viewerIsP1 = root.dataset.p1 === document.body.dataset.viewerSub;
-        const draftP1 = (viewerLocalIndex === 0) === viewerIsP1 ? a0 : a1;
-        const draftP2 = draftP1 === a0 ? a1 : a0;
-
-        const body = $('[data-pm-review-body]');
-        body.innerHTML = `
-          <div class="pm-game-summary">
-            <div class="pm-summary-cell"><span class="pm-summary-label">Match ID</span><span class="pm-summary-value pm-summary-value--mono">${parsed.match_id || '—'}</span></div>
-            <div class="pm-summary-cell"><span class="pm-summary-label">Played at</span><span class="pm-summary-value pm-summary-value--mono">${formatPlayedAt(parsed.played_at)}</span></div>
-            <div class="pm-summary-cell"><span class="pm-summary-label">Format</span><span class="pm-summary-value pm-summary-value--mono">${parsed.format}</span></div>
-            <div class="pm-summary-cell"><span class="pm-summary-label">Models</span><span class="pm-summary-value pm-summary-value--mono">${draftP1.model_count} vs ${draftP2.model_count}</span></div>
-          </div>
-          <div class="pm-draft-pair">
-            ${renderDraftCard(p1, draftP1, winner === 'p1', winner === 'p2')}
-            ${renderDraftCard(p2, draftP2, winner === 'p2', winner === 'p1')}
-          </div>
-          <div class="pm-winner-step">
-            <p class="pm-winner-prompt">Who won game ${index + 1}?</p>
-            <div class="pm-winner-pair">
-              ${renderWinnerBtn(index, 'p1', p1, draftP1, winner === 'p1')}
-              ${renderWinnerBtn(index, 'p2', p2, draftP2, winner === 'p2')}
-            </div>
-          </div>`;
-        body.querySelectorAll('[data-winner-btn]').forEach((btn) => {
-          btn.addEventListener('click', () => {
-            const gi = parseInt(btn.dataset.gameIndex, 10);
-            const who = btn.dataset.who;
-            state.winners[gi] = who;
-            showGame(gi);
-            refreshSubmitState();
-          });
-        });
-      }
-
-      function escHtml(s) {
-        return String(s == null ? '' : s)
-          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-      }
-
-      function renderUnitCard(u) {
-        // Enriched units carry name/cost/unit_category_name from the
-        // unit-table join.  Fall back to a prettified key when the engine
-        // key wasn't matched (some units aren't in seed-unit-keys yet).
-        const enriched = !!u.name;
-        const display  = enriched ? u.name : u.key;
-        const cost     = enriched && u.cost != null ? u.cost : '';
-        const isLord   = (u.unit_category_name || '').toLowerCase() === 'lord';
-        const cls      = ['pm-draft-unit'];
-        if (isLord) cls.push('pm-draft-unit--lord');
-        return `
-          <div class="${cls.join(' ')}" title="${escHtml(u.key)}">
-            <div class="pm-draft-unit-name">${escHtml(display)}</div>
-            ${cost !== '' ? `<span class="pm-draft-unit-cost">${cost}</span>` : ''}
-            <div class="pm-draft-unit-tooltip">
-              <strong>${escHtml(display)}</strong>
-              <span>${escHtml(u.unit_category_name || u.unit_type_name || '—')}${cost !== '' ? ` · ${cost} pts` : ''}</span>
-            </div>
-          </div>`;
-      }
-
-      function renderDraftCard(handle, draft, isWinner, isLoser) {
-        const armies = (draft.armies || []);
-        const units  = armies.flatMap(a => a.units || []);
-        // Total cost from enriched units when available; otherwise fall back
-        // to total models so the header isn't blank.
-        const enrichedCount = units.filter((u) => u.cost != null).length;
-        let totalNum, totalLabel;
-        if (enrichedCount === units.length && enrichedCount > 0) {
-          totalNum   = units.reduce((s, u) => s + (u.cost || 0), 0);
-          totalLabel = 'pts';
-        } else {
-          totalNum   = draft.model_count
-                       || armies.reduce((s, a) => s + (a.force_value || 0), 0);
-          totalLabel = 'models';
-        }
-        const cls = ['pm-draft-card'];
-        if (isWinner) cls.push('pm-draft-card--winner');
-        if (isLoser)  cls.push('pm-draft-card--loser');
-        return `
-          <div class="${cls.join(' ')}">
-            <div class="pm-draft-head">
-              <div class="pm-draft-handle">
-                <span class="pm-draft-handle-name">${escHtml(handle)}</span>
-                <span class="pm-draft-handle-faction">${escHtml(draft.faction_key || '')}</span>
-              </div>
-              <div class="pm-draft-cost">
-                <span class="pm-draft-cost-num">${totalNum.toLocaleString()}</span>
-                <span class="pm-draft-cost-unit">${totalLabel}</span>
-              </div>
-            </div>
-            <div class="pm-draft-units">
-              ${units.map(renderUnitCard).join('')}
-            </div>
-            <div class="pm-draft-foot">
-              <span>${units.length} units across ${armies.length} ${armies.length === 1 ? 'army' : 'armies'}</span>
-              <strong>${escHtml((armies[0]||{}).commander_display || '')}</strong>
-            </div>
-          </div>`;
-      }
-
-      function renderWinnerBtn(gameIndex, who, handle, draft, selected) {
-        const cls = ['pm-winner-btn'];
-        if (who === 'p2') cls.push('pm-winner-btn--right');
-        if (selected) cls.push('pm-winner-btn--selected');
-        return `
-          <button type="button"
-                  data-winner-btn
-                  data-game-index="${gameIndex}"
-                  data-who="${who}"
-                  class="${cls.join(' ')}">
-            <span class="pm-winner-trophy" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M6 9H4a2 2 0 0 1-2-2V5h4"/>
-                <path d="M18 9h2a2 2 0 0 0 2-2V5h-4"/>
-                <path d="M6 5h12v6a6 6 0 1 1-12 0V5z"/>
-                <path d="M9 22h6"/>
-                <path d="M12 17v5"/>
-              </svg>
-            </span>
-            <span class="pm-winner-handle">
-              <span class="pm-winner-handle-name">${handle}</span>
-              <span class="pm-winner-handle-faction">${draft.faction_key || ''}</span>
-            </span>
-          </button>`;
-      }
-
-      function refreshSubmitState() {
-        const declared = Object.keys(state.winners).length;
-        // Series clinched? max(p1, p2) >= ceil(N/2)
-        const counts = Object.values(state.winners).reduce((acc, w) => {
-          acc[w] = (acc[w] || 0) + 1; return acc;
-        }, {p1: 0, p2: 0});
-        const need = Math.ceil(gameCount / 2);
-        const clinched = counts.p1 >= need || counts.p2 >= need;
-        const allDone = declared === gameCount;
-        const ready = allDone || clinched;
-        $('[data-pm-action="submit"]').disabled = !ready;
-        $('[data-pm-hint]').textContent = ready
-          ? 'All games declared. Submit when ready.'
-          : `Declare a winner for each game (${declared}/${gameCount}).`;
-      }
-
-      // ── Step 3 → Step 4: commit ──────────────────────────────────────────
-      window.submitMatchRecord = async function () {
-        const need = Math.ceil(gameCount / 2);
-        const counts = Object.values(state.winners).reduce((acc, w) => {
-          acc[w] = (acc[w] || 0) + 1; return acc;
-        }, {p1: 0, p2: 0});
-        const clinched = counts.p1 >= need || counts.p2 >= need;
-        // For a clinched series we still send only the games that have winners.
-        const games = [];
-        for (let i = 0; i < gameCount; i++) {
-          const w = state.winners[i];
-          if (!w && !clinched) return;
-          if (!w) continue;
-          const parsed = state.parsed[i];
-          const winnerSub = w === 'p1' ? p1 : p2;
-          games.push({'winner-sub': winnerSub, parsed: parsed});
-        }
-        const resp = await fetch(`/api/match/${matchEid}/record`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: {'Content-Type': 'application/json', 'Accept': 'application/hal+json'},
-          body: JSON.stringify({games: games})
-        });
-        const result = await resp.json();
-        if (resp.status >= 400) {
-          $('[data-pm-hint]').textContent = result.message || 'Submission failed.';
-          $('[data-pm-hint]').style.color = 'var(--color-danger-500)';
-          return;
-        }
-        renderSubmitted(result, games);
-        root.dataset.pmStep = 'submitted';
-        toggleFooter('submitted');
-      };
-
-      function renderSubmitted(result, games) {
-        const counts = games.reduce((acc, g) => {
-          const w = g['winner-sub'];
-          if (w === p1) acc.p1++;
-          if (w === p2) acc.p2++;
-          return acc;
-        }, {p1: 0, p2: 0});
-        const winnerHandle = result['winner-sub'] || (counts.p1 > counts.p2 ? p1 : p2);
-        $('[data-pm-summary]').textContent =
-          `${winnerHandle} takes the series ${counts.p1}–${counts.p2}.`;
-        const rows = $('[data-pm-result-rows]');
-        rows.innerHTML = games.map((g, i) => `
-          <div class="pm-result-row">
-            <span class="pm-result-game">Game ${i + 1}</span>
-            <span class="pm-result-name ${g['winner-sub'] === p1 ? 'pm-result-name--winner' : ''}">${p1}</span>
-            <span class="pm-result-vs">vs</span>
-            <span class="pm-result-name pm-result-name--right ${g['winner-sub'] === p2 ? 'pm-result-name--winner' : ''}">${p2}</span>
-          </div>`).join('');
-      }
-
-      function toggleFooter(step) {
-        const map = {
-          upload:    {primary: 'parse',  back: false, secondary: 'cancel', finish: false},
-          parsing:   {primary: null,     back: false, secondary: null,     finish: false},
-          review:    {primary: 'submit', back: true,  secondary: null,     finish: false},
-          submitted: {primary: null,     back: false, secondary: null,     finish: true}
-        };
-        const cfg = map[step];
-        const setVis = (key, on) => {
-          const el = root.querySelector(`[data-pm-action="${key}"]`);
-          if (el) el.hidden = !on;
-        };
-        ['parse', 'submit', 'finish', 'cancel', 'back'].forEach(k => setVis(k, false));
-        if (cfg.primary)   setVis(cfg.primary, true);
-        if (cfg.back)      setVis('back', true);
-        if (cfg.secondary) setVis(cfg.secondary, true);
-        if (cfg.finish)    setVis('finish', true);
-      }
-
-      function formatPlayedAt(at) {
-        if (!at) return '—';
-        if (typeof at === 'string') return at;
-        const pad = (n) => String(n).padStart(2, '0');
-        return `${at.year}-${pad(at.month)}-${pad(at.day)} ${pad(at.hour)}:${pad(at.minute)}`;
-      }
-
-      refreshUploadStep();
-      toggleFooter('upload');
-    })();
-    </script>
 </div>

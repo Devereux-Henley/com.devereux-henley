@@ -1,22 +1,26 @@
 (ns com.devereux-henley.rts-web.web.match-record
-  "Web handlers for the post-match modal. Two-phase flow:
+  "Web handlers for the post-match modal. HTMX-driven two-phase flow:
 
-    1. POST /api/match/:match-eid/parse — multipart with N `.replay` files,
-       parses each via the Rust binary, returns parsed JSON enriched with
-       per-unit name + cost lookups.  No DB writes.
-    2. POST /api/match/:match-eid/record — JSON body with the parsed data
-       (echoed back from phase 1) plus per-game declared winner subs.
-       Persists replays + match_game rows + match completion.
+    1. POST /view/match-record/:match-eid/parse — multipart with N
+       `.replay` files. Parses each via the Rust binary, enriches units
+       from the unit table, and returns the Step 3 review fragment HTML
+       (with hidden parsed JSON in form fields). No DB writes.
+    2. POST /view/match-record/:match-eid/submit — form-encoded with the
+       hidden parsed JSON echoed back plus per-game `winner-sub-N`.
+       Persists replays + match_game rows + match completion, returns the
+       Step 4 submitted fragment HTML.
 
-  The modal also serves an HTML fragment view for the modal itself."
+  GET /view/match-record/:match-eid/index.html serves the modal shell."
   (:require
    [camel-snake-kebab.core :as csk]
    [camel-snake-kebab.extras :as cske]
    [clojure.set :as set]
+   [clojure.string :as str]
    [com.devereux-henley.rts-data-access.contract :as db]
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.render :as render]
-   [integrant.core]))
+   [integrant.core]
+   [jsonista.core :as jsonista]))
 
 (defn- parsed->snake
   "Internal kebab-case keys from the parser get round-tripped through the
@@ -86,54 +90,24 @@
                         :file-path   (.getAbsolutePath (:tempfile part))}))
       acc)))
 
-(defmethod integrant.core/init-key ::parse-replays
-  [_init-key dependencies]
-  (fn [{{{:keys [match-eid]} :path} :parameters
-        multipart-params            :multipart-params
-        :as                         _request}]
-    (let [files (collect-game-files multipart-params)]
-      (cond
-        (empty? files)
-        {:status 400
-         :body   {:type    :match-record/error
-                  :message "No game files supplied. Use multipart fields game-0, game-1, …"}}
+(defn- snake->kebab
+  "Re-keywordizes a JSON-decoded parsed map back to the kebab-case
+  keywords the domain layer expects. The parsed JSON travels through the
+  modal as snake_case (matching the Rust binary's wire format)."
+  [m] (cske/transform-keys csk/->kebab-case-keyword m))
 
-        :else
-        (try
-          (let [parsed   (domain/parse-replay-files dependencies (mapv :file-path files))
-                key->row (resolve-units dependencies parsed)
-                enriched (mapv #(enrich-parsed key->row %) parsed)]
-            {:status 200
-             :body   {:type      :match-record/parsed
-                      :match-eid match-eid
-                      :games     (mapv (fn [{:keys [source-name]} parsed-map]
-                                         {:source-name source-name
-                                          :parsed      (parsed->snake parsed-map)})
-                                       files
-                                       enriched)}})
-          (catch Exception e
-            {:status 422
-             :body   {:type    :match-record/error
-                      :message (str "Replay parse failed: " (.getMessage e))}}))))))
-
-(defn- snake->kebab [m] (cske/transform-keys csk/->kebab-case-keyword m))
-
-(defmethod integrant.core/init-key ::record-match
-  [_init-key dependencies]
-  (fn [{{{:keys [match-eid]} :path
-         {:keys [games]}     :body} :parameters
-        session                     :ory-session
-        :as                         _request}]
-    (let [submission {:games           (mapv (fn [{:keys [winner-sub parsed source-name]}]
-                                               {:winner-sub  winner-sub
-                                                :source-name source-name
-                                                :parsed      (snake->kebab parsed)})
-                                             games)
-                      :uploaded-by-sub (get-in session [:identity :id])}
-          result     (domain/record-match-from-parsed dependencies match-eid submission)]
-      (case (:type result)
-        :match-record/recorded {:status 201 :body result}
-        :match-record/error    {:status 422 :body result}))))
+(defn- parse-log-labels
+  "Builds the staggered Step-2 log lines (5 per game). The animation that
+  reveals them is pure CSS (per-row animation-delay)."
+  [game-count]
+  (vec
+   (for [game (range 1 (inc game-count))
+         label ["Reading replay {n}"
+                "Verifying header"
+                "Detecting players & factions"
+                "Resolving draft compositions"
+                "Reading map & duration"]]
+     (str/replace label "{n}" (str game)))))
 
 (defmethod integrant.core/init-key ::modal-view
   [_init-key dependencies]
@@ -144,10 +118,200 @@
              (domain/get-record-context dependencies match-eid)]
       {:status 200
        :body   (render/render "match-record-modal.html"
-                              {:match        match
-                               :games        games
-                               :viewer-sub   (get-in session [:identity :id])
-                               :game-count   (:format match)
-                               :game-indexes (vec (range (:format match)))})}
+                              {:match             match
+                               :games             games
+                               :viewer-sub        (get-in session [:identity :id])
+                               :game-count        (:format match)
+                               :game-indexes      (vec (range (:format match)))
+                               :parse-log-labels  (parse-log-labels (:format match))})}
       {:status 404
        :body   {:type :missing/resource :name "match" :id match-eid}})))
+
+;; ─── Fragment endpoints (HTMX-driven modal flow) ──────────────────────────
+
+(defn- format-played-at
+  "Renders the parser's `:played-at` map as `YYYY-MM-DD HH:MM`. Returns nil
+  for nil/string inputs (string is shown verbatim by the template)."
+  [played-at]
+  (when (map? played-at)
+    (format "%04d-%02d-%02d %02d:%02d"
+            (:year played-at) (:month played-at) (:day played-at)
+            (:hour played-at) (:minute played-at))))
+
+(defn- alliance->units
+  "Flattens an alliance's armies → units into the per-unit shape the
+  review template expects (display name, cost when enriched, lord flag,
+  tooltip)."
+  [alliance]
+  (->> (:armies alliance)
+       (mapcat :units)
+       (mapv (fn [{:keys [key name cost unit-category-name unit-type-name]}]
+               (let [enriched? (some? name)
+                     display   (if enriched? name key)
+                     category  (or unit-category-name unit-type-name "—")
+                     is-lord?  (= "lord" (some-> unit-category-name str/lower-case))]
+                 {:key      key
+                  :display  display
+                  :cost     cost
+                  :is-lord  is-lord?
+                  :tooltip  (if cost
+                              (str category " · " cost " pts")
+                              category)})))))
+
+(defn- alliance-totals
+  "Returns the {:total-num … :total-unit …} pair shown in the draft head.
+  When every unit is enriched, reports total point cost; otherwise falls
+  back to model count so the header isn't blank."
+  [alliance units]
+  (let [enriched-count (count (filter :cost units))]
+    (if (and (pos? enriched-count) (= enriched-count (count units)))
+      {:total-num  (reduce + 0 (keep :cost units))
+       :total-unit "pts"}
+      {:total-num  (or (:model-count alliance)
+                       (reduce + 0 (keep :force-value (:armies alliance)))
+                       0)
+       :total-unit "models"})))
+
+(defn- side-context
+  "Builds the per-player side struct for one game (handle, faction-key,
+  unit list, totals, commander, army count)."
+  [handle alliance]
+  (let [armies      (vec (:armies alliance))
+        units       (alliance->units alliance)
+        totals      (alliance-totals alliance units)
+        commander   (:commander-display (first armies))]
+    (merge totals
+           {:handle            handle
+            :faction-key       (:faction-key alliance)
+            :units             units
+            :unit-count        (count units)
+            :army-count        (count armies)
+            :commander-display (or commander "")})))
+
+(defn- build-game-context
+  "Shapes a parsed game into the row the review template iterates over.
+  Resolves which alliance maps to which player using the parser's
+  uploader-local-alliance-index plus the viewer's identity (the uploader
+  is whoever is using the modal). The hidden parsed-json carries the
+  snake_case form back to the submit endpoint untouched."
+  [match viewer-sub game-index source-name parsed]
+  (let [a0               (get-in parsed [:alliances 0] {})
+        a1               (get-in parsed [:alliances 1] {})
+        viewer-local-idx (:uploader-local-alliance-index parsed)
+        viewer-is-p1?    (= viewer-sub (:player-one-sub match))
+        ;; viewer-is-p1? + viewer-local-idx pair determines the mapping.
+        ;; If viewer is p1 and viewer's alliance is index 0, p1=a0.
+        ;; If viewer is p1 and viewer's alliance is index 1, p1=a1.
+        ;; If viewer is p2, swap.
+        p1-alliance      (if (= viewer-is-p1? (zero? (or viewer-local-idx 0))) a0 a1)
+        p2-alliance      (if (identical? p1-alliance a0) a1 a0)]
+    {:game-index     game-index
+     :game-num       (inc game-index)
+     :parsed-json    (jsonista/write-value-as-string (parsed->snake parsed))
+     :source-name    source-name
+     :match-id       (:match-id parsed)
+     :played-at      (format-played-at (:played-at parsed))
+     :parser-format  (:format parsed)
+     :p1-model-count (:model-count p1-alliance)
+     :p2-model-count (:model-count p2-alliance)
+     :p1             (side-context (:player-one-sub match) p1-alliance)
+     :p2             (side-context (:player-two-sub match) p2-alliance)}))
+
+(defn- error-fragment
+  [message]
+  {:status  422
+   :headers {"Content-Type" "text/html; charset=utf-8"}
+   :body    (str "<section class=\"pm-error\" role=\"alert\">"
+                 (-> message
+                     (str/replace "&" "&amp;")
+                     (str/replace "<" "&lt;")
+                     (str/replace ">" "&gt;"))
+                 "</section>")})
+
+(defmethod integrant.core/init-key ::parse-replays-fragment
+  [_init-key dependencies]
+  (fn [{{{:keys [match-eid]} :path} :parameters
+        multipart-params            :multipart-params
+        session                     :ory-session
+        :as                         _request}]
+    (let [files (collect-game-files multipart-params)
+          match (db/get-match-by-eid (:connection dependencies) match-eid)]
+      (cond
+        (nil? match)        (error-fragment "Match not found.")
+        (empty? files)      (error-fragment "No replay files supplied.")
+        :else
+        (try
+          (let [parsed   (domain/parse-replay-files dependencies (mapv :file-path files))
+                key->row (resolve-units dependencies parsed)
+                enriched (mapv #(enrich-parsed key->row %) parsed)
+                viewer   (get-in session [:identity :id])
+                games    (mapv (fn [game-index file parsed-map]
+                                 (build-game-context match viewer game-index
+                                                     (:source-name file) parsed-map))
+                               (range)
+                               files
+                               enriched)]
+            {:status  200
+             :headers {"Content-Type" "text/html; charset=utf-8"}
+             :body    (render/render "match-record-review-fragment.html"
+                                     {:match match
+                                      :games games})})
+          (catch Exception e
+            (error-fragment (str "Replay parse failed: " (.getMessage e)))))))))
+
+(defn- collect-form-games
+  "Reads back the hidden parsed-N / source-name-N / winner-sub-N fields
+  from the submit form. Skips games with no winner declared (clinched
+  series may leave the trailing radios blank)."
+  [form-params game-count]
+  (->> (range game-count)
+       (keep (fn [idx]
+               (let [winner      (get form-params (str "winner-sub-" idx))
+                     parsed-json (get form-params (str "parsed-" idx))
+                     source-name (get form-params (str "source-name-" idx))]
+                 (when (and (not (str/blank? winner))
+                            (not (str/blank? parsed-json)))
+                   {:winner-sub  winner
+                    :source-name source-name
+                    :parsed      (-> parsed-json
+                                     (jsonista/read-value
+                                      (jsonista/object-mapper {:decode-key-fn keyword}))
+                                     snake->kebab)}))))
+       vec))
+
+(defmethod integrant.core/init-key ::record-match-fragment
+  [_init-key dependencies]
+  (fn [{{{:keys [match-eid]} :path} :parameters
+        session                     :ory-session
+        form-params                 :form-params
+        :as                         _request}]
+    (let [match (db/get-match-by-eid (:connection dependencies) match-eid)]
+      (cond
+        (nil? match) (error-fragment "Match not found.")
+        :else
+        (let [games      (collect-form-games form-params (:format match))
+              submission {:games           games
+                          :uploaded-by-sub (get-in session [:identity :id])}
+              result     (domain/record-match-from-parsed dependencies match-eid submission)]
+          (case (:type result)
+            :match-record/recorded
+            (let [p1            (:player-one-sub match)
+                  p2            (:player-two-sub match)
+                  win-counts    (frequencies (keep :winner-sub (:games result)))
+                  result-rows   (mapv (fn [g]
+                                        {:game-num (inc (:game-index g))
+                                         :p1-sub   p1
+                                         :p2-sub   p2
+                                         :p1-won   (= p1 (:winner-sub g))
+                                         :p2-won   (= p2 (:winner-sub g))})
+                                      (:games result))]
+              {:status  201
+               :headers {"Content-Type" "text/html; charset=utf-8"}
+               :body    (render/render "match-record-submitted-fragment.html"
+                                       {:winner-sub (:winner-sub result)
+                                        :p1-wins    (get win-counts p1 0)
+                                        :p2-wins    (get win-counts p2 0)
+                                        :result-rows result-rows})})
+
+            :match-record/error
+            (error-fragment (:message result))))))))

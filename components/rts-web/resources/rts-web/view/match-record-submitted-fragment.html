@@ -1,0 +1,43 @@
+<!--
+    Step 4 — Submitted. Server-rendered fragment swapped into #pm-modal-body
+    after the commit endpoint persists the match. Pure presentation; the
+    domain has already done all the persistence by the time this renders.
+-->
+<div class="pm-step-panel pm-panel--submitted">
+    <div class="pm-submitted">
+        <div class="pm-submitted-mark">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m5 12 5 5L20 7"/>
+            </svg>
+        </div>
+        <h3 class="pm-submitted-title">Match recorded</h3>
+        <p class="pm-submitted-desc">{{winner-sub}} takes the series {{p1-wins}}–{{p2-wins}}.</p>
+        <div class="pm-result-summary">
+            {% for row in result-rows %}
+            <div class="pm-result-row">
+                <span class="pm-result-game">Game {{row.game-num}}</span>
+                <span class="pm-result-name{% if row.p1-won %} pm-result-name--winner{% endif %}">{{row.p1-sub}}</span>
+                <span class="pm-result-vs">vs</span>
+                <span class="pm-result-name pm-result-name--right{% if row.p2-won %} pm-result-name--winner{% endif %}">{{row.p2-sub}}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="pm-footer">
+    <span class="pm-footer-hint">All games declared. Submit when ready.</span>
+    <div class="pm-footer-actions">
+        <button type="button" class="pm-btn pm-btn--primary"
+                _="on click trigger closeMatchRecordModal">
+            Return to Tournament
+        </button>
+    </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.getElementById('pm-modal-root');
+    if (root) root.dataset.pmStep = 'submitted';
+  })();
+</script>
