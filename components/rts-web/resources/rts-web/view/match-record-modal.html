@@ -1,0 +1,246 @@
+<!--
+    Post-match modal — HTMX-driven 4-step flow.
+
+    The modal root carries `data-pm-step`, which CSS uses to flip which
+    step panel is visible:
+      1. upload    — initial Step 1 form (multipart upload)
+      2. parsing   — overlay panel with the animated parse log
+      3. review    — Step 3 fragment swapped into #pm-modal-body by /parse
+      4. submitted — Step 4 fragment swapped into #pm-modal-body by /submit
+
+    Server-rendered fragments push the step transition by setting
+    data-pm-step in an inline <script>. Step 1 → Step 2 is driven by the
+    form's htmx:before-request listener.
+-->
+<div id="pm-modal-root"
+     class="pm-overlay"
+     role="dialog"
+     aria-modal="true"
+     aria-label="Record match results"
+     data-pm-step="upload"
+     data-match-eid="{{match.eid}}"
+     data-format="{{match.format}}"
+     _="on closeMatchRecordModal remove me
+        on keydown[key=='Escape'] from <body/> trigger closeMatchRecordModal">
+    <div class="pm-modal">
+        <div class="pm-header">
+            <div class="pm-header-titles">
+                <span class="pm-eyebrow">Record Match</span>
+                <h2 class="pm-title">{{match.player-one-sub}} vs {{match.player-two-sub}}</h2>
+                <p class="pm-subtitle">Bo{{match.format}} · Round {{match.round-index|add:1}}</p>
+            </div>
+            <button type="button"
+                    class="pm-close"
+                    aria-label="Close"
+                    _="on click trigger closeMatchRecordModal">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Stepper -->
+        <div class="pm-stepper" role="navigation" aria-label="Post-match progress">
+            <div class="pm-step pm-step--upload-step" data-step-key="upload">
+                <span class="pm-step-num">1</span>
+                <span class="pm-step-body">
+                    <span class="pm-step-label">Step 1</span>
+                    <span class="pm-step-name">Upload replays</span>
+                </span>
+            </div>
+            <div class="pm-step pm-step--parsing-step" data-step-key="parsing">
+                <span class="pm-step-num">2</span>
+                <span class="pm-step-body">
+                    <span class="pm-step-label">Step 2</span>
+                    <span class="pm-step-name">Parse files</span>
+                </span>
+            </div>
+            <div class="pm-step pm-step--review-step" data-step-key="review">
+                <span class="pm-step-num">3</span>
+                <span class="pm-step-body">
+                    <span class="pm-step-label">Step 3</span>
+                    <span class="pm-step-name">Review &amp; declare</span>
+                </span>
+            </div>
+            <div class="pm-step pm-step--submitted-step" data-step-key="submitted">
+                <span class="pm-step-num">4</span>
+                <span class="pm-step-body">
+                    <span class="pm-step-label">Step 4</span>
+                    <span class="pm-step-name">Submitted</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="pm-body">
+
+            <!-- ───────────── Always-on: Parsing overlay (Step 2) ───────────── -->
+            {# Lives outside #pm-modal-body so the swap doesn't blow it away.   #}
+            {# data-pm-step="parsing" on the root flips it visible via CSS.     #}
+            <div class="pm-step-panel pm-panel--parsing">
+                <div class="pm-parsing">
+                    <div class="pm-parsing-spinner" aria-hidden="true">
+                        <svg viewBox="0 0 88 88">
+                            <defs>
+                                <linearGradient id="pm-spin-g" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="var(--color-primary-700)"/>
+                                    <stop offset="100%" stop-color="var(--color-primary-500)" stop-opacity="0.2"/>
+                                </linearGradient>
+                            </defs>
+                            <circle cx="44" cy="44" r="40" fill="none" stroke="var(--color-border)" stroke-width="1"/>
+                            <circle cx="44" cy="44" r="40" fill="none" stroke="url(#pm-spin-g)" stroke-width="2"
+                                    stroke-dasharray="60 200" stroke-linecap="round"/>
+                            <circle cx="44" cy="44" r="32" fill="none" stroke="var(--color-border)" stroke-width="1" stroke-dasharray="2 4"/>
+                        </svg>
+                        <span class="pm-parsing-spinner-inner">Reading</span>
+                    </div>
+                    <div class="pm-parse-status">Parsing replay archives</div>
+                    <ul class="pm-parse-log">
+                        {% for row in parse-log-rows %}
+                        <li class="pm-log--done" style="animation-delay: {{row.delay-ms}}ms;">
+                            <span class="pm-log-mark">
+                                <svg class="pm-log-mark--done" width="14" height="14" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="3"
+                                     stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m5 12 5 5L20 7"/>
+                                </svg>
+                            </span>
+                            <span>{{row.label}}</span>
+                            <span class="pm-log-result"></span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ───────────── HTMX swap target: Steps 1, 3, 4 ───────────── -->
+            <div id="pm-modal-body">
+                <!-- Step 1: Upload form -->
+                <form class="pm-step-panel pm-panel--upload"
+                      hx-post="/view/match-record/{{match.eid}}/parse"
+                      hx-encoding="multipart/form-data"
+                      hx-target="#pm-modal-body"
+                      hx-swap="innerHTML swap:{{parse-swap-delay-ms}}ms"
+                      hx-on::before-request="document.getElementById('pm-modal-root').dataset.pmStep = 'parsing'"
+                      hx-on::response-error="document.getElementById('pm-modal-root').dataset.pmStep = 'upload'">
+                    <header class="pm-section-head">
+                        <p class="pm-section-eyebrow">Step 1 · Replay Upload</p>
+                        <h3 class="pm-section-title">Upload one replay per game</h3>
+                        <p class="pm-section-desc">Replays will be parsed automatically — drafts, factions, map and duration are read from the file. Either player can upload; the other will confirm.</p>
+                    </header>
+
+                    <div class="pm-upload-meta">
+                        <div class="pm-upload-player">
+                            <span class="pm-upload-handle">{{match.player-one-sub}}</span>
+                            <span class="pm-upload-role {% ifequal match.player-one-sub viewer-sub %}pm-upload-role--you{% endifequal %}">
+                                {% ifequal match.player-one-sub viewer-sub %}You{% else %}Opponent{% endifequal %}
+                            </span>
+                        </div>
+                        <span class="pm-vs-mark">VS</span>
+                        <div class="pm-upload-player pm-upload-player--right">
+                            <span class="pm-upload-handle">{{match.player-two-sub}}</span>
+                            <span class="pm-upload-role {% ifequal match.player-two-sub viewer-sub %}pm-upload-role--you{% endifequal %}">
+                                {% ifequal match.player-two-sub viewer-sub %}You{% else %}Opponent{% endifequal %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <ul class="pm-game-list" style="list-style:none; margin:0; padding:0;">
+                        {% for game-index in game-indexes %}
+                        <li class="pm-game-row" data-game-row="{{game-index}}">
+                            <div class="pm-game-tag">
+                                <span class="pm-game-tag-num">{{game-index|add:1}}</span>
+                                <span class="pm-game-tag-label">Game</span>
+                            </div>
+                            <label class="pm-game-drop">
+                                <span class="pm-drop-icon" aria-hidden="true">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="17 8 12 3 7 8"/>
+                                        <line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
+                                </span>
+                                <div class="pm-drop-info">
+                                    <span class="pm-drop-primary pm-drop-primary--placeholder" data-empty-label>Drop replay file or click to browse</span>
+                                    <span class="pm-drop-secondary" data-empty-meta>.replay · max 16 MB</span>
+                                    <span class="pm-drop-primary" data-file-label hidden></span>
+                                    <span class="pm-drop-secondary" data-file-meta hidden></span>
+                                </div>
+                                <button type="button"
+                                        class="pm-drop-clear"
+                                        hidden
+                                        _="on click halt the event
+                                           set row to closest .pm-game-row
+                                           set input to <input[type=file]/> in row
+                                           set input.value to ''
+                                           remove .pm-game-row--has-file from row
+                                           remove @hidden from <[data-empty-label]/> in row
+                                           remove @hidden from <[data-empty-meta]/> in row
+                                           add @hidden to <[data-file-label]/> in row
+                                           add @hidden to <[data-file-meta]/> in row
+                                           add @hidden to me
+                                           send pmFileChange to closest <form/>">
+                                    Clear
+                                </button>
+                                <input type="file"
+                                       name="game-{{game-index}}"
+                                       accept=".replay"
+                                       _="on change
+                                          if my files.length is 0 exit end
+                                          set row to closest .pm-game-row
+                                          set f to my files[0]
+                                          add .pm-game-row--has-file to row
+                                          add @hidden to <[data-empty-label]/> in row
+                                          add @hidden to <[data-empty-meta]/> in row
+                                          set lbl to <[data-file-label]/> in row
+                                          set lbl.textContent to f.name
+                                          remove @hidden from lbl
+                                          set meta to <[data-file-meta]/> in row
+                                          set sizeMb to (f.size / 1048576).toFixed(1)
+                                          set meta.textContent to sizeMb + ' MB · just now'
+                                          remove @hidden from meta
+                                          remove @hidden from <.pm-drop-clear/> in row
+                                          send pmFileChange to closest <form/>"/>
+                            </label>
+                        </li>
+                        {% endfor %}
+                    </ul>
+
+                    <div class="pm-footer">
+                        <span class="pm-footer-hint" data-pm-hint>Pick a replay file for each game.</span>
+                        <div class="pm-footer-actions">
+                            <button type="button"
+                                    class="pm-btn pm-btn--secondary"
+                                    _="on click trigger closeMatchRecordModal">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                    class="pm-btn pm-btn--primary"
+                                    disabled
+                                    _="on pmFileChange from closest <form/>
+                                       set inputs to (closest <form/>).querySelectorAll('input[type=file]')
+                                       set picked to 0
+                                       repeat in inputs
+                                         if its.files.length > 0 then increment picked end
+                                       end
+                                       set total to inputs.length
+                                       if picked < total
+                                         add @disabled to me
+                                       else
+                                         remove @disabled from me
+                                       end
+                                       set hint to <[data-pm-hint]/> in closest <form/>
+                                       if picked is total
+                                         set hint.textContent to total + ' of ' + total + ' replays ready.'
+                                       else
+                                         set hint.textContent to picked + ' of ' + total + ' replays uploaded.'
+                                       end">
+                                Parse Replays →
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

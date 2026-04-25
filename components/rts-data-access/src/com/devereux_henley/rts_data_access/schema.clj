@@ -293,7 +293,39 @@
     [:match-eid :uuid]
     [:game-index :int]
     [:winner-sub [:maybe :string]]
+    [:replay-eid {:optional true} [:maybe :uuid]]
+    [:uploader-local-alliance-index {:optional true} [:maybe :int]]
     [:created-at :instant]]))
+
+(def replay-entity
+  (schema.contract/to-schema
+   [:map
+    [:id :int]
+    [:eid :uuid]
+    [:match-id-external :string]
+    [:played-at :string]
+    [:victory-condition [:maybe :string]]
+    [:parser-format :string]
+    [:parsed-json :string]
+    [:uploader-local-alliance-index [:maybe :int]]
+    [:uploaded-by-sub :string]
+    [:created-at :instant]
+    [:updated-at :instant]
+    [:deleted-at [:maybe :instant]]]))
+
+(def create-replay-params
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:match-id-external :string]
+    [:played-at :string]
+    [:victory-condition {:optional true} [:maybe :string]]
+    [:parser-format :string]
+    [:parsed-json :string]
+    [:uploader-local-alliance-index {:optional true} [:maybe :int]]
+    [:uploaded-by-sub :string]
+    [:created-at :instant]
+    [:updated-at :instant]]))
 
 ;; ─── League / Season entities ────────────────────────────────────────────────
 

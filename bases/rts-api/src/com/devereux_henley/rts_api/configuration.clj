@@ -18,8 +18,10 @@
 (def hostname (or (System/getenv "RTS_API_HOSTNAME") "http://localhost:3001"))
 (def auth-hostname (or (System/getenv "AUTH_HOSTNAME") "http://localhost:4000"))
 (def session-name (str "ory_session_" (or (System/getenv "AUTH_SLUG") "eloquentyalowwhtijq6my4")))
-(def default-dependencies {:hostname   hostname
-                           :connection (integrant.core/ref ::db/connection)})
+(def replay-parser-bin (or (System/getenv "REPLAY_PARSER_BIN") "tw-replay-parser"))
+(def default-dependencies {:hostname          hostname
+                           :connection        (integrant.core/ref ::db/connection)
+                           :replay-parser-bin replay-parser-bin})
 
 (defn- handlers
   "Maps each Integrant key to default-dependencies."
@@ -99,6 +101,11 @@
             :com.devereux-henley.rts-web.web.view/tournament-view
             :com.devereux-henley.rts-web.web.view/tournament-phase-form-view))
 
+(def match-record-configuration
+  (handlers :com.devereux-henley.rts-web.web.view.tournament/modal-view
+            :com.devereux-henley.rts-web.web.view.tournament/parse-replays-fragment
+            :com.devereux-henley.rts-web.web.view.tournament/record-match-fragment))
+
 (def league-configuration
   (handlers :com.devereux-henley.rts-web.web.league/get-league
             :com.devereux-henley.rts-web.web.league/get-leagues
@@ -137,7 +144,8 @@
          draft-configuration
          social-media-configuration
          tournament-configuration
-         league-configuration))
+         league-configuration
+         match-record-configuration))
 
 (def core-configuration
   "Production profile. Uses Ory for authentication."

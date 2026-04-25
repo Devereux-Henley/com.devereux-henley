@@ -1,0 +1,194 @@
+<!--
+    Step 3 — Review & Declare. Server-rendered fragment swapped into
+    #pm-modal-body after the parse endpoint runs. Carries hidden parsed
+    JSON for each game so the commit endpoint can echo it back into the
+    domain without a second parse.
+-->
+<form id="pm-form-submit"
+      class="pm-step-panel pm-panel--review"
+      hx-post="/view/match-record/{{match.eid}}/submit"
+      hx-target="#pm-modal-body"
+      hx-swap="innerHTML">
+
+    {% for game in games %}
+    <input type="hidden" name="parsed-{{game.game-index}}"      value="{{game.parsed-json}}"/>
+    <input type="hidden" name="source-name-{{game.game-index}}" value="{{game.source-name}}"/>
+    {% endfor %}
+
+    <header class="pm-section-head">
+        <p class="pm-section-eyebrow">Step 3 · Review &amp; Declare</p>
+        <h3 class="pm-section-title">Confirm parsed drafts and pick winner</h3>
+        <p class="pm-section-desc">Drafts are read directly from each replay and are final. Pick the winner of each game; results lock once submitted.</p>
+    </header>
+
+    <div class="pm-game-tabs" role="tablist">
+        {% for game in games %}
+        <button type="button"
+                class="pm-game-tab{% if forloop.first %} pm-game-tab--active{% endif %}"
+                role="tab"
+                aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                aria-controls="pm-review-game-{{game.game-index}}"
+                _="on click
+                   remove .pm-game-tab--active from <.pm-game-tab/> in closest .pm-game-tabs
+                   add .pm-game-tab--active to me
+                   for tab in <.pm-game-tab/> in closest .pm-game-tabs
+                     set tab@aria-selected to (tab is me)
+                   end
+                   add @hidden to <.pm-review-game-panel/> in closest .pm-panel--review
+                   remove @hidden from #pm-review-game-{{game.game-index}}">
+            <span class="pm-game-tab-num">G{{game.game-num}}</span>
+            <span>Game {{game.game-num}}</span>
+        </button>
+        {% endfor %}
+    </div>
+
+    {% for game in games %}
+    <div class="pm-review-game-panel"
+         id="pm-review-game-{{game.game-index}}"
+         role="tabpanel"
+         {% if not forloop.first %}hidden{% endif %}>
+
+        <div class="pm-game-summary">
+            <div class="pm-summary-cell"><span class="pm-summary-label">Match ID</span>  <span class="pm-summary-value pm-summary-value--mono">{{game.match-id|default:"—"}}</span></div>
+            <div class="pm-summary-cell"><span class="pm-summary-label">Played at</span> <span class="pm-summary-value pm-summary-value--mono">{{game.played-at|default:"—"}}</span></div>
+            <div class="pm-summary-cell"><span class="pm-summary-label">Format</span>    <span class="pm-summary-value pm-summary-value--mono">{{game.parser-format}}</span></div>
+            <div class="pm-summary-cell"><span class="pm-summary-label">Models</span>    <span class="pm-summary-value pm-summary-value--mono">{{game.p1-model-count}} vs {{game.p2-model-count}}</span></div>
+        </div>
+
+        <div class="pm-draft-pair">
+            {% with side=game.p1 %}
+            <div class="pm-draft-card">
+                <div class="pm-draft-head">
+                    <div class="pm-draft-handle">
+                        <span class="pm-draft-handle-name">{{side.handle}}</span>
+                        <span class="pm-draft-handle-faction">{{side.faction-key}}</span>
+                    </div>
+                    <div class="pm-draft-cost">
+                        <span class="pm-draft-cost-num">{{side.total-num}}</span>
+                        <span class="pm-draft-cost-unit">{{side.total-unit}}</span>
+                    </div>
+                </div>
+                <div class="pm-draft-units">
+                    {% for unit in side.units %}
+                    <div class="pm-draft-unit{% if unit.is-lord %} pm-draft-unit--lord{% endif %}" title="{{unit.key}}">
+                        <div class="pm-draft-unit-name">{{unit.display}}</div>
+                        {% if unit.cost %}<span class="pm-draft-unit-cost">{{unit.cost}}</span>{% endif %}
+                        <div class="pm-draft-unit-tooltip">
+                            <strong>{{unit.display}}</strong>
+                            <span>{{unit.tooltip}}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="pm-draft-foot">
+                    <span>{{side.unit-count}} units across {{side.army-count}} {% ifequal side.army-count 1 %}army{% else %}armies{% endifequal %}</span>
+                    <strong>{{side.commander-display}}</strong>
+                </div>
+            </div>
+            {% endwith %}
+
+            {% with side=game.p2 %}
+            <div class="pm-draft-card">
+                <div class="pm-draft-head">
+                    <div class="pm-draft-handle">
+                        <span class="pm-draft-handle-name">{{side.handle}}</span>
+                        <span class="pm-draft-handle-faction">{{side.faction-key}}</span>
+                    </div>
+                    <div class="pm-draft-cost">
+                        <span class="pm-draft-cost-num">{{side.total-num}}</span>
+                        <span class="pm-draft-cost-unit">{{side.total-unit}}</span>
+                    </div>
+                </div>
+                <div class="pm-draft-units">
+                    {% for unit in side.units %}
+                    <div class="pm-draft-unit{% if unit.is-lord %} pm-draft-unit--lord{% endif %}" title="{{unit.key}}">
+                        <div class="pm-draft-unit-name">{{unit.display}}</div>
+                        {% if unit.cost %}<span class="pm-draft-unit-cost">{{unit.cost}}</span>{% endif %}
+                        <div class="pm-draft-unit-tooltip">
+                            <strong>{{unit.display}}</strong>
+                            <span>{{unit.tooltip}}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="pm-draft-foot">
+                    <span>{{side.unit-count}} units across {{side.army-count}} {% ifequal side.army-count 1 %}army{% else %}armies{% endifequal %}</span>
+                    <strong>{{side.commander-display}}</strong>
+                </div>
+            </div>
+            {% endwith %}
+        </div>
+
+        <div class="pm-winner-step">
+            <p class="pm-winner-prompt">Who won game {{game.game-num}}?</p>
+            <div class="pm-winner-pair">
+                <label class="pm-winner-btn">
+                    <input type="radio" name="winner-sub-{{game.game-index}}" value="{{game.p1.handle}}" hidden
+                           _="on change
+                              remove .pm-winner-btn--selected from <.pm-winner-btn/> in closest .pm-winner-pair
+                              add .pm-winner-btn--selected to closest <label/>"/>
+                    <span class="pm-winner-trophy" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 9H4a2 2 0 0 1-2-2V5h4"/><path d="M18 9h2a2 2 0 0 0 2-2V5h-4"/><path d="M6 5h12v6a6 6 0 1 1-12 0V5z"/><path d="M9 22h6"/><path d="M12 17v5"/>
+                        </svg>
+                    </span>
+                    <span class="pm-winner-handle">
+                        <span class="pm-winner-handle-name">{{game.p1.handle}}</span>
+                        <span class="pm-winner-handle-faction">{{game.p1.faction-key}}</span>
+                    </span>
+                </label>
+                <label class="pm-winner-btn pm-winner-btn--right">
+                    <input type="radio" name="winner-sub-{{game.game-index}}" value="{{game.p2.handle}}" hidden
+                           _="on change
+                              remove .pm-winner-btn--selected from <.pm-winner-btn/> in closest .pm-winner-pair
+                              add .pm-winner-btn--selected to closest <label/>"/>
+                    <span class="pm-winner-trophy" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 9H4a2 2 0 0 1-2-2V5h4"/><path d="M18 9h2a2 2 0 0 0 2-2V5h-4"/><path d="M6 5h12v6a6 6 0 1 1-12 0V5z"/><path d="M9 22h6"/><path d="M12 17v5"/>
+                        </svg>
+                    </span>
+                    <span class="pm-winner-handle">
+                        <span class="pm-winner-handle-name">{{game.p2.handle}}</span>
+                        <span class="pm-winner-handle-faction">{{game.p2.faction-key}}</span>
+                    </span>
+                </label>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="pm-footer">
+        <span class="pm-footer-hint" data-pm-hint>Declare a winner for each game (0/{{match.format}}).</span>
+        <div class="pm-footer-actions">
+            <button type="button" class="pm-btn pm-btn--secondary"
+                    _="on click trigger closeMatchRecordModal">Cancel</button>
+            <button type="submit"
+                    class="pm-btn pm-btn--primary"
+                    data-pm-action="submit" disabled
+                    _="on change from <input[type=radio]/> in closest <form/>
+                       set picks to (closest <form/>).querySelectorAll('input[name^=\'winner-sub-\']:checked')
+                       set declared to picks.length
+                       set p1Wins to 0
+                       set p2Wins to 0
+                       repeat in picks
+                         if its.value is '{{match.player-one-sub}}' then increment p1Wins end
+                         if its.value is '{{match.player-two-sub}}' then increment p2Wins end
+                       end
+                       set need to Math.ceil({{match.format}} / 2)
+                       set ready to (declared is {{match.format}}) or (p1Wins >= need) or (p2Wins >= need)
+                       if ready then remove @disabled from me else add @disabled to me end
+                       set hint to <[data-pm-hint]/> in closest .pm-step-panel
+                       if ready then set hint.textContent to 'All games declared. Submit when ready.'
+                       else set hint.textContent to 'Declare a winner for each game (' + declared + '/{{match.format}}).' end">
+                Submit Match →
+            </button>
+        </div>
+    </div>
+</form>
+
+<script>
+  (function () {
+    var root = document.getElementById('pm-modal-root');
+    if (root) root.dataset.pmStep = 'review';
+  })();
+</script>

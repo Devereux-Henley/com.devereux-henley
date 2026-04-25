@@ -16,8 +16,9 @@
         <link rel="stylesheet" href="/style/themes/warhammer3.css"/>
         <link rel="stylesheet" href="/style/themes/warhammer3-app.css"/>
         {% endifequal %}
+        {% block page-styles %}{% endblock %}
     </head>
-    <body class="app-shell" hx-headers='{"Accept": "application/htmx+html"}'>
+    <body class="app-shell" hx-headers='{"Accept": "application/htmx+html"}' data-viewer-sub="{{session.identity.id}}">
         <a class="skip-link sr-only" href="#content">Skip to main content</a>
         <nav class="navbar" aria-label="Main navigation">
             <div class="navbar-brand-cluster">

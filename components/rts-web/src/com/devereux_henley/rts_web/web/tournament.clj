@@ -176,17 +176,18 @@
 
 (defmethod integrant.core/init-key ::create-match
   [_init-key dependencies]
-  (fn [{{{:keys [eid]}                           :path
+  (fn [{{{:keys [eid]}                                  :path
          {:keys [phase-index round-index
-                 player-one-sub player-two-sub]} :body} :parameters
-        :as                                             _request}]
+                 player-one-sub player-two-sub format]} :body} :parameters
+        :as                                                    _request}]
     (let [result (domain/create-match
                   dependencies
                   eid
-                  {:phase-index    phase-index
-                   :round-index    round-index
-                   :player-one-sub player-one-sub
-                   :player-two-sub player-two-sub})]
+                  (cond-> {:phase-index    phase-index
+                           :round-index    round-index
+                           :player-one-sub player-one-sub
+                           :player-two-sub player-two-sub}
+                    format (assoc :format format)))]
       (if (= :tournament/match-error (:type result))
         {:status 422 :body result}
         {:status 201 :body result}))))
