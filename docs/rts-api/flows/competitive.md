@@ -13,8 +13,8 @@ Covers the per-game **Competitive** landing, league/season organization above to
 
 Every game has a single Competitive page at `/view/game/:game-eid/competitive/index.html`. It hosts two side-by-side tabs (WCAG-AA `role="tablist"`, Hyperscript-driven panel toggling — no HTMX swap needed):
 
-- **Tournaments** — every tournament for the game, league-affiliated or standalone. League-affiliated cards carry a "League · Season N" badge that links to the league.
-- **Leagues** — every league for the game. Each card shows the league name, description, current-season subline, and tournament count.
+- **Tournaments** — every tournament for the game, league-affiliated or standalone. League-affiliated cards carry a "League · Season N" badge that links to the league. The status pill in the card header is one of `registration` (gold), `active` (green), `complete` (neutral grey — a finished tournament is success, not failure), or `cancelled` (red — the only true failure mode); the colour is keyed off the status string via `status-badge--*` classes rather than a generic `badge-danger` palette family.
+- **Leagues** — every league for the game. Each card carries a small heraldic corner pin in the top-left so leagues read as siblings of tournament cards under the Warhammer III skin, plus the league name, description, current-season subline, and tournament count.
 
 The legacy `/view/game/:game-eid/tournament/index.html` URL is removed (404). All tournament-related navigation now flows through the Competitive landing.
 

@@ -53,7 +53,7 @@
                 {% if tournament.season-display-name %}
                 <span class="tournament-meta">{{tournament.season-display-name}}</span>
                 {% endif %}
-                <span class="badge">{{tournament.status}}</span>
+                <span class="status-badge status-badge--{{tournament.status}}">{{tournament.status}}</span>
             </li>
             {% endfor %}
         </ul>
