@@ -1,38 +1,39 @@
 <!--
     Post-match modal — HTMX-driven 4-step flow.
 
-    The modal root carries `data-pm-step`, which CSS uses to flip which
-    step panel is visible:
-      1. upload    — initial Step 1 form (multipart upload)
-      2. parsing   — overlay panel with the animated parse log
-      3. review    — Step 3 fragment swapped into #pm-modal-body by /parse
-      4. submitted — Step 4 fragment swapped into #pm-modal-body by /submit
+    Step state is derived purely from CSS:
+      • Step 1 (upload):     #pm-modal-body contains .pm-panel--upload
+      • Step 2 (parsing):    #pm-modal-root has the .htmx-request class
+                             (HTMX adds it for the duration of the parse POST)
+      • Step 3 (review):     #pm-modal-body contains .pm-panel--review
+      • Step 4 (submitted):  #pm-modal-body contains .pm-panel--submitted
 
-    Server-rendered fragments push the step transition by setting
-    data-pm-step in an inline <script>. Step 1 → Step 2 is driven by the
-    form's htmx:before-request listener.
+    Submit gating is driven by native HTML validity (`required` attributes)
+    plus form:invalid CSS for the visual disabled state and hint text. The
+    dialog handles Escape and focus trap natively; close/cancel buttons
+    submit a sibling <form method="dialog"> to close.
 -->
-<div id="pm-modal-root"
-     class="pm-overlay"
-     role="dialog"
-     aria-modal="true"
-     aria-label="Record match results"
-     data-pm-step="upload"
-     data-match-eid="{{match.eid}}"
-     data-format="{{match.format}}"
-     _="on closeMatchRecordModal remove me
-        on keydown[key=='Escape'] from <body/> trigger closeMatchRecordModal">
+<dialog id="pm-modal-root"
+        class="pm-overlay"
+        open
+        aria-labelledby="pm-modal-title"
+        data-match-eid="{{match.eid}}"
+        data-format="{{match.format}}"
+        hx-on:close="this.remove()">
+
+    <form id="pm-close-form" method="dialog"></form>
+
     <div class="pm-modal">
         <div class="pm-header">
             <div class="pm-header-titles">
                 <span class="pm-eyebrow">Record Match</span>
-                <h2 class="pm-title">{{match.player-one-sub}} vs {{match.player-two-sub}}</h2>
+                <h2 id="pm-modal-title" class="pm-title">{{match.player-one-sub}} vs {{match.player-two-sub}}</h2>
                 <p class="pm-subtitle">Bo{{match.format}} · Round {{match.round-index|add:1}}</p>
             </div>
-            <button type="button"
+            <button type="submit"
+                    form="pm-close-form"
                     class="pm-close"
-                    aria-label="Close"
-                    _="on click trigger closeMatchRecordModal">
+                    aria-label="Close">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="6" y1="6" x2="18" y2="18"/>
                     <line x1="18" y1="6" x2="6" y2="18"/>
@@ -74,9 +75,8 @@
 
         <div class="pm-body">
 
-            <!-- ───────────── Always-on: Parsing overlay (Step 2) ───────────── -->
-            {# Lives outside #pm-modal-body so the swap doesn't blow it away.   #}
-            {# data-pm-step="parsing" on the root flips it visible via CSS.     #}
+            {# Step 2 panel sits outside #pm-modal-body so HTMX doesn't blow it #}
+            {# away on swap. CSS shows it only while #pm-modal-root.htmx-request. #}
             <div class="pm-step-panel pm-panel--parsing">
                 <div class="pm-parsing">
                     <div class="pm-parsing-spinner" aria-hidden="true">
@@ -113,7 +113,7 @@
                 </div>
             </div>
 
-            <!-- ───────────── HTMX swap target: Steps 1, 3, 4 ───────────── -->
+            <!-- HTMX swap target: Steps 1, 3, 4 -->
             <div id="pm-modal-body">
                 <!-- Step 1: Upload form -->
                 <form class="pm-step-panel pm-panel--upload"
@@ -121,8 +121,7 @@
                       hx-encoding="multipart/form-data"
                       hx-target="#pm-modal-body"
                       hx-swap="innerHTML swap:{{parse-swap-delay-ms}}ms"
-                      hx-on::before-request="document.getElementById('pm-modal-root').dataset.pmStep = 'parsing'"
-                      hx-on::response-error="document.getElementById('pm-modal-root').dataset.pmStep = 'upload'">
+                      hx-indicator="#pm-modal-root">
                     <header class="pm-section-head">
                         <p class="pm-section-eyebrow">Step 1 · Replay Upload</p>
                         <h3 class="pm-section-title">Upload one replay per game</h3>
@@ -145,7 +144,7 @@
                         </div>
                     </div>
 
-                    <ul class="pm-game-list" style="list-style:none; margin:0; padding:0;">
+                    <ul class="pm-game-list">
                         {% for game-index in game-indexes %}
                         <li class="pm-game-row" data-game-row="{{game-index}}">
                             <div class="pm-game-tag">
@@ -161,80 +160,35 @@
                                     </svg>
                                 </span>
                                 <div class="pm-drop-info">
-                                    <span class="pm-drop-primary pm-drop-primary--placeholder" data-empty-label>Drop replay file or click to browse</span>
-                                    <span class="pm-drop-secondary" data-empty-meta>.replay · max 16 MB</span>
-                                    <span class="pm-drop-primary" data-file-label hidden></span>
-                                    <span class="pm-drop-secondary" data-file-meta hidden></span>
+                                    <span class="pm-drop-primary pm-drop-primary--placeholder">Drop replay file or click to browse</span>
+                                    <span class="pm-drop-secondary pm-drop-secondary--placeholder">.replay · max 16 MB</span>
+                                    <output class="pm-drop-primary pm-drop-filename" for="pm-game-input-{{game-index}}"></output>
+                                    <output class="pm-drop-secondary pm-drop-filemeta" for="pm-game-input-{{game-index}}"></output>
                                 </div>
                                 <button type="button"
                                         class="pm-drop-clear"
-                                        hidden
-                                        _="on click halt the event
-                                           set row to closest .pm-game-row
-                                           set input to <input[type=file]/> in row
-                                           set input.value to ''
-                                           remove .pm-game-row--has-file from row
-                                           remove @hidden from <[data-empty-label]/> in row
-                                           remove @hidden from <[data-empty-meta]/> in row
-                                           add @hidden to <[data-file-label]/> in row
-                                           add @hidden to <[data-file-meta]/> in row
-                                           add @hidden to me
-                                           send pmFileChange to closest <form/>">
+                                        onclick="event.stopPropagation();const r=this.closest('.pm-game-row');const i=r.querySelector('input[type=file]');i.value='';i.dispatchEvent(new Event('change',{bubbles:true}));">
                                     Clear
                                 </button>
                                 <input type="file"
+                                       id="pm-game-input-{{game-index}}"
                                        name="game-{{game-index}}"
                                        accept=".replay"
-                                       _="on change
-                                          if my files.length is 0 exit end
-                                          set row to closest .pm-game-row
-                                          set f to my files[0]
-                                          add .pm-game-row--has-file to row
-                                          add @hidden to <[data-empty-label]/> in row
-                                          add @hidden to <[data-empty-meta]/> in row
-                                          set lbl to <[data-file-label]/> in row
-                                          set lbl.textContent to f.name
-                                          remove @hidden from lbl
-                                          set meta to <[data-file-meta]/> in row
-                                          set sizeMb to (f.size / 1048576).toFixed(1)
-                                          set meta.textContent to sizeMb + ' MB · just now'
-                                          remove @hidden from meta
-                                          remove @hidden from <.pm-drop-clear/> in row
-                                          send pmFileChange to closest <form/>"/>
+                                       required/>
                             </label>
                         </li>
                         {% endfor %}
                     </ul>
 
                     <div class="pm-footer">
-                        <span class="pm-footer-hint" data-pm-hint>Pick a replay file for each game.</span>
+                        <span class="pm-footer-hint" data-pm-hint></span>
                         <div class="pm-footer-actions">
-                            <button type="button"
-                                    class="pm-btn pm-btn--secondary"
-                                    _="on click trigger closeMatchRecordModal">
+                            <button type="submit"
+                                    form="pm-close-form"
+                                    class="pm-btn pm-btn--secondary">
                                 Cancel
                             </button>
-                            <button type="submit"
-                                    class="pm-btn pm-btn--primary"
-                                    disabled
-                                    _="on pmFileChange from closest <form/>
-                                       set inputs to (closest <form/>).querySelectorAll('input[type=file]')
-                                       set picked to 0
-                                       repeat in inputs
-                                         if its.files.length > 0 then increment picked end
-                                       end
-                                       set total to inputs.length
-                                       if picked < total
-                                         add @disabled to me
-                                       else
-                                         remove @disabled from me
-                                       end
-                                       set hint to <[data-pm-hint]/> in closest <form/>
-                                       if picked is total
-                                         set hint.textContent to total + ' of ' + total + ' replays ready.'
-                                       else
-                                         set hint.textContent to picked + ' of ' + total + ' replays uploaded.'
-                                       end">
+                            <button type="submit" class="pm-btn pm-btn--primary">
                                 Parse Replays →
                             </button>
                         </div>
@@ -243,4 +197,35 @@
             </div>
         </div>
     </div>
-</div>
+
+    {# Two minimal jobs CSS can't do: (1) upgrade the dialog to a true modal #}
+    {# so the browser handles Escape + focus trap; (2) populate <output> with #}
+    {# the chosen filename. Everything else (panel/step state, submit gating, #}
+    {# tab/winner styling) is CSS-only. #}
+    <script>
+      (function () {
+        var root = document.getElementById('pm-modal-root');
+        if (!root) return;
+        if (typeof root.showModal === 'function' && !root.matches('dialog[open]:modal')) {
+          root.removeAttribute('open');
+          root.showModal();
+        }
+        root.addEventListener('change', function (e) {
+          var inp = e.target;
+          if (!(inp instanceof HTMLInputElement) || inp.type !== 'file') return;
+          var row = inp.closest('.pm-game-row');
+          if (!row) return;
+          var name = row.querySelector('.pm-drop-filename');
+          var meta = row.querySelector('.pm-drop-filemeta');
+          var f = inp.files && inp.files[0];
+          if (f) {
+            name.value = f.name;
+            meta.value = (f.size / 1048576).toFixed(1) + ' MB';
+          } else {
+            name.value = '';
+            meta.value = '';
+          }
+        });
+      })();
+    </script>
+</dialog>

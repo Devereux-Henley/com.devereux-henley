@@ -4,17 +4,32 @@
    ============================================================ */
 
 /* ── Modal scaffold ─────────────────────────────────────────── */
+/* The modal root is a <dialog open> element so Escape-to-close, focus
+   trap, and the `close` event come from the browser. We override the
+   default <dialog> chrome (border, padding, margin) to keep the existing
+   full-viewport-overlay look. */
 .pm-overlay {
   position: fixed;
   inset: 0;
   z-index: 9000;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  margin: 0;
+  border: none;
+  padding: var(--space-6);
   background: rgba(0, 0, 0, 0.62);
   backdrop-filter: blur(4px);
+  color: inherit;
   display: flex;
   align-items: stretch;
   justify-content: center;
-  padding: var(--space-6);
   animation: pm-overlay-in 220ms ease-out;
+}
+
+.pm-overlay::backdrop {
+  background: transparent;
 }
 
 @keyframes pm-overlay-in {
@@ -343,15 +358,6 @@
   transition: border-color 140ms;
 }
 
-.pm-game-row--has-file {
-  border-color: color-mix(in srgb, var(--color-primary-500) 50%, var(--color-border));
-}
-
-.pm-game-row--error {
-  border-color: color-mix(in srgb, var(--color-danger-500) 60%, var(--color-border));
-  background: color-mix(in srgb, var(--color-danger-500) 5%, var(--color-surface));
-}
-
 .pm-game-tag {
   background: linear-gradient(180deg, #1a1208 0%, #0d0906 100%);
   border-right: 1px solid var(--color-border);
@@ -404,13 +410,6 @@
   background: color-mix(in srgb, var(--color-primary-500) 5%, transparent);
 }
 
-.pm-game-drop input[type="file"] {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
 .pm-drop-icon {
   flex-shrink: 0;
   width: 40px;
@@ -421,20 +420,6 @@
   border: 1px dashed color-mix(in srgb, var(--color-primary-600) 50%, var(--color-border));
   color: var(--color-primary-700);
   background: color-mix(in srgb, var(--color-primary-500) 6%, transparent);
-}
-
-.pm-game-row--has-file .pm-drop-icon {
-  border-style: solid;
-  background: color-mix(in srgb, var(--color-success-500) 12%, transparent);
-  border-color: color-mix(in srgb, var(--color-success-500) 50%, transparent);
-  color: var(--color-success-600);
-}
-
-.pm-game-row--error .pm-drop-icon {
-  border-style: solid;
-  background: color-mix(in srgb, var(--color-danger-500) 12%, transparent);
-  border-color: color-mix(in srgb, var(--color-danger-500) 60%, transparent);
-  color: var(--color-danger-500);
 }
 
 .pm-drop-info { flex: 1; min-width: 0; }
@@ -628,22 +613,10 @@
   color: var(--color-text);
 }
 
-.pm-game-tab--active {
-  color: var(--color-primary-800);
-  border-bottom-color: var(--color-primary-600);
-}
-
 .pm-game-tab .pm-game-tab-num {
   font-size: 0.85rem;
   color: var(--color-primary-700);
   font-weight: 700;
-}
-
-.pm-game-tab--complete::after {
-  content: "✓";
-  font-size: 0.75rem;
-  color: var(--color-success-500);
-  margin-left: 4px;
 }
 
 .pm-game-summary {
@@ -949,16 +922,6 @@
   color: var(--color-primary-800);
 }
 
-.pm-winner-btn--selected {
-  border-color: var(--color-primary-600);
-  color: var(--color-primary-800);
-  background: linear-gradient(180deg,
-    color-mix(in srgb, var(--color-primary-500) 18%, var(--color-surface)) 0%,
-    color-mix(in srgb, var(--color-primary-500) 6%, var(--color-surface)) 100%);
-  box-shadow: 0 0 0 1px var(--color-primary-600),
-              0 4px 14px -4px color-mix(in srgb, var(--color-primary-500) 50%, transparent);
-}
-
 .pm-winner-trophy {
   flex-shrink: 0;
   width: 32px;
@@ -969,12 +932,6 @@
   color: var(--color-primary-700);
   border: 1px solid var(--color-border);
   background: color-mix(in srgb, var(--color-primary-500) 10%, transparent);
-}
-
-.pm-winner-btn--selected .pm-winner-trophy {
-  background: linear-gradient(180deg, var(--color-primary-600) 0%, var(--color-primary-500) 100%);
-  border-color: var(--color-primary-700);
-  color: var(--color-neutral-50);
 }
 
 .pm-winner-handle {
@@ -1237,33 +1194,145 @@
   overflow-y: auto;
 }
 
-/* ─── Step-panel visibility (server-rendered, JS-state-driven) ───────────── */
-/* The React prototype mounts one panel at a time; we render all four panels
-   into the DOM and let CSS toggle visibility based on the modal root's
-   data-pm-step attribute. */
+/* ─── Step-panel visibility (server-rendered, CSS-driven) ────────────────── */
+/* Step state is derived from what's currently rendered, with no flag
+   attribute or JS:
+     • Step 1 — #pm-modal-body contains .pm-panel--upload
+     • Step 2 — #pm-modal-root has the .htmx-request class (HTMX adds it
+                for the duration of the parse POST)
+     • Step 3 — #pm-modal-body contains .pm-panel--review
+     • Step 4 — #pm-modal-body contains .pm-panel--submitted
+*/
 
 .pm-step-panel { display: none; }
-.pm-overlay[data-pm-step="upload"]    .pm-panel--upload    { display: block; }
-.pm-overlay[data-pm-step="parsing"]   .pm-panel--parsing   { display: block; }
-.pm-overlay[data-pm-step="review"]    .pm-panel--review    { display: block; }
-.pm-overlay[data-pm-step="submitted"] .pm-panel--submitted { display: block; }
 
-/* Stepper state — driven by the modal root's data-pm-step attribute so we
-   don't toggle classes on each step chip from JS. */
-.pm-overlay[data-pm-step="parsing"]   .pm-step[data-step-key="upload"]    .pm-step-num,
-.pm-overlay[data-pm-step="review"]    .pm-step[data-step-key="upload"]    .pm-step-num,
-.pm-overlay[data-pm-step="review"]    .pm-step[data-step-key="parsing"]   .pm-step-num,
-.pm-overlay[data-pm-step="submitted"] .pm-step[data-step-key="upload"]    .pm-step-num,
-.pm-overlay[data-pm-step="submitted"] .pm-step[data-step-key="parsing"]   .pm-step-num,
-.pm-overlay[data-pm-step="submitted"] .pm-step[data-step-key="review"]    .pm-step-num {
-  background: color-mix(in srgb, var(--color-success-500) 35%, transparent);
-  color: var(--color-neutral-900);
-}
-.pm-overlay[data-pm-step="upload"]    .pm-step[data-step-key="upload"]    .pm-step-num,
-.pm-overlay[data-pm-step="parsing"]   .pm-step[data-step-key="parsing"]   .pm-step-num,
-.pm-overlay[data-pm-step="review"]    .pm-step[data-step-key="review"]    .pm-step-num,
-.pm-overlay[data-pm-step="submitted"] .pm-step[data-step-key="submitted"] .pm-step-num {
+#pm-modal-body > .pm-panel--upload,
+#pm-modal-body > .pm-panel--review,
+#pm-modal-body > .pm-panel--submitted { display: block; }
+
+/* During the parse request, hide whatever's currently in the body and show
+   the parsing overlay instead. After the swap, htmx-request comes off and
+   we fall back to whatever was just swapped in. */
+.pm-overlay.htmx-request .pm-panel--parsing { display: block; }
+.pm-overlay.htmx-request #pm-modal-body     { display: none; }
+
+/* ─── Stepper highlights (CSS-only, derived from rendered fragment) ─────── */
+
+/* Active step */
+.pm-overlay:has(#pm-modal-body > .pm-panel--upload):not(.htmx-request)    .pm-step[data-step-key="upload"]    .pm-step-num,
+.pm-overlay.htmx-request                                                  .pm-step[data-step-key="parsing"]   .pm-step-num,
+.pm-overlay:has(#pm-modal-body > .pm-panel--review):not(.htmx-request)    .pm-step[data-step-key="review"]    .pm-step-num,
+.pm-overlay:has(#pm-modal-body > .pm-panel--submitted):not(.htmx-request) .pm-step[data-step-key="submitted"] .pm-step-num {
   background: linear-gradient(180deg, var(--color-primary-600) 0%, var(--color-primary-500) 100%);
   color: var(--color-primary-800);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary-500) 30%, transparent);
+}
+
+/* Done steps — earlier than the currently-active step */
+.pm-overlay.htmx-request                                                  .pm-step[data-step-key="upload"]    .pm-step-num,
+.pm-overlay:has(#pm-modal-body > .pm-panel--review):not(.htmx-request)    .pm-step[data-step-key="upload"]    .pm-step-num,
+.pm-overlay:has(#pm-modal-body > .pm-panel--review):not(.htmx-request)    .pm-step[data-step-key="parsing"]   .pm-step-num,
+.pm-overlay:has(#pm-modal-body > .pm-panel--submitted):not(.htmx-request) .pm-step[data-step-key="upload"]    .pm-step-num,
+.pm-overlay:has(#pm-modal-body > .pm-panel--submitted):not(.htmx-request) .pm-step[data-step-key="parsing"]   .pm-step-num,
+.pm-overlay:has(#pm-modal-body > .pm-panel--submitted):not(.htmx-request) .pm-step[data-step-key="review"]    .pm-step-num {
+  background: color-mix(in srgb, var(--color-success-500) 35%, transparent);
+  color: var(--color-neutral-900);
+}
+
+/* ─── Step 1 — file row state from native validity ───────────────────────── */
+
+/* Hide the file input itself; the styled .pm-game-drop label is the affordance. */
+.pm-game-drop input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* The placeholder/filled <output> pair is exclusively toggled by validity:
+   an empty `required` file input is :invalid; one with a file is :valid. */
+.pm-drop-filename,
+.pm-drop-filemeta { display: none; }
+
+.pm-game-row:has(input[type="file"]:valid) .pm-drop-primary--placeholder,
+.pm-game-row:has(input[type="file"]:valid) .pm-drop-secondary--placeholder { display: none; }
+
+.pm-game-row:has(input[type="file"]:valid) .pm-drop-filename { display: block; }
+.pm-game-row:has(input[type="file"]:valid) .pm-drop-filemeta { display: block; }
+
+/* Border accent: green when filled. */
+.pm-game-row:has(input[type="file"]:valid) {
+  border-color: color-mix(in srgb, var(--color-primary-500) 50%, var(--color-border));
+}
+
+.pm-game-row:has(input[type="file"]:valid) .pm-drop-icon {
+  border-style: solid;
+  background: color-mix(in srgb, var(--color-success-500) 12%, transparent);
+  border-color: color-mix(in srgb, var(--color-success-500) 50%, transparent);
+  color: var(--color-success-600);
+}
+
+/* Clear button is meaningful only when there's a file to clear. */
+.pm-drop-clear { display: none; }
+.pm-game-row:has(input[type="file"]:valid) .pm-drop-clear { display: inline-flex; }
+
+/* ─── Submit gating + hint text via native form validity ─────────────────── */
+
+.pm-panel--upload  button[type="submit"].pm-btn--primary,
+.pm-panel--review  button[type="submit"].pm-btn--primary {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.pm-panel--upload:valid button[type="submit"].pm-btn--primary,
+.pm-panel--review:valid button[type="submit"].pm-btn--primary {
+  opacity: 1;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.pm-panel--upload [data-pm-hint]::before { content: "Pick a replay file for each game."; }
+.pm-panel--upload:valid [data-pm-hint]::before { content: "All replays ready. Submit when you're done."; }
+
+.pm-panel--review [data-pm-hint]::before { content: "Declare a winner for each game."; }
+.pm-panel--review:valid [data-pm-hint]::before { content: "All games declared. Submit when ready."; }
+
+/* ─── Step 3 — CSS-only game tabs ────────────────────────────────────────── */
+
+.pm-game-tab-input { position: absolute; opacity: 0; pointer-events: none; }
+
+.pm-review-game-panel { display: none; }
+
+/* Show the panel matching the checked tab. Bo7 is the pragmatic ceiling
+   for tournament formats; if we ever support BoN > 7 add another row. */
+.pm-panel--review:has(#pm-game-tab-0:checked) #pm-review-game-0,
+.pm-panel--review:has(#pm-game-tab-1:checked) #pm-review-game-1,
+.pm-panel--review:has(#pm-game-tab-2:checked) #pm-review-game-2,
+.pm-panel--review:has(#pm-game-tab-3:checked) #pm-review-game-3,
+.pm-panel--review:has(#pm-game-tab-4:checked) #pm-review-game-4,
+.pm-panel--review:has(#pm-game-tab-5:checked) #pm-review-game-5,
+.pm-panel--review:has(#pm-game-tab-6:checked) #pm-review-game-6 { display: block; }
+
+.pm-game-tab-input:checked + .pm-game-tab {
+  color: var(--color-primary-800);
+  border-bottom-color: var(--color-primary-600);
+}
+
+/* ─── Step 3 — winner button selected style ──────────────────────────────── */
+
+.pm-winner-btn:has(input[type="radio"]:checked) {
+  border-color: var(--color-primary-600);
+  color: var(--color-primary-800);
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--color-primary-500) 18%, var(--color-surface)) 0%,
+    color-mix(in srgb, var(--color-primary-500) 6%, var(--color-surface)) 100%);
+  box-shadow: 0 0 0 1px var(--color-primary-600),
+              0 4px 14px -4px color-mix(in srgb, var(--color-primary-500) 50%, transparent);
+}
+
+.pm-winner-btn:has(input[type="radio"]:checked) .pm-winner-trophy {
+  background: linear-gradient(180deg, var(--color-primary-600) 0%, var(--color-primary-500) 100%);
+  border-color: var(--color-primary-700);
+  color: var(--color-neutral-50);
 }

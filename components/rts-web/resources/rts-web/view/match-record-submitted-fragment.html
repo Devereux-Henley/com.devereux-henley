@@ -2,6 +2,10 @@
     Step 4 — Submitted. Server-rendered fragment swapped into #pm-modal-body
     after the commit endpoint persists the match. Pure presentation; the
     domain has already done all the persistence by the time this renders.
+
+    "Return to Tournament" submits the sibling <form method="dialog"> which
+    closes the dialog natively; hx-on:close on the dialog removes it from
+    the DOM.
 -->
 <div class="pm-step-panel pm-panel--submitted">
     <div class="pm-submitted">
@@ -26,18 +30,12 @@
 </div>
 
 <div class="pm-footer">
-    <span class="pm-footer-hint">All games declared. Submit when ready.</span>
+    <span class="pm-footer-hint">Match results are now locked.</span>
     <div class="pm-footer-actions">
-        <button type="button" class="pm-btn pm-btn--primary"
-                _="on click trigger closeMatchRecordModal">
+        <button type="submit"
+                form="pm-close-form"
+                class="pm-btn pm-btn--primary">
             Return to Tournament
         </button>
     </div>
 </div>
-
-<script>
-  (function () {
-    var root = document.getElementById('pm-modal-root');
-    if (root) root.dataset.pmStep = 'submitted';
-  })();
-</script>
