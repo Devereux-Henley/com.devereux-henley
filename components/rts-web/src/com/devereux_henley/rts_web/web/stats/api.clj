@@ -1,4 +1,4 @@
-(ns com.devereux-henley.rts-web.web.stats
+(ns com.devereux-henley.rts-web.web.stats.api
   (:require
    [com.devereux-henley.rts-domain.contract :as domain]
    [integrant.core]))

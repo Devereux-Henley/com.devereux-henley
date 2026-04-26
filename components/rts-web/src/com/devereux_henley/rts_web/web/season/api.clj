@@ -1,4 +1,4 @@
-(ns com.devereux-henley.rts-web.web.season
+(ns com.devereux-henley.rts-web.web.season.api
   (:require
    [com.devereux-henley.http.contract :as web.core]
    [com.devereux-henley.rts-domain.contract :as domain]

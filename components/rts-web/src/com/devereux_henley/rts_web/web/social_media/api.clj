@@ -1,4 +1,4 @@
-(ns com.devereux-henley.rts-web.web.social-media
+(ns com.devereux-henley.rts-web.web.social-media.api
   (:require
    [com.devereux-henley.http.contract :as web.core]
    [com.devereux-henley.rts-domain.contract :as domain]
