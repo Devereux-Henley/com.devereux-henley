@@ -26,4 +26,8 @@ CREATE TABLE IF NOT EXISTS unit (
   FOREIGN KEY(unit_category_id) REFERENCES unit_category(id)
 );
 --;;
-CREATE UNIQUE INDEX IF NOT EXISTS idx_unit_key ON unit(key) WHERE key IS NOT NULL AND deleted_at IS NULL;
+-- Non-unique: shared units (Regiments of Renown like Gotrek & Felix) appear
+-- in multiple faction seeds with the same engine key but different unit eids.
+-- The post-match join collapses duplicates by key client-side; the index is
+-- here for lookup speed only.
+CREATE INDEX IF NOT EXISTS idx_unit_key ON unit(key) WHERE key IS NOT NULL AND deleted_at IS NULL;
