@@ -3,8 +3,13 @@
 
     Step state is derived purely from CSS:
       • Step 1 (upload):     #pm-modal-body contains .pm-panel--upload
-      • Step 2 (parsing):    #pm-modal-root has the .htmx-request class
-                             (HTMX adds it for the duration of the parse POST)
+      • Step 2 (parsing):    #pm-modal-root has the .pm-parsing class
+                             (added on htmx:beforeRequest, removed on
+                             htmx:afterSwap or any error event — so it
+                             spans the full request → swap-delay → swap
+                             window, unlike HTMX's own .htmx-request
+                             which drops at htmx:afterRequest before the
+                             swap delay even starts)
       • Step 3 (review):     #pm-modal-body contains .pm-panel--review
       • Step 4 (submitted):  #pm-modal-body contains .pm-panel--submitted
 
@@ -19,7 +24,12 @@
         aria-labelledby="pm-modal-title"
         data-match-eid="{{match.eid}}"
         data-format="{{match.format}}"
-        hx-on:close="this.remove()">
+        hx-on:close="this.remove()"
+        hx-on:htmx:before-request="this.classList.add('pm-parsing')"
+        hx-on:htmx:after-swap="this.classList.remove('pm-parsing')"
+        hx-on:htmx:response-error="this.classList.remove('pm-parsing')"
+        hx-on:htmx:send-error="this.classList.remove('pm-parsing')"
+        hx-on:htmx:swap-error="this.classList.remove('pm-parsing')">
 
     <form id="pm-close-form" method="dialog"></form>
 
@@ -76,7 +86,7 @@
         <div class="pm-body">
 
             {# Step 2 panel sits outside #pm-modal-body so HTMX doesn't blow it #}
-            {# away on swap. CSS shows it only while #pm-modal-root.htmx-request. #}
+            {# away on swap. CSS shows it only while #pm-modal-root.pm-parsing.   #}
             <div class="pm-step-panel pm-panel--parsing">
                 <div class="pm-parsing">
                     <div class="pm-parsing-spinner" aria-hidden="true">

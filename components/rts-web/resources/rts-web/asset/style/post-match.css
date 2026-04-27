@@ -1195,11 +1195,14 @@
 }
 
 /* ─── Step-panel visibility (server-rendered, CSS-driven) ────────────────── */
-/* Step state is derived from what's currently rendered, with no flag
-   attribute or JS:
+/* Step state is derived from what's currently rendered:
      • Step 1 — #pm-modal-body contains .pm-panel--upload
-     • Step 2 — #pm-modal-root has the .htmx-request class (HTMX adds it
-                for the duration of the parse POST)
+     • Step 2 — #pm-modal-root has the .pm-parsing class (added on
+                htmx:beforeRequest, removed on htmx:afterSwap or any
+                error). Spans the full request → swap-delay → swap
+                window so the parse animation stays visible while
+                hx-swap's swap:Nms delay is in effect — HTMX's own
+                .htmx-request drops too early for that.
      • Step 3 — #pm-modal-body contains .pm-panel--review
      • Step 4 — #pm-modal-body contains .pm-panel--submitted
 */
@@ -1211,30 +1214,30 @@
 #pm-modal-body > .pm-panel--submitted { display: block; }
 
 /* During the parse request, hide whatever's currently in the body and show
-   the parsing overlay instead. After the swap, htmx-request comes off and
+   the parsing overlay instead. After the swap, pm-parsing comes off and
    we fall back to whatever was just swapped in. */
-.pm-overlay.htmx-request .pm-panel--parsing { display: block; }
-.pm-overlay.htmx-request #pm-modal-body     { display: none; }
+.pm-overlay.pm-parsing .pm-panel--parsing { display: block; }
+.pm-overlay.pm-parsing #pm-modal-body     { display: none; }
 
 /* ─── Stepper highlights (CSS-only, derived from rendered fragment) ─────── */
 
 /* Active step */
-.pm-overlay:has(#pm-modal-body > .pm-panel--upload):not(.htmx-request)    .pm-step[data-step-key="upload"]    .pm-step-num,
-.pm-overlay.htmx-request                                                  .pm-step[data-step-key="parsing"]   .pm-step-num,
-.pm-overlay:has(#pm-modal-body > .pm-panel--review):not(.htmx-request)    .pm-step[data-step-key="review"]    .pm-step-num,
-.pm-overlay:has(#pm-modal-body > .pm-panel--submitted):not(.htmx-request) .pm-step[data-step-key="submitted"] .pm-step-num {
+.pm-overlay:has(#pm-modal-body > .pm-panel--upload):not(.pm-parsing)    .pm-step[data-step-key="upload"]    .pm-step-num,
+.pm-overlay.pm-parsing                                                  .pm-step[data-step-key="parsing"]   .pm-step-num,
+.pm-overlay:has(#pm-modal-body > .pm-panel--review):not(.pm-parsing)    .pm-step[data-step-key="review"]    .pm-step-num,
+.pm-overlay:has(#pm-modal-body > .pm-panel--submitted):not(.pm-parsing) .pm-step[data-step-key="submitted"] .pm-step-num {
   background: linear-gradient(180deg, var(--color-primary-600) 0%, var(--color-primary-500) 100%);
   color: var(--color-primary-800);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary-500) 30%, transparent);
 }
 
 /* Done steps — earlier than the currently-active step */
-.pm-overlay.htmx-request                                                  .pm-step[data-step-key="upload"]    .pm-step-num,
-.pm-overlay:has(#pm-modal-body > .pm-panel--review):not(.htmx-request)    .pm-step[data-step-key="upload"]    .pm-step-num,
-.pm-overlay:has(#pm-modal-body > .pm-panel--review):not(.htmx-request)    .pm-step[data-step-key="parsing"]   .pm-step-num,
-.pm-overlay:has(#pm-modal-body > .pm-panel--submitted):not(.htmx-request) .pm-step[data-step-key="upload"]    .pm-step-num,
-.pm-overlay:has(#pm-modal-body > .pm-panel--submitted):not(.htmx-request) .pm-step[data-step-key="parsing"]   .pm-step-num,
-.pm-overlay:has(#pm-modal-body > .pm-panel--submitted):not(.htmx-request) .pm-step[data-step-key="review"]    .pm-step-num {
+.pm-overlay.pm-parsing                                                  .pm-step[data-step-key="upload"]    .pm-step-num,
+.pm-overlay:has(#pm-modal-body > .pm-panel--review):not(.pm-parsing)    .pm-step[data-step-key="upload"]    .pm-step-num,
+.pm-overlay:has(#pm-modal-body > .pm-panel--review):not(.pm-parsing)    .pm-step[data-step-key="parsing"]   .pm-step-num,
+.pm-overlay:has(#pm-modal-body > .pm-panel--submitted):not(.pm-parsing) .pm-step[data-step-key="upload"]    .pm-step-num,
+.pm-overlay:has(#pm-modal-body > .pm-panel--submitted):not(.pm-parsing) .pm-step[data-step-key="parsing"]   .pm-step-num,
+.pm-overlay:has(#pm-modal-body > .pm-panel--submitted):not(.pm-parsing) .pm-step[data-step-key="review"]    .pm-step-num {
   background: color-mix(in srgb, var(--color-success-500) 35%, transparent);
   color: var(--color-neutral-900);
 }
