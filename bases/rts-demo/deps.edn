@@ -1,0 +1,3 @@
+{:paths ["src"]
+ :deps {com.github.seancorfield/next.jdbc {:mvn/version "1.3.834"}}
+ :aliases {:run {:main-opts ["-m" "com.devereux-henley.rts-demo.core"]}}}
