@@ -273,18 +273,19 @@
   [alliance]
   (->> (:armies alliance)
        (mapcat :units)
-       (mapv (fn [{:keys [key name cost unit-category-name unit-type-name]}]
+       (mapv (fn [{:keys [key name cost unit-category-name unit-type-name unit-eid]}]
                (let [enriched? (some? name)
                      display   (if enriched? name key)
                      category  (or unit-category-name unit-type-name "—")
                      is-lord?  (= "lord" (some-> unit-category-name str/lower-case))]
-                 {:key     key
-                  :display display
-                  :cost    cost
-                  :is-lord is-lord?
-                  :tooltip (if cost
-                             (str category " · " cost " pts")
-                             category)})))))
+                 {:key      key
+                  :unit-eid unit-eid
+                  :display  display
+                  :cost     cost
+                  :is-lord  is-lord?
+                  :tooltip  (if cost
+                              (str category " · " cost " pts")
+                              category)})))))
 
 (defn- alliance-totals
   "Returns the {:total-num … :total-unit …} pair shown in the draft head.

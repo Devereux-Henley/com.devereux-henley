@@ -72,8 +72,11 @@
                 </div>
                 <div class="pm-draft-units">
                     {% for unit in side.units %}
-                    <div class="pm-draft-unit{% if unit.is-lord %} pm-draft-unit--lord{% endif %}" title="{{unit.key}}">
-                        <div class="pm-draft-unit-name">{{unit.display}}</div>
+                    <div class="pm-draft-unit{% if unit.is-lord %} pm-draft-unit--lord{% endif %}" title="{{unit.display}}">
+                        <img class="pm-draft-unit-portrait"
+                             src="/card/unit/{% if unit.unit-eid %}{{unit.unit-eid}}{% else %}placeholder{% endif %}.png"
+                             alt="{{unit.display}}"
+                             onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;"/>
                         {% if unit.cost %}<span class="pm-draft-unit-cost">{{unit.cost}}</span>{% endif %}
                         <div class="pm-draft-unit-tooltip">
                             <strong>{{unit.display}}</strong>
@@ -103,8 +106,11 @@
                 </div>
                 <div class="pm-draft-units">
                     {% for unit in side.units %}
-                    <div class="pm-draft-unit{% if unit.is-lord %} pm-draft-unit--lord{% endif %}" title="{{unit.key}}">
-                        <div class="pm-draft-unit-name">{{unit.display}}</div>
+                    <div class="pm-draft-unit{% if unit.is-lord %} pm-draft-unit--lord{% endif %}" title="{{unit.display}}">
+                        <img class="pm-draft-unit-portrait"
+                             src="/card/unit/{% if unit.unit-eid %}{{unit.unit-eid}}{% else %}placeholder{% endif %}.png"
+                             alt="{{unit.display}}"
+                             onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;"/>
                         {% if unit.cost %}<span class="pm-draft-unit-cost">{{unit.cost}}</span>{% endif %}
                         <div class="pm-draft-unit-tooltip">
                             <strong>{{unit.display}}</strong>
