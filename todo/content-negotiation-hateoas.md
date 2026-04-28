@@ -1,1 +1,0 @@
-- Move oob flag to content negotiation as API responses will always be oob swaps.
