@@ -215,26 +215,15 @@
         resolved))))
 
 (defn- faction-display
-  "Formats a resolved subfaction row as `Race → Subfaction` when the
-  subfaction's name adds information beyond the race name.  Collapses
-  to just `Race` when the subfaction is the 'main' one for the race
-  (e.g. `wh_main_emp_empire` → `The Empire`, not `The Empire → Empire`).
-  Returns the raw engine key when no row resolved so a missing-data case
-  is debuggable rather than blank."
+  "Renders the parent race name for a resolved subfaction row (e.g.
+  `wh_main_emp_empire` → `The Empire`).  The engine subfaction name (e.g.
+  `Reikland`) is intentionally dropped: in comp play the army's race is
+  what matters; the lord's specific subfaction is flavour.  Returns the
+  raw engine key when no row resolved so a missing-data case is
+  debuggable rather than blank."
   [faction-key key->row]
-  (if-let [row (get key->row faction-key)]
-    (let [race    (:faction-name row)
-          subname (:name row)
-          ;; Treat the subfaction as the race's 'main' entry when the names
-          ;; match outright or differ only by a leading 'The ' on the race
-          ;; (e.g. "The Empire" / "Empire").  In that case just render the
-          ;; race name; otherwise render `Race → Subfaction`.
-          main?   (or (str/blank? subname)
-                      (= race subname)
-                      (= (str/lower-case (or race ""))
-                         (str/lower-case (str "the " (or subname "")))))]
-      (if main? race (str race " → " subname)))
-    faction-key))
+  (or (get-in key->row [faction-key :faction-name])
+      faction-key))
 
 (defn- collect-game-files
   "Pulls multipart parts named `game-0`, `game-1`, … in order, up to but

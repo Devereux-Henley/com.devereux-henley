@@ -145,14 +145,16 @@ test.describe('Parse fragment endpoint', () => {
     // Faction-key resolution: the parser emits engine ids like
     // `wh_main_emp_empire` / `wh3_dlc23_chd_legion_of_azgorh` for the
     // sample replay.  After resolution the visible labels render the
-    // canonical RPFM `factions_screen_name_*` strings (e.g. `Reikland`,
-    // `The Legion of Azgorh`) prefixed with their parent race; the raw
-    // engine ids only survive in the hidden parsed-N JSON blob.
-    expect(html).toMatch(/pm-draft-handle-faction[^>]*>\s*The Empire → Reikland\s*</);
-    expect(html).toMatch(/pm-draft-handle-faction[^>]*>\s*Chaos Dwarfs → The Legion of Azgorh\s*</);
+    // parent race name only (the lord's specific subfaction is dropped —
+    // it isn't relevant for comp play); the raw engine ids only survive
+    // in the hidden parsed-N JSON blob.
+    expect(html).toMatch(/pm-draft-handle-faction[^>]*>\s*The Empire\s*</);
+    expect(html).toMatch(/pm-draft-handle-faction[^>]*>\s*Chaos Dwarfs\s*</);
     const visibleHtml = html.replace(/value="[^"]*"/g, '');
     expect(visibleHtml).not.toContain('wh_main_emp_empire');
     expect(visibleHtml).not.toContain('wh3_dlc23_chd_legion_of_azgorh');
+    expect(visibleHtml).not.toContain('Reikland');
+    expect(visibleHtml).not.toContain('Legion of Azgorh');
   });
 
   test('rejects empty submission with an inline error fragment', async ({ request }) => {
