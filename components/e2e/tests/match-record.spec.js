@@ -142,6 +142,16 @@ test.describe('Parse fragment endpoint', () => {
     // Aggregate "X units across N armies" footer is gone now that sections are
     // explicit — only the commander remains in the per-side foot.
     expect(html).not.toMatch(/units across \d+ arm/);
+    // Faction-key resolution: the parser emits engine ids like
+    // `wh_main_emp_empire` / `wh3_dlc23_chd_legion_of_azgorh` for the
+    // sample replay. After resolution the visible labels render the
+    // human-readable names; the raw engine ids only survive in the
+    // hidden parsed-N JSON blob.
+    expect(html).toMatch(/pm-draft-handle-faction[^>]*>\s*The Empire\s*</);
+    expect(html).toMatch(/pm-draft-handle-faction[^>]*>\s*Chaos Dwarfs → The Legion of Azgorh\s*</);
+    const visibleHtml = html.replace(/value="[^"]*"/g, '');
+    expect(visibleHtml).not.toContain('wh_main_emp_empire');
+    expect(visibleHtml).not.toContain('wh3_dlc23_chd_legion_of_azgorh');
   });
 
   test('rejects empty submission with an inline error fragment', async ({ request }) => {

@@ -26,7 +26,8 @@
    [com.devereux-henley.rts-web.web.tournament.api :as web.tournament.api]
    [com.devereux-henley.rts-web.web.view :as web.view]
    [integrant.core]
-   [jsonista.core :as jsonista]))
+   [jsonista.core :as jsonista]
+   [taoensso.timbre :as log]))
 
 ;; ─── Tournament list / detail / config views ────────────────────────────────
 
@@ -186,6 +187,54 @@
       {}
       (->> (db/get-units-by-keys (:connection dependencies) keys)
            (into {} (map (juxt :key identity)))))))
+
+(defn- collect-faction-keys
+  "Walks a parsed map's alliances and returns the set of every non-blank
+  `:faction-key` (the parser's engine-level subfaction id)."
+  [parsed]
+  (->> (:alliances parsed)
+       (keep :faction-key)
+       (remove empty?)
+       set))
+
+(defn- resolve-faction-keys
+  "Builds a `subfaction-key → resolution-row` map covering every faction
+  key referenced across the parsed games.  Logs a warning for any keys
+  the DB couldn't resolve so missing seed data shows up in the operator
+  log instead of silently rendering as the raw engine string."
+  [dependencies parsed-vec]
+  (let [keys (apply set/union (map collect-faction-keys parsed-vec))]
+    (if (empty? keys)
+      {}
+      (let [rows         (db/get-subfactions-by-keys (:connection dependencies) keys)
+            resolved     (into {} (map (juxt :key identity)) rows)
+            unresolved   (set/difference keys (set (map :key rows)))]
+        (when (seq unresolved)
+          (log/warn "Unresolved faction-keys; rendering raw engine ids."
+                    {:keys (sort unresolved)}))
+        resolved))))
+
+(defn- faction-display
+  "Formats a resolved subfaction row as `Race → Subfaction` when the
+  subfaction's name adds information beyond the race name.  Collapses
+  to just `Race` when the subfaction is the 'main' one for the race
+  (e.g. `wh_main_emp_empire` → `The Empire`, not `The Empire → Empire`).
+  Returns the raw engine key when no row resolved so a missing-data case
+  is debuggable rather than blank."
+  [faction-key key->row]
+  (if-let [row (get key->row faction-key)]
+    (let [race    (:faction-name row)
+          subname (:name row)
+          ;; Treat the subfaction as the race's 'main' entry when the names
+          ;; match outright or differ only by a leading 'The ' on the race
+          ;; (e.g. "The Empire" / "Empire").  In that case just render the
+          ;; race name; otherwise render `Race → Subfaction`.
+          main?   (or (str/blank? subname)
+                      (= race subname)
+                      (= (str/lower-case (or race ""))
+                         (str/lower-case (str "the " (or subname "")))))]
+      (if main? race (str race " → " subname)))
+    faction-key))
 
 (defn- collect-game-files
   "Pulls multipart parts named `game-0`, `game-1`, … in order, up to but
@@ -352,12 +401,16 @@
        :total-unit "models"})))
 
 (defn- side-context
-  "Builds the per-player side struct for one game: handle, faction-key,
+  "Builds the per-player side struct for one game: handle, faction display,
   side-level totals, commander, and a vector of section contexts (Main
   Army + optional Reinforcements). `side-key` (\"p1\" / \"p2\") is woven
   into the struct so the template can build unique heading IDs for
-  `aria-labelledby` without a parent loop variable."
-  [side-key handle alliance]
+  `aria-labelledby` without a parent loop variable.  `faction-key->row` is
+  the resolver map produced by `resolve-faction-keys`; when an alliance's
+  engine key is in the map, `:faction-display` renders the human-readable
+  name (e.g. `The Empire`, `Chaos Dwarfs → The Legion of Azgorh`); otherwise
+  the raw engine key is shown so missing seed data is visible to operators."
+  [side-key handle alliance faction-key->row]
   (let [armies    (vec (:armies alliance))
         sections  (alliance->sections alliance)
         all-units (vec (mapcat :section-units sections))
@@ -367,6 +420,7 @@
            {:side-key          side-key
             :handle            handle
             :faction-key       (:faction-key alliance)
+            :faction-display   (faction-display (:faction-key alliance) faction-key->row)
             :sections          sections
             :commander-display (or commander "")})))
 
@@ -376,7 +430,7 @@
   uploader-local-alliance-index plus the viewer's identity (the uploader
   is whoever is using the modal). The hidden parsed-json carries the
   snake_case form back to the submit endpoint untouched."
-  [match viewer-sub game-index source-name parsed]
+  [match viewer-sub game-index source-name parsed faction-key->row]
   (let [a0               (get-in parsed [:alliances 0] {})
         a1               (get-in parsed [:alliances 1] {})
         viewer-local-idx (:uploader-local-alliance-index parsed)
@@ -396,8 +450,8 @@
      :parser-format  (:format parsed)
      :p1-model-count (:model-count p1-alliance)
      :p2-model-count (:model-count p2-alliance)
-     :p1             (side-context "p1" (:player-one-sub match) p1-alliance)
-     :p2             (side-context "p2" (:player-two-sub match) p2-alliance)}))
+     :p1             (side-context "p1" (:player-one-sub match) p1-alliance faction-key->row)
+     :p2             (side-context "p2" (:player-two-sub match) p2-alliance faction-key->row)}))
 
 (defn- error-fragment
   [message]
@@ -423,16 +477,18 @@
         (empty? files)      (error-fragment "No replay files supplied.")
         :else
         (try
-          (let [parsed   (domain/parse-replay-files dependencies (mapv :file-path files))
-                key->row (resolve-units dependencies parsed)
-                enriched (mapv #(enrich-parsed key->row %) parsed)
-                viewer   (get-in session [:identity :id])
-                games    (mapv (fn [game-index file parsed-map]
-                                 (build-game-context match viewer game-index
-                                                     (:source-name file) parsed-map))
-                               (range)
-                               files
-                               enriched)]
+          (let [parsed       (domain/parse-replay-files dependencies (mapv :file-path files))
+                key->row     (resolve-units dependencies parsed)
+                enriched     (mapv #(enrich-parsed key->row %) parsed)
+                faction->row (resolve-faction-keys dependencies parsed)
+                viewer       (get-in session [:identity :id])
+                games        (mapv (fn [game-index file parsed-map]
+                                     (build-game-context match viewer game-index
+                                                         (:source-name file) parsed-map
+                                                         faction->row))
+                                   (range)
+                                   files
+                                   enriched)]
             {:status  200
              :headers {"Content-Type" "text/html; charset=utf-8"}
              :body    (render/render "match-record-review-fragment.html"
