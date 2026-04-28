@@ -268,11 +268,18 @@
 
 (defn- army->units
   "Maps a single army's units into the per-unit shape the review template
-  expects (display name, cost when enriched, lord flag, tooltip)."
+  expects (display name, cost when enriched, lord flag, tooltip).
+
+  The `enriched?` branch and `or`/`if` fallbacks below cover parser keys
+  that don't resolve to a DB unit row. Once #45 lands and key resolution
+  is guaranteed, the fallbacks become dead code — see #49 for the
+  cleanup checklist."
   [army]
   (mapv (fn [{:keys [key name cost unit-category-name unit-type-name unit-eid]}]
           (let [enriched? (some? name)
+                ;; FALLBACK (#49): unresolved parser key shows the raw engine key.
                 display   (if enriched? name key)
+                ;; FALLBACK (#49): missing category data falls through to type, then em-dash.
                 category  (or unit-category-name unit-type-name "—")
                 is-lord?  (= "lord" (some-> unit-category-name str/lower-case))]
             {:key      key
@@ -280,6 +287,7 @@
              :display  display
              :cost     cost
              :is-lord  is-lord?
+             ;; FALLBACK (#49): tooltip omits cost when the DB row is missing.
              :tooltip  (if cost
                          (str category " · " cost " pts")
                          category)}))
@@ -288,7 +296,11 @@
 (defn- section-totals
   "Per-section count/cost pair mirroring `alliance-totals` at section
   scope: cost in pts when every unit in the section is enriched, otherwise
-  the section's army-level :force-value sum (model count)."
+  the section's army-level :force-value sum (model count).
+
+  The model-count branch is a FALLBACK (#49) for partial enrichment — once
+  #45 guarantees every parser key matches a DB unit row, this collapses
+  to just the pts branch."
   [armies units]
   (let [enriched-count (count (filter :cost units))]
     (if (and (pos? enriched-count) (= enriched-count (count units)))
