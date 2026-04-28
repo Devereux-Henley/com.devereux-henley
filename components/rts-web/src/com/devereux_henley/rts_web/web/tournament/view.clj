@@ -206,9 +206,9 @@
   (let [keys (apply set/union (map collect-faction-keys parsed-vec))]
     (if (empty? keys)
       {}
-      (let [rows         (db/get-subfactions-by-keys (:connection dependencies) keys)
-            resolved     (into {} (map (juxt :key identity)) rows)
-            unresolved   (set/difference keys (set (map :key rows)))]
+      (let [rows       (db/get-subfactions-by-keys (:connection dependencies) keys)
+            resolved   (into {} (map (juxt :key identity)) rows)
+            unresolved (set/difference keys (set (map :key rows)))]
         (when (seq unresolved)
           (log/warn "Unresolved faction-keys; rendering raw engine ids."
                     {:keys (sort unresolved)}))

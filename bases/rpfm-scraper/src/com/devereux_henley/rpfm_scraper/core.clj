@@ -274,7 +274,7 @@
                            {})
             {:keys [content rows empty?]}
             (subfactions-seed/generate-subfaction-seed faction-rows faction-loc seed-dir)
-            existing (when (.exists path) (slurp path))]
+            existing     (when (.exists path) (slurp path))]
         (cond
           dry-run?
           (logf "  [subfactions] DRY: would write %d rows" (count rows))

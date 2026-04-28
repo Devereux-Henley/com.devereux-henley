@@ -66,8 +66,8 @@
   (let [prefix "factions_screen_name_"]
     (reduce
      (fn [m row]
-       (let [k       (get row "key")
-             screen  (get row "screen_name")
+       (let [k        (get row "key")
+             screen   (get row "screen_name")
              from-loc (get faction-loc (str prefix k))]
          (cond
            (and (seq k) (seq from-loc)) (assoc m k from-loc)
