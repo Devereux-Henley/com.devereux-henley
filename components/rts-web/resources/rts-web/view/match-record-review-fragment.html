@@ -70,25 +70,40 @@
                         <span class="pm-draft-cost-unit">{{side.total-unit}}</span>
                     </div>
                 </div>
-                <div class="pm-draft-units">
-                    {% for unit in side.units %}
-                    <div class="pm-draft-unit{% if unit.is-lord %} pm-draft-unit--lord{% endif %}" title="{{unit.display}}">
-                        <img class="pm-draft-unit-portrait"
-                             src="/card/unit/{% if unit.unit-eid %}{{unit.unit-eid}}{% else %}placeholder{% endif %}.png"
-                             alt="{{unit.display}}"
-                             onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;"/>
-                        {% if unit.cost %}<span class="pm-draft-unit-cost">{{unit.cost}}</span>{% endif %}
-                        <div class="pm-draft-unit-tooltip">
-                            <strong>{{unit.display}}</strong>
-                            <span>{{unit.tooltip}}</span>
+                {% for section in side.sections %}
+                <section class="pm-draft-section pm-draft-section--{{section.section}}"
+                         aria-labelledby="pm-section-{{game.game-index}}-{{side.side-key}}-{{section.section}}">
+                    <header class="pm-draft-section-head">
+                        <h4 id="pm-section-{{game.game-index}}-{{side.side-key}}-{{section.section}}"
+                            class="pm-draft-section-label">{{section.section-label}}</h4>
+                        <span class="pm-draft-section-meta">
+                            <span class="pm-draft-section-count">{{section.section-unit-count}} {% ifequal section.section-unit-count 1 %}unit{% else %}units{% endifequal %}</span>
+                            <span class="pm-draft-section-cost">{{section.section-num}} {{section.section-unit}}</span>
+                        </span>
+                    </header>
+                    <div class="pm-draft-units">
+                        {% for unit in section.section-units %}
+                        <div class="pm-draft-unit{% if unit.is-lord %} pm-draft-unit--lord{% endif %}" title="{{unit.display}}">
+                            <img class="pm-draft-unit-portrait"
+                                 src="/card/unit/{% if unit.unit-eid %}{{unit.unit-eid}}{% else %}placeholder{% endif %}.png"
+                                 alt="{{unit.display}}"
+                                 onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;"/>
+                            {% if unit.cost %}<span class="pm-draft-unit-cost">{{unit.cost}}</span>{% endif %}
+                            <div class="pm-draft-unit-tooltip">
+                                <strong>{{unit.display}}</strong>
+                                <span>{{unit.tooltip}}</span>
+                            </div>
                         </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
-                </div>
+                </section>
+                {% endfor %}
+                {% if side.commander-display %}
                 <div class="pm-draft-foot">
-                    <span>{{side.unit-count}} units across {{side.army-count}} {% ifequal side.army-count 1 %}army{% else %}armies{% endifequal %}</span>
+                    <span>Commander</span>
                     <strong>{{side.commander-display}}</strong>
                 </div>
+                {% endif %}
             </div>
             {% endwith %}
 
@@ -104,25 +119,40 @@
                         <span class="pm-draft-cost-unit">{{side.total-unit}}</span>
                     </div>
                 </div>
-                <div class="pm-draft-units">
-                    {% for unit in side.units %}
-                    <div class="pm-draft-unit{% if unit.is-lord %} pm-draft-unit--lord{% endif %}" title="{{unit.display}}">
-                        <img class="pm-draft-unit-portrait"
-                             src="/card/unit/{% if unit.unit-eid %}{{unit.unit-eid}}{% else %}placeholder{% endif %}.png"
-                             alt="{{unit.display}}"
-                             onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;"/>
-                        {% if unit.cost %}<span class="pm-draft-unit-cost">{{unit.cost}}</span>{% endif %}
-                        <div class="pm-draft-unit-tooltip">
-                            <strong>{{unit.display}}</strong>
-                            <span>{{unit.tooltip}}</span>
+                {% for section in side.sections %}
+                <section class="pm-draft-section pm-draft-section--{{section.section}}"
+                         aria-labelledby="pm-section-{{game.game-index}}-{{side.side-key}}-{{section.section}}">
+                    <header class="pm-draft-section-head">
+                        <h4 id="pm-section-{{game.game-index}}-{{side.side-key}}-{{section.section}}"
+                            class="pm-draft-section-label">{{section.section-label}}</h4>
+                        <span class="pm-draft-section-meta">
+                            <span class="pm-draft-section-count">{{section.section-unit-count}} {% ifequal section.section-unit-count 1 %}unit{% else %}units{% endifequal %}</span>
+                            <span class="pm-draft-section-cost">{{section.section-num}} {{section.section-unit}}</span>
+                        </span>
+                    </header>
+                    <div class="pm-draft-units">
+                        {% for unit in section.section-units %}
+                        <div class="pm-draft-unit{% if unit.is-lord %} pm-draft-unit--lord{% endif %}" title="{{unit.display}}">
+                            <img class="pm-draft-unit-portrait"
+                                 src="/card/unit/{% if unit.unit-eid %}{{unit.unit-eid}}{% else %}placeholder{% endif %}.png"
+                                 alt="{{unit.display}}"
+                                 onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;"/>
+                            {% if unit.cost %}<span class="pm-draft-unit-cost">{{unit.cost}}</span>{% endif %}
+                            <div class="pm-draft-unit-tooltip">
+                                <strong>{{unit.display}}</strong>
+                                <span>{{unit.tooltip}}</span>
+                            </div>
                         </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
-                </div>
+                </section>
+                {% endfor %}
+                {% if side.commander-display %}
                 <div class="pm-draft-foot">
-                    <span>{{side.unit-count}} units across {{side.army-count}} {% ifequal side.army-count 1 %}army{% else %}armies{% endifequal %}</span>
+                    <span>Commander</span>
                     <strong>{{side.commander-display}}</strong>
                 </div>
+                {% endif %}
             </div>
             {% endwith %}
         </div>
