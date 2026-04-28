@@ -144,10 +144,11 @@ test.describe('Parse fragment endpoint', () => {
     expect(html).not.toMatch(/units across \d+ arm/);
     // Faction-key resolution: the parser emits engine ids like
     // `wh_main_emp_empire` / `wh3_dlc23_chd_legion_of_azgorh` for the
-    // sample replay. After resolution the visible labels render the
-    // human-readable names; the raw engine ids only survive in the
-    // hidden parsed-N JSON blob.
-    expect(html).toMatch(/pm-draft-handle-faction[^>]*>\s*The Empire\s*</);
+    // sample replay.  After resolution the visible labels render the
+    // canonical RPFM `factions_screen_name_*` strings (e.g. `Reikland`,
+    // `The Legion of Azgorh`) prefixed with their parent race; the raw
+    // engine ids only survive in the hidden parsed-N JSON blob.
+    expect(html).toMatch(/pm-draft-handle-faction[^>]*>\s*The Empire → Reikland\s*</);
     expect(html).toMatch(/pm-draft-handle-faction[^>]*>\s*Chaos Dwarfs → The Legion of Azgorh\s*</);
     const visibleHtml = html.replace(/value="[^"]*"/g, '');
     expect(visibleHtml).not.toContain('wh_main_emp_empire');
