@@ -1322,6 +1322,21 @@
   border-bottom-color: var(--color-primary-600);
 }
 
+/* Checkmark on a game tab once that game's winner radio is selected. Bo7
+   ceiling matches the panel-display rules above. */
+.pm-panel--review:has(input[name="winner-sub-0"]:checked) label[for="pm-game-tab-0"]::after,
+.pm-panel--review:has(input[name="winner-sub-1"]:checked) label[for="pm-game-tab-1"]::after,
+.pm-panel--review:has(input[name="winner-sub-2"]:checked) label[for="pm-game-tab-2"]::after,
+.pm-panel--review:has(input[name="winner-sub-3"]:checked) label[for="pm-game-tab-3"]::after,
+.pm-panel--review:has(input[name="winner-sub-4"]:checked) label[for="pm-game-tab-4"]::after,
+.pm-panel--review:has(input[name="winner-sub-5"]:checked) label[for="pm-game-tab-5"]::after,
+.pm-panel--review:has(input[name="winner-sub-6"]:checked) label[for="pm-game-tab-6"]::after {
+  content: "✓";
+  font-size: 0.75rem;
+  color: var(--color-success-500);
+  margin-left: 4px;
+}
+
 /* ─── Step 3 — winner button selected style ──────────────────────────────── */
 
 .pm-winner-btn:has(input[type="radio"]:checked) {

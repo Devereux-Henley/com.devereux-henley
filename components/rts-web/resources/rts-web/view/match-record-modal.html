@@ -177,7 +177,11 @@
                                 </div>
                                 <button type="button"
                                         class="pm-drop-clear"
-                                        onclick="event.stopPropagation();const r=this.closest('.pm-game-row');const i=r.querySelector('input[type=file]');i.value='';i.dispatchEvent(new Event('change',{bubbles:true}));">
+                                        _="on click
+                                           halt the event's bubbling
+                                           then set inp to the first <input[type='file']/> in the closest .pm-game-row
+                                           then set inp's value to ''
+                                           then send change to inp">
                                     Clear
                                 </button>
                                 <input type="file"
