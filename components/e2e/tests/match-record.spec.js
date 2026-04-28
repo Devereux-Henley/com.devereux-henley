@@ -94,7 +94,8 @@ test.describe('Match-record modal view', () => {
     expect(res.status()).toBe(200);
     const html = await res.text();
     expect(html).toContain('id="pm-modal-root"');
-    expect(html).toContain('data-pm-step="upload"');
+    expect(html).toMatch(/<dialog[^>]*\bopen\b/);
+    expect(html).toContain('pm-panel--upload');
     expect(html).toContain(`data-match-eid="${matchEid}"`);
     expect(html).toContain('data-format="3"');
     expect(html).toContain(`hx-post="/view/match-record/${matchEid}/parse"`);
@@ -123,8 +124,7 @@ test.describe('Parse fragment endpoint', () => {
     expect(html).toContain('name="parsed-1"');
     expect(html).toContain('name="parsed-2"');
     expect(html).toContain('name="winner-sub-0"');
-    // Inline script flips data-pm-step to review.
-    expect(html).toContain("dataset.pmStep = 'review'");
+    expect(html).toContain('pm-panel--review');
   });
 
   test('rejects empty submission with an inline error fragment', async ({ request }) => {
@@ -165,7 +165,7 @@ test.describe('Submit fragment endpoint', () => {
     const html = await submitRes.text();
     expect(html).toContain('Match recorded');
     expect(html).toContain('dev-admin takes the series 1–0');
-    expect(html).toContain("dataset.pmStep = 'submitted'");
+    expect(html).toContain('pm-panel--submitted');
   });
 
   test('rejects an undecided Bo3 submission with the inline error fragment', async ({ request }) => {

@@ -213,7 +213,14 @@
             </section>
 
             {% for phase-group in matches-by-phase %}
-            <section id="panel-phase-{{phase-group.phase}}" role="tabpanel" aria-labelledby="tab-phase-{{phase-group.phase}}" class="tourney-tab-panel" hidden></section>
+            <section id="panel-phase-{{phase-group.phase}}"
+                     role="tabpanel"
+                     aria-labelledby="tab-phase-{{phase-group.phase}}"
+                     class="tourney-tab-panel"
+                     hidden
+                     hx-get="/api/tournament/{{data.eid}}/phase/{{phase-group.phase}}"
+                     hx-trigger="match-recorded from:body"
+                     hx-swap="innerHTML"></section>
             {% endfor %}
 
         </div>

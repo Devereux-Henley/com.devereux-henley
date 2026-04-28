@@ -434,7 +434,8 @@
                                        :p2-won   (= p2 (:winner-sub g))})
                                     (:games result))]
               {:status  201
-               :headers {"Content-Type" "text/html; charset=utf-8"}
+               :headers {"Content-Type"            "text/html; charset=utf-8"
+                         "HX-Trigger-After-Settle" "match-recorded"}
                :body    (render/render "match-record-submitted-fragment.html"
                                        {:winner-sub  (:winner-sub result)
                                         :p1-wins     (get win-counts p1 0)
