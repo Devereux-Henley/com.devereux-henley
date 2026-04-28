@@ -73,6 +73,10 @@
                 <div class="pm-draft-units">
                     {% for unit in side.units %}
                     <div class="pm-draft-unit{% if unit.is-lord %} pm-draft-unit--lord{% endif %}" title="{{unit.key}}">
+                        <img class="pm-draft-unit-portrait"
+                             src="/card/unit/{% if unit.unit-eid %}{{unit.unit-eid}}{% else %}placeholder{% endif %}.png"
+                             alt=""
+                             onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;"/>
                         <div class="pm-draft-unit-name">{{unit.display}}</div>
                         {% if unit.cost %}<span class="pm-draft-unit-cost">{{unit.cost}}</span>{% endif %}
                         <div class="pm-draft-unit-tooltip">
@@ -104,6 +108,10 @@
                 <div class="pm-draft-units">
                     {% for unit in side.units %}
                     <div class="pm-draft-unit{% if unit.is-lord %} pm-draft-unit--lord{% endif %}" title="{{unit.key}}">
+                        <img class="pm-draft-unit-portrait"
+                             src="/card/unit/{% if unit.unit-eid %}{{unit.unit-eid}}{% else %}placeholder{% endif %}.png"
+                             alt=""
+                             onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;"/>
                         <div class="pm-draft-unit-name">{{unit.display}}</div>
                         {% if unit.cost %}<span class="pm-draft-unit-cost">{{unit.cost}}</span>{% endif %}
                         <div class="pm-draft-unit-tooltip">

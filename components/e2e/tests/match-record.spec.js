@@ -125,6 +125,10 @@ test.describe('Parse fragment endpoint', () => {
     expect(html).toContain('name="parsed-2"');
     expect(html).toContain('name="winner-sub-0"');
     expect(html).toContain('pm-panel--review');
+    // Each draft unit tile renders a portrait <img> sourced from /card/unit/<eid>.png
+    // (or the placeholder fallback when the parser key didn't enrich against the DB).
+    expect(html).toMatch(/<img class="pm-draft-unit-portrait"[^>]*src="\/card\/unit\/[^"]+\.png"/);
+    expect(html).toMatch(/onerror="this\.src='\/card\/unit\/placeholder\.png'/);
   });
 
   test('rejects empty submission with an inline error fragment', async ({ request }) => {

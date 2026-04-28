@@ -1169,22 +1169,24 @@
   margin: var(--space-5) 0;
 }
 
-/* ─── Draft unit cards (text-driven; we don't ship WH3 unit portraits) ──── */
-/* Override the prototype's portrait-centric layout: show the unit name as
-   text inside the 56×110 tile, with the cost still pinned at the bottom. */
+/* ─── Draft unit cards ──────────────────────────────────────────────────── */
+/* Portrait fills the 56×110 tile (see .pm-draft-unit img above). The name
+   overlays the bottom of the tile with a dark scrim so it stays legible
+   over any portrait; the cost pip continues to pin to the very bottom. */
 .pm-draft-unit-name {
   position: absolute;
-  inset: 6px 4px 22px 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 14px 4px 22px 4px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.88) 35%, rgba(0, 0, 0, 0.55) 70%, transparent 100%);
   text-align: center;
   font-family: var(--font-family-heading);
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   line-height: 1.15;
   letter-spacing: 0.04em;
   color: var(--color-primary-800);
-  text-shadow: 0 1px 3px #000;
+  text-shadow: 0 1px 3px #000, 0 0 6px #000;
   word-break: break-word;
   hyphens: auto;
   pointer-events: none;
