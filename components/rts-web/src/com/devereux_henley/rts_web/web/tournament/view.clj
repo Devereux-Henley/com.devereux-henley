@@ -266,26 +266,76 @@
             (:year played-at) (:month played-at) (:day played-at)
             (:hour played-at) (:minute played-at))))
 
-(defn- alliance->units
-  "Flattens an alliance's armies → units into the per-unit shape the
-  review template expects (display name, cost when enriched, lord flag,
-  tooltip)."
+(defn- army->units
+  "Maps a single army's units into the per-unit shape the review template
+  expects (display name, cost when enriched, lord flag, tooltip).
+
+  The `enriched?` branch and `or`/`if` fallbacks below cover parser keys
+  that don't resolve to a DB unit row. Once #45 lands and key resolution
+  is guaranteed, the fallbacks become dead code — see #49 for the
+  cleanup checklist."
+  [army]
+  (mapv (fn [{:keys [key name cost unit-category-name unit-type-name unit-eid]}]
+          (let [enriched? (some? name)
+                ;; FALLBACK (#49): unresolved parser key shows the raw engine key.
+                display   (if enriched? name key)
+                ;; FALLBACK (#49): missing category data falls through to type, then em-dash.
+                category  (or unit-category-name unit-type-name "—")
+                is-lord?  (= "lord" (some-> unit-category-name str/lower-case))]
+            {:key      key
+             :unit-eid unit-eid
+             :display  display
+             :cost     cost
+             :is-lord  is-lord?
+             ;; FALLBACK (#49): tooltip omits cost when the DB row is missing.
+             :tooltip  (if cost
+                         (str category " · " cost " pts")
+                         category)}))
+        (:units army)))
+
+(defn- section-totals
+  "Per-section count/cost pair mirroring `alliance-totals` at section
+  scope: cost in pts when every unit in the section is enriched, otherwise
+  the section's army-level :force-value sum (model count).
+
+  The model-count branch is a FALLBACK (#49) for partial enrichment — once
+  #45 guarantees every parser key matches a DB unit row, this collapses
+  to just the pts branch."
+  [armies units]
+  (let [enriched-count (count (filter :cost units))]
+    (if (and (pos? enriched-count) (= enriched-count (count units)))
+      {:section-num  (reduce + 0 (keep :cost units))
+       :section-unit "pts"}
+      {:section-num  (reduce + 0 (keep :force-value armies))
+       :section-unit "models"})))
+
+(defn- build-section
+  "Composes a section context (label, units, count, cost/model-count)
+  for a contiguous group of armies that belong to either the Main Army
+  or the Reinforcements bucket."
+  [section-key armies]
+  (let [label (case section-key
+                "main"           "Main Army"
+                "reinforcements" "Reinforcements")
+        units (vec (mapcat army->units armies))]
+    (merge {:section            section-key
+            :section-label      label
+            :section-units      units
+            :section-unit-count (count units)}
+           (section-totals armies units))))
+
+(defn- alliance->sections
+  "Splits an alliance's armies into a Main Army section (the first
+  army) and a Reinforcements section (everything after). The Reinforcements
+  section is omitted when the alliance only carries one army; the Main
+  Army section is omitted when the alliance carries no armies at all."
   [alliance]
-  (->> (:armies alliance)
-       (mapcat :units)
-       (mapv (fn [{:keys [key name cost unit-category-name unit-type-name unit-eid]}]
-               (let [enriched? (some? name)
-                     display   (if enriched? name key)
-                     category  (or unit-category-name unit-type-name "—")
-                     is-lord?  (= "lord" (some-> unit-category-name str/lower-case))]
-                 {:key      key
-                  :unit-eid unit-eid
-                  :display  display
-                  :cost     cost
-                  :is-lord  is-lord?
-                  :tooltip  (if cost
-                              (str category " · " cost " pts")
-                              category)})))))
+  (let [armies (vec (:armies alliance))
+        main   (when (seq armies) [(first armies)])
+        reinf  (vec (rest armies))]
+    (cond-> []
+      main        (conj (build-section "main" main))
+      (seq reinf) (conj (build-section "reinforcements" reinf)))))
 
 (defn- alliance-totals
   "Returns the {:total-num … :total-unit …} pair shown in the draft head.
@@ -302,19 +352,22 @@
        :total-unit "models"})))
 
 (defn- side-context
-  "Builds the per-player side struct for one game (handle, faction-key,
-  unit list, totals, commander, army count)."
-  [handle alliance]
+  "Builds the per-player side struct for one game: handle, faction-key,
+  side-level totals, commander, and a vector of section contexts (Main
+  Army + optional Reinforcements). `side-key` (\"p1\" / \"p2\") is woven
+  into the struct so the template can build unique heading IDs for
+  `aria-labelledby` without a parent loop variable."
+  [side-key handle alliance]
   (let [armies    (vec (:armies alliance))
-        units     (alliance->units alliance)
-        totals    (alliance-totals alliance units)
+        sections  (alliance->sections alliance)
+        all-units (vec (mapcat :section-units sections))
+        totals    (alliance-totals alliance all-units)
         commander (:commander-display (first armies))]
     (merge totals
-           {:handle            handle
+           {:side-key          side-key
+            :handle            handle
             :faction-key       (:faction-key alliance)
-            :units             units
-            :unit-count        (count units)
-            :army-count        (count armies)
+            :sections          sections
             :commander-display (or commander "")})))
 
 (defn- build-game-context
@@ -343,8 +396,8 @@
      :parser-format  (:format parsed)
      :p1-model-count (:model-count p1-alliance)
      :p2-model-count (:model-count p2-alliance)
-     :p1             (side-context (:player-one-sub match) p1-alliance)
-     :p2             (side-context (:player-two-sub match) p2-alliance)}))
+     :p1             (side-context "p1" (:player-one-sub match) p1-alliance)
+     :p2             (side-context "p2" (:player-two-sub match) p2-alliance)}))
 
 (defn- error-fragment
   [message]

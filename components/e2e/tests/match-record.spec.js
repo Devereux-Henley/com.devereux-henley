@@ -129,6 +129,19 @@ test.describe('Parse fragment endpoint', () => {
     // (or the placeholder fallback when the parser key didn't enrich against the DB).
     expect(html).toMatch(/<img class="pm-draft-unit-portrait"[^>]*src="\/card\/unit\/[^"]+\.png"/);
     expect(html).toMatch(/onerror="this\.src='\/card\/unit\/placeholder\.png'/);
+    // Each side splits its army into a Main Army and a Reinforcements section
+    // — both label headings must appear for both players (p1 and p2), with
+    // matching aria-labelledby ids so the section headings are screen-reader
+    // accessible.
+    for (const side of ['p1', 'p2']) {
+      expect(html).toMatch(new RegExp(`id="pm-section-0-${side}-main"[^>]*>Main Army</h4>`));
+      expect(html).toMatch(new RegExp(`id="pm-section-0-${side}-reinforcements"[^>]*>Reinforcements</h4>`));
+      expect(html).toContain(`aria-labelledby="pm-section-0-${side}-main"`);
+      expect(html).toContain(`aria-labelledby="pm-section-0-${side}-reinforcements"`);
+    }
+    // Aggregate "X units across N armies" footer is gone now that sections are
+    // explicit — only the commander remains in the per-side foot.
+    expect(html).not.toMatch(/units across \d+ arm/);
   });
 
   test('rejects empty submission with an inline error fragment', async ({ request }) => {
