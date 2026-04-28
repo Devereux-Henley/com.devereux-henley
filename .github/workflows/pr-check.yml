@@ -3,10 +3,16 @@ name: PR Check
 on:
   pull_request:
     branches: [main]
+    paths:
+      - 'bases/**'
+      - 'components/**'
+      - 'projects/**'
 
 jobs:
   check:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
         with:
@@ -40,25 +46,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cljdeps-
 
-      - name: Set up Rust
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          toolchain: stable
-
-      - name: Cache Cargo build
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            tools/replay-parser/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('tools/replay-parser/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-
-
-      - name: Build replay parser
-        working-directory: tools/replay-parser
-        run: cargo build --release
+      - name: Download replay parser from latest tw3-replay-parser release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p bin
+          gh release download \
+            --repo Devereux-Henley/tw3-replay-parser \
+            --pattern 'tw-replay-parser' \
+            --dir bin
+          chmod +x bin/tw-replay-parser
 
       - name: Install Playwright
         working-directory: components/e2e
@@ -68,7 +65,7 @@ jobs:
 
       - name: Start dev server
         env:
-          REPLAY_PARSER_BIN: ${{ github.workspace }}/tools/replay-parser/target/release/tw-replay-parser
+          REPLAY_PARSER_BIN: ${{ github.workspace }}/bin/tw-replay-parser
         run: |
           mkdir -p db
           clojure -M:dev -i components/e2e/resources/e2e/start_dev_server.clj &
