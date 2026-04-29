@@ -1,7 +1,3 @@
-ALTER TABLE faction ADD COLUMN key TEXT;
---;;
-CREATE UNIQUE INDEX IF NOT EXISTS idx_faction_key_per_game ON faction(game_id, key) WHERE key IS NOT NULL AND deleted_at IS NULL;
---;;
 CREATE TABLE IF NOT EXISTS subfaction (
   id INTEGER PRIMARY KEY ASC,
   eid TEXT NOT NULL,

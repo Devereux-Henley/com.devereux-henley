@@ -22,30 +22,18 @@
   "1f7c0c3a-fa17-4d6f-8a41-2d3c2c3f5b9c")
 
 (def ^:private faction-row-re
-  #"\(\s*(\d+),\s*'([0-9a-f\-]+)',\s*\d+,\s*'((?:[^']|'')*)',")
-
-(def ^:private faction-key-row-re
-  #"WHEN\s+'([0-9a-f\-]+)'\s+THEN\s+'([^']+)'")
+  #"\(\s*(\d+),\s*'[0-9a-f\-]+',\s*\d+,\s*'(?:[^']|'')*',\s*'([^']+)',")
 
 (defn build-slug->faction-id
-  "Walk seed-factions.sql + seed-faction-keys.sql and return {slug → faction-id}.
-  Skips slugs that don't have a matching faction row so callers can fall back
-  cleanly when a race isn't yet seeded."
+  "Walk seed-factions.sql and return {slug → faction-id}.  Each VALUES row
+  pairs `(id, 'eid', game_id, 'name', 'slug', …)` — we extract id and the
+  slug column directly.  Rows without a slug are skipped so callers can fall
+  back cleanly when a race isn't yet seeded."
   [seed-dir]
-  (let [factions-content (slurp (io/file seed-dir "seed-factions.sql"))
-        keys-content     (slurp (io/file seed-dir "seed-faction-keys.sql"))
-        eid->id          (into {}
-                               (map (fn [m]
-                                      [(nth m 2) (Long/parseLong (nth m 1))]))
-                               (re-seq faction-row-re factions-content))
-        eid->slug        (into {} (map (fn [m] [(nth m 1) (nth m 2)]))
-                               (re-seq faction-key-row-re keys-content))]
-    (reduce-kv (fn [m eid slug]
-                 (if-let [id (get eid->id eid)]
-                   (assoc m slug id)
-                   m))
-               {}
-               eid->slug)))
+  (let [factions-content (slurp (io/file seed-dir "seed-factions.sql"))]
+    (into {}
+          (map (fn [m] [(nth m 2) (Long/parseLong (nth m 1))]))
+          (re-seq faction-row-re factions-content))))
 
 (defn- faction-slug-for-key
   "Maps an engine factions_tables key (e.g. `wh3_dlc23_chd_legion_of_azgorh`)

@@ -23,7 +23,6 @@
 (def seed-files
   ["seed-games.sql"
    "seed-factions.sql"
-   "seed-faction-keys.sql"
    "seed-subfactions.sql"
    "seed-social-media-platforms.sql"
    "seed-game-social-links.sql"
