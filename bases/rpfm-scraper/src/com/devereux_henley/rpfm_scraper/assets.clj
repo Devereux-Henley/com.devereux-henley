@@ -32,10 +32,11 @@
                            StandardCopyOption/COPY_ATTRIBUTES])))
 
 (defn- mogrify-trim! [path]
-  (let [{:keys [exit err]}
-        (shell/sh "mogrify" "-fuzz" "20%" "-trim" "+repage" path)]
+  (let [path-str (str path)
+        {:keys [exit err]}
+        (shell/sh "mogrify" "-trim" "+repage" path-str)]
     (when-not (zero? exit)
-      (throw (ex-info (str "mogrify failed: " err) {:path path})))))
+      (throw (ex-info (str "mogrify failed: " err) {:path path-str})))))
 
 (defn- copy-and-trim! [src dest dry-run?]
   (when-not dry-run?

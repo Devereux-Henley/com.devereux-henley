@@ -85,7 +85,7 @@ VALUES
    19,
    1,
    2,
-   '{"unit_size":1,"melee_attack_types":[],"charge_bonus":10,"weapon_ap_damage":90,"health":3520,"draftable-spells":[],"melee_defence":30,"melee_attack":25,"melee_modifiers":[],"armor":30,"leadership":60,"cost":300,"weapon_strength":300,"barrier":0,"abilities":["wh_main_unit_passive_unstable_mark_ii","wh3_main_unit_passive_single_entity","wh2_dlc09_character_abilities_curse_of_khsar","wh_main_unit_passive_unstable"],"attributes":["causes_fear","encourages","hide_forest","undead"],"bonus_vs_large":0,"missile_modifiers":[],"bonus_vs_infantry":0,"speed":31,"missile_damage_types":[],"ammunition":0,"weapon_damage":210,"is_large":false}',
+   '{"cost":300,"is_large":false,"unit_size":1,"health":3520,"barrier":0,"armor":30,"leadership":60,"speed":31,"melee_attack":25,"melee_attack_types":[],"melee_modifiers":[],"melee_defence":30,"weapon_strength":300,"weapon_damage":210,"weapon_ap_damage":90,"bonus_vs_infantry":0,"bonus_vs_large":0,"charge_bonus":10,"ammunition":0,"missile_damage_types":[],"missile_modifiers":[],"attributes":["causes_fear","encourages","hide_forest","undead"],"abilities":["wh_main_unit_passive_unstable_mark_ii","wh3_main_unit_passive_single_entity","wh2_dlc09_character_abilities_curse_of_khsar","wh_main_unit_passive_unstable"],"draftable-spells":[]}',
    0,
    1,
    'f0ce7395-a57f-41e9-ade0-fd13bafc058f',

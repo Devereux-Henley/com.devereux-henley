@@ -133,7 +133,7 @@ VALUES
    21,
    1,
    2,
-   '{"unit_size":1,"melee_attack_types":[],"charge_bonus":35,"weapon_ap_damage":130,"health":3572,"draftable-spells":[],"melee_defence":40,"melee_attack":60,"melee_modifiers":[],"armor":30,"leadership":60,"cost":600,"weapon_strength":430,"barrier":0,"abilities":["wh_main_unit_passive_unstable","wh3_main_unit_passive_single_entity","wh_main_unit_passive_unstable_mark_ii","wh_main_lord_passive_the_hunger","wh2_dlc11_character_abilities_taunt"],"attributes":["causes_fear","encourages","hide_forest","undead"],"bonus_vs_large":0,"missile_modifiers":[],"bonus_vs_infantry":0,"speed":38,"missile_damage_types":[],"ammunition":0,"weapon_damage":300,"is_large":false}',
+   '{"cost":600,"is_large":false,"unit_size":1,"health":3572,"barrier":0,"armor":30,"leadership":60,"speed":38,"melee_attack":60,"melee_attack_types":[],"melee_modifiers":[],"melee_defence":40,"weapon_strength":430,"weapon_damage":300,"weapon_ap_damage":130,"bonus_vs_infantry":0,"bonus_vs_large":0,"charge_bonus":35,"ammunition":0,"missile_damage_types":[],"missile_modifiers":[],"attributes":["causes_fear","encourages","hide_forest","undead"],"abilities":["wh_main_unit_passive_unstable","wh3_main_unit_passive_single_entity","wh_main_unit_passive_unstable_mark_ii","wh_main_lord_passive_the_hunger","wh2_dlc11_character_abilities_taunt"],"draftable-spells":[]}',
    0,
    1,
    'f0ce7395-a57f-41e9-ade0-fd13bafc058f',
