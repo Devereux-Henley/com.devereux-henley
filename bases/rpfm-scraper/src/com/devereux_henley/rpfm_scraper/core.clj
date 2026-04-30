@@ -12,6 +12,7 @@
    [com.devereux-henley.rpfm-scraper.rpfm :as rpfm]
    [com.devereux-henley.rpfm-scraper.spells-seed :as spells-seed]
    [com.devereux-henley.rpfm-scraper.stats :as stats]
+   [com.devereux-henley.rpfm-scraper.subfactions-seed :as subfactions-seed]
    [com.devereux-henley.rpfm-scraper.tables :as tables]
    [com.devereux-henley.rpfm-scraper.unit-items-seed :as unit-items-seed]
    [com.devereux-henley.rpfm-scraper.unit-lores-seed :as unit-lores-seed]
@@ -253,6 +254,38 @@
       (do (spit path content)
           (logf "  [unit-keys] wrote %d unit-key pairs" (count pairs))))))
 
+(defn- generate-subfaction-seed!
+  "Spits `seed-subfactions.sql` from `factions_tables.json` + `factions_loc.json`.
+  Mirrors `generate-unit-keys-seed!`'s preserve-on-empty behaviour so a scrape
+  that's missing the relevant RPFM files doesn't clobber a previously-good seed."
+  [data-dir dry-run?]
+  (log "Generating subfaction seed...")
+  (let [factions-file (io/file data-dir "factions_tables.json")
+        loc-file      (io/file data-dir "factions_loc.json")
+        path          (io/file seed-dir "seed-subfactions.sql")]
+    (cond
+      (not (.exists factions-file))
+      (log "  [subfactions] factions_tables.json not found, preserving existing seed-subfactions.sql")
+
+      :else
+      (let [faction-rows (:rows (rpfm/parse-rpfm-table (.getPath factions-file)))
+            faction-loc  (if (.exists loc-file)
+                           (rpfm/parse-loc-file (.getPath loc-file))
+                           {})
+            {:keys [content rows empty?]}
+            (subfactions-seed/generate-subfaction-seed faction-rows faction-loc seed-dir)
+            existing     (when (.exists path) (slurp path))]
+        (cond
+          dry-run?
+          (logf "  [subfactions] DRY: would write %d rows" (count rows))
+
+          (and empty? (seq existing) (not (str/starts-with? existing "-- no subfaction rows")))
+          (log "  [subfactions] preserving existing seed-subfactions.sql (no rows this run)")
+
+          :else
+          (do (spit path content)
+              (logf "  [subfactions] wrote %d subfaction rows" (count rows))))))))
+
 (defn- update-abilities-seed! [data dry-run?]
   (log "Updating ability descriptions and costs...")
   (let [file        (io/file seed-dir "seed-abilities.sql")
@@ -411,6 +444,7 @@
         lore-consolidate (consolidate-lores! dry?)
         unit-key-pairs   (update-unit-seeds! data dry?)]
     (generate-unit-keys-seed! unit-key-pairs dry?)
+    (generate-subfaction-seed! (:data-dir opts) dry?)
     (update-abilities-seed! data dry?)
     (copy-assets! data opts)
     (update-spell-seed! data dry?)

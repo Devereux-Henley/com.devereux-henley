@@ -168,6 +168,7 @@
 (def replay-entity        schema/replay-entity)
 (def create-replay-params schema/create-replay-params)
 
-(def get-replay-by-eid query.replay/get-replay-by-eid)
-(def create-replay     query.replay/create-replay)
-(def get-units-by-keys query.replay/get-units-by-keys)
+(def get-replay-by-eid       query.replay/get-replay-by-eid)
+(def create-replay           query.replay/create-replay)
+(def get-units-by-keys       query.replay/get-units-by-keys)
+(def get-subfactions-by-keys query.replay/get-subfactions-by-keys)

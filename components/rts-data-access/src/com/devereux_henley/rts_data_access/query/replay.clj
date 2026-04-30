@@ -10,6 +10,7 @@
 
 (def get-replay-by-eid-query (resource/load-query-resource "replay" "get-replay-by-eid.sql"))
 (def get-units-by-keys-template (resource/load-query-resource "replay" "get-units-by-keys.sql"))
+(def get-subfactions-by-keys-template (resource/load-query-resource "replay" "get-subfactions-by-keys.sql"))
 
 (def unit-resolution-row-schema
   (schema.contract/to-schema
@@ -22,6 +23,16 @@
     [:unit-type-name :string]
     [:faction-eid :uuid]
     [:faction-name :string]]))
+
+(def subfaction-resolution-row-schema
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:key :string]
+    [:name :string]
+    [:faction-eid :uuid]
+    [:faction-name :string]
+    [:faction-key [:maybe :string]]]))
 
 (defn get-replay-by-eid
   {:malli/schema (schema.contract/to-schema
@@ -54,3 +65,19 @@
          connection
          (into [sql] keys-vec)
          unit-resolution-row-schema)))))
+
+(defn get-subfactions-by-keys
+  "Resolves a collection of engine `factions_tables` keys (the parser's
+  `faction_key` field) to subfaction rows joined with their parent race
+  (faction).  Returns a vector of rows whose `key` is in the input set;
+  missing keys are simply omitted so callers can fall back to the raw key."
+  [connection subfaction-keys]
+  (let [keys-vec (vec (distinct (filter some? subfaction-keys)))]
+    (if (empty? keys-vec)
+      []
+      (let [placeholders (string/join "," (repeat (count keys-vec) "?"))
+            sql          (format get-subfactions-by-keys-template placeholders)]
+        (jdbc.contract/query-for-entities
+         connection
+         (into [sql] keys-vec)
+         subfaction-resolution-row-schema)))))
