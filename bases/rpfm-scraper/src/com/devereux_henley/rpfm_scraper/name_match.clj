@@ -39,51 +39,51 @@
   'dark').  Keeps the per-name list explicit (and tiny) instead of
   growing a per-(name \u00d7 variant) override entry."
   {;; Mark-eligible daemons (mark = lore)
-   "Alluress"                       "slaanesh"
-   "Bloodspeaker"                   "khorne"
-   "Bloodreaper"                    "khorne"
-   "Bringer of Pain"                "slaanesh"
-   "Cultist of Khorne"              "khorne"
-   "Cultist of Nurgle"              "nurgle"
-   "Cultist of Slaanesh"            "slaanesh"
-   "Cultist of Tzeentch"            "tzeentch"
-   "Exalted Bloodthirster"          "khorne"
-   "Exalted Great Unclean One"      "nurgle"
-   "Exalted Keeper of Secrets"      "slaanesh"
-   "Exalted Lord of Change"         "tzeentch"
-   "Iridescent Horror"              "tzeentch"
-   "Plagueridden"                   "nurgle"
+   "Alluress"                      "slaanesh"
+   "Bloodspeaker"                  "khorne"
+   "Bloodreaper"                   "khorne"
+   "Bringer of Pain"               "slaanesh"
+   "Cultist of Khorne"             "khorne"
+   "Cultist of Nurgle"             "nurgle"
+   "Cultist of Slaanesh"           "slaanesh"
+   "Cultist of Tzeentch"           "tzeentch"
+   "Exalted Bloodthirster"         "khorne"
+   "Exalted Great Unclean One"     "nurgle"
+   "Exalted Keeper of Secrets"     "slaanesh"
+   "Exalted Lord of Change"        "tzeentch"
+   "Iridescent Horror"             "tzeentch"
+   "Plagueridden"                  "nurgle"
    ;; Generic spellcaster archetypes \u2014 canonical lore shared with
    ;; the seed's existing pinning
-   "Archmage"                       "light"
-   "Bray-Shaman"                    "beasts"
-   "Damsel"                         "damsel"
-   "Daemonsmith Sorcerer"           "fire"
-   "Frost Maiden"                   "ice"
-   "Great Bray-Shaman"              "beasts"
-   "Great Shaman-Sorcerer"          "death"
-   "Grey Seer"                      "plague"
-   "Ice Witch"                      "ice"
-   "Liche Priest"                   "death"
-   "Mage"                           "light"
-   "Prophetess"                     "prophetess"
-   "Shaman-Sorcerer"                "death"
-   "Skink Priest"                   "beasts"
-   "Sorcerer-Prophet"               "fire"
-   "Sorceress"                      "dark"
-   "Spellsinger"                    "beasts"
-   "Spellweaver"                    "life"
-   "Supreme Sorceress"              "dark"
+   "Archmage"                      "light"
+   "Bray-Shaman"                   "beasts"
+   "Damsel"                        "damsel"
+   "Daemonsmith Sorcerer"          "fire"
+   "Frost Maiden"                  "ice"
+   "Great Bray-Shaman"             "beasts"
+   "Great Shaman-Sorcerer"         "death"
+   "Grey Seer"                     "plague"
+   "Ice Witch"                     "ice"
+   "Liche Priest"                  "death"
+   "Mage"                          "light"
+   "Prophetess"                    "prophetess"
+   "Shaman-Sorcerer"               "death"
+   "Skink Priest"                  "beasts"
+   "Sorcerer-Prophet"              "fire"
+   "Sorceress"                     "dark"
+   "Spellsinger"                   "beasts"
+   "Spellweaver"                   "life"
+   "Supreme Sorceress"             "dark"
    ;; Faction-unique non-spellcaster names that still need a
    ;; multi-variant tiebreaker
-   "Butcher"                        "great_maw"
-   "Slaughtermaster"                "great_maw"
-   "Dragon-blooded Shugengan Lord"  "yang"
-   "Fimir Balefiend"                "fire"
-   "Malevolent Ancient Treeman"     "life"
-   "Malevolent Branchwraith"        "life"
-   "Vampire"                        "vampire"
-   "Vampire Fleet Captain"          "vampire_fleet_captain"})
+   "Butcher"                       "great_maw"
+   "Slaughtermaster"               "great_maw"
+   "Dragon-blooded Shugengan Lord" "yang"
+   "Fimir Balefiend"               "fire"
+   "Malevolent Ancient Treeman"    "life"
+   "Malevolent Branchwraith"       "life"
+   "Vampire"                       "vampire"
+   "Vampire Fleet Captain"         "vampire_fleet_captain"})
 
 ;; Backwards-compatible alias: `mark-from-key`'s callers still expect a
 ;; mark-only result, but the lore preference machinery accepts any
@@ -257,15 +257,15 @@
   is empty AND a mark hint is available, so non-mark resolutions
   retain their original (paren-distinguished) canonical pinning."
   [land-units-loc main-unit-rows]
-  (let [prefix    "land_units_onscreen_name_"
-        pn        (count prefix)
-        lu-name   (reduce-kv
-                   (fn [m k v]
-                     (if (and k (str/starts-with? k prefix))
-                       (assoc m (subs k pn) (normalize-name v))
-                       m))
-                   {}
-                   land-units-loc)
+  (let [prefix      "land_units_onscreen_name_"
+        pn          (count prefix)
+        lu-name     (reduce-kv
+                     (fn [m k v]
+                       (if (and k (str/starts-with? k prefix))
+                         (assoc m (subs k pn) (normalize-name v))
+                         m))
+                     {}
+                     land-units-loc)
         index+strip (reduce
                      (fn [{:keys [full stripped]} row]
                        (let [unit-key (get row "unit")
@@ -300,9 +300,9 @@
   second tuple element is `nil` because `extract-stats` derives the
   `land_unit` key from `main_units_tables` once it has the unit key."
   [unit-name faction-prefixes name-index]
-  (let [norm           (normalize-name unit-name)
-        mark           (or (mark-from-display-name norm)
-                           (mark-from-faction-prefixes faction-prefixes))
+  (let [norm          (normalize-name unit-name)
+        mark          (or (mark-from-display-name norm)
+                          (mark-from-faction-prefixes faction-prefixes))
         ;; Lore preference broader than mark: a Mark of Chaos counts
         ;; as a lore (so Khorne-marked daemons still flow through
         ;; here) but `lore-from-display-name` also returns Light/Dark/
@@ -311,12 +311,12 @@
         ;; Faction defaults are the last resort — they fire only for
         ;; names with no per-name preference and no parenthetical, so
         ;; they don't overrule explicit lore signals.
-        lore           (or (lore-from-display-name norm)
-                           (lore-from-faction-prefixes faction-prefixes))
-        stripped-ix    (::stripped (meta name-index))
-        base-name      (strip-display-name-lore norm)
-        direct         (seq (get name-index norm))
-        override-key   (when-not direct (get overrides/display-name-unit-key-overrides norm))
+        lore          (or (lore-from-display-name norm)
+                          (lore-from-faction-prefixes faction-prefixes))
+        stripped-ix   (::stripped (meta name-index))
+        base-name     (strip-display-name-lore norm)
+        direct        (seq (get name-index norm))
+        override-key  (when-not direct (get overrides/display-name-unit-key-overrides norm))
         ;; Composed names like "Chaos Sorcerer of Tzeentch" don't
         ;; appear in the loc-derived name index, and uniquely-marked
         ;; daemons like "Alluress" live in loc only as "Alluress
@@ -332,32 +332,32 @@
         ;; (Slann Mage-Priest (Beasts/Death/Metal/Shadows), …) keep
         ;; their hand-pinned canonical instead of collapsing to a
         ;; loose `_campaign_0` resolution.
-        candidates     (or direct
-                           (when (and (not override-key) lore)
-                             (or (seq (get name-index base-name))
-                                 (seq (get stripped-ix norm))
-                                 (seq (get stripped-ix base-name)))))
-        candidates     (vec (or candidates []))
+        candidates    (or direct
+                          (when (and (not override-key) lore)
+                            (or (seq (get name-index base-name))
+                                (seq (get stripped-ix norm))
+                                (seq (get stripped-ix base-name)))))
+        candidates    (vec (or candidates []))
         ;; Mark filter runs first because it's the strongest discriminator
         ;; (a row's god alignment is rarely ambiguous given its key).  The
         ;; faction filter follows so per-faction variants (chs vs kho for
         ;; "Daemon Prince of Khorne") are picked correctly.  Lore is the
         ;; softest tiebreaker — applied last so it doesn't fire over a
         ;; faction-matched candidate.
-        mark-filtered  (prefer-mark candidates mark)
-        canonical      (fn [pool]
-                         (some (fn [gp]
-                                 (some (fn [item] (when (str/starts-with? (first item) gp) item))
-                                       pool))
-                               ["wh_main_" "wh3_main_" "wh2_main_" "wh_" "wh3_" "wh2_"]))
-        faction-of     (fn [pool]
-                         (filterv
-                          (fn [[uk lu]]
-                            (some (fn [p]
-                                    (or (str/includes? uk (str "_" p "_"))
-                                        (str/includes? lu (str "_" p "_"))))
-                                  faction-prefixes))
-                          pool))]
+        mark-filtered (prefer-mark candidates mark)
+        canonical     (fn [pool]
+                        (some (fn [gp]
+                                (some (fn [item] (when (str/starts-with? (first item) gp) item))
+                                      pool))
+                              ["wh_main_" "wh3_main_" "wh2_main_" "wh_" "wh3_" "wh2_"]))
+        faction-of    (fn [pool]
+                        (filterv
+                         (fn [[uk lu]]
+                           (some (fn [p]
+                                   (or (str/includes? uk (str "_" p "_"))
+                                       (str/includes? lu (str "_" p "_"))))
+                                 faction-prefixes))
+                         pool))]
     (cond
       override-key
       [override-key nil]

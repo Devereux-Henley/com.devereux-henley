@@ -29,8 +29,8 @@
    ;; variant by convention, which has stats meaningfully different
    ;; from the foot variant.  The mark-aware resolver only narrows by
    ;; mark + lore, not by mount, so these stay pinned.
-   "Chaos Sorcerer"                  "wh3_dlc20_chs_cha_chaos_sorcerer_death_warshrine"
-   "Chaos Sorcerer Lord"             "wh3_dlc20_chs_cha_chaos_sorcerer_lord_death_warshrine"
+   "Chaos Sorcerer"              "wh3_dlc20_chs_cha_chaos_sorcerer_death_warshrine"
+   "Chaos Sorcerer Lord"         "wh3_dlc20_chs_cha_chaos_sorcerer_lord_death_warshrine"
    ;; Slann Mage-Priest lore variants — `land_units_loc` stores their
    ;; display name as `{{tr:agent_subtypes_onscreen_name_override_*}}`
    ;; references (the actual string lives in `agent_subtypes_loc` which
@@ -39,10 +39,10 @@
    ;; below, so the mechanical resolver collapses them all to the
    ;; un-loremarked `_campaign_0` canonical and the seed loses the
    ;; per-lore distinction.
-   "Slann Mage-Priest (Beasts)"      "wh2_dlc13_lzd_cha_slann_mage_priest_beasts_0"
-   "Slann Mage-Priest (Death)"       "wh2_dlc13_lzd_cha_slann_mage_priest_death_0"
-   "Slann Mage-Priest (Metal)"       "wh2_dlc13_lzd_cha_slann_mage_priest_metal_0"
-   "Slann Mage-Priest (Shadows)"     "wh2_dlc13_lzd_cha_slann_mage_priest_shadows_0"})
+   "Slann Mage-Priest (Beasts)"  "wh2_dlc13_lzd_cha_slann_mage_priest_beasts_0"
+   "Slann Mage-Priest (Death)"   "wh2_dlc13_lzd_cha_slann_mage_priest_death_0"
+   "Slann Mage-Priest (Metal)"   "wh2_dlc13_lzd_cha_slann_mage_priest_metal_0"
+   "Slann Mage-Priest (Shadows)" "wh2_dlc13_lzd_cha_slann_mage_priest_shadows_0"})
 
 (def unit-card-overrides
   "Explicit unit-name → icon/portrait stem overrides for units whose display
