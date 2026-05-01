@@ -83,6 +83,28 @@
       (is (= [nil nil]
              (nm/find-unit-key "Halberdiers" ["emp"] name-index))))))
 
+(deftest find-unit-key-faction-scoped-override-pins-cross-faction-engine-key
+  (testing "DoC 'Daemon Prince' resolves to the WoC undivided land_unit"
+    ;; The override map ships
+    ;; `{"dae" "Daemon Prince"} → wh3_dlc20_chs_cha_daemon_prince`.
+    ;; Under the `dae` faction prefix, the resolver should return that
+    ;; engine key with a nil land-unit (extract-stats derives it via
+    ;; main_units_tables) — even when the loc-derived name index has
+    ;; perfectly-fine DoC candidates that the normal resolver would
+    ;; otherwise pick.
+    (let [name-index {"Daemon Prince"
+                      [["wh3_main_dae_cha_daemon_prince_0" "wh3_main_dae_cha_daemon_prince_0"]]}]
+      (is (= ["wh3_dlc20_chs_cha_daemon_prince" nil]
+             (nm/find-unit-key "Daemon Prince" ["dae"] name-index)))))
+  (testing "Other faction prefixes fall through to the normal resolver"
+    ;; The override is faction-scoped — a WoC ("chs") seed processing
+    ;; the same display name keeps its own resolution path.  Same goes
+    ;; for any non-listed prefix.
+    (let [name-index {"Daemon Prince"
+                      [["wh3_dlc20_chs_cha_daemon_prince" "wh3_dlc20_chs_cha_daemon_prince"]]}]
+      (is (= ["wh3_dlc20_chs_cha_daemon_prince" "wh3_dlc20_chs_cha_daemon_prince"]
+             (nm/find-unit-key "Daemon Prince" ["chs"] name-index))))))
+
 (deftest find-unit-key-resolves-non-mark-spellcasters
   (testing "Per-name lore preference resolves Mage/Archmage/Sorceress/etc."
     (let [;; Mage has 28 lore variants in the loc; the per-name dict

@@ -224,7 +224,7 @@ SET key = CASE eid
   WHEN '00040038-0000-4000-8000-000000000000' THEN 'wh3_dlc23_chd_mon_lammasu'
   WHEN '00050002-0000-4000-8000-000000000000' THEN 'wh3_main_dae_cha_be_lakor_0'
   WHEN '00050003-0000-4000-8000-000000000000' THEN 'wh3_main_dae_cha_daemon_prince_slaanesh'
-  WHEN '00050004-0000-4000-8000-000000000000' THEN 'wh3_main_dae_cha_daemon_prince_0'
+  WHEN '00050004-0000-4000-8000-000000000000' THEN 'wh3_dlc20_chs_cha_daemon_prince'
   WHEN '00050005-0000-4000-8000-000000000000' THEN 'wh3_dlc20_chs_cha_daemon_prince_mkho'
   WHEN '00050006-0000-4000-8000-000000000000' THEN 'wh3_dlc20_chs_cha_daemon_prince_mnur'
   WHEN '00050007-0000-4000-8000-000000000000' THEN 'wh3_dlc20_chs_cha_daemon_prince_msla'

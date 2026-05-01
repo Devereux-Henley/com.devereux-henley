@@ -44,6 +44,34 @@
    "Slann Mage-Priest (Metal)"   "wh2_dlc13_lzd_cha_slann_mage_priest_metal_0"
    "Slann Mage-Priest (Shadows)" "wh2_dlc13_lzd_cha_slann_mage_priest_shadows_0"})
 
+(def faction-display-name-unit-key-overrides
+  "Faction-scoped pin from a `(faction-prefix, display-name)` tuple to
+  an engine `unit` key.  Consulted by `nm/find-unit-key` BEFORE the
+  normal resolution path, so it forces a specific faction's row to a
+  cross-faction canonical without changing how the same display name
+  resolves under other faction prefixes.
+
+  The default-resolution path picks one engine key per
+  `(display-name, faction-prefix)`, which produces the right answer
+  for nearly every unit but trips on a handful of cross-faction
+  shorthand cases — e.g. multiplayer rosters where one faction's
+  display name should mirror another's kit even though both have
+  their own engine row.
+
+  Entries here pin per-faction; non-listed (faction, name) tuples
+  fall through to the normal resolver."
+  {["dae" "Daemon Prince"]
+   ;; The DoC Undivided Daemon Prince has a campaign-only land_unit
+   ;; (`wh3_main_dae_cha_daemon_prince_0`) but no MP front-end agent
+   ;; subtype — `agent_subtypes_tables.json` only carries `*_fe`
+   ;; entries for the marked DoC variants.  The Warriors of Chaos
+   ;; undivided variant (`wh3_dlc20_chs_cha_daemon_prince`) is the
+   ;; only RPFM-canonical MP "Undivided Daemon Prince".  Pin DoC's
+   ;; unmarked row to it so both factions ship the same Lore-of-Fire
+   ;; kit (stats + abilities + lore) and a scraper rerun keeps them
+   ;; aligned instead of re-divided onto each faction's land_unit.
+   "wh3_dlc20_chs_cha_daemon_prince"})
+
 (def unit-card-overrides
   "Explicit unit-name → icon/portrait stem overrides for units whose display
   name is absent from the land_units loc file (RoR units, variant units,

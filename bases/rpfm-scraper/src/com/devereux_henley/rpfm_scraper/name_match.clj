@@ -300,9 +300,18 @@
   second tuple element is `nil` because `extract-stats` derives the
   `land_unit` key from `main_units_tables` once it has the unit key."
   [unit-name faction-prefixes name-index]
-  (let [norm          (normalize-name unit-name)
-        mark          (or (mark-from-display-name norm)
-                          (mark-from-faction-prefixes faction-prefixes))
+  (let [norm             (normalize-name unit-name)
+        ;; Faction-scoped override fires first — pins specific
+        ;; (faction, name) tuples to a cross-faction engine key
+        ;; (e.g. DoC "Daemon Prince" → the WoC undivided land_unit so
+        ;; both rosters ship the RPFM-canonical MP Undivided Daemon
+        ;; Prince kit).  Returns immediately when matched, before
+        ;; mark/lore/canonical-prefix resolution kicks in.
+        faction-override (some (fn [p]
+                                 (get overrides/faction-display-name-unit-key-overrides [p norm]))
+                               faction-prefixes)
+        mark             (or (mark-from-display-name norm)
+                             (mark-from-faction-prefixes faction-prefixes))
         ;; Lore preference broader than mark: a Mark of Chaos counts
         ;; as a lore (so Khorne-marked daemons still flow through
         ;; here) but `lore-from-display-name` also returns Light/Dark/
@@ -311,12 +320,12 @@
         ;; Faction defaults are the last resort — they fire only for
         ;; names with no per-name preference and no parenthetical, so
         ;; they don't overrule explicit lore signals.
-        lore          (or (lore-from-display-name norm)
-                          (lore-from-faction-prefixes faction-prefixes))
-        stripped-ix   (::stripped (meta name-index))
-        base-name     (strip-display-name-lore norm)
-        direct        (seq (get name-index norm))
-        override-key  (when-not direct (get overrides/display-name-unit-key-overrides norm))
+        lore             (or (lore-from-display-name norm)
+                             (lore-from-faction-prefixes faction-prefixes))
+        stripped-ix      (::stripped (meta name-index))
+        base-name        (strip-display-name-lore norm)
+        direct           (seq (get name-index norm))
+        override-key     (when-not direct (get overrides/display-name-unit-key-overrides norm))
         ;; Composed names like "Chaos Sorcerer of Tzeentch" don't
         ;; appear in the loc-derived name index, and uniquely-marked
         ;; daemons like "Alluress" live in loc only as "Alluress
@@ -332,33 +341,36 @@
         ;; (Slann Mage-Priest (Beasts/Death/Metal/Shadows), …) keep
         ;; their hand-pinned canonical instead of collapsing to a
         ;; loose `_campaign_0` resolution.
-        candidates    (or direct
-                          (when (and (not override-key) lore)
-                            (or (seq (get name-index base-name))
-                                (seq (get stripped-ix norm))
-                                (seq (get stripped-ix base-name)))))
-        candidates    (vec (or candidates []))
+        candidates       (or direct
+                             (when (and (not override-key) lore)
+                               (or (seq (get name-index base-name))
+                                   (seq (get stripped-ix norm))
+                                   (seq (get stripped-ix base-name)))))
+        candidates       (vec (or candidates []))
         ;; Mark filter runs first because it's the strongest discriminator
         ;; (a row's god alignment is rarely ambiguous given its key).  The
         ;; faction filter follows so per-faction variants (chs vs kho for
         ;; "Daemon Prince of Khorne") are picked correctly.  Lore is the
         ;; softest tiebreaker — applied last so it doesn't fire over a
         ;; faction-matched candidate.
-        mark-filtered (prefer-mark candidates mark)
-        canonical     (fn [pool]
-                        (some (fn [gp]
-                                (some (fn [item] (when (str/starts-with? (first item) gp) item))
-                                      pool))
-                              ["wh_main_" "wh3_main_" "wh2_main_" "wh_" "wh3_" "wh2_"]))
-        faction-of    (fn [pool]
-                        (filterv
-                         (fn [[uk lu]]
-                           (some (fn [p]
-                                   (or (str/includes? uk (str "_" p "_"))
-                                       (str/includes? lu (str "_" p "_"))))
-                                 faction-prefixes))
-                         pool))]
+        mark-filtered    (prefer-mark candidates mark)
+        canonical        (fn [pool]
+                           (some (fn [gp]
+                                   (some (fn [item] (when (str/starts-with? (first item) gp) item))
+                                         pool))
+                                 ["wh_main_" "wh3_main_" "wh2_main_" "wh_" "wh3_" "wh2_"]))
+        faction-of       (fn [pool]
+                           (filterv
+                            (fn [[uk lu]]
+                              (some (fn [p]
+                                      (or (str/includes? uk (str "_" p "_"))
+                                          (str/includes? lu (str "_" p "_"))))
+                                    faction-prefixes))
+                            pool))]
     (cond
+      faction-override
+      [faction-override nil]
+
       override-key
       [override-key nil]
 
