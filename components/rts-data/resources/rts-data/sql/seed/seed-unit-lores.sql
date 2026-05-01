@@ -166,4 +166,11 @@ VALUES
   (164, 9218, 86, 0, '00180014-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
   (165, 9221, 77, 0, '00180015-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
   (166, 9221, 84, 0, '00180016-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (167, 9221, 86, 0, '00180017-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null);
+  (167, 9221, 86, 0, '00180017-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
+  -- Undivided Daemon Prince (DoC + WoC) — gates draft access to Lore of
+  -- Fire spells via the panel's lore selector.  Marked variants
+  -- (Khorne / Nurgle / Slaanesh / Tzeentch) keep their mark-specific
+  -- spell pool via separate unit rows; only the unmarked variants
+  -- pin Fire here.
+  (168, 1604, 94, 0, NULL, 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
+  (169, 8819, 94, 0, NULL, 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null);
