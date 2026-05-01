@@ -83,21 +83,21 @@
                     </header>
                     <div class="pm-draft-units">
                         {% for unit in section.section-units %}
-                        <div class="pm-draft-unit{% if unit.is-lord %} pm-draft-unit--lord{% endif %}" title="{{unit.display}}{% if unit.mark-label %} ({{unit.mark-label}}){% endif %}">
+                        <div class="pm-draft-unit{% if unit.is-lord %} pm-draft-unit--lord{% endif %}" title="{{unit.display}}{% if unit.mark-shown %} ({{unit.mark-label}}){% endif %}">
                             {# FALLBACK (#49): src ternary + onerror cover unresolved parser keys #}
                             {# (no unit-eid) and missing PNGs — drop both once #45 closes. #}
                             <img class="pm-draft-unit-portrait"
                                  src="/card/unit/{% if unit.unit-eid %}{{unit.unit-eid}}{% else %}placeholder{% endif %}.png"
-                                 alt="{{unit.display}}{% if unit.mark-label %} ({{unit.mark-label}}){% endif %}"
+                                 alt="{{unit.display}}{% if unit.mark-shown %} ({{unit.mark-label}}){% endif %}"
                                  onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;"/>
-                            {% if unit.mark %}<span class="pm-draft-unit-mark pm-draft-unit-mark--{{unit.mark}}" aria-label="Mark of {{unit.mark-label}}" title="Mark of {{unit.mark-label}}"></span>{% endif %}
+                            {% if unit.mark-shown %}<span class="pm-draft-unit-mark pm-draft-unit-mark--{{unit.mark}}" aria-label="Mark of {{unit.mark-label}}" title="Mark of {{unit.mark-label}}"></span>{% endif %}
                             {# FALLBACK (#49): cost pip is hidden when the DB row is missing. #}
                             {# When the unit was veteranned the pip shows the adjusted cost; the level pip overlays in the opposite corner. #}
                             {% if unit.adjusted-cost %}<span class="pm-draft-unit-cost">{{unit.adjusted-cost}}</span>{% else %}{% if unit.cost %}<span class="pm-draft-unit-cost">{{unit.cost}}</span>{% endif %}{% endif %}
                             {% if unit.leveled? %}<span class="pm-draft-unit-level" aria-label="Veteran rank {{unit.level}}">{{unit.level}}</span>{% endif %}
                             <div class="pm-draft-unit-tooltip">
                                 <strong>{{unit.display}}</strong>
-                                {% if unit.mark-label %}<span class="pm-draft-unit-tooltip-mark">Mark of {{unit.mark-label}}</span>{% endif %}
+                                {% if unit.mark-shown %}<span class="pm-draft-unit-tooltip-mark">Mark of {{unit.mark-label}}</span>{% endif %}
                                 <span>{{unit.tooltip}}</span>
                             </div>
                         </div>
@@ -139,21 +139,21 @@
                     </header>
                     <div class="pm-draft-units">
                         {% for unit in section.section-units %}
-                        <div class="pm-draft-unit{% if unit.is-lord %} pm-draft-unit--lord{% endif %}" title="{{unit.display}}{% if unit.mark-label %} ({{unit.mark-label}}){% endif %}">
+                        <div class="pm-draft-unit{% if unit.is-lord %} pm-draft-unit--lord{% endif %}" title="{{unit.display}}{% if unit.mark-shown %} ({{unit.mark-label}}){% endif %}">
                             {# FALLBACK (#49): src ternary + onerror cover unresolved parser keys #}
                             {# (no unit-eid) and missing PNGs — drop both once #45 closes. #}
                             <img class="pm-draft-unit-portrait"
                                  src="/card/unit/{% if unit.unit-eid %}{{unit.unit-eid}}{% else %}placeholder{% endif %}.png"
-                                 alt="{{unit.display}}{% if unit.mark-label %} ({{unit.mark-label}}){% endif %}"
+                                 alt="{{unit.display}}{% if unit.mark-shown %} ({{unit.mark-label}}){% endif %}"
                                  onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;"/>
-                            {% if unit.mark %}<span class="pm-draft-unit-mark pm-draft-unit-mark--{{unit.mark}}" aria-label="Mark of {{unit.mark-label}}" title="Mark of {{unit.mark-label}}"></span>{% endif %}
+                            {% if unit.mark-shown %}<span class="pm-draft-unit-mark pm-draft-unit-mark--{{unit.mark}}" aria-label="Mark of {{unit.mark-label}}" title="Mark of {{unit.mark-label}}"></span>{% endif %}
                             {# FALLBACK (#49): cost pip is hidden when the DB row is missing. #}
                             {# When the unit was veteranned the pip shows the adjusted cost; the level pip overlays in the opposite corner. #}
                             {% if unit.adjusted-cost %}<span class="pm-draft-unit-cost">{{unit.adjusted-cost}}</span>{% else %}{% if unit.cost %}<span class="pm-draft-unit-cost">{{unit.cost}}</span>{% endif %}{% endif %}
                             {% if unit.leveled? %}<span class="pm-draft-unit-level" aria-label="Veteran rank {{unit.level}}">{{unit.level}}</span>{% endif %}
                             <div class="pm-draft-unit-tooltip">
                                 <strong>{{unit.display}}</strong>
-                                {% if unit.mark-label %}<span class="pm-draft-unit-tooltip-mark">Mark of {{unit.mark-label}}</span>{% endif %}
+                                {% if unit.mark-shown %}<span class="pm-draft-unit-tooltip-mark">Mark of {{unit.mark-label}}</span>{% endif %}
                                 <span>{{unit.tooltip}}</span>
                             </div>
                         </div>

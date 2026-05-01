@@ -44,6 +44,8 @@
 
 (def get-units-for-faction-query (resource/load-query-resource "game" "get-units-for-faction.sql"))
 
+(def get-family-variants-by-eid-query (resource/load-query-resource "game" "get-family-variants-by-eid.sql"))
+
 (def get-draft-state-by-draft-query (resource/load-query-resource "game" "get-draft-state-by-draft.sql"))
 
 (def get-items-for-unit-query (resource/load-query-resource "game" "get-items-for-unit.sql"))
@@ -162,6 +164,28 @@
                    [:sequential schema/unit-entity]])}
   [connection faction-eid]
   (jdbc.contract/query-for-entities connection [get-units-for-faction-query faction-eid] schema/unit-entity))
+
+(def family-variant-row-schema
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:mark [:maybe [:enum "khorne" "nurgle" "slaanesh" "tzeentch" "undivided"]]]
+    [:cost [:maybe :int]]]))
+
+(defn get-family-variants-by-eid
+  "Returns every unit row sharing the family (name + faction) of the
+  given unit.  Single-variant families come back with one row; the
+  draft-unit panel uses the count to decide whether to render the
+  mark selector."
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection] :uuid]
+                   [:sequential family-variant-row-schema]])}
+  [connection unit-eid]
+  (jdbc.contract/query-for-entities
+   connection
+   [get-family-variants-by-eid-query unit-eid]
+   family-variant-row-schema))
 
 (defn get-draft-by-eid
   {:malli/schema (schema.contract/to-schema

@@ -1,5 +1,5 @@
-{% if mark %}
+{% if mark %}{% if family-variant-count > 1 %}
 <span class="unit-mark unit-mark--{{mark}}"
       title="Mark of {{mark|capitalize}}"
       aria-label="Mark of {{mark|capitalize}}">{{mark|capitalize}}</span>
-{% endif %}
+{% endif %}{% endif %}

@@ -108,7 +108,7 @@
          body                    :body} :parameters
         router                          :reitit.core/router
         :as                             _request}]
-    (let [selections (select-keys (or body {}) [:mount :lore :level :abilities :spells :items])
+    (let [selections (select-keys (or body {}) [:unit-eid :mount :lore :level :abilities :spells :items])
           result     (domain/update-unit-in-draft dependencies draft-eid eid section selections)]
       (if (= :draft/update-success (:type result))
         ;; Enrich the response with the freshly-persisted entry (+ embedded

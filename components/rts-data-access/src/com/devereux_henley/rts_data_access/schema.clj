@@ -130,6 +130,7 @@
     [:cost [:maybe :int]]
     [:unit-statistics :string]
     [:mark [:maybe [:enum "khorne" "nurgle" "slaanesh" "tzeentch" "undivided"]]]
+    [:family-variant-count {:optional true} :int]
     [:is-unique :int]
     [:version :int]
     [:created-at :instant]

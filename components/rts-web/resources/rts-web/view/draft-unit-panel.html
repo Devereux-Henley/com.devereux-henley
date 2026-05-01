@@ -45,7 +45,7 @@
                 <div class="draft-stats-badges">
                     <span class="badge badge-primary">{{unit.unit-type-name}}</span>
                     <span class="badge badge-neutral">{{unit.unit-category-name}}</span>
-                    {% with mark=unit.mark %}{% include "rts-web/view/_partial/unit-mark.html" %}{% endwith %}
+                    {% with mark=unit.mark family-variant-count=unit.family-variant-count %}{% include "rts-web/view/_partial/unit-mark.html" %}{% endwith %}
                 </div>
                 <div class="draft-stats-cost-row">
                     <span class="draft-budget-icon" aria-hidden="true">&#11044;</span>
@@ -220,6 +220,50 @@
                 </li>
                 {% endfor %}
             </ul>
+        </section>
+        {% endif %}
+
+        {% if unit.family-variants|count > 1 %}
+        <section class="draft-stats-section unit-panel" aria-labelledby="panel-mark-heading">
+            <h4 class="unit-panel-heading" id="panel-mark-heading">Mark of Chaos</h4>
+            {# Sibling form so the mark select doesn't trigger the main
+               form's mount/lore/items PATCH on change.  Edit-case uses
+               an HTMX form (PATCHes the entry's unit-eid); browse-case
+               falls back to Hyperscript htmx.ajax with a GET to the
+               selected variant's eid. #}
+            <label class="lore-select-field" for="draft-mark-select">
+                <span class="sr-only">Select Mark of Chaos for {{unit.name}}</span>
+                {% if data.section %}
+                <form id="draft-mark-form"
+                      hx-patch="/api/draft/{{unit.draft-eid}}/entry/{{data.eid}}?section={{data.section}}"
+                      hx-ext="json-enc"
+                      hx-trigger="change"
+                      hx-target="#draft-unit-body"
+                      hx-select="#draft-unit-body"
+                      hx-swap="outerHTML"
+                      hx-headers='{"Accept": "application/htmx+html"}'>
+                    <select class="lore-select"
+                            id="draft-mark-select"
+                            name="unit-eid"
+                            aria-labelledby="panel-mark-heading">
+                        {% for variant in unit.family-variants %}
+                        <option value="{{variant.eid}}"{% ifequal variant.eid unit.eid %} selected{% endifequal %}>{% if variant.mark %}{{variant.mark|capitalize}}{% else %}Undivided{% endif %}{% if variant.cost %} &mdash; {{variant.cost}} pts{% endif %}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+                {% else %}
+                <select class="lore-select"
+                        id="draft-mark-select"
+                        name="unit-eid"
+                        form="draft-mark-form-detached"
+                        aria-labelledby="panel-mark-heading"
+                        _="on change halt the event then call htmx.ajax('GET', '/api/draft/{{unit.draft-eid}}/unit/' + my.value, {target:'#draft-unit-body', swap:'outerHTML', select:'#draft-unit-body', headers:{'Accept':'application/htmx+html'}})">
+                    {% for variant in unit.family-variants %}
+                    <option value="{{variant.eid}}"{% ifequal variant.eid unit.eid %} selected{% endifequal %}>{% if variant.mark %}{{variant.mark|capitalize}}{% else %}Undivided{% endif %}{% if variant.cost %} &mdash; {{variant.cost}} pts{% endif %}</option>
+                    {% endfor %}
+                </select>
+                {% endif %}
+            </label>
         </section>
         {% endif %}
 

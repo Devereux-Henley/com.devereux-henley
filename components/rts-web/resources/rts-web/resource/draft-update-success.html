@@ -6,5 +6,8 @@
      alt="{{data.entry._embedded.unit.name}}"
      hx-swap-oob="true"
      onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;">
+<span id="draft-slot-mark-{{data.entry-eid}}" style="display:contents" hx-swap-oob="true">
+    {% if data.entry._embedded.unit.mark %}{% if data.entry._embedded.unit.family-variant-count > 1 %}<span class="unit-mark--dot unit-mark--{{data.entry._embedded.unit.mark}} draft-slot-mark" aria-hidden="true" title="Mark of {{data.entry._embedded.unit.mark|capitalize}}"></span>{% endif %}{% endif %}
+</span>
 {% with budget=data.budget oob="oob" %}{% include "rts-web/view/draft-budget-group.html" %}{% endwith %}
 {% with unit=data.entry._embedded.unit data=data.entry %}{% include "rts-web/view/draft-unit-panel.html" %}{% endwith %}

@@ -48,6 +48,7 @@
    [:unit-type-name {:optional true} :string]
    [:unit-category-name {:optional true} :string]
    [:mark {:optional true} [:maybe [:enum "khorne" "nurgle" "slaanesh" "tzeentch" "undivided"]]]
+   [:family-variant-count {:optional true} :int]
    [:game-eid {:optional true} :uuid]
    [:is-unique {:optional true} :int]])
 
@@ -505,6 +506,12 @@
      [:unit-type-name :string]
      [:unit-category-name :string]
      [:mark {:optional true} [:maybe [:enum "khorne" "nurgle" "slaanesh" "tzeentch" "undivided"]]]
+     [:family-variant-count {:optional true} :int]
+     [:family-variants {:optional true}
+      [:sequential [:map
+                    [:eid :uuid]
+                    [:mark [:maybe [:enum "khorne" "nurgle" "slaanesh" "tzeentch" "undivided"]]]
+                    [:cost [:maybe :int]]]]]
      [:cost [:maybe :int]]
      [:total-cost {:optional true} [:maybe :int]]
      [:level {:optional true} [:int {:min 0 :max 9}]]
@@ -634,6 +641,11 @@
 (def add-unit-to-draft-specification
   (schema.contract/to-schema
    [:map
+    ;; Slot-edit mark switching: when present, the entry's `:unit-eid`
+    ;; gets swapped to the supplied variant (same family + different
+    ;; mark) and the existing mount/lore/items/abilities/spells
+    ;; selections are cleared because they're keyed to the old row.
+    [:unit-eid  {:optional true} :uuid]
     [:mount     {:optional true} [:maybe :string]]
     [:lore      {:optional true} [:maybe :string]]
     [:level     {:optional true} [:int {:min 0 :max 9}]]

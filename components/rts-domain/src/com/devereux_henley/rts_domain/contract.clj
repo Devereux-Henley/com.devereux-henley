@@ -74,6 +74,7 @@
 (def get-lores-for-unit                          handlers.draft/get-lores-for-unit)
 (def get-spells-for-lore                         handlers.draft/get-spells-for-lore)
 (def hydrate-units-with-stats                   handlers.draft/hydrate-units-with-stats)
+(def group-units-by-family                       handlers.draft/group-units-by-family)
 (def build-section-context                      handlers.draft/build-section-context)
 (def get-draft-unit-details                     handlers.draft/get-draft-unit-details)
 (def get-draft-entry-details                    handlers.draft/get-draft-entry-details)

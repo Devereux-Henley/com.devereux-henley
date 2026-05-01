@@ -2,7 +2,7 @@
         id="draft-slot-card-{{unit.entry-eid}}"
         hx-preserve="true"
         type="button"
-        aria-label="Edit {{unit.name}}{% if unit.mark %} (Mark of {{unit.mark|capitalize}}){% endif %} in {{section.section-label}}"
+        aria-label="Edit {{unit.name}}{% if unit.mark %}{% if unit.family-variant-count > 1 %} (Mark of {{unit.mark|capitalize}}){% endif %}{% endif %} in {{section.section-label}}"
         hx-get="/api/draft/{{section.draft-eid}}/entry/{{unit.entry-eid}}?section={{section.section}}&amp;embed=unit"
         hx-target="#draft-unit"
         hx-swap="outerHTML">
@@ -11,7 +11,15 @@
          src="/card/unit/{% if unit.lore-portrait-key %}{{unit.lore-portrait-key}}{% else %}{{unit.eid}}{% endif %}.png"
          alt="{{unit.name}}"
          onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;">
-    {% if unit.mark %}<span class="unit-mark--dot unit-mark--{{unit.mark}} draft-slot-mark" aria-hidden="true" title="Mark of {{unit.mark|capitalize}}"></span>{% endif %}
+    {# Mark dot lives inside an addressable anchor so the
+       slot-mark-switch OOB swap in draft-update-success.html can
+       replace it without disturbing the rest of the
+       hx-preserve'd button.  `display: contents` lets the inner
+       dot keep absolute-positioning against the button instead of
+       the anchor. #}
+    <span id="draft-slot-mark-{{unit.entry-eid}}" style="display:contents">
+        {% if unit.mark %}{% if unit.family-variant-count > 1 %}<span class="unit-mark--dot unit-mark--{{unit.mark}} draft-slot-mark" aria-hidden="true" title="Mark of {{unit.mark|capitalize}}"></span>{% endif %}{% endif %}
+    </span>
 </button>
 <div class="draft-slot-cost" id="draft-slot-cost-{{unit.entry-eid}}" aria-hidden="true">{{unit.total-cost}}</div>
 <button class="draft-slot-remove"

@@ -168,6 +168,40 @@
   [units]
   (mapv #(m/decode hydrated-unit-schema % unit-hydration-transformer) units))
 
+;; ─── Family grouping ─────────────────────────────────────────────────────────
+
+(defn- canonical-variant
+  "Picks the row that represents a family in the roster.  Prefers the
+  unmarked variant (`:mark` nil) when the family has a base + marked
+  forms; otherwise returns the first variant in the family.  The
+  canonical variant's portrait + cost label drives the roster card,
+  while the per-mark eid/cost lives in `:family-variants`."
+  [members]
+  (or (first (filter (comp nil? :mark) members))
+      (first members)))
+
+(defn group-units-by-family
+  "Collapses a unit collection so each (name, faction-eid) family has
+  a single representative row.  The representative carries the full
+  hydrated-unit shape plus a `:family-variants` vector — one entry
+  per mark in id-stable order — that the unit panel uses to drive
+  the Mark selector.  Single-variant families pass through unchanged
+  with a single-entry `:family-variants` so the template can apply
+  the same logic uniformly."
+  [units]
+  (->> units
+       (group-by (juxt :name :faction-eid))
+       (sort-by (comp :id first val))
+       (mapv (fn [[_family members]]
+               (let [ordered   (sort-by :id members)
+                     canonical (canonical-variant ordered)
+                     variants  (mapv (fn [u]
+                                       {:eid  (:eid u)
+                                        :mark (:mark u)
+                                        :cost (:cost u)})
+                                     ordered)]
+                 (assoc canonical :family-variants variants))))))
+
 ;; ─── Section context ──────────────────────────────────────────────────────────
 
 (defn- section-percentage
@@ -610,7 +644,8 @@
         passive-spells                                                       (filterv #(= 0 (:cost %)) all-spells)
         draftable-spells-v                                                   (filterv #(pos? (:cost %)) all-spells)
         items                                                                (db/get-items-for-unit conn unit-eid)
-        lores                                                                (vec (db/get-lores-for-unit conn unit-eid))]
+        lores                                                                (vec (db/get-lores-for-unit conn unit-eid))
+        family-variants                                                      (vec (db/get-family-variants-by-eid conn unit-eid))]
     (assoc unit
            :type                :draft/unit
            :draft-eid           draft-eid
@@ -627,6 +662,7 @@
            :passive-spells      passive-spells
            :draftable-spells    draftable-spells-v
            :has-passives        (boolean (or (seq passive-abilities) (seq passive-spells)))
+           :family-variants     family-variants
            :validation          {:can-add-to-reinforcements? (= 1 (:reinforcements-enabled game-mode))})))
 
 (defn- mark-selected
@@ -850,42 +886,78 @@
         entries (get state (keyword section) [])]
     (some #(when (= entry-eid (:entry-eid %)) %) entries)))
 
+(defn- valid-mark-swap?
+  "Sanity check for slot mark switching: the new variant must share
+  the entry's family (same name + faction).  Prevents a malicious
+  PATCH from swapping into a totally different unit."
+  [unit-by-eid old-eid new-eid]
+  (let [old-unit (get unit-by-eid old-eid)
+        new-unit (get unit-by-eid new-eid)]
+    (and old-unit new-unit
+         (= (:name old-unit) (:name new-unit)))))
+
 (defn update-unit-in-draft
   "Validates and replaces the selections of an already-placed draft entry.
    entry-eid identifies the specific state entry; section says which list it
    lives in. selections has the same shape as add-unit-to-draft selections.
+
+   When `selections` carries `:unit-eid`, the entry's unit row is
+   swapped to a different mark variant — the mount/lore/abilities/
+   spells/items selections are cleared because they're keyed to the
+   old row's catalog.  The new variant must share the entry's
+   family (same name + faction) to prevent a swap into an unrelated
+   unit.
+
    Returns {:type :draft/update-success …} on success or
    {:type :draft/update-error …} on violation or missing entry."
   [dependencies draft-eid entry-eid section selections]
-  (let [selections-0 (update selections :mount not-empty)
-        conn         (:connection dependencies)
-        draft        (db/get-draft-by-eid conn draft-eid)
-        game-mode    (db/get-game-mode-by-eid conn (:game-mode-eid draft))
-        state        (get-draft-state dependencies draft-eid)
-        section-k    (keyword section)
-        section-list (get state section-k [])
-        index        (find-entry-index section-list entry-eid)
-        existing     (when index (nth section-list index))
-        unit-by-eid  (faction-unit-index conn (:faction-eid draft))
-        section-max  (if (= section "main")
-                       (:draft-value game-mode)
-                       (:reinforcement-value game-mode))
+  (let [selections-0  (update selections :mount not-empty)
+        conn          (:connection dependencies)
+        draft         (db/get-draft-by-eid conn draft-eid)
+        game-mode     (db/get-game-mode-by-eid conn (:game-mode-eid draft))
+        state         (get-draft-state dependencies draft-eid)
+        section-k     (keyword section)
+        section-list  (get state section-k [])
+        index         (find-entry-index section-list entry-eid)
+        existing      (when index (nth section-list index))
+        unit-by-eid   (faction-unit-index conn (:faction-eid draft))
+        section-max   (if (= section "main")
+                        (:draft-value game-mode)
+                        (:reinforcement-value game-mode))
+        new-unit-eid  (:unit-eid selections-0)
+        mark-swap?    (and existing
+                           new-unit-eid
+                           (not= new-unit-eid (:unit-eid existing)))
+        ;; Mark swap clears the catalog-keyed selections — they're
+        ;; per-row, not portable across variants.  Lore-change spell
+        ;; clearance below still applies for the same-row case.
+        selections    (cond-> (dissoc selections-0 :unit-eid)
+                        mark-swap? (-> (assoc :mount nil)
+                                       (assoc :lore nil)
+                                       (assoc :abilities [])
+                                       (assoc :spells [])
+                                       (assoc :items [])))
         ;; Changing lore invalidates the old spell pool — drop any carried
         ;; spell selections so the client can't persist stale keys.
-        selections   (if (and (contains? selections-0 :lore)
-                              existing
-                              (not= (:lore selections-0) (:lore existing)))
-                       (assoc selections-0 :spells [])
-                       selections-0)]
+        selections    (if (and (not mark-swap?)
+                               (contains? selections :lore)
+                               existing
+                               (not= (:lore selections) (:lore existing)))
+                        (assoc selections :spells [])
+                        selections)
+        effective-eid (if mark-swap? new-unit-eid (some-> existing :unit-eid))]
     (cond
       (nil? existing)
       {:type :draft/update-error :message "Unit not found in this section."}
 
-      (nil? (get unit-by-eid (:unit-eid existing)))
+      (and mark-swap? (not (valid-mark-swap? unit-by-eid (:unit-eid existing) new-unit-eid)))
+      {:type :draft/update-error :message "Mark variant must belong to the same unit family."}
+
+      (nil? (get unit-by-eid effective-eid))
       {:type :draft/update-error :message "Unit not found in this faction's roster."}
 
       :else
-      (let [unit          (get unit-by-eid (:unit-eid existing))
+      (let [unit          (get unit-by-eid effective-eid)
             new-total     (compute-unit-total-cost unit selections conn)
             ;; Reduced army: the entry under edit is removed so validate-add
             ;; re-runs as if the unit were being freshly added. For the common
@@ -910,7 +982,7 @@
         (if violation
           (assoc violation :type :draft/update-error)
           (let [new-entry {:entry-eid  entry-eid
-                           :unit-eid   (:unit-eid existing)
+                           :unit-eid   effective-eid
                            :mount      (:mount selections)
                            :lore       (:lore selections)
                            :level      (or (:level selections) 0)
@@ -922,9 +994,9 @@
                                  (assoc (vec section-list) index new-entry))]
             (set-draft-state dependencies draft-eid new-state)
             (let [section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)
-                  lore-pk     (lore-portrait-key-for conn (:unit-eid existing) (:lore selections))]
+                  lore-pk     (lore-portrait-key-for conn effective-eid (:lore selections))]
               {:type              :draft/update-success
                :entry-eid         entry-eid
                :total-cost        new-total
-               :slot-portrait-key (or lore-pk (str (:unit-eid existing)))
+               :slot-portrait-key (or lore-pk (str effective-eid))
                :budget            (section-budget section-ctx)})))))))

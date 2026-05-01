@@ -11,6 +11,10 @@ SELECT
   json_extract(u.unit_statistics, '$.cost') as cost,
   u.unit_statistics,
   u.mark,
+  (SELECT COUNT(*) FROM unit fv
+    WHERE fv.name = u.name
+      AND fv.faction_id = u.faction_id
+      AND fv.deleted_at IS NULL) AS family_variant_count,
   u.is_unique,
   u.version,
   u.created_at,

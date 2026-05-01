@@ -180,14 +180,15 @@
   (let [level (or (:level unit) 0)]
     (if-let [row (resolve-key key->row key)]
       (assoc unit
-             :name               (:name row)
-             :cost               (:cost row)
-             :level              level
-             :adjusted-cost      (domain/apply-level-cost (:cost row) (get level->cost-row level))
-             :unit-category-name (:unit-category-name row)
-             :unit-type-name     (:unit-type-name row)
-             :unit-eid           (:eid row)
-             :mark               (:mark row))
+             :name                 (:name row)
+             :cost                 (:cost row)
+             :level                level
+             :adjusted-cost        (domain/apply-level-cost (:cost row) (get level->cost-row level))
+             :unit-category-name   (:unit-category-name row)
+             :unit-type-name       (:unit-type-name row)
+             :unit-eid             (:eid row)
+             :mark                 (:mark row)
+             :family-variant-count (:family-variant-count row))
       (assoc unit :level level))))
 
 (defn- enrich-parsed
@@ -342,15 +343,22 @@
   is guaranteed, the fallbacks become dead code — see #49 for the
   cleanup checklist."
   [army]
-  (mapv (fn [{:keys [key name cost adjusted-cost level unit-category-name unit-type-name unit-eid mark]}]
-          (let [enriched?  (some? name)
+  (mapv (fn [{:keys [key name cost adjusted-cost level unit-category-name unit-type-name unit-eid mark family-variant-count]}]
+          (let [enriched?   (some? name)
                 ;; FALLBACK (#49): unresolved parser key shows the raw engine key.
-                display    (if enriched? name key)
+                display     (if enriched? name key)
                 ;; FALLBACK (#49): missing category data falls through to type, then em-dash.
-                category   (or unit-category-name unit-type-name "—")
-                is-lord?   (= "lord" (some-> unit-category-name str/lower-case))
+                category    (or unit-category-name unit-type-name "—")
+                is-lord?    (= "lord" (some-> unit-category-name str/lower-case))
                 ;; level 0 → no chevron; otherwise show pip count for the template.
-                shown-cost (or adjusted-cost cost)]
+                shown-cost  (or adjusted-cost cost)
+                ;; Surface the badge only when the family has more than
+                ;; one mark variant — for mono-mark families like
+                ;; "Bloodletters of Khorne" or "Herald of Khorne" the
+                ;; name itself already implies the mark.
+                mark-shown? (and mark
+                                 (some? family-variant-count)
+                                 (> family-variant-count 1))]
             {:key           key
              :unit-eid      unit-eid
              :display       display
@@ -362,6 +370,7 @@
              :leveled?      (pos? level)
              :is-lord       is-lord?
              :mark          mark
+             :mark-shown    mark-shown?
              :mark-label    (when mark (str/capitalize mark))
              ;; FALLBACK (#49): tooltip omits cost when the DB row is missing.
              :tooltip       (cond
