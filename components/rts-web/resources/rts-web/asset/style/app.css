@@ -544,6 +544,13 @@ table.table tbody tr:hover td { background: color-mix(in srgb, var(--color-accen
   pointer-events: none;
 }
 
+.draft-slot-mark {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  z-index: 1;
+}
+
 .draft-slot-remove {
   display: none; position: absolute; top: 3px; right: 3px;
   width: 18px; height: 18px;
@@ -655,6 +662,13 @@ h3.draft-category-header {
   text-align: center;
   padding: 1px 0;
   pointer-events: none;
+}
+
+.draft-unit-card-mark {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 1;
 }
 
 /* --- Stats panel --- */
@@ -2320,3 +2334,61 @@ h3.draft-category-header {
   letter-spacing: 0.04em;
   text-align: right;
 }
+
+/* --- Mark of Chaos badge ------------------------------------------------- */
+/*
+ * Used by the unit detail page, draft picker / panel / slots, and the
+ * faction unit list to surface a marked unit's god alignment.  The
+ * post-match modal still ships its own absolutely-positioned variant
+ * (`.pm-draft-unit-mark`) — both share the same per-god gradient
+ * palette via `--mark-fg` / `--mark-bg-edge` so reskins land in one
+ * place.  `.unit-mark` is the inline (label + dot) form used in
+ * tooltips / table cells; `.unit-mark--dot` is the bare dot used as
+ * an overlay on portraits.
+ */
+
+.unit-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.unit-mark::before {
+  content: "";
+  display: inline-block;
+  width: 0.75em;
+  height: 0.75em;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+  background: radial-gradient(circle at 35% 30%, var(--mark-fg, #aaa), var(--mark-bg-edge, #444));
+}
+
+.unit-mark--dot {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+  background: radial-gradient(circle at 35% 30%, var(--mark-fg, #aaa), var(--mark-bg-edge, #444));
+  pointer-events: none;
+}
+
+.unit-mark--khorne,
+.pm-draft-unit-mark--khorne   { --mark-fg: #e8504a; --mark-bg-edge: #6b1311; }
+.unit-mark--nurgle,
+.pm-draft-unit-mark--nurgle   { --mark-fg: #b6c067; --mark-bg-edge: #3a5118; }
+.unit-mark--slaanesh,
+.pm-draft-unit-mark--slaanesh { --mark-fg: #d96fc6; --mark-bg-edge: #54183f; }
+.unit-mark--tzeentch,
+.pm-draft-unit-mark--tzeentch { --mark-fg: #4ea3e8; --mark-bg-edge: #143e6b; }
+.unit-mark--undivided,
+.pm-draft-unit-mark--undivided { --mark-fg: #9c8c63; --mark-bg-edge: #3b2f18; }

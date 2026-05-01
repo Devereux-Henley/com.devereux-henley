@@ -22,7 +22,12 @@
             <tbody>
                 {% for unit in group.units %}
                 <tr>
-                    <td><a href="/view/game/{{game-eid}}/unit/{{unit.eid}}/index.html">{{unit.name}}</a></td>
+                    <td>
+                        <span class="unit-row-name">
+                            <a href="/view/game/{{game-eid}}/unit/{{unit.eid}}/index.html">{{unit.name}}</a>
+                            {% with mark=unit.mark %}{% include "rts-web/view/_partial/unit-mark.html" %}{% endwith %}
+                        </span>
+                    </td>
                     <td>{{unit.unit-type-name}}</td>
                     <td>{{unit.cost}}</td>
                 </tr>

@@ -9,7 +9,7 @@
             <div id="main-army-section-lord-slot"
                  class="draft-slot draft-slot--lord draft-slot--filled"
                  role="listitem"
-                 aria-label="{{section.lord-unit.name}}">
+                 aria-label="{{section.lord-unit.name}}{% if section.lord-unit.mark %} (Mark of {{section.lord-unit.mark|capitalize}}){% endif %}">
                 {% with unit=section.lord-unit %}{% include "rts-web/view/draft-slot-inner.html" %}{% endwith %}
             </div>
             {% else %}
@@ -19,7 +19,7 @@
             <div id="draft-slot-{{unit.entry-eid}}"
                  class="draft-slot draft-slot--filled"
                  role="listitem"
-                 aria-label="{{unit.name}}">
+                 aria-label="{{unit.name}}{% if unit.mark %} (Mark of {{unit.mark|capitalize}}){% endif %}">
                 {% include "rts-web/view/draft-slot-inner.html" %}
             </div>
             {% endfor %}
@@ -28,7 +28,7 @@
             <div id="draft-slot-{{unit.entry-eid}}"
                  class="draft-slot draft-slot--filled"
                  role="listitem"
-                 aria-label="{{unit.name}}">
+                 aria-label="{{unit.name}}{% if unit.mark %} (Mark of {{unit.mark|capitalize}}){% endif %}">
                 {% include "rts-web/view/draft-slot-inner.html" %}
             </div>
             {% endfor %}

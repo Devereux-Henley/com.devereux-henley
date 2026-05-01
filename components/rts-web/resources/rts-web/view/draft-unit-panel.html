@@ -45,6 +45,7 @@
                 <div class="draft-stats-badges">
                     <span class="badge badge-primary">{{unit.unit-type-name}}</span>
                     <span class="badge badge-neutral">{{unit.unit-category-name}}</span>
+                    {% with mark=unit.mark %}{% include "rts-web/view/_partial/unit-mark.html" %}{% endwith %}
                 </div>
                 <div class="draft-stats-cost-row">
                     <span class="draft-budget-icon" aria-hidden="true">&#11044;</span>

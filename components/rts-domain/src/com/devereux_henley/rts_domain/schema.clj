@@ -47,6 +47,7 @@
    [:cost {:optional true} [:maybe :int]]
    [:unit-type-name {:optional true} :string]
    [:unit-category-name {:optional true} :string]
+   [:mark {:optional true} [:maybe [:enum "khorne" "nurgle" "slaanesh" "tzeentch" "undivided"]]]
    [:game-eid {:optional true} :uuid]
    [:is-unique {:optional true} :int]])
 
@@ -503,6 +504,7 @@
      [:description :string]
      [:unit-type-name :string]
      [:unit-category-name :string]
+     [:mark {:optional true} [:maybe [:enum "khorne" "nurgle" "slaanesh" "tzeentch" "undivided"]]]
      [:cost [:maybe :int]]
      [:total-cost {:optional true} [:maybe :int]]
      [:level {:optional true} [:int {:min 0 :max 9}]]
