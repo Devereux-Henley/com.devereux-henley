@@ -129,6 +129,7 @@
     [:unit-category-name :string]
     [:cost [:maybe :int]]
     [:unit-statistics :string]
+    [:mark [:maybe [:enum "khorne" "nurgle" "slaanesh" "tzeentch" "undivided"]]]
     [:is-unique :int]
     [:version :int]
     [:created-at :instant]

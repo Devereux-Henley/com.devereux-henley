@@ -819,6 +819,35 @@
   pointer-events: none;
 }
 
+.pm-draft-unit-mark {
+  position: absolute;
+  /* Sits below the level badge (top: 2px, height: 14px → next slot at 18px). */
+  top: 18px;
+  right: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+.pm-draft-unit-mark--khorne   { background: radial-gradient(circle at 35% 30%, #e8504a, #6b1311); }
+.pm-draft-unit-mark--nurgle   { background: radial-gradient(circle at 35% 30%, #b6c067, #3a5118); }
+.pm-draft-unit-mark--slaanesh { background: radial-gradient(circle at 35% 30%, #d96fc6, #54183f); }
+.pm-draft-unit-mark--tzeentch { background: radial-gradient(circle at 35% 30%, #4ea3e8, #143e6b); }
+.pm-draft-unit-mark--undivided { background: radial-gradient(circle at 35% 30%, #9c8c63, #3b2f18); }
+
+.pm-draft-unit-tooltip-mark {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+
 .pm-draft-unit-tooltip {
   display: none;
   position: absolute;

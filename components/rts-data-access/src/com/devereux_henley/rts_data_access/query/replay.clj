@@ -18,6 +18,7 @@
     [:eid :uuid]
     [:key [:maybe :string]]
     [:name :string]
+    [:mark [:maybe [:enum "khorne" "nurgle" "slaanesh" "tzeentch" "undivided"]]]
     [:cost [:maybe :int]]
     [:unit-category-name :string]
     [:unit-type-name :string]

@@ -5,6 +5,7 @@ SELECT
   u.eid,
   u.key,
   u.name,
+  u.mark,
   json_extract(u.unit_statistics, '$.cost') AS cost,
   uc.name AS unit_category_name,
   ut.name AS unit_type_name,

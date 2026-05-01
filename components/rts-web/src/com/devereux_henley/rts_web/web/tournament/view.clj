@@ -170,12 +170,12 @@
       (some #(get key->row %) (key-prefix-candidates k))))
 
 (defn- enrich-unit
-  "Adds resolved unit data (name, cost, category) to a unit map when its
-  engine key has a matching DB row.  Computes the veterancy-adjusted cost
-  via `level->cost-row` (typically the global unit_level_cost map) using the
-  parser's `:level` — defaulted to 0 for replays produced by a pre-level
-  parser binary.  Leaves the map unchanged otherwise so the client can fall
-  back to the raw key."
+  "Adds resolved unit data (name, cost, category, level/adjusted-cost,
+  Mark of Chaos) to a unit map when its engine key has a matching DB row.
+  Computes the veterancy-adjusted cost via `level->cost-row` (typically the
+  global unit_level_cost map) using the parser's `:level` — defaulted to 0
+  for replays produced by a pre-level parser binary.  Leaves the map
+  unchanged otherwise so the client can fall back to the raw key."
   [key->row level->cost-row {:keys [key] :as unit}]
   (let [level (or (:level unit) 0)]
     (if-let [row (resolve-key key->row key)]
@@ -186,7 +186,8 @@
              :adjusted-cost      (domain/apply-level-cost (:cost row) (get level->cost-row level))
              :unit-category-name (:unit-category-name row)
              :unit-type-name     (:unit-type-name row)
-             :unit-eid           (:eid row))
+             :unit-eid           (:eid row)
+             :mark               (:mark row))
       (assoc unit :level level))))
 
 (defn- enrich-parsed
@@ -341,7 +342,7 @@
   is guaranteed, the fallbacks become dead code — see #49 for the
   cleanup checklist."
   [army]
-  (mapv (fn [{:keys [key name cost adjusted-cost level unit-category-name unit-type-name unit-eid]}]
+  (mapv (fn [{:keys [key name cost adjusted-cost level unit-category-name unit-type-name unit-eid mark]}]
           (let [enriched?  (some? name)
                 ;; FALLBACK (#49): unresolved parser key shows the raw engine key.
                 display    (if enriched? name key)
@@ -360,6 +361,8 @@
              ;; chevron overlay only renders when the unit was leveled.
              :leveled?      (pos? level)
              :is-lord       is-lord?
+             :mark          mark
+             :mark-label    (when mark (str/capitalize mark))
              ;; FALLBACK (#49): tooltip omits cost when the DB row is missing.
              :tooltip       (cond
                               (and shown-cost (pos? level))
