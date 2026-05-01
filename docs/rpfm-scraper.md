@@ -27,4 +27,6 @@ clojure -M:build -A rpfm-scraper uber
 java -jar target/rpfm-scraper.jar --data-dir bases/rpfm-scraper/data
 ```
 
-Use `--dry-run` to preview changes without writing files. See [game-data.md](rpfm-scraper/game-data.md) for the full workflow including icon extraction.
+Use `--dry-run` to preview changes without writing files. Pass `--strict` to fail (exit non-zero) when any unit row lacks a `key`, lacks an `<eid>.png` in `asset/card/unit/`, or any PNG in that directory no longer corresponds to a unit row — required for the periodic data-refresh job so coverage gaps surface as a red build instead of a warning line. Every run (strict or not) writes `target/scraper-coverage.json` with the missing-key, missing-icon, and stale-PNG names so a CI run has a single artefact to diff between scrapes.
+
+See [game-data.md](rpfm-scraper/game-data.md) for the full workflow including icon extraction.

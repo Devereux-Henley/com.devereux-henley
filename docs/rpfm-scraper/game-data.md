@@ -87,7 +87,22 @@ java -jar target/rpfm-scraper.jar --data-dir bases/rpfm-scraper/data
 
 The tool prints a per-faction summary. Any units whose display name could not be matched to a game key are listed as warnings and left unchanged.
 
-Use `--dry-run` to preview changes without writing files.
+Use `--dry-run` to preview changes without writing files. Pass `--strict` to fail the run when any unit row lacks a `key`, lacks an `<eid>.png` in `asset/card/unit/`, or any PNG in that directory no longer corresponds to a unit row. Strict is what the periodic data-refresh job runs so coverage regressions show as a red build.
+
+Every run (strict or not) writes a coverage manifest to `target/scraper-coverage.json`:
+
+```json
+{
+  "total": 2200,
+  "missing-keys":  ["Display Name A", "Display Name B"],
+  "missing-icons": ["Display Name C"],
+  "stale-pngs":    ["00010024-0000-4000-8000-000000000000"]
+}
+```
+
+`missing-keys` and `missing-icons` are sorted, deduplicated unit display names. `stale-pngs` is the list of `<eid>` filenames in `asset/card/unit/` whose `eid` is no longer in any seed file (the bidirectional check that catches PNGs left over from a deleted/renamed unit). The `placeholder.png` filename is exempt.
+
+When a `--strict` run fails, the manifest is the input list for extending `bases/rpfm-scraper/src/.../overrides.clj` — add a `display-name → icon-stem` entry for each `missing-keys`/`missing-icons` name the heuristic could not resolve, then re-run.
 
 #### Optional: copy game icons and unit cards
 
@@ -129,7 +144,7 @@ Verify that the stat changes look plausible (costs, armor, weapon strength, etc.
 
 ## Known limitations
 
-- **4 Lizardmen Slann variants** (`Slann Mage-Priest (Beasts/Death/Metal/Shadows)`) share the same display name in-game and are not matched; their stats must be updated manually if changed.
+- **4 Lizardmen Slann variants** (`Slann Mage-Priest (Beasts/Death/Metal/Shadows)`) share the same display name in-game and are not matched by the loc heuristic; the `display-name-unit-key-overrides` map in `overrides.clj` now pins each variant to its engine key so they no longer appear in `scraper-coverage.json` `missing-keys`, but stat-blob updates for these four still depend on the override pointing at a current `main_units_tables` row.
 - `abilities` and `draftable-spells` are not sourced from game data — they must be maintained manually when CA adds or renames abilities for a unit. (Mounts **are** sourced from game data via `units_custom_battle_mounts_tables` as of the 000021 / 000022 migrations.)
 - `equipment` is populated only for legendary lords/heroes with character-specific items in `ancillaries_included_agent_subtypes_tables`. Generic lords/heroes (non-legendary) have no `equipment` field — their item pools are defined by the game's faction/category system and are not stored per-unit.
 - `seed-spells.sql` `mana_cost` and spell descriptions are not updated by this script.

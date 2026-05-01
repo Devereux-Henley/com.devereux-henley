@@ -1,5 +1,6 @@
 (ns com.devereux-henley.rpfm-scraper.core
   (:require
+   [clojure.data.json :as json]
    [clojure.java.io :as io]
    [clojure.string :as str]
    [clojure.tools.cli :as cli]
@@ -54,6 +55,8 @@
     :id :portraits-dir]
    [nil "--dry-run" "Print what would change without writing files."
     :id :dry-run :default false]
+   [nil "--strict" "Exit non-zero when any unit row lacks a key or PNG, or any PNG is stale."
+    :id :strict :default false]
    ["-h" "--help"]])
 
 (defn- log [& args]
@@ -438,9 +441,119 @@
           (assets/copy-stat-icons stat-icons-dir stat-icon-asset-dir dry-run))
       (log "  [stat icons] --stat-icons-dir not provided, skipping stat icon copy"))))
 
+(def ^:private placeholder-png-stem
+  "Filename stem (without .png) for the optional placeholder image.  Excluded
+  from the stale-PNG check so a hand-added `placeholder.png` doesn't trip
+  --strict.  Mirrors the issue-45 acceptance criteria."
+  "placeholder")
+
+(defn- list-png-stems
+  "Stem names (without `.png`) of every PNG file directly in `dir`, or `#{}`
+  if `dir` doesn't exist."
+  [dir]
+  (let [d (io/file dir)]
+    (if (.isDirectory d)
+      (->> (.list d)
+           (filter #(str/ends-with? % ".png"))
+           (map #(subs % 0 (- (count %) 4)))
+           set)
+      #{})))
+
+(defn compute-coverage
+  "Compute the unit-coverage report from the canonical seed-file unit list,
+  the unit-key pairs collected during the stats pass, and the unit-card
+  asset directory state.
+
+  - `unit-name-eid-pairs`: `[[name eid faction] ...]` covering every unit
+    row in the per-faction seed files (output of `assets/build-unit-name-eid-map`).
+  - `unit-key-pairs`: `[[eid unit-key] ...]` collected by the stats pass.
+  - `asset-dir`: directory whose `<eid>.png` files are the post-match
+    modal's source of unit portraits.
+
+  Returns:
+    {:total         <count of unit rows>
+     :missing-keys  [<sorted distinct names with no engine key>]
+     :missing-icons [<sorted distinct names with no <eid>.png>]
+     :stale-pngs    [<sorted eid stems present on disk but not in seed>]}"
+  [unit-name-eid-pairs unit-key-pairs asset-dir]
+  (let [all-eids     (set (map second unit-name-eid-pairs))
+        keyed-eids   (set (map first unit-key-pairs))
+        png-stems    (list-png-stems asset-dir)
+        missing-key  (->> unit-name-eid-pairs
+                          (remove (fn [[_ eid _]] (contains? keyed-eids eid)))
+                          (map first)
+                          distinct
+                          sort
+                          vec)
+        missing-icon (->> unit-name-eid-pairs
+                          (remove (fn [[_ eid _]] (contains? png-stems eid)))
+                          (map first)
+                          distinct
+                          sort
+                          vec)
+        stale-pngs   (->> png-stems
+                          (remove #(or (= % placeholder-png-stem)
+                                       (contains? all-eids %)))
+                          sort
+                          vec)]
+    {:total         (count unit-name-eid-pairs)
+     :missing-keys  missing-key
+     :missing-icons missing-icon
+     :stale-pngs    stale-pngs}))
+
+(defn coverage-clean?
+  "True when every unit row has a key, every unit row has a PNG, and no PNG
+  is stale.  Drives the --strict exit code."
+  [coverage]
+  (and (empty? (:missing-keys coverage))
+       (empty? (:missing-icons coverage))
+       (empty? (:stale-pngs coverage))))
+
+(defn- write-coverage-manifest!
+  "Spit `target/scraper-coverage.json` with the coverage report so a CI run
+  has a single artefact to diff between scrapes.  Always written (even in
+  non-strict mode) per the issue-45 spec; skipped under --dry-run."
+  [coverage dry-run?]
+  (log "Writing coverage manifest...")
+  (let [target-dir (io/file "target")
+        path       (io/file target-dir "scraper-coverage.json")]
+    (cond
+      dry-run?
+      (logf "  [coverage] DRY: would write %s" (.getPath path))
+
+      :else
+      (do
+        (.mkdirs target-dir)
+        (spit path (str (json/write-str coverage :escape-slash false) "\n"))
+        (logf "  [coverage] %s — total: %d, missing-keys: %d, missing-icons: %d, stale-pngs: %d"
+              (.getPath path)
+              (:total coverage)
+              (count (:missing-keys coverage))
+              (count (:missing-icons coverage))
+              (count (:stale-pngs coverage)))))))
+
+(defn- log-coverage-examples!
+  "Print up to 5 example names per missing-keys / missing-icons bucket, plus
+  every stale PNG.  Helps a developer triaging a --strict failure see what
+  to fix without opening the manifest."
+  [coverage]
+  (when (seq (:missing-keys coverage))
+    (logf "  [coverage] missing-keys (%d), e.g. %s"
+          (count (:missing-keys coverage))
+          (pr-str (take 5 (:missing-keys coverage)))))
+  (when (seq (:missing-icons coverage))
+    (logf "  [coverage] missing-icons (%d), e.g. %s"
+          (count (:missing-icons coverage))
+          (pr-str (take 5 (:missing-icons coverage)))))
+  (when (seq (:stale-pngs coverage))
+    (logf "  [coverage] stale-pngs (%d), e.g. %s"
+          (count (:stale-pngs coverage))
+          (pr-str (take 5 (:stale-pngs coverage))))))
+
 (defn- run [opts]
   (let [data             (load-tables (:data-dir opts))
         dry?             (:dry-run opts)
+        strict?          (:strict opts)
         lore-consolidate (consolidate-lores! dry?)
         unit-key-pairs   (update-unit-seeds! data dry?)]
     (generate-unit-keys-seed! unit-key-pairs dry?)
@@ -453,7 +566,25 @@
           unit-id-map  (generate-unit-item-seed! data item-key->id dry?)
           stem->id     (generate-mount-seed! data dry?)]
       (generate-unit-mount-seed! data stem->id unit-id-map dry?))
-    (log "Done.")))
+    (let [unit-name-eid-pairs (assets/build-unit-name-eid-map seed-dir)
+          coverage            (compute-coverage unit-name-eid-pairs
+                                                unit-key-pairs
+                                                unit-card-asset-dir)]
+      (write-coverage-manifest! coverage dry?)
+      (log-coverage-examples! coverage)
+      (cond
+        (coverage-clean? coverage)
+        (log "Done.")
+
+        strict?
+        (do (logf "STRICT: %d missing keys, %d missing icons, %d stale PNGs — failing run"
+                  (count (:missing-keys coverage))
+                  (count (:missing-icons coverage))
+                  (count (:stale-pngs coverage)))
+            (System/exit 1))
+
+        :else
+        (log "Done (with coverage gaps; pass --strict to fail loud).")))))
 
 (defn -main [& args]
   (let [{:keys [options errors summary]} (cli/parse-opts args cli-options)]

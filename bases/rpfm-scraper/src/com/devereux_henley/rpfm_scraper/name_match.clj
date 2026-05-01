@@ -1,6 +1,7 @@
 (ns com.devereux-henley.rpfm-scraper.name-match
   (:require
-   [clojure.string :as str]))
+   [clojure.string :as str]
+   [com.devereux-henley.rpfm-scraper.overrides :as overrides]))
 
 (defn normalize-name [s]
   (when s
@@ -38,13 +39,22 @@
 
 (defn find-unit-key
   "Best matching [unit-key land-unit-key] for a display name + faction. Returns
-  [nil nil] when no match is possible."
+  [nil nil] when no match is possible.
+
+  When the name index has no candidates (typically for generic spellcasters
+  whose display name shares a row with multiple lore variants in
+  `land_units_loc`), `overrides/display-name-unit-key-overrides` provides
+  an explicit display-name → engine `unit` key mapping; the second tuple
+  element is `nil` because `extract-stats` derives the `land_unit` key
+  from `main_units_tables` once it has the unit key."
   [unit-name faction-prefixes name-index]
   (let [norm       (normalize-name unit-name)
         candidates (get name-index norm [])]
     (cond
       (empty? candidates)
-      [nil nil]
+      (if-let [override-key (get overrides/display-name-unit-key-overrides norm)]
+        [override-key nil]
+        [nil nil])
 
       (= 1 (count candidates))
       (first candidates)
@@ -61,10 +71,15 @@
           (= 1 (count filtered)) (first filtered)
 
           (seq filtered)
+          ;; Among same-display-name candidates, prefer the canonical
+          ;; original variant (oldest game-version, no DLC-pack suffix)
+          ;; over later DLC-set repackagings — `wh2_dlc13_*_imperial_supply`
+          ;; et al re-export an existing unit's display name with a key
+          ;; that won't match a replay drafted against the base unit.
           (or (some (fn [gp]
                       (some (fn [item] (when (str/starts-with? (first item) gp) item))
                             filtered))
-                    ["wh3_" "wh2_" "wh_"])
+                    ["wh_main_" "wh3_main_" "wh2_main_" "wh_" "wh3_" "wh2_"])
               (first filtered))
 
           :else (first candidates))))))

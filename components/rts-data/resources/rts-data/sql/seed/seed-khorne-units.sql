@@ -160,7 +160,7 @@ VALUES
    11,
    1,
    2,
-   '{"cost":1400,"is_large":false,"unit_size":1,"health":11242,"barrier":0,"armor":70,"leadership":65,"speed":38,"melee_attack":35,"melee_attack_types":["flaming"],"melee_modifiers":[],"melee_defence":25,"weapon_strength":375,"weapon_damage":250,"weapon_ap_damage":125,"bonus_vs_infantry":0,"bonus_vs_large":0,"charge_bonus":25,"ammunition":0,"missile_damage_types":[],"missile_modifiers":[],"attributes":["causes_fear","encourages","mark_khorne"],"abilities":["wh3_main_character_abilities_gate_of_khorne","wh3_main_unit_passive_single_entity","wh_main_unit_passive_frenzy","wh_main_character_abilities_foe_seeker"],"draftable-spells":[]}',
+   '{"cost":700,"is_large":false,"unit_size":1,"health":4068,"barrier":0,"armor":75,"leadership":65,"speed":44,"melee_attack":55,"melee_attack_types":[],"melee_modifiers":[],"melee_defence":40,"weapon_strength":420,"weapon_damage":275,"weapon_ap_damage":145,"bonus_vs_infantry":0,"bonus_vs_large":0,"charge_bonus":45,"ammunition":0,"missile_damage_types":[],"missile_modifiers":[],"attributes":["encourages","hide_forest","mark_khorne"],"abilities":["wh3_main_character_abilities_gate_of_khorne","wh3_main_unit_passive_single_entity","wh_main_unit_passive_frenzy","wh_main_character_abilities_foe_seeker"],"draftable-spells":[]}',
    0,
    1,
    'f0ce7395-a57f-41e9-ade0-fd13bafc058f',

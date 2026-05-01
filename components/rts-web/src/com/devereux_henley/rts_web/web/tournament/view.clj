@@ -150,12 +150,31 @@
        (remove empty?)
        set))
 
+(defn- key-prefix-candidates
+  "Successively shorter prefixes of `k` produced by stripping one trailing
+  `_<token>` at a time, ordered longest-first.  Used so a parser-emitted
+  mount-suffixed key (e.g. `wh3_dlc23_chd_cha_sorcerer_prophet_fire_great_taurus`)
+  resolves against the base unit row whose `unit.key` is the un-mounted
+  variant (`wh3_dlc23_chd_cha_sorcerer_prophet_fire`)."
+  [k]
+  (let [parts (str/split k #"_")]
+    (when (> (count parts) 1)
+      (mapv (fn [n] (str/join "_" (take n parts)))
+            (range (dec (count parts)) 0 -1)))))
+
+(defn- resolve-key
+  "Exact lookup, then longest-prefix fallback against `key->row` so mount
+  variants enrich against their base unit row."
+  [key->row k]
+  (or (get key->row k)
+      (some #(get key->row %) (key-prefix-candidates k))))
+
 (defn- enrich-unit
   "Adds resolved unit data (name, cost, category) to a unit map when its
   engine key has a matching DB row.  Leaves the map unchanged otherwise so
   the client can fall back to the raw key."
   [key->row {:keys [key] :as unit}]
-  (if-let [row (get key->row key)]
+  (if-let [row (resolve-key key->row key)]
     (assoc unit
            :name               (:name row)
            :cost               (:cost row)
@@ -180,12 +199,15 @@
                   alliances))))
 
 (defn- resolve-units
-  "Builds a `key → row` map for every unit key referenced by the parsed games."
+  "Builds a `key → row` map for every unit key referenced by the parsed
+  games.  Includes prefix candidates so a parser-emitted mount-suffixed
+  key resolves against the base unit row at enrich time."
   [dependencies parsed-vec]
-  (let [keys (apply set/union (map collect-unit-keys parsed-vec))]
-    (if (empty? keys)
+  (let [keys     (apply set/union (map collect-unit-keys parsed-vec))
+        all-keys (into keys (mapcat key-prefix-candidates) keys)]
+    (if (empty? all-keys)
       {}
-      (->> (db/get-units-by-keys (:connection dependencies) keys)
+      (->> (db/get-units-by-keys (:connection dependencies) all-keys)
            (into {} (map (juxt :key identity)))))))
 
 (defn- collect-faction-keys
