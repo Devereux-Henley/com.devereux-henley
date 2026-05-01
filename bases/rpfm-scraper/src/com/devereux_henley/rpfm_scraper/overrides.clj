@@ -4,51 +4,47 @@
   "Explicit display-name → engine `unit` key map for unit rows whose display
   name is absent from the `land_units` loc table — typically generic
   spellcasters that share a name with multiple lore variants (Mage,
-  Archmage, Damsel, Sorceress …) and the marks-of-Chaos sorcerer variants.
+  Archmage, Damsel, Sorceress …).
 
-  When `nm/find-unit-key`'s name index lookup misses, it falls back to this
-  map.  The selected key is used both for `seed-unit-keys.sql` (so parsed
-  replays can join back to the unit row) and as the `main_units_tables`
-  lookup key for `extract-stats` — which then derives the `land_unit` key
-  from the row.
+  Mark-of-Chaos variants (\"Chaos Sorcerer of Tzeentch\", \"Herald of
+  Nurgle\", …) are NOT pinned here: `nm/find-unit-key` resolves them
+  mechanically by stripping the mark suffix off the display name,
+  looking the base up in the loc-derived name index, and filtering
+  candidates by `nm/mark-from-key`.  Adding mark-eligible families in
+  future DLCs therefore doesn't grow this map.
 
-  Where multiple lore/mark variants are valid, the entry below picks one
+  When `nm/find-unit-key`'s name index lookup misses, it falls back to
+  this map.  The selected key is used both for `seed-unit-keys.sql` (so
+  parsed replays can join back to the unit row) and as the
+  `main_units_tables` lookup key for `extract-stats` — which then
+  derives the `land_unit` key from the row.
+
+  Where multiple lore variants are valid, the entry below picks one
   canonical variant; the `unit.key` is the engine key the post-match
-  modal's enrich step joins against, so picking a single canonical key is
-  the same trade-off the existing `unit-card-overrides` map makes."
-  {"Alluress"                        "wh3_main_sla_cha_alluress_slaanesh_0"
-   "Archmage"                        "wh2_dlc15_hef_cha_archmage_light_0"
+  modal's enrich step joins against, so picking a single canonical key
+  is the same trade-off the existing `unit-card-overrides` map makes."
+  {"Archmage"                        "wh2_dlc15_hef_cha_archmage_light_0"
    "Bray-Shaman"                     "wh2_dlc17_bst_cha_bray_shaman_beasts_2"
    "Butcher"                         "wh3_main_ogr_cha_butcher_great_maw_0"
+   ;; Unmarked Chaos Sorcerer base variants — display name has no
+   ;; mark hint, so the mechanical mark-aware lookup can't fire.  The
+   ;; per-mark variants ("Chaos Sorcerer of Nurgle/Slaanesh/Tzeentch")
+   ;; resolve via `nm/find-unit-key` without an entry here.
    "Chaos Sorcerer"                  "wh3_dlc20_chs_cha_chaos_sorcerer_death_warshrine"
    "Chaos Sorcerer Lord"             "wh3_dlc20_chs_cha_chaos_sorcerer_lord_death_warshrine"
-   "Chaos Sorcerer Lord of Nurgle"   "wh3_dlc20_chs_cha_chaos_sorcerer_lord_nurgle_mnur"
-   "Chaos Sorcerer Lord of Slaanesh" "wh3_dlc27_chs_cha_sorcerer_lord_slaanesh_msla"
-   "Chaos Sorcerer Lord of Tzeentch" "wh3_dlc20_chs_cha_chaos_sorcerer_lord_tzeentch_mtze"
-   "Chaos Sorcerer of Nurgle"        "wh3_dlc25_chs_cha_chaos_sorcerer_nurgle_mnur"
-   "Chaos Sorcerer of Slaanesh"      "wh3_dlc20_chs_cha_chaos_sorcerer_slaanesh_msla"
-   "Chaos Sorcerer of Tzeentch"      "wh3_dlc20_chs_cha_chaos_sorcerer_tzeentch_mtze"
    "Daemonsmith Sorcerer"            "wh3_dlc23_chd_cha_daemonsmith_sorcerer_fire"
    "Damsel"                          "wh_main_brt_cha_damsel_0"
    "Dragon-blooded Shugengan Lord"   "wh3_main_cth_cha_dragon_blooded_shugengan_lord_yang_0"
-   "Exalted Great Unclean One"       "wh3_main_nur_cha_exalted_great_unclean_one_nurgle_0"
-   "Exalted Keeper of Secrets"       "wh3_main_sla_cha_exalted_keeper_of_secrets_slaanesh_0"
-   "Exalted Lord of Change"          "wh3_main_tze_cha_exalted_lord_of_change_tzeentch_0"
    "Fimir Balefiend"                 "wh_dlc08_nor_cha_fimir_balefiend_fire_0"
    "Frost Maiden"                    "wh3_main_ksl_cha_frost_maiden_ice_0"
    "Great Bray-Shaman"               "wh2_twa04_bst_cha_great_bray_shaman_beasts_0"
    "Great Shaman-Sorcerer"           "wh3_dlc27_nor_cha_great_shaman_sorcerer_death"
    "Grey Seer"                       "wh2_main_skv_cha_grey_seer_plague_0"
-   "Herald of Nurgle"                "wh3_main_nur_cha_herald_of_nurgle_nurgle_0"
-   "Herald of Slaanesh"              "wh3_main_sla_cha_herald_of_slaanesh_slaanesh_0"
-   "Herald of Tzeentch"              "wh3_main_pro_tze_cha_herald_of_tzeentch_tzeentch_0"
    "Ice Witch"                       "wh3_dlc24_ksl_cha_ice_witch_ice_frost_wyrm"
-   "Iridescent Horror"               "wh3_main_tze_cha_iridescent_horror_tzeentch_0"
    "Liche Priest"                    "wh2_dlc09_tmb_cha_liche_priest_death_0"
    "Mage"                            "wh2_main_hef_cha_mage_light_0"
    "Malevolent Ancient Treeman"      "wh2_dlc16_wef_cha_malicious_ancient_treeman_life_0"
    "Malevolent Branchwraith"         "wh2_dlc16_wef_cha_malicious_branchwraith_life_0"
-   "Plagueridden"                    "wh3_main_nur_cha_plagueridden_nurgle_0"
    "Prophetess"                      "wh_dlc07_brt_cha_prophetess_0"
    "Shaman-Sorcerer"                 "wh_dlc08_nor_cha_shaman_sorcerer_death_0"
    "Skink Priest"                    "wh2_dlc12_lzd_cha_skink_priest_beasts_4"

@@ -12,44 +12,203 @@
         (str/replace "\u2019" "'")
         str/trim)))
 
+;; ---------------------------------------------------------------------------
+;; Mark of Chaos
+;; ---------------------------------------------------------------------------
+;;
+;; Marked Warriors-of-Chaos / Daemons-of-Chaos units encode the mark in
+;; both directions: the display name carries " of <God>" / " (<God>)" /
+;; the bare god noun, and the engine `unit` key carries one of three
+;; suffix conventions: `_m<short>` (e.g. `_mtze`), `_<short>_` (e.g.
+;; `_kho_`), or `_<full-god>` (e.g. `_tzeentch`).  Using the two together
+;; lets `find-unit-key` disambiguate the variants of "Chaos Sorcerer" /
+;; "Chaos Sorcerer Lord" / "Herald of <God>" / "Daemon Prince of <God>"
+;; without having to hand-pin every case in `overrides/display-name-unit-key-overrides`.
+
+(def ^:private display-name-mark-re
+  "Captures the trailing god noun in display names like 'Chaos Sorcerer
+  of Tzeentch', 'Chaos Furies (Khorne)', or 'Daemon Prince of Slaanesh'."
+  #"(?i)(?:\s+of\s+|\s*\(\s*)(khorne|nurgle|slaanesh|tzeentch)\s*\)?$")
+
+(def ^:private name-implied-mark
+  "Display names that imply a Mark of Chaos by virtue of being a
+  uniquely-marked daemon family in the engine.  Keeps the per-name
+  list explicit (and tiny) instead of growing a per-(name \u00d7 lore)
+  override entry \u2014 Alluress lives only as a Slaanesh daemon, the
+  Plagueridden only as Nurgle, etc."
+  {"Alluress"                       "slaanesh"
+   "Bloodspeaker"                   "khorne"
+   "Bloodreaper"                    "khorne"
+   "Bringer of Pain"                "slaanesh"
+   "Cultist of Khorne"              "khorne"
+   "Cultist of Nurgle"              "nurgle"
+   "Cultist of Slaanesh"            "slaanesh"
+   "Cultist of Tzeentch"            "tzeentch"
+   "Exalted Bloodthirster"          "khorne"
+   "Exalted Great Unclean One"      "nurgle"
+   "Exalted Keeper of Secrets"      "slaanesh"
+   "Exalted Lord of Change"         "tzeentch"
+   "Iridescent Horror"              "tzeentch"
+   "Plagueridden"                   "nurgle"})
+
+(defn- mark-from-faction-prefixes
+  "Maps the mono-god subfaction prefix passed by `core/update-unit-seeds!`
+  to the implied mark.  Returns nil for non-mono-god factions (DoC,
+  WoC, Beastmen, \u2026) so non-implied names keep their literal lookup."
+  [faction-prefixes]
+  (some {"kho" "khorne"
+         "nur" "nurgle"
+         "sla" "slaanesh"
+         "tze" "tzeentch"}
+        faction-prefixes))
+
+(defn mark-from-display-name
+  "Returns 'khorne' / 'nurgle' / 'slaanesh' / 'tzeentch' if the display
+  name carries a Mark of Chaos signal: trailing 'X of <God>' / 'X (<God>)'
+  suffix, or membership in the `name-implied-mark` dictionary of
+  uniquely-marked daemons (Alluress, Plagueridden, \u2026).  Lowercased for
+  stable downstream matching against engine key suffixes."
+  [name]
+  (when name
+    (or (when-let [m (re-find display-name-mark-re name)]
+          (str/lower-case (second m)))
+        (get name-implied-mark name))))
+
+(defn strip-display-name-mark
+  "Drops the trailing mark from a display name ('Daemon Prince of Khorne'
+  \u2192 'Daemon Prince') so the base name can be looked up in the loc-derived
+  name index when the composed name has no candidates."
+  [name]
+  (when name
+    (str/trim (str/replace name display-name-mark-re ""))))
+
+(defn mark-from-key
+  "Returns the mark a `unit`/`land_unit` engine key encodes, or nil.
+  Mirrors the inference in `seed-unit-marks.sql` and the runtime
+  `rts-domain.domain.mark/mark-from-key` helper \u2014 kept inline here so
+  the scraper has no dep on the runtime base."
+  [k]
+  (cond
+    (nil? k) nil
+    (or (str/includes? k "_mkho") (str/includes? k "_kho_") (str/includes? k "_khorne"))   "khorne"
+    (or (str/includes? k "_mnur") (str/includes? k "_nur_") (str/includes? k "_nurgle"))   "nurgle"
+    (or (str/includes? k "_msla") (str/includes? k "_sla_") (str/includes? k "_slaanesh")) "slaanesh"
+    (or (str/includes? k "_mtze") (str/includes? k "_tze_") (str/includes? k "_tzeentch")) "tzeentch"
+    :else nil))
+
+(defn- prefer-mark
+  "Among `candidates` (each `[unit-key land-unit-key]`), keep only those
+  whose `unit-key` encodes `mark`.  Returns the original collection
+  when nothing matches so the caller can fall through to the next
+  filter."
+  [candidates mark]
+  (if-not mark
+    candidates
+    (let [filtered (filterv (fn [[uk _]] (= mark (mark-from-key uk))) candidates)]
+      (if (seq filtered) filtered candidates))))
+
+(defn- prefer-matching-lore
+  "Among mark-matched candidates, prefer the one whose engine key
+  carries the god's full noun as the *lore* segment — that is, the
+  god noun appearing immediately before the trailing variant number
+  or mark suffix (e.g. `…_herald_of_nurgle_nurgle_0`,
+  `…_chaos_sorcerer_lord_nurgle_mnur`).  This mirrors the canonical
+  lore the engine pairs with each mark, the same choice the old
+  hand-curated `display-name-unit-key-overrides` map encoded.  Plain
+  `str/includes?` of `_<god>_` would match family names too (e.g.
+  `_of_nurgle_death_0` contains `_nurgle_` between `of` and `death`),
+  so we anchor against the trailing `_<variant-number>` or mark
+  suffix to pick the lore segment specifically."
+  [candidates mark]
+  (if-not mark
+    candidates
+    (let [pattern   (re-pattern (str "_" mark "_(\\d+|m(?:kho|nur|sla|tze))"))
+          preferred (filterv (fn [[uk _]] (re-find pattern uk)) candidates)]
+      (if (seq preferred) preferred candidates))))
+
+(def ^:private trailing-paren-re
+  "Drops a single trailing parenthetical (e.g. ' (Fire)', ' (Tzeentch)')
+  from a loc display name."
+  #"\s*\([^)]*\)\s*$")
+
+(defn- strip-trailing-paren [s]
+  (when s (str/trim (str/replace s trailing-paren-re ""))))
+
 (defn build-name-index
   "display-name → [[unit-key land-unit-key] ...]. Walks the main-unit table
   rows in their original order so that the 'first candidate' tiebreaker
-  matches the RPFM table row order (same as Python's dict-insertion order)."
+  matches the RPFM table row order (same as Python's dict-insertion order).
+
+  The returned map has its `:rpfm-scraper.name-match/stripped` meta carrying
+  a parallel index keyed by the parenthetical-stripped form of each
+  display name (\"Chaos Sorcerer Lord (Fire)\" → \"Chaos Sorcerer Lord\").
+  `find-unit-key` consults this fallback only when the literal lookup
+  is empty AND a mark hint is available, so non-mark resolutions
+  retain their original (paren-distinguished) canonical pinning."
   [land-units-loc main-unit-rows]
-  (let [prefix  "land_units_onscreen_name_"
-        pn      (count prefix)
-        lu-name (reduce-kv
-                 (fn [m k v]
-                   (if (and k (str/starts-with? k prefix))
-                     (assoc m (subs k pn) (normalize-name v))
-                     m))
-                 {}
-                 land-units-loc)]
-    (reduce
-     (fn [m row]
-       (let [unit-key (get row "unit")
-             lu-key   (get row "land_unit")
-             nm       (get lu-name lu-key)]
-         (if nm
-           (update m nm (fnil conj []) [unit-key lu-key])
-           m)))
-     {}
-     main-unit-rows)))
+  (let [prefix    "land_units_onscreen_name_"
+        pn        (count prefix)
+        lu-name   (reduce-kv
+                   (fn [m k v]
+                     (if (and k (str/starts-with? k prefix))
+                       (assoc m (subs k pn) (normalize-name v))
+                       m))
+                   {}
+                   land-units-loc)
+        index+strip (reduce
+                     (fn [{:keys [full stripped]} row]
+                       (let [unit-key (get row "unit")
+                             lu-key   (get row "land_unit")
+                             nm       (get lu-name lu-key)
+                             sn       (when nm (strip-trailing-paren nm))]
+                         (cond-> {:full     full
+                                  :stripped stripped}
+                           nm (update :full update nm (fnil conj []) [unit-key lu-key])
+                           (and sn (not= sn nm))
+                           (update :stripped update sn (fnil conj []) [unit-key lu-key]))))
+                     {:full {} :stripped {}}
+                     main-unit-rows)]
+    (with-meta (:full index+strip)
+      {::stripped (:stripped index+strip)})))
 
 (defn find-unit-key
   "Best matching [unit-key land-unit-key] for a display name + faction. Returns
   [nil nil] when no match is possible.
 
-  When the name index has no candidates (typically for generic spellcasters
-  whose display name shares a row with multiple lore variants in
-  `land_units_loc`), `overrides/display-name-unit-key-overrides` provides
-  an explicit display-name → engine `unit` key mapping; the second tuple
-  element is `nil` because `extract-stats` derives the `land_unit` key
-  from `main_units_tables` once it has the unit key."
+  When the display name encodes a Mark of Chaos suffix (\"Chaos Sorcerer
+  of Tzeentch\", \"Chaos Furies (Khorne)\", \"Daemon Prince of Slaanesh\"),
+  `mark-from-display-name` lifts the mark and the lookup falls through
+  to the bare base name's candidates filtered by `mark-from-key` — that
+  pair handles the variants mechanically and keeps the override map
+  free of mark-only entries.
+
+  When the name index still has no candidates (typically for generic
+  spellcasters whose display name shares a row with multiple lore
+  variants in `land_units_loc`), `overrides/display-name-unit-key-overrides`
+  provides an explicit display-name → engine `unit` key mapping; the
+  second tuple element is `nil` because `extract-stats` derives the
+  `land_unit` key from `main_units_tables` once it has the unit key."
   [unit-name faction-prefixes name-index]
-  (let [norm       (normalize-name unit-name)
-        candidates (get name-index norm [])]
+  (let [norm        (normalize-name unit-name)
+        mark        (or (mark-from-display-name norm)
+                        (mark-from-faction-prefixes faction-prefixes))
+        stripped-ix (::stripped (meta name-index))
+        ;; Composed names like "Chaos Sorcerer of Tzeentch" don't appear
+        ;; in the loc-derived name index, and uniquely-marked daemons
+        ;; like "Alluress" live in loc only as "Alluress (Slaanesh)" /
+        ;; "Alluress (Shadows)".  Fall back through (1) the bare base
+        ;; with mark suffix dropped and (2) the parenthetical-stripped
+        ;; index — both paths only fire when a mark hint is available
+        ;; so non-mark lookups keep their literal canonical pinning.
+        candidates  (or (seq (get name-index norm))
+                        (when mark
+                          (or (seq (get name-index (strip-display-name-mark norm)))
+                              (seq (get stripped-ix norm))
+                              (seq (get stripped-ix (strip-display-name-mark norm))))))
+        candidates  (vec (or candidates []))
+        candidates  (-> candidates
+                        (prefer-mark mark)
+                        (prefer-matching-lore mark))]
     (cond
       (empty? candidates)
       (if-let [override-key (get overrides/display-name-unit-key-overrides norm)]
