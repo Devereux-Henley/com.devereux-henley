@@ -88,6 +88,9 @@
 (def get-draft-state-by-draft query.game/get-draft-state-by-draft)
 (def upsert-draft-state query.game/upsert-draft-state)
 
+(def unit-level-cost-entity schema/unit-level-cost-entity)
+(def get-unit-level-costs query.game/get-unit-level-costs)
+
 (def unit-statistics-raw-schema schema/unit-statistics-raw-schema)
 (def unit-statistics-transformer schema/unit-statistics-transformer)
 

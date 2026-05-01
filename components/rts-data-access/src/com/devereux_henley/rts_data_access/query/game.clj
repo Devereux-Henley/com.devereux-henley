@@ -54,6 +54,8 @@
 
 (def get-mount-by-key-query (resource/load-query-resource "game" "get-mount-by-key.sql"))
 
+(def get-unit-level-costs-query (resource/load-query-resource "game" "get-unit-level-costs.sql"))
+
 (def upsert-draft-state-query (resource/load-query-resource "game" "upsert-draft-state.sql"))
 (def update-draft-query (resource/load-query-resource "game" "update-draft.sql"))
 
@@ -233,6 +235,16 @@
   "Returns a single mount row by its ancillary `type` key, or nil."
   [connection mount-key]
   (jdbc.contract/query-for-entity connection [get-mount-by-key-query mount-key] schema/mount-entity))
+
+(defn get-unit-level-costs
+  "Returns the 10-row veteran-rank cost table as `level → entity-row`. The
+  engine formula `round(base_cost * cost_multiplier) + fixed_cost` applies
+  to every unit; level 0 is the no-op pass-through."
+  [connection]
+  (into (sorted-map)
+        (map (juxt :level identity))
+        (jdbc.contract/query-for-entities
+         connection [get-unit-level-costs-query] schema/unit-level-cost-entity)))
 
 (defn get-lores-for-unit
   "Returns all active lores linked to the given unit EID via the unit_lore

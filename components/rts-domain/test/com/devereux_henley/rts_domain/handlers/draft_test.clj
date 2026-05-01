@@ -291,14 +291,21 @@
 
 ;; --- add-unit-to-draft ---
 
+(def ^:private test-level-costs
+  "Subset of the unit_level_cost seed sufficient for level 0/1 in tests.
+   Level 0 is a no-op (multiplier 1.0, fixed 0). Level 1 covers the
+   leveled-add path: base 100 → round(100 * 1.03) + 11 = 114."
+  {0 {:level 0 :fixed-cost 0  :cost-multiplier 1.0  :fatigue 0 :melee-cp 0.0  :missile-cp 0.0}
+   1 {:level 1 :fixed-cost 11 :cost-multiplier 1.03 :fatigue 0 :melee-cp 26.0 :missile-cp 26.0}})
+
 (defn- stub-add-unit
   "Returns a fixture fn for add-unit-to-draft tests.
    faction-units  — list returned by get-units-for-faction.
    existing-state-json — :state string for get-draft-state-by-draft, or nil."
   ([faction-units existing-state-json]
    (stub-add-unit faction-units existing-state-json {}))
-  ([faction-units existing-state-json {:keys [mounts items abilities]
-                                       :or   {mounts [] items [] abilities {}}}]
+  ([faction-units existing-state-json {:keys [mounts items abilities level-costs]
+                                       :or   {mounts [] items [] abilities {} level-costs test-level-costs}}]
    (fn [f]
      (with-redefs [data-access.contract/get-draft-by-eid         (fn [_ _] test-draft)
                    data-access.contract/get-game-mode-by-eid     (fn [_ _] test-game-mode)
@@ -308,6 +315,7 @@
                    data-access.contract/get-abilities-by-keys    (fn [_ _] abilities)
                    data-access.contract/get-items-for-unit       (fn [_ _] items)
                    data-access.contract/get-mounts-for-unit      (fn [_ _] mounts)
+                   data-access.contract/get-unit-level-costs     (fn [_] level-costs)
                    data-access.contract/upsert-draft-state       (fn [_ _ _] nil)]
        (f)))))
 
@@ -436,7 +444,8 @@
                   data-access.contract/get-spells-by-keys       (fn [_ _] {})
                   data-access.contract/get-abilities-by-keys    (fn [_ _] {})
                   data-access.contract/get-items-for-unit       (fn [_ _] [])
-                  data-access.contract/get-mounts-for-unit      (fn [_ _] mounts)]
+                  data-access.contract/get-mounts-for-unit      (fn [_ _] mounts)
+                  data-access.contract/get-unit-level-costs     (fn [_] test-level-costs)]
       (let [result (handlers.draft/update-unit-in-draft test-deps test-draft-eid test-entry-eid "main"
                                                         {:mount mount-key})]
         (is (= :draft/update-success (:type result)))
@@ -461,7 +470,8 @@
                   data-access.contract/get-spells-by-keys       (fn [_ _] {})
                   data-access.contract/get-abilities-by-keys    (fn [_ _] {})
                   data-access.contract/get-items-for-unit       (fn [_ _] [])
-                  data-access.contract/get-mounts-for-unit      (fn [_ _] mounts)]
+                  data-access.contract/get-mounts-for-unit      (fn [_ _] mounts)
+                  data-access.contract/get-unit-level-costs     (fn [_] test-level-costs)]
       (let [result (handlers.draft/update-unit-in-draft test-deps test-draft-eid test-entry-eid "main"
                                                         {:mount mount-key})]
         (is (= :draft/update-error (:type result)))
@@ -489,7 +499,8 @@
                   data-access.contract/get-spells-by-keys       (fn [_ _] {})
                   data-access.contract/get-abilities-by-keys    (fn [_ _] {})
                   data-access.contract/get-items-for-unit       (fn [_ _] [])
-                  data-access.contract/get-mounts-for-unit      (fn [_ _] [])]
+                  data-access.contract/get-mounts-for-unit      (fn [_ _] [])
+                  data-access.contract/get-unit-level-costs     (fn [_] test-level-costs)]
       (let [result (handlers.draft/update-unit-in-draft test-deps test-draft-eid (first eeids) "main" {})]
         (is (= :draft/update-success (:type result)))))))
 
@@ -640,6 +651,7 @@
                 data-access.contract/get-spells-by-keys    (fn [_ _] {})
                 data-access.contract/get-items-for-unit    (fn [_ _] [])
                 data-access.contract/get-mounts-for-unit   (fn [_ _] [mount-with-overrides])
+                data-access.contract/get-unit-level-costs  (fn [_] test-level-costs)
                 data-access.contract/get-lores-for-unit    (fn [_ _] [])]
     (let [entry-resource {:eid       (:entry-eid test-entry)
                           :draft-eid test-draft-eid
@@ -702,6 +714,7 @@
                 data-access.contract/get-spells-by-keys    (fn [_ _] {})
                 data-access.contract/get-items-for-unit    (fn [_ _] [])
                 data-access.contract/get-mounts-for-unit   (fn [_ _] [mount-with-overrides])
+                data-access.contract/get-unit-level-costs  (fn [_] test-level-costs)
                 data-access.contract/get-lores-for-unit    (fn [_ _] [])]
     (let [entry-resource {:eid       (:entry-eid test-entry)
                           :draft-eid test-draft-eid
@@ -788,6 +801,7 @@
                 data-access.contract/get-spells-by-keys    stub-spell-lookup
                 data-access.contract/get-items-for-unit    (fn [_ _] [])
                 data-access.contract/get-mounts-for-unit   (fn [_ _] [])
+                data-access.contract/get-unit-level-costs  (fn [_] test-level-costs)
                 data-access.contract/get-lores-for-unit    (fn [_ _] [fire-lore life-lore])
                 data-access.contract/get-spells-for-lore   stub-lore-spells]
     (let [result (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid
@@ -824,6 +838,7 @@
                   data-access.contract/get-abilities-by-keys    (fn [_ _] {})
                   data-access.contract/get-items-for-unit       (fn [_ _] [])
                   data-access.contract/get-mounts-for-unit      (fn [_ _] [])
+                  data-access.contract/get-unit-level-costs     (fn [_] test-level-costs)
                   data-access.contract/get-lores-for-unit       (fn [_ _] [fire-lore life-lore])
                   data-access.contract/get-spells-for-lore      stub-lore-spells]
       (let [result    (handlers.draft/update-unit-in-draft test-deps test-draft-eid entry-eid "main"
@@ -837,3 +852,48 @@
         (is (= :draft/update-success (:type result)))
         (is (= "wh_dlc05_lore_life" (:lore new-entry)))
         (is (= [] (:spells new-entry)))))))
+
+;; --- veteran level cost ---
+
+(deftest apply-level-cost-rank-zero-is-noop
+  (is (= 800 (handlers.draft/apply-level-cost 800 (get test-level-costs 0)))))
+
+(deftest apply-level-cost-rank-one-rounds-and-adds-fixed
+  ;; round(800 * 1.03) + 11 = 824 + 11 = 835
+  (is (= 835 (handlers.draft/apply-level-cost 800 (get test-level-costs 1)))))
+
+(deftest apply-level-cost-falls-back-to-base-when-row-missing
+  ;; preserves base when the lookup is empty (e.g. data source unavailable)
+  (is (= 800 (handlers.draft/apply-level-cost 800 nil))))
+
+(deftest add-unit-to-draft-applies-level-cost-adjustment
+  ;; base 100 + level 1 (mult 1.03, fixed 11) = round(103) + 11 = 114
+  ((stub-add-unit [infantry-unit] nil)
+   (fn []
+     (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main"
+                                                    {:level 1})]
+       (is (= :draft/add-success (:type result)))
+       (is (= 114 (:total-cost (:new-unit result))))
+       (is (= 1 (:level (:new-unit result))))))))
+
+(deftest add-unit-to-draft-persists-level-in-state
+  (let [stored (atom nil)]
+    ((stub-add-unit [infantry-unit] nil)
+     (fn []
+       (with-redefs [data-access.contract/upsert-draft-state (fn [_ _ json] (reset! stored json))]
+         (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main"
+                                           {:level 1}))
+       (let [parsed (jsonista.core/read-value @stored (jsonista.core/object-mapper {:decode-key-fn keyword}))]
+         ;; Malli encode runs the string-transformer on :int fields, so :level
+         ;; round-trips through JSON as a string.
+         (is (= "1" (get-in parsed [:main 0 :level]))))))))
+
+(deftest add-unit-to-draft-out-of-range-level-clamps-to-nine
+  ((stub-add-unit [infantry-unit] nil)
+   (fn []
+     (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main"
+                                                    {:level 99})]
+       ;; Schema-validated callers won't hit this branch, but the handler must
+       ;; not blow up on stray input — clamp to the top rank we know about.
+       (is (= :draft/add-success (:type result)))
+       (is (= 9 (:level (:new-unit result))))))))
