@@ -82,6 +82,7 @@
 (def update-unit-in-draft                       handlers.draft/update-unit-in-draft)
 (def remove-unit-from-draft                     handlers.draft/remove-unit-from-draft)
 (def get-draft-entry                            handlers.draft/get-draft-entry)
+(def apply-level-cost                           handlers.draft/apply-level-cost)
 
 ;;; ─── Tournament handler functions ──────────────────────────────────────────
 
