@@ -30,13 +30,16 @@
   of Tzeentch', 'Chaos Furies (Khorne)', or 'Daemon Prince of Slaanesh'."
   #"(?i)(?:\s+of\s+|\s*\(\s*)(khorne|nurgle|slaanesh|tzeentch)\s*\)?$")
 
-(def ^:private name-implied-mark
-  "Display names that imply a Mark of Chaos by virtue of being a
-  uniquely-marked daemon family in the engine.  Keeps the per-name
-  list explicit (and tiny) instead of growing a per-(name \u00d7 lore)
-  override entry \u2014 Alluress lives only as a Slaanesh daemon, the
-  Plagueridden only as Nurgle, etc."
-  {"Alluress"                       "slaanesh"
+(def ^:private name-default-lore
+  "Display names that imply a canonical lore.  Mark-eligible daemons
+  carry their mark as the lore (\"Alluress\" \u2192 'slaanesh', etc.);
+  generic spellcasters whose name is shared across multiple lore
+  variants in `land_units_loc` carry the lore the engine pairs with
+  the archetype by convention (\"Mage\" \u2192 'light', \"Sorceress\" \u2192
+  'dark').  Keeps the per-name list explicit (and tiny) instead of
+  growing a per-(name \u00d7 variant) override entry."
+  {;; Mark-eligible daemons (mark = lore)
+   "Alluress"                       "slaanesh"
    "Bloodspeaker"                   "khorne"
    "Bloodreaper"                    "khorne"
    "Bringer of Pain"                "slaanesh"
@@ -49,7 +52,49 @@
    "Exalted Keeper of Secrets"      "slaanesh"
    "Exalted Lord of Change"         "tzeentch"
    "Iridescent Horror"              "tzeentch"
-   "Plagueridden"                   "nurgle"})
+   "Plagueridden"                   "nurgle"
+   ;; Generic spellcaster archetypes \u2014 canonical lore shared with
+   ;; the seed's existing pinning
+   "Archmage"                       "light"
+   "Bray-Shaman"                    "beasts"
+   "Damsel"                         "damsel"
+   "Daemonsmith Sorcerer"           "fire"
+   "Frost Maiden"                   "ice"
+   "Great Bray-Shaman"              "beasts"
+   "Great Shaman-Sorcerer"          "death"
+   "Grey Seer"                      "plague"
+   "Ice Witch"                      "ice"
+   "Liche Priest"                   "death"
+   "Mage"                           "light"
+   "Prophetess"                     "prophetess"
+   "Shaman-Sorcerer"                "death"
+   "Skink Priest"                   "beasts"
+   "Sorcerer-Prophet"               "fire"
+   "Sorceress"                      "dark"
+   "Spellsinger"                    "beasts"
+   "Spellweaver"                    "life"
+   "Supreme Sorceress"              "dark"
+   ;; Faction-unique non-spellcaster names that still need a
+   ;; multi-variant tiebreaker
+   "Butcher"                        "great_maw"
+   "Slaughtermaster"                "great_maw"
+   "Dragon-blooded Shugengan Lord"  "yang"
+   "Fimir Balefiend"                "fire"
+   "Malevolent Ancient Treeman"     "life"
+   "Malevolent Branchwraith"        "life"
+   "Vampire"                        "vampire"
+   "Vampire Fleet Captain"          "vampire_fleet_captain"})
+
+;; Backwards-compatible alias: `mark-from-key`'s callers still expect a
+;; mark-only result, but the lore preference machinery accepts any
+;; lore string.  Keeping the names distinct in tests + comments.
+(def ^:private name-implied-mark
+  "Subset of `name-default-lore` whose value is one of the four Marks
+  of Chaos.  Used by `mark-from-display-name` so the mark column on
+  a unit row stays Khorne/Nurgle/Slaanesh/Tzeentch even though the
+  full lore preference dictionary covers more archetypes."
+  (into {} (filter (comp #{"khorne" "nurgle" "slaanesh" "tzeentch"} val))
+        name-default-lore))
 
 (defn- mark-from-faction-prefixes
   "Maps the mono-god subfaction prefix passed by `core/update-unit-seeds!`
@@ -82,6 +127,67 @@
   (when name
     (str/trim (str/replace name display-name-mark-re ""))))
 
+(def ^:private display-name-lore-paren-re
+  "Captures any trailing parenthetical (e.g. '(Beasts)', '(Death)',
+  '(Hellscourges)') in seed display names.  Matches more loosely than
+  `display-name-mark-re` since we want the lore-preference path to
+  cover Light/Dark/Fire/etc. too, not just Marks of Chaos."
+  #"\s*\(\s*([^)]+?)\s*\)\s*$")
+
+(defn lore-from-display-name
+  "Returns the canonical lore implied by a display name, or nil.
+  Priority: the four Marks of Chaos via `mark-from-display-name` \u2192 a
+  trailing `(<Lore>)` parenthetical \u2192 entry in `name-default-lore`.
+  Lowercased and snake-cased so the result matches engine key segments
+  (`'beasts'`, `'great_maw'`, `'fire'` \u2026)."
+  [name]
+  (when name
+    (or (mark-from-display-name name)
+        (when-let [m (re-find display-name-lore-paren-re name)]
+          (-> (second m) str/lower-case (str/replace #"\s+" "_")))
+        (get name-default-lore name))))
+
+(defn strip-display-name-lore
+  "Drops the trailing mark suffix or parenthetical lore from a display
+  name ('Slann Mage-Priest (Beasts)' \u2192 'Slann Mage-Priest', 'Daemon
+  Prince of Khorne' \u2192 'Daemon Prince').  Used by `find-unit-key`
+  when looking up the base name in the parenthetical-stripped
+  secondary index."
+  [name]
+  (when name
+    (-> name
+        (str/replace display-name-mark-re "")
+        (str/replace display-name-lore-paren-re "")
+        str/trim)))
+
+(def ^:private faction-default-lore
+  "Faction prefix \u2192 default lore for archetypes whose loc display
+  name is shared across multiple lore variants and whose seed name
+  doesn't itself carry a lore disambiguator.  Captures the
+  per-faction convention the engine pairs with each archetype.  Only
+  triggers via `lore-from-faction-prefixes` after the per-name
+  dictionary fails, so faction defaults never override a more
+  specific name-level preference."
+  {"hef" "light"
+   "def" "dark"
+   "tmb" "death"
+   "skv" "plague"
+   "ogr" "great_maw"
+   "chd" "fire"
+   "nor" "death"
+   "cth" "yang"
+   "ksl" "ice"
+   "bst" "beasts"
+   "lzd" "beasts"})
+
+(defn- lore-from-faction-prefixes
+  "Maps a seed's faction prefix(es) to the faction's default lore via
+  `faction-default-lore`.  Returns nil when no prefix has a registered
+  default (so unmarked, non-spellcaster units keep their literal
+  lookup behaviour)."
+  [faction-prefixes]
+  (some faction-default-lore faction-prefixes))
+
 (defn mark-from-key
   "Returns the mark a `unit`/`land_unit` engine key encodes, or nil.
   Mirrors the inference in `seed-unit-marks.sql` and the runtime
@@ -107,22 +213,27 @@
     (let [filtered (filterv (fn [[uk _]] (= mark (mark-from-key uk))) candidates)]
       (if (seq filtered) filtered candidates))))
 
-(defn- prefer-matching-lore
-  "Among mark-matched candidates, prefer the one whose engine key
-  carries the god's full noun as the *lore* segment — that is, the
-  god noun appearing immediately before the trailing variant number
-  or mark suffix (e.g. `…_herald_of_nurgle_nurgle_0`,
-  `…_chaos_sorcerer_lord_nurgle_mnur`).  This mirrors the canonical
-  lore the engine pairs with each mark, the same choice the old
-  hand-curated `display-name-unit-key-overrides` map encoded.  Plain
-  `str/includes?` of `_<god>_` would match family names too (e.g.
-  `_of_nurgle_death_0` contains `_nurgle_` between `of` and `death`),
-  so we anchor against the trailing `_<variant-number>` or mark
-  suffix to pick the lore segment specifically."
-  [candidates mark]
-  (if-not mark
+(defn- prefer-lore
+  "Among `candidates`, prefer the one whose engine key carries the
+  given lore as the trailing-or-near-trailing key segment.  Pattern:
+  `_<lore>` optionally followed by exactly one more non-underscore
+  segment, then end-of-string.  Anchors against:
+
+    `_<lore>_<digit>`   (e.g. `…_lord_death_0`)
+    `_<lore>_m<short>`  (e.g. `…_lord_nurgle_mnur`)
+    `_<lore>_<word>`    (e.g. `…_lord_death_warshrine`)
+    `_<lore>$`          (e.g. `…_supreme_sorceress_dark`)
+
+  Non-tail occurrences (e.g. `_of_nurgle_death_0` for lore='nurgle')
+  don't satisfy the trailing anchor so the family name doesn't cause
+  a false-positive lore match.  Generalises the original
+  `prefer-matching-lore` from marks to any lore name (Light, Dark,
+  Fire, Beasts, Great_Maw, …) so non-mark spellcaster archetypes can
+  flow through the same machinery."
+  [candidates lore]
+  (if-not lore
     candidates
-    (let [pattern   (re-pattern (str "_" mark "_(\\d+|m(?:kho|nur|sla|tze))"))
+    (let [pattern   (re-pattern (str "_" lore "(?:_[a-z0-9]+)?$"))
           preferred (filterv (fn [[uk _]] (re-find pattern uk)) candidates)]
       (if (seq preferred) preferred candidates))))
 
@@ -189,59 +300,89 @@
   second tuple element is `nil` because `extract-stats` derives the
   `land_unit` key from `main_units_tables` once it has the unit key."
   [unit-name faction-prefixes name-index]
-  (let [norm        (normalize-name unit-name)
-        mark        (or (mark-from-display-name norm)
-                        (mark-from-faction-prefixes faction-prefixes))
-        stripped-ix (::stripped (meta name-index))
-        ;; Composed names like "Chaos Sorcerer of Tzeentch" don't appear
-        ;; in the loc-derived name index, and uniquely-marked daemons
-        ;; like "Alluress" live in loc only as "Alluress (Slaanesh)" /
-        ;; "Alluress (Shadows)".  Fall back through (1) the bare base
-        ;; with mark suffix dropped and (2) the parenthetical-stripped
-        ;; index — both paths only fire when a mark hint is available
-        ;; so non-mark lookups keep their literal canonical pinning.
-        candidates  (or (seq (get name-index norm))
-                        (when mark
-                          (or (seq (get name-index (strip-display-name-mark norm)))
-                              (seq (get stripped-ix norm))
-                              (seq (get stripped-ix (strip-display-name-mark norm))))))
-        candidates  (vec (or candidates []))
-        candidates  (-> candidates
-                        (prefer-mark mark)
-                        (prefer-matching-lore mark))]
+  (let [norm           (normalize-name unit-name)
+        mark           (or (mark-from-display-name norm)
+                           (mark-from-faction-prefixes faction-prefixes))
+        ;; Lore preference broader than mark: a Mark of Chaos counts
+        ;; as a lore (so Khorne-marked daemons still flow through
+        ;; here) but `lore-from-display-name` also returns Light/Dark/
+        ;; Fire/Beasts/etc. for non-mark spellcaster archetypes
+        ;; ("Mage" → 'light', "Slann Mage-Priest (Beasts)" → 'beasts').
+        ;; Faction defaults are the last resort — they fire only for
+        ;; names with no per-name preference and no parenthetical, so
+        ;; they don't overrule explicit lore signals.
+        lore           (or (lore-from-display-name norm)
+                           (lore-from-faction-prefixes faction-prefixes))
+        stripped-ix    (::stripped (meta name-index))
+        base-name      (strip-display-name-lore norm)
+        direct         (seq (get name-index norm))
+        override-key   (when-not direct (get overrides/display-name-unit-key-overrides norm))
+        ;; Composed names like "Chaos Sorcerer of Tzeentch" don't
+        ;; appear in the loc-derived name index, and uniquely-marked
+        ;; daemons like "Alluress" live in loc only as "Alluress
+        ;; (Slaanesh)" / "Alluress (Shadows)".  Fall back through
+        ;; (1) the bare base with lore suffix dropped against the
+        ;; full index, then (2) literal name in the
+        ;; parenthetical-stripped secondary index, then (3) bare
+        ;; base in the stripped index.  All fallbacks fire only
+        ;; when a lore hint is available so non-spellcaster lookups
+        ;; keep their literal canonical pinning.  An explicit
+        ;; override beats the mechanical fallback so seed entries
+        ;; whose loc display name is a `{{tr:…}}` placeholder
+        ;; (Slann Mage-Priest (Beasts/Death/Metal/Shadows), …) keep
+        ;; their hand-pinned canonical instead of collapsing to a
+        ;; loose `_campaign_0` resolution.
+        candidates     (or direct
+                           (when (and (not override-key) lore)
+                             (or (seq (get name-index base-name))
+                                 (seq (get stripped-ix norm))
+                                 (seq (get stripped-ix base-name)))))
+        candidates     (vec (or candidates []))
+        ;; Mark filter runs first because it's the strongest discriminator
+        ;; (a row's god alignment is rarely ambiguous given its key).  The
+        ;; faction filter follows so per-faction variants (chs vs kho for
+        ;; "Daemon Prince of Khorne") are picked correctly.  Lore is the
+        ;; softest tiebreaker — applied last so it doesn't fire over a
+        ;; faction-matched candidate.
+        mark-filtered  (prefer-mark candidates mark)
+        canonical      (fn [pool]
+                         (some (fn [gp]
+                                 (some (fn [item] (when (str/starts-with? (first item) gp) item))
+                                       pool))
+                               ["wh_main_" "wh3_main_" "wh2_main_" "wh_" "wh3_" "wh2_"]))
+        faction-of     (fn [pool]
+                         (filterv
+                          (fn [[uk lu]]
+                            (some (fn [p]
+                                    (or (str/includes? uk (str "_" p "_"))
+                                        (str/includes? lu (str "_" p "_"))))
+                                  faction-prefixes))
+                          pool))]
     (cond
-      (empty? candidates)
-      (if-let [override-key (get overrides/display-name-unit-key-overrides norm)]
-        [override-key nil]
-        [nil nil])
+      override-key
+      [override-key nil]
 
-      (= 1 (count candidates))
-      (first candidates)
+      (empty? candidates)
+      [nil nil]
+
+      (= 1 (count mark-filtered))
+      (first mark-filtered)
 
       :else
-      (let [filtered (filterv
-                      (fn [[uk lu]]
-                        (some (fn [p]
-                                (or (str/includes? uk (str "_" p "_"))
-                                    (str/includes? lu (str "_" p "_"))))
-                              faction-prefixes))
-                      candidates)]
+      (let [faction-filtered (faction-of mark-filtered)
+            ;; Faction filter eliminating everything is common for shared
+            ;; daemons where the seed processes them under DoC/WoC but
+            ;; the engine keys carry mono-god prefixes — fall back to
+            ;; the mark-filtered set so the canonical-prefix tiebreaker
+            ;; picks the mono-god `wh3_main_*` over a DLC-pack ROR.
+            pool             (if (seq faction-filtered) faction-filtered mark-filtered)
+            ;; Lore is a soft preference: narrow the pool only when at
+            ;; least one candidate matches, otherwise leave the pool
+            ;; intact for the canonical-prefix fallback.
+            lore-filtered    (prefer-lore pool lore)]
         (cond
-          (= 1 (count filtered)) (first filtered)
-
-          (seq filtered)
-          ;; Among same-display-name candidates, prefer the canonical
-          ;; original variant (oldest game-version, no DLC-pack suffix)
-          ;; over later DLC-set repackagings — `wh2_dlc13_*_imperial_supply`
-          ;; et al re-export an existing unit's display name with a key
-          ;; that won't match a replay drafted against the base unit.
-          (or (some (fn [gp]
-                      (some (fn [item] (when (str/starts-with? (first item) gp) item))
-                            filtered))
-                    ["wh_main_" "wh3_main_" "wh2_main_" "wh_" "wh3_" "wh2_"])
-              (first filtered))
-
-          :else (first candidates))))))
+          (= 1 (count lore-filtered)) (first lore-filtered)
+          :else (or (canonical lore-filtered) (first lore-filtered)))))))
 
 ;; ---------------------------------------------------------------------------
 ;; Icon matching (unit cards)

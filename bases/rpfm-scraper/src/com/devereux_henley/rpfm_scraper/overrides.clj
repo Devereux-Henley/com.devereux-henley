@@ -23,43 +23,26 @@
   canonical variant; the `unit.key` is the engine key the post-match
   modal's enrich step joins against, so picking a single canonical key
   is the same trade-off the existing `unit-card-overrides` map makes."
-  {"Archmage"                        "wh2_dlc15_hef_cha_archmage_light_0"
-   "Bray-Shaman"                     "wh2_dlc17_bst_cha_bray_shaman_beasts_2"
-   "Butcher"                         "wh3_main_ogr_cha_butcher_great_maw_0"
-   ;; Unmarked Chaos Sorcerer base variants — display name has no
-   ;; mark hint, so the mechanical mark-aware lookup can't fire.  The
-   ;; per-mark variants ("Chaos Sorcerer of Nurgle/Slaanesh/Tzeentch")
-   ;; resolve via `nm/find-unit-key` without an entry here.
+  {;; Chaos Sorcerer / Lord — engine carries multiple equipment-mount
+   ;; variants (`_warshrine`, `_chaos_steed`, `_daemonic_steed`,
+   ;; `_<lore>_<n>`) per lore.  The seed pins the warshrine-mount
+   ;; variant by convention, which has stats meaningfully different
+   ;; from the foot variant.  The mark-aware resolver only narrows by
+   ;; mark + lore, not by mount, so these stay pinned.
    "Chaos Sorcerer"                  "wh3_dlc20_chs_cha_chaos_sorcerer_death_warshrine"
    "Chaos Sorcerer Lord"             "wh3_dlc20_chs_cha_chaos_sorcerer_lord_death_warshrine"
-   "Daemonsmith Sorcerer"            "wh3_dlc23_chd_cha_daemonsmith_sorcerer_fire"
-   "Damsel"                          "wh_main_brt_cha_damsel_0"
-   "Dragon-blooded Shugengan Lord"   "wh3_main_cth_cha_dragon_blooded_shugengan_lord_yang_0"
-   "Fimir Balefiend"                 "wh_dlc08_nor_cha_fimir_balefiend_fire_0"
-   "Frost Maiden"                    "wh3_main_ksl_cha_frost_maiden_ice_0"
-   "Great Bray-Shaman"               "wh2_twa04_bst_cha_great_bray_shaman_beasts_0"
-   "Great Shaman-Sorcerer"           "wh3_dlc27_nor_cha_great_shaman_sorcerer_death"
-   "Grey Seer"                       "wh2_main_skv_cha_grey_seer_plague_0"
-   "Ice Witch"                       "wh3_dlc24_ksl_cha_ice_witch_ice_frost_wyrm"
-   "Liche Priest"                    "wh2_dlc09_tmb_cha_liche_priest_death_0"
-   "Mage"                            "wh2_main_hef_cha_mage_light_0"
-   "Malevolent Ancient Treeman"      "wh2_dlc16_wef_cha_malicious_ancient_treeman_life_0"
-   "Malevolent Branchwraith"         "wh2_dlc16_wef_cha_malicious_branchwraith_life_0"
-   "Prophetess"                      "wh_dlc07_brt_cha_prophetess_0"
-   "Shaman-Sorcerer"                 "wh_dlc08_nor_cha_shaman_sorcerer_death_0"
-   "Skink Priest"                    "wh2_dlc12_lzd_cha_skink_priest_beasts_4"
+   ;; Slann Mage-Priest lore variants — `land_units_loc` stores their
+   ;; display name as `{{tr:agent_subtypes_onscreen_name_override_*}}`
+   ;; references (the actual string lives in `agent_subtypes_loc` which
+   ;; the scraper doesn't load).  Without that resolution the
+   ;; parenthetical-stripped index has no entries for the four lores
+   ;; below, so the mechanical resolver collapses them all to the
+   ;; un-loremarked `_campaign_0` canonical and the seed loses the
+   ;; per-lore distinction.
    "Slann Mage-Priest (Beasts)"      "wh2_dlc13_lzd_cha_slann_mage_priest_beasts_0"
    "Slann Mage-Priest (Death)"       "wh2_dlc13_lzd_cha_slann_mage_priest_death_0"
    "Slann Mage-Priest (Metal)"       "wh2_dlc13_lzd_cha_slann_mage_priest_metal_0"
-   "Slann Mage-Priest (Shadows)"     "wh2_dlc13_lzd_cha_slann_mage_priest_shadows_0"
-   "Slaughtermaster"                 "wh3_main_ogr_cha_slaughtermaster_great_maw_0"
-   "Sorcerer-Prophet"                "wh3_dlc23_chd_cha_sorcerer_prophet_fire"
-   "Sorceress"                       "wh2_main_def_cha_sorceress_dark_0"
-   "Spellsinger"                     "wh_dlc05_wef_cha_spellsinger_beasts_0"
-   "Spellweaver"                     "wh2_dlc16_wef_cha_spellweaver_life_0"
-   "Supreme Sorceress"               "wh2_dlc10_def_cha_supreme_sorceress_dark_0"
-   "Vampire"                         "wh_main_vmp_cha_vampire_0"
-   "Vampire Fleet Captain"           "wh2_dlc11_cst_cha_vampire_fleet_captain_0"})
+   "Slann Mage-Priest (Shadows)"     "wh2_dlc13_lzd_cha_slann_mage_priest_shadows_0"})
 
 (def unit-card-overrides
   "Explicit unit-name → icon/portrait stem overrides for units whose display

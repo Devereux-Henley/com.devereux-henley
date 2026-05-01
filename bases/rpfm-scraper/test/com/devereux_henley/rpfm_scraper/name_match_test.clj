@@ -79,5 +79,52 @@
              (nm/find-unit-key "Halberdiers" ["emp"] name-index)))))
   (testing "Empty index without mark suffix falls through to override map"
     ;; Sanity: the override path is preserved for non-mark generic names.
-    (is (= ["wh_main_brt_cha_damsel_0" nil]
-           (nm/find-unit-key "Damsel" ["brt"] {})))))
+    (let [name-index (with-meta {} {})]
+      (is (= [nil nil]
+             (nm/find-unit-key "Halberdiers" ["emp"] name-index))))))
+
+(deftest find-unit-key-resolves-non-mark-spellcasters
+  (testing "Per-name lore preference resolves Mage/Archmage/Sorceress/etc."
+    (let [;; Mage has 28 lore variants in the loc; the per-name dict
+          ;; says Mage → Light, so the resolver picks the Light one.
+          name-index (with-meta {}
+                       {:com.devereux-henley.rpfm-scraper.name-match/stripped
+                        {"Mage"
+                         [["wh2_main_hef_cha_mage_death_0" "lu_death"]
+                          ["wh2_main_hef_cha_mage_high_0"  "lu_high"]
+                          ["wh2_main_hef_cha_mage_light_0" "lu_light"]
+                          ["wh2_main_hef_cha_mage_metal_0" "lu_metal"]]
+                         "Archmage"
+                         [["wh2_dlc15_hef_cha_archmage_beasts_0" "lu_beasts"]
+                          ["wh2_dlc15_hef_cha_archmage_light_0"  "lu_light"]]
+                         "Sorceress"
+                         [["wh2_main_def_cha_sorceress_beasts_0" "lu_beasts"]
+                          ["wh2_main_def_cha_sorceress_dark_0"   "lu_dark"]
+                          ["wh2_main_def_cha_sorceress_metal_0"  "lu_metal"]]}})]
+      (is (= ["wh2_main_hef_cha_mage_light_0" "lu_light"]
+             (nm/find-unit-key "Mage" ["hef"] name-index)))
+      (is (= ["wh2_dlc15_hef_cha_archmage_light_0" "lu_light"]
+             (nm/find-unit-key "Archmage" ["hef"] name-index)))
+      (is (= ["wh2_main_def_cha_sorceress_dark_0" "lu_dark"]
+             (nm/find-unit-key "Sorceress" ["def"] name-index)))))
+  (testing "Faction default lore covers archetypes not in name dict"
+    (let [name-index (with-meta {}
+                       {:com.devereux-henley.rpfm-scraper.name-match/stripped
+                        {"Loremaster"
+                         [["wh2_main_hef_cha_loremaster_high_0"  "lu_high"]
+                          ["wh2_main_hef_cha_loremaster_light_0" "lu_light"]]}})]
+      ;; "Loremaster" has no per-name entry, but the High Elf faction
+      ;; default lore is Light, so the resolver picks the Light variant.
+      (is (= ["wh2_main_hef_cha_loremaster_light_0" "lu_light"]
+             (nm/find-unit-key "Loremaster" ["hef"] name-index)))))
+  (testing "Parenthetical lore in seed name overrides name + faction defaults"
+    ;; "Slann Mage-Priest (Heavens)" → lore from parenthetical = 'heavens',
+    ;; even though the lzd faction default is 'beasts'.
+    (let [name-index (with-meta {}
+                       {:com.devereux-henley.rpfm-scraper.name-match/stripped
+                        {"Slann Mage-Priest"
+                         [["wh2_main_lzd_cha_slann_mage_priest_high_0"    "lu_high"]
+                          ["wh2_main_lzd_cha_slann_mage_priest_heavens_0" "lu_heavens"]
+                          ["wh2_main_lzd_cha_slann_mage_priest_light_0"  "lu_light"]]}})]
+      (is (= ["wh2_main_lzd_cha_slann_mage_priest_heavens_0" "lu_heavens"]
+             (nm/find-unit-key "Slann Mage-Priest (Heavens)" ["lzd"] name-index))))))
