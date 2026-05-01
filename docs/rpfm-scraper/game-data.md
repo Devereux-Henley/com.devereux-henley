@@ -21,6 +21,7 @@ Non-numeric fields (`abilities`, `draftable-spells`, `mounts`) are preserved fro
 | `seed-unit-items.sql` | fully regenerated: unit → item links for legendary lords/heroes with pre-assigned gear |
 | `seed-mounts.sql` | fully regenerated from `units_custom_battle_mounts_tables`: one row per distinct MP mount, keyed on icon stem (e.g. `mount_barded_warhorse`) |
 | `seed-unit-mounts.sql` | fully regenerated: unit → mount links with cost = `main_units_tables.multiplayer_cost` diff (mounted variant − base) |
+| `seed-unit-level-cost.sql` | fully regenerated from `unit_stats_land_experience_bonuses_tables`: one row per veteran rank (0-9) with `fixed_cost`, `cost_multiplier`, fatigue, and combat-potential deltas. Engine formula: `adjusted_cost = round(base_cost * cost_multiplier) + fixed_cost` |
 | `asset/icon/ability/*.png` | spell icons copied alongside ability icons when `--icons-dir` is given (spells are abilities in WH3; icons keyed by spell eid) |
 | `asset/icon/item/*.png` | item icons copied when `--item-icons-dir` is given (one file per distinct `ancillary_types_tables.ui_icon` stem) |
 | `asset/icon/mount/*.png` | mount icons copied when `--mount-icons-dir` is given (one file per distinct mount icon stem, matching `mount.icon_key`) |
@@ -53,6 +54,7 @@ Open Claude Code with the RPFM MCP server active, set the game to `warhammer_3` 
 | `mounts_tables.json` | `db/mounts_tables/data__` |
 | `battlefield_engines_tables.json` | `db/battlefield_engines_tables/data__` |
 | `unit_attributes_to_groups_junctions_tables.json` | `db/unit_attributes_to_groups_junctions_tables/data__` |
+| `unit_stats_land_experience_bonuses_tables.json` | `db/unit_stats_land_experience_bonuses_tables/data__` |
 
 Stat icons (pass via `--stat-icons-dir`) are extracted from `ui/skins/default/` as a sibling directory tree — use `mcp__rpfm__extract_packed_files` with the following GameFiles paths:
 
