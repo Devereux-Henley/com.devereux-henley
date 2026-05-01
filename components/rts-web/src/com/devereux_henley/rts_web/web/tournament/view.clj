@@ -344,15 +344,15 @@
   cleanup checklist."
   [army]
   (mapv (fn [{:keys [key name cost adjusted-cost level unit-category-name unit-type-name unit-eid]}]
-          (let [enriched?     (some? name)
+          (let [enriched?  (some? name)
                 ;; FALLBACK (#49): unresolved parser key shows the raw engine key.
-                display       (if enriched? name key)
+                display    (if enriched? name key)
                 ;; FALLBACK (#49): missing category data falls through to type, then em-dash.
-                category      (or unit-category-name unit-type-name "—")
-                is-lord?      (= "lord" (some-> unit-category-name str/lower-case))
-                level         (clamp-level level)
+                category   (or unit-category-name unit-type-name "—")
+                is-lord?   (= "lord" (some-> unit-category-name str/lower-case))
+                level      (clamp-level level)
                 ;; level 0 → no chevron; otherwise show pip count for the template.
-                shown-cost    (or adjusted-cost cost)]
+                shown-cost (or adjusted-cost cost)]
             {:key           key
              :unit-eid      unit-eid
              :display       display

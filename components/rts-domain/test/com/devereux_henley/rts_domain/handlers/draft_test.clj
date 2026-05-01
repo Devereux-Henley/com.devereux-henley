@@ -295,7 +295,7 @@
   "Subset of the unit_level_cost seed sufficient for level 0/1 in tests.
    Level 0 is a no-op (multiplier 1.0, fixed 0). Level 1 covers the
    leveled-add path: base 100 → round(100 * 1.03) + 11 = 114."
-  {0 {:level 0 :fixed-cost 0  :cost-multiplier 1.0  :fatigue 0 :melee-cp 0.0  :missile-cp 0.0}
+  {0 {:level 0 :fixed-cost 0 :cost-multiplier 1.0 :fatigue 0 :melee-cp 0.0 :missile-cp 0.0}
    1 {:level 1 :fixed-cost 11 :cost-multiplier 1.03 :fatigue 0 :melee-cp 26.0 :missile-cp 26.0}})
 
 (defn- stub-add-unit

@@ -5,12 +5,12 @@
    [com.devereux-henley.rpfm-scraper.unit-level-cost-seed :as seed]))
 
 (defn- row [lvl fc mul fat melee missile]
-  {"xp_level" lvl
-   "fatigue" fat
-   "mp_fixed_cost" fc
+  {"xp_level"                      lvl
+   "fatigue"                       fat
+   "mp_fixed_cost"                 fc
    "mp_experience_cost_multiplier" mul
-   "additional_melee_cp" melee
-   "additional_missile_cp" missile})
+   "additional_melee_cp"           melee
+   "additional_missile_cp"         missile})
 
 (def ^:private full-rows
   [(row "0" 0 1.00 0 0.0 0.0)
@@ -50,7 +50,7 @@
   (testing "string xp_level keys (RPFM JSON) and numeric ones both round-trip"
     (let [{:keys [rows missing-levels]}
           (seed/generate-unit-level-cost-seed
-           [{"xp_level" 0 "mp_fixed_cost" 0 "mp_experience_cost_multiplier" 1.0
-             "fatigue" 0 "additional_melee_cp" 0.0 "additional_missile_cp" 0.0}])]
+           [{"xp_level" 0 "mp_fixed_cost"       0   "mp_experience_cost_multiplier" 1.0
+             "fatigue"  0 "additional_melee_cp" 0.0 "additional_missile_cp"         0.0}])]
       (is (= 1 rows))
       (is (= (set (range 1 10)) missing-levels)))))
