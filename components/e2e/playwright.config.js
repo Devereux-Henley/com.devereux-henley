@@ -6,7 +6,7 @@ module.exports = defineConfig({
   retries: 0,
   reporter: [['list'], ['json', { outputFile: 'test-results/results.json' }]],
   use: {
-    baseURL: 'http://localhost:3001',
+    baseURL: process.env.RTS_API_BASE_URL || 'http://localhost:3001',
     trace: 'retain-on-failure',
   },
   projects: [

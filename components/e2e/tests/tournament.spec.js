@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-const BASE = 'http://127.0.0.1:3001';
+const BASE = process.env.RTS_API_BASE_URL || "http://127.0.0.1:3001";
 const GAME_EID = 'eea787d7-1065-45eb-a3f6-e26f32c294a1';
 
 function headers(user) {

@@ -16,10 +16,17 @@
           hx-headers='{"Accept": "application/htmx+html"}'>
 
         <div class="draft-stats-header">
+            {# visibility:hidden (not display:none) so a missing portrait
+               PNG keeps the 4.5rem × 130px layout slot reserved. Without
+               this, swapping `lore-portrait-key` to a 404'ing url shrinks
+               the header by ~43px while content above the scroll position
+               re-layouts, which the browser compensates by clamping
+               scrollTop downward — visible as a draft panel that scrolls
+               itself when toggling a lore. #}
             <img class="draft-stats-portrait"
                  src="/card/unit/{% if unit.lore-portrait-key %}{{unit.lore-portrait-key}}{% else %}{{unit.eid}}{% endif %}.png"
                  alt="{{unit.name}}"
-                 onerror="this.style.display='none'">
+                 onerror="this.style.visibility='hidden'">
             <div class="draft-stats-meta">
                 <h3 class="draft-stats-name">
                     <span class="draft-stats-name-text">{{unit.name}}</span>
