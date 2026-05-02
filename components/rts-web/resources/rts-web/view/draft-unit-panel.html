@@ -270,6 +270,15 @@
         {% if unit.lores|not-empty? %}
         <section class="draft-stats-section unit-panel" aria-labelledby="panel-lores-heading">
             <h4 class="unit-panel-heading" id="panel-lores-heading">Lore of Magic</h4>
+            {# Mark variants and most non-spellcasters carry exactly one
+               lore — the dropdown would be a single-option no-op.
+               Render a static label in that case and reserve the
+               selector for true multi-lore casters (Mage, Sorceress,
+               Bray-Shaman, Liche Priest, …).  The unit's
+               `:draftable-spells` already reflect the lore in
+               `unit_statistics`, so no override is needed when the
+               choice is forced. #}
+            {% if unit.lores|count > 1 %}
             <label class="lore-select-field" for="draft-lore-select">
                 <span class="sr-only">Select lore for {{unit.name}}</span>
                 <select class="lore-select"
@@ -282,6 +291,9 @@
                     {% endfor %}
                 </select>
             </label>
+            {% else %}
+            <p class="lore-static-label" aria-labelledby="panel-lores-heading">{{unit.lores.0.name}}</p>
+            {% endif %}
         </section>
         {% endif %}
 

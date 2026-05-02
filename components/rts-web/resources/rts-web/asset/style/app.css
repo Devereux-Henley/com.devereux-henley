@@ -2382,6 +2382,16 @@ h3.draft-category-header {
   pointer-events: none;
 }
 
+.lore-static-label {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-strong);
+}
+
 .unit-mark--khorne,
 .pm-draft-unit-mark--khorne   { --mark-fg: #e8504a; --mark-bg-edge: #6b1311; }
 .unit-mark--nurgle,
