@@ -169,17 +169,15 @@
   (or (get key->row k)
       (some #(get key->row %) (key-prefix-candidates k))))
 
-(defn- clamp-level [n]
-  (-> (or n 0) int (max 0) (min 9)))
-
 (defn- enrich-unit
   "Adds resolved unit data (name, cost, category) to a unit map when its
   engine key has a matching DB row.  Computes the veterancy-adjusted cost
   via `level->cost-row` (typically the global unit_level_cost map) using the
-  parser's `:level` (default 0).  Leaves the map unchanged otherwise so the
-  client can fall back to the raw key."
+  parser's `:level` — defaulted to 0 for replays produced by a pre-level
+  parser binary.  Leaves the map unchanged otherwise so the client can fall
+  back to the raw key."
   [key->row level->cost-row {:keys [key] :as unit}]
-  (let [level (clamp-level (:level unit))]
+  (let [level (or (:level unit) 0)]
     (if-let [row (resolve-key key->row key)]
       (assoc unit
              :name               (:name row)
@@ -350,7 +348,6 @@
                 ;; FALLBACK (#49): missing category data falls through to type, then em-dash.
                 category   (or unit-category-name unit-type-name "—")
                 is-lord?   (= "lord" (some-> unit-category-name str/lower-case))
-                level      (clamp-level level)
                 ;; level 0 → no chevron; otherwise show pip count for the template.
                 shown-cost (or adjusted-cost cost)]
             {:key           key

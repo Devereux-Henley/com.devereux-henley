@@ -887,13 +887,3 @@
          ;; Malli encode runs the string-transformer on :int fields, so :level
          ;; round-trips through JSON as a string.
          (is (= "1" (get-in parsed [:main 0 :level]))))))))
-
-(deftest add-unit-to-draft-out-of-range-level-clamps-to-nine
-  ((stub-add-unit [infantry-unit] nil)
-   (fn []
-     (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main"
-                                                    {:level 99})]
-       ;; Schema-validated callers won't hit this branch, but the handler must
-       ;; not blow up on stray input — clamp to the top rank we know about.
-       (is (= :draft/add-success (:type result)))
-       (is (= 9 (:level (:new-unit result))))))))

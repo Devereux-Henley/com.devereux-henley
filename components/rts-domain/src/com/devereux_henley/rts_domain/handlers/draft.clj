@@ -271,7 +271,7 @@
     [:unit-eid :uuid]
     [:mount      {:optional true} [:maybe :string]]
     [:lore       {:optional true} [:maybe :string]]
-    [:level      {:optional true, :default 0} :int]
+    [:level      {:optional true, :default 0} [:int {:min 0 :max 9}]]
     [:abilities  {:optional true, :default []} [:sequential :string]]
     [:spells     {:optional true, :default []} [:sequential :string]]
     [:items      {:optional true, :default []} [:sequential :string]]
@@ -429,9 +429,6 @@
 
 ;; ─── Cost calculation ─────────────────────────────────────────────────────────
 
-(defn- clamp-level [n]
-  (-> (or n 0) int (max 0) (min 9)))
-
 (defn apply-level-cost
   "Applies the engine veterancy formula
      adjusted = round(base * cost_multiplier) + fixed_cost
@@ -457,7 +454,7 @@
    not a display name. Cost comes from unit_mount.cost via get-mounts-for-unit."
   [unit-hydrated selections conn]
   (let [base-cost     (or (:cost unit-hydrated) 0)
-        level         (clamp-level (:level selections))
+        level         (or (:level selections) 0)
         level-costs   (db/get-unit-level-costs conn)
         adjusted-base (apply-level-cost base-cost (get level-costs level))
         mount-key     (:mount selections)
@@ -510,7 +507,7 @@
           (when-let [u (get unit-by-eid (:unit-eid entry))]
             (assoc u
                    :total-cost        (or (:total-cost entry) (:cost u))
-                   :level             (clamp-level (:level entry))
+                   :level             (:level entry)
                    :entry-eid         (:entry-eid entry)
                    :lore-portrait-key (lore-portrait-key-for conn (:unit-eid entry) (:lore entry)))))
         entries))
@@ -547,7 +544,7 @@
    :entry-eid         entry-eid
    :name              (:name unit)
    :total-cost        total-cost
-   :level             (clamp-level level)
+   :level             level
    :is-lord           (boolean (:is-lord unit))
    :lore-portrait-key lore-portrait-key})
 
@@ -662,7 +659,7 @@
         :section   section
         :mount     (:mount source)
         :lore      (:lore source)
-        :level     (clamp-level (:level source))
+        :level     (or (:level source) 0)
         :abilities (vec (:abilities source))
         :spells    (vec (:spells source))
         :items     (vec (:items source))}))))
@@ -725,7 +722,7 @@
         ;; BEFORE spell-selection marking. apply-mount-overrides is
         ;; orthogonal and can run alongside.
         overlaid    (as-> unit $
-                      (assoc $ :mount mount :level (clamp-level level))
+                      (assoc $ :mount mount :level (or level 0))
                       (apply-lore-overrides conn $ lore)
                       (apply-mount-overrides $ mount)
                       (update $ :draftable-abilities mark-selected ability-set)
@@ -746,7 +743,7 @@
   [dependencies entry-resource]
   (let [selections {:mount     (:mount entry-resource)
                     :lore      (:lore entry-resource)
-                    :level     (clamp-level (:level entry-resource))
+                    :level     (:level entry-resource)
                     :abilities (:abilities entry-resource)
                     :spells    (:spells entry-resource)
                     :items     (:items entry-resource)}
@@ -800,7 +797,7 @@
                                        :unit-eid   unit-eid
                                        :mount      (:mount selections)
                                        :lore       (:lore selections)
-                                       :level      (clamp-level (:level selections))
+                                       :level      (or (:level selections) 0)
                                        :abilities  (or (:abilities selections) [])
                                        :spells     (or (:spells selections) [])
                                        :items      (or (:items selections) [])
@@ -811,7 +808,7 @@
               {:type     :draft/add-success
                :section  (section-ref section-ctx)
                :new-unit (slot-unit unit new-entry-eid total-cost lore-portrait-key
-                                    (clamp-level (:level selections)))
+                                    (or (:level selections) 0))
                :budget   (section-budget section-ctx)})))))))
 
 (defn- find-entry-index
@@ -916,7 +913,7 @@
                            :unit-eid   (:unit-eid existing)
                            :mount      (:mount selections)
                            :lore       (:lore selections)
-                           :level      (clamp-level (:level selections))
+                           :level      (or (:level selections) 0)
                            :abilities  (or (:abilities selections) [])
                            :spells     (or (:spells selections) [])
                            :items      (or (:items selections) [])
