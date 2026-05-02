@@ -5,6 +5,10 @@ const fs = require('fs');
 const BASE = process.env.RTS_API_BASE_URL || 'http://127.0.0.1:3001';
 const GAME_EID = 'eea787d7-1065-45eb-a3f6-e26f32c294a1';
 const SAMPLE_REPLAY = path.resolve(__dirname, '../fixtures/sample-battle.replay');
+// Replay carrying veteranned units: a level-9 Aspiring Champions and a level-1
+// + level-3 pair of Chosen of Khorne (DW). Used to exercise the chevron-badge
+// + adjusted-cost rendering path in the post-match modal.
+const LEVELED_REPLAY = path.resolve(__dirname, '../fixtures/leveled-battle.replay');
 
 function jsonHeaders(user) {
   return {
@@ -55,8 +59,8 @@ async function createMatch(request, tournamentEid, format = 3) {
   return (await res.json()).eid;
 }
 
-async function postParseFragment(request, matchEid, count) {
-  const buffer = fs.readFileSync(SAMPLE_REPLAY);
+async function postParseFragment(request, matchEid, count, replayPath = SAMPLE_REPLAY) {
+  const buffer = fs.readFileSync(replayPath);
   const multipart = {};
   for (let i = 0; i < count; i++) {
     multipart[`game-${i}`] = {
@@ -155,6 +159,37 @@ test.describe('Parse fragment endpoint', () => {
     expect(visibleHtml).not.toContain('wh3_dlc23_chd_legion_of_azgorh');
     expect(visibleHtml).not.toContain('Reikland');
     expect(visibleHtml).not.toContain('Legion of Azgorh');
+  });
+
+  test('renders chevron badges and adjusted costs for veteranned units', async ({ request }) => {
+    const tournamentEid = await createActiveTournament(request);
+    const matchEid = await createMatch(request, tournamentEid, 1);
+
+    const res = await postParseFragment(request, matchEid, 1, LEVELED_REPLAY);
+    expect(res.status()).toBe(200);
+    const html = await res.text();
+
+    // The leveled fixture has three veteranned units: L9 Aspiring Champions
+    // (base 1100 → adjusted 1496) and L1 + L3 Chosen of Khorne (base 1450 →
+    // adjusted 1505 / 1614). Each one renders its rank badge in the corner of
+    // the portrait + the adjusted cost in the existing pip.
+    expect(html).toMatch(/<span class="pm-draft-unit-level" aria-label="Veteran rank 9">9<\/span>/);
+    expect(html).toMatch(/<span class="pm-draft-unit-level" aria-label="Veteran rank 1">1<\/span>/);
+    expect(html).toMatch(/<span class="pm-draft-unit-level" aria-label="Veteran rank 3">3<\/span>/);
+    expect(html).toMatch(/<span class="pm-draft-unit-cost">1496<\/span>/);
+    expect(html).toMatch(/<span class="pm-draft-unit-cost">1505<\/span>/);
+    expect(html).toMatch(/<span class="pm-draft-unit-cost">1614<\/span>/);
+
+    // Unleveled units in the same draft (Skavenslaves, Daemon Prince, base
+    // Aspiring Champions) must not carry a level badge — the conditional in
+    // the template is gated on `unit.leveled?` (level > 0).
+    const badgeCount = (html.match(/class="pm-draft-unit-level"/g) || []).length;
+    expect(badgeCount).toBe(3);
+
+    // The Chaos side total reflects the adjusted costs end to end. With the
+    // replay's roster — Daemon Prince 1800, Asp Champions 1100 + 1496,
+    // Chosen 1250, Chosen DW 1505 + 1614 — the side header reads 8765 pts.
+    expect(html).toMatch(/pm-draft-cost-num">\s*8765\s*</);
   });
 
   test('rejects empty submission with an inline error fragment', async ({ request }) => {
