@@ -115,7 +115,7 @@ VALUES
    2,
    1,
    2,
-   '{"cost":700,"is_large":false,"unit_size":2,"health":8864,"barrier":0,"armor":80,"leadership":55,"speed":70,"melee_attack":28,"melee_attack_types":[],"melee_modifiers":[],"melee_defence":24,"weapon_strength":280,"weapon_damage":100,"weapon_ap_damage":180,"bonus_vs_infantry":20,"bonus_vs_large":0,"charge_bonus":64,"ammunition":0,"missile_damage_types":[],"missile_modifiers":[],"attributes":["encourages","guerrilla_deploy","hide_forest","ignore_trees"],"abilities":["wh3_main_unit_passive_single_entity","wh_dlc03_unit_passive_primal_fury"],"draftable-spells":[]}',
+   '{"cost":400,"is_large":false,"unit_size":1,"health":4168,"barrier":0,"armor":15,"leadership":55,"speed":38,"melee_attack":30,"melee_attack_types":[],"melee_modifiers":[],"melee_defence":28,"weapon_strength":310,"weapon_damage":215,"weapon_ap_damage":95,"bonus_vs_infantry":0,"bonus_vs_large":0,"charge_bonus":38,"ammunition":0,"missile_damage_types":[],"missile_modifiers":[],"attributes":["encourages","hide_forest","ignore_trees"],"equipment":[{"key":"wh3_dlc24_anc_arcane_item_ritual_of_the_beast","cost":200},{"key":"wh_dlc03_anc_follower_beastmen_bray_shamans_familiar","cost":35}],"abilities":["wh3_main_unit_passive_single_entity","wh_dlc03_unit_passive_primal_fury"],"draftable-spells":[]}',
    0,
    1,
    'f0ce7395-a57f-41e9-ade0-fd13bafc058f',

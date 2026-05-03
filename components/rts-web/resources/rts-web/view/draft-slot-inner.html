@@ -2,18 +2,35 @@
         id="draft-slot-card-{{unit.entry-eid}}"
         hx-preserve="true"
         type="button"
-        aria-label="Edit {{unit.name}} in {{section.section-label}}"
+        aria-labelledby="draft-slot-edit-label-{{unit.entry-eid}}"
         hx-get="/api/draft/{{section.draft-eid}}/entry/{{unit.entry-eid}}?section={{section.section}}&amp;embed=unit"
         hx-target="#draft-unit"
         hx-swap="outerHTML">
+    {# Accessible label lives in a child span rather than an inline
+       aria-label so a slot-edit OOB swap in draft-update-success.html
+       can refresh the label text after a mark change (the parent
+       button is `hx-preserve`'d and can't be re-rendered itself). #}
+    <span class="sr-only" id="draft-slot-edit-label-{{unit.entry-eid}}">Edit {{unit.name}}{% if unit.mark %}{% if unit.family-variant-count > 1 %} (Mark of {{unit.mark|capitalize}}){% endif %}{% endif %} in {{section.section-label}}</span>
     <img class="draft-slot-card"
          id="draft-slot-card-img-{{unit.entry-eid}}"
          src="/card/unit/{% if unit.lore-portrait-key %}{{unit.lore-portrait-key}}{% else %}{{unit.eid}}{% endif %}.png"
          alt="{{unit.name}}"
          onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;">
+    {# Mark dot lives inside an addressable anchor so the
+       slot-mark-switch OOB swap in draft-update-success.html can
+       replace it without disturbing the rest of the
+       hx-preserve'd button.  `display: contents` lets the inner
+       dot keep absolute-positioning against the button instead of
+       the anchor. #}
+    <span id="draft-slot-mark-{{unit.entry-eid}}" style="display:contents">
+        {% if unit.mark %}{% if unit.family-variant-count > 1 %}<span class="unit-mark--dot unit-mark--{{unit.mark}} draft-slot-mark" aria-hidden="true" title="Mark of {{unit.mark|capitalize}}"></span>{% endif %}{% endif %}
+    </span>
 </button>
 <div class="draft-slot-cost" id="draft-slot-cost-{{unit.entry-eid}}" aria-hidden="true">{{unit.total-cost}}</div>
 <button class="draft-slot-remove"
-        aria-label="Remove {{unit.name}} from {{section.section-label}}"
+        aria-labelledby="draft-slot-remove-label-{{unit.entry-eid}}"
         hx-delete="/api/draft/{{section.draft-eid}}/entry/{{unit.entry-eid}}?section={{section.section}}"
-        hx-swap="none">&#10005;</button>
+        hx-swap="none">
+    <span class="sr-only" id="draft-slot-remove-label-{{unit.entry-eid}}">Remove {{unit.name}} from {{section.section-label}}</span>
+    &#10005;
+</button>

@@ -819,6 +819,33 @@
   pointer-events: none;
 }
 
+/* Per-god palette is shared with `.unit-mark` in app.css via the
+ * `--mark-fg` / `--mark-bg-edge` custom properties — only the
+ * positioning and overlay sizing live here. */
+.pm-draft-unit-mark {
+  position: absolute;
+  /* Sits below the level badge (top: 2px, height: 14px → next slot at 18px). */
+  top: 18px;
+  right: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+  background: radial-gradient(circle at 35% 30%, var(--mark-fg, #aaa), var(--mark-bg-edge, #444));
+  pointer-events: none;
+}
+
+.pm-draft-unit-tooltip-mark {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+
 .pm-draft-unit-tooltip {
   display: none;
   position: absolute;

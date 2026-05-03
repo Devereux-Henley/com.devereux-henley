@@ -170,23 +170,25 @@
       (some #(get key->row %) (key-prefix-candidates k))))
 
 (defn- enrich-unit
-  "Adds resolved unit data (name, cost, category) to a unit map when its
-  engine key has a matching DB row.  Computes the veterancy-adjusted cost
-  via `level->cost-row` (typically the global unit_level_cost map) using the
-  parser's `:level` — defaulted to 0 for replays produced by a pre-level
-  parser binary.  Leaves the map unchanged otherwise so the client can fall
-  back to the raw key."
+  "Adds resolved unit data (name, cost, category, level/adjusted-cost,
+  Mark of Chaos) to a unit map when its engine key has a matching DB row.
+  Computes the veterancy-adjusted cost via `level->cost-row` (typically the
+  global unit_level_cost map) using the parser's `:level` — defaulted to 0
+  for replays produced by a pre-level parser binary.  Leaves the map
+  unchanged otherwise so the client can fall back to the raw key."
   [key->row level->cost-row {:keys [key] :as unit}]
   (let [level (or (:level unit) 0)]
     (if-let [row (resolve-key key->row key)]
       (assoc unit
-             :name               (:name row)
-             :cost               (:cost row)
-             :level              level
-             :adjusted-cost      (domain/apply-level-cost (:cost row) (get level->cost-row level))
-             :unit-category-name (:unit-category-name row)
-             :unit-type-name     (:unit-type-name row)
-             :unit-eid           (:eid row))
+             :name                 (:name row)
+             :cost                 (:cost row)
+             :level                level
+             :adjusted-cost        (domain/apply-level-cost (:cost row) (get level->cost-row level))
+             :unit-category-name   (:unit-category-name row)
+             :unit-type-name       (:unit-type-name row)
+             :unit-eid             (:eid row)
+             :mark                 (:mark row)
+             :family-variant-count (:family-variant-count row))
       (assoc unit :level level))))
 
 (defn- enrich-parsed
@@ -341,15 +343,22 @@
   is guaranteed, the fallbacks become dead code — see #49 for the
   cleanup checklist."
   [army]
-  (mapv (fn [{:keys [key name cost adjusted-cost level unit-category-name unit-type-name unit-eid]}]
-          (let [enriched?  (some? name)
+  (mapv (fn [{:keys [key name cost adjusted-cost level unit-category-name unit-type-name unit-eid mark family-variant-count]}]
+          (let [enriched?   (some? name)
                 ;; FALLBACK (#49): unresolved parser key shows the raw engine key.
-                display    (if enriched? name key)
+                display     (if enriched? name key)
                 ;; FALLBACK (#49): missing category data falls through to type, then em-dash.
-                category   (or unit-category-name unit-type-name "—")
-                is-lord?   (= "lord" (some-> unit-category-name str/lower-case))
+                category    (or unit-category-name unit-type-name "—")
+                is-lord?    (= "lord" (some-> unit-category-name str/lower-case))
                 ;; level 0 → no chevron; otherwise show pip count for the template.
-                shown-cost (or adjusted-cost cost)]
+                shown-cost  (or adjusted-cost cost)
+                ;; Surface the badge only when the family has more than
+                ;; one mark variant — for mono-mark families like
+                ;; "Bloodletters of Khorne" or "Herald of Khorne" the
+                ;; name itself already implies the mark.
+                mark-shown? (and mark
+                                 (some? family-variant-count)
+                                 (> family-variant-count 1))]
             {:key           key
              :unit-eid      unit-eid
              :display       display
@@ -360,6 +369,9 @@
              ;; chevron overlay only renders when the unit was leveled.
              :leveled?      (pos? level)
              :is-lord       is-lord?
+             :mark          mark
+             :mark-shown    mark-shown?
+             :mark-label    (when mark (str/capitalize mark))
              ;; FALLBACK (#49): tooltip omits cost when the DB row is missing.
              :tooltip       (cond
                               (and shown-cost (pos? level))

@@ -65,15 +65,16 @@
 
 (defmethod integrant.core/init-key ::get-draft-unit
   [_init-key dependencies]
-  (fn [{{{:keys [draft-eid eid]} :path
-         query                   :query} :parameters
-        router                           :reitit.core/router
-        :as                              _request}]
-    (let [overrides (selection-overrides query)]
+  (fn [{{{:keys [draft-eid eid]}      :path
+         {:keys [unit-eid] :as query} :query} :parameters
+        router                                :reitit.core/router
+        :as                                   _request}]
+    (let [overrides (selection-overrides query)
+          unit      (or eid unit-eid)]
       (web.core/handle-fetch-response
        domain/draft-unit-resource
        {:hostname (:hostname dependencies) :router router}
-       #(domain/get-draft-unit-details dependencies draft-eid eid overrides)))))
+       #(domain/get-draft-unit-details dependencies draft-eid unit overrides)))))
 
 (defmethod integrant.core/init-key ::get-draft-entry
   [_init-key dependencies]
@@ -108,7 +109,7 @@
          body                    :body} :parameters
         router                          :reitit.core/router
         :as                             _request}]
-    (let [selections (select-keys (or body {}) [:mount :lore :level :abilities :spells :items])
+    (let [selections (select-keys (or body {}) [:unit-eid :mount :lore :level :abilities :spells :items])
           result     (domain/update-unit-in-draft dependencies draft-eid eid section selections)]
       (if (= :draft/update-success (:type result))
         ;; Enrich the response with the freshly-persisted entry (+ embedded

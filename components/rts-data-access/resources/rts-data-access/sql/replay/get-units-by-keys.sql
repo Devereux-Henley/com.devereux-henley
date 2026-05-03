@@ -5,6 +5,12 @@ SELECT
   u.eid,
   u.key,
   u.name,
+  u.family_name,
+  u.mark,
+  (SELECT COUNT(*) FROM unit fv
+    WHERE fv.family_name = u.family_name
+      AND fv.faction_id = u.faction_id
+      AND fv.deleted_at IS NULL) AS family_variant_count,
   json_extract(u.unit_statistics, '$.cost') AS cost,
   uc.name AS unit_category_name,
   ut.name AS unit_type_name,

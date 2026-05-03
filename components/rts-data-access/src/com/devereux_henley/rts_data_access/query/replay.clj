@@ -18,6 +18,8 @@
     [:eid :uuid]
     [:key [:maybe :string]]
     [:name :string]
+    [:mark [:maybe schema/mark-enum]]
+    [:family-variant-count {:optional true} :int]
     [:cost [:maybe :int]]
     [:unit-category-name :string]
     [:unit-type-name :string]

@@ -55,6 +55,8 @@ Open Claude Code with the RPFM MCP server active, set the game to `warhammer_3` 
 | `battlefield_engines_tables.json` | `db/battlefield_engines_tables/data__` |
 | `unit_attributes_to_groups_junctions_tables.json` | `db/unit_attributes_to_groups_junctions_tables/data__` |
 | `unit_stats_land_experience_bonuses_tables.json` | `db/unit_stats_land_experience_bonuses_tables/data__` |
+| `unit_sets_tables.json` | `db/unit_sets_tables/data__` |
+| `unit_set_to_unit_junctions_tables.json` | `db/unit_set_to_unit_junctions_tables/data__` |
 
 Stat icons (pass via `--stat-icons-dir`) are extracted from `ui/skins/default/` as a sibling directory tree — use `mcp__rpfm__extract_packed_files` with the following GameFiles paths:
 

@@ -233,6 +233,27 @@
                          :query web.game.api/faction-query-parameters}
             :responses  {200 {:body domain/faction-resource}}
             :handler    (integrant.core/ref ::web.game.api/get-faction)}}]
+   ["/draft/:draft-eid/unit"
+    {:name :draft-unit/preview
+     :get  {:produces   ["application/json" "application/htmx+html"]
+            :openapi    {:summary      "Previews a unit variant within the draft context (variant via `unit-eid` query)."
+                         :tags         ["draft"]
+                         :produces     ["application/json" "application/htmx+html"]
+                         :operation-id "draft-unit/preview"}
+            :parameters {:path  (schema.contract/to-schema
+                                 [:map
+                                  [:draft-eid :uuid]])
+                         :query (schema.contract/to-schema
+                                 [:map
+                                  [:unit-eid  :uuid]
+                                  [:mount     {:optional true} [:maybe :string]]
+                                  [:lore      {:optional true} [:maybe :string]]
+                                  [:items     {:optional true} [:or :string [:sequential :string]]]
+                                  [:spells    {:optional true} [:or :string [:sequential :string]]]
+                                  [:abilities {:optional true} [:or :string [:sequential :string]]]])}
+            :responses  {200 {:body domain/draft-unit-resource}
+                         500 {:body domain/draft-error-response}}
+            :handler    (integrant.core/ref ::web.draft.api/get-draft-unit)}}]
    ["/draft/:draft-eid/unit/:eid"
     {:name :draft-unit/by-eid
      :get  {:produces   ["application/json" "application/htmx+html"]

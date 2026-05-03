@@ -67,7 +67,7 @@
                             type="button"
                             role="listitem"
                             aria-pressed="false"
-                            aria-label="{{unit.name}}, {{unit.unit-type-name}}, cost {{unit.cost}}"
+                            aria-label="{{unit.name}}{% if unit.mark %}{% if unit.family-variant-count > 1 %} (Mark of {{unit.mark|capitalize}}){% endif %}{% endif %}, {{unit.unit-type-name}}, cost {{unit.cost}}"
                             hx-get="/api/draft/{{draft-eid}}/unit/{{unit.eid}}"
                             hx-target="#draft-unit"
                             hx-swap="outerHTML">
@@ -75,6 +75,7 @@
                              alt=""
                              loading="lazy"
                              onerror="this.style.display='none'">
+                        {% if unit.mark %}{% if unit.family-variant-count > 1 %}<span class="unit-mark--dot unit-mark--{{unit.mark}} draft-unit-card-mark" aria-hidden="true" title="Mark of {{unit.mark|capitalize}}"></span>{% endif %}{% endif %}
                         <span class="draft-unit-card-cost" aria-hidden="true">{{unit.cost}}</span>
                     </button>
                     {% endfor %}

@@ -13,7 +13,14 @@
         units             (domain/hydrate-units-with-stats
                            (domain/get-units-for-faction dependencies (:faction-eid draft)))
         unit-by-eid       (into {} (map (juxt :eid identity) units))
-        units-by-cat      (->> units
+        ;; Roster shows one card per family — five "Daemon Prince"
+        ;; rows (one per mark) collapse into a single tile whose mark
+        ;; switcher lives in the panel.  Each card carries its
+        ;; canonical's portrait + cost; the per-mark variant eids ride
+        ;; along on `:family-variants` for the panel + slot panel to
+        ;; consume.
+        families          (domain/group-units-by-family units)
+        units-by-cat      (->> families
                                (partition-by :unit-category-name)
                                (mapv (fn [g] {:category (:unit-category-name (first g))
                                               :units    (vec (sort-by :cost g))})))

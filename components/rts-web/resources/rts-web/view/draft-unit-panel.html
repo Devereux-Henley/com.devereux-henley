@@ -45,6 +45,7 @@
                 <div class="draft-stats-badges">
                     <span class="badge badge-primary">{{unit.unit-type-name}}</span>
                     <span class="badge badge-neutral">{{unit.unit-category-name}}</span>
+                    {% with mark=unit.mark family-variant-count=unit.family-variant-count %}{% include "rts-web/view/_partial/unit-mark.html" %}{% endwith %}
                 </div>
                 <div class="draft-stats-cost-row">
                     <span class="draft-budget-icon" aria-hidden="true">&#11044;</span>
@@ -222,7 +223,42 @@
         </section>
         {% endif %}
 
-        {% if unit.lores|not-empty? %}
+        {% if unit.family-variants|count > 1 %}
+        <section class="draft-stats-section unit-panel" aria-labelledby="panel-mark-heading">
+            <h4 class="unit-panel-heading" id="panel-mark-heading">Mark of Chaos</h4>
+            {# The select uses HTML5 `form=` association to a SIBLING form
+               rendered after `draft-unit-form`'s closing tag (see end of
+               the panel).  A nested <form> here would be silently dropped
+               by the HTML5 parser, but its </form> would close the outer
+               draft-unit-form prematurely and orphan every section after
+               it (lore/spells/mounts/items) — so they would never appear
+               in the PATCH body.  Edit-mode PATCHes the entry's unit-eid;
+               browse-mode GETs the unit-preview endpoint with the same
+               `unit-eid` query param.  Both modes share this select. #}
+            <label class="lore-select-field" for="draft-mark-select">
+                <span class="sr-only">Select Mark of Chaos for {{unit.name}}</span>
+                <select class="lore-select"
+                        id="draft-mark-select"
+                        name="unit-eid"
+                        form="draft-mark-form"
+                        aria-labelledby="panel-mark-heading"
+                        _="on change halt the event then send patchMark to #draft-mark-form">
+                    {% for variant in unit.family-variants %}
+                    <option value="{{variant.eid}}"{% ifequal variant.eid unit.eid %} selected{% endifequal %}>{% if variant.mark %}{{variant.mark|capitalize}}{% else %}Undivided{% endif %}{% if variant.cost %} &mdash; {{variant.cost}} pts{% endif %}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </section>
+        {% endif %}
+
+        {# Only render the Lore-of-Magic section for true multi-lore
+           casters (Mage, Sorceress, Bray-Shaman, Liche Priest, …).
+           Mark variants and most non-spellcasters carry 0 or 1 lore
+           — single-lore picks are forced (the unit's
+           `:draftable-spells` already reflect the lore in
+           `unit_statistics`) so a one-option dropdown adds friction
+           without function. #}
+        {% if unit.lores|count > 1 %}
         <section class="draft-stats-section unit-panel" aria-labelledby="panel-lores-heading">
             <h4 class="unit-panel-heading" id="panel-lores-heading">Lore of Magic</h4>
             <label class="lore-select-field" for="draft-lore-select">
@@ -362,5 +398,29 @@
         {% endif %}
 
     </form>
+    {# Sibling form for the mark select (associated via form="draft-mark-form").
+       Kept outside #draft-unit-form so the HTML5 parser doesn't truncate
+       the outer form's body — see the comment in the Mark of Chaos section
+       above for the underlying nested-form pitfall.  Edit-mode PATCHes
+       the entry; browse-mode GETs the unit-preview endpoint, which takes
+       the same `unit-eid` query param the select submits. #}
+    {% if data.section %}
+    <form id="draft-mark-form"
+          hx-patch="/api/draft/{{data.draft-eid}}/entry/{{data.eid}}?section={{data.section}}"
+          hx-ext="json-enc"
+          hx-trigger="patchMark"
+          hx-target="#draft-unit-body"
+          hx-select="#draft-unit-body"
+          hx-swap="outerHTML"
+          hx-headers='{"Accept": "application/htmx+html"}'></form>
+    {% else %}
+    <form id="draft-mark-form"
+          hx-get="/api/draft/{{unit.draft-eid}}/unit"
+          hx-trigger="patchMark"
+          hx-target="#draft-unit-body"
+          hx-select="#draft-unit-body"
+          hx-swap="outerHTML"
+          hx-headers='{"Accept": "application/htmx+html"}'></form>
+    {% endif %}
     </div>
 </aside>

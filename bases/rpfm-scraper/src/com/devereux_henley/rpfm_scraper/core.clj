@@ -7,6 +7,7 @@
    [com.devereux-henley.rpfm-scraper.abilities-seed :as abilities-seed]
    [com.devereux-henley.rpfm-scraper.assets :as assets]
    [com.devereux-henley.rpfm-scraper.items-seed :as items-seed]
+   [com.devereux-henley.rpfm-scraper.marks-seed :as marks-seed]
    [com.devereux-henley.rpfm-scraper.mounts-seed :as mounts-seed]
    [com.devereux-henley.rpfm-scraper.name-match :as nm]
    [com.devereux-henley.rpfm-scraper.overrides :as overrides]
@@ -322,6 +323,35 @@
           (do (spit path content)
               (logf "  [subfactions] wrote %d subfaction rows" (count rows))))))))
 
+(defn- generate-mark-seed!
+  "Spits `seed-unit-marks.sql` from `unit_set_to_unit_junctions_tables.json`.
+  Mirrors `generate-subfaction-seed!`'s preserve-on-empty behaviour so a
+  scrape that's missing the junction file doesn't clobber a previously-good
+  seed."
+  [data-dir dry-run?]
+  (log "Generating Mark-of-Chaos seed...")
+  (let [junctions-file (io/file data-dir "unit_set_to_unit_junctions_tables.json")
+        path           (io/file seed-dir "seed-unit-marks.sql")]
+    (cond
+      (not (.exists junctions-file))
+      (log "  [marks] unit_set_to_unit_junctions_tables.json not found, preserving existing seed-unit-marks.sql")
+
+      :else
+      (let [junction-rows (:rows (rpfm/parse-rpfm-table (.getPath junctions-file)))
+            {:keys [content rows empty?]}
+            (marks-seed/generate-mark-seed junction-rows)
+            existing      (when (.exists path) (slurp path))]
+        (cond
+          dry-run?
+          (logf "  [marks] DRY: would write %d mark assignments" (count rows))
+
+          (and empty? (seq existing) (not (str/starts-with? existing "-- no mark assignments")))
+          (log "  [marks] preserving existing seed-unit-marks.sql (no rows this run)")
+
+          :else
+          (do (spit path content)
+              (logf "  [marks] wrote %d mark assignments" (count rows))))))))
+
 (defn- update-abilities-seed! [data dry-run?]
   (log "Updating ability descriptions and costs...")
   (let [file        (io/file seed-dir "seed-abilities.sql")
@@ -434,16 +464,18 @@
   (let [{:keys [unit-cards-dir portraits-dir icons-dir item-icons-dir mount-icons-dir stat-icons-dir dry-run]} opts]
     (when (or unit-cards-dir portraits-dir)
       (log "Copying and trimming unit cards...")
-      (let [pairs (assets/build-unit-name-eid-map seed-dir)]
-        (logf "  %d units in seed" (count pairs))
-        (if unit-cards-dir
-          (assets/copy-unit-cards unit-cards-dir unit-card-asset-dir
-                                  (:name-index data) pairs portraits-dir dry-run)
-          (log "  [unit cards] --unit-cards-dir not provided, skipping"))
+      (let [pairs               (assets/build-unit-name-eid-map seed-dir)
+            _                   (logf "  %d units in seed" (count pairs))
+            unmatched-card-eids (if unit-cards-dir
+                                  (assets/copy-unit-cards unit-cards-dir unit-card-asset-dir
+                                                          (:name-index data) pairs portraits-dir dry-run)
+                                  (do (log "  [unit cards] --unit-cards-dir not provided, skipping")
+                                      #{}))]
         (if portraits-dir
           (do (log "Copying and trimming lord/hero portraits...")
               (assets/copy-unit-portraits portraits-dir unit-card-asset-dir
-                                          (:name-index data) pairs unit-cards-dir dry-run))
+                                          (:name-index data) pairs unit-cards-dir
+                                          unmatched-card-eids dry-run))
           (log "  [portraits] --portraits-dir not provided, skipping"))))
     (if icons-dir
       (do (log "Copying and trimming ability icons...")
@@ -601,6 +633,7 @@
         lore-consolidate (consolidate-lores! dry?)
         unit-key-pairs   (update-unit-seeds! data dry?)]
     (generate-unit-keys-seed! unit-key-pairs dry?)
+    (generate-mark-seed! (:data-dir opts) dry?)
     (generate-subfaction-seed! (:data-dir opts) dry?)
     (update-abilities-seed! data dry?)
     (copy-assets! data opts)

@@ -224,6 +224,22 @@ Available dev users (defined in `bases/rts-api/src/.../dev_auth.clj`):
 - `dev-player-one`
 - `dev-player-two`
 
+## Pre-PR checks
+
+Before opening a pull request, run **both** over the changed files and resolve anything that's not pre-existing:
+
+```bash
+CLJ_FILES=$(git diff main...HEAD --name-only | grep '\.clj$')
+cljfmt fix $CLJ_FILES
+clj-kondo --lint $CLJ_FILES
+```
+
+- `cljfmt fix` rewrites in-place; commit the formatting diff as a separate `Apply cljfmt` commit if it lands on top of feature work.
+- `clj-kondo` errors block; warnings need triage. The five `Unresolved var: db/...` and `Unresolved var: domain/...` warnings in `components/rts-web/src/.../web/tournament/view.clj` are the documented re-export pattern (`(def foo bar/foo)` in contract namespaces) — leave them. Any new warning that didn't exist on `main` is a regression to fix.
+- `clojure -M:poly check` should be clean (component boundaries) and `clojure -M:poly test` should be green on every brick the diff touches.
+
+The Playwright e2e suite (`components/e2e`) is a separate gate — run it locally before opening a PR if the diff touches templates, routes, or HTMX-driven flows. CI fails hard on Playwright failures; locally it skips gracefully without a running server.
+
 **PR screenshots** go in the separate [images.com.devereux-henley](https://github.com/Devereux-Henley/images.com.devereux-henley) repo (cloned at `~/Repos/images.com.devereux-henley`), not in this repo. Organize by feature folder (e.g. `tournament-mvp1/`) and reference via raw GitHub URLs in PR descriptions:
 
 ```bash

@@ -70,7 +70,7 @@ VALUES
    12,
    1,
    1,
-   '{"cost":1650,"is_large":false,"unit_size":1,"health":8130,"barrier":0,"armor":90,"leadership":70,"speed":75,"melee_attack":48,"melee_attack_types":[],"melee_modifiers":["frostbite"],"melee_defence":35,"weapon_strength":445,"weapon_damage":135,"weapon_ap_damage":310,"bonus_vs_infantry":0,"bonus_vs_large":25,"charge_bonus":50,"ammunition":0,"missile_damage_types":[],"missile_modifiers":[],"attributes":["causes_fear","causes_terror","encourages"],"abilities":["wh3_main_unit_passive_single_entity","wh_main_character_abilities_arcane_conduit","wh3_main_character_abilities_ice_shard","wh3_main_unit_passive_by_our_blood","wh3_main_character_abilities_guardian_call"],"draftable-spells":[]}',
+   '{"cost":400,"is_large":false,"unit_size":1,"health":3688,"barrier":0,"armor":15,"leadership":70,"speed":38,"melee_attack":40,"melee_attack_types":["magical"],"melee_modifiers":["frostbite"],"melee_defence":35,"weapon_strength":320,"weapon_damage":220,"weapon_ap_damage":100,"bonus_vs_infantry":0,"bonus_vs_large":0,"charge_bonus":20,"ammunition":0,"missile_damage_types":[],"missile_modifiers":[],"attributes":["encourages","hide_forest"],"abilities":["wh3_main_unit_passive_single_entity","wh_main_character_abilities_arcane_conduit","wh3_main_character_abilities_ice_shard","wh3_main_unit_passive_by_our_blood","wh3_main_character_abilities_guardian_call"],"draftable-spells":[]}',
    0,
    1,
    'f0ce7395-a57f-41e9-ade0-fd13bafc058f',

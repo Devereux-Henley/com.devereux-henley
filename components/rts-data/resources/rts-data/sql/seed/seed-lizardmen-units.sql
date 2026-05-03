@@ -160,7 +160,7 @@ VALUES
    13,
    1,
    2,
-   '{"cost":2150,"is_large":true,"unit_size":5,"health":49280,"barrier":0,"armor":130,"leadership":70,"speed":50,"melee_attack":26,"melee_attack_types":[],"melee_modifiers":[],"melee_defence":32,"weapon_strength":480,"weapon_damage":140,"weapon_ap_damage":340,"bonus_vs_infantry":18,"bonus_vs_large":0,"charge_bonus":70,"ammunition":80,"missile_damage_types":[],"missile_modifiers":[],"attributes":["causes_fear","causes_terror","encourages","mounted_fire_move","wallbreaker"],"abilities":["wh3_main_unit_passive_single_entity","wh2_main_unit_passive_primal_instincts","wh2_dlc12_lord_abilities_focus_instincts"],"draftable-spells":[]}',
+   '{"cost":250,"is_large":false,"unit_size":1,"health":3256,"barrier":0,"armor":30,"leadership":55,"speed":46,"melee_attack":22,"melee_attack_types":[],"melee_modifiers":[],"melee_defence":26,"weapon_strength":280,"weapon_damage":210,"weapon_ap_damage":70,"bonus_vs_infantry":0,"bonus_vs_large":0,"charge_bonus":10,"ammunition":0,"missile_damage_types":[],"missile_modifiers":[],"attributes":["encourages","hide_forest"],"equipment":[{"key":"wh3_dlc24_anc_arcane_item_ritual_of_the_beast","cost":200}],"abilities":["wh3_main_unit_passive_single_entity","wh2_main_unit_passive_primal_instincts","wh2_dlc12_lord_abilities_focus_instincts"],"draftable-spells":[]}',
    0,
    1,
    'f0ce7395-a57f-41e9-ade0-fd13bafc058f',

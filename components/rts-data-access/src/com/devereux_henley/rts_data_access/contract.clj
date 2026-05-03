@@ -70,6 +70,8 @@
 
 (def get-units-for-faction query.game/get-units-for-faction)
 
+(def get-family-variants-by-eid query.game/get-family-variants-by-eid)
+
 (def get-spells-by-keys query.game/get-spells-by-keys)
 (def get-abilities-by-keys query.game/get-abilities-by-keys)
 
@@ -108,6 +110,7 @@
 (def match-status-enum schema/match-status-enum)
 (def match-format-enum schema/match-format-enum)
 (def bracket-type-enum schema/bracket-type-enum)
+(def mark-enum schema/mark-enum)
 
 ;;; ─── Tournament DB queries ────────────────────────────────────────────────
 
