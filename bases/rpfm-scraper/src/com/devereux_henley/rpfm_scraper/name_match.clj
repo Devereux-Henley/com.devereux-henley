@@ -403,7 +403,14 @@
 (def ^:private category-re #"_(inf|cav|mon|veh|art|cha|hrd|rng|mis)_")
 (def ^:private game-prefix-re #"^wh[23]?_(main|dlc\d+|pro\d+|twa\d+)_")
 (def ^:private numeric-suffix-re #"_\d+$")
-(def ^:private stopwords #{"of" "the" "at" "a" "an" "and" "in" "on" "for"})
+(def ^:private stopwords
+  "Connector words stripped from a normalised unit key when probing for an
+  asset match.  `chaos` is included because the WH1 card filenames
+  consistently drop it (e.g. engine `wh_main_chs_inf_chaos_warriors_0`
+  vs source `wh_main_chs_warriors.png`); WH3 marked-variant assets keep
+  it, but those are matched via the exact-key path before stopword
+  stripping kicks in."
+  #{"of" "the" "at" "a" "an" "and" "in" "on" "for" "chaos"})
 
 (defn- strip-stopwords [k]
   (->> (str/split k #"_")

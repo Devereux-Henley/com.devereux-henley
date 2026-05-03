@@ -19,6 +19,20 @@
        (filter #(str/ends-with? % ".png"))
        sort))
 
+(defn- list-pngs-recursive
+  "Like `list-pngs` but walks every subdirectory of `dir`, returning each
+  PNG's path relative to `dir` (so the caller can re-resolve via
+  `(io/file dir relative-path)`).  Portraits live under
+  `units/no_culture/` and `faction_leaders/` so the flat `list-pngs`
+  misses them entirely."
+  [dir]
+  (let [root (.toPath (io/file dir))]
+    (->> (file-seq (io/file dir))
+         (filter #(and (.isFile %)
+                       (str/ends-with? (.getName %) ".png")))
+         (map #(str (.relativize root (.toPath %))))
+         sort)))
+
 (defn- png-stems [dir]
   (->> (list-pngs dir)
        (map #(subs % 0 (- (count %) 4)))
@@ -71,16 +85,28 @@
                            candidates)]
       (if (seq filtered) filtered candidates))))
 
+(defn- find-png-recursive
+  "Walk `dir` for a PNG whose basename is `<key>.png`.  Returns the
+  resolved java.io.File or nil.  Portraits and some card overlays
+  live in nested subdirs (e.g. `units/no_culture/`) so a flat lookup
+  silently misses them."
+  [dir key]
+  (when dir
+    (let [target (str key ".png")]
+      (some (fn [^java.io.File f]
+              (when (and (.isFile f) (= target (.getName f)))
+                f))
+            (file-seq (io/file dir))))))
+
 (defn- apply-override! [name eid cards-dir portraits-dir asset-dir dry-run?]
   (when-let [key (get overrides/unit-card-overrides name)]
     (let [candidates (remove nil? [cards-dir portraits-dir])]
       (loop [dirs candidates]
         (if-let [d (first dirs)]
-          (let [src (io/file d (str key ".png"))]
-            (if (.exists src)
-              (do (copy-and-trim! src (io/file asset-dir (str eid ".png")) dry-run?)
-                  :copied)
-              (recur (next dirs))))
+          (if-let [src (find-png-recursive d key)]
+            (do (copy-and-trim! src (io/file asset-dir (str eid ".png")) dry-run?)
+                :copied)
+            (recur (next dirs)))
           (do (log (format "  [override] WARNING: override key '%s' not found for '%s'"
                            key name))
               :override-missing))))))
@@ -88,7 +114,12 @@
 (defn copy-unit-cards
   "For each (name eid faction) in unit-name-eid-pairs, find the best-matching
   icon in cards-dir and copy to asset-dir/<eid>.png, then trim. Overrides
-  apply first; faction filter disambiguates same-named units."
+  apply first; faction filter disambiguates same-named units.
+
+  Returns the set of eids that fell through with no matching icon so the
+  portrait pass can force-overwrite their (likely stale) `<eid>.png` —
+  otherwise a stale image from a prior run sticks around because the
+  portrait pass skips eids that already have a card file on disk."
   [cards-dir asset-dir name-index unit-name-eid-pairs portraits-dir dry-run?]
   (let [available      (png-stems cards-dir)
         available-list (sort available)
@@ -98,9 +129,16 @@
     (doseq [[name eid faction] unit-name-eid-pairs]
       (if (apply-override! name eid cards-dir portraits-dir asset-dir dry-run?)
         (swap! copied inc)
-        (let [all-candidates (get name-index (nm/normalize-name name) [])]
+        (let [norm           (nm/normalize-name name)
+              all-candidates (or (seq (get name-index norm))
+                                 ;; Fall back to display-name overrides for
+                                 ;; units whose name isn't in the loc-built
+                                 ;; index (e.g. "Chaos Sorcerer" — the loc
+                                 ;; entry is "Chaos Sorcerer (Death)").
+                                 (when-let [k (get overrides/display-name-unit-key-overrides norm)]
+                                   [[k k]]))]
           (if (empty? all-candidates)
-            (swap! missing-key conj name)
+            (swap! missing-key conj [name eid])
             (let [candidates (filter-by-faction all-candidates faction)
                   unit-key   (some (fn [[uk _]]
                                      (nm/find-icon uk available available-list name))
@@ -110,41 +148,59 @@
                                     (io/file asset-dir (str eid ".png"))
                                     dry-run?)
                     (swap! copied inc))
-                (swap! missing-src conj name)))))))
+                (swap! missing-src conj [name eid])))))))
     (log (format "  [unit cards] copied+trimmed %d cards" @copied))
     (when (seq @missing-key)
       (log (format "  [unit cards] %d units not in name index (e.g. %s)"
-                   (count @missing-key) (pr-str (take 3 @missing-key)))))
+                   (count @missing-key) (pr-str (take 3 (map first @missing-key))))))
     (when (seq @missing-src)
       (log (format "  [unit cards] %d units with no matching icon (e.g. %s)"
-                   (count @missing-src) (pr-str (take 3 @missing-src)))))))
+                   (count @missing-src) (pr-str (take 3 (map first @missing-src))))))
+    ;; Eids that need the portrait pass to forcibly overwrite their stale png.
+    (into #{} (map second) (concat @missing-key @missing-src))))
 
 (defn- build-portrait-role-map
-  "Scan portraits-dir for base PNGs, returning {role-key best-filename}
-  preferring campaign_01 over higher-numbered variants."
+  "Scan portraits-dir recursively for base PNGs, returning
+  {role-key relative-path} preferring campaign_01 over higher-numbered
+  variants.  Values are paths relative to `portraits-dir` so the caller
+  can pass them straight into `(io/file portraits-dir rel-path)`."
   [portraits-dir]
   (reduce
-   (fn [m fname]
-     (let [stem (subs fname 0 (- (count fname) 4))]
+   (fn [m rel-path]
+     (let [fname (.getName (io/file rel-path))
+           stem  (subs fname 0 (- (count fname) 4))]
        (if-let [[_ base quality] (re-matches #"^(.+)_(\d+)$" stem)]
          (if (zero? (Long/parseLong quality))
            (let [role (str/replace base #"_campaign_\d+$" "")]
              (cond
-               (not (contains? m role))  (assoc m role fname)
+               (not (contains? m role))  (assoc m role rel-path)
                (and (str/includes? base "_campaign_01")
                     (not (str/includes? (get m role) "_campaign_01")))
-               (assoc m role fname)
+               (assoc m role rel-path)
                :else m))
            m)
          m)))
    {}
-   (->> (list-pngs portraits-dir)
+   ;; `units/` holds the full-size unit-card portraits we want.
+   ;; `portholes/` holds the small circular HUD avatars; skip them.
+   ;; `_mask`-suffixed files are layered alpha masks, not the
+   ;; standalone portrait — also skip.
+   (->> (list-pngs-recursive portraits-dir)
+        (filter #(or (str/starts-with? % "units/")
+                     (str/includes? % "/units/")))
         (remove #(str/includes? % "_mask")))))
 
 (defn copy-unit-portraits
-  "For each unit without an existing card, find a matching portrait and
-  copy it. Overrides apply first; faction filter disambiguates."
-  [portraits-dir asset-dir name-index unit-name-eid-pairs cards-dir dry-run?]
+  "For each unit without an existing card (or whose eid is in
+  `force-overwrite-eids` because the cards pass found no engine match),
+  find a matching portrait and copy it.  Overrides apply first; faction
+  filter disambiguates.
+
+  `force-overwrite-eids` is the set returned by `copy-unit-cards` — those
+  eids carry a stale png from a prior run and must be re-resolved against
+  the portraits dir, otherwise the wrong image stays on disk."
+  [portraits-dir asset-dir name-index unit-name-eid-pairs cards-dir
+   force-overwrite-eids dry-run?]
   (let [role-map    (build-portrait-role-map portraits-dir)
         role-list   (sort (keys role-map))
         existing    (png-stems asset-dir)
@@ -152,10 +208,14 @@
         missing-key (atom [])
         no-portrait (atom [])]
     (doseq [[name eid faction] unit-name-eid-pairs
-            :when              (not (contains? existing eid))]
+            :when              (or (not (contains? existing eid))
+                                   (contains? force-overwrite-eids eid))]
       (if (apply-override! name eid cards-dir portraits-dir asset-dir dry-run?)
         (swap! copied inc)
-        (let [all-candidates (get name-index (nm/normalize-name name) [])]
+        (let [norm           (nm/normalize-name name)
+              all-candidates (or (seq (get name-index norm))
+                                 (when-let [k (get overrides/display-name-unit-key-overrides norm)]
+                                   [[k k]]))]
           (if (empty? all-candidates)
             (swap! missing-key conj name)
             (let [candidates    (filter-by-faction all-candidates faction)

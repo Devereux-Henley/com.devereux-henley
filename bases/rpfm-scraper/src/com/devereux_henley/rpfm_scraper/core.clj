@@ -464,16 +464,18 @@
   (let [{:keys [unit-cards-dir portraits-dir icons-dir item-icons-dir mount-icons-dir stat-icons-dir dry-run]} opts]
     (when (or unit-cards-dir portraits-dir)
       (log "Copying and trimming unit cards...")
-      (let [pairs (assets/build-unit-name-eid-map seed-dir)]
-        (logf "  %d units in seed" (count pairs))
-        (if unit-cards-dir
-          (assets/copy-unit-cards unit-cards-dir unit-card-asset-dir
-                                  (:name-index data) pairs portraits-dir dry-run)
-          (log "  [unit cards] --unit-cards-dir not provided, skipping"))
+      (let [pairs               (assets/build-unit-name-eid-map seed-dir)
+            _                   (logf "  %d units in seed" (count pairs))
+            unmatched-card-eids (if unit-cards-dir
+                                  (assets/copy-unit-cards unit-cards-dir unit-card-asset-dir
+                                                          (:name-index data) pairs portraits-dir dry-run)
+                                  (do (log "  [unit cards] --unit-cards-dir not provided, skipping")
+                                      #{}))]
         (if portraits-dir
           (do (log "Copying and trimming lord/hero portraits...")
               (assets/copy-unit-portraits portraits-dir unit-card-asset-dir
-                                          (:name-index data) pairs unit-cards-dir dry-run))
+                                          (:name-index data) pairs unit-cards-dir
+                                          unmatched-card-eids dry-run))
           (log "  [portraits] --portraits-dir not provided, skipping"))))
     (if icons-dir
       (do (log "Copying and trimming ability icons...")

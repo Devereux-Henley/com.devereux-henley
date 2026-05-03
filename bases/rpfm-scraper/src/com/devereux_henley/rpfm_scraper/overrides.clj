@@ -91,6 +91,22 @@
    "Chaos Spawn"                                                "wh_dlc03_bst_spawn"
    "Chaos Warhounds"                                            "wh_dlc03_bst_warhounds"
    "Chaos Warhounds (Poison)"                                   "wh_dlc03_bst_warhounds_poison"
+   ;; Warriors of Chaos rank-and-file: source filenames drop the
+   ;; "chaos" prefix and use singular ("marauder" not "marauders") so
+   ;; the heuristic resolver can't reach them on its own.
+   "Marauders"                                                  "wh_main_chs_marauder"
+   "Marauders (Great Weapons)"                                  "wh_main_chs_marauder_great_weapons"
+   "Chaos Knights (Lances)"                                     "wh_main_chs_knights_lance"
+   ;; Warriors of Chaos lord/hero portraits — the warshrine-mounted
+   ;; canonical engine key has no card asset, only a unit portrait
+   ;; under `units/no_culture/`.  Pin to the portrait basename.
+   "Chaos Sorcerer"                                             "chs_sorcerer_campaign_01_0"
+   "Chaos Sorcerer Lord"                                        "chs_sorcerer_lord_campaign_01_0"
+   ;; Warriors of Chaos Regiments of Renown: source uses
+   ;; `wh_pro04_chs_ror_<unit>` (no `_inf_chaos_…_ror_0` middle).
+   "Mirror Guard (Chaos Warriors)"                              "wh_pro04_chs_ror_warriors"
+   "Swords of Chaos (Chaos Knights)"                            "wh_pro04_chs_ror_knights"
+   "Wyrd Spawn (Chaos Spawn)"                                   "wh_pro04_chs_ror_spawn"
    "Minotaurs (Great Weapons)"                                  "wh_dlc03_bst_minotaurs_great_weapons"
    "Minotaurs (Shields)"                                        "wh_dlc03_bst_minotaurs_shield"
    "Cairn Wraiths"                                              "wh_main_vmp_cairn_wraith"
