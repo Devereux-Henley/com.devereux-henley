@@ -716,30 +716,30 @@
     (is (nil? (:health-override hydrated)))
     (is (= [] (:granted-abilities hydrated)))))
 
-(deftest embed-unit-for-entry-overlays-mount-health-when-mount-selected)
-(with-redefs [data-access.contract/get-draft-by-eid           (fn [_ _] test-draft)
-              data-access.contract/get-game-mode-by-eid       (fn [_ _] test-game-mode)
-              data-access.contract/get-unit-by-eid            (fn [_ _] lord-with-mount-stats)
-              data-access.contract/get-abilities-by-keys      (fn [_ _] {})
-              data-access.contract/get-spells-by-keys         (fn [_ _] {})
-              data-access.contract/get-items-for-unit         (fn [_ _] [])
-              data-access.contract/get-mounts-for-unit        (fn [_ _] [mount-with-overrides])
-              data-access.contract/get-unit-level-costs       (fn [_] test-level-costs)
-              data-access.contract/get-family-variants-by-eid (fn [_ _] [])
-              data-access.contract/get-lores-for-unit         (fn [_ _] [])])
-(let [entry-resource {:eid       (:entry-eid test-entry)
-                      :draft-eid test-draft-eid
-                      :unit-eid  test-lord-eid
-                      :section   "main"
-                      :mount     "mount_deathclaw"
-                      :abilities []
-                      :spells    []
-                      :items     []}
-      result         (handlers.draft/embed-unit-for-entry test-deps entry-resource)
-      unit           (get-in result [:_embedded :unit])]
-  (is (= 6828 (:health unit)))
-  (is (= 1000 (:total-cost unit)))
-  (is (true? (:selected (first (:mounts unit))))))
+(deftest embed-unit-for-entry-overlays-mount-health-when-mount-selected
+  (with-redefs [data-access.contract/get-draft-by-eid           (fn [_ _] test-draft)
+                data-access.contract/get-game-mode-by-eid       (fn [_ _] test-game-mode)
+                data-access.contract/get-unit-by-eid            (fn [_ _] lord-with-mount-stats)
+                data-access.contract/get-abilities-by-keys      (fn [_ _] {})
+                data-access.contract/get-spells-by-keys         (fn [_ _] {})
+                data-access.contract/get-items-for-unit         (fn [_ _] [])
+                data-access.contract/get-mounts-for-unit        (fn [_ _] [mount-with-overrides])
+                data-access.contract/get-unit-level-costs       (fn [_] test-level-costs)
+                data-access.contract/get-family-variants-by-eid (fn [_ _] [])
+                data-access.contract/get-lores-for-unit         (fn [_ _] [])]
+    (let [entry-resource {:eid       (:entry-eid test-entry)
+                          :draft-eid test-draft-eid
+                          :unit-eid  test-lord-eid
+                          :section   "main"
+                          :mount     "mount_deathclaw"
+                          :abilities []
+                          :spells    []
+                          :items     []}
+          result         (handlers.draft/embed-unit-for-entry test-deps entry-resource)
+          unit           (get-in result [:_embedded :unit])]
+      (is (= 6828 (:health unit)))
+      (is (= 1000 (:total-cost unit)))
+      (is (true? (:selected (first (:mounts unit))))))))
 
 (deftest get-draft-unit-details-excludes-mount-only-abilities-from-base-list
   ;; Karl-Franz-style fixture: unit_statistics lists Bloodroar in abilities,
@@ -781,30 +781,30 @@
         (is (= #{"hold_the_line" "foe_seeker"}
                (into draftable-keys passive-keys)))))))
 
-(deftest embed-unit-for-entry-leaves-base-stats-when-no-mount-selected)
-(with-redefs [data-access.contract/get-draft-by-eid           (fn [_ _] test-draft)
-              data-access.contract/get-game-mode-by-eid       (fn [_ _] test-game-mode)
-              data-access.contract/get-unit-by-eid            (fn [_ _] lord-with-mount-stats)
-              data-access.contract/get-abilities-by-keys      (fn [_ _] {})
-              data-access.contract/get-spells-by-keys         (fn [_ _] {})
-              data-access.contract/get-items-for-unit         (fn [_ _] [])
-              data-access.contract/get-mounts-for-unit        (fn [_ _] [mount-with-overrides])
-              data-access.contract/get-unit-level-costs       (fn [_] test-level-costs)
-              data-access.contract/get-family-variants-by-eid (fn [_ _] [])
-              data-access.contract/get-lores-for-unit         (fn [_ _] [])])
-(let [entry-resource {:eid       (:entry-eid test-entry)
-                      :draft-eid test-draft-eid
-                      :unit-eid  test-lord-eid
-                      :section   "main"
-                      :mount     nil
-                      :abilities []
-                      :spells    []
-                      :items     []}
-      result         (handlers.draft/embed-unit-for-entry test-deps entry-resource)
-      unit           (get-in result [:_embedded :unit])]
-  (is (= 4288 (:health unit)))
-  (is (= 200 (:total-cost unit)))
-  (is (= [] (:mount-granted-abilities unit))))
+(deftest embed-unit-for-entry-leaves-base-stats-when-no-mount-selected
+  (with-redefs [data-access.contract/get-draft-by-eid           (fn [_ _] test-draft)
+                data-access.contract/get-game-mode-by-eid       (fn [_ _] test-game-mode)
+                data-access.contract/get-unit-by-eid            (fn [_ _] lord-with-mount-stats)
+                data-access.contract/get-abilities-by-keys      (fn [_ _] {})
+                data-access.contract/get-spells-by-keys         (fn [_ _] {})
+                data-access.contract/get-items-for-unit         (fn [_ _] [])
+                data-access.contract/get-mounts-for-unit        (fn [_ _] [mount-with-overrides])
+                data-access.contract/get-unit-level-costs       (fn [_] test-level-costs)
+                data-access.contract/get-family-variants-by-eid (fn [_ _] [])
+                data-access.contract/get-lores-for-unit         (fn [_ _] [])]
+    (let [entry-resource {:eid       (:entry-eid test-entry)
+                          :draft-eid test-draft-eid
+                          :unit-eid  test-lord-eid
+                          :section   "main"
+                          :mount     nil
+                          :abilities []
+                          :spells    []
+                          :items     []}
+          result         (handlers.draft/embed-unit-for-entry test-deps entry-resource)
+          unit           (get-in result [:_embedded :unit])]
+      (is (= 4288 (:health unit)))
+      (is (= 200 (:total-cost unit)))
+      (is (= [] (:mount-granted-abilities unit))))))
 
 ;; --- lore overrides ----------------------------------------------------------
 
@@ -870,30 +870,30 @@
       (is (= 2 (count (:lores unit))))
       (is (every? (complement :selected) (:lores unit))))))
 
-(deftest apply-lore-overrides-with-selected-lore-swaps-spells-and-portrait)
-(with-redefs [data-access.contract/get-draft-by-eid           (fn [_ _] test-draft)
-              data-access.contract/get-game-mode-by-eid       (fn [_ _] test-game-mode)
-              data-access.contract/get-unit-by-eid            (fn [_ _] lore-unit)
-              data-access.contract/get-abilities-by-keys      (fn [_ _] {})
-              data-access.contract/get-spells-by-keys         stub-spell-lookup
-              data-access.contract/get-items-for-unit         (fn [_ _] [])
-              data-access.contract/get-mounts-for-unit        (fn [_ _] [])
-              data-access.contract/get-unit-level-costs       (fn [_] test-level-costs)
-              data-access.contract/get-family-variants-by-eid (fn [_ _] [])
-              data-access.contract/get-lores-for-unit         (fn [_ _] [fire-lore life-lore])
-              data-access.contract/get-spells-for-lore        stub-lore-spells])
-(let [result (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid
-                                                    {:mount     nil
-                                                     :lore      "wh_main_lore_fire"
-                                                     :abilities []
-                                                     :spells    []
-                                                     :items     []})
-      spells (:draftable-spells result)]
-  (is (= "wh_main_lore_fire" (:lore result)))
-  (is (= "000a0006-0000-4000-8000-000000000000" (:lore-portrait-key result)))
-  (is (= #{"fire_spell_a" "fire_spell_b"} (set (map :key spells))))
-  (is (true? (:selected (first (filter #(= "wh_main_lore_fire" (:key %)) (:lores result))))))
-  (is (false? (:selected (first (filter #(= "wh_dlc05_lore_life" (:key %)) (:lores result)))))))
+(deftest apply-lore-overrides-with-selected-lore-swaps-spells-and-portrait
+  (with-redefs [data-access.contract/get-draft-by-eid           (fn [_ _] test-draft)
+                data-access.contract/get-game-mode-by-eid       (fn [_ _] test-game-mode)
+                data-access.contract/get-unit-by-eid            (fn [_ _] lore-unit)
+                data-access.contract/get-abilities-by-keys      (fn [_ _] {})
+                data-access.contract/get-spells-by-keys         stub-spell-lookup
+                data-access.contract/get-items-for-unit         (fn [_ _] [])
+                data-access.contract/get-mounts-for-unit        (fn [_ _] [])
+                data-access.contract/get-unit-level-costs       (fn [_] test-level-costs)
+                data-access.contract/get-family-variants-by-eid (fn [_ _] [])
+                data-access.contract/get-lores-for-unit         (fn [_ _] [fire-lore life-lore])
+                data-access.contract/get-spells-for-lore        stub-lore-spells]
+    (let [result (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid
+                                                        {:mount     nil
+                                                         :lore      "wh_main_lore_fire"
+                                                         :abilities []
+                                                         :spells    []
+                                                         :items     []})
+          spells (:draftable-spells result)]
+      (is (= "wh_main_lore_fire" (:lore result)))
+      (is (= "000a0006-0000-4000-8000-000000000000" (:lore-portrait-key result)))
+      (is (= #{"fire_spell_a" "fire_spell_b"} (set (map :key spells))))
+      (is (true? (:selected (first (filter #(= "wh_main_lore_fire" (:key %)) (:lores result))))))
+      (is (false? (:selected (first (filter #(= "wh_dlc05_lore_life" (:key %)) (:lores result)))))))))
 
 (deftest update-unit-in-draft-clears-spells-when-lore-changes
   (let [entry-eid (UUID/fromString "e0000000-0000-0000-0000-0000000000bb")
