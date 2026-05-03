@@ -481,20 +481,14 @@ SET mark = CASE key
   WHEN 'wh_pro04_chs_mon_chaos_spawn_ror_0' THEN 'tzeentch'
   ELSE mark
 END,
-family_name = CASE name
-  WHEN 'Daemon Prince of Khorne' THEN 'Daemon Prince'
-  WHEN 'Daemon Prince of Nurgle' THEN 'Daemon Prince'
-  WHEN 'Daemon Prince of Slaanesh' THEN 'Daemon Prince'
-  WHEN 'Daemon Prince of Tzeentch' THEN 'Daemon Prince'
-  WHEN 'Chaos Sorcerer of Nurgle' THEN 'Chaos Sorcerer'
-  WHEN 'Chaos Sorcerer of Slaanesh' THEN 'Chaos Sorcerer'
-  WHEN 'Chaos Sorcerer of Tzeentch' THEN 'Chaos Sorcerer'
-  WHEN 'Chaos Sorcerer Lord of Nurgle' THEN 'Chaos Sorcerer Lord'
-  WHEN 'Chaos Sorcerer Lord of Slaanesh' THEN 'Chaos Sorcerer Lord'
-  WHEN 'Chaos Sorcerer Lord of Tzeentch' THEN 'Chaos Sorcerer Lord'
-  WHEN 'Chaos Furies (Khorne)' THEN 'Chaos Furies'
-  WHEN 'Chaos Furies (Nurgle)' THEN 'Chaos Furies'
-  WHEN 'Chaos Furies (Slaanesh)' THEN 'Chaos Furies'
-  WHEN 'Chaos Furies (Tzeentch)' THEN 'Chaos Furies'
+family_name = CASE
+  WHEN INSTR(name, ' of Khorne') > 0 THEN REPLACE(name, ' of Khorne', '')
+  WHEN INSTR(name, ' of Nurgle') > 0 THEN REPLACE(name, ' of Nurgle', '')
+  WHEN INSTR(name, ' of Slaanesh') > 0 THEN REPLACE(name, ' of Slaanesh', '')
+  WHEN INSTR(name, ' of Tzeentch') > 0 THEN REPLACE(name, ' of Tzeentch', '')
+  WHEN INSTR(name, ' (Khorne)') > 0 THEN REPLACE(name, ' (Khorne)', '')
+  WHEN INSTR(name, ' (Nurgle)') > 0 THEN REPLACE(name, ' (Nurgle)', '')
+  WHEN INSTR(name, ' (Slaanesh)') > 0 THEN REPLACE(name, ' (Slaanesh)', '')
+  WHEN INSTR(name, ' (Tzeentch)') > 0 THEN REPLACE(name, ' (Tzeentch)', '')
   ELSE name
 END;

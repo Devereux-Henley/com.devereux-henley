@@ -112,27 +112,27 @@
 (def ^:private no-rows-sentinel
   "-- no mark assignments in this scrape (preserved on subsequent empty runs)\n")
 
-(def ^:private family-name-overrides
-  "Maps an engine `name` to the family-grouping label.  Each entry collapses
-  a `X of <God>` / `X (<God>)` mark variant onto its base family name so
-  the roster card groups them under one entry.  The seed emits a CASE that
-  applies these overrides to `family_name` — `name` itself stays as the
+(def ^:private family-name-strips
+  "Substrings stripped from a unit's engine `name` to derive its
+  `family_name` (the roster-grouping key).  The seed emits a CASE that
+  applies these strips to `family_name` — `name` itself stays as the
   engine-original string so the slot, panel header, and replay enrichment
-  can show 'Daemon Prince of Khorne'."
-  [["Daemon Prince of Khorne"         "Daemon Prince"]
-   ["Daemon Prince of Nurgle"         "Daemon Prince"]
-   ["Daemon Prince of Slaanesh"       "Daemon Prince"]
-   ["Daemon Prince of Tzeentch"       "Daemon Prince"]
-   ["Chaos Sorcerer of Nurgle"        "Chaos Sorcerer"]
-   ["Chaos Sorcerer of Slaanesh"      "Chaos Sorcerer"]
-   ["Chaos Sorcerer of Tzeentch"      "Chaos Sorcerer"]
-   ["Chaos Sorcerer Lord of Nurgle"   "Chaos Sorcerer Lord"]
-   ["Chaos Sorcerer Lord of Slaanesh" "Chaos Sorcerer Lord"]
-   ["Chaos Sorcerer Lord of Tzeentch" "Chaos Sorcerer Lord"]
-   ["Chaos Furies (Khorne)"           "Chaos Furies"]
-   ["Chaos Furies (Nurgle)"           "Chaos Furies"]
-   ["Chaos Furies (Slaanesh)"         "Chaos Furies"]
-   ["Chaos Furies (Tzeentch)"         "Chaos Furies"]])
+  can show 'Daemon Prince of Khorne'.
+
+  Order matters: the longer ' of <God>' patterns are tried first so a
+  name like 'Chaos Knights of Khorne (Lances)' strips just the mark
+  segment and family-groups with 'Chaos Knights (Lances)' — not 'Chaos
+  Knights' on its own.  Family grouping is also faction-scoped, so
+  cross-faction same-stem units (e.g. mono-god 'Spawn of Khorne' in the
+  Khorne faction vs 'Spawn of Nurgle' in Nurgle) never collide."
+  [" of Khorne"
+   " of Nurgle"
+   " of Slaanesh"
+   " of Tzeentch"
+   " (Khorne)"
+   " (Nurgle)"
+   " (Slaanesh)"
+   " (Tzeentch)"])
 
 (defn- format-mark-seed
   "Renders the engine-key→mark map as a single combined UPDATE.  Single
@@ -166,10 +166,10 @@
                 (format "  WHEN '%s' THEN '%s'\n" (str/replace k "'" "''") mark)))
        "  ELSE mark\n"
        "END,\n"
-       "family_name = CASE name\n"
+       "family_name = CASE\n"
        (apply str
-              (for [[from to] family-name-overrides]
-                (format "  WHEN '%s' THEN '%s'\n" from to)))
+              (for [s family-name-strips]
+                (format "  WHEN INSTR(name, '%s') > 0 THEN REPLACE(name, '%s', '')\n" s s)))
        "  ELSE name\n"
        "END;\n"))))
 
