@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-const BASE = 'http://localhost:3001';
+const BASE = process.env.RTS_API_BASE_URL || "http://localhost:3001";
 const GAME_EID = 'eea787d7-1065-45eb-a3f6-e26f32c294a1';
 const EMPIRE_FACTION_EID = '35dd38fa-2bcc-4492-8f58-a106d0d02cbb';
 const LAND_BATTLE_MODE_EID = 'a1b2c3d4-0001-4000-8000-000000000001';

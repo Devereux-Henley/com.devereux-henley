@@ -800,6 +800,25 @@
   pointer-events: none;
 }
 
+.pm-draft-unit-level {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  border-radius: 7px;
+  background: var(--color-primary-800);
+  color: var(--color-neutral-100);
+  font-size: 0.55rem;
+  font-weight: 700;
+  font-family: var(--font-family-heading);
+  line-height: 14px;
+  text-align: center;
+  box-shadow: 0 1px 2px #000;
+  pointer-events: none;
+}
+
 .pm-draft-unit-tooltip {
   display: none;
   position: absolute;

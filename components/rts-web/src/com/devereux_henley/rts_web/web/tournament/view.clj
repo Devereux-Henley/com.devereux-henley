@@ -171,21 +171,27 @@
 
 (defn- enrich-unit
   "Adds resolved unit data (name, cost, category) to a unit map when its
-  engine key has a matching DB row.  Leaves the map unchanged otherwise so
-  the client can fall back to the raw key."
-  [key->row {:keys [key] :as unit}]
-  (if-let [row (resolve-key key->row key)]
-    (assoc unit
-           :name               (:name row)
-           :cost               (:cost row)
-           :unit-category-name (:unit-category-name row)
-           :unit-type-name     (:unit-type-name row)
-           :unit-eid           (:eid row))
-    unit))
+  engine key has a matching DB row.  Computes the veterancy-adjusted cost
+  via `level->cost-row` (typically the global unit_level_cost map) using the
+  parser's `:level` — defaulted to 0 for replays produced by a pre-level
+  parser binary.  Leaves the map unchanged otherwise so the client can fall
+  back to the raw key."
+  [key->row level->cost-row {:keys [key] :as unit}]
+  (let [level (or (:level unit) 0)]
+    (if-let [row (resolve-key key->row key)]
+      (assoc unit
+             :name               (:name row)
+             :cost               (:cost row)
+             :level              level
+             :adjusted-cost      (domain/apply-level-cost (:cost row) (get level->cost-row level))
+             :unit-category-name (:unit-category-name row)
+             :unit-type-name     (:unit-type-name row)
+             :unit-eid           (:eid row))
+      (assoc unit :level level))))
 
 (defn- enrich-parsed
   "Threads `enrich-unit` through every unit in the parsed structure."
-  [key->row parsed]
+  [key->row level->cost-row parsed]
   (update parsed :alliances
           (fn [alliances]
             (mapv (fn [alliance]
@@ -194,7 +200,7 @@
                               (mapv (fn [army]
                                       (update army :units
                                               (fn [units]
-                                                (mapv (partial enrich-unit key->row) units))))
+                                                (mapv (partial enrich-unit key->row level->cost-row) units))))
                                     armies))))
                   alliances))))
 
@@ -335,28 +341,42 @@
   is guaranteed, the fallbacks become dead code — see #49 for the
   cleanup checklist."
   [army]
-  (mapv (fn [{:keys [key name cost unit-category-name unit-type-name unit-eid]}]
-          (let [enriched? (some? name)
+  (mapv (fn [{:keys [key name cost adjusted-cost level unit-category-name unit-type-name unit-eid]}]
+          (let [enriched?  (some? name)
                 ;; FALLBACK (#49): unresolved parser key shows the raw engine key.
-                display   (if enriched? name key)
+                display    (if enriched? name key)
                 ;; FALLBACK (#49): missing category data falls through to type, then em-dash.
-                category  (or unit-category-name unit-type-name "—")
-                is-lord?  (= "lord" (some-> unit-category-name str/lower-case))]
-            {:key      key
-             :unit-eid unit-eid
-             :display  display
-             :cost     cost
-             :is-lord  is-lord?
+                category   (or unit-category-name unit-type-name "—")
+                is-lord?   (= "lord" (some-> unit-category-name str/lower-case))
+                ;; level 0 → no chevron; otherwise show pip count for the template.
+                shown-cost (or adjusted-cost cost)]
+            {:key           key
+             :unit-eid      unit-eid
+             :display       display
+             :cost          cost
+             :adjusted-cost adjusted-cost
+             :level         level
+             ;; The template needs the pip-count and a boolean toggle so the
+             ;; chevron overlay only renders when the unit was leveled.
+             :leveled?      (pos? level)
+             :is-lord       is-lord?
              ;; FALLBACK (#49): tooltip omits cost when the DB row is missing.
-             :tooltip  (if cost
-                         (str category " · " cost " pts")
-                         category)}))
+             :tooltip       (cond
+                              (and shown-cost (pos? level))
+                              (str category " · " shown-cost " pts (rank " level ")")
+
+                              shown-cost
+                              (str category " · " shown-cost " pts")
+
+                              :else category)}))
         (:units army)))
 
 (defn- section-totals
   "Per-section count/cost pair mirroring `alliance-totals` at section
   scope: cost in pts when every unit in the section is enriched, otherwise
-  the section's army-level :force-value sum (model count).
+  the section's army-level :force-value sum (model count). The pts sum
+  uses each unit's veterancy-adjusted cost so the header reflects what
+  the player actually paid.
 
   The model-count branch is a FALLBACK (#49) for partial enrichment — once
   #45 guarantees every parser key matches a DB unit row, this collapses
@@ -364,7 +384,7 @@
   [armies units]
   (let [enriched-count (count (filter :cost units))]
     (if (and (pos? enriched-count) (= enriched-count (count units)))
-      {:section-num  (reduce + 0 (keep :cost units))
+      {:section-num  (reduce + 0 (map (fn [u] (or (:adjusted-cost u) (:cost u))) units))
        :section-unit "pts"}
       {:section-num  (reduce + 0 (keep :force-value armies))
        :section-unit "models"})))
@@ -399,12 +419,13 @@
 
 (defn- alliance-totals
   "Returns the {:total-num … :total-unit …} pair shown in the draft head.
-  When every unit is enriched, reports total point cost; otherwise falls
-  back to model count so the header isn't blank."
+  When every unit is enriched, reports total point cost using each unit's
+  veterancy-adjusted cost; otherwise falls back to model count so the
+  header isn't blank."
   [alliance units]
   (let [enriched-count (count (filter :cost units))]
     (if (and (pos? enriched-count) (= enriched-count (count units)))
-      {:total-num  (reduce + 0 (keep :cost units))
+      {:total-num  (reduce + 0 (map (fn [u] (or (:adjusted-cost u) (:cost u))) units))
        :total-unit "pts"}
       {:total-num  (or (:model-count alliance)
                        (reduce + 0 (keep :force-value (:armies alliance)))
@@ -490,7 +511,8 @@
         (try
           (let [parsed       (domain/parse-replay-files dependencies (mapv :file-path files))
                 key->row     (resolve-units dependencies parsed)
-                enriched     (mapv #(enrich-parsed key->row %) parsed)
+                level-costs  (db/get-unit-level-costs (:connection dependencies))
+                enriched     (mapv #(enrich-parsed key->row level-costs %) parsed)
                 faction->row (resolve-faction-keys dependencies parsed)
                 viewer       (get-in session [:identity :id])
                 games        (mapv (fn [game-index file parsed-map]

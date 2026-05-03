@@ -271,6 +271,7 @@
     [:unit-eid :uuid]
     [:mount      {:optional true} [:maybe :string]]
     [:lore       {:optional true} [:maybe :string]]
+    [:level      {:optional true, :default 0} [:int {:min 0 :max 9}]]
     [:abilities  {:optional true, :default []} [:sequential :string]]
     [:spells     {:optional true, :default []} [:sequential :string]]
     [:items      {:optional true, :default []} [:sequential :string]]
@@ -428,36 +429,57 @@
 
 ;; ─── Cost calculation ─────────────────────────────────────────────────────────
 
+(defn apply-level-cost
+  "Applies the engine veterancy formula
+     adjusted = round(base * cost_multiplier) + fixed_cost
+   using the provided unit_level_cost row. Falls back to `base` when the
+   row is absent (e.g. data-source down) — no level adjustment in that case
+   is safer than refusing to price the unit."
+  [base level-cost-row]
+  (if (and level-cost-row (some? base))
+    (long (+ (Math/round (* (double base) (double (:cost-multiplier level-cost-row))))
+             (or (:fixed-cost level-cost-row) 0)))
+    (or base 0)))
+
 (defn- compute-unit-total-cost
-  "Returns base-cost + mount-cost + ability-cost + spell-cost + item-cost.
-   selections: {:mount str-or-nil :abilities [ability-key] :spells [spell-key] :items [item-key]}
+  "Returns level-adjusted-base-cost + mount-cost + ability-cost + spell-cost + item-cost.
+
+   The level adjustment uses the unit_level_cost row matching `:level` (0-9,
+   defaulting to 0). Mount/ability/spell/item costs are NOT scaled by level —
+   the engine only veterans the base unit price.
+
+   selections: {:mount str-or-nil :level int-or-nil :abilities [ability-key]
+                :spells [spell-key] :items [item-key]}
    :mount is the mount `type` key (e.g. \"wh2_dlc09_anc_mount_skeleton_chariot\"),
    not a display name. Cost comes from unit_mount.cost via get-mounts-for-unit."
   [unit-hydrated selections conn]
-  (let [base-cost    (or (:cost unit-hydrated) 0)
-        mount-key    (:mount selections)
-        mount-cost   (when mount-key
-                       (:cost (first (filter #(= mount-key (:key %))
-                                             (db/get-mounts-for-unit conn (:eid unit-hydrated))))))
-        ability-keys (not-empty (:abilities selections []))
-        ability-cost (when ability-keys
-                       (->> (db/get-abilities-by-keys conn ability-keys)
-                            vals
-                            (map #(or (:cost %) 0))
-                            (reduce + 0)))
-        spell-keys   (not-empty (:spells selections []))
-        spell-cost   (when spell-keys
-                       (->> (db/get-spells-by-keys conn spell-keys)
-                            vals
-                            (map #(or (:cost %) 0))
-                            (reduce + 0)))
-        item-keys    (not-empty (set (:items selections [])))
-        item-cost    (when item-keys
-                       (->> (db/get-items-for-unit conn (:eid unit-hydrated))
-                            (filter #(item-keys (:key %)))
-                            (map #(or (:cost %) 0))
-                            (reduce + 0)))]
-    (+ base-cost (or mount-cost 0) (or ability-cost 0) (or spell-cost 0) (or item-cost 0))))
+  (let [base-cost     (or (:cost unit-hydrated) 0)
+        level         (or (:level selections) 0)
+        level-costs   (db/get-unit-level-costs conn)
+        adjusted-base (apply-level-cost base-cost (get level-costs level))
+        mount-key     (:mount selections)
+        mount-cost    (when mount-key
+                        (:cost (first (filter #(= mount-key (:key %))
+                                              (db/get-mounts-for-unit conn (:eid unit-hydrated))))))
+        ability-keys  (not-empty (:abilities selections []))
+        ability-cost  (when ability-keys
+                        (->> (db/get-abilities-by-keys conn ability-keys)
+                             vals
+                             (map #(or (:cost %) 0))
+                             (reduce + 0)))
+        spell-keys    (not-empty (:spells selections []))
+        spell-cost    (when spell-keys
+                        (->> (db/get-spells-by-keys conn spell-keys)
+                             vals
+                             (map #(or (:cost %) 0))
+                             (reduce + 0)))
+        item-keys     (not-empty (set (:items selections [])))
+        item-cost     (when item-keys
+                        (->> (db/get-items-for-unit conn (:eid unit-hydrated))
+                             (filter #(item-keys (:key %)))
+                             (map #(or (:cost %) 0))
+                             (reduce + 0)))]
+    (+ adjusted-base (or mount-cost 0) (or ability-cost 0) (or spell-cost 0) (or item-cost 0))))
 
 ;; ─── Shared helpers ───────────────────────────────────────────────────────────
 
@@ -477,14 +499,15 @@
 
 (defn- hydrate-section
   "Resolves state entries to their hydrated units, attaching :total-cost,
-   the entry's :entry-eid, and (when the entry has a selected lore) the
-   :lore-portrait-key from unit_lore so slot fragments render the
+   :level, the entry's :entry-eid, and (when the entry has a selected lore)
+   the :lore-portrait-key from unit_lore so slot fragments render the
    lore-specific card."
   [conn unit-by-eid entries]
   (mapv (fn [entry]
           (when-let [u (get unit-by-eid (:unit-eid entry))]
             (assoc u
                    :total-cost        (or (:total-cost entry) (:cost u))
+                   :level             (:level entry)
                    :entry-eid         (:entry-eid entry)
                    :lore-portrait-key (lore-portrait-key-for conn (:unit-eid entry) (:lore entry)))))
         entries))
@@ -516,11 +539,12 @@
 (defn- slot-unit
   "Projects a hydrated unit to the draft-section-unit shape rendered by
    slot fragments."
-  [unit entry-eid total-cost lore-portrait-key]
+  [unit entry-eid total-cost lore-portrait-key level]
   {:eid               (:eid unit)
    :entry-eid         entry-eid
    :name              (:name unit)
    :total-cost        total-cost
+   :level             level
    :is-lord           (boolean (:is-lord unit))
    :lore-portrait-key lore-portrait-key})
 
@@ -635,6 +659,7 @@
         :section   section
         :mount     (:mount source)
         :lore      (:lore source)
+        :level     (or (:level source) 0)
         :abilities (vec (:abilities source))
         :spells    (vec (:spells source))
         :items     (vec (:items source))}))))
@@ -689,7 +714,7 @@
   exposes granted abilities as :mount-granted-abilities, surfaces the raw
   :mount key so the template can pre-check its radio, and assocs
   :total-cost reflecting base + mount + item + spell + ability costs."
-  [conn unit {:keys [mount lore items spells abilities] :as selections}]
+  [conn unit {:keys [mount lore items spells abilities level] :as selections}]
   (let [ability-set (set abilities)
         spell-set   (set spells)
         item-set    (set items)
@@ -697,7 +722,7 @@
         ;; BEFORE spell-selection marking. apply-mount-overrides is
         ;; orthogonal and can run alongside.
         overlaid    (as-> unit $
-                      (assoc $ :mount mount)
+                      (assoc $ :mount mount :level (or level 0))
                       (apply-lore-overrides conn $ lore)
                       (apply-mount-overrides $ mount)
                       (update $ :draftable-abilities mark-selected ability-set)
@@ -718,6 +743,7 @@
   [dependencies entry-resource]
   (let [selections {:mount     (:mount entry-resource)
                     :lore      (:lore entry-resource)
+                    :level     (:level entry-resource)
                     :abilities (:abilities entry-resource)
                     :spells    (:spells entry-resource)
                     :items     (:items entry-resource)}
@@ -771,6 +797,7 @@
                                        :unit-eid   unit-eid
                                        :mount      (:mount selections)
                                        :lore       (:lore selections)
+                                       :level      (or (:level selections) 0)
                                        :abilities  (or (:abilities selections) [])
                                        :spells     (or (:spells selections) [])
                                        :items      (or (:items selections) [])
@@ -780,7 +807,8 @@
                   lore-portrait-key (lore-portrait-key-for conn unit-eid (:lore selections))]
               {:type     :draft/add-success
                :section  (section-ref section-ctx)
-               :new-unit (slot-unit unit new-entry-eid total-cost lore-portrait-key)
+               :new-unit (slot-unit unit new-entry-eid total-cost lore-portrait-key
+                                    (or (:level selections) 0))
                :budget   (section-budget section-ctx)})))))))
 
 (defn- find-entry-index
@@ -885,6 +913,7 @@
                            :unit-eid   (:unit-eid existing)
                            :mount      (:mount selections)
                            :lore       (:lore selections)
+                           :level      (or (:level selections) 0)
                            :abilities  (or (:abilities selections) [])
                            :spells     (or (:spells selections) [])
                            :items      (or (:items selections) [])

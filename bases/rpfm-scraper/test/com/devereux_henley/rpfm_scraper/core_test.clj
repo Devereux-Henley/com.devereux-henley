@@ -139,3 +139,15 @@
                                                      "/nonexistent/path/scraper-cov")]
       (is (= ["Halberdiers"] (:missing-icons cov)))
       (is (empty? (:stale-pngs cov))))))
+
+(deftest compute-coverage-flags-missing-level-ranks
+  (testing "missing veteran ranks make coverage dirty"
+    (let [unit-name-eid-pairs [["Halberdiers" "eid-1" "empire"]]
+          unit-key-pairs      [["eid-1" "wh_main_emp_inf_halberdiers"]]
+          asset-dir           (mk-asset-dir! ["eid-1"])
+          cov                 (core/compute-coverage unit-name-eid-pairs
+                                                     unit-key-pairs
+                                                     asset-dir
+                                                     #{3 7})]
+      (is (= [3 7] (:missing-level-ranks cov)))
+      (is (false? (core/coverage-clean? cov))))))

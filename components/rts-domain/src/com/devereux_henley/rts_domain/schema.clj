@@ -505,6 +505,7 @@
      [:unit-category-name :string]
      [:cost [:maybe :int]]
      [:total-cost {:optional true} [:maybe :int]]
+     [:level {:optional true} [:int {:min 0 :max 9}]]
      [:mount {:optional true} [:maybe :string]]
      [:lore {:optional true} [:maybe :string]]
      [:lore-portrait-key {:optional true} [:maybe :string]]
@@ -553,6 +554,7 @@
      [:section [:enum "main" "reinforcements"]]
      [:mount {:optional true} [:maybe :string]]
      [:lore {:optional true} [:maybe :string]]
+     [:level {:optional true} [:int {:min 0 :max 9}]]
      [:abilities {:optional true} [:sequential :string]]
      [:spells {:optional true} [:sequential :string]]
      [:items {:optional true} [:sequential :string]]
@@ -573,6 +575,7 @@
    [:entry-eid :uuid]
    [:name :string]
    [:total-cost [:maybe :int]]
+   [:level {:optional true} [:int {:min 0 :max 9}]]
    [:is-lord {:optional true} :boolean]
    [:lore-portrait-key {:optional true} [:maybe :string]]])
 
@@ -631,6 +634,7 @@
    [:map
     [:mount     {:optional true} [:maybe :string]]
     [:lore      {:optional true} [:maybe :string]]
+    [:level     {:optional true} [:int {:min 0 :max 9}]]
     [:abilities {:optional true :decode/json scalar-or-seq->vec} [:sequential :string]]
     [:spells    {:optional true :decode/json scalar-or-seq->vec} [:sequential :string]]
     [:items     {:optional true :decode/json scalar-or-seq->vec} [:sequential :string]]]))

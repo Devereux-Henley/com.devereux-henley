@@ -16,6 +16,7 @@
    [com.devereux-henley.rpfm-scraper.subfactions-seed :as subfactions-seed]
    [com.devereux-henley.rpfm-scraper.tables :as tables]
    [com.devereux-henley.rpfm-scraper.unit-items-seed :as unit-items-seed]
+   [com.devereux-henley.rpfm-scraper.unit-level-cost-seed :as unit-level-cost-seed]
    [com.devereux-henley.rpfm-scraper.unit-lores-seed :as unit-lores-seed]
    [com.devereux-henley.rpfm-scraper.unit-mounts-seed :as unit-mounts-seed])
   (:gen-class))
@@ -145,6 +146,12 @@
           custom-battle-mount-rows               (:rows (rpfm/parse-rpfm-table (p "units_custom_battle_mounts_tables.json")))
           _                                      (logf "  custom battle mounts (MP): %d" (count custom-battle-mount-rows))
 
+          land-xp-bonus-file                     (io/file (p "unit_stats_land_experience_bonuses_tables.json"))
+          land-xp-bonus-rows                     (when (.exists land-xp-bonus-file)
+                                                   (:rows (rpfm/parse-rpfm-table (.getPath land-xp-bonus-file))))
+          _                                      (logf "  land XP bonuses (per-rank cost): %d rows"
+                                                       (count land-xp-bonus-rows))
+
           land-unit-ability-map                  (tables/build-land-unit-ability-map
                                                   (:rows (rpfm/parse-rpfm-table (p "land_units_to_unit_abilites_junctions_tables.json"))))
           _                                      (logf "  land_unit → abilities: %d entries" (count land-unit-ability-map))
@@ -173,6 +180,7 @@
        :ancillary-name-map       ancillary-name-map
        :ancillary-type-icon-map  ancillary-type-icon-map
        :custom-battle-mount-rows custom-battle-mount-rows
+       :land-xp-bonus-rows       land-xp-bonus-rows
        :unit-ability-map         unit-ability-map
        :ability-name-map         ability-name-map
        :ability-tooltip-map      ability-tooltip-map
@@ -256,6 +264,31 @@
       :else
       (do (spit path content)
           (logf "  [unit-keys] wrote %d unit-key pairs" (count pairs))))))
+
+(defn- generate-unit-level-cost-seed!
+  "Spits `seed-unit-level-cost.sql` from `unit_stats_land_experience_bonuses_tables`.
+  Returns the set of expected ranks (0-9) missing from the source rows so the
+  --strict path can fail loud when the table was scraped incompletely.  When the
+  RPFM JSON is absent (e.g. partial data refresh), preserves the existing seed."
+  [rows dry-run?]
+  (log "Generating unit-level-cost seed...")
+  (let [path (io/file seed-dir "seed-unit-level-cost.sql")]
+    (cond
+      (nil? rows)
+      (do (log "  [unit-level-cost] unit_stats_land_experience_bonuses_tables.json not found, preserving existing seed")
+          #{})
+
+      :else
+      (let [{:keys [content rows missing-levels]}
+            (unit-level-cost-seed/generate-unit-level-cost-seed rows)]
+        (cond
+          dry-run?
+          (logf "  [unit-level-cost] DRY: would write %d rows" rows)
+
+          :else
+          (do (spit path content)
+              (logf "  [unit-level-cost] wrote %d rank rows" rows)))
+        missing-levels))))
 
 (defn- generate-subfaction-seed!
   "Spits `seed-subfactions.sql` from `factions_tables.json` + `factions_loc.json`.
@@ -471,43 +504,49 @@
     modal's source of unit portraits.
 
   Returns:
-    {:total         <count of unit rows>
-     :missing-keys  [<sorted distinct names with no engine key>]
-     :missing-icons [<sorted distinct names with no <eid>.png>]
-     :stale-pngs    [<sorted eid stems present on disk but not in seed>]}"
-  [unit-name-eid-pairs unit-key-pairs asset-dir]
-  (let [all-eids     (set (map second unit-name-eid-pairs))
-        keyed-eids   (set (map first unit-key-pairs))
-        png-stems    (list-png-stems asset-dir)
-        missing-key  (->> unit-name-eid-pairs
-                          (remove (fn [[_ eid _]] (contains? keyed-eids eid)))
-                          (map first)
-                          distinct
-                          sort
-                          vec)
-        missing-icon (->> unit-name-eid-pairs
-                          (remove (fn [[_ eid _]] (contains? png-stems eid)))
-                          (map first)
-                          distinct
-                          sort
-                          vec)
-        stale-pngs   (->> png-stems
-                          (remove #(or (= % placeholder-png-stem)
-                                       (contains? all-eids %)))
-                          sort
-                          vec)]
-    {:total         (count unit-name-eid-pairs)
-     :missing-keys  missing-key
-     :missing-icons missing-icon
-     :stale-pngs    stale-pngs}))
+    {:total                <count of unit rows>
+     :missing-keys         [<sorted distinct names with no engine key>]
+     :missing-icons        [<sorted distinct names with no <eid>.png>]
+     :stale-pngs           [<sorted eid stems present on disk but not in seed>]
+     :missing-level-ranks  [<sorted ranks 0-9 missing from unit_level_cost seed>]}"
+  ([unit-name-eid-pairs unit-key-pairs asset-dir]
+   (compute-coverage unit-name-eid-pairs unit-key-pairs asset-dir #{}))
+  ([unit-name-eid-pairs unit-key-pairs asset-dir missing-level-ranks]
+   (let [all-eids     (set (map second unit-name-eid-pairs))
+         keyed-eids   (set (map first unit-key-pairs))
+         png-stems    (list-png-stems asset-dir)
+         missing-key  (->> unit-name-eid-pairs
+                           (remove (fn [[_ eid _]] (contains? keyed-eids eid)))
+                           (map first)
+                           distinct
+                           sort
+                           vec)
+         missing-icon (->> unit-name-eid-pairs
+                           (remove (fn [[_ eid _]] (contains? png-stems eid)))
+                           (map first)
+                           distinct
+                           sort
+                           vec)
+         stale-pngs   (->> png-stems
+                           (remove #(or (= % placeholder-png-stem)
+                                        (contains? all-eids %)))
+                           sort
+                           vec)]
+     {:total               (count unit-name-eid-pairs)
+      :missing-keys        missing-key
+      :missing-icons       missing-icon
+      :stale-pngs          stale-pngs
+      :missing-level-ranks (vec (sort missing-level-ranks))})))
 
 (defn coverage-clean?
-  "True when every unit row has a key, every unit row has a PNG, and no PNG
-  is stale.  Drives the --strict exit code."
+  "True when every unit row has a key, every unit row has a PNG, no PNG is
+  stale, and the unit-level-cost seed covers ranks 0-9.  Drives the --strict
+  exit code."
   [coverage]
   (and (empty? (:missing-keys coverage))
        (empty? (:missing-icons coverage))
-       (empty? (:stale-pngs coverage))))
+       (empty? (:stale-pngs coverage))
+       (empty? (:missing-level-ranks coverage))))
 
 (defn- write-coverage-manifest!
   "Spit `target/scraper-coverage.json` with the coverage report so a CI run
@@ -525,12 +564,13 @@
       (do
         (.mkdirs target-dir)
         (spit path (str (json/write-str coverage :escape-slash false) "\n"))
-        (logf "  [coverage] %s — total: %d, missing-keys: %d, missing-icons: %d, stale-pngs: %d"
+        (logf "  [coverage] %s — total: %d, missing-keys: %d, missing-icons: %d, stale-pngs: %d, missing-level-ranks: %d"
               (.getPath path)
               (:total coverage)
               (count (:missing-keys coverage))
               (count (:missing-icons coverage))
-              (count (:stale-pngs coverage)))))))
+              (count (:stale-pngs coverage))
+              (count (:missing-level-ranks coverage)))))))
 
 (defn- log-coverage-examples!
   "Print up to 5 example names per missing-keys / missing-icons bucket, plus
@@ -548,7 +588,11 @@
   (when (seq (:stale-pngs coverage))
     (logf "  [coverage] stale-pngs (%d), e.g. %s"
           (count (:stale-pngs coverage))
-          (pr-str (take 5 (:stale-pngs coverage))))))
+          (pr-str (take 5 (:stale-pngs coverage)))))
+  (when (seq (:missing-level-ranks coverage))
+    (logf "  [coverage] missing-level-ranks (%d): %s"
+          (count (:missing-level-ranks coverage))
+          (pr-str (:missing-level-ranks coverage)))))
 
 (defn- run [opts]
   (let [data             (load-tables (:data-dir opts))
@@ -566,10 +610,13 @@
           unit-id-map  (generate-unit-item-seed! data item-key->id dry?)
           stem->id     (generate-mount-seed! data dry?)]
       (generate-unit-mount-seed! data stem->id unit-id-map dry?))
-    (let [unit-name-eid-pairs (assets/build-unit-name-eid-map seed-dir)
+    (let [missing-levels      (generate-unit-level-cost-seed!
+                               (:land-xp-bonus-rows data) dry?)
+          unit-name-eid-pairs (assets/build-unit-name-eid-map seed-dir)
           coverage            (compute-coverage unit-name-eid-pairs
                                                 unit-key-pairs
-                                                unit-card-asset-dir)]
+                                                unit-card-asset-dir
+                                                missing-levels)]
       (write-coverage-manifest! coverage dry?)
       (log-coverage-examples! coverage)
       (cond
@@ -577,10 +624,11 @@
         (log "Done.")
 
         strict?
-        (do (logf "STRICT: %d missing keys, %d missing icons, %d stale PNGs — failing run"
+        (do (logf "STRICT: %d missing keys, %d missing icons, %d stale PNGs, %d missing level ranks — failing run"
                   (count (:missing-keys coverage))
                   (count (:missing-icons coverage))
-                  (count (:stale-pngs coverage)))
+                  (count (:stale-pngs coverage))
+                  (count (:missing-level-ranks coverage)))
             (System/exit 1))
 
         :else

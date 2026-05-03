@@ -199,6 +199,16 @@
     [:cost :int]
     [:portrait-key {:optional true} [:maybe :string]]]))
 
+(def unit-level-cost-entity
+  (schema.contract/to-schema
+   [:map
+    [:level :int]
+    [:fixed-cost :int]
+    [:cost-multiplier :double]
+    [:fatigue :int]
+    [:melee-cp :double]
+    [:missile-cp :double]]))
+
 (def draft-state-entity
   (schema.contract/to-schema
    [:map
