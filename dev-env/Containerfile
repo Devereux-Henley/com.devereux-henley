@@ -1,0 +1,89 @@
+FROM registry.fedoraproject.org/fedora-toolbox:41
+
+LABEL com.github.containers.toolbox="true" \
+      summary="Emacs + Clojure dev environment for com.devereux-henley"
+
+RUN dnf -y install \
+      emacs \
+      git \
+      gh \
+      java-21-openjdk-devel \
+      kde-gtk-config \
+      make \
+      rlwrap \
+      ripgrep \
+      sqlite \
+      nodejs \
+      npm \
+      perl-Digest-SHA \
+      unzip \
+      which \
+      alsa-lib \
+      at-spi2-atk \
+      atk \
+      cups-libs \
+      libdrm \
+      libxcb \
+      libxkbcommon \
+      mesa-libgbm \
+      nss \
+      pango \
+    && dnf clean all
+
+RUN curl -fsSL -o /tmp/clojure-install.sh \
+      https://github.com/clojure/brew-install/releases/latest/download/posix-install.sh \
+    && chmod +x /tmp/clojure-install.sh \
+    && /tmp/clojure-install.sh \
+    && rm /tmp/clojure-install.sh
+
+RUN curl -fsSL -o /tmp/install-clj-kondo \
+      https://raw.githubusercontent.com/clj-kondo/clj-kondo/master/script/install-clj-kondo \
+    && chmod +x /tmp/install-clj-kondo \
+    && /tmp/install-clj-kondo --dir /usr/local/bin \
+    && rm /tmp/install-clj-kondo
+
+ARG CLJFMT_VERSION=0.16.4
+RUN curl -fsSL -o /tmp/cljfmt.tar.gz \
+      https://github.com/weavejester/cljfmt/releases/download/${CLJFMT_VERSION}/cljfmt-${CLJFMT_VERSION}-linux-amd64-static.tar.gz \
+    && tar -xzf /tmp/cljfmt.tar.gz -C /usr/local/bin \
+    && rm /tmp/cljfmt.tar.gz
+
+RUN cat >/etc/profile.d/00-local-bin-path.sh <<'EOF'
+case ":$PATH:" in
+    *":$HOME/.local/bin:"*) ;;
+    *) export PATH="$HOME/.local/bin:$PATH" ;;
+esac
+EOF
+
+RUN cat >/etc/profile.d/emacs-daemon.sh <<'EOF'
+if [ -f /run/.toolboxenv ] && [ -t 1 ]; then
+    if ! emacsclient --eval t >/dev/null 2>&1; then
+        (emacs --daemon >/dev/null 2>&1 &)
+    fi
+fi
+EOF
+
+RUN cat >/etc/profile.d/claude-install.sh <<'EOF'
+if [ -f /run/.toolboxenv ] && [ -t 1 ] && ! command -v claude >/dev/null 2>&1; then
+    echo "Installing Claude Code (first run)..."
+    curl -fsSL https://claude.ai/install.sh | bash
+fi
+EOF
+
+RUN cat >/etc/profile.d/clojure-mcp-install.sh <<'EOF'
+if [ -f /run/.toolboxenv ] && [ -t 1 ] && [ ! -f "$HOME/.clojure/tools/mcp.edn" ]; then
+    echo "Installing clojure-mcp (first run)..."
+    clojure -Ttools install-latest :lib io.github.bhauman/clojure-mcp :as mcp
+fi
+EOF
+
+RUN cat >/etc/profile.d/clojure-mcp-register.sh <<'EOF'
+if [ -f /run/.toolboxenv ] && [ -t 1 ] && command -v claude >/dev/null 2>&1; then
+    if ! claude mcp get clojure-mcp >/dev/null 2>&1; then
+        echo "Registering clojure-mcp with Claude Code..."
+        claude mcp add clojure-mcp -- clojure -Tmcp start :config-profile :cli-assist
+    fi
+fi
+EOF
+
+ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk
