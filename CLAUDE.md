@@ -2,20 +2,21 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-# Clojure Parenthesis Repair
+## Toolbox dev environment
 
-The command `clj-paren-repair` is installed on your path.
+`dev-env/` packages a self-contained [Fedora Toolbx](https://containertoolbx.org/) image with everything needed to work in this repo: Emacs, JDK 21, Clojure CLI, clj-kondo, cljfmt, gh, sqlite, Node/npm + Playwright system deps, Claude Code, and clojure-mcp. From `dev-env/`:
 
-Examples:
-`clj-paren-repair <files>`
-`clj-paren-repair path/to/file1.clj path/to/file2.clj path/to/file3.clj`
+```bash
+make build        # podman build the image
+make create       # toolbox create rts-dev from the image
+make enter        # toolbox enter rts-dev
+make stop         # graceful emacs daemon shutdown + podman stop
+make rm           # stop + toolbox rm
+```
 
-**IMPORTANT:** Do NOT try to manually repair parenthesis errors.
-If you encounter unbalanced delimiters, run `clj-paren-repair` on the file
-instead of attempting to fix them yourself. If the tool doesn't work,
-report to the user that they need to fix the delimiter error manually.
+First interactive `make enter` prepends `~/.local/bin` to PATH, starts the emacs daemon, installs Claude Code via `claude.ai/install.sh`, installs clojure-mcp via `clojure -Ttools install-latest`, and registers the MCP server with Claude. Subsequent enters skip whatever's already in place.
 
-The tool automatically formats files with cljfmt when it processes them.
+clojure-mcp is the canonical way to interact with the running nREPL — it auto-repairs delimiters before evaluation, so prefer it over manual edits when working in `.clj` files.
 
 ## Commands
 
@@ -47,21 +48,18 @@ See `docs/rpfm-scraper/game-data.md` for the full RPFM data refresh workflow.
 
 **Claude's REPL workflow (preferred over starting the dev server script):**
 
-```bash
-# 1. Start nREPL (background — port 7888)
-clojure -M:dev:claude -m nrepl.cmdline --port 7888 &
+1. Start nREPL on port 7888 in the background:
 
-# 2. Connect and boot the system
-clj-nrepl-eval -p 7888 "(require 'claude-workspace :reload)"
-clj-nrepl-eval -p 7888 "(claude-workspace/go!)"    ; migrations + Jetty on :3001
-clj-nrepl-eval -p 7888 "(claude-workspace/seed-db!)" ; seed game data
+   ```bash
+   clojure -M:dev:claude -m nrepl.cmdline --port 7888 &
+   ```
 
-# 3. After code changes, reload and restart
-clj-nrepl-eval -p 7888 "(claude-workspace/restart!)"
-
-# 4. Stop the system
-clj-nrepl-eval -p 7888 "(claude-workspace/halt!)"
-```
+2. Drive the running system through the clojure-mcp tools:
+   - `(require 'claude-workspace :reload)`
+   - `(claude-workspace/go!)` — migrations + Jetty on :3001
+   - `(claude-workspace/seed-db!)` — seed game data
+   - `(claude-workspace/restart!)` — reload + restart after code changes
+   - `(claude-workspace/halt!)` — stop the system
 
 This is faster than `clojure -M:dev -i start_dev_server.clj` because it supports incremental reloading (`restart!`) without a full JVM restart, and gives Claude a REPL for debugging.
 

@@ -60,6 +60,16 @@ Components are shared units of behaviour consumed by one or more bases.
 
 ## Development
 
+### Toolbox
+
+[`dev-env/`](dev-env) packages a [Fedora Toolbx](https://containertoolbx.org/) image with the full development toolchain (Emacs, JDK 21, Clojure CLI, clj-kondo, cljfmt, gh, sqlite, Node/npm + Playwright deps, Claude Code, clojure-mcp). From `dev-env/`:
+
+```
+make build && make create && make enter
+```
+
+First interactive enter installs Claude Code and clojure-mcp into the shared home directory and starts the Emacs daemon. See [`CLAUDE.md`](CLAUDE.md#toolbox-dev-environment) for details.
+
 ### REPL
 
 The repository root `deps.edn` contains a `:dev` alias that wires all components and bases onto the classpath. CIDER is configured via [`.dir-locals.el`](.dir-locals.el) to always jack-in from the repository root using that alias — this ensures the full component graph is available regardless of which file is open.
