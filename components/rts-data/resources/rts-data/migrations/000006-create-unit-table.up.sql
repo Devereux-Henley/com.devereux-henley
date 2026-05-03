@@ -6,6 +6,15 @@ CREATE TABLE IF NOT EXISTS unit (
   -- their per-unit keys back to a unit row.
   key TEXT,
   name TEXT NOT NULL,
+  -- Family identifier shared across mark variants (e.g. all four marked
+  -- "Daemon Prince of <God>" rows + the unmarked base share family_name
+  -- "Daemon Prince").  The roster card groups by this; the slot/panel/
+  -- replays display `name`, which retains the engine-original full string
+  -- including any " of <God>" suffix.  Populated by seed-unit-marks.sql
+  -- for every row (defaults to the row's own name for non-mark families)
+  -- — left NULL-able only so the per-faction unit seeds don't have to
+  -- write the column themselves.
+  family_name TEXT,
   description TEXT NOT NULL,
   game_id INTEGER NOT NULL,
   faction_id INTEGER NOT NULL,

@@ -171,26 +171,31 @@
 ;; ─── Family grouping ─────────────────────────────────────────────────────────
 
 (defn- canonical-variant
-  "Picks the row that represents a family in the roster.  Prefers the
-  unmarked variant (`:mark` nil) when the family has a base + marked
-  forms; otherwise returns the first variant in the family.  The
-  canonical variant's portrait + cost label drives the roster card,
-  while the per-mark eid/cost lives in `:family-variants`."
+  "Picks the row that represents a family in the roster.  Prefers — in
+  order — the row whose `:name` already matches the family label
+  (`:family-name`), then the unmarked-mark row (`:mark` nil), then the
+  first row in id order.  The canonical variant's portrait + cost label
+  drives the roster card; per-mark eid/cost lives in `:family-variants`."
   [members]
-  (or (first (filter (comp nil? :mark) members))
+  (or (first (filter #(and (:family-name %) (= (:name %) (:family-name %))) members))
+      (first (filter (comp nil? :mark) members))
       (first members)))
 
 (defn group-units-by-family
-  "Collapses a unit collection so each (name, faction-eid) family has
+  "Collapses a unit collection so each (family-name, faction-eid) family has
   a single representative row.  The representative carries the full
   hydrated-unit shape plus a `:family-variants` vector — one entry
   per mark in id-stable order — that the unit panel uses to drive
   the Mark selector.  Single-variant families pass through unchanged
   with a single-entry `:family-variants` so the template can apply
-  the same logic uniformly."
+  the same logic uniformly.
+
+  Grouping uses `:family-name` (the seed-stamped family identifier
+  that's shared across mark variants) rather than `:name` (which is
+  the engine-original string and differs across marked variants)."
   [units]
   (->> units
-       (group-by (juxt :name :faction-eid))
+       (group-by (juxt #(or (:family-name %) (:name %)) :faction-eid))
        (sort-by (comp :id first val))
        (mapv (fn [[_family members]]
                (let [ordered   (sort-by :id members)
@@ -198,6 +203,7 @@
                      variants  (mapv (fn [u]
                                        {:eid  (:eid u)
                                         :mark (:mark u)
+                                        :name (:name u)
                                         :cost (:cost u)})
                                      ordered)]
                  (assoc canonical :family-variants variants))))))
@@ -888,13 +894,18 @@
 
 (defn- valid-mark-swap?
   "Sanity check for slot mark switching: the new variant must share
-  the entry's family (same name + faction).  Prevents a malicious
-  PATCH from swapping into a totally different unit."
+  the entry's family (same family-name + faction).  Family-name is the
+  shared identifier across mark variants; engine `name` differs across
+  marked variants ('Daemon Prince of Khorne' vs base 'Daemon Prince')
+  so comparing on it would reject every cross-mark swap.  Falls back
+  to `:name` for unit rows that predate the family-name backfill."
   [unit-by-eid old-eid new-eid]
   (let [old-unit (get unit-by-eid old-eid)
-        new-unit (get unit-by-eid new-eid)]
+        new-unit (get unit-by-eid new-eid)
+        old-key  (or (:family-name old-unit) (:name old-unit))
+        new-key  (or (:family-name new-unit) (:name new-unit))]
     (and old-unit new-unit
-         (= (:name old-unit) (:name new-unit)))))
+         (= old-key new-key))))
 
 (defn update-unit-in-draft
   "Validates and replaces the selections of an already-placed draft entry.

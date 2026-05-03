@@ -481,7 +481,7 @@ SET mark = CASE key
   WHEN 'wh_pro04_chs_mon_chaos_spawn_ror_0' THEN 'tzeentch'
   ELSE mark
 END,
-name = CASE name
+family_name = CASE name
   WHEN 'Daemon Prince of Khorne' THEN 'Daemon Prince'
   WHEN 'Daemon Prince of Nurgle' THEN 'Daemon Prince'
   WHEN 'Daemon Prince of Slaanesh' THEN 'Daemon Prince'

@@ -43,6 +43,7 @@
    [:eid :uuid]
    [:type {:optional true} [:= :game/unit]]
    [:name {:min 1} :string]
+   [:family-name {:optional true} [:maybe :string]]
    [:description {:optional true} :string]
    [:cost {:optional true} [:maybe :int]]
    [:unit-type-name {:optional true} :string]
@@ -507,10 +508,12 @@
      [:unit-category-name :string]
      [:mark {:optional true} [:maybe [:enum "khorne" "nurgle" "slaanesh" "tzeentch" "undivided"]]]
      [:family-variant-count {:optional true} :int]
+     [:family-name {:optional true} [:maybe :string]]
      [:family-variants {:optional true}
       [:sequential [:map
                     [:eid :uuid]
                     [:mark [:maybe [:enum "khorne" "nurgle" "slaanesh" "tzeentch" "undivided"]]]
+                    [:name {:optional true} :string]
                     [:cost [:maybe :int]]]]]
      [:cost [:maybe :int]]
      [:total-cost {:optional true} [:maybe :int]]

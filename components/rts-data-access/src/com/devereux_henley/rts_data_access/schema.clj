@@ -121,6 +121,7 @@
     [:id :int]
     [:eid :uuid]
     [:name {:min 1} :string]
+    [:family-name {:optional true} [:maybe :string]]
     [:description {:min 1} :string]
     [:game-eid :uuid]
     [:unit-type-eid :uuid]

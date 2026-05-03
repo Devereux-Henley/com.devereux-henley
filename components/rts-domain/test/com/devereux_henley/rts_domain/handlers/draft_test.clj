@@ -137,6 +137,29 @@
         "Canonical falls back to the only variant when no unmarked exists")
     (is (= 1 (count (:family-variants family))))))
 
+(deftest group-units-by-family-groups-by-family-name-when-engine-names-differ
+  ;; Mark variants carry distinct engine names ("Daemon Prince of Khorne",
+  ;; etc.) but share `:family-name` "Daemon Prince" so the roster card
+  ;; still collapses them into one family.
+  (let [units  [{:id   1               :eid         #uuid "00000001-0000-4000-8000-000000000000"
+                 :name "Daemon Prince" :family-name "Daemon Prince"                              :faction-eid faction-eid
+                 :mark "undivided"     :cost        1800}
+                {:id   2                         :eid         #uuid "00000002-0000-4000-8000-000000000000"
+                 :name "Daemon Prince of Khorne" :family-name "Daemon Prince"                              :faction-eid faction-eid
+                 :mark "khorne"                  :cost        1900}
+                {:id   3                           :eid         #uuid "00000003-0000-4000-8000-000000000000"
+                 :name "Daemon Prince of Tzeentch" :family-name "Daemon Prince"                              :faction-eid faction-eid
+                 :mark "tzeentch"                  :cost        1900}]
+        result (handlers.draft/group-units-by-family units)
+        family (first result)]
+    (is (= 1 (count result)))
+    (is (= "Daemon Prince" (:name family))
+        "Canonical prefers the row whose engine name matches family-name")
+    (is (= 3 (count (:family-variants family))))
+    (is (= ["Daemon Prince" "Daemon Prince of Khorne" "Daemon Prince of Tzeentch"]
+           (mapv :name (:family-variants family)))
+        "Each variant carries its engine-original name through to the panel")))
+
 (deftest group-units-by-family-keeps-different-faction-rows-separate
   (let [other-faction #uuid "f0000017-0000-4000-8000-000000000000"
         units         [{:id   1               :eid         #uuid "00000001-0000-4000-8000-000000000000"

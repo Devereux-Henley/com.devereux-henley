@@ -84,11 +84,13 @@
 (def ^:private no-rows-sentinel
   "-- no mark assignments in this scrape (preserved on subsequent empty runs)\n")
 
-(def ^:private name-collapses
-  "Display-name conflations applied independently of the mark itself: each
-  `X of <God>` / `X (<God>)` family rolls up into a single canonical row so
-  the UI groups variants by family.  Drives the `name = CASE name …` clause
-  the seed file emits."
+(def ^:private family-name-overrides
+  "Maps an engine `name` to the family-grouping label.  Each entry collapses
+  a `X of <God>` / `X (<God>)` mark variant onto its base family name so
+  the roster card groups them under one entry.  The seed emits a CASE that
+  applies these overrides to `family_name` — `name` itself stays as the
+  engine-original string so the slot, panel header, and replay enrichment
+  can show 'Daemon Prince of Khorne'."
   [["Daemon Prince of Khorne"         "Daemon Prince"]
    ["Daemon Prince of Nurgle"         "Daemon Prince"]
    ["Daemon Prince of Slaanesh"       "Daemon Prince"]
@@ -136,9 +138,9 @@
                 (format "  WHEN '%s' THEN '%s'\n" (str/replace k "'" "''") mark)))
        "  ELSE mark\n"
        "END,\n"
-       "name = CASE name\n"
+       "family_name = CASE name\n"
        (apply str
-              (for [[from to] name-collapses]
+              (for [[from to] family-name-overrides]
                 (format "  WHEN '%s' THEN '%s'\n" from to)))
        "  ELSE name\n"
        "END;\n"))))
