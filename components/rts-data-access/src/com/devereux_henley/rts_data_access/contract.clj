@@ -110,6 +110,7 @@
 (def match-status-enum schema/match-status-enum)
 (def match-format-enum schema/match-format-enum)
 (def bracket-type-enum schema/bracket-type-enum)
+(def mark-enum schema/mark-enum)
 
 ;;; ─── Tournament DB queries ────────────────────────────────────────────────
 

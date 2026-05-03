@@ -115,6 +115,14 @@
     [:updated-at :instant]
     [:deleted-at [:maybe :instant]]]))
 
+(def mark-enum
+  "Closed set of valid Mark of Chaos values for the unit `mark` column.
+  Matches the CHECK constraint in `000006-create-unit-table.up.sql` and
+  the runtime set in `rts-domain.domain.mark/marks` — keep all three in
+  sync.  Re-exported via `rts-data-access.contract/mark-enum` for
+  rts-domain (and any other consumer outside this component)."
+  [:enum "khorne" "nurgle" "slaanesh" "tzeentch" "undivided"])
+
 (def unit-entity
   (schema.contract/to-schema
    [:map
@@ -130,7 +138,7 @@
     [:unit-category-name :string]
     [:cost [:maybe :int]]
     [:unit-statistics :string]
-    [:mark [:maybe [:enum "khorne" "nurgle" "slaanesh" "tzeentch" "undivided"]]]
+    [:mark [:maybe mark-enum]]
     [:family-variant-count {:optional true} :int]
     [:is-unique :int]
     [:version :int]

@@ -48,7 +48,7 @@
    [:cost {:optional true} [:maybe :int]]
    [:unit-type-name {:optional true} :string]
    [:unit-category-name {:optional true} :string]
-   [:mark {:optional true} [:maybe [:enum "khorne" "nurgle" "slaanesh" "tzeentch" "undivided"]]]
+   [:mark {:optional true} [:maybe data-access.contract/mark-enum]]
    [:family-variant-count {:optional true} :int]
    [:game-eid {:optional true} :uuid]
    [:is-unique {:optional true} :int]])
@@ -506,13 +506,13 @@
      [:description :string]
      [:unit-type-name :string]
      [:unit-category-name :string]
-     [:mark {:optional true} [:maybe [:enum "khorne" "nurgle" "slaanesh" "tzeentch" "undivided"]]]
+     [:mark {:optional true} [:maybe data-access.contract/mark-enum]]
      [:family-variant-count {:optional true} :int]
      [:family-name {:optional true} [:maybe :string]]
      [:family-variants {:optional true}
       [:sequential [:map
                     [:eid :uuid]
-                    [:mark [:maybe [:enum "khorne" "nurgle" "slaanesh" "tzeentch" "undivided"]]]
+                    [:mark [:maybe data-access.contract/mark-enum]]
                     [:name {:optional true} :string]
                     [:cost [:maybe :int]]]]]
      [:cost [:maybe :int]]

@@ -169,7 +169,7 @@
   (schema.contract/to-schema
    [:map
     [:eid :uuid]
-    [:mark [:maybe [:enum "khorne" "nurgle" "slaanesh" "tzeentch" "undivided"]]]
+    [:mark [:maybe schema/mark-enum]]
     [:cost [:maybe :int]]]))
 
 (defn get-family-variants-by-eid
