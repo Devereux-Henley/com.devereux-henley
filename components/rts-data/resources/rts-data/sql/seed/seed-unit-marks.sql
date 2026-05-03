@@ -249,7 +249,7 @@ SET mark = CASE key
   WHEN 'wh3_dlc27_tze_mon_cockatrice_monst_arcanum' THEN 'tzeentch'
   WHEN 'wh3_dlc27_tze_mon_cockatrice_monst_arcanum_reward' THEN 'tzeentch'
   WHEN 'wh3_main_dae_cha_daemon_prince_0' THEN 'undivided'
-  WHEN 'wh3_main_dae_inf_chaos_furies_0' THEN 'khorne'
+  WHEN 'wh3_main_dae_inf_chaos_furies_0' THEN 'undivided'
   WHEN 'wh3_main_ie_nor_cha_exalted_great_unclean_one_burplesmirk_spewpit' THEN 'nurgle'
   WHEN 'wh3_main_ie_nor_cha_exalted_hero_mkho_killgore_slaymaim' THEN 'khorne'
   WHEN 'wh3_main_kho_cav_bloodcrushers_0' THEN 'khorne'

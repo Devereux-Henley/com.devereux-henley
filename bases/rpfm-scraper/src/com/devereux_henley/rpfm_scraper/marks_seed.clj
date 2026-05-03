@@ -49,37 +49,65 @@
    "undivided_characters"                "undivided"
    "chaos_spawn_undivided"               "undivided"})
 
-(def ^:private god-precedence
-  "Sort order for resolving conflicts when a unit appears in multiple
-  mark-bearing sets.  A named god (Khorne/Nurgle/Slaanesh/Tzeentch) wins
-  over `undivided` so the most-specific assignment sticks."
-  {"khorne"    0
-   "nurgle"    1
-   "slaanesh"  2
-   "tzeentch"  3
-   "undivided" 4})
+(def ^:private specific-mark-sets
+  "Tier-1 mark-bearing sets — narrow and unambiguous.  A unit's
+  membership in any one of these is treated as authoritative."
+  #{"khorne_characters" "wh3_dlc20_chs_khorne_marked_units" "wh3_dlc20_chs_khorne_daemon_units"
+    "nurgle_characters" "wh3_dlc20_chs_nurgle_marked_units" "wh3_dlc20_chs_nurgle_daemon_units"
+    "slaanesh_characters" "wh3_dlc20_chs_slaanesh_marked_units" "wh3_dlc20_chs_slaanesh_daemon_units"
+    "tzeentch_characters" "wh3_dlc20_chs_tzeentch_marked_units" "wh3_dlc20_chs_tzeentch_daemon_units"
+    "undivided_characters" "chaos_spawn_undivided"})
 
 (defn build-unit-key-mark-map
   "Returns {unit_record (engine `key`) → mark string} from the parsed
-  `unit_set_to_unit_junctions_tables` rows.  Only rows whose `unit_set` is
-  in `mark-bearing-sets` and whose `exclude` flag is false contribute."
+  `unit_set_to_unit_junctions_tables` rows.  Two-tier resolution:
+
+    1. Specific sets (lord/hero/marked/daemon/undivided) — if a unit
+       appears in any one of these, that's the authoritative mark.
+
+    2. Broad mono-god sets (`wh3_main_<god>_all`) — fallback when the
+       unit isn't in any specific set.  If the unit appears in
+       multiple `<god>_all` sets simultaneously (e.g. the cross-faction
+       base `wh3_main_dae_inf_chaos_furies_0` is in all four), it's a
+       faction-shared base — mark Undivided rather than picking one
+       god arbitrarily."
   [junction-rows]
-  (reduce
-   (fn [m row]
-     (let [unit-rec (get row "unit_record")
-           excluded (true? (get row "exclude"))
-           set-key  (get row "unit_set")
-           mark     (get mark-bearing-sets set-key)]
-       (if (and (seq unit-rec) mark (not excluded))
-         (let [existing (get m unit-rec)]
-           (if (or (nil? existing)
-                   (< (god-precedence mark 99)
-                      (god-precedence existing 99)))
-             (assoc m unit-rec mark)
-             m))
-         m)))
-   {}
-   junction-rows))
+  (let [;; tier-1: explicit per-set mark assignments
+        specific      (reduce
+                       (fn [m row]
+                         (let [unit-rec (get row "unit_record")
+                               excluded (true? (get row "exclude"))
+                               set-key  (get row "unit_set")]
+                           (if (and (seq unit-rec) (not excluded)
+                                    (contains? specific-mark-sets set-key))
+                             (assoc m unit-rec (get mark-bearing-sets set-key))
+                             m)))
+                       {}
+                       junction-rows)
+        ;; tier-2: collect every god `_all` set a unit belongs to
+        all-set-marks (reduce
+                       (fn [m row]
+                         (let [unit-rec (get row "unit_record")
+                               excluded (true? (get row "exclude"))
+                               set-key  (get row "unit_set")
+                               mark     (when (str/starts-with? (or set-key "") "wh3_main_")
+                                          (get mark-bearing-sets set-key))]
+                           (if (and (seq unit-rec) mark (not excluded))
+                             (update m unit-rec (fnil conj #{}) mark)
+                             m)))
+                       {}
+                       junction-rows)]
+    (reduce-kv
+     (fn [m unit-rec marks]
+       (if (contains? specific unit-rec)
+         m
+         (assoc m unit-rec
+                (if (= 1 (count marks))
+                  (first marks)
+                  ;; Multi-god membership ⇒ faction-shared base.
+                  "undivided"))))
+     specific
+     all-set-marks)))
 
 (def ^:private no-rows-sentinel
   "-- no mark assignments in this scrape (preserved on subsequent empty runs)\n")
