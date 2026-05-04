@@ -587,7 +587,7 @@
   [name]
   (some-> name (->> (re-find lore-suffix-re)) second))
 
-(defn- family-marks
+(defn family-marks
   "Reduces `family-variants` to one entry per distinct `:mark` value,
   preferring the variant whose `:lore` matches `current-lore` so a
   mark swap preserves the lore choice when possible.  The current
@@ -604,7 +604,7 @@
                        (first (filter #(= current-lore (:lore %)) siblings))
                        (first siblings))))))))
 
-(defn- family-lores
+(defn family-lores
   "Reduces `family-variants` to the lore options under `current-mark`
   (a single mark's slate of lore variants).  Each entry carries a
   derived `:lore-label` for display.  Returns an empty vector when

@@ -26,6 +26,61 @@
         </div>
     </header>
 
+    {# Mark + Lore selectors mirror the draft-unit-panel's cascading
+       dropdowns, but each option is a unit eid that navigates to the
+       corresponding variant's page rather than swapping the entry's
+       unit-eid in a draft.  Hyperscript's `set window.location.href`
+       triggers a full reload — the unit page is the document root so
+       there's no SPA target to partially swap. #}
+    {% if family-marks|count > 1 %}
+    <section class="unit-variants" aria-labelledby="unit-variants-heading">
+        <h3 class="sr-only" id="unit-variants-heading">Variants of {{data.name}}</h3>
+        <div class="unit-variants-row">
+            <label class="lore-select-field" for="unit-mark-select">
+                <span class="unit-variants-label">Mark of Chaos</span>
+                <select class="lore-select"
+                        id="unit-mark-select"
+                        aria-label="Select Mark of Chaos for {{data.name}}"
+                        _="on change set window.location.href to `/view/game/{{game.eid}}/unit/${my value}/index.html`">
+                    {% for variant in family-marks %}
+                    <option value="{{variant.eid}}"{% ifequal variant.eid data.eid %} selected{% endifequal %}>{% if variant.mark %}{{variant.mark|capitalize}}{% else %}Undivided{% endif %}{% if variant.cost %} &mdash; {{variant.cost}} pts{% endif %}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            {% if family-lores|count > 1 %}
+            <label class="lore-select-field" for="unit-lore-select">
+                <span class="unit-variants-label">Lore of Magic</span>
+                <select class="lore-select"
+                        id="unit-lore-select"
+                        aria-label="Select lore for {{data.name}}"
+                        _="on change set window.location.href to `/view/game/{{game.eid}}/unit/${my value}/index.html`">
+                    {% for variant in family-lores %}
+                    <option value="{{variant.eid}}"{% ifequal variant.eid data.eid %} selected{% endifequal %}>{{variant.lore-label}}{% if variant.cost %} &mdash; {{variant.cost}} pts{% endif %}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            {% endif %}
+        </div>
+    </section>
+    {% elif family-lores|count > 1 %}
+    <section class="unit-variants" aria-labelledby="unit-variants-heading">
+        <h3 class="sr-only" id="unit-variants-heading">Variants of {{data.name}}</h3>
+        <div class="unit-variants-row">
+            <label class="lore-select-field" for="unit-lore-select">
+                <span class="unit-variants-label">Lore of Magic</span>
+                <select class="lore-select"
+                        id="unit-lore-select"
+                        aria-label="Select lore for {{data.name}}"
+                        _="on change set window.location.href to `/view/game/{{game.eid}}/unit/${my value}/index.html`">
+                    {% for variant in family-lores %}
+                    <option value="{{variant.eid}}"{% ifequal variant.eid data.eid %} selected{% endifequal %}>{{variant.lore-label}}{% if variant.cost %} &mdash; {{variant.cost}} pts{% endif %}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+    </section>
+    {% endif %}
+
     <div class="unit-layout{% if not unit-statistics %}{% if not abilities %} unit-layout-no-stats{% endif %}{% endif %}">
 
         <div class="unit-panel-left stack stack-4">

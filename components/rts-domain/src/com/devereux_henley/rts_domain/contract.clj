@@ -72,6 +72,8 @@
 (def get-items-for-unit                         handlers.draft/get-items-for-unit)
 (def get-mounts-for-unit                         handlers.draft/get-mounts-for-unit)
 (def get-spells-for-lore                         handlers.draft/get-spells-for-lore)
+(def family-marks                                handlers.draft/family-marks)
+(def family-lores                                handlers.draft/family-lores)
 (def hydrate-units-with-stats                   handlers.draft/hydrate-units-with-stats)
 (def group-units-by-family                       handlers.draft/group-units-by-family)
 (def build-section-context                      handlers.draft/build-section-context)
