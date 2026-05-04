@@ -129,7 +129,13 @@
    ;; Variant / RoR engine keys that don't share a normalized stem
    ;; with their card icon — pin explicitly so the icon resolver
    ;; doesn't fall through to the wrong (or no) image.
-   "Chaos Feral Manticore"                                      "chs_feral_manticore_0"
+   ;; WoC's "Chaos Feral Manticore" engine key is `wh_dlc06_chs_feral_manticore`
+   ;; but no Chaos-faction card icon ships under that name.  The only
+   ;; `chs_*manticore*` asset is a head-close-up portrait
+   ;; (`portraits/units/no_culture/chs_feral_manticore_0.png`); pin to
+   ;; the Beastmen card art (same model, full-body) for a proper
+   ;; battle-card-style image instead.
+   "Chaos Feral Manticore"                                      "wh_dlc03_bst_feral_manticore"
    "Chaos Warriors (Halberds)"                                  "wh_main_chs_warriors_halberd"
    "Chosen (Great Weapons)"                                     "wh_main_chs_chosen_great_weapons"
    "Knights of Immolation (Doom Knights of Tzeentch)"           "wh3_twa07_tze_cav_doom_knights_ror_0"
