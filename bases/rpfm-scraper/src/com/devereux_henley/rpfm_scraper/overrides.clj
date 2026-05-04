@@ -138,6 +138,7 @@
    ;; `wh_pro04_chs_ror_<unit>` (no `_inf_chaos_…_ror_0` middle).
    "Mirror Guard (Chaos Warriors)"                              "wh_pro04_chs_ror_warriors"
    "Swords of Chaos (Chaos Knights)"                            "wh_pro04_chs_ror_knights"
+   "The Daemonspew (Forsaken)"                                  "wh_pro04_chs_ror_forsaken"
    "Wyrd Spawn (Chaos Spawn)"                                   "wh_pro04_chs_ror_spawn"
    "Minotaurs (Great Weapons)"                                  "wh_dlc03_bst_minotaurs_great_weapons"
    "Minotaurs (Shields)"                                        "wh_dlc03_bst_minotaurs_shield"
