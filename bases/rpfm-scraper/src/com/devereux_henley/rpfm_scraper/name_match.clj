@@ -213,6 +213,23 @@
     (let [filtered (filterv (fn [[uk _]] (= mark (mark-from-key uk))) candidates)]
       (if (seq filtered) filtered candidates))))
 
+(defn- prefer-non-summoned
+  "Drops candidates whose engine key ends with `_summoned` when at least
+  one non-summoned candidate remains. Many display names (e.g. 'Feral
+  Manticore', 'Dryads') appear both on a recruitable `main_units` row
+  and on a campaign-only summon-spell row whose `multiplayer_cost` is
+  0; without this filter the canonical-prefix tiebreaker picks the
+  `wh_main_*_summoned` row over the `wh_dlc*` recruitable because the
+  canonical-prefix order ranks `wh_main_` higher than `wh_`.  The
+  filter is conditional so MP-fielded summons (Ceithin-har, Gwindalor,
+  …) whose only entry is a `_summoned` key still resolve."
+  [candidates]
+  (let [non-summoned (filterv (fn [[uk lu]]
+                                (not (or (str/ends-with? (or uk "") "_summoned")
+                                         (str/ends-with? (or lu "") "_summoned"))))
+                              candidates)]
+    (if (seq non-summoned) non-summoned candidates)))
+
 (defn- prefer-lore
   "Among `candidates`, prefer the one whose engine key carries the
   given lore as the trailing-or-near-trailing key segment.  Pattern:
@@ -347,6 +364,13 @@
                                    (seq (get stripped-ix norm))
                                    (seq (get stripped-ix base-name)))))
         candidates       (vec (or candidates []))
+        ;; Drop campaign-only summon-spell variants when a recruitable
+        ;; row exists for the same display name — `_summoned` rows
+        ;; carry mp_cost 0 and represent in-battle conjurations, not
+        ;; the unit on the drafting roster.  Conditional so MP-fielded
+        ;; summons (Ceithin-har, Gwindalor) still resolve when their
+        ;; only entry is a `_summoned` key.
+        candidates       (prefer-non-summoned candidates)
         ;; Mark filter runs first because it's the strongest discriminator
         ;; (a row's god alignment is rarely ambiguous given its key).  The
         ;; faction filter follows so per-faction variants (chs vs kho for
