@@ -102,10 +102,49 @@
    ;; under `units/no_culture/`.  Pin to the portrait basename.
    "Chaos Sorcerer"                                             "chs_sorcerer_campaign_01_0"
    "Chaos Sorcerer Lord"                                        "chs_sorcerer_lord_campaign_01_0"
+   ;; Mark-of-Chaos character variants — engine keys like
+   ;; `wh3_dlc20_chs_cha_chaos_lord_mkho` have no card stem; their
+   ;; artwork lives under
+   ;; `portraits/units/no_culture/dae_<mark>_<role>_campaign_01_0.png`.
+   ;; Without these pins, `unit-key->portrait-base` strips the `_mkho`
+   ;; tail and the prefix-fallback in `find-portrait` collapses every
+   ;; marked variant to the unmarked `chs_<role>` portrait (or, for
+   ;; sorcerer/sorcerer-lord which Khorne can't field, to whatever the
+   ;; previous-rank portrait happens to be — same png reused across
+   ;; multiple eids).
+   "Chaos Lord of Khorne"                                       "dae_kho_chaos_lord_campaign_01_0"
+   "Chaos Lord of Nurgle"                                       "dae_nur_chaos_lord_campaign_01_0"
+   "Chaos Lord of Slaanesh"                                     "dae_sla_chaos_lord_campaign_01_0"
+   "Chaos Lord of Tzeentch"                                     "dae_tze_chaos_lord_campaign_01_0"
+   "Chaos Sorcerer of Nurgle"                                   "dae_nur_chaos_sorcerer_campaign_01_0"
+   "Chaos Sorcerer of Slaanesh"                                 "dae_sla_chaos_sorcerer_campaign_01_0"
+   "Chaos Sorcerer of Tzeentch"                                 "dae_tze_chaos_sorcerer_campaign_01_0"
+   "Chaos Sorcerer Lord of Nurgle"                              "dae_nur_chaos_sorcerer_lord_campaign_01_0"
+   "Chaos Sorcerer Lord of Slaanesh"                            "dae_sla_chaos_sorcerer_lord_campaign_01_0"
+   "Chaos Sorcerer Lord of Tzeentch"                            "dae_tze_chaos_sorcerer_lord_campaign_01_0"
+   "Exalted Hero of Khorne"                                     "dae_kho_exalted_hero_campaign_01_0"
+   "Exalted Hero of Nurgle"                                     "dae_nur_exalted_hero_campaign_01_0"
+   "Exalted Hero of Slaanesh"                                   "dae_sla_exalted_hero_campaign_01_0"
+   "Exalted Hero of Tzeentch"                                   "dae_tze_exalted_hero_campaign_01_0"
+   ;; Variant / RoR engine keys that don't share a normalized stem
+   ;; with their card icon — pin explicitly so the icon resolver
+   ;; doesn't fall through to the wrong (or no) image.
+   ;; WoC's "Chaos Feral Manticore" engine key is `wh_dlc06_chs_feral_manticore`
+   ;; but no Chaos-faction card icon ships under that name.  The only
+   ;; `chs_*manticore*` asset is a head-close-up portrait
+   ;; (`portraits/units/no_culture/chs_feral_manticore_0.png`); pin to
+   ;; the Beastmen card art (same model, full-body) for a proper
+   ;; battle-card-style image instead.
+   "Chaos Feral Manticore"                                      "wh_dlc03_bst_feral_manticore"
+   "Chaos Warriors (Halberds)"                                  "wh_main_chs_warriors_halberd"
+   "Chosen (Great Weapons)"                                     "wh_main_chs_chosen_great_weapons"
+   "Knights of Immolation (Doom Knights of Tzeentch)"           "wh3_twa07_tze_cav_doom_knights_ror_0"
+   "Summoners of Rage (Dragon Ogres)"                           "wh_pro04_chs_ror_dragon_ogre"
    ;; Warriors of Chaos Regiments of Renown: source uses
    ;; `wh_pro04_chs_ror_<unit>` (no `_inf_chaos_…_ror_0` middle).
    "Mirror Guard (Chaos Warriors)"                              "wh_pro04_chs_ror_warriors"
    "Swords of Chaos (Chaos Knights)"                            "wh_pro04_chs_ror_knights"
+   "The Daemonspew (Forsaken)"                                  "wh_pro04_chs_ror_forsaken"
    "Wyrd Spawn (Chaos Spawn)"                                   "wh_pro04_chs_ror_spawn"
    "Minotaurs (Great Weapons)"                                  "wh_dlc03_bst_minotaurs_great_weapons"
    "Minotaurs (Shields)"                                        "wh_dlc03_bst_minotaurs_shield"
@@ -172,7 +211,6 @@
    "Steam Tank (Volley Gun)"                                    "wh3_dlc25_emp_veh_steam_tank_helblaster"
    "Teeth-Breakers (Ratling Guns)"                              "wh2_dlc12_skv_ratling_gun_team_ror"
    "The Companions of Quenelles (Questing Knights)"             "wh_pro04_brt_ror_questing_knights"
-   "The Daemonspew (Forsaken)"                                  "wh_dlc01_chs_forsaken"
    "The Eye of Morrslieb (Cygor)"                               "wh_pro04_bst_ror_cygor"
    "The Feasters in the Dusk (Crypt Ghouls)"                    "wh_dlc04_vmp_feasters"
    "The Holy Wardens of La Maisontaal (Battle Pilgrims)"        "wh_pro04_brt_ror_battle_pilgrims"
@@ -289,7 +327,7 @@
    "Festus the Leechlord"                                       "dae_festus_0"
    "Gotrek"                                                     "neu_gotrek_0"
    "Grimgor Ironhide"                                           "grn_ch_grimgor_0"
-   "Harald Hammerstorm"                                         "chs_ch_aekold_0"
+   "Harald Hammerstorm"                                         "dae_chs_harald_hammerstorm_0"
    "Helman Ghorst"                                              "vmp_ch_master_necromancer_helman_0"
    "High Beastmaster"                                           "def_cha_lokhir_0"
    "Kairos Fateweaver"                                          "dae_kairos_0"

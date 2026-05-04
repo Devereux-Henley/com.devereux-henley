@@ -105,6 +105,30 @@
       (is (= ["wh3_dlc20_chs_cha_daemon_prince" "wh3_dlc20_chs_cha_daemon_prince"]
              (nm/find-unit-key "Daemon Prince" ["chs"] name-index))))))
 
+(deftest find-unit-key-prefers-recruitable-over-summoned-variant
+  (testing "Drops `_summoned` engine keys when a recruitable row exists"
+    ;; "Feral Manticore" had two Beastmen rows in `main_units_tables`:
+    ;; the recruitable `wh_dlc03_bst_feral_manticore` (mp_cost 800) and
+    ;; the campaign-only `wh_main_bst_feral_manticore_summoned`
+    ;; (mp_cost 0).  Without the summoned filter the canonical-prefix
+    ;; tiebreaker picks `wh_main_*_summoned` because `wh_main_` outranks
+    ;; `wh_`; with the filter the resolver returns the recruitable.
+    (let [name-index {"Feral Manticore"
+                      [["wh_dlc03_bst_feral_manticore"          "lu_dlc03"]
+                       ["wh_main_bst_feral_manticore_summoned"  "lu_main_summoned"]]}]
+      (is (= ["wh_dlc03_bst_feral_manticore" "lu_dlc03"]
+             (nm/find-unit-key "Feral Manticore" ["bst"] name-index)))))
+  (testing "MP-fielded summon falls through when it's the only candidate"
+    ;; "Ceithin-har" is the named Forest Dragon associated with the
+    ;; Sisters of Twilight; in main_units_tables its only row is the
+    ;; `_summoned` entry and that row carries a non-zero mp_cost.
+    ;; The filter must be conditional or this kind of unit collapses
+    ;; to nil.
+    (let [name-index {"Ceithin-har"
+                      [["wh2_dlc16_wef_mon_ceithin_har_summoned" "lu_summoned"]]}]
+      (is (= ["wh2_dlc16_wef_mon_ceithin_har_summoned" "lu_summoned"]
+             (nm/find-unit-key "Ceithin-har" ["wef"] name-index))))))
+
 (deftest find-unit-key-resolves-non-mark-spellcasters
   (testing "Per-name lore preference resolves Mage/Archmage/Sorceress/etc."
     (let [;; Mage has 28 lore variants in the loc; the per-name dict
