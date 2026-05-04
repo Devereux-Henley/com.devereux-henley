@@ -1479,5 +1479,11 @@ SET key = CASE eid
   WHEN '00180045-0000-4000-8000-000000000000' THEN 'wh_dlc05_wef_mon_treeman_0'
   WHEN '00180046-0000-4000-8000-000000000000' THEN 'wh2_dlc16_wef_cav_great_stag_knights_0'
   WHEN '00180047-0000-4000-8000-000000000000' THEN 'wh2_dlc16_wef_cav_great_stag_knights_ror_0'
+  WHEN '001700d9-0000-4000-8000-000000000000' THEN 'wh3_dlc25_chs_cha_chaos_sorcerer_death_mnur'
+  WHEN '001700da-0000-4000-8000-000000000000' THEN 'wh3_dlc20_chs_cha_chaos_sorcerer_shadows_msla'
+  WHEN '001700db-0000-4000-8000-000000000000' THEN 'wh3_dlc20_chs_cha_chaos_sorcerer_metal_mtze'
+  WHEN '001700dc-0000-4000-8000-000000000000' THEN 'wh3_dlc20_chs_cha_chaos_sorcerer_lord_death_mnur'
+  WHEN '001700dd-0000-4000-8000-000000000000' THEN 'wh3_dlc27_chs_cha_sorcerer_lord_shadows_msla'
+  WHEN '001700de-0000-4000-8000-000000000000' THEN 'wh3_dlc20_chs_cha_chaos_sorcerer_lord_metal_mtze'
   ELSE key
 END;
