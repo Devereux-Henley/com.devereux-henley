@@ -116,24 +116,12 @@
    "Chaos Lord of Nurgle"                                       "dae_nur_chaos_lord_campaign_01_0"
    "Chaos Lord of Slaanesh"                                     "dae_sla_chaos_lord_campaign_01_0"
    "Chaos Lord of Tzeentch"                                     "dae_tze_chaos_lord_campaign_01_0"
-   ;; Marked Chaos Sorcerer / Sorcerer Lord — each mark has TWO
-   ;; lores in vanilla MP (Slann Mage-Priest pattern).  Canonical
-   ;; lore takes the `_campaign_01_0` portrait, secondary lore the
-   ;; `_campaign_02_0`.  Without the per-(mark, lore) split, a single
-   ;; row covered both lores and the same portrait was rendered for
-   ;; both.
-   "Chaos Sorcerer of Nurgle (Nurgle)"                          "dae_nur_chaos_sorcerer_campaign_01_0"
-   "Chaos Sorcerer of Nurgle (Death)"                           "dae_nur_chaos_sorcerer_campaign_02_0"
-   "Chaos Sorcerer of Slaanesh (Slaanesh)"                      "dae_sla_chaos_sorcerer_campaign_01_0"
-   "Chaos Sorcerer of Slaanesh (Shadows)"                       "dae_sla_chaos_sorcerer_campaign_02_0"
-   "Chaos Sorcerer of Tzeentch (Tzeentch)"                      "dae_tze_chaos_sorcerer_campaign_01_0"
-   "Chaos Sorcerer of Tzeentch (Metal)"                         "dae_tze_chaos_sorcerer_campaign_02_0"
-   "Chaos Sorcerer Lord of Nurgle (Nurgle)"                     "dae_nur_chaos_sorcerer_lord_campaign_01_0"
-   "Chaos Sorcerer Lord of Nurgle (Death)"                      "dae_nur_chaos_sorcerer_lord_campaign_02_0"
-   "Chaos Sorcerer Lord of Slaanesh (Slaanesh)"                 "dae_sla_chaos_sorcerer_lord_campaign_01_0"
-   "Chaos Sorcerer Lord of Slaanesh (Shadows)"                  "dae_sla_chaos_sorcerer_lord_campaign_02_0"
-   "Chaos Sorcerer Lord of Tzeentch (Tzeentch)"                 "dae_tze_chaos_sorcerer_lord_campaign_01_0"
-   "Chaos Sorcerer Lord of Tzeentch (Metal)"                    "dae_tze_chaos_sorcerer_lord_campaign_02_0"
+   "Chaos Sorcerer of Nurgle"                                   "dae_nur_chaos_sorcerer_campaign_01_0"
+   "Chaos Sorcerer of Slaanesh"                                 "dae_sla_chaos_sorcerer_campaign_01_0"
+   "Chaos Sorcerer of Tzeentch"                                 "dae_tze_chaos_sorcerer_campaign_01_0"
+   "Chaos Sorcerer Lord of Nurgle"                              "dae_nur_chaos_sorcerer_lord_campaign_01_0"
+   "Chaos Sorcerer Lord of Slaanesh"                            "dae_sla_chaos_sorcerer_lord_campaign_01_0"
+   "Chaos Sorcerer Lord of Tzeentch"                            "dae_tze_chaos_sorcerer_lord_campaign_01_0"
    "Exalted Hero of Khorne"                                     "dae_kho_exalted_hero_campaign_01_0"
    "Exalted Hero of Nurgle"                                     "dae_nur_exalted_hero_campaign_01_0"
    "Exalted Hero of Slaanesh"                                   "dae_sla_exalted_hero_campaign_01_0"
