@@ -55,3 +55,9 @@ bases/rpfm-scraper/assets/
 # Deploy secrets + local smoke-test data
 deploy/.env
 deploy/data/
+
+# Replayss for driving the replay flow in rts-api.
+dev-env/replays/
+
+# Claude stuff
+.claude/scheduled_tasks.lock
