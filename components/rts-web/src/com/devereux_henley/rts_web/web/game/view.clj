@@ -1,7 +1,6 @@
 (ns com.devereux-henley.rts-web.web.game.view
   (:require
    [clojure.java.io :as io]
-   [com.devereux-henley.rts-data-access.contract :as data-access.contract]
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.render :as render]
    [com.devereux-henley.rts-web.web.game.api :as web.game.api]
@@ -69,25 +68,13 @@
                                                                     abilities)
                    mounts                                     (domain/get-mounts-for-unit dependencies (:eid data))
                    items                                      (domain/get-items-for-unit dependencies (:eid data))
-                   portrait-stem                              (:eid data)
-                   ;; Family-variant cascading selectors — same shape as
-                   ;; the draft panel's, just navigating to a different
-                   ;; unit page rather than swapping the panel.
-                   family-variants                            (vec (data-access.contract/get-family-variants-by-eid
-                                                                    (:connection dependencies) (:eid data)))
-                   family-marks                               (domain/family-marks family-variants
-                                                                                   (:eid data)
-                                                                                   (:mark data)
-                                                                                   (:lore data))
-                   family-lores                               (domain/family-lores family-variants (:mark data))]
+                   portrait-stem                              (:eid data)]
                {:unit-statistics  stats
                 :abilities        (not-empty resolved-abilities)
                 :draftable-spells (not-empty resolved-spells)
                 :mounts           (not-empty mounts)
                 :items            (not-empty items)
                 :lore             lore-key
-                :family-marks     family-marks
-                :family-lores     family-lores
                 :unit-card        (when (io/resource
                                          (str "rts-web/asset/card/unit/" portrait-stem ".png"))
                                     (str "/card/unit/" portrait-stem ".png"))}))))
