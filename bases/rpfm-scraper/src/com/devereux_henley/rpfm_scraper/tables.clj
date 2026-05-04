@@ -54,6 +54,23 @@
      {}
      (re-seq tuple-re seed-lores-sql))))
 
+(defn build-lore-name->key-map
+  "Parse seed-lores.sql (or a string) and return {suffix → lore-key}
+  keyed by canonicalised display names.  When multiple rows share a
+  suffix the lowest id wins (matches build-lore-name->id-map's
+  precedence)."
+  [seed-lores-sql]
+  (let [tuple-re #"(?ms)^\s+\((\d+),\s*'[0-9a-f\-]+',\s*'([^']+)',\s*'([^']+)',"]
+    (->> (re-seq tuple-re seed-lores-sql)
+         (sort-by (fn [[_ id-str]] (Long/parseLong id-str)))
+         (reduce
+          (fn [m [_ _id-str lore-key display-name]]
+            (let [k (canonical-lore-suffix display-name)]
+              (if (or (clojure.string/blank? k) (contains? m k))
+                m
+                (assoc m k lore-key))))
+          {}))))
+
 (defn build-land-unit-ability-map
   "land_unit key → #{ability keys}, from
   land_units_to_unit_abilites_junctions_tables (note the CA typo in the

@@ -139,6 +139,7 @@
     [:cost [:maybe :int]]
     [:unit-statistics :string]
     [:mark [:maybe mark-enum]]
+    [:lore {:optional true} [:maybe :string]]
     [:family-variant-count {:optional true} :int]
     [:is-unique :int]
     [:version :int]

@@ -12,6 +12,7 @@ SELECT
   json_extract(u.unit_statistics, '$.cost') as cost,
   u.unit_statistics,
   u.mark,
+  u.lore,
   (SELECT COUNT(*) FROM unit fv
     WHERE fv.family_name = u.family_name
       AND fv.faction_id = u.faction_id

@@ -21,10 +21,9 @@
   the caller provided none of the selection keys. When at least one is
   present the result is a complete snapshot — missing keys default to nil
   or empty so the render reflects exactly what the URL specifies."
-  [{:keys [mount lore level items spells abilities] :as query}]
-  (when (some #(contains? query %) [:mount :lore :level :items :spells :abilities])
+  [{:keys [mount level items spells abilities] :as query}]
+  (when (some #(contains? query %) [:mount :level :items :spells :abilities])
     {:mount     (not-empty mount)
-     :lore      (not-empty lore)
      :level     (or level 0)
      :items     (or (web.core/query-param->vec items) [])
      :spells    (or (web.core/query-param->vec spells) [])
@@ -97,7 +96,7 @@
     (let [{{{:keys [draft-eid eid]} :path
             {:keys [section]}       :query
             body                    :body} :parameters} request
-          selections                                    (select-keys (or body {}) [:mount :lore :level :abilities :spells :items])
+          selections                                    (select-keys (or body {}) [:mount :level :abilities :spells :items])
           result                                        (domain/add-unit-to-draft dependencies draft-eid eid section selections)]
       {:status (if (= :draft/add-success (:type result)) 200 422)
        :body   result})))
@@ -109,7 +108,7 @@
          body                    :body} :parameters
         router                          :reitit.core/router
         :as                             _request}]
-    (let [selections (select-keys (or body {}) [:unit-eid :mount :lore :level :abilities :spells :items])
+    (let [selections (select-keys (or body {}) [:unit-eid :mount :level :abilities :spells :items])
           result     (domain/update-unit-in-draft dependencies draft-eid eid section selections)]
       (if (= :draft/update-success (:type result))
         ;; Enrich the response with the freshly-persisted entry (+ embedded

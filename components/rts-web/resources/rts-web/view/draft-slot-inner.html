@@ -13,7 +13,7 @@
     <span class="sr-only" id="draft-slot-edit-label-{{unit.entry-eid}}">Edit {{unit.name}}{% if unit.mark %}{% if unit.family-variant-count > 1 %} (Mark of {{unit.mark|capitalize}}){% endif %}{% endif %} in {{section.section-label}}</span>
     <img class="draft-slot-card"
          id="draft-slot-card-img-{{unit.entry-eid}}"
-         src="/card/unit/{% if unit.lore-portrait-key %}{{unit.lore-portrait-key}}{% else %}{{unit.eid}}{% endif %}.png"
+         src="/card/unit/{{unit.eid}}.png"
          alt="{{unit.name}}"
          onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;">
     {# Mark dot lives inside an addressable anchor so the

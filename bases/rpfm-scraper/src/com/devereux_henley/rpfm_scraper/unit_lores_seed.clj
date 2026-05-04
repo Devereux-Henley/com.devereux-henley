@@ -1,57 +1,44 @@
 (ns com.devereux-henley.rpfm-scraper.unit-lores-seed
-  "Consolidation of lore-dispatch unit variants.
+  "Pins `unit.lore` and refines `unit.family_name` for every variant
+  unit row whose engine name carries a trailing `(<Suffix>)` resolving
+  to a lore in the catalogue.  The emitted `seed-unit-lores.sql` is a
+  single UPDATE that sets both columns via CASE eid expressions (same
+  shape as `seed-unit-marks.sql`), so non-spellcaster rows pass
+  through untouched.
 
-  Many generic lords/heroes (High Elves Archmage, Dark Elves Sorceress,
-  Tomb Kings Liche Priest, etc.) ship as one row per lore of magic — same
-  combat stats, different `draftable-spells`, different portrait. This
-  namespace:
+  Why family_name lives partly here: `seed-unit-marks.sql` already
+  strips mark suffixes from name into family_name; lore-suffixed
+  variants need an additional strip.  Folding both strips into the
+  marks seed via chained REPLACE blows SQLite's parser depth limit
+  (the catalogue has ~80 lore suffixes), so we precompute the final
+  family_name in Clojure here and emit per-eid overrides.
 
-  1. Walks every seed-<faction>-units.sql looking for `Name (<suffix>)`
-     groups that qualify as lore-dispatch (size ≥ 2; each variant has a
-     non-empty, distinct `draftable-spells`; every suffix resolves to a
-     row in the `lore` table).
-  2. Rewrites the file in-place, keeping the first variant as the
-     survivor (stripping the suffix from its name, clearing its stored
-     `draftable-spells`) and deleting the sibling tuples.
-  3. Emits seed-unit-lores.sql with one row per original variant so the
-     per-(unit, lore) spell pool + portrait alias lives on the new
-     unit_lore table."
+  No consolidation: each (mark, lore) pair lives as its own unit row
+  sharing `family_name` with its siblings, exactly the way marks
+  already do.  The draft panel's family selector toggles between
+  variants by swapping `unit-eid`."
   (:require
-   [clojure.data.json :as json]
    [clojure.java.io :as io]
    [clojure.string :as str]))
 
-(def ^:private seed-author "f0ce7395-a57f-41e9-ade0-fd13bafc058f")
+(def ^:private suffix-re #"^(.+?) \(([A-Za-z ]+)\)$")
 
-(defn- log [& args]
-  (binding [*out* *err*] (apply println args)))
+(defn- name+suffix
+  "Splits 'Archmage (High)' → ['Archmage' 'High'].  Returns nil when
+  the trailing token isn't a `(<Word>)` suffix."
+  [name]
+  (when-let [[_ base suffix] (re-matches suffix-re name)]
+    [base suffix]))
 
-(defn- sql-escape [s]
-  (str/replace (or s "") "'" "''"))
+(def ^:private tuple-start-re #"(?m)^  \((\d+),")
 
-;; ─── Tuple parsing ────────────────────────────────────────────────────────────
-
-(def ^:private tuple-start-re
-  "Matches the very start of each unit INSERT tuple — `  (<id>,` at a line
-  start. Used only to locate tuple boundaries; the per-tuple fields are
-  extracted with a simpler regex on the resulting substring."
-  #"(?m)^  \((\d+),")
-
-(def ^:private tuple-field-re
-  "Extracts just the fields we care about from a single tuple substring.
-  1=eid-stem, 2=eid-tail, 3=name (SQL-escaped, may include `''`),
-  4=stats-json (SQL-escaped).
-
-  The `[^']*(?:''[^']*)*` unrolled-loop form avoids catastrophic
-  backtracking that trips the simpler `(?:[^']|'')*` pattern on blobs
-  with many doubled-quotes (e.g. the elaborate ability names in the
-  High Elves seed)."
-  #"(?s)'([0-9a-f]+)(-[0-9a-f\-]+)',\s*'([^']*(?:''[^']*)*)',\s*'[^']*(?:''[^']*)*',\s*\d+,\s*\d+,\s*\d+,\s*\d+,\s*'(\{[^']*(?:''[^']*)*\})'")
+(def ^:private tuple-eid-name-re
+  "Captures eid + raw-name from a single tuple slice.  The unrolled-loop
+  form on `name` avoids catastrophic backtracking on stat blobs that
+  contain many doubled-quotes."
+  #"(?s)\(\s*\d+\s*,\s*'([0-9a-f\-]+)',\s*'([^']*(?:''[^']*)*)'")
 
 (defn- tuple-spans
-  "Returns a vector of [start end) pairs — one per tuple boundary in
-  `content`. `end` is the start of the next tuple (or file length for the
-  last tuple)."
   [content]
   (let [matcher (re-matcher tuple-start-re content)
         starts  (loop [acc []]
@@ -62,211 +49,145 @@
     (mapv vector starts ends)))
 
 (defn- parse-tuples
-  "Returns a vector of maps, one per unit tuple in `content`:
-    {:start :end :id :eid :name :raw-name :stats :raw-json}
-  `:eid` is the full UUID (matching the PNG filename). `:end` is the
-  offset just after this tuple (start of the next, or EOF). `:raw-name`
-  and `:raw-json` preserve the SQL-escaped strings exactly as they appear
-  on disk so in-place replacement is byte-exact."
+  "Returns a vector of {:eid :name} for every unit tuple in `content`.
+  Names are unescaped (`''` → `'`)."
   [content]
   (into []
         (keep
          (fn [[start end]]
-           (let [slice (subs content start end)
-                 id-m  (re-find tuple-start-re slice)]
-             (when-let [field-m (re-find tuple-field-re slice)]
-               (let [[_ stem tail raw-name raw-json] field-m
-                     id                              (Long/parseLong (nth id-m 1))
-                     name                            (str/replace raw-name "''" "'")
-                     json                            (str/replace raw-json "''" "'")
-                     stats                           (try (json/read-str json) (catch Exception _ nil))]
-                 {:start    start
-                  :end      end
-                  :id       id
-                  :eid      (str stem tail)
-                  :name     name
-                  :raw-name raw-name
-                  :stats    stats
-                  :raw-json raw-json})))))
+           (let [slice (subs content start end)]
+             (when-let [m (re-find tuple-eid-name-re slice)]
+               {:eid  (nth m 1)
+                :name (str/replace (nth m 2) "''" "'")}))))
         (tuple-spans content)))
 
-;; ─── Classification ───────────────────────────────────────────────────────────
+(def ^:private mark-name-patterns
+  "Substrings whose presence in a unit's engine name implies a mark
+  assignment.  Mirrors `marks-seed/mark-strips`'s shape but maps each
+  pattern to its mark so the lore step can also infer mark for
+  newly-cloned variants whose engine `key` isn't in seed-unit-keys.sql
+  yet (e.g. lore-paren clones produced by the one-shot
+  un-consolidation).  Order matters only insofar as we strip them all
+  unconditionally — detection just checks containment."
+  {" of Khorne"   "khorne"
+   " of Nurgle"   "nurgle"
+   " of Slaanesh" "slaanesh"
+   " of Tzeentch" "tzeentch"
+   " (Khorne)"    "khorne"
+   " (Nurgle)"    "nurgle"
+   " (Slaanesh)"  "slaanesh"
+   " (Tzeentch)"  "tzeentch"})
 
-(def ^:private suffix-re #"^(.+?) \(([A-Za-z ]+)\)$")
-
-(defn- base+suffix
-  "Splits 'Archmage (High)' → ['Archmage' 'High']. Returns nil for names
-  without a trailing ` (<Token>)` suffix."
+(defn- strip-mark-suffix
   [name]
-  (when-let [[_ base suffix] (re-matches suffix-re name)]
-    [base suffix]))
+  (reduce (fn [n s] (str/replace n s "")) name (keys mark-name-patterns)))
 
-(defn- spell-keys
-  [stats]
-  (mapv #(get % "key") (get stats "draftable-spells" [])))
+(defn- infer-mark
+  "Returns the first mark whose suffix appears in `name`, or nil when
+  the name carries no mark token.  Used as a fallback for variant rows
+  that haven't been linked to an engine `key` yet."
+  [name]
+  (some (fn [[s m]] (when (str/includes? name s) m)) mark-name-patterns))
 
-(defn- dispatch-group?
-  "A group of tuples sharing a base name qualifies as lore-dispatch when:
-    - size ≥ 2
-    - every variant has a non-empty draftable-spells list
-    - the spell lists differ between variants
-    - every suffix resolves to an id in lore-suffix->id"
-  [variants lore-suffix->id]
-  (and (>= (count variants) 2)
-       (every? (fn [v] (seq (:spell-keys v))) variants)
-       (> (count (set (map :spell-keys variants))) 1)
-       (every? (fn [v] (contains? lore-suffix->id (:suffix v))) variants)))
+(def ^:private extra-lore-pins
+  "Hand-curated lore assignments for unit rows whose engine name
+  doesn't carry a `(<Suffix>)` token — currently the unmarked Daemon
+  Prince variants in Daemons of Chaos and Warriors of Chaos, both
+  pinned to the Lore of Fire pool.  Modeled as overrides because
+  their family identity ('Daemon Prince' shared with the four marked
+  variants) precludes a renaming-style fix."
+  [{:eid         "00050004-0000-4000-8000-000000000000"
+    :lore-key    "wh_main_lore_fire"
+    :family-name "Daemon Prince"}
+   {:eid         "00170013-0000-4000-8000-000000000000"
+    :lore-key    "wh_main_lore_fire"
+    :family-name "Daemon Prince"}])
 
-(defn- group-tuples
-  "Returns [dispatch-groups non-dispatch-tuples] where dispatch-groups is
-  a seq of {:base :variants [...]} for groups that qualify, and
-  non-dispatch-tuples contains every tuple not belonging to such a group
-  (singletons, non-lore suffixed, and mixed groups)."
-  [tuples lore-suffix->id]
-  (let [decorated          (keep (fn [t]
-                                   (when-let [[base suffix] (base+suffix (:name t))]
-                                     (assoc t :base base :suffix suffix :spell-keys (spell-keys (:stats t)))))
-                                 tuples)
-        by-base            (group-by :base decorated)
-        dispatch           (keep (fn [[base variants]]
-                                   (when (dispatch-group? variants lore-suffix->id)
-                                     {:base base :variants (vec variants)}))
-                                 by-base)
-        dispatch-tuple-ids (into #{} (mapcat (fn [g] (map :id (:variants g)))) dispatch)
-        non-dispatch       (remove (fn [t] (contains? dispatch-tuple-ids (:id t))) tuples)]
-    [dispatch non-dispatch]))
+(defn collect-lore-variants
+  "Walks every seed-<faction>-units.sql under `seed-dir` and returns
+  `[{:eid :lore-key :family-name} …]` for each tuple whose name suffix
+  resolves to a lore, plus a small set of hand-curated extras for
+  unmarked-but-lored rows that don't follow the suffix pattern (see
+  `extra-lore-pins`).  `:family-name` is the unit's name with both
+  mark and lore suffixes stripped (e.g.
+  'Chaos Sorcerer Lord of Nurgle (Death)' → 'Chaos Sorcerer Lord').
+  Tuples whose suffix isn't a known lore (e.g. mark suffixes like
+  ` (Khorne)`) are silently skipped — the marks seed handles them."
+  [seed-dir lore-suffix->key]
+  (let [files         (->> (.list (io/file seed-dir))
+                           (filter #(and (str/starts-with? % "seed-")
+                                         (str/ends-with? % "-units.sql")))
+                           sort)
+        suffixed      (into []
+                            (mapcat
+                             (fn [filename]
+                               (let [content (slurp (str (io/file seed-dir filename)))]
+                                 (keep
+                                  (fn [{:keys [eid name]}]
+                                    (when-let [[base suffix] (name+suffix name)]
+                                      (when-let [lore-key (get lore-suffix->key suffix)]
+                                        {:eid         eid
+                                         :lore-key    lore-key
+                                         :mark        (infer-mark base)
+                                         :family-name (strip-mark-suffix base)})))
+                                  (parse-tuples content)))))
+                            files)
+        suffixed-eids (into #{} (map :eid) suffixed)
+        extras        (remove #(contains? suffixed-eids (:eid %)) extra-lore-pins)]
+    (into suffixed extras)))
 
-;; ─── Rewrite helpers ──────────────────────────────────────────────────────────
+(def ^:private no-rows-sentinel
+  "-- no lore assignments in this scrape (preserved on subsequent empty runs)\n")
 
-(defn- rewrite-survivor-tuple
-  "Returns the original tuple text with the unit name replaced and the
-  draftable-spells array in the stats JSON emptied. Uses the tuple's
-  captured raw strings for byte-exact anchors."
-  [orig-tuple {:keys [raw-name raw-json stats]} new-name]
-  (let [stage-1     (str/replace-first orig-tuple
-                                       (str "'" raw-name "'")
-                                       (str "'" (sql-escape new-name) "'"))
-        cleared     (assoc (or stats {}) "draftable-spells" [])
-        cleared-raw (-> (json/write-str cleared
-                                        :escape-slash false
-                                        :escape-js-separators false)
-                        (str/replace "'" "''"))]
-    (str/replace-first stage-1 (str "'" raw-json "'") (str "'" cleared-raw "'"))))
-
-(defn- splice-file
-  "Produces the rewritten file content: survivor tuples are renamed +
-  stats-cleared in place; sibling tuples are dropped wholesale."
-  [content dispatch-groups]
-  (let [survivor-info (into {} (map (fn [g]
-                                      [(:id (first (:variants g)))
-                                       {:new-name (:base g)
-                                        :tuple    (first (:variants g))}]))
-                            dispatch-groups)
-        drop-ids      (into #{} (mapcat (fn [g] (map :id (rest (:variants g)))))
-                            dispatch-groups)
-        ;; Apply edits in reverse offset order so earlier offsets stay valid.
-        content'      (reduce
-                       (fn [acc t]
-                         (cond
-                           (contains? drop-ids (:id t))
-                           (str (subs acc 0 (:start t)) (subs acc (:end t)))
-
-                           (contains? survivor-info (:id t))
-                           (let [{:keys [new-name tuple]} (get survivor-info (:id t))
-                                 orig-tuple               (subs acc (:start t) (:end t))
-                                 new-tuple                (rewrite-survivor-tuple orig-tuple tuple new-name)]
-                             (str (subs acc 0 (:start t)) new-tuple (subs acc (:end t))))
-
-                           :else acc))
-                       content
-                       (sort-by :start > (parse-tuples content)))]
-    content'))
-
-;; ─── Public API ───────────────────────────────────────────────────────────────
-
-(defn consolidate-file
-  "Reads one seed-<faction>-units.sql at `path`, consolidates lore-dispatch
-  groups, and returns a map:
-    {:content  rewritten-content
-     :groups   [{:base str
-                 :survivor-id int
-                 :variants [{:id :eid-stem :suffix :spell-keys}]}]}
-  The caller is responsible for writing :content back and aggregating
-  :groups across files for seed-unit-lores.sql emission."
-  [path lore-suffix->id]
-  (let [content      (slurp path)
-        tuples       (parse-tuples content)
-        [dispatch _] (group-tuples tuples lore-suffix->id)
-        rewritten    (splice-file content dispatch)
-        records      (mapv (fn [g]
-                             {:base        (:base g)
-                              :survivor-id (:id (first (:variants g)))
-                              :variants    (mapv (fn [v]
-                                                   {:id         (:id v)
-                                                    :eid        (:eid v)
-                                                    :suffix     (:suffix v)
-                                                    :spell-keys (:spell-keys v)})
-                                                 (:variants g))})
-                           dispatch)]
-    {:content rewritten :groups records}))
-
-(defn consolidate-lore-variants!
-  "Walks every seed-<faction>-units.sql under `seed-dir`, rewrites it in
-  place with lore dispatch groups collapsed, and returns the aggregated
-  records for emission into seed-unit-lores.sql. When `dry-run?` is true
-  the file system is not touched but the records are still returned."
-  [seed-dir lore-suffix->id dry-run?]
-  (let [files        (->> (.list (io/file seed-dir))
-                          (filter #(and (str/starts-with? % "seed-")
-                                        (str/ends-with? % "-units.sql")))
-                          sort)
-        total-groups (atom 0)
-        total-rows   (atom 0)
-        records
-        (reduce
-         (fn [acc filename]
-           (let [path                     (str (io/file seed-dir filename))
-                 {:keys [content groups]} (consolidate-file path lore-suffix->id)]
-             (when (seq groups)
-               (swap! total-groups + (count groups))
-               (swap! total-rows + (reduce + (map #(count (:variants %)) groups)))
-               (when-not dry-run?
-                 (spit path content)))
-             (into acc (map #(assoc % :faction-file filename) groups))))
-         []
-         files)]
-    (log (format "  [unit-lores] consolidated %d dispatch groups (%d variants) across %d faction files"
-                 @total-groups @total-rows (count files)))
-    records))
+(defn- format-seed
+  [variants]
+  (if (empty? variants)
+    no-rows-sentinel
+    (let [sorted (->> variants
+                      (filter :lore-key)
+                      (sort-by :eid))]
+      (str
+       "-- Generated by rpfm-scraper.  Do not hand-edit — re-run the\n"
+       "-- scraper.  Pins `unit.lore` and overrides `unit.family_name`\n"
+       "-- for every variant unit row whose engine name carries a\n"
+       "-- trailing `(<Suffix>)` resolving to a lore in the catalogue.\n"
+       "-- The mark suffix has already been stripped from family_name\n"
+       "-- by seed-unit-marks.sql; this step strips the lore paren on\n"
+       "-- top so all (mark, lore) variants of a wizard collapse to a\n"
+       "-- shared family identifier.  Single combined UPDATE because\n"
+       "-- next.jdbc.execute! only consumes the first statement of a\n"
+       "-- multi-statement string.  Runs after the per-faction unit\n"
+       "-- seeds + seed-unit-marks.sql populate the rows.\n"
+       "UPDATE unit\n"
+       "SET lore = CASE eid\n"
+       (apply str
+              (for [{:keys [eid lore-key]} sorted]
+                (format "  WHEN '%s' THEN '%s'\n"
+                        eid
+                        (str/replace lore-key "'" "''"))))
+       "  ELSE lore\n"
+       "END,\n"
+       "mark = CASE eid\n"
+       (apply str
+              (for [{:keys [eid mark]} sorted
+                    :when              mark]
+                (format "  WHEN '%s' THEN '%s'\n" eid mark)))
+       "  ELSE mark\n"
+       "END,\n"
+       "family_name = CASE eid\n"
+       (apply str
+              (for [{:keys [eid family-name]} sorted]
+                (format "  WHEN '%s' THEN '%s'\n"
+                        eid
+                        (str/replace family-name "'" "''"))))
+       "  ELSE family_name\n"
+       "END;\n"))))
 
 (defn generate-unit-lore-seed
-  "Builds seed-unit-lores.sql content from the aggregated consolidation
-  records + lore-suffix→lore-id map. Each group contributes one row per
-  (unit, lore-variant) pair — carrying the variant's eid-stem as
-  portrait_key. The spell list for a lore is invariant across units and
-  lives on the spell_lore junction; we don't duplicate it here."
-  [records lore-suffix->id]
-  (let [rows   (for [r     records
-                     v     (:variants r)
-                     :let  [lore-id (get lore-suffix->id (:suffix v))]
-                     :when lore-id]
-                 {:unit-id      (:survivor-id r)
-                  :lore-id      lore-id
-                  :portrait-key (:eid v)})
-        sorted (sort-by (juxt :unit-id :lore-id) rows)
-        n      (count sorted)]
-    (if (zero? n)
-      "-- no unit_lore rows\n"
-      (let [header  ["INSERT OR IGNORE INTO unit_lore(id, unit_id, lore_id, cost, portrait_key, version, created_by_sub, created_at, updated_at, deleted_at)"
-                     "VALUES"]
-            indexed (map-indexed (fn [i r] [(inc i) r]) sorted)
-            row-sql (fn [[idx {:keys [unit-id lore-id portrait-key]}]]
-                      (let [comma    (if (< idx n) "," ";")
-                            portrait (if portrait-key
-                                       (format "'%s'" (sql-escape portrait-key))
-                                       "null")]
-                        (format "  (%d, %d, %d, 0, %s, 1, '%s', STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), STRFTIME('%%Y-%%m-%%dT%%H:%%M:%%fZ','now'), null)%s"
-                                idx unit-id lore-id portrait seed-author comma)))
-            body    (map row-sql indexed)]
-        (log (format "  [unit-lores] emitted %d unit_lore rows" n))
-        (str (str/join "\n" (concat header body)) "\n")))))
+  "Returns `{:content :rows :empty?}` for `seed-unit-lores.sql` so the
+  standard write helper can persist it."
+  [variants]
+  (let [content (format-seed variants)]
+    {:content content
+     :rows    variants
+     :empty?  (empty? variants)}))

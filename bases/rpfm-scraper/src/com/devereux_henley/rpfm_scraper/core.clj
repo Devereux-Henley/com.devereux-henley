@@ -412,36 +412,32 @@
       (spit (io/file seed-dir "seed-mounts.sql") content))
     stem->id))
 
-(defn- load-lore-suffix->id []
+(defn- load-lore-suffix->key []
   (let [path (io/file seed-dir "seed-lores.sql")]
-    (tables/build-lore-name->id-map (slurp path))))
+    (tables/build-lore-name->key-map (slurp path))))
 
-(defn- consolidate-lores! [dry-run?]
-  (log "Consolidating lore-dispatch unit variants...")
-  (let [lore-suffix->id (load-lore-suffix->id)
-        _               (logf "  lore suffix->id map: %d entries" (count lore-suffix->id))
-        records         (unit-lores-seed/consolidate-lore-variants! seed-dir lore-suffix->id dry-run?)]
-    {:records         records
-     :lore-suffix->id lore-suffix->id}))
-
-(defn- generate-unit-lore-seed! [{:keys [records lore-suffix->id]} dry-run?]
+(defn- generate-unit-lore-seed!
+  "Walks every per-faction unit seed and emits `seed-unit-lores.sql` —
+  a CASE UPDATE that pins `unit.lore` for every variant unit row whose
+  trailing `(<Suffix>)` resolves to a lore in the catalogue."
+  [lore-suffix->key dry-run?]
   (log "Generating unit-lore seed...")
-  (let [path     (io/file seed-dir "seed-unit-lores.sql")
-        content  (unit-lores-seed/generate-unit-lore-seed records lore-suffix->id)
-        empty?   (str/starts-with? content "-- no unit_lore rows")
-        existing (when (.exists path) (slurp path))]
+  (let [path                     (io/file seed-dir "seed-unit-lores.sql")
+        variants                 (unit-lores-seed/collect-lore-variants seed-dir lore-suffix->key)
+        {:keys [content empty?]} (unit-lores-seed/generate-unit-lore-seed variants)
+        existing                 (when (.exists path) (slurp path))]
     (cond
       dry-run?
-      :ok
+      (logf "  [unit-lores] DRY: would write %d lore assignments" (count variants))
 
       ;; Preserve an existing, populated seed when the current run found
-      ;; no groups (re-runs of the scraper are idempotent — suffixed unit
-      ;; rows were already collapsed on a prior run).
-      (and empty? (seq existing) (not (str/starts-with? existing "-- no unit_lore rows")))
-      (log "  [unit-lores] preserving existing seed-unit-lores.sql (no new groups this run)")
+      ;; no variants (e.g. seed files temporarily missing).
+      (and empty? (seq existing) (not (str/starts-with? existing "-- no lore assignments")))
+      (log "  [unit-lores] preserving existing seed-unit-lores.sql (no variants this run)")
 
       :else
-      (spit path content))))
+      (do (spit path content)
+          (logf "  [unit-lores] wrote %d lore assignments" (count variants))))))
 
 (defn- generate-unit-mount-seed! [data stem->mount-id unit-id-map dry-run?]
   (log "Generating unit-mount seed...")
@@ -630,7 +626,7 @@
   (let [data             (load-tables (:data-dir opts))
         dry?             (:dry-run opts)
         strict?          (:strict opts)
-        lore-consolidate (consolidate-lores! dry?)
+        lore-suffix->key (load-lore-suffix->key)
         unit-key-pairs   (update-unit-seeds! data dry?)]
     (generate-unit-keys-seed! unit-key-pairs dry?)
     (generate-mark-seed! (:data-dir opts) dry?)
@@ -638,7 +634,7 @@
     (update-abilities-seed! data dry?)
     (copy-assets! data opts)
     (update-spell-seed! data dry?)
-    (generate-unit-lore-seed! lore-consolidate dry?)
+    (generate-unit-lore-seed! lore-suffix->key dry?)
     (let [item-key->id (generate-item-seed! data dry?)
           unit-id-map  (generate-unit-item-seed! data item-key->id dry?)
           stem->id     (generate-mount-seed! data dry?)]

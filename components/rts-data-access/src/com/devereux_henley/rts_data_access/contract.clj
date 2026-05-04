@@ -83,7 +83,6 @@
 (def get-mount-by-key query.game/get-mount-by-key)
 
 (def lore-entity schema/lore-entity)
-(def get-lores-for-unit query.game/get-lores-for-unit)
 (def get-spells-for-lore query.game/get-spells-for-lore)
 
 (def draft-state-entity schema/draft-state-entity)

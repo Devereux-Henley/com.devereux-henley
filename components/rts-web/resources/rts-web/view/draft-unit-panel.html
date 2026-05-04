@@ -17,14 +17,12 @@
 
         <div class="draft-stats-header">
             {# visibility:hidden (not display:none) so a missing portrait
-               PNG keeps the 4.5rem × 130px layout slot reserved. Without
-               this, swapping `lore-portrait-key` to a 404'ing url shrinks
-               the header by ~43px while content above the scroll position
-               re-layouts, which the browser compensates by clamping
-               scrollTop downward — visible as a draft panel that scrolls
-               itself when toggling a lore. #}
+               PNG keeps the 4.5rem × 130px layout slot reserved.  Each
+               (mark, lore) variant is its own unit row whose `:eid`
+               doubles as the portrait stem, so the URL doesn't need a
+               separate lore-portrait-key fallback. #}
             <img class="draft-stats-portrait"
-                 src="/card/unit/{% if unit.lore-portrait-key %}{{unit.lore-portrait-key}}{% else %}{{unit.eid}}{% endif %}.png"
+                 src="/card/unit/{{unit.eid}}.png"
                  alt="{{unit.name}}"
                  onerror="this.style.visibility='hidden'">
             <div class="draft-stats-meta">
@@ -223,18 +221,20 @@
         </section>
         {% endif %}
 
-        {% if unit.family-variants|count > 1 %}
+        {# The Mark and Lore selectors are two views of the same
+           `:family-variants` list — one collapses on `:mark`, the
+           other narrows by the chosen mark and collapses on `:lore`.
+           Each selector submits `unit-eid` to its own sibling form
+           (kept distinct so a change on one doesn't carry the other's
+           value as a second `unit-eid` query param, which fails the
+           single-uuid coercion).  Forms live OUTSIDE draft-unit-form
+           and are associated via HTML5 `form=` so the parser doesn't
+           truncate the outer form's body.  A unit-eid swap clears
+           per-row selections (mount/abilities/spells/items) and
+           re-renders the panel against the new variant's stat block. #}
+        {% if unit.family-marks|count > 1 %}
         <section class="draft-stats-section unit-panel" aria-labelledby="panel-mark-heading">
             <h4 class="unit-panel-heading" id="panel-mark-heading">Mark of Chaos</h4>
-            {# The select uses HTML5 `form=` association to a SIBLING form
-               rendered after `draft-unit-form`'s closing tag (see end of
-               the panel).  A nested <form> here would be silently dropped
-               by the HTML5 parser, but its </form> would close the outer
-               draft-unit-form prematurely and orphan every section after
-               it (lore/spells/mounts/items) — so they would never appear
-               in the PATCH body.  Edit-mode PATCHes the entry's unit-eid;
-               browse-mode GETs the unit-preview endpoint with the same
-               `unit-eid` query param.  Both modes share this select. #}
             <label class="lore-select-field" for="draft-mark-select">
                 <span class="sr-only">Select Mark of Chaos for {{unit.name}}</span>
                 <select class="lore-select"
@@ -242,8 +242,8 @@
                         name="unit-eid"
                         form="draft-mark-form"
                         aria-labelledby="panel-mark-heading"
-                        _="on change halt the event then send patchMark to #draft-mark-form">
-                    {% for variant in unit.family-variants %}
+                        _="on change halt the event then send patchFamily to #draft-mark-form">
+                    {% for variant in unit.family-marks %}
                     <option value="{{variant.eid}}"{% ifequal variant.eid unit.eid %} selected{% endifequal %}>{% if variant.mark %}{{variant.mark|capitalize}}{% else %}Undivided{% endif %}{% if variant.cost %} &mdash; {{variant.cost}} pts{% endif %}</option>
                     {% endfor %}
                 </select>
@@ -251,25 +251,24 @@
         </section>
         {% endif %}
 
-        {# Only render the Lore-of-Magic section for true multi-lore
-           casters (Mage, Sorceress, Bray-Shaman, Liche Priest, …).
-           Mark variants and most non-spellcasters carry 0 or 1 lore
-           — single-lore picks are forced (the unit's
-           `:draftable-spells` already reflect the lore in
-           `unit_statistics`) so a one-option dropdown adds friction
-           without function. #}
-        {% if unit.lores|count > 1 %}
+        {# Lore selector renders only for families whose current mark
+           narrows to multiple lore variants (e.g. an Undivided Chaos
+           Sorcerer Lord with Death/Shadows/Fire/Metal access).  Single-
+           lore variants don't render the selector — their lore is
+           implied by the unit row itself. #}
+        {% if unit.family-lores|count > 1 %}
         <section class="draft-stats-section unit-panel" aria-labelledby="panel-lores-heading">
             <h4 class="unit-panel-heading" id="panel-lores-heading">Lore of Magic</h4>
             <label class="lore-select-field" for="draft-lore-select">
                 <span class="sr-only">Select lore for {{unit.name}}</span>
                 <select class="lore-select"
                         id="draft-lore-select"
-                        name="lore"
-                        aria-labelledby="panel-lores-heading">
-                    <option value=""{% if not data.lore %} selected{% endif %}>Select a lore&hellip;</option>
-                    {% for lore in unit.lores %}
-                    <option value="{{lore.key}}"{% if lore.selected %} selected{% endif %}>{{lore.name}}</option>
+                        name="unit-eid"
+                        form="draft-lore-form"
+                        aria-labelledby="panel-lores-heading"
+                        _="on change halt the event then send patchFamily to #draft-lore-form">
+                    {% for variant in unit.family-lores %}
+                    <option value="{{variant.eid}}"{% ifequal variant.eid unit.eid %} selected{% endifequal %}>{{variant.lore-label}}{% if variant.cost %} &mdash; {{variant.cost}} pts{% endif %}</option>
                     {% endfor %}
                 </select>
             </label>
@@ -398,17 +397,29 @@
         {% endif %}
 
     </form>
-    {# Sibling form for the mark select (associated via form="draft-mark-form").
-       Kept outside #draft-unit-form so the HTML5 parser doesn't truncate
-       the outer form's body — see the comment in the Mark of Chaos section
-       above for the underlying nested-form pitfall.  Edit-mode PATCHes
-       the entry; browse-mode GETs the unit-preview endpoint, which takes
-       the same `unit-eid` query param the select submits. #}
+    {# Sibling forms — one per family-axis selector — associated via
+       form="draft-mark-form" / "draft-lore-form".  Kept distinct so
+       only the changed selector's value goes on the wire (a single
+       shared form would submit BOTH select values as two `unit-eid`
+       query params, which fails the single-uuid coercion).  Both
+       forms live OUTSIDE #draft-unit-form because a nested <form>
+       would silently close draft-unit-form prematurely and orphan
+       every section after it.  Edit-mode PATCHes the entry; browse-
+       mode GETs the unit-preview endpoint with the same `unit-eid`
+       query param. #}
     {% if data.section %}
     <form id="draft-mark-form"
           hx-patch="/api/draft/{{data.draft-eid}}/entry/{{data.eid}}?section={{data.section}}"
           hx-ext="json-enc"
-          hx-trigger="patchMark"
+          hx-trigger="patchFamily"
+          hx-target="#draft-unit-body"
+          hx-select="#draft-unit-body"
+          hx-swap="outerHTML"
+          hx-headers='{"Accept": "application/htmx+html"}'></form>
+    <form id="draft-lore-form"
+          hx-patch="/api/draft/{{data.draft-eid}}/entry/{{data.eid}}?section={{data.section}}"
+          hx-ext="json-enc"
+          hx-trigger="patchFamily"
           hx-target="#draft-unit-body"
           hx-select="#draft-unit-body"
           hx-swap="outerHTML"
@@ -416,7 +427,14 @@
     {% else %}
     <form id="draft-mark-form"
           hx-get="/api/draft/{{unit.draft-eid}}/unit"
-          hx-trigger="patchMark"
+          hx-trigger="patchFamily"
+          hx-target="#draft-unit-body"
+          hx-select="#draft-unit-body"
+          hx-swap="outerHTML"
+          hx-headers='{"Accept": "application/htmx+html"}'></form>
+    <form id="draft-lore-form"
+          hx-get="/api/draft/{{unit.draft-eid}}/unit"
+          hx-trigger="patchFamily"
           hx-target="#draft-unit-body"
           hx-select="#draft-unit-body"
           hx-swap="outerHTML"
