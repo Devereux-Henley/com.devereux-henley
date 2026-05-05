@@ -173,11 +173,13 @@
 (defn- canonical-variant
   "Picks the row that represents a family in the roster.  Prefers — in
   order — the row whose `:name` already matches the family label
-  (`:family-name`), then the unmarked-mark row (`:mark` nil), then the
-  first row in id order.  The canonical variant's portrait + cost label
-  drives the roster card; per-mark eid/cost lives in `:family-variants`."
+  (`:family-name`, i.e. unmarked + un-lore-suffixed), then the
+  unmarked-no-lore row, then the unmarked row, then the first in id
+  order.  The canonical variant's portrait + cost label drives the
+  roster card; per-(mark, lore) eid/cost lives in `:family-variants`."
   [members]
   (or (first (filter #(and (:family-name %) (= (:name %) (:family-name %))) members))
+      (first (filter #(and (nil? (:mark %)) (nil? (:lore %))) members))
       (first (filter (comp nil? :mark) members))
       (first members)))
 
@@ -185,14 +187,14 @@
   "Collapses a unit collection so each (family-name, faction-eid) family has
   a single representative row.  The representative carries the full
   hydrated-unit shape plus a `:family-variants` vector — one entry
-  per mark in id-stable order — that the unit panel uses to drive
-  the Mark selector.  Single-variant families pass through unchanged
-  with a single-entry `:family-variants` so the template can apply
-  the same logic uniformly.
+  per (mark, lore) variant in id-stable order — that the unit panel
+  uses to drive the Mark and Lore selectors.  Single-variant families
+  pass through unchanged with a single-entry `:family-variants` so
+  the template can apply the same logic uniformly.
 
   Grouping uses `:family-name` (the seed-stamped family identifier
-  that's shared across mark variants) rather than `:name` (which is
-  the engine-original string and differs across marked variants)."
+  shared across mark + lore variants) rather than `:name` (which is
+  the engine-original string and differs across variants)."
   [units]
   (->> units
        (group-by (juxt #(or (:family-name %) (:name %)) :faction-eid))
@@ -203,6 +205,7 @@
                      variants  (mapv (fn [u]
                                        {:eid  (:eid u)
                                         :mark (:mark u)
+                                        :lore (:lore u)
                                         :name (:name u)
                                         :cost (:cost u)})
                                      ordered)]
@@ -377,11 +380,6 @@
   [dependencies unit-eid]
   (db/get-mounts-for-unit (:connection dependencies) unit-eid))
 
-(defn get-lores-for-unit
-  "Returns all active lores linked to the given unit EID."
-  [dependencies unit-eid]
-  (db/get-lores-for-unit (:connection dependencies) unit-eid))
-
 (defn get-spells-for-lore
   "Returns the canonical spell list for the given lore key."
   [dependencies lore-key]
@@ -528,28 +526,19 @@
   [conn faction-eid]
   (into {} (map (juxt :eid identity) (hydrate-units-with-stats (db/get-units-for-faction conn faction-eid)))))
 
-(defn- lore-portrait-key-for
-  "Resolves the unit_lore.portrait_key for a unit-eid + selected lore key,
-   or nil when the unit has no such lore. Returns nil for a nil lore key
-   so callers can skip the query entirely."
-  [conn unit-eid lore-key]
-  (when lore-key
-    (->> (db/get-lores-for-unit conn unit-eid)
-         (some #(when (= lore-key (:key %)) (:portrait-key %))))))
-
 (defn- hydrate-section
   "Resolves state entries to their hydrated units, attaching :total-cost,
-   :level, the entry's :entry-eid, and (when the entry has a selected lore)
-   the :lore-portrait-key from unit_lore so slot fragments render the
-   lore-specific card."
-  [conn unit-by-eid entries]
+   :level, and the entry's :entry-eid.  Each variant unit row carries
+   its own portrait at /card/unit/<eid>.png — no lore-portrait override
+   is needed since the entry's `:unit-eid` already points at the
+   specific (mark, lore) variant the player picked."
+  [_conn unit-by-eid entries]
   (mapv (fn [entry]
           (when-let [u (get unit-by-eid (:unit-eid entry))]
             (assoc u
-                   :total-cost        (or (:total-cost entry) (:cost u))
-                   :level             (:level entry)
-                   :entry-eid         (:entry-eid entry)
-                   :lore-portrait-key (lore-portrait-key-for conn (:unit-eid entry) (:lore entry)))))
+                   :total-cost (or (:total-cost entry) (:cost u))
+                   :level      (:level entry)
+                   :entry-eid  (:entry-eid entry))))
         entries))
 
 (defn- hydrated-section-context
@@ -579,14 +568,57 @@
 (defn- slot-unit
   "Projects a hydrated unit to the draft-section-unit shape rendered by
    slot fragments."
-  [unit entry-eid total-cost lore-portrait-key level]
-  {:eid               (:eid unit)
-   :entry-eid         entry-eid
-   :name              (:name unit)
-   :total-cost        total-cost
-   :level             level
-   :is-lord           (boolean (:is-lord unit))
-   :lore-portrait-key lore-portrait-key})
+  [unit entry-eid total-cost level]
+  {:eid        (:eid unit)
+   :entry-eid  entry-eid
+   :name       (:name unit)
+   :total-cost total-cost
+   :level      level
+   :is-lord    (boolean (:is-lord unit))})
+
+;; ─── Family selectors ────────────────────────────────────────────────────────
+
+(def ^:private lore-suffix-re #" \(([^()]+)\)$")
+
+(defn- lore-label
+  "Extracts the trailing `(<Suffix>)` from a variant name as the lore
+  display label.  Returns nil when the name doesn't carry a lore
+  suffix (e.g. mark-only families like 'Daemon Prince of Khorne')."
+  [name]
+  (some-> name (->> (re-find lore-suffix-re)) second))
+
+(defn- family-marks
+  "Reduces `family-variants` to one Mark-selector option per distinct
+  `:mark` value, preferring the variant whose `:lore` matches
+  `current-lore` so a mark swap preserves the lore choice when
+  possible.  The current unit's eid is preserved as the representative
+  for `current-mark` so the dropdown's selected option matches the
+  panel's unit.  Returns the slim `family-mark-option` shape — only
+  the fields the selector actually renders."
+  [family-variants current-eid current-mark current-lore]
+  (let [by-mark (group-by :mark family-variants)]
+    (->> (keys by-mark)
+         (sort-by #(or % ""))
+         (mapv (fn [m]
+                 (let [siblings (get by-mark m)
+                       chosen   (or (when (= m current-mark)
+                                      (first (filter #(= current-eid (:eid %)) siblings)))
+                                    (first (filter #(= current-lore (:lore %)) siblings))
+                                    (first siblings))]
+                   (select-keys chosen [:eid :mark :cost])))))))
+
+(defn- family-lores
+  "Reduces `family-variants` to the Lore-selector options under
+  `current-mark` (a single mark's slate of lore variants).  Returns
+  the slim `family-lore-option` shape — eid, cost, and a derived
+  `:lore-label` parsed from the variant name.  Empty when the family
+  has no lore dimension under the current mark."
+  [family-variants current-mark]
+  (->> family-variants
+       (filter #(= current-mark (:mark %)))
+       (mapv (fn [v] {:eid        (:eid v)
+                      :cost       (:cost v)
+                      :lore-label (lore-label (:name v))}))))
 
 ;; ─── Composite domain operations ──────────────────────────────────────────────
 
@@ -624,7 +656,13 @@
   :mount-granted-abilities when the corresponding mount is selected.
   This prevents the hand-curated seed's habit of folding mount-only
   abilities (e.g. Bloodroar on Karl Franz) into the foot unit's
-  draftable pool."
+  draftable pool.
+
+  Spells: when the unit has a `:lore` set, the draftable + passive
+  pool is fetched from spell_lore (the canonical per-lore catalogue).
+  Otherwise the unit_statistics JSON's `draftable-spells` list is
+  the source of truth — used for unique characters with bespoke
+  spell pools (e.g. Malagor) and non-spellcasters."
   [dependencies draft-eid unit-eid]
   (let [conn                                                                 (:connection dependencies)
         draft                                                                (db/get-draft-by-eid conn draft-eid)
@@ -646,12 +684,15 @@
                                                                                    base-ability-keys)
         passive-abilities                                                    (filterv #(= 0 (:cost %)) all-abilities)
         draftable-abilities                                                  (filterv #(pos? (:cost %)) all-abilities)
-        all-spells                                                           (or (hydrate-spell-keys conn draftable-spells) [])
+        all-spells                                                           (if-let [lore-key (:lore unit)]
+                                                                               (lore-spells conn lore-key)
+                                                                               (or (hydrate-spell-keys conn draftable-spells) []))
         passive-spells                                                       (filterv #(= 0 (:cost %)) all-spells)
         draftable-spells-v                                                   (filterv #(pos? (:cost %)) all-spells)
         items                                                                (db/get-items-for-unit conn unit-eid)
-        lores                                                                (vec (db/get-lores-for-unit conn unit-eid))
-        family-variants                                                      (vec (db/get-family-variants-by-eid conn unit-eid))]
+        family-variants                                                      (vec (db/get-family-variants-by-eid conn unit-eid))
+        marks-row                                                            (family-marks family-variants (:eid unit) (:mark unit) (:lore unit))
+        lores-row                                                            (family-lores family-variants (:mark unit))]
     (assoc unit
            :type                :draft/unit
            :draft-eid           draft-eid
@@ -664,11 +705,11 @@
            :draftable-abilities draftable-abilities
            :items               items
            :mounts              mounts
-           :lores               lores
            :passive-spells      passive-spells
            :draftable-spells    draftable-spells-v
            :has-passives        (boolean (or (seq passive-abilities) (seq passive-spells)))
-           :family-variants     family-variants
+           :family-marks        marks-row
+           :family-lores        lores-row
            :validation          {:can-add-to-reinforcements? (= 1 (:reinforcements-enabled game-mode))})))
 
 (defn- mark-selected
@@ -700,35 +741,10 @@
         :unit-eid  (:unit-eid entry)
         :section   section
         :mount     (:mount source)
-        :lore      (:lore source)
         :level     (or (:level source) 0)
         :abilities (vec (:abilities source))
         :spells    (vec (:spells source))
         :items     (vec (:items source))}))))
-
-(defn- apply-lore-overrides
-  "If lore-key identifies one of the unit's lores, replace
-  :draftable-spells with the canonical spell pool for that lore (fetched
-  from spell_lore), assoc :lore-portrait-key to the lore's portrait_key
-  (so the template portrait URL swaps), and mark :selected on each lore.
-  Always assocs :lore (raw key) so the template can pre-check the radio.
-
-  The spell pool for a lore is invariant across units — every unit that
-  can access Lore of Fire drafts from the same six Fire spells. Units
-  that historically drafted a reduced subset are modeled as accessing a
-  different (character-specific) lore, not a sub-selection of the main."
-  [conn unit lore-key]
-  (let [lores    (or (:lores unit) [])
-        marked   (mapv (fn [l] (assoc l :selected (= lore-key (:key l)))) lores)
-        selected (when lore-key (first (filter #(= lore-key (:key %)) lores)))
-        unit'    (assoc unit :lores marked :lore lore-key)]
-    (if-not selected
-      unit'
-      (let [spells (lore-spells conn lore-key)]
-        (assoc unit'
-               :draftable-spells  (filterv #(pos? (:cost %)) spells)
-               :passive-spells    (filterv #(= 0 (:cost %)) spells)
-               :lore-portrait-key (:portrait-key selected))))))
 
 (defn- apply-mount-overrides
   "If mount-key identifies one of the unit's mounts, overlay its stats /
@@ -755,17 +771,18 @@
   options, overlays the chosen mount's stats/health/barrier/attributes,
   exposes granted abilities as :mount-granted-abilities, surfaces the raw
   :mount key so the template can pre-check its radio, and assocs
-  :total-cost reflecting base + mount + item + spell + ability costs."
-  [conn unit {:keys [mount lore items spells abilities level] :as selections}]
+  :total-cost reflecting base + mount + item + spell + ability costs.
+
+  Lore is no longer a selection: each unit row already represents one
+  (mark, lore) variant, so its `:draftable-spells` are already the
+  correct pool by the time we get here.  The user toggles lore by
+  swapping `unit-eid` (handled in `update-unit-in-draft`)."
+  [conn unit {:keys [mount items spells abilities level] :as selections}]
   (let [ability-set (set abilities)
         spell-set   (set spells)
         item-set    (set items)
-        ;; apply-lore-overrides replaces :draftable-spells, so it must run
-        ;; BEFORE spell-selection marking. apply-mount-overrides is
-        ;; orthogonal and can run alongside.
         overlaid    (as-> unit $
                       (assoc $ :mount mount :level (or level 0))
-                      (apply-lore-overrides conn $ lore)
                       (apply-mount-overrides $ mount)
                       (update $ :draftable-abilities mark-selected ability-set)
                       (update $ :draftable-spells mark-selected spell-set)
@@ -838,18 +855,16 @@
                                       {:entry-eid  new-entry-eid
                                        :unit-eid   unit-eid
                                        :mount      (:mount selections)
-                                       :lore       (:lore selections)
                                        :level      (or (:level selections) 0)
                                        :abilities  (or (:abilities selections) [])
                                        :spells     (or (:spells selections) [])
                                        :items      (or (:items selections) [])
                                        :total-cost total-cost})]
             (set-draft-state dependencies draft-eid new-state)
-            (let [section-ctx       (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)
-                  lore-portrait-key (lore-portrait-key-for conn unit-eid (:lore selections))]
+            (let [section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)]
               {:type     :draft/add-success
                :section  (section-ref section-ctx)
-               :new-unit (slot-unit unit new-entry-eid total-cost lore-portrait-key
+               :new-unit (slot-unit unit new-entry-eid total-cost
                                     (or (:level selections) 0))
                :budget   (section-budget section-ctx)})))))))
 
@@ -892,13 +907,14 @@
         entries (get state (keyword section) [])]
     (some #(when (= entry-eid (:entry-eid %)) %) entries)))
 
-(defn- valid-mark-swap?
-  "Sanity check for slot mark switching: the new variant must share
-  the entry's family (same family-name + faction).  Family-name is the
-  shared identifier across mark variants; engine `name` differs across
-  marked variants ('Daemon Prince of Khorne' vs base 'Daemon Prince')
-  so comparing on it would reject every cross-mark swap.  Falls back
-  to `:name` for unit rows that predate the family-name backfill."
+(defn- valid-family-swap?
+  "Sanity check for slot mark / lore switching: the new variant must
+  share the entry's family (same family-name + faction).  Family-name
+  is the shared identifier across (mark, lore) variants; engine `name`
+  differs across them ('Daemon Prince of Khorne' vs base 'Daemon
+  Prince', 'Archmage (High)' vs 'Archmage (Light)') so comparing on
+  it would reject every cross-variant swap.  Falls back to `:name` for
+  unit rows that predate the family-name backfill."
   [unit-by-eid old-eid new-eid]
   (let [old-unit (get unit-by-eid old-eid)
         new-unit (get unit-by-eid new-eid)
@@ -913,11 +929,12 @@
    lives in. selections has the same shape as add-unit-to-draft selections.
 
    When `selections` carries `:unit-eid`, the entry's unit row is
-   swapped to a different mark variant — the mount/lore/abilities/
-   spells/items selections are cleared because they're keyed to the
-   old row's catalog.  The new variant must share the entry's
-   family (same name + faction) to prevent a swap into an unrelated
-   unit.
+   swapped to a different family variant (different mark and/or
+   different lore — both are unit-eid-keyed in the family-variants
+   catalogue).  The mount/abilities/spells/items selections are
+   cleared because they're keyed to the old row's catalog.  The new
+   variant must share the entry's family (same family-name + faction)
+   to prevent a swap into an unrelated unit.
 
    Returns {:type :draft/update-success …} on success or
    {:type :draft/update-error …} on violation or missing entry."
@@ -936,33 +953,25 @@
                         (:draft-value game-mode)
                         (:reinforcement-value game-mode))
         new-unit-eid  (:unit-eid selections-0)
-        mark-swap?    (and existing
+        family-swap?  (and existing
                            new-unit-eid
                            (not= new-unit-eid (:unit-eid existing)))
-        ;; Mark swap clears the catalog-keyed selections — they're
-        ;; per-row, not portable across variants.  Lore-change spell
-        ;; clearance below still applies for the same-row case.
+        ;; Family swap clears the catalog-keyed selections — they're
+        ;; per-row, not portable across variants (a different lore
+        ;; row's draftable-spells differ from the old, and ability/
+        ;; mount/item catalogs are mark-specific).
         selections    (cond-> (dissoc selections-0 :unit-eid)
-                        mark-swap? (-> (assoc :mount nil)
-                                       (assoc :lore nil)
-                                       (assoc :abilities [])
-                                       (assoc :spells [])
-                                       (assoc :items [])))
-        ;; Changing lore invalidates the old spell pool — drop any carried
-        ;; spell selections so the client can't persist stale keys.
-        selections    (if (and (not mark-swap?)
-                               (contains? selections :lore)
-                               existing
-                               (not= (:lore selections) (:lore existing)))
-                        (assoc selections :spells [])
-                        selections)
-        effective-eid (if mark-swap? new-unit-eid (some-> existing :unit-eid))]
+                        family-swap? (-> (assoc :mount nil)
+                                         (assoc :abilities [])
+                                         (assoc :spells [])
+                                         (assoc :items [])))
+        effective-eid (if family-swap? new-unit-eid (some-> existing :unit-eid))]
     (cond
       (nil? existing)
       {:type :draft/update-error :message "Unit not found in this section."}
 
-      (and mark-swap? (not (valid-mark-swap? unit-by-eid (:unit-eid existing) new-unit-eid)))
-      {:type :draft/update-error :message "Mark variant must belong to the same unit family."}
+      (and family-swap? (not (valid-family-swap? unit-by-eid (:unit-eid existing) new-unit-eid)))
+      {:type :draft/update-error :message "Variant must belong to the same unit family."}
 
       (nil? (get unit-by-eid effective-eid))
       {:type :draft/update-error :message "Unit not found in this faction's roster."}
@@ -995,7 +1004,6 @@
           (let [new-entry {:entry-eid  entry-eid
                            :unit-eid   effective-eid
                            :mount      (:mount selections)
-                           :lore       (:lore selections)
                            :level      (or (:level selections) 0)
                            :abilities  (or (:abilities selections) [])
                            :spells     (or (:spells selections) [])
@@ -1004,10 +1012,9 @@
                 new-state (assoc state section-k
                                  (assoc (vec section-list) index new-entry))]
             (set-draft-state dependencies draft-eid new-state)
-            (let [section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)
-                  lore-pk     (lore-portrait-key-for conn effective-eid (:lore selections))]
+            (let [section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)]
               {:type              :draft/update-success
                :entry-eid         entry-eid
                :total-cost        new-total
-               :slot-portrait-key (or lore-pk (str effective-eid))
+               :slot-portrait-key (str effective-eid)
                :budget            (section-budget section-ctx)})))))))

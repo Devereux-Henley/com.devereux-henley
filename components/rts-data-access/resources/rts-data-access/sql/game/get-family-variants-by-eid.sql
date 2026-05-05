@@ -1,14 +1,17 @@
 -- Returns every unit row that shares the given unit's family (same
--- family_name + faction).  Drives the Mark of Chaos selector in the
--- draft unit panel so a player browsing "Daemon Prince" can flip
--- between the four marked variants without leaving the panel.  The
--- engine `name` differs across mark variants ("Daemon Prince of
--- Khorne" vs base "Daemon Prince"); `family_name` is the shared key.
--- Mono-variant families return a single row; the panel uses the count
--- to decide whether to render a selector at all.
+-- family_name + faction).  Drives the Mark of Chaos and Lore of Magic
+-- selectors in the draft unit panel: a player browsing "Daemon Prince"
+-- can flip between marked/lored variants without leaving the panel.
+-- The engine `name` differs across variants ("Daemon Prince of Khorne"
+-- vs base "Daemon Prince" vs "Archmage (High)" vs "Archmage (Light)");
+-- `family_name` is the shared key after stripping mark and lore
+-- suffixes (see marks_seed.clj `chained-replaces`).  Mono-variant
+-- families return a single row; the panel uses the count to decide
+-- whether to render a selector at all.
 SELECT
   fv.eid,
   fv.mark,
+  fv.lore,
   fv.name,
   json_extract(fv.unit_statistics, '$.cost') AS cost
 FROM

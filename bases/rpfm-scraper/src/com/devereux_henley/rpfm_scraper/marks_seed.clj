@@ -112,17 +112,12 @@
 (def ^:private no-rows-sentinel
   "-- no mark assignments in this scrape (preserved on subsequent empty runs)\n")
 
-(def ^:private family-name-strips
-  "Substrings stripped from a unit's engine `name` to derive its
-  `family_name` (the roster-grouping key).  The seed emits a CASE that
-  applies these strips to `family_name` — `name` itself stays as the
-  engine-original string so the slot, panel header, and replay enrichment
-  can show 'Daemon Prince of Khorne'.
-
-  Order matters: the longer ' of <God>' patterns are tried first so a
-  name like 'Chaos Knights of Khorne (Lances)' strips just the mark
-  segment and family-groups with 'Chaos Knights (Lances)' — not 'Chaos
-  Knights' on its own.  Family grouping is also faction-scoped, so
+(def ^:private mark-strips
+  "Mark substrings stripped from a unit's engine `name` to derive its
+  `family_name` (the roster-grouping key).  Both ` of <God>` (used on
+  characters) and ` (<God>)` (used on rank-and-file like Chaos Knights
+  of Khorne (Lances)) are stripped so all mark variants of a family
+  collapse to the same key.  Family grouping is faction-scoped, so
   cross-faction same-stem units (e.g. mono-god 'Spawn of Khorne' in the
   Khorne faction vs 'Spawn of Nurgle' in Nurgle) never collide."
   [" of Khorne"
@@ -137,7 +132,13 @@
 (defn- format-mark-seed
   "Renders the engine-key→mark map as a single combined UPDATE.  Single
   statement because next.jdbc.execute! only consumes the first one of a
-  multi-statement string (same constraint as seed-unit-keys.sql)."
+  multi-statement string (same constraint as seed-unit-keys.sql).
+
+  family_name strips mark suffixes only — lore-variant unit rows have
+  their family_name overridden later by `seed-unit-lores.sql` (a
+  per-eid CASE that strips the lore paren in addition to the mark
+  segment).  Splitting the work avoids hitting SQLite's parser depth
+  limit when chaining ~80 REPLACE calls for every catalogue lore."
   [unit-key->mark]
   (if (empty? unit-key->mark)
     no-rows-sentinel
@@ -168,7 +169,7 @@
        "END,\n"
        "family_name = CASE\n"
        (apply str
-              (for [s family-name-strips]
+              (for [s mark-strips]
                 (format "  WHEN INSTR(name, '%s') > 0 THEN REPLACE(name, '%s', '')\n" s s)))
        "  ELSE name\n"
        "END;\n"))))

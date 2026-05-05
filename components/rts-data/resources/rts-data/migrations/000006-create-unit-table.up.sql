@@ -25,6 +25,15 @@ CREATE TABLE IF NOT EXISTS unit (
   -- Per-mark variants share a display name (e.g. "Daemon Prince") and are
   -- distinguished by this column; non-Chaos units leave it NULL.
   mark TEXT CHECK (mark IS NULL OR mark IN ('khorne', 'nurgle', 'slaanesh', 'tzeentch', 'undivided')),
+  -- Lore-of-Magic dimension parallel to `mark`.  Wizards with multiple lore
+  -- options ship as one row per (mark, lore) pair (e.g. "Archmage (High)" /
+  -- "Archmage (Light)" sharing family_name "Archmage").  Non-spellcasters
+  -- and single-lore wizards leave it NULL.  Populated by
+  -- seed-unit-lores.sql (a CASE UPDATE keyed by eid, mirroring
+  -- seed-unit-marks.sql).  Not CHECK-constrained — the valid set is the
+  -- engine `lore.key` catalogue (~80 entries) and we keep the FK contract
+  -- at the application layer rather than hand-maintaining a SQL list.
+  lore TEXT,
   is_unique INTEGER NOT NULL DEFAULT 0,
   version INT NOT NULL,
   created_by_sub TEXT NOT NULL,

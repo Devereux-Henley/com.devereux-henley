@@ -472,20 +472,27 @@
                            [:label :string]]]]]
     [:granted-abilities {:optional true} [:sequential draft-ability]]]))
 
-(def draft-lore
-  "Per-(unit, lore) access row. :portrait-key aliases the eid-stem of an
-  on-disk `/card/unit/<stem>.png` that should render when this lore is
-  active. The spell pool itself is NOT stored here — it's fetched from
-  the spell_lore junction when the lore is selected, because the pool
-  is invariant across every unit that can access the lore."
+(def family-mark-option
+  "One row in the Mark of Chaos selector — just the eid the change
+  swaps to, the mark label, and the variant's cost.  No `:name` /
+  `:lore` because the selector doesn't render them; full per-variant
+  data lives on the unit row that the eid resolves to."
   (schema.contract/to-schema
    [:map
     [:eid :uuid]
-    [:key :string]
-    [:name :string]
-    [:cost :int]
-    [:selected {:optional true} :boolean]
-    [:portrait-key {:optional true} [:maybe :string]]]))
+    [:mark [:maybe data-access.contract/mark-enum]]
+    [:cost [:maybe :int]]]))
+
+(def family-lore-option
+  "One row in the Lore of Magic selector — the eid the change swaps
+  to, the variant's cost, and a `:lore-label` (the canonical suffix
+  like \"Death\" / \"High\") parsed from the variant name for
+  display."
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:cost [:maybe :int]]
+    [:lore-label {:optional true} [:maybe :string]]]))
 
 (def draft-unit-resource
   "A unit viewed in the context of a specific draft — the full game-unit
@@ -507,20 +514,15 @@
      [:unit-type-name :string]
      [:unit-category-name :string]
      [:mark {:optional true} [:maybe data-access.contract/mark-enum]]
+     [:lore {:optional true} [:maybe :string]]
      [:family-variant-count {:optional true} :int]
      [:family-name {:optional true} [:maybe :string]]
-     [:family-variants {:optional true}
-      [:sequential [:map
-                    [:eid :uuid]
-                    [:mark [:maybe data-access.contract/mark-enum]]
-                    [:name {:optional true} :string]
-                    [:cost [:maybe :int]]]]]
+     [:family-marks {:optional true} [:sequential family-mark-option]]
+     [:family-lores {:optional true} [:sequential family-lore-option]]
      [:cost [:maybe :int]]
      [:total-cost {:optional true} [:maybe :int]]
      [:level {:optional true} [:int {:min 0 :max 9}]]
      [:mount {:optional true} [:maybe :string]]
-     [:lore {:optional true} [:maybe :string]]
-     [:lore-portrait-key {:optional true} [:maybe :string]]
      [:health {:optional true} [:maybe :int]]
      [:barrier {:optional true} [:maybe :int]]
      [:unit-statistics [:sequential draft-unit-stat]]
@@ -535,7 +537,6 @@
      [:mount-granted-abilities {:optional true} [:sequential draft-ability]]
      [:items {:optional true} [:sequential draft-item]]
      [:mounts {:optional true} [:sequential draft-mount]]
-     [:lores {:optional true} [:sequential draft-lore]]
      [:passive-spells {:optional true} [:sequential draft-spell]]
      [:draftable-spells {:optional true} [:sequential draft-spell]]
      [:has-passives {:optional true} :boolean]
@@ -565,7 +566,6 @@
      [:unit-eid {:model/link :draft-unit/by-eid} :uuid]
      [:section [:enum "main" "reinforcements"]]
      [:mount {:optional true} [:maybe :string]]
-     [:lore {:optional true} [:maybe :string]]
      [:level {:optional true} [:int {:min 0 :max 9}]]
      [:abilities {:optional true} [:sequential :string]]
      [:spells {:optional true} [:sequential :string]]
@@ -581,15 +581,16 @@
 
 (def draft-section-unit
   "A unit as it appears inside a rendered draft section: just enough fields
-   to draw the slot card and target the specific placed entry."
+   to draw the slot card and target the specific placed entry.  The
+   slot's portrait is derived directly from `:eid` (each variant unit
+   row has its own portrait)."
   [:map
    [:eid :uuid]
    [:entry-eid :uuid]
    [:name :string]
    [:total-cost [:maybe :int]]
    [:level {:optional true} [:int {:min 0 :max 9}]]
-   [:is-lord {:optional true} :boolean]
-   [:lore-portrait-key {:optional true} [:maybe :string]]])
+   [:is-lord {:optional true} :boolean]])
 
 (def draft-section-budget
   "The meter-only projection of a section context: enough to render the
@@ -644,13 +645,13 @@
 (def add-unit-to-draft-specification
   (schema.contract/to-schema
    [:map
-    ;; Slot-edit mark switching: when present, the entry's `:unit-eid`
-    ;; gets swapped to the supplied variant (same family + different
-    ;; mark) and the existing mount/lore/items/abilities/spells
-    ;; selections are cleared because they're keyed to the old row.
+    ;; Slot-edit family switching: when present, the entry's `:unit-eid`
+    ;; gets swapped to the supplied variant (same family — different
+    ;; mark and/or different lore) and the existing mount / items /
+    ;; abilities / spells selections are cleared because they're keyed
+    ;; to the old row's catalog.
     [:unit-eid  {:optional true} :uuid]
     [:mount     {:optional true} [:maybe :string]]
-    [:lore      {:optional true} [:maybe :string]]
     [:level     {:optional true} [:int {:min 0 :max 9}]]
     [:abilities {:optional true :decode/json scalar-or-seq->vec} [:sequential :string]]
     [:spells    {:optional true :decode/json scalar-or-seq->vec} [:sequential :string]]

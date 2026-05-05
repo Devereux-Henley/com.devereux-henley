@@ -268,7 +268,6 @@
                          :query (schema.contract/to-schema
                                  [:map
                                   [:mount     {:optional true} [:maybe :string]]
-                                  [:lore      {:optional true} [:maybe :string]]
                                   [:level     {:optional true} [:int {:min 0 :max 9}]]
                                   [:items     {:optional true} [:or :string [:sequential :string]]]
                                   [:spells    {:optional true} [:or :string [:sequential :string]]]
@@ -310,7 +309,6 @@
                                     [:embed     {:optional true} [:or [:enum "unit"]
                                                                   [:sequential [:enum "unit"]]]]
                                     [:mount     {:optional true} [:maybe :string]]
-                                    [:lore      {:optional true} [:maybe :string]]
                                     [:level     {:optional true} [:int {:min 0 :max 9}]]
                                     [:items     {:optional true} [:or :string [:sequential :string]]]
                                     [:spells    {:optional true} [:or :string [:sequential :string]]]

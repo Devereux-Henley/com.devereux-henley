@@ -62,10 +62,16 @@
    "seed-unit-items.sql"
    "seed-mounts.sql"
    "seed-unit-mounts.sql"
-   "seed-unit-lores.sql"
    "seed-unit-keys.sql"
    "seed-unit-level-cost.sql"
-   "seed-unit-marks.sql"])
+   ;; seed-unit-marks.sql must run BEFORE seed-unit-lores.sql so the
+   ;; lore step's per-eid family_name override applies on top of the
+   ;; mark step's name strip.  seed-unit-lore-marks.sql then back-
+   ;; fills `mark` for lore-pinned rows that didn't pick up a mark
+   ;; via the engine-key CASE (typically un-consolidation clones).
+   "seed-unit-marks.sql"
+   "seed-unit-lores.sql"
+   "seed-unit-lore-marks.sql"])
 
 (defn seed-db
   "Seeds the database with baseline data. Reads each seed file on every call so

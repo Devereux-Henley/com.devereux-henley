@@ -123,13 +123,13 @@
       (migratus/down cfg 9)
       (is (not (table-exists? conn "draft"))))))
 
-(deftest migration-000030-unit-level-cost-table
+(deftest migration-000029-unit-level-cost-table
   (with-temp-db [cfg conn]
     (testing "up creates unit_level_cost table"
-      (migratus/up cfg 30)
+      (migratus/up cfg 29)
       (is (table-exists? conn "unit_level_cost")))
     (testing "down drops unit_level_cost table"
-      (migratus/down cfg 30)
+      (migratus/down cfg 29)
       (is (not (table-exists? conn "unit_level_cost"))))))
 
 ;; ---------------------------------------------------------------------------

@@ -71,7 +71,6 @@
 (def get-abilities-by-keys                      handlers.draft/get-abilities-by-keys)
 (def get-items-for-unit                         handlers.draft/get-items-for-unit)
 (def get-mounts-for-unit                         handlers.draft/get-mounts-for-unit)
-(def get-lores-for-unit                          handlers.draft/get-lores-for-unit)
 (def get-spells-for-lore                         handlers.draft/get-spells-for-lore)
 (def hydrate-units-with-stats                   handlers.draft/hydrate-units-with-stats)
 (def group-units-by-family                       handlers.draft/group-units-by-family)

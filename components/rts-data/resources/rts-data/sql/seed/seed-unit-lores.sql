@@ -1,176 +1,433 @@
-INSERT OR IGNORE INTO unit_lore(id, unit_id, lore_id, cost, portrait_key, version, created_by_sub, created_at, updated_at, deleted_at)
-VALUES
-  (1, 403, 77, 0, '00020003-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (2, 403, 79, 0, '00020006-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (3, 403, 86, 0, '00020005-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (4, 403, 92, 0, '00020004-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (5, 411, 77, 0, '0002000b-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (6, 411, 79, 0, '0002000e-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (7, 411, 86, 0, '0002000d-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (8, 411, 92, 0, '0002000c-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (9, 805, 77, 0, '00030005-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (10, 805, 84, 0, '00030007-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (11, 805, 96, 0, '00030006-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (12, 809, 77, 0, '00030009-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (13, 809, 84, 0, '0003000b-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (14, 809, 96, 0, '0003000a-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (15, 1204, 42, 0, '00040006-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (16, 1204, 92, 0, '00040004-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (17, 1204, 94, 0, '00040005-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (18, 1204, 102, 0, '00040007-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (19, 1210, 42, 0, '0004000c-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (20, 1210, 92, 0, '0004000a-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (21, 1210, 94, 0, '0004000b-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (22, 1210, 102, 0, '0004000d-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (23, 1610, 60, 0, '0005000b-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (24, 1610, 92, 0, '0005000a-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (25, 1612, 72, 0, '0005000d-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (26, 1612, 86, 0, '0005000c-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (27, 1614, 75, 0, '0005000f-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (28, 1614, 102, 0, '0005000e-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (29, 1618, 60, 0, '00050013-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (30, 1618, 92, 0, '00050012-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (31, 1620, 72, 0, '00050015-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (32, 1620, 86, 0, '00050014-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (33, 1622, 75, 0, '00050017-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (34, 1622, 102, 0, '00050016-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (35, 1626, 72, 0, '0005001b-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (36, 1626, 86, 0, '0005001a-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (37, 1629, 75, 0, '0005001e-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (38, 1629, 102, 0, '0005001d-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (39, 1632, 60, 0, '00050021-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (40, 1632, 92, 0, '00050020-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (41, 2010, 21, 0, '0006000b-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (42, 2010, 77, 0, '0006000a-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (43, 2010, 86, 0, '0006000e-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (44, 2010, 92, 0, '0006000c-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (45, 2010, 94, 0, '0006000d-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (46, 2018, 21, 0, '00060013-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (47, 2018, 77, 0, '00060012-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (48, 2018, 86, 0, '00060016-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (49, 2018, 92, 0, '00060014-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (50, 2018, 94, 0, '00060015-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (51, 2802, 68, 0, '00080002-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (52, 2802, 70, 0, '00080003-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (53, 3604, 25, 0, '000a0008-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (54, 3604, 77, 0, '000a0004-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (55, 3604, 84, 0, '000a0009-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (56, 3604, 86, 0, '000a000c-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (57, 3604, 92, 0, '000a0005-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (58, 3604, 94, 0, '000a0006-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (59, 3604, 96, 0, '000a0007-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (60, 3604, 98, 0, '000a000a-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (61, 3604, 102, 0, '000a000b-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (62, 3625, 25, 0, '000a001d-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (63, 3625, 77, 0, '000a0019-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (64, 3625, 84, 0, '000a001e-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (65, 3625, 86, 0, '000a0021-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (66, 3625, 92, 0, '000a001a-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (67, 3625, 94, 0, '000a001b-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (68, 3625, 96, 0, '000a001c-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (69, 3625, 98, 0, '000a001f-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (70, 3625, 102, 0, '000a0020-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (71, 4405, 64, 0, '000c0005-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (72, 4405, 66, 0, '000c0006-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (73, 4410, 64, 0, '000c000a-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (74, 4410, 66, 0, '000c000b-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (75, 4811, 77, 0, '000d000b-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (76, 4811, 96, 0, '000d000c-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (77, 5203, 92, 0, '000e0003-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (78, 5203, 94, 0, '000e0004-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (79, 5203, 102, 0, '000e0005-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (80, 5211, 86, 0, '000e000c-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (81, 5211, 94, 0, '000e000b-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (82, 5215, 92, 0, '000e000f-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (83, 5215, 94, 0, '000e0010-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (84, 5215, 102, 0, '000e0011-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (85, 5602, 60, 0, '000f0003-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (86, 5602, 92, 0, '000f0002-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (87, 5605, 60, 0, '000f0006-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (88, 5605, 92, 0, '000f0005-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (89, 5608, 60, 0, '000f0009-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (90, 5608, 92, 0, '000f0008-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (91, 5612, 60, 0, '000f000d-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (92, 5612, 92, 0, '000f000c-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (93, 5620, 60, 0, '000f0015-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (94, 5620, 92, 0, '000f0014-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (95, 6005, 62, 0, '00100007-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (96, 6005, 77, 0, '00100005-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (97, 6005, 92, 0, '00100006-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (98, 6005, 96, 0, '00100008-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (99, 6012, 62, 0, '0010000e-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (100, 6012, 77, 0, '0010000c-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (101, 6012, 92, 0, '0010000d-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (102, 6012, 96, 0, '0010000f-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (103, 6402, 29, 0, '00110002-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (104, 6402, 31, 0, '00110003-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (105, 6803, 72, 0, '00120004-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (106, 6803, 86, 0, '00120003-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (107, 6807, 72, 0, '00120008-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (108, 6807, 86, 0, '00120007-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (109, 6809, 72, 0, '0012000a-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (110, 6809, 86, 0, '00120009-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (111, 6814, 72, 0, '0012000f-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (112, 6814, 86, 0, '0012000e-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (113, 6816, 72, 0, '00120011-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (114, 6816, 86, 0, '00120010-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (115, 7206, 1, 0, '00130008-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (116, 7206, 86, 0, '00130009-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (117, 7206, 92, 0, '00130006-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (118, 7206, 98, 0, '00130007-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (119, 7602, 75, 0, '00140003-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (120, 7602, 102, 0, '00140002-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (121, 7605, 75, 0, '00140006-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (122, 7605, 102, 0, '00140005-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (123, 7607, 75, 0, '00140008-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (124, 7607, 102, 0, '00140007-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (125, 7614, 75, 0, '0014000f-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (126, 7614, 102, 0, '0014000e-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (127, 7618, 75, 0, '00140013-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (128, 7618, 102, 0, '00140012-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (129, 8014, 4, 0, '0015000f-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (130, 8014, 92, 0, '0015000e-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (131, 8014, 104, 0, '00150010-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (132, 8418, 86, 0, '00160013-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (133, 8418, 92, 0, '00160012-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (134, 8809, 86, 0, '0017000c-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (135, 8809, 92, 0, '00170009-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (136, 8809, 94, 0, '0017000a-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (137, 8809, 102, 0, '0017000b-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (138, 8813, 60, 0, '0017000e-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (139, 8813, 92, 0, '0017000d-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (140, 8815, 72, 0, '00170010-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (141, 8815, 86, 0, '0017000f-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (142, 8817, 75, 0, '00170012-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (143, 8817, 102, 0, '00170011-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (144, 8832, 86, 0, '00170023-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (145, 8832, 92, 0, '00170020-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (146, 8832, 94, 0, '00170021-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (147, 8832, 102, 0, '00170022-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (148, 8836, 60, 0, '00170025-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (149, 8836, 92, 0, '00170024-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (150, 8838, 72, 0, '00170027-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (151, 8838, 86, 0, '00170026-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (152, 8840, 75, 0, '00170029-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (153, 8840, 102, 0, '00170028-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (154, 9205, 77, 0, '00180005-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (155, 9205, 84, 0, '00180006-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (156, 9205, 86, 0, '00180007-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (157, 9209, 21, 0, '0018000a-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (158, 9209, 25, 0, '0018000b-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (159, 9209, 77, 0, '00180009-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (160, 9209, 84, 0, '0018000c-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (161, 9209, 86, 0, '0018000d-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (162, 9218, 77, 0, '00180012-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (163, 9218, 84, 0, '00180013-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (164, 9218, 86, 0, '00180014-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (165, 9221, 77, 0, '00180015-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (166, 9221, 84, 0, '00180016-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (167, 9221, 86, 0, '00180017-0000-4000-8000-000000000000', 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  -- Undivided Daemon Prince (DoC + WoC) — gates draft access to Lore of
-  -- Fire spells via the panel's lore selector.  Marked variants
-  -- (Khorne / Nurgle / Slaanesh / Tzeentch) keep their mark-specific
-  -- spell pool via separate unit rows; only the unmarked variants
-  -- pin Fire here.
-  (168, 1604, 94, 0, NULL, 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null),
-  (169, 8819, 94, 0, NULL, 1, 'f0ce7395-a57f-41e9-ade0-fd13bafc058f', STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), STRFTIME('%Y-%m-%dT%H:%M:%fZ','now'), null);
+-- Generated by rpfm-scraper.  Do not hand-edit — re-run the
+-- scraper.  Pins `unit.lore` and overrides `unit.family_name`
+-- for every variant unit row whose engine name carries a
+-- trailing `(<Suffix>)` resolving to a lore in the catalogue.
+-- The mark suffix has already been stripped from family_name
+-- by seed-unit-marks.sql; this step strips the lore paren on
+-- top so all (mark, lore) variants of a wizard collapse to a
+-- shared family identifier.  Single combined UPDATE because
+-- next.jdbc.execute! only consumes the first statement of a
+-- multi-statement string.  Runs after the per-faction unit
+-- seeds + seed-unit-marks.sql populate the rows.
+UPDATE unit
+SET lore = CASE eid
+  WHEN '00020003-0000-4000-8000-000000000000' THEN 'wh_dlc03_lore_beasts'
+  WHEN '00020004-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '00020005-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '00020006-0000-4000-8000-000000000000' THEN 'wh_dlc03_lore_wild'
+  WHEN '0002000b-0000-4000-8000-000000000000' THEN 'wh_dlc03_lore_beasts'
+  WHEN '0002000c-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '0002000d-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '0002000e-0000-4000-8000-000000000000' THEN 'wh_dlc03_lore_wild'
+  WHEN '00030005-0000-4000-8000-000000000000' THEN 'wh_dlc03_lore_beasts'
+  WHEN '00030006-0000-4000-8000-000000000000' THEN 'wh_main_lore_heavens'
+  WHEN '00030007-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_life'
+  WHEN '00030009-0000-4000-8000-000000000000' THEN 'wh_dlc03_lore_beasts'
+  WHEN '0003000a-0000-4000-8000-000000000000' THEN 'wh_main_lore_heavens'
+  WHEN '0003000b-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_life'
+  WHEN '00040004-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '00040005-0000-4000-8000-000000000000' THEN 'wh_main_lore_fire'
+  WHEN '00040006-0000-4000-8000-000000000000' THEN 'wh3_dlc23_lore_hashut'
+  WHEN '00040007-0000-4000-8000-000000000000' THEN 'wh_main_lore_metal'
+  WHEN '0004000a-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '0004000b-0000-4000-8000-000000000000' THEN 'wh_main_lore_fire'
+  WHEN '0004000c-0000-4000-8000-000000000000' THEN 'wh3_dlc23_lore_hashut'
+  WHEN '0004000d-0000-4000-8000-000000000000' THEN 'wh_main_lore_metal'
+  WHEN '00050004-0000-4000-8000-000000000000' THEN 'wh_main_lore_fire'
+  WHEN '0005000a-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '0005000b-0000-4000-8000-000000000000' THEN 'wh3_main_lore_nurgle'
+  WHEN '0005000c-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '0005000d-0000-4000-8000-000000000000' THEN 'wh3_main_lore_slaanesh'
+  WHEN '0005000e-0000-4000-8000-000000000000' THEN 'wh_main_lore_metal'
+  WHEN '0005000f-0000-4000-8000-000000000000' THEN 'wh3_main_lore_tzeentch'
+  WHEN '00050012-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '00050013-0000-4000-8000-000000000000' THEN 'wh3_main_lore_nurgle'
+  WHEN '00050014-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '00050015-0000-4000-8000-000000000000' THEN 'wh3_main_lore_slaanesh'
+  WHEN '00050016-0000-4000-8000-000000000000' THEN 'wh_main_lore_metal'
+  WHEN '00050017-0000-4000-8000-000000000000' THEN 'wh3_main_lore_tzeentch'
+  WHEN '0005001a-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '0005001b-0000-4000-8000-000000000000' THEN 'wh3_main_lore_slaanesh'
+  WHEN '0005001d-0000-4000-8000-000000000000' THEN 'wh_main_lore_metal'
+  WHEN '0005001e-0000-4000-8000-000000000000' THEN 'wh3_main_lore_tzeentch'
+  WHEN '00050020-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '00050021-0000-4000-8000-000000000000' THEN 'wh3_main_lore_nurgle'
+  WHEN '0005004d-0000-4000-8000-000000000000' THEN 'wh3_main_lore_nurgle'
+  WHEN '0005004e-0000-4000-8000-000000000000' THEN 'wh3_main_lore_slaanesh'
+  WHEN '0005004f-0000-4000-8000-000000000000' THEN 'wh3_main_lore_tzeentch'
+  WHEN '0006000a-0000-4000-8000-000000000000' THEN 'wh_dlc03_lore_beasts'
+  WHEN '0006000b-0000-4000-8000-000000000000' THEN 'wh2_main_lore_dark_magic'
+  WHEN '0006000c-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '0006000d-0000-4000-8000-000000000000' THEN 'wh_main_lore_fire'
+  WHEN '0006000e-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '00060012-0000-4000-8000-000000000000' THEN 'wh_dlc03_lore_beasts'
+  WHEN '00060013-0000-4000-8000-000000000000' THEN 'wh2_main_lore_dark_magic'
+  WHEN '00060014-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '00060015-0000-4000-8000-000000000000' THEN 'wh_main_lore_fire'
+  WHEN '00060016-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '00080002-0000-4000-8000-000000000000' THEN 'wh3_main_lore_of_yang'
+  WHEN '00080003-0000-4000-8000-000000000000' THEN 'wh3_main_lore_of_yin'
+  WHEN '000a0004-0000-4000-8000-000000000000' THEN 'wh_dlc03_lore_beasts'
+  WHEN '000a0005-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '000a0006-0000-4000-8000-000000000000' THEN 'wh_main_lore_fire'
+  WHEN '000a0007-0000-4000-8000-000000000000' THEN 'wh_main_lore_heavens'
+  WHEN '000a0008-0000-4000-8000-000000000000' THEN 'wh2_main_lore_high_magic'
+  WHEN '000a0009-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_life'
+  WHEN '000a000a-0000-4000-8000-000000000000' THEN 'wh_main_lore_light'
+  WHEN '000a000b-0000-4000-8000-000000000000' THEN 'wh_main_lore_metal'
+  WHEN '000a000c-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '000a0019-0000-4000-8000-000000000000' THEN 'wh_dlc03_lore_beasts'
+  WHEN '000a001a-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '000a001b-0000-4000-8000-000000000000' THEN 'wh_main_lore_fire'
+  WHEN '000a001c-0000-4000-8000-000000000000' THEN 'wh_main_lore_heavens'
+  WHEN '000a001d-0000-4000-8000-000000000000' THEN 'wh2_main_lore_high_magic'
+  WHEN '000a001e-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_life'
+  WHEN '000a001f-0000-4000-8000-000000000000' THEN 'wh_main_lore_light'
+  WHEN '000a0020-0000-4000-8000-000000000000' THEN 'wh_main_lore_metal'
+  WHEN '000a0021-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '000c0005-0000-4000-8000-000000000000' THEN 'wh3_main_lore_of_ice'
+  WHEN '000c0006-0000-4000-8000-000000000000' THEN 'wh3_main_lore_of_tempest'
+  WHEN '000c000a-0000-4000-8000-000000000000' THEN 'wh3_main_lore_of_ice'
+  WHEN '000c000b-0000-4000-8000-000000000000' THEN 'wh3_main_lore_of_tempest'
+  WHEN '000c0023-0000-4000-8000-000000000000' THEN 'wh_dlc03_lore_beasts'
+  WHEN '000c0024-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '000c0025-0000-4000-8000-000000000000' THEN 'wh3_dlc24_lore_hag'
+  WHEN '000c0026-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '000d000b-0000-4000-8000-000000000000' THEN 'wh_dlc03_lore_beasts'
+  WHEN '000d000c-0000-4000-8000-000000000000' THEN 'wh_main_lore_heavens'
+  WHEN '000d0037-0000-4000-8000-000000000000' THEN 'wh_main_lore_fire'
+  WHEN '000d0038-0000-4000-8000-000000000000' THEN 'wh_main_lore_heavens'
+  WHEN '000d0039-0000-4000-8000-000000000000' THEN 'wh2_main_lore_high_magic'
+  WHEN '000d003a-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_life'
+  WHEN '000d003b-0000-4000-8000-000000000000' THEN 'wh_main_lore_light'
+  WHEN '000d003c-0000-4000-8000-000000000000' THEN 'wh_dlc03_lore_beasts'
+  WHEN '000d003d-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '000d003e-0000-4000-8000-000000000000' THEN 'wh_main_lore_metal'
+  WHEN '000d003f-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '000e0003-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '000e0004-0000-4000-8000-000000000000' THEN 'wh_main_lore_fire'
+  WHEN '000e0005-0000-4000-8000-000000000000' THEN 'wh_main_lore_metal'
+  WHEN '000e000b-0000-4000-8000-000000000000' THEN 'wh_main_lore_fire'
+  WHEN '000e000c-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '000e000f-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '000e0010-0000-4000-8000-000000000000' THEN 'wh_main_lore_fire'
+  WHEN '000e0011-0000-4000-8000-000000000000' THEN 'wh_main_lore_metal'
+  WHEN '000f0002-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '000f0003-0000-4000-8000-000000000000' THEN 'wh3_main_lore_nurgle'
+  WHEN '000f0005-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '000f0006-0000-4000-8000-000000000000' THEN 'wh3_main_lore_nurgle'
+  WHEN '000f0008-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '000f0009-0000-4000-8000-000000000000' THEN 'wh3_main_lore_nurgle'
+  WHEN '000f000c-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '000f000d-0000-4000-8000-000000000000' THEN 'wh3_main_lore_nurgle'
+  WHEN '000f0014-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '000f0015-0000-4000-8000-000000000000' THEN 'wh3_main_lore_nurgle'
+  WHEN '000f003d-0000-4000-8000-000000000000' THEN 'wh3_main_lore_nurgle'
+  WHEN '00100005-0000-4000-8000-000000000000' THEN 'wh_dlc03_lore_beasts'
+  WHEN '00100006-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '00100007-0000-4000-8000-000000000000' THEN 'wh3_main_lore_of_great_maw'
+  WHEN '00100008-0000-4000-8000-000000000000' THEN 'wh_main_lore_heavens'
+  WHEN '0010000c-0000-4000-8000-000000000000' THEN 'wh_dlc03_lore_beasts'
+  WHEN '0010000d-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '0010000e-0000-4000-8000-000000000000' THEN 'wh3_main_lore_of_great_maw'
+  WHEN '0010000f-0000-4000-8000-000000000000' THEN 'wh_main_lore_heavens'
+  WHEN '00110002-0000-4000-8000-000000000000' THEN 'wh2_main_lore_plague'
+  WHEN '00110003-0000-4000-8000-000000000000' THEN 'wh2_main_lore_ruin'
+  WHEN '00120003-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '00120004-0000-4000-8000-000000000000' THEN 'wh3_main_lore_slaanesh'
+  WHEN '00120007-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '00120008-0000-4000-8000-000000000000' THEN 'wh3_main_lore_slaanesh'
+  WHEN '00120009-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '0012000a-0000-4000-8000-000000000000' THEN 'wh3_main_lore_slaanesh'
+  WHEN '0012000e-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '0012000f-0000-4000-8000-000000000000' THEN 'wh3_main_lore_slaanesh'
+  WHEN '00120010-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '00120011-0000-4000-8000-000000000000' THEN 'wh3_main_lore_slaanesh'
+  WHEN '00120040-0000-4000-8000-000000000000' THEN 'wh3_main_lore_slaanesh'
+  WHEN '00130006-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '00130007-0000-4000-8000-000000000000' THEN 'wh_main_lore_light'
+  WHEN '00130008-0000-4000-8000-000000000000' THEN 'wh2_dlc09_lore_nehekhara'
+  WHEN '00130009-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '00140002-0000-4000-8000-000000000000' THEN 'wh_main_lore_metal'
+  WHEN '00140003-0000-4000-8000-000000000000' THEN 'wh3_main_lore_tzeentch'
+  WHEN '00140005-0000-4000-8000-000000000000' THEN 'wh_main_lore_metal'
+  WHEN '00140006-0000-4000-8000-000000000000' THEN 'wh3_main_lore_tzeentch'
+  WHEN '00140007-0000-4000-8000-000000000000' THEN 'wh_main_lore_metal'
+  WHEN '00140008-0000-4000-8000-000000000000' THEN 'wh3_main_lore_tzeentch'
+  WHEN '0014000e-0000-4000-8000-000000000000' THEN 'wh_main_lore_metal'
+  WHEN '0014000f-0000-4000-8000-000000000000' THEN 'wh3_main_lore_tzeentch'
+  WHEN '00140012-0000-4000-8000-000000000000' THEN 'wh_main_lore_metal'
+  WHEN '00140013-0000-4000-8000-000000000000' THEN 'wh3_main_lore_tzeentch'
+  WHEN '0014002d-0000-4000-8000-000000000000' THEN 'wh3_main_lore_tzeentch'
+  WHEN '0015000e-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '0015000f-0000-4000-8000-000000000000' THEN 'wh2_dlc11_lore_deep'
+  WHEN '00150010-0000-4000-8000-000000000000' THEN 'wh_main_lore_vampires'
+  WHEN '00160012-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '00160013-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '00170009-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '0017000a-0000-4000-8000-000000000000' THEN 'wh_main_lore_fire'
+  WHEN '0017000b-0000-4000-8000-000000000000' THEN 'wh_main_lore_metal'
+  WHEN '0017000c-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '0017000d-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '0017000e-0000-4000-8000-000000000000' THEN 'wh3_main_lore_nurgle'
+  WHEN '0017000f-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '00170010-0000-4000-8000-000000000000' THEN 'wh3_main_lore_slaanesh'
+  WHEN '00170011-0000-4000-8000-000000000000' THEN 'wh_main_lore_metal'
+  WHEN '00170012-0000-4000-8000-000000000000' THEN 'wh3_main_lore_tzeentch'
+  WHEN '00170013-0000-4000-8000-000000000000' THEN 'wh_main_lore_fire'
+  WHEN '00170020-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '00170021-0000-4000-8000-000000000000' THEN 'wh_main_lore_fire'
+  WHEN '00170022-0000-4000-8000-000000000000' THEN 'wh_main_lore_metal'
+  WHEN '00170023-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '00170024-0000-4000-8000-000000000000' THEN 'wh_main_lore_death'
+  WHEN '00170025-0000-4000-8000-000000000000' THEN 'wh3_main_lore_nurgle'
+  WHEN '00170026-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '00170027-0000-4000-8000-000000000000' THEN 'wh3_main_lore_slaanesh'
+  WHEN '00170028-0000-4000-8000-000000000000' THEN 'wh_main_lore_metal'
+  WHEN '00170029-0000-4000-8000-000000000000' THEN 'wh3_main_lore_tzeentch'
+  WHEN '00180005-0000-4000-8000-000000000000' THEN 'wh_dlc03_lore_beasts'
+  WHEN '00180006-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_life'
+  WHEN '00180007-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '00180009-0000-4000-8000-000000000000' THEN 'wh_dlc03_lore_beasts'
+  WHEN '0018000a-0000-4000-8000-000000000000' THEN 'wh2_main_lore_dark_magic'
+  WHEN '0018000b-0000-4000-8000-000000000000' THEN 'wh2_main_lore_high_magic'
+  WHEN '0018000c-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_life'
+  WHEN '0018000d-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '00180012-0000-4000-8000-000000000000' THEN 'wh_dlc03_lore_beasts'
+  WHEN '00180013-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_life'
+  WHEN '00180014-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  WHEN '00180015-0000-4000-8000-000000000000' THEN 'wh_dlc03_lore_beasts'
+  WHEN '00180016-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_life'
+  WHEN '00180017-0000-4000-8000-000000000000' THEN 'wh_dlc05_lore_shadows'
+  ELSE lore
+END,
+mark = CASE eid
+  WHEN '00050012-0000-4000-8000-000000000000' THEN 'nurgle'
+  WHEN '00050013-0000-4000-8000-000000000000' THEN 'nurgle'
+  WHEN '00050014-0000-4000-8000-000000000000' THEN 'slaanesh'
+  WHEN '00050015-0000-4000-8000-000000000000' THEN 'slaanesh'
+  WHEN '00050016-0000-4000-8000-000000000000' THEN 'tzeentch'
+  WHEN '00050017-0000-4000-8000-000000000000' THEN 'tzeentch'
+  WHEN '000f0002-0000-4000-8000-000000000000' THEN 'nurgle'
+  WHEN '000f0003-0000-4000-8000-000000000000' THEN 'nurgle'
+  WHEN '000f0008-0000-4000-8000-000000000000' THEN 'nurgle'
+  WHEN '000f0009-0000-4000-8000-000000000000' THEN 'nurgle'
+  WHEN '000f000c-0000-4000-8000-000000000000' THEN 'nurgle'
+  WHEN '000f000d-0000-4000-8000-000000000000' THEN 'nurgle'
+  WHEN '00120003-0000-4000-8000-000000000000' THEN 'slaanesh'
+  WHEN '00120004-0000-4000-8000-000000000000' THEN 'slaanesh'
+  WHEN '00120009-0000-4000-8000-000000000000' THEN 'slaanesh'
+  WHEN '0012000a-0000-4000-8000-000000000000' THEN 'slaanesh'
+  WHEN '00120010-0000-4000-8000-000000000000' THEN 'slaanesh'
+  WHEN '00120011-0000-4000-8000-000000000000' THEN 'slaanesh'
+  WHEN '00140002-0000-4000-8000-000000000000' THEN 'tzeentch'
+  WHEN '00140003-0000-4000-8000-000000000000' THEN 'tzeentch'
+  WHEN '00140007-0000-4000-8000-000000000000' THEN 'tzeentch'
+  WHEN '00140008-0000-4000-8000-000000000000' THEN 'tzeentch'
+  WHEN '0014000e-0000-4000-8000-000000000000' THEN 'tzeentch'
+  WHEN '0014000f-0000-4000-8000-000000000000' THEN 'tzeentch'
+  WHEN '0017000d-0000-4000-8000-000000000000' THEN 'nurgle'
+  WHEN '0017000e-0000-4000-8000-000000000000' THEN 'nurgle'
+  WHEN '0017000f-0000-4000-8000-000000000000' THEN 'slaanesh'
+  WHEN '00170010-0000-4000-8000-000000000000' THEN 'slaanesh'
+  WHEN '00170011-0000-4000-8000-000000000000' THEN 'tzeentch'
+  WHEN '00170012-0000-4000-8000-000000000000' THEN 'tzeentch'
+  WHEN '00170024-0000-4000-8000-000000000000' THEN 'nurgle'
+  WHEN '00170025-0000-4000-8000-000000000000' THEN 'nurgle'
+  WHEN '00170026-0000-4000-8000-000000000000' THEN 'slaanesh'
+  WHEN '00170027-0000-4000-8000-000000000000' THEN 'slaanesh'
+  WHEN '00170028-0000-4000-8000-000000000000' THEN 'tzeentch'
+  WHEN '00170029-0000-4000-8000-000000000000' THEN 'tzeentch'
+  ELSE mark
+END,
+family_name = CASE eid
+  WHEN '00020003-0000-4000-8000-000000000000' THEN 'Great Bray-Shaman'
+  WHEN '00020004-0000-4000-8000-000000000000' THEN 'Great Bray-Shaman'
+  WHEN '00020005-0000-4000-8000-000000000000' THEN 'Great Bray-Shaman'
+  WHEN '00020006-0000-4000-8000-000000000000' THEN 'Great Bray-Shaman'
+  WHEN '0002000b-0000-4000-8000-000000000000' THEN 'Bray-Shaman'
+  WHEN '0002000c-0000-4000-8000-000000000000' THEN 'Bray-Shaman'
+  WHEN '0002000d-0000-4000-8000-000000000000' THEN 'Bray-Shaman'
+  WHEN '0002000e-0000-4000-8000-000000000000' THEN 'Bray-Shaman'
+  WHEN '00030005-0000-4000-8000-000000000000' THEN 'Prophetess'
+  WHEN '00030006-0000-4000-8000-000000000000' THEN 'Prophetess'
+  WHEN '00030007-0000-4000-8000-000000000000' THEN 'Prophetess'
+  WHEN '00030009-0000-4000-8000-000000000000' THEN 'Damsel'
+  WHEN '0003000a-0000-4000-8000-000000000000' THEN 'Damsel'
+  WHEN '0003000b-0000-4000-8000-000000000000' THEN 'Damsel'
+  WHEN '00040004-0000-4000-8000-000000000000' THEN 'Sorcerer-Prophet'
+  WHEN '00040005-0000-4000-8000-000000000000' THEN 'Sorcerer-Prophet'
+  WHEN '00040006-0000-4000-8000-000000000000' THEN 'Sorcerer-Prophet'
+  WHEN '00040007-0000-4000-8000-000000000000' THEN 'Sorcerer-Prophet'
+  WHEN '0004000a-0000-4000-8000-000000000000' THEN 'Daemonsmith Sorcerer'
+  WHEN '0004000b-0000-4000-8000-000000000000' THEN 'Daemonsmith Sorcerer'
+  WHEN '0004000c-0000-4000-8000-000000000000' THEN 'Daemonsmith Sorcerer'
+  WHEN '0004000d-0000-4000-8000-000000000000' THEN 'Daemonsmith Sorcerer'
+  WHEN '00050004-0000-4000-8000-000000000000' THEN 'Daemon Prince'
+  WHEN '0005000a-0000-4000-8000-000000000000' THEN 'Exalted Great Unclean One'
+  WHEN '0005000b-0000-4000-8000-000000000000' THEN 'Exalted Great Unclean One'
+  WHEN '0005000c-0000-4000-8000-000000000000' THEN 'Exalted Keeper of Secrets'
+  WHEN '0005000d-0000-4000-8000-000000000000' THEN 'Exalted Keeper of Secrets'
+  WHEN '0005000e-0000-4000-8000-000000000000' THEN 'Exalted Lord of Change'
+  WHEN '0005000f-0000-4000-8000-000000000000' THEN 'Exalted Lord of Change'
+  WHEN '00050012-0000-4000-8000-000000000000' THEN 'Herald'
+  WHEN '00050013-0000-4000-8000-000000000000' THEN 'Herald'
+  WHEN '00050014-0000-4000-8000-000000000000' THEN 'Herald'
+  WHEN '00050015-0000-4000-8000-000000000000' THEN 'Herald'
+  WHEN '00050016-0000-4000-8000-000000000000' THEN 'Herald'
+  WHEN '00050017-0000-4000-8000-000000000000' THEN 'Herald'
+  WHEN '0005001a-0000-4000-8000-000000000000' THEN 'Alluress'
+  WHEN '0005001b-0000-4000-8000-000000000000' THEN 'Alluress'
+  WHEN '0005001d-0000-4000-8000-000000000000' THEN 'Iridescent Horror'
+  WHEN '0005001e-0000-4000-8000-000000000000' THEN 'Iridescent Horror'
+  WHEN '00050020-0000-4000-8000-000000000000' THEN 'Plagueridden'
+  WHEN '00050021-0000-4000-8000-000000000000' THEN 'Plagueridden'
+  WHEN '0005004d-0000-4000-8000-000000000000' THEN 'Chaos Furies'
+  WHEN '0005004e-0000-4000-8000-000000000000' THEN 'Chaos Furies'
+  WHEN '0005004f-0000-4000-8000-000000000000' THEN 'Chaos Furies'
+  WHEN '0006000a-0000-4000-8000-000000000000' THEN 'Supreme Sorceress'
+  WHEN '0006000b-0000-4000-8000-000000000000' THEN 'Supreme Sorceress'
+  WHEN '0006000c-0000-4000-8000-000000000000' THEN 'Supreme Sorceress'
+  WHEN '0006000d-0000-4000-8000-000000000000' THEN 'Supreme Sorceress'
+  WHEN '0006000e-0000-4000-8000-000000000000' THEN 'Supreme Sorceress'
+  WHEN '00060012-0000-4000-8000-000000000000' THEN 'Sorceress'
+  WHEN '00060013-0000-4000-8000-000000000000' THEN 'Sorceress'
+  WHEN '00060014-0000-4000-8000-000000000000' THEN 'Sorceress'
+  WHEN '00060015-0000-4000-8000-000000000000' THEN 'Sorceress'
+  WHEN '00060016-0000-4000-8000-000000000000' THEN 'Sorceress'
+  WHEN '00080002-0000-4000-8000-000000000000' THEN 'Dragon-blooded Shugengan Lord'
+  WHEN '00080003-0000-4000-8000-000000000000' THEN 'Dragon-blooded Shugengan Lord'
+  WHEN '000a0004-0000-4000-8000-000000000000' THEN 'Archmage'
+  WHEN '000a0005-0000-4000-8000-000000000000' THEN 'Archmage'
+  WHEN '000a0006-0000-4000-8000-000000000000' THEN 'Archmage'
+  WHEN '000a0007-0000-4000-8000-000000000000' THEN 'Archmage'
+  WHEN '000a0008-0000-4000-8000-000000000000' THEN 'Archmage'
+  WHEN '000a0009-0000-4000-8000-000000000000' THEN 'Archmage'
+  WHEN '000a000a-0000-4000-8000-000000000000' THEN 'Archmage'
+  WHEN '000a000b-0000-4000-8000-000000000000' THEN 'Archmage'
+  WHEN '000a000c-0000-4000-8000-000000000000' THEN 'Archmage'
+  WHEN '000a0019-0000-4000-8000-000000000000' THEN 'Mage'
+  WHEN '000a001a-0000-4000-8000-000000000000' THEN 'Mage'
+  WHEN '000a001b-0000-4000-8000-000000000000' THEN 'Mage'
+  WHEN '000a001c-0000-4000-8000-000000000000' THEN 'Mage'
+  WHEN '000a001d-0000-4000-8000-000000000000' THEN 'Mage'
+  WHEN '000a001e-0000-4000-8000-000000000000' THEN 'Mage'
+  WHEN '000a001f-0000-4000-8000-000000000000' THEN 'Mage'
+  WHEN '000a0020-0000-4000-8000-000000000000' THEN 'Mage'
+  WHEN '000a0021-0000-4000-8000-000000000000' THEN 'Mage'
+  WHEN '000c0005-0000-4000-8000-000000000000' THEN 'Ice Witch'
+  WHEN '000c0006-0000-4000-8000-000000000000' THEN 'Ice Witch'
+  WHEN '000c000a-0000-4000-8000-000000000000' THEN 'Frost Maiden'
+  WHEN '000c000b-0000-4000-8000-000000000000' THEN 'Frost Maiden'
+  WHEN '000c0023-0000-4000-8000-000000000000' THEN 'Hag Witch'
+  WHEN '000c0024-0000-4000-8000-000000000000' THEN 'Hag Witch'
+  WHEN '000c0025-0000-4000-8000-000000000000' THEN 'Hag Witch'
+  WHEN '000c0026-0000-4000-8000-000000000000' THEN 'Hag Witch'
+  WHEN '000d000b-0000-4000-8000-000000000000' THEN 'Skink Priest'
+  WHEN '000d000c-0000-4000-8000-000000000000' THEN 'Skink Priest'
+  WHEN '000d0037-0000-4000-8000-000000000000' THEN 'Slann Mage-Priest'
+  WHEN '000d0038-0000-4000-8000-000000000000' THEN 'Slann Mage-Priest'
+  WHEN '000d0039-0000-4000-8000-000000000000' THEN 'Slann Mage-Priest'
+  WHEN '000d003a-0000-4000-8000-000000000000' THEN 'Slann Mage-Priest'
+  WHEN '000d003b-0000-4000-8000-000000000000' THEN 'Slann Mage-Priest'
+  WHEN '000d003c-0000-4000-8000-000000000000' THEN 'Slann Mage-Priest'
+  WHEN '000d003d-0000-4000-8000-000000000000' THEN 'Slann Mage-Priest'
+  WHEN '000d003e-0000-4000-8000-000000000000' THEN 'Slann Mage-Priest'
+  WHEN '000d003f-0000-4000-8000-000000000000' THEN 'Slann Mage-Priest'
+  WHEN '000e0003-0000-4000-8000-000000000000' THEN 'Great Shaman-Sorcerer'
+  WHEN '000e0004-0000-4000-8000-000000000000' THEN 'Great Shaman-Sorcerer'
+  WHEN '000e0005-0000-4000-8000-000000000000' THEN 'Great Shaman-Sorcerer'
+  WHEN '000e000b-0000-4000-8000-000000000000' THEN 'Fimir Balefiend'
+  WHEN '000e000c-0000-4000-8000-000000000000' THEN 'Fimir Balefiend'
+  WHEN '000e000f-0000-4000-8000-000000000000' THEN 'Shaman-Sorcerer'
+  WHEN '000e0010-0000-4000-8000-000000000000' THEN 'Shaman-Sorcerer'
+  WHEN '000e0011-0000-4000-8000-000000000000' THEN 'Shaman-Sorcerer'
+  WHEN '000f0002-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer Lord'
+  WHEN '000f0003-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer Lord'
+  WHEN '000f0005-0000-4000-8000-000000000000' THEN 'Exalted Great Unclean One'
+  WHEN '000f0006-0000-4000-8000-000000000000' THEN 'Exalted Great Unclean One'
+  WHEN '000f0008-0000-4000-8000-000000000000' THEN 'Herald'
+  WHEN '000f0009-0000-4000-8000-000000000000' THEN 'Herald'
+  WHEN '000f000c-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer'
+  WHEN '000f000d-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer'
+  WHEN '000f0014-0000-4000-8000-000000000000' THEN 'Plagueridden'
+  WHEN '000f0015-0000-4000-8000-000000000000' THEN 'Plagueridden'
+  WHEN '000f003d-0000-4000-8000-000000000000' THEN 'Chaos Furies'
+  WHEN '00100005-0000-4000-8000-000000000000' THEN 'Slaughtermaster'
+  WHEN '00100006-0000-4000-8000-000000000000' THEN 'Slaughtermaster'
+  WHEN '00100007-0000-4000-8000-000000000000' THEN 'Slaughtermaster'
+  WHEN '00100008-0000-4000-8000-000000000000' THEN 'Slaughtermaster'
+  WHEN '0010000c-0000-4000-8000-000000000000' THEN 'Butcher'
+  WHEN '0010000d-0000-4000-8000-000000000000' THEN 'Butcher'
+  WHEN '0010000e-0000-4000-8000-000000000000' THEN 'Butcher'
+  WHEN '0010000f-0000-4000-8000-000000000000' THEN 'Butcher'
+  WHEN '00110002-0000-4000-8000-000000000000' THEN 'Grey Seer'
+  WHEN '00110003-0000-4000-8000-000000000000' THEN 'Grey Seer'
+  WHEN '00120003-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer Lord'
+  WHEN '00120004-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer Lord'
+  WHEN '00120007-0000-4000-8000-000000000000' THEN 'Exalted Keeper of Secrets'
+  WHEN '00120008-0000-4000-8000-000000000000' THEN 'Exalted Keeper of Secrets'
+  WHEN '00120009-0000-4000-8000-000000000000' THEN 'Herald'
+  WHEN '0012000a-0000-4000-8000-000000000000' THEN 'Herald'
+  WHEN '0012000e-0000-4000-8000-000000000000' THEN 'Alluress'
+  WHEN '0012000f-0000-4000-8000-000000000000' THEN 'Alluress'
+  WHEN '00120010-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer'
+  WHEN '00120011-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer'
+  WHEN '00120040-0000-4000-8000-000000000000' THEN 'Chaos Furies'
+  WHEN '00130006-0000-4000-8000-000000000000' THEN 'Liche Priest'
+  WHEN '00130007-0000-4000-8000-000000000000' THEN 'Liche Priest'
+  WHEN '00130008-0000-4000-8000-000000000000' THEN 'Liche Priest'
+  WHEN '00130009-0000-4000-8000-000000000000' THEN 'Liche Priest'
+  WHEN '00140002-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer Lord'
+  WHEN '00140003-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer Lord'
+  WHEN '00140005-0000-4000-8000-000000000000' THEN 'Exalted Lord of Change'
+  WHEN '00140006-0000-4000-8000-000000000000' THEN 'Exalted Lord of Change'
+  WHEN '00140007-0000-4000-8000-000000000000' THEN 'Herald'
+  WHEN '00140008-0000-4000-8000-000000000000' THEN 'Herald'
+  WHEN '0014000e-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer'
+  WHEN '0014000f-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer'
+  WHEN '00140012-0000-4000-8000-000000000000' THEN 'Iridescent Horror'
+  WHEN '00140013-0000-4000-8000-000000000000' THEN 'Iridescent Horror'
+  WHEN '0014002d-0000-4000-8000-000000000000' THEN 'Chaos Furies'
+  WHEN '0015000e-0000-4000-8000-000000000000' THEN 'Vampire Fleet Captain'
+  WHEN '0015000f-0000-4000-8000-000000000000' THEN 'Vampire Fleet Captain'
+  WHEN '00150010-0000-4000-8000-000000000000' THEN 'Vampire Fleet Captain'
+  WHEN '00160012-0000-4000-8000-000000000000' THEN 'Vampire'
+  WHEN '00160013-0000-4000-8000-000000000000' THEN 'Vampire'
+  WHEN '00170009-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer Lord'
+  WHEN '0017000a-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer Lord'
+  WHEN '0017000b-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer Lord'
+  WHEN '0017000c-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer Lord'
+  WHEN '0017000d-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer Lord'
+  WHEN '0017000e-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer Lord'
+  WHEN '0017000f-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer Lord'
+  WHEN '00170010-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer Lord'
+  WHEN '00170011-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer Lord'
+  WHEN '00170012-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer Lord'
+  WHEN '00170013-0000-4000-8000-000000000000' THEN 'Daemon Prince'
+  WHEN '00170020-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer'
+  WHEN '00170021-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer'
+  WHEN '00170022-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer'
+  WHEN '00170023-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer'
+  WHEN '00170024-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer'
+  WHEN '00170025-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer'
+  WHEN '00170026-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer'
+  WHEN '00170027-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer'
+  WHEN '00170028-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer'
+  WHEN '00170029-0000-4000-8000-000000000000' THEN 'Chaos Sorcerer'
+  WHEN '00180005-0000-4000-8000-000000000000' THEN 'Malevolent Ancient Treeman'
+  WHEN '00180006-0000-4000-8000-000000000000' THEN 'Malevolent Ancient Treeman'
+  WHEN '00180007-0000-4000-8000-000000000000' THEN 'Malevolent Ancient Treeman'
+  WHEN '00180009-0000-4000-8000-000000000000' THEN 'Spellweaver'
+  WHEN '0018000a-0000-4000-8000-000000000000' THEN 'Spellweaver'
+  WHEN '0018000b-0000-4000-8000-000000000000' THEN 'Spellweaver'
+  WHEN '0018000c-0000-4000-8000-000000000000' THEN 'Spellweaver'
+  WHEN '0018000d-0000-4000-8000-000000000000' THEN 'Spellweaver'
+  WHEN '00180012-0000-4000-8000-000000000000' THEN 'Malevolent Branchwraith'
+  WHEN '00180013-0000-4000-8000-000000000000' THEN 'Malevolent Branchwraith'
+  WHEN '00180014-0000-4000-8000-000000000000' THEN 'Malevolent Branchwraith'
+  WHEN '00180015-0000-4000-8000-000000000000' THEN 'Spellsinger'
+  WHEN '00180016-0000-4000-8000-000000000000' THEN 'Spellsinger'
+  WHEN '00180017-0000-4000-8000-000000000000' THEN 'Spellsinger'
+  ELSE family_name
+END;

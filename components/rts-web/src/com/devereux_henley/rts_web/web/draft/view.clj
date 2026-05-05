@@ -8,39 +8,37 @@
 
 (defn- build-draft-context
   [dependencies draft request]
-  (let [game-mode         (domain/get-game-mode-by-eid dependencies (:game-mode-eid draft))
-        faction           (domain/get-faction-by-eid dependencies (:faction-eid draft))
-        units             (domain/hydrate-units-with-stats
-                           (domain/get-units-for-faction dependencies (:faction-eid draft)))
-        unit-by-eid       (into {} (map (juxt :eid identity) units))
+  (let [game-mode    (domain/get-game-mode-by-eid dependencies (:game-mode-eid draft))
+        faction      (domain/get-faction-by-eid dependencies (:faction-eid draft))
+        units        (domain/hydrate-units-with-stats
+                      (domain/get-units-for-faction dependencies (:faction-eid draft)))
+        unit-by-eid  (into {} (map (juxt :eid identity) units))
         ;; Roster shows one card per family — five "Daemon Prince"
         ;; rows (one per mark) collapse into a single tile whose mark
         ;; switcher lives in the panel.  Each card carries its
         ;; canonical's portrait + cost; the per-mark variant eids ride
         ;; along on `:family-variants` for the panel + slot panel to
         ;; consume.
-        families          (domain/group-units-by-family units)
-        units-by-cat      (->> families
-                               (partition-by :unit-category-name)
-                               (mapv (fn [g] {:category (:unit-category-name (first g))
-                                              :units    (vec (sort-by :cost g))})))
-        state             (domain/get-draft-state dependencies (:eid draft))
-        lore-portrait-key (fn [unit-eid lore-key]
-                            (when lore-key
-                              (->> (domain/get-lores-for-unit dependencies unit-eid)
-                                   (some #(when (= lore-key (:key %)) (:portrait-key %))))))
-        hydrate           (fn [entries]
-                            (vec (keep (fn [entry]
-                                         (when-let [u (get unit-by-eid (:unit-eid entry))]
-                                           (assoc u
-                                                  :total-cost        (or (:total-cost entry) (:cost u))
-                                                  :entry-eid         (:entry-eid entry)
-                                                  :lore-portrait-key (lore-portrait-key (:unit-eid entry) (:lore entry)))))
-                                       entries)))
-        main-units        (hydrate (:main state))
-        reinf-units       (hydrate (:reinforcements state))
-        main-ctx          (domain/build-section-context "main" main-units (:eid draft) game-mode)
-        reinf-ctx         (domain/build-section-context "reinforcements" reinf-units (:eid draft) game-mode)]
+        families     (domain/group-units-by-family units)
+        units-by-cat (->> families
+                          (partition-by :unit-category-name)
+                          (mapv (fn [g] {:category (:unit-category-name (first g))
+                                         :units    (vec (sort-by :cost g))})))
+        state        (domain/get-draft-state dependencies (:eid draft))
+        ;; Each (mark, lore) variant is its own unit row with its own
+        ;; portrait, so the entry's `:unit-eid` already points at the
+        ;; correct image — no per-lore portrait override needed.
+        hydrate      (fn [entries]
+                       (vec (keep (fn [entry]
+                                    (when-let [u (get unit-by-eid (:unit-eid entry))]
+                                      (assoc u
+                                             :total-cost (or (:total-cost entry) (:cost u))
+                                             :entry-eid  (:entry-eid entry))))
+                                  entries)))
+        main-units   (hydrate (:main state))
+        reinf-units  (hydrate (:reinforcements state))
+        main-ctx     (domain/build-section-context "main" main-units (:eid draft) game-mode)
+        reinf-ctx    (domain/build-section-context "reinforcements" reinf-units (:eid draft) game-mode)]
     {:faction                faction
      :game-mode              game-mode
      :reinforcements-enabled (= 1 (:reinforcements-enabled game-mode))
