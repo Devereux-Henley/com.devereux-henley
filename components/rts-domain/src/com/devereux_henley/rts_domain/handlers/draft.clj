@@ -588,31 +588,37 @@
   (some-> name (->> (re-find lore-suffix-re)) second))
 
 (defn- family-marks
-  "Reduces `family-variants` to one entry per distinct `:mark` value,
-  preferring the variant whose `:lore` matches `current-lore` so a
-  mark swap preserves the lore choice when possible.  The current
-  unit's eid is preserved as the representative for `current-mark`
-  so the dropdown's selected option matches the panel's unit."
+  "Reduces `family-variants` to one Mark-selector option per distinct
+  `:mark` value, preferring the variant whose `:lore` matches
+  `current-lore` so a mark swap preserves the lore choice when
+  possible.  The current unit's eid is preserved as the representative
+  for `current-mark` so the dropdown's selected option matches the
+  panel's unit.  Returns the slim `family-mark-option` shape — only
+  the fields the selector actually renders."
   [family-variants current-eid current-mark current-lore]
   (let [by-mark (group-by :mark family-variants)]
     (->> (keys by-mark)
          (sort-by #(or % ""))
          (mapv (fn [m]
-                 (let [siblings (get by-mark m)]
-                   (or (when (= m current-mark)
-                         (first (filter #(= current-eid (:eid %)) siblings)))
-                       (first (filter #(= current-lore (:lore %)) siblings))
-                       (first siblings))))))))
+                 (let [siblings (get by-mark m)
+                       chosen   (or (when (= m current-mark)
+                                      (first (filter #(= current-eid (:eid %)) siblings)))
+                                    (first (filter #(= current-lore (:lore %)) siblings))
+                                    (first siblings))]
+                   (select-keys chosen [:eid :mark :cost])))))))
 
 (defn- family-lores
-  "Reduces `family-variants` to the lore options under `current-mark`
-  (a single mark's slate of lore variants).  Each entry carries a
-  derived `:lore-label` for display.  Returns an empty vector when
-  the family has no lore dimension under the current mark."
+  "Reduces `family-variants` to the Lore-selector options under
+  `current-mark` (a single mark's slate of lore variants).  Returns
+  the slim `family-lore-option` shape — eid, cost, and a derived
+  `:lore-label` parsed from the variant name.  Empty when the family
+  has no lore dimension under the current mark."
   [family-variants current-mark]
   (->> family-variants
        (filter #(= current-mark (:mark %)))
-       (mapv (fn [v] (assoc v :lore-label (lore-label (:name v)))))))
+       (mapv (fn [v] {:eid        (:eid v)
+                      :cost       (:cost v)
+                      :lore-label (lore-label (:name v))}))))
 
 ;; ─── Composite domain operations ──────────────────────────────────────────────
 
@@ -702,7 +708,6 @@
            :passive-spells      passive-spells
            :draftable-spells    draftable-spells-v
            :has-passives        (boolean (or (seq passive-abilities) (seq passive-spells)))
-           :family-variants     family-variants
            :family-marks        marks-row
            :family-lores        lores-row
            :validation          {:can-add-to-reinforcements? (= 1 (:reinforcements-enabled game-mode))})))

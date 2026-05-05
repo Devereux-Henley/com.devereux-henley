@@ -472,6 +472,28 @@
                            [:label :string]]]]]
     [:granted-abilities {:optional true} [:sequential draft-ability]]]))
 
+(def family-mark-option
+  "One row in the Mark of Chaos selector — just the eid the change
+  swaps to, the mark label, and the variant's cost.  No `:name` /
+  `:lore` because the selector doesn't render them; full per-variant
+  data lives on the unit row that the eid resolves to."
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:mark [:maybe data-access.contract/mark-enum]]
+    [:cost [:maybe :int]]]))
+
+(def family-lore-option
+  "One row in the Lore of Magic selector — the eid the change swaps
+  to, the variant's cost, and a `:lore-label` (the canonical suffix
+  like \"Death\" / \"High\") parsed from the variant name for
+  display."
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:cost [:maybe :int]]
+    [:lore-label {:optional true} [:maybe :string]]]))
+
 (def draft-unit-resource
   "A unit viewed in the context of a specific draft — the full game-unit
    fields (name, stats, abilities, attributes, health/barrier) merged with
@@ -495,28 +517,8 @@
      [:lore {:optional true} [:maybe :string]]
      [:family-variant-count {:optional true} :int]
      [:family-name {:optional true} [:maybe :string]]
-     [:family-variants {:optional true}
-      [:sequential [:map
-                    [:eid :uuid]
-                    [:mark [:maybe data-access.contract/mark-enum]]
-                    [:lore {:optional true} [:maybe :string]]
-                    [:name {:optional true} :string]
-                    [:cost [:maybe :int]]]]]
-     [:family-marks {:optional true}
-      [:sequential [:map
-                    [:eid :uuid]
-                    [:mark [:maybe data-access.contract/mark-enum]]
-                    [:lore {:optional true} [:maybe :string]]
-                    [:name {:optional true} :string]
-                    [:cost [:maybe :int]]]]]
-     [:family-lores {:optional true}
-      [:sequential [:map
-                    [:eid :uuid]
-                    [:mark [:maybe data-access.contract/mark-enum]]
-                    [:lore {:optional true} [:maybe :string]]
-                    [:name {:optional true} :string]
-                    [:cost [:maybe :int]]
-                    [:lore-label {:optional true} [:maybe :string]]]]]
+     [:family-marks {:optional true} [:sequential family-mark-option]]
+     [:family-lores {:optional true} [:sequential family-lore-option]]
      [:cost [:maybe :int]]
      [:total-cost {:optional true} [:maybe :int]]
      [:level {:optional true} [:int {:min 0 :max 9}]]
