@@ -72,13 +72,29 @@
    ;; aligned instead of re-divided onto each faction's land_unit.
    "wh3_dlc20_chs_cha_daemon_prince"})
 
+(def faction-display-name-unit-card-overrides
+  "Faction-scoped pin from `(faction-slug, display-name)` to an icon or
+  portrait stem.  Consulted by `apply-override!` BEFORE the bare-name
+  `unit-card-overrides` map so a display name that collides across
+  factions (e.g. \"Master Engineer\" — both Empire and Dwarfs ship one)
+  can resolve per faction without giving up the cross-faction default.
+
+  Use this only when the same display name needs different art per
+  faction; otherwise add to `unit-card-overrides`."
+  {["dwarfs"        "Master Engineer"] "dwf_master_engineer_campaign_01_0"
+   ;; "Mortars" exists as a unit display name in both Empire and
+   ;; Vampire Coast seeds; the bare-name pin already routes Empire
+   ;; correctly, so add the VC-only stem here.
+   ["vampire-coast" "Mortars"]         "wh2_dlc11_cst_mortar"})
+
 (def unit-card-overrides
   "Explicit unit-name → icon/portrait stem overrides for units whose display
   name is absent from the land_units loc file (RoR units, variant units,
   lords/heroes with special names). Values are icon stems from ui/units/icons/
   OR portrait stems from ui/portraits/units/no_culture/ — both directories are
   searched by the copy routines."
-  {"Amaxon Barbs (Razordon Hunting Pack)"                       "wh2_dlc13_lzd_razordon"
+  {;; RoR variant — pin to the `_ror` icon, not the base razordon.
+   "Amaxon Barbs (Razordon Hunting Pack)"                       "wh2_dlc13_lzd_razordon_ror"
    "Amethyst Helstorm Rocket Battery"                           "wh_main_emp_helstorm_rocket"
    "Amethyst Outriders"                                         "wh_main_emp_outriders"
    "Armoured Squig Hoppers"                                     "wh_dlc06_grn_squig_hoppers"
@@ -149,6 +165,18 @@
    "Minotaurs (Great Weapons)"                                  "wh_dlc03_bst_minotaurs_great_weapons"
    "Minotaurs (Shields)"                                        "wh_dlc03_bst_minotaurs_shield"
    "Cairn Wraiths"                                              "wh_main_vmp_cairn_wraith"
+   ;; Vampire Counts recruitable variants — same `_<n>` collapse +
+   ;; engine/asset name divergence (singular `warrior`/`ghoul` in
+   ;; assets vs plural in engine; `barded_lance` ordering reversed
+   ;; from `lances_barding`) trips the resolver across the family.
+   "Black Knights (Lances & Barding)"                           "wh_main_vmp_black_knights_barded_lance"
+   "Corpse Cart"                                                "wh_dlc04_vmp_corpse_cart"
+   "Corpse Cart (Balefire)"                                     "wh_dlc04_vmp_corpse_cart_balefire"
+   "Corpse Cart (Unholy Lodestone)"                             "wh_dlc04_vmp_corpse_cart_lodestone"
+   "Crypt Ghouls"                                               "wh_main_vmp_crypt_ghoul"
+   "Grave Guard (Great Weapons)"                                "wh_main_vmp_grave_guard_great_weapons"
+   "Skeleton Spearmen"                                          "wh_main_vmp_skeleton_warrior_spear"
+   "Skeleton Warriors"                                          "wh_main_vmp_skeleton_warrior_sword"
    "Centigors (Great Weapons)"                                  "wh_dlc03_bst_centigors_great_weapons"
    "Centigors (Throwing Axes)"                                  "wh_dlc03_bst_centigors_throwing_axes"
    "Centigors of Tzeentch"                                      "wh3_dlc24_tze_inf_centigors"
@@ -169,7 +197,28 @@
    "Gyrocopters (Trollhammers - Grudge Settlers)"               "wh_main_dwf_gyrocopter"
    "Halberdiers"                                                "wh2_dlc13_emp_halberdiers_ror"
    "Hammerers (Grudge Settlers)"                                "wh_main_dwf_hammerers"
-   "Hawk-Eyes of Drakira (Waywatchers)"                         "wh_dlc05_wef_waywatchers"
+   ;; Was wrongly pinned to the base waywatchers icon — has a
+   ;; dedicated `_ror_` art under wh_pro04.
+   "Hawk-Eyes of Drakira (Waywatchers)"                         "wh_pro04_wef_ror_waywatchers"
+   ;; High Elves variants + RoRs — base recruitable variants (Archers
+   ;; with Light Armour, Lothern Sea Guard with Shields, Silver Helms
+   ;; with Shields) hit the standard `_<n>` collapse bug.  RoRs use
+   ;; "the_<flavor>_ror_0" engine keys whose normalized stems share
+   ;; nothing with their card filenames, so they fall through to the
+   ;; portrait pass and pick up generic art.
+   "Archers (Light Armour)"                                     "wh2_main_hef_archers_light_armour"
+   "Heralds of the Wind (Ellyrian Reavers - Bows)"              "wh2_dlc10_hef_ellyrian_reavers_bow_ror"
+   "Lothern Sea Guard (Shields)"                                "wh2_main_hef_lothern_sea_guard_shields"
+   "Silver Helms (Shields)"                                     "wh2_main_hef_silver_helms_shield"
+   "The Fireborn (Dragon Princes)"                              "wh2_dlc10_hef_cav_dragon_princes_ror"
+   "The Grey (Shadow Warriors)"                                 "wh2_dlc10_hef_inf_shadow_warriors_ror"
+   "The Puremane Company (White Lions of Chrace)"               "wh2_dlc10_hef_white_lions_of_chrace_ror"
+   "The Scions of Mathlann (Spearmen)"                          "wh2_dlc10_hef_spearmen_ror"
+   "The Storm Riders (Lothern Sea Guard)"                       "wh2_dlc10_hef_lothern_sea_guard_ror"
+   ;; Empire Grey Wizard portrait — `emp_wizard_shadow_*` (wizard
+   ;; first) is a placeholder; the real character portrait pool
+   ;; lives under `emp_shadow_wizard_campaign_<N>_0` (shadow first).
+   "Grey Wizard"                                                "emp_shadow_wizard_campaign_01_0"
    "Helstorm Rocket Battery"                                    "wh_main_emp_helstorm_rocket"
    "Irondrakes (Grudge Settlers)"                               "wh_main_dwf_irondrakes"
    "Khargan the Crazed"                                         "wh3_dlc25_nur_exalted_great_unclean_one_qb_boss"
@@ -180,23 +229,42 @@
    "Lava Arachnarok Spider"                                     "wh_main_grn_arachnarok_spider"
    "Loec's Tricksters (Wardancers - Asrai Spears)"              "wh_dlc05_wef_wardancers_spear"
    "Longbeards (Great Weapons - Grudge Settlers)"               "wh_main_dwf_longbeards_great_weapons"
-   "Lost Sylvan Knights (Great Stag Knights)"                   "wh2_dlc16_wef_great_stag_knights"
+   ;; Was wrongly pinned to the base great_stag_knights — RoR variant ships its own.
+   "Lost Sylvan Knights (Great Stag Knights)"                   "wh2_dlc16_wef_ror_great_stag_knights"
    "Luminark of Hysh"                                           "wh_main_emp_luminark"
-   "Malevolent Ancient Treeman (Beasts)"                        "wh2_dlc16_wef_malicious_treekin"
-   "Malevolent Ancient Treeman (Life)"                          "wh2_dlc16_wef_malicious_treekin"
-   "Malevolent Ancient Treeman (Shadows)"                       "wh2_dlc16_wef_malicious_treekin"
+   ;; Was wrongly pinned to the treekin (smaller variant) art — the
+   ;; ancient treeman has its own dedicated icon.
+   "Malevolent Ancient Treeman (Beasts)"                        "wh2_dlc16_wef_malicious_treeman"
+   "Malevolent Ancient Treeman (Life)"                          "wh2_dlc16_wef_malicious_treeman"
+   "Malevolent Ancient Treeman (Shadows)"                       "wh2_dlc16_wef_malicious_treeman"
    "Malevolent Branchwraith (Beasts)"                           "wh2_dlc16_wef_malicious_dryads"
    "Malevolent Branchwraith (Life)"                             "wh2_dlc16_wef_malicious_dryads"
    "Malevolent Branchwraith (Shadows)"                          "wh2_dlc16_wef_malicious_dryads"
-   "Morskittar's Hellion (Mutant Rat Ogre)"                     "wh2_dlc16_skv_rat_ogre_mutant"
+   ;; RoR variant — pin to the `_ror_` icon, not the base mutant rat ogre.
+   "Morskittar's Hellion (Mutant Rat Ogre)"                     "wh2_dlc16_skv_ror_rat_ogre_mutant"
    "Peasant Bowmen"                                             "wh_main_brt_bowmen"
    "Peasant Bowmen (Fire Arrows)"                               "wh_dlc07_brt_bowmen_fire"
    "Peasant Bowmen (Pox Arrows)"                                "wh_dlc07_brt_bowmen_pox"
    "Quarrellers (Great Weapons - Grudge Settlers)"              "wh_main_dwf_quarrellers_great_weapons"
    "Raven Heralds (Dark Riders)"                                "wh2_dlc10_def_raven_heralds"
+   ;; Dwarf rangers great-weapons variant — engine `_rangers_1`
+   ;; collapses to base, but the asset uses `_great_axe` (not `_1`).
+   "Rangers (Great Weapons)"                                    "wh_dlc06_dwf_rangers_great_axe"
+   ;; Dwarf characters — only `dwf_runesmith_campaign_*` portraits
+   ;; ship; distinguish Runelord (lord) from Runesmith (hero) by
+   ;; pinning to different campaign-N entries from the same pool.
+   "Runelord"                                                   "dwf_runesmith_campaign_01_0"
+   "Runesmith"                                                  "dwf_runesmith_campaign_02_0"
    "Razordon Hunting Pack"                                      "wh2_dlc13_lzd_razordon"
-   "Skeleton Archer Chariots"                                   "wh2_dlc09_tmb_skeleton_archers_ror"
-   "Skin Wolf Werekin"                                          "wh_dlc08_nor_skin_wolves"
+   ;; Greenskins base savage orcs — `wh_main_grn_inf_savage_orcs`
+   ;; engine has no exact match; pin to the sword-armed variant.
+   "Savage Orcs"                                                "wh_main_grn_savage_orc_boyz_sword"
+   ;; Was wrongly pinned to the foot-archer RoR; the chariot-archer
+   ;; engine has its own dedicated card stem.
+   "Skeleton Archer Chariots"                                   "wh2_dlc09_tmb_skeleton_chariot_archers"
+   ;; Was wrongly pinned to the skin-wolves pack icon — Werekin is
+   ;; the single-character chieftain variant; pin to its portrait.
+   "Skin Wolf Werekin"                                          "nor_cha_skin_wolf_werekin_campaign_02_0"
    "Mortars"                                                    "wh_main_emp_mortar"
    "Outriders (Grenade Launchers)"                              "wh_main_emp_outriders_grenade_launcher"
    "Spearmen (Shields)"                                         "wh_main_emp_spearmen_shield"
@@ -216,8 +284,19 @@
    "The Holy Wardens of La Maisontaal (Battle Pilgrims)"        "wh_pro04_brt_ror_battle_pilgrims"
    "The Stubborn Bulls (Empire Knights - Greatswords)"          "wh2_dlc13_emp_empire_knights_everlasting_light_ror"
    "The Tide of Skjold (Zombie Pirate Deckhand Mob)"            "wh2_dlc11_cst_zombie_deckhands_ror"
-   "Thunderers (Grudge-Rakers)"                                 "wh_main_dwf_thunderers"
-   "Wardens of Cythral (Wildwood Rangers)"                      "wh_dlc05_wef_wildwood_ranger"
+   ;; Was wrongly pinned to base wildwood_ranger — RoR-specific art exists.
+   "Wardens of Cythral (Wildwood Rangers)"                      "wh_pro04_wef_ror_wildwood_ranger"
+   ;; Wood Elves recruitable variants — `_<n>` collapse for shielded /
+   ;; weapon variants; "swiftshiver" / "starfire" / "hagbane" naming
+   ;; in display names maps to `_dual` / `_flaming` / `_poison`
+   ;; suffixes in source filenames.
+   "Deepwood Scouts (Swiftshiver Shards)"                       "wh_dlc05_wef_deepwood_scouts_dual"
+   "Eternal Guard (Shields)"                                    "wh_dlc05_wef_eternal_guard_shield"
+   "Glade Guard (Hagbane Tips)"                                 "wh_dlc05_wef_glade_guard_poison"
+   "Glade Guard (Starfire Shafts)"                              "wh_dlc05_wef_glade_guard_flaming"
+   "Glade Riders (Hagbane Tips)"                                "wh_dlc05_wef_glade_riders_poison"
+   "Wardancers (Asrai Spears)"                                  "wh_dlc05_wef_wardancers_spear"
+   "Wild Riders (Shields)"                                      "wh_dlc05_wef_wild_riders_shield"
    "Mounted Yeomen Archers"                                     "wh_main_brt_mounted_yeomen_archers"
    "Wardens of Montfort (Mounted Yeomen Archers)"               "wh_pro04_brt_ror_mounted_yeomen_archers"
    "Wild Hunters of Kurnous (Wild Riders - Shields)"            "wh_dlc05_wef_wild_riders_shield"
@@ -226,6 +305,14 @@
    "Zintler's Reiksguard (Reiksguard)"                          "wh_dlc04_emp_zintlers"
    "Zombie Pirate Deckhand Mob"                                 "wh2_dlc11_cst_zombie_deckhands"
    "Zombie Pirate Deckhand Mob (Polearms)"                      "wh2_dlc11_cst_zombie_deckhands_polearm"
+   ;; Vampire Coast variant rows — same `_<n>` collapse as other
+   ;; factions; pin each to its variant-specific card.
+   "Depth Guard (Polearms)"                                     "wh2_dlc11_cst_depth_guard_polearm"
+   "Zombie Pirate Gunnery Mob (Bombers)"                        "wh2_dlc11_cst_zombie_gunnery_mob_bombers"
+   "Zombie Pirate Gunnery Mob (Hand Cannons)"                   "wh2_dlc11_cst_zombie_gunnery_mob_hand_cannon"
+   "Zombie Pirate Gunnery Mob (Handgunners)"                    "wh2_dlc11_cst_zombie_gunnery_mob_handguns"
+   "Deck Droppers (Bombers)"                                    "wh2_dlc11_cst_deck_droppers_bombers"
+   "Deck Droppers (Handgunners)"                                "wh2_dlc11_cst_deck_droppers_handgunners"
    "Count Noctilus"                                             "cst_cha_count_noctilus_0"
    "Plaguebearers of Nurgle"                                    "wh3_main_nur_inf_plaguebearers_2"
    "Zombies"                                                    "wh_main_vmp_zombies"
@@ -250,37 +337,170 @@
    "Clan Vulkn Tailslashers (Clanrats - Shields)"               "wh2_dlc12_skv_inf_clanrats_shields_ror"
    "Cold One Riders"                                            "wh2_main_lzd_cav_cold_one_riders"
    "Cold One Spear-Riders"                                      "wh2_main_lzd_cav_cold_one_spearriders"
+   ;; Dark Elves recruitable variants whose engine keys differ from
+   ;; their card filenames only by a numeric `_<n>` suffix.  Without
+   ;; pins, `find-icon`'s normalize step strips both `_inf_/_cav_` and
+   ;; the trailing `_<n>`, collapsing every variant onto the base
+   ;; icon (e.g. all three Shades rows ⇒ `wh2_main_def_shades.png`).
+   "Cold One Dread Knights"                                     "wh2_main_def_cold_one_dread_knights"
+   "Dark Riders (Shields)"                                      "wh2_main_def_dark_riders_shield"
+   "Darkshards (Shields)"                                       "wh2_main_def_darkshards_shields"
+   "Shades (Dual Weapons)"                                      "wh2_main_def_shades_dual_weapons"
+   "Shades (Greatswords)"                                       "wh2_main_def_shades_great_weapons"
+   "The Bolt-fiends (Darkshards - Shields)"                     "wh2_dlc10_def_darkshards_shields_ror"
    "Council Guard (Stormvermin - Halberds)"                     "wh2_dlc12_skv_inf_stormvermin_halberds_ror"
    "Death Shriek Terrorgheist"                                  "wh2_dlc11_cst_death_shriek_terrogheist"
    "Doom Knights of Tzeentch"                                   "wh3_twa07_tze_cav_doom_knights_ror_0"
    "Dwarf Warriors"                                             "wh_main_dwf_warriors"
    "Dwarf Warriors (Great Weapons)"                             "wh_main_dwf_warriors_great_weapons"
+   ;; Dwarf recruitable variants whose engine keys differ from the base
+   ;; only by a numeric `_<n>` suffix.  Same `find-icon` collapse bug as
+   ;; the Dark Elves variants — the variant rows pick up the base card.
+   "Gyrocopters (Brimstone Guns)"                               "wh_main_dwf_gyrocopter_brimstone"
+   "Irondrakes (Trollhammer Torpedoes)"                         "wh_main_dwf_irondrakes_troll_hammer"
+   "Longbeards (Great Weapons)"                                 "wh_main_dwf_longbeards_great_weapons"
+   "Miners (Blasting Charges)"                                  "wh_main_dwf_miners_blasting_charges"
+   "Quarrellers (Great Weapons)"                                "wh_main_dwf_quarrellers_great_weapons"
+   ;; Engine source filename misspells "rakers" as "raker" (singular)
+   ;; and slips an extra `r` in (`grudger_raker`) — keep the literal
+   ;; filename, otherwise `find-png-recursive` won't find it.
+   "Thunderers (Grudge-Rakers)"                                 "wh3_dlc25_dwf_inf_thunderers_grudger_raker"
    "Enigmas of Ghyran (Zoats)"                                  "wh2_dlc16_wef_ror_zoats"
    "Everqueen's Court Guards (Sisters of Avelorn)"              "wh2_dlc10_hef_inf_sisters_of_avelorn_ror"
    "Exalted Flamer of Tzeentch"                                 "wh3_main_tze_mon_exalted_flamer_0"
    "Explosive Squig"                                            "wh_dlc06_grn_squig_herd"
    "Feral Bastiladon"                                           "wh2_main_lzd_mon_bastiladon_feral"
+   ;; Feral variant has its own portrait under `units/no_culture/`;
+   ;; the bare `wh2_dlc13_lzd_dread_saurian` icon is the
+   ;; non-feral form.
+   "Feral Dread Saurian"                                        "lzd_dread_saurian_feral_0"
    "Feral Hydra"                                                "wh2_main_def_war_hydra"
    "Field Trebuchets"                                           "wh_main_brt_trebuchet"
    "Firebark Elders (Tree Kin)"                                 "wh_pro04_wef_ror_treekin"
    "Forest Goblin Spider Rider Archers"                         "wh_main_grn_goblin_spider_rider_bow"
    "Forest Goblin Spider Riders"                                "wh_main_grn_goblin_spider_rider_spear"
+   ;; Greenskins recruitable variants — engine keys and source
+   ;; filenames diverge widely (singular vs plural, "orc_boyz" vs
+   ;; "boar_boyz", missing/added "orc"/"goblin" segments) so the
+   ;; resolver collapses whole families to one base icon.  No
+   ;; dedicated `_fanatics` icon ships, so Fanatics share their
+   ;; non-fanatic counterpart's art (sword for melee, bow for archers).
+   "Black Orcs (Great Weapons)"                                 "wh_main_grn_black_orc"
+   "Goblin Archers"                                             "wh_main_grn_goblins_bow"
+   "Goblin Wolf Rider Archers"                                  "wh_main_grn_goblin_wolf_rider_bow"
+   "Goblin Wolf Riders"                                         "wh_main_grn_goblin_wolf_rider_spear"
+   "Goblins (Spears)"                                           "wh_main_grn_goblins_spear"
+   "Night Goblin Archers"                                       "wh_main_grn_night_goblins_bow"
+   "Night Goblin Archers (Fanatics)"                            "wh_main_grn_night_goblins_bow"
+   "Night Goblins (Fanatics)"                                   "wh_main_grn_night_goblins_sword"
+   "Orc Arrer Boyz"                                             "wh_main_grn_orc_boyz_bow"
+   "Orc Big 'Uns"                                               "wh_main_grn_orc_boyz_big_uns"
+   "Orc Boar Boy Big 'Uns"                                      "wh_main_grn_boar_boyz_big_uns"
+   "Orc Boar Boyz"                                              "wh_main_grn_boar_boyz"
+   "Orc Boar Chariots"                                          "wh_main_grn_boar_chariot"
+   "Savage Orc Arrer Boyz"                                      "wh_main_grn_savage_orc_boyz_bow"
+   "Savage Orc Big 'Uns"                                        "wh_main_grn_savage_orc_boyz_big_uns"
+   "Savage Orc Boar Boy Big 'Uns"                               "wh_main_grn_savage_orc_boar_boyz_big_uns"
+   ;; The bare `grn_river_troll_hag_0` portrait is a sparse
+   ;; placeholder; the full portrait pool lives under
+   ;; `grn_troll_hag_campaign_<N>_0`.  Pin to campaign_01.
+   "Giant River Troll Hag"                                      "grn_troll_hag_campaign_01_0"
+   ;; Engine key: `wh2_dlc13_lzd_cha_gor_rok_0` has no card icon; pin
+   ;; to the lord-portrait stem (mirrors Kroq-Gar / Saurus Oldblood).
+   "Gor-Rok"                                                    "lzd_lord_gor_rok_0"
    "Gorgers"                                                    "wh3_main_ogr_mon_gorger_0"
+   ;; Cathay engine key for the unit is `…_jade_longma_riders_…`
+   ;; but the source icon filename is `…_great_longma_riders_0`,
+   ;; so the resolver normalizer can't bridge the renaming —
+   ;; pin explicitly.
+   "Great Longma Riders"                                        "wh3_main_cth_cav_great_longma_riders_0"
    "Great Cannons"                                              "wh_main_emp_cannon"
    "Gwindalor"                                                  "wh2_dlc16_wef_ror_zoats"
    "Iron Daemon - Dreadquake Mortar"                            "wh3_dlc23_chd_veh_iron_daemon"
    "Ithilmar Chariots"                                          "wh2_main_hef_cav_ithilmar_tiranoc_chariot"
    "Keepers of the Flame (Phoenix Guard)"                       "wh2_dlc10_hef_phoenix_guard_ror"
    "Khemrian Warsphinx"                                         "wh2_dlc09_tmb_warsphinx"
+   ;; Tomb Kings recruitable variants — same `_<n>` collapse bug
+   ;; (Necropolis Knights ⇒ base; Ushabti ⇒ base) as other factions.
+   "Necropolis Knights (Halberds)"                              "wh2_dlc09_tmb_necropolis_knights_halberds"
+   "Ushabti (Great Bows)"                                       "wh2_dlc09_tmb_ushabti_bow"
    "Knights of the Ebon Claw (Dread Knights)"                   "wh2_dlc10_def_cold_one_dread_knights_ror"
    "Legion of Chaqua (Saurus Spears)"                           "wh2_dlc12_lzd_inf_saurus_spearmen_shields_ror"
+   ;; Lizardmen recruitable variants — the resolver collapses
+   ;; `wh2_main_lzd_inf_*_<n>` to the base icon (same `_<n>` strip
+   ;; bug as Dwarves and Dark Elves).  Red Crested Skinks pair
+   ;; misses entirely because the engine key word order
+   ;; (`skink_red_crested`) differs from the icon stem
+   ;; (`red_crested_skinks`).
+   "Cohort of Sotek (Red Crested Skinks)"                       "wh2_dlc12_lzd_inf_red_crested_skinks_ror"
+   "Red Crested Skinks"                                         "wh2_dlc12_lzd_inf_red_crested_skinks"
+   "Saurus Spears (Shields)"                                    "wh2_main_lzd_inf_saurus_spearmen_shields"
+   "Saurus Warriors (Shields)"                                  "wh2_main_lzd_inf_saurus_warriors_shields"
+   "Skink Cohort (Javelins)"                                    "wh2_main_lzd_inf_skink_cohort_javelins"
    "Lion Chariots of Chrace"                                    "wh2_dlc15_hef_veh_lion_chariot"
    "Lothern Skycutters"                                         "wh3_dlc27_hef_veh_sky_cutter_bows"
    "Lothern Skycutters (Bolt Throwers)"                         "wh3_dlc27_hef_veh_sky_cutter_bolt_thrower"
    "Maws of Savagery (Skin Wolves - Armoured)"                  "wh_pro04_nor_ror_skin_wolves_armoured"
+   ;; RoR shared by Khorne (000b0012) and Norsca (000e0013) seeds —
+   ;; engine key is `nor_*_marauder_berserkers_ror_0`, asset filename
+   ;; is `wh_pro04_nor_ror_marauder_berserkers` (no `_inf_`/`_0`).
+   "Brutes of the Hound (Marauder Berserkers)"                  "wh_pro04_nor_ror_marauder_berserkers"
    "Norscan Giant"                                              "wh_dlc08_nor_giant"
    "Norscan Ice Trolls"                                         "wh_dlc08_nor_ice_trolls"
    "Norscan Ice Wolves"                                         "wh_dlc08_nor_ice_wolves"
+   ;; Norsca recruitable + variant rows.  Many engine keys diverge
+   ;; from asset filenames (singular vs plural, missing/added "nor"
+   ;; segment).  Several units have no nor-specific card so they
+   ;; fall back to the WoC-shared art (`wh_main_chs_*`) since the
+   ;; engine treats both factions as wielding identical models.
+   ;; "Norscan Trolls" engine `wh_main_nor_mon_chaos_trolls` has
+   ;; no asset, so use the WoC trolls icon — same model.
+   "Bloodshriek Chimera (Chimera)"                              "wh3_dlc27_nor_mon_chimera_ror"
+   "Beasts of Tashnar (Norscan Warhounds)"                      "wh_pro04_nor_ror_chaos_warwolves"
+   "Chaos Frost Dragon"                                         "wh_dlc08_nor_frost_wyrm"
+   "Chimera"                                                    "wh3_dlc27_nor_mon_chimera"
+   "Curs'd Ettin"                                               "wh3_dlc27_nor_mon_cursd_ettin"
+   "Curs'd Ettin (Runecaller)"                                  "wh3_dlc27_nor_mon_cursd_ettin_runecaller"
+   "Dread Maw"                                                  "wh3_dlc27_nor_mon_dread_maw"
+   "Feral Mammoth"                                              "wh_dlc08_nor_war_mammoth_feral"
+   "Feral Manticore"                                            "wh_dlc03_bst_feral_manticore"
+   "Fimir Noble"                                                "nor_fimir_noble_campaign_01_0"
+   "Fimir Warriors"                                             "wh_dlc08_nor_fimir_warriors"
+   "Fimir Warriors (Great Weapons)"                             "wh_dlc08_nor_fimir_warriors_great_weapons"
+   "Followers of the Great Eagle (Marauder Chariots)"           "wh3_dlc27_nor_cav_chaos_chariot_ror"
+   "Icehorn Marauders (Marauders)"                              "wh_pro04_nor_ror_marauder"
+   "Kurgan Horsemen (Dual Weapons)"                             "wh3_dlc27_nor_cav_kurgan_horsemen_dualweapons"
+   "Kurgan Horsemen (Great Weapons)"                            "wh3_dlc27_nor_cav_kurgan_horsemen_greatweapons"
+   "Marauder Bearmen"                                           "wh3_dlc27_nor_inf_marauder_bearmen"
+   "Marauder Bearmen (Great Weapons)"                           "wh3_dlc27_nor_inf_marauder_bearmen_greatweapons"
+   "Marauder Berserkers"                                        "wh_dlc08_nor_marauder_berserkers"
+   "Marauder Champions"                                         "wh_dlc08_nor_marauder_champions"
+   "Marauder Champions (Great Weapons)"                         "wh_dlc08_nor_marauder_champions_great_weapons"
+   "Marauder Chariots"                                          "wh_main_chs_chariot"
+   "Marauder Chieftain"                                         "nor_marauder_chieftain_campaign_01_0"
+   "Marauder Horsemasters"                                      "wh_dlc06_chs_marauder_horsemasters"
+   "Marauder Horsemen"                                          "wh_main_chs_marauder_horsemen"
+   "Marauder Horsemen (Throwing Axes)"                          "wh_main_chs_marauder_horsemen_throwing_axe"
+   "Marauder Hunters"                                           "wh_dlc08_nor_marauder_hunters"
+   "Marauder Hunters (Javelins)"                                "wh_dlc08_nor_marauder_hunters_javelin"
+   "Marauder Ice Wolf Chariots"                                 "wh_dlc08_nor_marauder_ice_wolves_chariot"
+   "Marauder Spearmen"                                          "wh_dlc08_nor_marauder_spearmen"
+   "Mist Stalkers (Fimir Warriors)"                             "wh_pro04_nor_ror_fimir_warriors"
+   "Norscan Trolls"                                             "wh_main_chs_trolls"
+   "Norscan Warhounds"                                          "wh_dlc08_nor_warhounds"
+   "Norscan Warhounds (Poison)"                                 "wh_main_chs_warhounds_poison"
+   "Riders of the Mighty Serpent (Marauder Horsemen)"           "wh3_dlc27_nor_cav_marauder_horsemen_ror"
+   "Sayl the Faithless"                                         "nor_sayl_the_faithless_0"
+   "Beorg Bearstruck"                                           "nor_beorg_bearstruck_0"
+   "Soulcrusher (War Mammoth)"                                  "wh_pro04_nor_ror_chaos_war_mammoth_howdah"
+   ;; The Cold-Voider RoR has no dedicated card; fall back to base
+   ;; frost-wyrm art (same model as the lord variant).
+   "The Cold-Voider (Chaos Frost Dragon)"                       "wh_dlc08_nor_frost_wyrm"
+   ;; The Great Mawherd of Bloodfjord — feral mammoth boss; share base art.
+   "The Great Mawherd of Bloodfjord (Feral Mammoths)"           "wh_dlc08_nor_war_mammoth_feral"
+   "War Mammoth"                                                "wh_dlc08_nor_war_mammoth_howdah"
+   "War Mammoth (Warshrine)"                                    "wh_dlc08_nor_war_mammoth_warshrine"
+   "Worshippers of the Crow (Marauders - Great Weapons)"        "wh3_dlc27_nor_inf_chaos_marauders_great_weapons_ror"
    "Noxbringer (Soul Grinder of Nurgle)"                        "wh3_dlc25_nur_mon_soul_grinder_ror"
    "Obsinite Gyrocopters"                                       "wh3_dlc25_dwf_veh_gyrocopter_1_grudge_unit"
    "Pahaux Sentinels (Terradon Riders)"                         "wh2_dlc12_lzd_mon_terradon_ror"
@@ -296,6 +516,15 @@
    "Spider Hatchlings"                                          "wh_dlc06_grn_spider_hatchling"
    "Stormvermin (Halberds)"                                     "wh2_main_skv_inf_stormvermin_halberds"
    "Stormvermin (Swords & Shields)"                             "wh2_main_skv_inf_stormvermin_shields"
+   ;; Skaven recruitable variants — same `_<n>` collapse bug as the
+   ;; other factions; the base recruitable rows pick up the unshielded
+   ;; / no-poison / no-slings icons.
+   "Clanrat Spears (Shields)"                                   "wh2_main_skv_inf_clanrat_spearmen_shields"
+   "Clanrats (Shields)"                                         "wh2_main_skv_inf_clanrats_shields"
+   "Gutter Runner Slingers (Poison)"                            "wh2_main_skv_inf_gutter_runner_slingers_poison"
+   "Gutter Runners (Poison)"                                    "wh2_main_skv_inf_gutter_runners_poison"
+   "Night Runners (Slings)"                                     "wh2_main_skv_inf_night_runners_slings"
+   "Wolf Rats (Poison)"                                         "wh2_dlc16_skv_wolf_rats_poison"
    "Supply Train"                                               "wh3_dlc23_chd_veh_iron_daemon"
    "Terradon Riders"                                            "wh2_dlc12_lzd_mon_terradon_ror"
    "Terradon Riders (Fireleech Bolas)"                          "wh2_main_lzd_mon_terradon_fireleech"
@@ -305,6 +534,11 @@
    "The Royal Altdorf Gryphites (Demigryph Knights)"            "wh_dlc04_emp_royal_gryphites"
    "War Wagons (Mortars)"                                       "wh2_dlc13_emp_war_wagon_mortar"
    "The Umbral Tide (Salamander Hunting Pack)"                  "wh2_dlc12_lzd_mon_salamander_hunting_pack_ror"
+   ;; Only one Tzar Guard card icon ships (the RoR), so the base
+   ;; recruitable rows + the RoR all share it as the best-available
+   ;; art.  Pinning the RoR display name explicitly so the override
+   ;; pipeline picks it up the same way the variants do.
+   "Dazh's Hearth-Blades (Tzar Guard - Great Weapons)"          "wh3_twa06_ksl_inf_tzar_guard_ror_0"
    "Tzar Guard"                                                 "wh3_twa06_ksl_inf_tzar_guard_ror_0"
    "Tzar Guard (Great Weapons)"                                 "wh3_twa06_ksl_inf_tzar_guard_ror_0"
    "War Lions of Chrace"                                        "wh2_dlc15_hef_mon_war_lions"
@@ -329,14 +563,20 @@
    "Grimgor Ironhide"                                           "grn_ch_grimgor_0"
    "Harald Hammerstorm"                                         "dae_chs_harald_hammerstorm_0"
    "Helman Ghorst"                                              "vmp_ch_master_necromancer_helman_0"
-   "High Beastmaster"                                           "def_cha_lokhir_0"
+   ;; High Beastmaster (DEF generic lord) shares a class with Lokhir
+   ;; Fellheart (the named lord) but not his face — pin to the generic
+   ;; campaign portrait so the override doesn't reuse Lokhir's image.
+   "High Beastmaster"                                           "def_beastmaster_campaign_01_0"
    "Kairos Fateweaver"                                          "dae_kairos_0"
    "Karanak"                                                    "dae_karanak_0"
    "Kayzk the Befouled"                                         "dae_nur_kayzk_the_befouled_0"
-   "Khainite Assassin"                                          "def_cha_lokhir_0"
+   ;; Khainite Assassin (generic DEF hero) — same Lokhir confusion as
+   ;; High Beastmaster; pin to the generic assassin portrait pool.
+   "Khainite Assassin"                                          "def_assassin_campaign_01_0"
    "Kihar the Tormentor"                                        "chs_ch_kihar_0"
    "Kroq-Gar"                                                   "lzd_lord_kroq_gar_0"
-   "Ku'gath Plaguefather"                                       "dae_epidemius_0"
+   ;; Was pinned to Epidemius's portrait — Ku'gath has his own.
+   "Ku'gath Plaguefather"                                       "dae_kugath_0"
    "Lokhir Fellheart"                                           "def_cha_lokhir_0"
    "Luthor Harkon"                                              "cst_cha_luthor_harkon_0"
    "Master Assassin"                                            "skv_warlord_campaign_01_0"
@@ -411,9 +651,13 @@
    "Prophetess (Heavens)"                                       "brt_prophetess_campaign_02_0"
    "Prophetess (Life)"                                          "brt_prophetess_campaign_03_0"
    "Damsel (Life)"                                              "brt_damsel_campaign_02_0"
-   "Shaman-Sorcerer (Death)"                                    "nor_great_shaman_sorcerer_death_campaign_01_0"
-   "Shaman-Sorcerer (Fire)"                                     "nor_great_shaman_sorcerer_fire_campaign_01_0"
-   "Shaman-Sorcerer (Metal)"                                    "nor_great_shaman_sorcerer_metal_campaign_01_0"
+   ;; Was sharing the Great Shaman-Sorcerer portraits — the
+   ;; non-Great (hero) variant has its own `nor_cha_shaman_sorcerer_*`
+   ;; portrait pool with no per-lore split, so distribute lores across
+   ;; the available campaign portraits to give each variant a distinct face.
+   "Shaman-Sorcerer (Death)"                                    "nor_cha_shaman_sorcerer_campaign_01_0"
+   "Shaman-Sorcerer (Fire)"                                     "nor_cha_shaman_sorcerer_campaign_02_0"
+   "Shaman-Sorcerer (Metal)"                                    "nor_cha_shaman_sorcerer_campaign_03_0"
    "Slann Mage-Priest (Beasts)"                                 "lzd_slann_campaign_01_0"
    "Slann Mage-Priest (Death)"                                  "lzd_slann_campaign_01_0"
    "Slann Mage-Priest (Metal)"                                  "lzd_slann_campaign_04_0"
@@ -532,9 +776,19 @@
    "Supreme Sorceress (Shadows)"                                "def_supreme_sorceress_campaign_05_0"
    "Vampire (Death)"                                            "vmp_vampire_female_campaign_01_0"
    "Vampire (Shadows)"                                          "vmp_vampire_female_campaign_02_0"
-   "Vampire Fleet Captain (Death)"                              "cst_vampire_fleet_admiral_male_campaign_01_0"
-   "Vampire Fleet Captain (Deep)"                               "cst_vampire_fleet_admiral_male_campaign_02_0"
-   "Vampire Fleet Captain (Vampires)"                           "cst_vampire_fleet_admiral_male_campaign_03_0"})
+   ;; Captains were wrongly pinned to the male-admiral portraits;
+   ;; they have their own `cst_fleet_captain_*` series.
+   "Vampire Fleet Captain (Death)"                              "cst_fleet_captain_campaign_01_0"
+   "Vampire Fleet Captain (Deep)"                               "cst_fleet_captain_campaign_02_0"
+   "Vampire Fleet Captain (Vampires)"                           "cst_fleet_captain_campaign_03_0"
+   ;; Admiral lore variants: female pistol + male polearm portrait
+   ;; pools, indexed by lore order (Death=01, Deep=02, Vampires=03).
+   "Vampire Fleet Admiral (Pistol - Death)"                     "cst_cha_vampire_fleet_admiral_female_campaign_01_0"
+   "Vampire Fleet Admiral (Pistol - Deep)"                      "cst_cha_vampire_fleet_admiral_female_campaign_02_0"
+   "Vampire Fleet Admiral (Pistol - Vampires)"                  "cst_cha_vampire_fleet_admiral_female_campaign_03_0"
+   "Vampire Fleet Admiral (Polearms - Death)"                   "cst_vampire_fleet_admiral_male_campaign_01_0"
+   "Vampire Fleet Admiral (Polearms - Deep)"                    "cst_vampire_fleet_admiral_male_campaign_02_0"
+   "Vampire Fleet Admiral (Polearms - Vampires)"                "cst_vampire_fleet_admiral_male_campaign_03_0"})
 
 (def faction-key-map
   "Faction slug (matching seed-<slug>-units.sql) to the list of unit-key

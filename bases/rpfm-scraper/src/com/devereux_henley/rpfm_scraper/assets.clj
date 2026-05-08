@@ -98,8 +98,9 @@
                 f))
             (file-seq (io/file dir))))))
 
-(defn- apply-override! [name eid cards-dir portraits-dir asset-dir dry-run?]
-  (when-let [key (get overrides/unit-card-overrides name)]
+(defn- apply-override! [name eid faction cards-dir portraits-dir asset-dir dry-run?]
+  (when-let [key (or (get overrides/faction-display-name-unit-card-overrides [faction name])
+                     (get overrides/unit-card-overrides name))]
     (let [candidates (remove nil? [cards-dir portraits-dir])]
       (loop [dirs candidates]
         (if-let [d (first dirs)]
@@ -127,7 +128,7 @@
         missing-key    (atom [])
         missing-src    (atom [])]
     (doseq [[name eid faction] unit-name-eid-pairs]
-      (if (apply-override! name eid cards-dir portraits-dir asset-dir dry-run?)
+      (if (apply-override! name eid faction cards-dir portraits-dir asset-dir dry-run?)
         (swap! copied inc)
         (let [norm           (nm/normalize-name name)
               all-candidates (or (seq (get name-index norm))
@@ -210,7 +211,7 @@
     (doseq [[name eid faction] unit-name-eid-pairs
             :when              (or (not (contains? existing eid))
                                    (contains? force-overwrite-eids eid))]
-      (if (apply-override! name eid cards-dir portraits-dir asset-dir dry-run?)
+      (if (apply-override! name eid faction cards-dir portraits-dir asset-dir dry-run?)
         (swap! copied inc)
         (let [norm           (nm/normalize-name name)
               all-candidates (or (seq (get name-index norm))
