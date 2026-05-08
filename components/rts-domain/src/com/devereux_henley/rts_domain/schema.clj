@@ -486,8 +486,9 @@
 (def family-lore-option
   "One row in the Lore of Magic selector — the eid the change swaps
   to, the variant's cost, and a `:lore-label` (the canonical suffix
-  like \"Death\" / \"High\") parsed from the variant name for
-  display."
+  like \"Death\" / \"High\") derived from the variant's `:lore`
+  catalogue display name (with the variant-name parenthetical as a
+  fallback)."
   (schema.contract/to-schema
    [:map
     [:eid :uuid]

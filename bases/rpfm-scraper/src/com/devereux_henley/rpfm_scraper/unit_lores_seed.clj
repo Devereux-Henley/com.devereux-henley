@@ -105,17 +105,41 @@
 
 (def ^:private extra-lore-pins
   "Hand-curated lore assignments for unit rows whose engine name
-  doesn't carry a `(<Suffix>)` token — currently the unmarked Daemon
-  Prince variants in Daemons of Chaos and Warriors of Chaos, both
-  pinned to the Lore of Fire pool.  Modeled as overrides because
-  their family identity ('Daemon Prince' shared with the four marked
-  variants) precludes a renaming-style fix."
+  doesn't carry a `(<Suffix>)` token.  Two flavors:
+  * unmarked Daemon Prince variants in Daemons of Chaos and Warriors
+    of Chaos, both pinned to the Lore of Fire pool;
+  * the seven Empire wizard rows whose color-themed names (Amber,
+    Bright, Celestial, Gold, Grey, Jade, Light) imply a lore but
+    don't carry a `(<Lore>)` suffix the scraper can match on.
+  Modeled as overrides because their family identity (a shared
+  'Wizard' / 'Daemon Prince' label) precludes a renaming-style fix."
   [{:eid         "00050004-0000-4000-8000-000000000000"
     :lore-key    "wh_main_lore_fire"
     :family-name "Daemon Prince"}
    {:eid         "00170013-0000-4000-8000-000000000000"
     :lore-key    "wh_main_lore_fire"
-    :family-name "Daemon Prince"}])
+    :family-name "Daemon Prince"}
+   {:eid         "0001000b-0000-4000-8000-000000000000"
+    :lore-key    "wh_dlc03_lore_beasts"
+    :family-name "Wizard"}
+   {:eid         "0001000d-0000-4000-8000-000000000000"
+    :lore-key    "wh_main_lore_fire"
+    :family-name "Wizard"}
+   {:eid         "0001000e-0000-4000-8000-000000000000"
+    :lore-key    "wh_main_lore_heavens"
+    :family-name "Wizard"}
+   {:eid         "00010012-0000-4000-8000-000000000000"
+    :lore-key    "wh_main_lore_metal"
+    :family-name "Wizard"}
+   {:eid         "00010014-0000-4000-8000-000000000000"
+    :lore-key    "wh_dlc05_lore_shadows"
+    :family-name "Wizard"}
+   {:eid         "00010016-0000-4000-8000-000000000000"
+    :lore-key    "wh_dlc05_lore_life"
+    :family-name "Wizard"}
+   {:eid         "00010019-0000-4000-8000-000000000000"
+    :lore-key    "wh_main_lore_light"
+    :family-name "Wizard"}])
 
 (defn collect-lore-variants
   "Walks every seed-<faction>-units.sql under `seed-dir` and returns
