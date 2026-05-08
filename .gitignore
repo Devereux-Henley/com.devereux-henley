@@ -60,4 +60,5 @@ deploy/data/
 dev-env/replays/
 
 # Claude stuff
-.claude/scheduled_tasks.lock
+**/.claude/scheduled_tasks.lock
+**/.claude/settings.local.json

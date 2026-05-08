@@ -580,12 +580,23 @@
 
 (def ^:private lore-suffix-re #" \(([^()]+)\)$")
 
+(def ^:private lore-name-prefix "Lore of ")
+
 (defn- lore-label
-  "Extracts the trailing `(<Suffix>)` from a variant name as the lore
-  display label.  Returns nil when the name doesn't carry a lore
-  suffix (e.g. mark-only families like 'Daemon Prince of Khorne')."
-  [name]
-  (some-> name (->> (re-find lore-suffix-re)) second))
+  "Returns the lore display label for a family variant.  Prefers the
+  joined `:lore-name` from the `lore` catalogue (e.g. \"Lore of Fire\"
+  → \"Fire\", \"Lore of Yang\" → \"Yang\"), which works uniformly for
+  every wizard family regardless of how the engine names its rows.
+  Falls back to parsing a trailing `(<Suffix>)` from the variant's
+  `:name` so families whose rows lack a `:lore` pin (currently the
+  Vampire Fleet Admiral pistol/polearm splits) still render a label.
+  Returns nil when neither source yields one."
+  [{:keys [name lore-name]}]
+  (or (when lore-name
+        (cond-> lore-name
+          (str/starts-with? lore-name lore-name-prefix)
+          (subs (count lore-name-prefix))))
+      (some-> name (->> (re-find lore-suffix-re)) second)))
 
 (defn- family-marks
   "Reduces `family-variants` to one Mark-selector option per distinct
@@ -611,14 +622,14 @@
   "Reduces `family-variants` to the Lore-selector options under
   `current-mark` (a single mark's slate of lore variants).  Returns
   the slim `family-lore-option` shape — eid, cost, and a derived
-  `:lore-label` parsed from the variant name.  Empty when the family
-  has no lore dimension under the current mark."
+  `:lore-label` (see `lore-label`).  Empty when the family has no
+  lore dimension under the current mark."
   [family-variants current-mark]
   (->> family-variants
        (filter #(= current-mark (:mark %)))
        (mapv (fn [v] {:eid        (:eid v)
                       :cost       (:cost v)
-                      :lore-label (lore-label (:name v))}))))
+                      :lore-label (lore-label v)}))))
 
 ;; ─── Composite domain operations ──────────────────────────────────────────────
 

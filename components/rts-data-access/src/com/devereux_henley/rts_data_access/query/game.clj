@@ -170,6 +170,7 @@
     [:eid :uuid]
     [:mark [:maybe schema/mark-enum]]
     [:lore [:maybe :string]]
+    [:lore-name {:optional true} [:maybe :string]]
     [:name {:optional true} :string]
     [:cost [:maybe :int]]]))
 

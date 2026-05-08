@@ -13,6 +13,7 @@ SELECT
   fv.mark,
   fv.lore,
   fv.name,
+  l.name AS lore_name,
   json_extract(fv.unit_statistics, '$.cost') AS cost
 FROM
   unit u
@@ -20,6 +21,9 @@ FROM
           ON fv.family_name = u.family_name
          AND fv.faction_id = u.faction_id
          AND fv.deleted_at IS NULL
+  LEFT JOIN lore l
+         ON l.key = fv.lore
+        AND l.deleted_at IS NULL
 WHERE
   u.eid = ?
 ORDER BY fv.id;
