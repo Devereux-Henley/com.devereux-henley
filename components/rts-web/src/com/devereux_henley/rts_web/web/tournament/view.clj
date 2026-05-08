@@ -172,18 +172,26 @@
 (defn- enrich-unit
   "Adds resolved unit data (name, cost, category, level/adjusted-cost,
   Mark of Chaos) to a unit map when its engine key has a matching DB row.
-  Computes the veterancy-adjusted cost via `level->cost-row` (typically the
-  global unit_level_cost map) using the parser's `:level` — defaulted to 0
-  for replays produced by a pre-level parser binary.  Leaves the map
-  unchanged otherwise so the client can fall back to the raw key."
+
+  When the parser emitted a non-zero `:cost` (engine-resolved final cost
+  including mount/mark/lore/veterancy/armory adders), it wins as
+  `:adjusted-cost` — the prefix-fallback resolution returns the un-mounted
+  base row, whose seed cost is too low for variants like
+  `..._steam_tank` or `..._great_taurus`. Falls back to
+  `(apply-level-cost base-cost level-row)` for replays parsed by older
+  binaries that don't emit `:cost`. Leaves the map unchanged when no row
+  resolves so the client can fall back to the raw key."
   [key->row level->cost-row {:keys [key] :as unit}]
-  (let [level (or (:level unit) 0)]
+  (let [level       (or (:level unit) 0)
+        parsed-cost (:cost unit)]
     (if-let [row (resolve-key key->row key)]
       (assoc unit
              :name                 (:name row)
              :cost                 (:cost row)
              :level                level
-             :adjusted-cost        (domain/apply-level-cost (:cost row) (get level->cost-row level))
+             :adjusted-cost        (if (and parsed-cost (pos? parsed-cost))
+                                     parsed-cost
+                                     (domain/apply-level-cost (:cost row) (get level->cost-row level)))
              :unit-category-name   (:unit-category-name row)
              :unit-type-name       (:unit-type-name row)
              :unit-eid             (:eid row)

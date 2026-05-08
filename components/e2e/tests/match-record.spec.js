@@ -9,6 +9,11 @@ const SAMPLE_REPLAY = path.resolve(__dirname, '../fixtures/sample-battle.replay'
 // + level-3 pair of Chosen of Khorne (DW). Used to exercise the chevron-badge
 // + adjusted-cost rendering path in the post-match modal.
 const LEVELED_REPLAY = path.resolve(__dirname, '../fixtures/leveled-battle.replay');
+// Replay carrying mount-encoded engine keys whose un-mounted base row would
+// price too low if cost were reconstructed from the seed: a Master Engineer
+// on Steam Tank (engine cost 3100 vs un-mounted ~900). Used to exercise the
+// parser-emitted-cost branch in enrich-unit.
+const MOUNT_VARIANT_REPLAY = path.resolve(__dirname, '../fixtures/mount-variant-battle.replay');
 
 function jsonHeaders(user) {
   return {
@@ -190,6 +195,27 @@ test.describe('Parse fragment endpoint', () => {
     // replay's roster — Daemon Prince 1800, Asp Champions 1100 + 1496,
     // Chosen 1250, Chosen DW 1505 + 1614 — the side header reads 8765 pts.
     expect(html).toMatch(/pm-draft-cost-num">\s*8765\s*</);
+  });
+
+  test('renders engine-resolved cost for mount-variant unit keys', async ({ request }) => {
+    const tournamentEid = await createActiveTournament(request);
+    const matchEid = await createMatch(request, tournamentEid, 1);
+
+    const res = await postParseFragment(request, matchEid, 1, MOUNT_VARIANT_REPLAY);
+    expect(res.status()).toBe(200);
+    const html = await res.text();
+
+    // Master Engineer on Steam Tank — the engine key
+    // wh3_dlc25_emp_cha_master_engineer_steam_tank resolves via prefix-fallback
+    // to the un-mounted Master Engineer row whose seed cost is ~900. The
+    // parser emits child[48] (engine-resolved final cost = 3100) and
+    // enrich-unit prefers it over the seed reconstruction, so the tile shows
+    // the full mount-included cost.
+    expect(html).toMatch(/<span class="pm-draft-unit-cost">3100<\/span>/);
+
+    // Sanity: the un-mounted Skaven Warlord on the other side renders the
+    // engine-resolved baseline cost (1075), not the seed display base (525).
+    expect(html).toMatch(/<span class="pm-draft-unit-cost">1075<\/span>/);
   });
 
   test('rejects empty submission with an inline error fragment', async ({ request }) => {
