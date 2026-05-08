@@ -23,12 +23,26 @@
 
 (def ^:private suffix-re #"^(.+?) \(([A-Za-z ]+)\)$")
 
+(def ^:private weapon-lore-suffix-re
+  ;; Two-dimension parenthetical: '<name> (<weapon> - <lore>)'.  Used
+  ;; for Vampire Fleet Admirals where the engine ships six rows
+  ;; (Pistol|Polearms × Death|Deep|Vampires) but the user-facing UI
+  ;; should collapse to two families ('… (Pistol)', '… (Polearms)')
+  ;; with lore as the inner dimension — same end shape as a marked
+  ;; spellcaster, just with the weapon kept in the family name.
+  #"^(.+?) \(([A-Za-z]+) - ([A-Za-z ]+)\)$")
+
 (defn- name+suffix
-  "Splits 'Archmage (High)' → ['Archmage' 'High'].  Returns nil when
-  the trailing token isn't a `(<Word>)` suffix."
+  "Splits 'Archmage (High)' → ['Archmage' 'High'].  Also splits
+  'Vampire Fleet Admiral (Pistol - Death)' →
+  ['Vampire Fleet Admiral (Pistol)' 'Death'] so the weapon stays in
+  the family name and only the lore is extracted as the suffix.
+  Returns nil when the trailing token isn't a recognised parenthetical."
   [name]
-  (when-let [[_ base suffix] (re-matches suffix-re name)]
-    [base suffix]))
+  (or (when-let [[_ base weapon lore] (re-matches weapon-lore-suffix-re name)]
+        [(str base " (" weapon ")") lore])
+      (when-let [[_ base suffix] (re-matches suffix-re name)]
+        [base suffix])))
 
 (def ^:private tuple-start-re #"(?m)^  \((\d+),")
 
