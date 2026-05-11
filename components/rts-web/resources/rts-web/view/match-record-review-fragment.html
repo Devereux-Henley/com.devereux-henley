@@ -99,6 +99,8 @@
                                 <strong>{{unit.display}}</strong>
                                 {% if unit.mark-shown %}<span class="pm-draft-unit-tooltip-mark">Mark of {{unit.mark-label}}</span>{% endif %}
                                 <span>{{unit.tooltip}}</span>
+                                {% if unit.has-mount %}<span class="pm-draft-unit-tooltip-mount">Mount · {{unit.mount-name}}</span>{% endif %}
+                                {% if unit.has-spells %}<span class="pm-draft-unit-tooltip-spells">Spells · {{unit.spell-names|join:", "}}</span>{% endif %}
                             </div>
                         </div>
                         {% endfor %}
@@ -155,6 +157,8 @@
                                 <strong>{{unit.display}}</strong>
                                 {% if unit.mark-shown %}<span class="pm-draft-unit-tooltip-mark">Mark of {{unit.mark-label}}</span>{% endif %}
                                 <span>{{unit.tooltip}}</span>
+                                {% if unit.has-mount %}<span class="pm-draft-unit-tooltip-mount">Mount · {{unit.mount-name}}</span>{% endif %}
+                                {% if unit.has-spells %}<span class="pm-draft-unit-tooltip-spells">Spells · {{unit.spell-names|join:", "}}</span>{% endif %}
                             </div>
                         </div>
                         {% endfor %}

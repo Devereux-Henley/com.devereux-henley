@@ -150,6 +150,18 @@
        (remove empty?)
        set))
 
+(defn- collect-spell-keys
+  "Walks a parsed map's units and returns the set of every non-blank spell
+  key the parser emitted (a unit's `:spells` is the engine-known spell list
+  for that caster; non-casters carry an empty vector)."
+  [parsed]
+  (->> (:alliances parsed)
+       (mapcat :armies)
+       (mapcat :units)
+       (mapcat :spells)
+       (remove empty?)
+       set))
+
 (defn- key-prefix-candidates
   "Successively shorter prefixes of `k` produced by stripping one trailing
   `_<token>` at a time, ordered longest-first.  Used so a parser-emitted
@@ -169,9 +181,35 @@
   (or (get key->row k)
       (some #(get key->row %) (key-prefix-candidates k))))
 
+(defn- mount-suffix
+  "Returns the trailing portion of `parsed-key` after `base-key` and an
+  underscore, or nil when the parsed key doesn't strictly extend the base
+  row's key (i.e. the unit was bought without a mount). The remainder is
+  the engine's mount tag — e.g. `great_taurus` for a Sorcerer Prophet on
+  a Great Taurus."
+  [base-key parsed-key]
+  (when (and (seq base-key) (seq parsed-key))
+    (let [prefix (str base-key "_")]
+      (when (and (str/starts-with? parsed-key prefix)
+                 (> (count parsed-key) (count prefix)))
+        (subs parsed-key (count prefix))))))
+
+(defn- match-mount-by-suffix
+  "Finds the mount row in `mount-rows` whose key, after stripping the
+  canonical `mount_` prefix, equals `suffix`. Returns nil when no row
+  matches so callers can leave `:mount` unset."
+  [mount-rows suffix]
+  (when suffix
+    (some (fn [m]
+            (when-let [k (:key m)]
+              (when (= (str/replace-first k #"^mount_" "") suffix)
+                m)))
+          mount-rows)))
+
 (defn- enrich-unit
   "Adds resolved unit data (name, cost, category, level/adjusted-cost,
-  Mark of Chaos) to a unit map when its engine key has a matching DB row.
+  Mark of Chaos, equipped mount, known spells) to a unit map when its
+  engine key has a matching DB row.
 
   When the parser emitted a non-zero `:cost` (engine-resolved final cost
   including mount/mark/lore/veterancy/armory adders), it wins as
@@ -180,28 +218,41 @@
   `..._steam_tank` or `..._great_taurus`. Falls back to
   `(apply-level-cost base-cost level-row)` for replays parsed by older
   binaries that don't emit `:cost`. Leaves the map unchanged when no row
-  resolves so the client can fall back to the raw key."
-  [key->row level->cost-row {:keys [key] :as unit}]
+  resolves so the client can fall back to the raw key.
+
+  `:spells` on the input is the parser's vector of engine spell keys for
+  this unit; we replace it with a vector of resolved spell rows
+  (`{:key :name :mana-cost :cost}`) preserving order and dropping any keys
+  the spell table doesn't know. `:mount` is set when the parsed key
+  strictly extends the resolved unit's key (e.g. `..._great_taurus`) and
+  the matching `unit_mount` row is in `unit-eid->mount-rows`."
+  [key->row level->cost-row spell-key->row unit-eid->mount-rows {:keys [key spells] :as unit}]
   (let [level       (or (:level unit) 0)
-        parsed-cost (:cost unit)]
+        parsed-cost (:cost unit)
+        spell-rows  (->> spells (keep #(get spell-key->row %)) vec)
+        with-spells (assoc unit :spells spell-rows)]
     (if-let [row (resolve-key key->row key)]
-      (assoc unit
-             :name                 (:name row)
-             :cost                 (:cost row)
-             :level                level
-             :adjusted-cost        (if (and parsed-cost (pos? parsed-cost))
-                                     parsed-cost
-                                     (domain/apply-level-cost (:cost row) (get level->cost-row level)))
-             :unit-category-name   (:unit-category-name row)
-             :unit-type-name       (:unit-type-name row)
-             :unit-eid             (:eid row)
-             :mark                 (:mark row)
-             :family-variant-count (:family-variant-count row))
-      (assoc unit :level level))))
+      (let [mount-row (match-mount-by-suffix
+                       (get unit-eid->mount-rows (:eid row))
+                       (mount-suffix (:key row) key))]
+        (cond-> (assoc with-spells
+                       :name                 (:name row)
+                       :cost                 (:cost row)
+                       :level                level
+                       :adjusted-cost        (if (and parsed-cost (pos? parsed-cost))
+                                               parsed-cost
+                                               (domain/apply-level-cost (:cost row) (get level->cost-row level)))
+                       :unit-category-name   (:unit-category-name row)
+                       :unit-type-name       (:unit-type-name row)
+                       :unit-eid             (:eid row)
+                       :mark                 (:mark row)
+                       :family-variant-count (:family-variant-count row))
+          mount-row (assoc :mount mount-row)))
+      (assoc with-spells :level level))))
 
 (defn- enrich-parsed
   "Threads `enrich-unit` through every unit in the parsed structure."
-  [key->row level->cost-row parsed]
+  [key->row level->cost-row spell-key->row unit-eid->mount-rows parsed]
   (update parsed :alliances
           (fn [alliances]
             (mapv (fn [alliance]
@@ -210,7 +261,10 @@
                               (mapv (fn [army]
                                       (update army :units
                                               (fn [units]
-                                                (mapv (partial enrich-unit key->row level->cost-row) units))))
+                                                (mapv (partial enrich-unit
+                                                               key->row level->cost-row
+                                                               spell-key->row unit-eid->mount-rows)
+                                                      units))))
                                     armies))))
                   alliances))))
 
@@ -225,6 +279,40 @@
       {}
       (->> (db/get-units-by-keys (:connection dependencies) all-keys)
            (into {} (map (juxt :key identity)))))))
+
+(defn- resolve-spells
+  "Builds a `spell-key → spell-row` map covering every spell key the
+  parser emitted across the parsed games. Logs a warning for keys the
+  spell table couldn't resolve so missing seed data surfaces in the
+  operator log instead of silently disappearing from the modal."
+  [dependencies parsed-vec]
+  (let [spell-keys (apply set/union (map collect-spell-keys parsed-vec))]
+    (if (empty? spell-keys)
+      {}
+      (let [resolved   (or (db/get-spells-by-keys (:connection dependencies) spell-keys) {})
+            unresolved (set/difference spell-keys (set (keys resolved)))]
+        (when (seq unresolved)
+          (log/warn "Unresolved spell keys; rendering raw engine ids."
+                    {:keys (sort unresolved)}))
+        resolved))))
+
+(defn- resolve-mount-options
+  "Builds a `unit-eid → vector of mount rows` map for every base unit
+  whose parsed key strictly extends the seed row's key — those are the
+  units that need a mount lookup to enrich `:mount`. Batching by
+  unit-eid means each unit's mount catalogue is fetched once even when
+  the unit appears in multiple games of the match."
+  [dependencies parsed-vec key->row]
+  (let [base-eids (->> (apply set/union (map collect-unit-keys parsed-vec))
+                       (keep (fn [k]
+                               (let [row (resolve-key key->row k)]
+                                 (when (and row (mount-suffix (:key row) k))
+                                   (:eid row)))))
+                       set)]
+    (into {}
+          (map (fn [eid]
+                 [eid (db/get-mounts-for-unit (:connection dependencies) eid)]))
+          base-eids)))
 
 (defn- collect-faction-keys
   "Walks a parsed map's alliances and returns the set of every non-blank
@@ -342,6 +430,19 @@
             (:year played-at) (:month played-at) (:day played-at)
             (:hour played-at) (:minute played-at))))
 
+(defn- collapse-spell-names
+  "Returns a distinct, order-preserving vector of spell display names with
+  the engine's per-spell upgraded twin folded into its base name — every
+  Lore-of-Fire wizard who knows Flaming Sword of Rhuin also gets the
+  `..._upgraded` row, but to the player it's the same spell at higher
+  mana, so the tooltip should mention it once."
+  [spells]
+  (->> spells
+       (keep :name)
+       (map #(str/replace % #" Upgraded$" ""))
+       distinct
+       vec))
+
 (defn- army->units
   "Maps a single army's units into the per-unit shape the review template
   expects (display name, cost when enriched, lord flag, tooltip).
@@ -351,7 +452,7 @@
   is guaranteed, the fallbacks become dead code — see #49 for the
   cleanup checklist."
   [army]
-  (mapv (fn [{:keys [key name cost adjusted-cost level unit-category-name unit-type-name unit-eid mark family-variant-count]}]
+  (mapv (fn [{:keys [key name cost adjusted-cost level unit-category-name unit-type-name unit-eid mark family-variant-count mount spells]}]
           (let [enriched?   (some? name)
                 ;; FALLBACK (#49): unresolved parser key shows the raw engine key.
                 display     (if enriched? name key)
@@ -366,7 +467,9 @@
                 ;; name itself already implies the mark.
                 mark-shown? (and mark
                                  (some? family-variant-count)
-                                 (> family-variant-count 1))]
+                                 (> family-variant-count 1))
+                spell-names (collapse-spell-names spells)
+                mount-name  (:name mount)]
             {:key           key
              :unit-eid      unit-eid
              :display       display
@@ -380,6 +483,10 @@
              :mark          mark
              :mark-shown    mark-shown?
              :mark-label    (when mark (str/capitalize mark))
+             :mount-name    mount-name
+             :spell-names   spell-names
+             :has-mount     (boolean mount-name)
+             :has-spells    (boolean (seq spell-names))
              ;; FALLBACK (#49): tooltip omits cost when the DB row is missing.
              :tooltip       (cond
                               (and shown-cost (pos? level))
@@ -531,8 +638,10 @@
         (try
           (let [parsed       (domain/parse-replay-files dependencies (mapv :file-path files))
                 key->row     (resolve-units dependencies parsed)
+                spell->row   (resolve-spells dependencies parsed)
+                eid->mounts  (resolve-mount-options dependencies parsed key->row)
                 level-costs  (db/get-unit-level-costs (:connection dependencies))
-                enriched     (mapv #(enrich-parsed key->row level-costs %) parsed)
+                enriched     (mapv #(enrich-parsed key->row level-costs spell->row eid->mounts %) parsed)
                 faction->row (resolve-faction-keys dependencies parsed)
                 viewer       (get-in session [:identity :id])
                 games        (mapv (fn [game-index file parsed-map]
