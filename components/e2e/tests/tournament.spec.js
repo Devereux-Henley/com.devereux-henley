@@ -633,9 +633,9 @@ test.describe('Tournament Phase Details API', () => {
     expect((await res.json()).type).toBe('missing/resource');
   });
 
-  test('phase details renders an htmx fragment when accept is htmx+html', async ({ request }) => {
+  test('phase details renders an htmx fragment from the components endpoint', async ({ request }) => {
     const eid = await createActiveSwissTournament(request);
-    const res = await request.get(`${BASE}/api/tournament/${eid}/phase/0`, {
+    const res = await request.get(`${BASE}/components/tournament/${eid}/phase/0/phase-panel.html`, {
       headers: {
         Accept: 'application/htmx+html',
         Cookie: 'dev_impersonation=dev-admin',

@@ -11,7 +11,7 @@
           hx-patch="/api/draft/{{data.draft-eid}}/entry/{{data.eid}}?section={{data.section}}"
           hx-ext="json-enc"
           {% else %}
-          hx-get="/api/draft/{{unit.draft-eid}}/unit/{{unit.eid}}"
+          hx-get="/components/draft/{{unit.draft-eid}}/unit/{{unit.eid}}/unit-panel.html"
           {% endif %}
           hx-trigger="change delay:300ms"
           hx-target="#draft-unit-body"
@@ -437,14 +437,14 @@
           hx-headers='{"Accept": "application/htmx+html"}'></form>
     {% else %}
     <form id="draft-mark-form"
-          hx-get="/api/draft/{{unit.draft-eid}}/unit"
+          hx-get="/components/draft/{{unit.draft-eid}}/unit-panel.html"
           hx-trigger="patchFamily"
           hx-target="#draft-unit-body"
           hx-select="#draft-unit-body"
           hx-swap="outerHTML"
           hx-headers='{"Accept": "application/htmx+html"}'></form>
     <form id="draft-lore-form"
-          hx-get="/api/draft/{{unit.draft-eid}}/unit"
+          hx-get="/components/draft/{{unit.draft-eid}}/unit-panel.html"
           hx-trigger="patchFamily"
           hx-target="#draft-unit-body"
           hx-select="#draft-unit-body"

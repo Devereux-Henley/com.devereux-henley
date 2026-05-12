@@ -17,7 +17,7 @@
         {% include "rts-web/view/tournament-round-row.html" %}
     </div>
     <button type="button" class="btn btn-ghost btn-sm"
-            hx-get="/api/tournament/{{tournament-eid}}/round"
+            hx-get="/components/tournament/{{tournament-eid}}/round-row.html"
             hx-target="previous .tournament-rounds-container"
             hx-swap="beforeend">+ Add Round</button>
 </div>

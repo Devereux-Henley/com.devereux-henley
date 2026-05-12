@@ -13,7 +13,7 @@
         {% if factions %}
         {% for faction in factions %}
         <a class="faction-card"
-           hx-get="/api/game/faction/{{faction.eid}}?embed=units-by-category"
+           hx-get="/components/faction/{{faction.eid}}/faction-card.html?embed=units-by-category"
            hx-target="#content"
            hx-push-url="/view/game/{{game-eid}}/faction/{{faction.eid}}/index.html"
            href="/view/game/{{game-eid}}/faction/{{faction.eid}}/index.html"

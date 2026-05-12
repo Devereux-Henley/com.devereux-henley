@@ -198,7 +198,7 @@ test.describe('Competitive view + legacy URL', () => {
 
   test('competitive landing renders both tabs', async ({ request }) => {
     const res = await request.get(`${BASE}/view/game/${GAME_EID}/competitive/index.html`, {
-      headers: { Accept: 'text/html', Cookie: 'dev_impersonation=dev-admin' },
+      headers: { Accept: 'application/htmx+html', Cookie: 'dev_impersonation=dev-admin' },
     });
     expect(res.status()).toBe(200);
     const body = await res.text();
