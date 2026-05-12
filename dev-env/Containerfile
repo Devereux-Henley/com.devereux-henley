@@ -87,4 +87,21 @@ if [ -f /run/.toolboxenv ] && [ -t 1 ] && command -v claude >/dev/null 2>&1; the
 fi
 EOF
 
+# Installs @playwright/cli (the agent-friendly browser-automation CLI used
+# by the /playwright-cli skill) into ~/.local on first interactive enter,
+# then seeds the Chromium browser the CLI drives. The dnf install above
+# already pulls the Chromium runtime libs (alsa-lib, atk, libdrm, libxcb,
+# libxkbcommon, nss, pango, …), so the browser install itself only needs
+# to download the browser bundle.
+RUN cat >/etc/profile.d/playwright-cli-install.sh <<'EOF'
+if [ -f /run/.toolboxenv ] && [ -t 1 ] && ! command -v playwright-cli >/dev/null 2>&1; then
+    echo "Installing playwright-cli (first run)..."
+    mkdir -p "$HOME/.local"
+    npm config set prefix "$HOME/.local"
+    npm install -g @playwright/cli@latest
+    echo "Installing Chromium browser bundle..."
+    npx --yes playwright install chromium
+fi
+EOF
+
 ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk
