@@ -1,9 +1,13 @@
 <aside class="draft-stats-panel" id="draft-unit" role="complementary" aria-label="Unit statistics for {{unit.name}}">
     <div id="draft-unit-body">
-    <form class="draft-stats-inner"
+    <form class="draft-stats-inner{% if data.locked? %} draft-stats-inner--locked{% endif %}"
           id="draft-unit-form"
           onsubmit="return false"
-          {% if data.section %}
+          {% if data.locked? %}
+          {# Locked drafts are read-only — the form still renders so the
+             panel shows mark/lore/mount/abilities/spells as chosen, but
+             no hx-* triggers fire and every input is `disabled` below. #}
+          {% else %}{% if data.section %}
           hx-patch="/api/draft/{{data.draft-eid}}/entry/{{data.eid}}?section={{data.section}}"
           hx-ext="json-enc"
           {% else %}
@@ -13,7 +17,8 @@
           hx-target="#draft-unit-body"
           hx-select="#draft-unit-body"
           hx-swap="outerHTML"
-          hx-headers='{"Accept": "application/htmx+html"}'>
+          hx-headers='{"Accept": "application/htmx+html"}'
+          {% endif %}>
 
         <div class="draft-stats-header">
             {# visibility:hidden (not display:none) so a missing portrait
@@ -29,7 +34,7 @@
                 <h3 class="draft-stats-name">
                     <span class="draft-stats-name-text">{{unit.name}}</span>
                     <span class="draft-editing-indicator-slot">
-                        {% if data.section %}
+                        {% if data.section %}{% if not data.locked? %}
                         <span class="draft-editing-indicator{% ifequal data.section "main" %} draft-editing-indicator--main{% else %} draft-editing-indicator--reinf{% endifequal %}"
                               role="status"
                               aria-label="Editing {% ifequal data.section "main" %}Main Army{% else %}Reinforcements{% endifequal %}"
@@ -37,7 +42,7 @@
                             {% with class="draft-editing-icon" size="14" %}{% include "rts-web/view/icon/pencil.html" %}{% endwith %}
                             <span class="sr-only">Editing {% ifequal data.section "main" %}Main Army{% else %}Reinforcements{% endifequal %}. Changes save automatically.</span>
                         </span>
-                        {% endif %}
+                        {% endif %}{% endif %}
                     </span>
                 </h3>
                 <div class="draft-stats-badges">
@@ -55,7 +60,7 @@
         <div class="draft-stats-actions">
             <div id="draft-action-error" role="alert" aria-live="polite" hidden></div>
             {% if data.section %}
-            {% else %}
+            {% else %}{% if not data.locked? %}
             <button class="btn btn-primary draft-add-btn"
                     type="button"
                     hx-post="/api/draft/{{unit.draft-eid}}/unit/{{unit.eid}}?section=main"
@@ -77,6 +82,7 @@
                 Add to Reinforcements
             </button>
             {% endifunequal %}
+            {% endif %}
             {% endif %}
             {% endif %}
             <a class="draft-details-link"
@@ -187,6 +193,7 @@
                                name="abilities"
                                value="{{ability.key}}"
                                {% if ability.selected %}checked{% endif %}
+                               {% if data.locked? %}disabled{% endif %}
                                aria-label="{{ability.name}} (+{{ability.cost}})">
                         <img class="draft-option-icon"
                              src="/icon/ability/{{ability.eid}}.png"
@@ -242,7 +249,7 @@
                         name="unit-eid"
                         form="draft-mark-form"
                         aria-labelledby="panel-mark-heading"
-                        _="on change halt the event then send patchFamily to #draft-mark-form">
+                        {% if data.locked? %}disabled{% else %}_="on change halt the event then send patchFamily to #draft-mark-form"{% endif %}>
                     {% for variant in unit.family-marks %}
                     <option value="{{variant.eid}}"{% ifequal variant.eid unit.eid %} selected{% endifequal %}>{% if variant.mark %}{{variant.mark|capitalize}}{% else %}Undivided{% endif %}{% if variant.cost %} &mdash; {{variant.cost}} pts{% endif %}</option>
                     {% endfor %}
@@ -266,7 +273,7 @@
                         name="unit-eid"
                         form="draft-lore-form"
                         aria-labelledby="panel-lores-heading"
-                        _="on change halt the event then send patchFamily to #draft-lore-form">
+                        {% if data.locked? %}disabled{% else %}_="on change halt the event then send patchFamily to #draft-lore-form"{% endif %}>
                     {% for variant in unit.family-lores %}
                     <option value="{{variant.eid}}"{% ifequal variant.eid unit.eid %} selected{% endifequal %}>{{variant.lore-label}}{% if variant.cost %} &mdash; {{variant.cost}} pts{% endif %}</option>
                     {% endfor %}
@@ -287,6 +294,7 @@
                                name="spells"
                                value="{{spell.key}}"
                                {% if spell.selected %}checked{% endif %}
+                               {% if data.locked? %}disabled{% endif %}
                                aria-label="{{spell.name}} ({{spell.mana-cost}} mana, +{{spell.cost}})">
                         <img class="draft-option-icon"
                              src="/icon/ability/{{spell.eid}}.png"
@@ -312,6 +320,7 @@
                                name="mount"
                                value=""
                                {% if not data.mount %}checked{% endif %}
+                               {% if data.locked? %}disabled{% endif %}
                                aria-label="No mount">
                         <span class="draft-option-name">No mount</span>
                     </label>
@@ -324,6 +333,7 @@
                                name="mount"
                                value="{{mount.key}}"
                                {% ifequal data.mount mount.key %}checked{% endifequal %}
+                               {% if data.locked? %}disabled{% endif %}
                                aria-label="{{mount.name}} (+{{mount.cost}})">
                         <img class="draft-option-icon"
                              src="/icon/mount/{{mount.icon-key}}.png"
@@ -350,6 +360,7 @@
                                name="items"
                                value="{{item.key}}"
                                {% if item.selected %}checked{% endif %}
+                               {% if data.locked? %}disabled{% endif %}
                                aria-label="{{item.name}} (+{{item.cost}})">
                         <img class="draft-option-icon"
                              src="/icon/item/{{item.icon-key}}.png"

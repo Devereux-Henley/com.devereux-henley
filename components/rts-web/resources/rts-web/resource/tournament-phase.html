@@ -1,4 +1,4 @@
-{% with phase-group=data.phase-group tournament-state=data.tournament-state %}
+{% with phase-group=data.phase-group tournament-state=data.tournament-state game-eid=data.game-eid %}
 {% ifequal phase-group.phase-type "swiss" %}{% include "rts-web/view/tournament/_standings.html" %}{% endifequal %}
 {% ifequal phase-group.phase-type "round-robin" %}{% include "rts-web/view/tournament/_standings.html" %}{% endifequal %}
 

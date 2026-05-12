@@ -189,17 +189,13 @@
      [:bracket-type data-access.contract/bracket-type-enum]
      [:player-one-sub :string]
      [:player-two-sub [:maybe :string]]
-     [:player-one-draft-eid {:optional true :model/link :draft/by-eid} :uuid]
-     [:player-two-draft-eid {:optional true :model/link :draft/by-eid} :uuid]
      [:winner-sub [:maybe :string]]
      [:status data-access.contract/match-status-enum]
      [:format data-access.contract/match-format-enum]
      [:_links
       [:map
        [:self :url]
-       [:tournament :url]
-       [:player-one-draft {:optional true} :url]
-       [:player-two-draft {:optional true} :url]]]])))
+       [:tournament :url]]]])))
 
 (def create-match-specification
   (schema.contract/to-schema
@@ -355,13 +351,16 @@
   "Response for GET /api/tournament/:eid/phase/:phase-index — the phase
    details panel. Carries just what the Selmer template needs: the
    focused phase group plus the tournament-wide standings that back
-   the swiss / round-robin view."
+   the swiss / round-robin view. `:game-eid` rides along so the match
+   cards can build `View lineup` URLs to each player's draft (since
+   the draft view path is game-scoped)."
   (schema.contract/to-schema
    [:map
     [:type [:= :tournament/phase]]
     [:phase-group phase-group]
     [:tournament-state [:map {:closed false}
                         [:standings [:sequential standing-entry]]]]
+    [:game-eid :uuid]
     [:data [:map [:eid :uuid]]]]))
 
 (def tournament-match-result-response
@@ -541,6 +540,7 @@
      [:passive-spells {:optional true} [:sequential draft-spell]]
      [:draftable-spells {:optional true} [:sequential draft-spell]]
      [:has-passives {:optional true} :boolean]
+     [:locked? {:optional true} :boolean]
      [:validation {:optional true}
       [:map
        [:can-add-to-reinforcements? :boolean]]]
@@ -571,6 +571,7 @@
      [:abilities {:optional true} [:sequential :string]]
      [:spells {:optional true} [:sequential :string]]
      [:items {:optional true} [:sequential :string]]
+     [:locked? {:optional true} :boolean]
      [:_links
       [:map
        [:self :url]

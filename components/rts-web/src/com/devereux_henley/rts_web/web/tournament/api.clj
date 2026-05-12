@@ -249,6 +249,24 @@
         {:status 422 :body result}
         {:status 200 :body result}))))
 
+(defn- attach-lineups-to-matches
+  "Walks each round-bucket inside a phase-group and replaces every match
+  slot with one carrying `:lineups` — the per-game pair of draft eids
+  recorded against `match_game`. Drafts are auto-created on match-record
+  submit, so completed matches end up with one lineup row per game."
+  [phase-group lineups-by-match-eid]
+  (let [decorate-match  (fn [m]
+                          (if-let [lineups (get lineups-by-match-eid (:eid m))]
+                            (assoc m :lineups lineups)
+                            m))
+        decorate-round  (fn [r] (update r :matches #(mapv decorate-match %)))
+        decorate-bucket #(when (seq %) (mapv decorate-round %))]
+    (cond-> phase-group
+      (:rounds phase-group)          (update :rounds          decorate-bucket)
+      (:winners-bracket phase-group) (update :winners-bracket  decorate-bucket)
+      (:losers-bracket phase-group)  (update :losers-bracket   decorate-bucket)
+      (:grand-final phase-group)     (update :grand-final      decorate-bucket))))
+
 (defmethod integrant.core/init-key ::get-phase
   [_init-key dependencies]
   (fn [{{{:keys [eid phase-index]} :path} :parameters}]
@@ -257,12 +275,33 @@
           raw-matches     (domain/get-matches-for-tournament dependencies eid)
           qualifier-count (or (:qualifier-count state) (count (:standings state)))
           grouped         (domain/group-matches-by-phase raw-matches phases qualifier-count)
-          phase-group     (first (filter #(= phase-index (:phase %)) grouped))]
+          phase-group-raw (first (filter #(= phase-index (:phase %)) grouped))
+          ;; Per-match game rows carry the auto-created player draft eids.
+          ;; Fetched per real-match (placeholders / byes skipped) and keyed
+          ;; by match-eid so each match-card can render its lineup links
+          ;; without an extra round-trip from the template.
+          real-matches    (filter :eid raw-matches)
+          lineups         (into {}
+                                (map (fn [m]
+                                       [(:eid m)
+                                        (domain/get-games-for-match dependencies (:eid m))]))
+                                real-matches)
+          phase-group     (when phase-group-raw
+                            (attach-lineups-to-matches phase-group-raw lineups))
+          ;; Each match-card surfaces per-game "View lineup" links to the
+          ;; player drafts (read-only since the match references them).
+          ;; The view URL is `/view/game/<game>/draft/<draft>/index.html`,
+          ;; so the fragment template needs the parent tournament's
+          ;; game-eid — pulled from the tournament row here so each match
+          ;; render can build the URL without a second lookup per card.
+          tournament      (get-tournament-by-eid dependencies eid)
+          game-eid        (:game-eid tournament)]
       (if phase-group
         {:status 200
          :body   {:type             :tournament/phase
                   :tournament-state state
                   :phase-group      phase-group
+                  :game-eid         game-eid
                   :data             {:eid eid}}}
         {:status 404
          :body   {:type :missing/resource :name "tournament-phase" :id phase-index}}))))

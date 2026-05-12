@@ -37,6 +37,9 @@
 
 (def get-drafts-for-player-by-game query.game/get-drafts-for-player-by-game)
 
+(def get-draft-lock-info query.game/get-draft-lock-info)
+(def draft-lock-info-schema query.game/draft-lock-info-schema)
+
 (def create-draft query.game/create-draft)
 (def update-draft query.game/update-draft)
 

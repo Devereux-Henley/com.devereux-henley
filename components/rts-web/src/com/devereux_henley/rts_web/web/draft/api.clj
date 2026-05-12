@@ -57,10 +57,27 @@
          body          :body} :parameters
         router                :reitit.core/router
         :as                   _request}]
-    (web.core/handle-fetch-response
-     domain/draft-resource
-     {:hostname (:hostname dependencies) :router router}
-     #(domain/update-draft dependencies eid (select-keys (or body {}) [:name])))))
+    (let [result (domain/update-draft dependencies eid (select-keys (or body {}) [:name]))]
+      (if (= :draft/locked (:type result))
+        {:status 409 :body result}
+        (web.core/handle-fetch-response
+         domain/draft-resource
+         {:hostname (:hostname dependencies) :router router}
+         (constantly result))))))
+
+(defn- with-lock-flag
+  "Attaches `:locked? true/false` to a panel resource so the template
+  can gate mutation triggers (hx-patch/hx-post on mark/lore/mount/
+  abilities/spells/items selectors) without each fragment re-querying
+  the lock state. The flag is computed once per request and propagated
+  to any embedded unit panel so the form controls inside it know about
+  the lock too."
+  [dependencies draft-eid resource]
+  (let [locked? (some? (domain/draft-lock-info dependencies draft-eid))
+        attach  #(assoc % :locked? locked?)]
+    (cond-> (attach resource)
+      (get-in resource [:_embedded :unit])
+      (update-in [:_embedded :unit] attach))))
 
 (defmethod integrant.core/init-key ::get-draft-unit
   [_init-key dependencies]
@@ -73,7 +90,8 @@
       (web.core/handle-fetch-response
        domain/draft-unit-resource
        {:hostname (:hostname dependencies) :router router}
-       #(domain/get-draft-unit-details dependencies draft-eid unit overrides)))))
+       #(some->> (domain/get-draft-unit-details dependencies draft-eid unit overrides)
+                 (with-lock-flag dependencies draft-eid))))))
 
 (defmethod integrant.core/init-key ::get-draft-entry
   [_init-key dependencies]
@@ -87,7 +105,9 @@
        domain/draft-entry-resource
        {:hostname (:hostname dependencies) :router router}
        #(if-let [details (domain/get-draft-entry-details dependencies draft-eid eid section overrides)]
-          (web.core/apply-embeds draft-entry-embed-registry dependencies embed-set details)
+          (->> details
+               (web.core/apply-embeds draft-entry-embed-registry dependencies embed-set)
+               (with-lock-flag dependencies draft-eid))
           {:type :missing/resource :name "draft-entry" :id eid})))))
 
 (defmethod integrant.core/init-key ::draft-add-unit
@@ -98,7 +118,10 @@
             body                    :body} :parameters} request
           selections                                    (select-keys (or body {}) [:mount :level :abilities :spells :items])
           result                                        (domain/add-unit-to-draft dependencies draft-eid eid section selections)]
-      {:status (if (= :draft/add-success (:type result)) 200 422)
+      {:status (case (:type result)
+                 :draft/add-success 200
+                 :draft/locked      409
+                 422)
        :body   result})))
 
 (defmethod integrant.core/init-key ::draft-update-unit
@@ -110,7 +133,8 @@
         :as                             _request}]
     (let [selections (select-keys (or body {}) [:unit-eid :mount :level :abilities :spells :items])
           result     (domain/update-unit-in-draft dependencies draft-eid eid section selections)]
-      (if (= :draft/update-success (:type result))
+      (case (:type result)
+        :draft/update-success
         ;; Enrich the response with the freshly-persisted entry (+ embedded
         ;; unit) so the same round-trip re-renders the panel via HTMX. The
         ;; OOB fragments in draft-update-success.html handle the sidebar
@@ -121,11 +145,17 @@
            domain/draft-update-response
            {:hostname (:hostname dependencies) :router router}
            (constantly (assoc result :entry entry))))
+
+        :draft/locked
+        {:status 409 :body result}
+
         {:status 422 :body result}))))
 
 (defmethod integrant.core/init-key ::draft-remove-unit
   [_init-key dependencies]
   (fn [request]
     (let [{{{:keys [draft-eid eid]} :path
-            {:keys [section]}       :query} :parameters} request]
-      {:status 200 :body (domain/remove-unit-from-draft dependencies draft-eid eid section)})))
+            {:keys [section]}       :query} :parameters} request
+          result                                         (domain/remove-unit-from-draft dependencies draft-eid eid section)]
+      {:status (if (= :draft/locked (:type result)) 409 200)
+       :body   result})))

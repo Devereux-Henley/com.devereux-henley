@@ -5,7 +5,16 @@
 {% block content %}
 <title id="page-title" hx-swap-oob="true">{{data.display-name}} | {{game.name}} | RTS-UI</title>
 
-<div class="draft-page">
+<div class="draft-page{% if locked? %} draft-page--locked{% endif %}">
+
+    {% if locked? %}
+    <aside class="draft-locked-banner" role="status">
+        <strong>Locked</strong>
+        <span>This draft has been used in
+            <a href="/view/game/{{game.eid}}/tournament/{{locking-tournament-eid}}/index.html">{{locking-tournament-name}}</a>
+            and is read-only.</span>
+    </aside>
+    {% endif %}
 
     <!-- ═══════════════════════════════════════════════════════════ -->
     <!-- Campaign nameplate — renames the draft                      -->
@@ -23,11 +32,11 @@
                    autocomplete="off"
                    spellcheck="false"
                    aria-describedby="draft-nameplate-hint"
-                   hx-patch="/api/draft/{{data.eid}}"
+                   {% if locked? %}readonly aria-readonly="true"{% else %}hx-patch="/api/draft/{{data.eid}}"
                    hx-ext="json-enc"
                    hx-trigger="input changed delay:500ms, blur changed"
                    hx-swap="none"
-                   hx-on::after-request="this.closest('.draft-nameplate').classList.toggle('draft-nameplate--saved', event.detail.successful)">
+                   hx-on::after-request="this.closest('.draft-nameplate').classList.toggle('draft-nameplate--saved', event.detail.successful)"{% endif %}>
             <span id="draft-nameplate-hint" class="sr-only">Up to 60 characters. Leave blank to restore the default name.</span>
             <span class="draft-nameplate-saved" role="status" aria-live="polite">Saved</span>
         </label>

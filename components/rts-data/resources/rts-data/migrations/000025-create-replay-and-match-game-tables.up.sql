@@ -27,6 +27,8 @@ CREATE TABLE IF NOT EXISTS match_game (
   winner_sub TEXT,
   replay_id INTEGER REFERENCES replay(id),
   uploader_local_alliance_index INTEGER,
+  player_one_draft_id INTEGER REFERENCES draft(id),
+  player_two_draft_id INTEGER REFERENCES draft(id),
   created_at TEXT NOT NULL,
   UNIQUE(eid),
   FOREIGN KEY(match_id) REFERENCES match(id)

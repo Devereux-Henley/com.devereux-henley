@@ -59,6 +59,17 @@
 
 (def upsert-draft-state-query (resource/load-query-resource "game" "upsert-draft-state.sql"))
 (def update-draft-query (resource/load-query-resource "game" "update-draft.sql"))
+(def get-draft-lock-info-query (resource/load-query-resource "game" "get-draft-lock-info.sql"))
+
+(def draft-lock-info-schema
+  "Shape of the row returned by `get-draft-lock-info` — the first
+  tournament match that references the draft. `nil` means the draft
+  isn't referenced anywhere yet (still editable)."
+  (schema.contract/to-schema
+   [:map
+    [:match-eid       :uuid]
+    [:tournament-eid  :uuid]
+    [:tournament-name :string]]))
 
 (defn get-game-by-eid
   {:malli/schema (schema.contract/to-schema
@@ -196,6 +207,19 @@
                    schema/draft-entity])}
   [connection eid]
   (jdbc.contract/query-for-entity connection [get-draft-by-eid-query eid] schema/draft-entity))
+
+(defn get-draft-lock-info
+  "Returns the first tournament match that references the given draft
+  (by eid) or `nil` if no match does. The presence of any match row is
+  what makes a draft read-only — locking is one-way and derived at
+  request time rather than stored on `draft` directly. Returned shape:
+  `{:match-eid :tournament-eid :tournament-name}`."
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection] :uuid]
+                   [:maybe draft-lock-info-schema]])}
+  [connection eid]
+  (jdbc.contract/query-for-entity connection [get-draft-lock-info-query eid] draft-lock-info-schema))
 
 (defn get-drafts-for-player
   {:malli/schema (schema.contract/to-schema

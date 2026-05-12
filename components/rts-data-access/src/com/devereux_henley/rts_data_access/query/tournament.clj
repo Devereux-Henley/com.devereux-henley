@@ -150,26 +150,35 @@
 (def get-games-for-match-query (resource/load-query-resource "tournament" "get-games-for-match.sql"))
 
 (defn create-game
-  "Records a per-game result for a match. `opts` may carry `:replay-eid` and
-  `:uploader-local-alliance-index` to bind a parsed replay to this game.  The
-  internal int FK is resolved by SQL subquery so callers stay in eid land."
+  "Records a per-game result for a match. `opts` may carry:
+   - `:replay-eid`                    — the parsed replay row
+   - `:uploader-local-alliance-index` — which alliance the uploader was on
+   - `:player-one-draft-eid`          — draft auto-built from the parsed replay
+   - `:player-two-draft-eid`          — same, for the other side
+   The internal int FKs are resolved by SQL subqueries so callers stay in
+   eid land."
   ([connection match-eid game-index winner-sub]
    (create-game connection match-eid game-index winner-sub {}))
   ([connection match-eid game-index winner-sub
-    {:keys [replay-eid uploader-local-alliance-index]}]
+    {:keys [replay-eid uploader-local-alliance-index
+            player-one-draft-eid player-two-draft-eid]}]
    (let [eid (str (random-uuid))]
      (jdbc.contract/execute-one!
       connection
       [create-game-query eid game-index winner-sub
        (some-> replay-eid str)
        uploader-local-alliance-index
+       (some-> player-one-draft-eid str)
+       (some-> player-two-draft-eid str)
        (str (Instant/now)) (str match-eid)])
      {:eid                           (java.util.UUID/fromString eid)
       :match-eid                     match-eid
       :game-index                    game-index
       :winner-sub                    winner-sub
       :replay-eid                    replay-eid
-      :uploader-local-alliance-index uploader-local-alliance-index})))
+      :uploader-local-alliance-index uploader-local-alliance-index
+      :player-one-draft-eid          player-one-draft-eid
+      :player-two-draft-eid          player-two-draft-eid})))
 
 (defn get-games-for-match
   [connection match-eid]
