@@ -2,6 +2,6 @@
  :deps {camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}
         integrant/integrant   {:mvn/version "1.0.1"}
         metosin/jsonista      {:mvn/version "0.3.5"}
-        metosin/reitit        {:mvn/version "0.5.18"}
+        metosin/reitit        {:mvn/version "0.10.1"}
         com.taoensso/timbre   {:mvn/version "6.0.4"}
         selmer/selmer         {:mvn/version "1.12.55"}}}
