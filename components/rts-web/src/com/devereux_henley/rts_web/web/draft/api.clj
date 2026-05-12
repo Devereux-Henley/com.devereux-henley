@@ -57,10 +57,13 @@
          body          :body} :parameters
         router                :reitit.core/router
         :as                   _request}]
-    (web.core/handle-fetch-response
-     domain/draft-resource
-     {:hostname (:hostname dependencies) :router router}
-     #(domain/update-draft dependencies eid (select-keys (or body {}) [:name])))))
+    (let [result (domain/update-draft dependencies eid (select-keys (or body {}) [:name]))]
+      (if (= :draft/locked (:type result))
+        {:status 409 :body result}
+        (web.core/handle-fetch-response
+         domain/draft-resource
+         {:hostname (:hostname dependencies) :router router}
+         (constantly result))))))
 
 (defmethod integrant.core/init-key ::get-draft-unit
   [_init-key dependencies]
@@ -98,7 +101,10 @@
             body                    :body} :parameters} request
           selections                                    (select-keys (or body {}) [:mount :level :abilities :spells :items])
           result                                        (domain/add-unit-to-draft dependencies draft-eid eid section selections)]
-      {:status (if (= :draft/add-success (:type result)) 200 422)
+      {:status (case (:type result)
+                 :draft/add-success 200
+                 :draft/locked      409
+                 422)
        :body   result})))
 
 (defmethod integrant.core/init-key ::draft-update-unit
@@ -110,7 +116,8 @@
         :as                             _request}]
     (let [selections (select-keys (or body {}) [:unit-eid :mount :level :abilities :spells :items])
           result     (domain/update-unit-in-draft dependencies draft-eid eid section selections)]
-      (if (= :draft/update-success (:type result))
+      (case (:type result)
+        :draft/update-success
         ;; Enrich the response with the freshly-persisted entry (+ embedded
         ;; unit) so the same round-trip re-renders the panel via HTMX. The
         ;; OOB fragments in draft-update-success.html handle the sidebar
@@ -121,11 +128,17 @@
            domain/draft-update-response
            {:hostname (:hostname dependencies) :router router}
            (constantly (assoc result :entry entry))))
+
+        :draft/locked
+        {:status 409 :body result}
+
         {:status 422 :body result}))))
 
 (defmethod integrant.core/init-key ::draft-remove-unit
   [_init-key dependencies]
   (fn [request]
     (let [{{{:keys [draft-eid eid]} :path
-            {:keys [section]}       :query} :parameters} request]
-      {:status 200 :body (domain/remove-unit-from-draft dependencies draft-eid eid section)})))
+            {:keys [section]}       :query} :parameters} request
+          result                                         (domain/remove-unit-from-draft dependencies draft-eid eid section)]
+      {:status (if (= :draft/locked (:type result)) 409 200)
+       :body   result})))

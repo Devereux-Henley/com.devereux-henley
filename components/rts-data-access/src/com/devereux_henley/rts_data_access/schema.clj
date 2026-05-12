@@ -317,6 +317,8 @@
     [:winner-sub [:maybe :string]]
     [:replay-eid {:optional true} [:maybe :uuid]]
     [:uploader-local-alliance-index {:optional true} [:maybe :int]]
+    [:player-one-draft-eid {:optional true} [:maybe :uuid]]
+    [:player-two-draft-eid {:optional true} [:maybe :uuid]]
     [:created-at :instant]]))
 
 (def replay-entity

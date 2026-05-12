@@ -1,13 +1,23 @@
 (ns com.devereux-henley.rts-domain.handlers.draft-test
   (:require
    [clojure.string]
-   [clojure.test :refer [deftest is]]
+   [clojure.test :refer [deftest is use-fixtures]]
    [com.devereux-henley.rts-data-access.contract :as data-access.contract]
    [com.devereux-henley.rts-domain.handlers.draft :as handlers.draft]
    [jsonista.core])
   (:import
    [java.time Instant]
    [java.util UUID]))
+
+;; Every mutation handler now starts with a lock check that calls
+;; `data-access.contract/get-draft-lock-info`. Default each test to the
+;; "unlocked" reading (nil) so the existing assertions exercise the
+;; happy path; the lock-specific deftests below stub it to a locking
+;; row to assert the short-circuit branch.
+(use-fixtures :each
+  (fn [t]
+    (with-redefs [data-access.contract/get-draft-lock-info (fn [_ _] nil)]
+      (t))))
 
 (defn- state-json
   "Builds a draft-state JSON string from maps of {:main [uuid …] :reinforcements [uuid …]}.
@@ -833,3 +843,53 @@
          ;; Malli encode runs the string-transformer on :int fields, so :level
          ;; round-trips through JSON as a string.
          (is (= "1" (get-in parsed [:main 0 :level]))))))))
+
+;; --- read-only lock behaviour ---
+
+(def ^:private locking-info
+  "Stand-in for `get-draft-lock-info`'s row return when a tournament
+  match references the draft."
+  {:match-eid       (UUID/randomUUID)
+   :tournament-eid  (UUID/randomUUID)
+   :tournament-name "Spring Open"})
+
+(defn- with-locked-draft
+  "Wraps `f` with a stub that makes `get-draft-lock-info` return the
+  locking row. Each mutation handler should short-circuit before
+  touching any other DB fn, so we don't bother stubbing them."
+  [f]
+  (with-redefs [data-access.contract/get-draft-lock-info (fn [_ _] locking-info)]
+    (f)))
+
+(deftest update-draft-returns-locked-error-when-draft-used-in-match
+  (with-locked-draft
+    (fn []
+      (let [result (handlers.draft/update-draft test-deps test-draft-eid {:name "renamed"})]
+        (is (= :draft/locked (:type result)))
+        (is (= (:match-eid locking-info) (:match-eid result)))
+        (is (= "Spring Open" (:tournament-name result)))))))
+
+(deftest add-unit-to-draft-returns-locked-error-when-draft-used-in-match
+  (with-locked-draft
+    (fn []
+      (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main" {})]
+        (is (= :draft/locked (:type result)))
+        (is (= (:tournament-eid locking-info) (:tournament-eid result)))))))
+
+(deftest remove-unit-from-draft-returns-locked-error-when-draft-used-in-match
+  (with-locked-draft
+    (fn []
+      (let [result (handlers.draft/remove-unit-from-draft test-deps test-draft-eid (UUID/randomUUID) "main")]
+        (is (= :draft/locked (:type result)))))))
+
+(deftest update-unit-in-draft-returns-locked-error-when-draft-used-in-match
+  (with-locked-draft
+    (fn []
+      (let [result (handlers.draft/update-unit-in-draft test-deps test-draft-eid (UUID/randomUUID) "main" {})]
+        (is (= :draft/locked (:type result)))))))
+
+(deftest lock-info-passes-through-data-access-result
+  (with-redefs [data-access.contract/get-draft-lock-info (fn [_ _] locking-info)]
+    (is (= locking-info (handlers.draft/lock-info test-deps test-draft-eid))))
+  (with-redefs [data-access.contract/get-draft-lock-info (fn [_ _] nil)]
+    (is (nil? (handlers.draft/lock-info test-deps test-draft-eid)))))

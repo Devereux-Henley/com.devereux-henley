@@ -64,6 +64,7 @@
 (def get-drafts-for-player-by-game              handlers.draft/get-drafts-for-player-by-game)
 (def create-draft                               handlers.draft/create-draft)
 (def update-draft                               handlers.draft/update-draft)
+(def draft-lock-info                            handlers.draft/lock-info)
 (def get-draft-state                            handlers.draft/get-draft-state)
 (def set-draft-state                            handlers.draft/set-draft-state)
 (def parse-unit-statistics                      handlers.draft/parse-unit-statistics)

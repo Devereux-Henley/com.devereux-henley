@@ -355,13 +355,16 @@
   "Response for GET /api/tournament/:eid/phase/:phase-index — the phase
    details panel. Carries just what the Selmer template needs: the
    focused phase group plus the tournament-wide standings that back
-   the swiss / round-robin view."
+   the swiss / round-robin view. `:game-eid` rides along so the match
+   cards can build `View lineup` URLs to each player's draft (since
+   the draft view path is game-scoped)."
   (schema.contract/to-schema
    [:map
     [:type [:= :tournament/phase]]
     [:phase-group phase-group]
     [:tournament-state [:map {:closed false}
                         [:standings [:sequential standing-entry]]]]
+    [:game-eid :uuid]
     [:data [:map [:eid :uuid]]]]))
 
 (def tournament-match-result-response

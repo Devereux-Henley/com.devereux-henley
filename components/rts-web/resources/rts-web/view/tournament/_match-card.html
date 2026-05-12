@@ -2,10 +2,14 @@
     <div class="tourney-match-players">
         <span class="tourney-match-player {% ifequal match.winner-sub match.player-one-sub %}tourney-match-winner{% endifequal %}">
             {{match.player-one-sub}}
+            {% if match.lineups %}{% for lineup in match.lineups %}{% if lineup.player-one-draft-eid %}<a class="tourney-match-lineup-link"
+               href="/view/game/{{game-eid}}/draft/{{lineup.player-one-draft-eid}}/index.html">G{{lineup.game-index|add:1}} lineup</a>{% endif %}{% endfor %}{% endif %}
         </span>
         <span class="tourney-match-vs" aria-hidden="true">vs</span>
         <span class="tourney-match-player {% ifequal match.winner-sub match.player-two-sub %}tourney-match-winner{% endifequal %}">
             {% if match.player-two-sub %}{{match.player-two-sub}}{% else %}<em>bye</em>{% endif %}
+            {% if match.lineups %}{% for lineup in match.lineups %}{% if lineup.player-two-draft-eid %}<a class="tourney-match-lineup-link"
+               href="/view/game/{{game-eid}}/draft/{{lineup.player-two-draft-eid}}/index.html">G{{lineup.game-index|add:1}} lineup</a>{% endif %}{% endfor %}{% endif %}
         </span>
     </div>
     <div class="tourney-match-meta tourney-match-actions">

@@ -284,16 +284,39 @@
         with-display-name
         (assoc :type :game/draft))))
 
+(defn lock-info
+  "Returns the locking-match info `{:match-eid :tournament-eid :tournament-name}`
+  when the draft is associated with at least one tournament match, or `nil`
+  when it's still editable. Locking is one-way and derived at request time —
+  the link is `match.player_{one,two}_draft_id` referencing `draft.id`."
+  [dependencies draft-eid]
+  (db/get-draft-lock-info (:connection dependencies) draft-eid))
+
+(defn- locked-error
+  "Typed response used by every mutation handler when the target draft is
+  associated with a match. Carries the locking match/tournament so the
+  caller can link the user to it."
+  [lock]
+  (merge {:type    :draft/locked
+          :message "This draft is locked because it's been used in a tournament match."}
+         lock))
+
 (defn update-draft
   "Applies a partial update to a draft. Currently only :name is
   mutable — empty/whitespace-only clears the stored name so the default
   (faction + date) renders again. Returns the refreshed draft with
-  :display-name recomputed."
+  :display-name recomputed.
+
+  Returns `{:type :draft/locked …}` when the draft has been used in a
+  match — drafts go read-only one-way as soon as a tournament match
+  references them."
   [dependencies eid {:keys [name] :as _updates}]
-  (let [normalised (when name (not-empty (str/trim name)))]
-    (-> (db/update-draft (:connection dependencies) eid {:name normalised})
-        with-display-name
-        (assoc :type :game/draft))))
+  (if-let [lock (lock-info dependencies eid)]
+    (locked-error lock)
+    (let [normalised (when name (not-empty (str/trim name)))]
+      (-> (db/update-draft (:connection dependencies) eid {:name normalised})
+          with-display-name
+          (assoc :type :game/draft)))))
 
 (defn get-drafts-for-player
   "Returns all drafts for a player, each tagged with :type :game/draft."
@@ -826,58 +849,61 @@
 (defn add-unit-to-draft
   "Validates and adds a unit to the specified section of a draft.
    selections: {:mount str-or-nil :abilities [ability-key] :spells [spell-key] :items [item-key]}
-   Returns {:type :draft/add-success ...} on success, {:type :draft/add-error ...} on violation."
+   Returns {:type :draft/add-success ...} on success, {:type :draft/add-error ...} on violation,
+   or {:type :draft/locked ...} when the draft is read-only."
   [dependencies draft-eid unit-eid section selections]
-  (let [;; Form-encoded submissions send an empty-string `mount` when the
+  (if-let [lock (lock-info dependencies draft-eid)]
+    (locked-error lock)
+    (let [;; Form-encoded submissions send an empty-string `mount` when the
         ;; "No mount" radio is selected; normalise to nil so downstream
         ;; lookups and persistence see the absent-mount shape.
-        selections  (update selections :mount not-empty)
-        conn        (:connection dependencies)
-        draft       (db/get-draft-by-eid conn draft-eid)
-        game-mode   (db/get-game-mode-by-eid conn (:game-mode-eid draft))
-        state       (get-draft-state dependencies draft-eid)
-        section-k   (keyword section)
-        unit-by-eid (faction-unit-index conn (:faction-eid draft))
-        unit        (get unit-by-eid unit-eid)
-        section-max (if (= section "main")
-                      (:draft-value game-mode)
-                      (:reinforcement-value game-mode))]
-    (if (nil? unit)
-      {:type :draft/add-error :message "Unit not found in this faction's roster."}
-      (let [total-cost   (compute-unit-total-cost unit selections conn)
-            army-entries (concat
-                          (keep (fn [e] (when-let [u (get unit-by-eid (:unit-eid e))] (assoc u :section "main")))
-                                (:main state))
-                          (keep (fn [e] (when-let [u (get unit-by-eid (:unit-eid e))] (assoc u :section "reinforcements")))
-                                (:reinforcements state)))
-            section-cost (reduce (fn [s entry]
-                                   (if-let [u (get unit-by-eid (:unit-eid entry))]
-                                     (+ s (or (:total-cost entry) (:cost u) 0))
-                                     s))
-                                 0
-                                 (get state section-k []))
-            violation    (rules.draft/validate-add
-                          army-entries unit section
-                          section-cost section-max total-cost)]
-        (if violation
-          violation
-          (let [new-entry-eid (random-uuid)
-                new-state     (update state section-k (fnil conj [])
-                                      {:entry-eid  new-entry-eid
-                                       :unit-eid   unit-eid
-                                       :mount      (:mount selections)
-                                       :level      (or (:level selections) 0)
-                                       :abilities  (or (:abilities selections) [])
-                                       :spells     (or (:spells selections) [])
-                                       :items      (or (:items selections) [])
-                                       :total-cost total-cost})]
-            (set-draft-state dependencies draft-eid new-state)
-            (let [section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)]
-              {:type     :draft/add-success
-               :section  (section-ref section-ctx)
-               :new-unit (slot-unit unit new-entry-eid total-cost
-                                    (or (:level selections) 0))
-               :budget   (section-budget section-ctx)})))))))
+          selections  (update selections :mount not-empty)
+          conn        (:connection dependencies)
+          draft       (db/get-draft-by-eid conn draft-eid)
+          game-mode   (db/get-game-mode-by-eid conn (:game-mode-eid draft))
+          state       (get-draft-state dependencies draft-eid)
+          section-k   (keyword section)
+          unit-by-eid (faction-unit-index conn (:faction-eid draft))
+          unit        (get unit-by-eid unit-eid)
+          section-max (if (= section "main")
+                        (:draft-value game-mode)
+                        (:reinforcement-value game-mode))]
+      (if (nil? unit)
+        {:type :draft/add-error :message "Unit not found in this faction's roster."}
+        (let [total-cost   (compute-unit-total-cost unit selections conn)
+              army-entries (concat
+                            (keep (fn [e] (when-let [u (get unit-by-eid (:unit-eid e))] (assoc u :section "main")))
+                                  (:main state))
+                            (keep (fn [e] (when-let [u (get unit-by-eid (:unit-eid e))] (assoc u :section "reinforcements")))
+                                  (:reinforcements state)))
+              section-cost (reduce (fn [s entry]
+                                     (if-let [u (get unit-by-eid (:unit-eid entry))]
+                                       (+ s (or (:total-cost entry) (:cost u) 0))
+                                       s))
+                                   0
+                                   (get state section-k []))
+              violation    (rules.draft/validate-add
+                            army-entries unit section
+                            section-cost section-max total-cost)]
+          (if violation
+            violation
+            (let [new-entry-eid (random-uuid)
+                  new-state     (update state section-k (fnil conj [])
+                                        {:entry-eid  new-entry-eid
+                                         :unit-eid   unit-eid
+                                         :mount      (:mount selections)
+                                         :level      (or (:level selections) 0)
+                                         :abilities  (or (:abilities selections) [])
+                                         :spells     (or (:spells selections) [])
+                                         :items      (or (:items selections) [])
+                                         :total-cost total-cost})]
+              (set-draft-state dependencies draft-eid new-state)
+              (let [section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)]
+                {:type     :draft/add-success
+                 :section  (section-ref section-ctx)
+                 :new-unit (slot-unit unit new-entry-eid total-cost
+                                      (or (:level selections) 0))
+                 :budget   (section-budget section-ctx)}))))))))
 
 (defn- find-entry-index
   "Returns the index of the first entry with the given :entry-eid in entries,
@@ -887,29 +913,32 @@
                        entries)))
 
 (defn remove-unit-from-draft
-  "Removes the entry matching entry-eid from the given section of a draft's state
-   and returns a :draft/remove-success response map."
+  "Removes the entry matching entry-eid from the given section of a draft's
+   state and returns a :draft/remove-success response map, or {:type
+   :draft/locked …} when the draft has been used in a match."
   [dependencies draft-eid entry-eid section]
-  (let [conn          (:connection dependencies)
-        draft         (db/get-draft-by-eid conn draft-eid)
-        game-mode     (db/get-game-mode-by-eid conn (:game-mode-eid draft))
-        state         (get-draft-state dependencies draft-eid)
-        section-k     (keyword section)
-        old-list      (get state section-k [])
-        index         (find-entry-index old-list entry-eid)
-        removed-entry (when index (nth old-list index))
-        unit-by-eid   (faction-unit-index conn (:faction-eid draft))
-        removed-unit  (when removed-entry (get unit-by-eid (:unit-eid removed-entry)))
-        new-state     (assoc state section-k
-                             (if (some? index)
-                               (into [] (concat (subvec old-list 0 index) (subvec old-list (inc index))))
-                               old-list))]
-    (set-draft-state dependencies draft-eid new-state)
-    (let [section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)]
-      {:type              :draft/remove-success
-       :removed-entry-eid entry-eid
-       :removed-is-lord   (boolean (:is-lord removed-unit))
-       :budget            (section-budget section-ctx)})))
+  (if-let [lock (lock-info dependencies draft-eid)]
+    (locked-error lock)
+    (let [conn          (:connection dependencies)
+          draft         (db/get-draft-by-eid conn draft-eid)
+          game-mode     (db/get-game-mode-by-eid conn (:game-mode-eid draft))
+          state         (get-draft-state dependencies draft-eid)
+          section-k     (keyword section)
+          old-list      (get state section-k [])
+          index         (find-entry-index old-list entry-eid)
+          removed-entry (when index (nth old-list index))
+          unit-by-eid   (faction-unit-index conn (:faction-eid draft))
+          removed-unit  (when removed-entry (get unit-by-eid (:unit-eid removed-entry)))
+          new-state     (assoc state section-k
+                               (if (some? index)
+                                 (into [] (concat (subvec old-list 0 index) (subvec old-list (inc index))))
+                                 old-list))]
+      (set-draft-state dependencies draft-eid new-state)
+      (let [section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)]
+        {:type              :draft/remove-success
+         :removed-entry-eid entry-eid
+         :removed-is-lord   (boolean (:is-lord removed-unit))
+         :budget            (section-budget section-ctx)}))))
 
 (defn get-draft-entry
   "Returns the state entry matching entry-eid in the given section, or nil."
@@ -947,85 +976,88 @@
    variant must share the entry's family (same family-name + faction)
    to prevent a swap into an unrelated unit.
 
-   Returns {:type :draft/update-success …} on success or
-   {:type :draft/update-error …} on violation or missing entry."
+   Returns {:type :draft/update-success …} on success,
+   {:type :draft/update-error …} on violation or missing entry, or
+   {:type :draft/locked …} when the draft has been used in a match."
   [dependencies draft-eid entry-eid section selections]
-  (let [selections-0  (update selections :mount not-empty)
-        conn          (:connection dependencies)
-        draft         (db/get-draft-by-eid conn draft-eid)
-        game-mode     (db/get-game-mode-by-eid conn (:game-mode-eid draft))
-        state         (get-draft-state dependencies draft-eid)
-        section-k     (keyword section)
-        section-list  (get state section-k [])
-        index         (find-entry-index section-list entry-eid)
-        existing      (when index (nth section-list index))
-        unit-by-eid   (faction-unit-index conn (:faction-eid draft))
-        section-max   (if (= section "main")
-                        (:draft-value game-mode)
-                        (:reinforcement-value game-mode))
-        new-unit-eid  (:unit-eid selections-0)
-        family-swap?  (and existing
-                           new-unit-eid
-                           (not= new-unit-eid (:unit-eid existing)))
+  (if-let [lock (lock-info dependencies draft-eid)]
+    (locked-error lock)
+    (let [selections-0  (update selections :mount not-empty)
+          conn          (:connection dependencies)
+          draft         (db/get-draft-by-eid conn draft-eid)
+          game-mode     (db/get-game-mode-by-eid conn (:game-mode-eid draft))
+          state         (get-draft-state dependencies draft-eid)
+          section-k     (keyword section)
+          section-list  (get state section-k [])
+          index         (find-entry-index section-list entry-eid)
+          existing      (when index (nth section-list index))
+          unit-by-eid   (faction-unit-index conn (:faction-eid draft))
+          section-max   (if (= section "main")
+                          (:draft-value game-mode)
+                          (:reinforcement-value game-mode))
+          new-unit-eid  (:unit-eid selections-0)
+          family-swap?  (and existing
+                             new-unit-eid
+                             (not= new-unit-eid (:unit-eid existing)))
         ;; Family swap clears the catalog-keyed selections — they're
         ;; per-row, not portable across variants (a different lore
         ;; row's draftable-spells differ from the old, and ability/
         ;; mount/item catalogs are mark-specific).
-        selections    (cond-> (dissoc selections-0 :unit-eid)
-                        family-swap? (-> (assoc :mount nil)
-                                         (assoc :abilities [])
-                                         (assoc :spells [])
-                                         (assoc :items [])))
-        effective-eid (if family-swap? new-unit-eid (some-> existing :unit-eid))]
-    (cond
-      (nil? existing)
-      {:type :draft/update-error :message "Unit not found in this section."}
+          selections    (cond-> (dissoc selections-0 :unit-eid)
+                          family-swap? (-> (assoc :mount nil)
+                                           (assoc :abilities [])
+                                           (assoc :spells [])
+                                           (assoc :items [])))
+          effective-eid (if family-swap? new-unit-eid (some-> existing :unit-eid))]
+      (cond
+        (nil? existing)
+        {:type :draft/update-error :message "Unit not found in this section."}
 
-      (and family-swap? (not (valid-family-swap? unit-by-eid (:unit-eid existing) new-unit-eid)))
-      {:type :draft/update-error :message "Variant must belong to the same unit family."}
+        (and family-swap? (not (valid-family-swap? unit-by-eid (:unit-eid existing) new-unit-eid)))
+        {:type :draft/update-error :message "Variant must belong to the same unit family."}
 
-      (nil? (get unit-by-eid effective-eid))
-      {:type :draft/update-error :message "Unit not found in this faction's roster."}
+        (nil? (get unit-by-eid effective-eid))
+        {:type :draft/update-error :message "Unit not found in this faction's roster."}
 
-      :else
-      (let [unit          (get unit-by-eid effective-eid)
-            new-total     (compute-unit-total-cost unit selections conn)
+        :else
+        (let [unit          (get unit-by-eid effective-eid)
+              new-total     (compute-unit-total-cost unit selections conn)
             ;; Reduced army: the entry under edit is removed so validate-add
             ;; re-runs as if the unit were being freshly added. For the common
             ;; "same unit, new mount" case this keeps unit-copy counts correct.
-            reduced-state (update state section-k
-                                  (fn [xs]
-                                    (into [] (concat (subvec xs 0 index) (subvec xs (inc index))))))
-            army-entries  (concat
-                           (keep (fn [e] (when-let [u (get unit-by-eid (:unit-eid e))] (assoc u :section "main")))
-                                 (:main reduced-state))
-                           (keep (fn [e] (when-let [u (get unit-by-eid (:unit-eid e))] (assoc u :section "reinforcements")))
-                                 (:reinforcements reduced-state)))
-            section-cost  (reduce (fn [s entry]
-                                    (if-let [u (get unit-by-eid (:unit-eid entry))]
-                                      (+ s (or (:total-cost entry) (:cost u) 0))
-                                      s))
-                                  0
-                                  (get reduced-state section-k []))
-            violation     (rules.draft/validate-add
-                           army-entries unit section
-                           section-cost section-max new-total)]
-        (if violation
-          (assoc violation :type :draft/update-error)
-          (let [new-entry {:entry-eid  entry-eid
-                           :unit-eid   effective-eid
-                           :mount      (:mount selections)
-                           :level      (or (:level selections) 0)
-                           :abilities  (or (:abilities selections) [])
-                           :spells     (or (:spells selections) [])
-                           :items      (or (:items selections) [])
-                           :total-cost new-total}
-                new-state (assoc state section-k
-                                 (assoc (vec section-list) index new-entry))]
-            (set-draft-state dependencies draft-eid new-state)
-            (let [section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)]
-              {:type              :draft/update-success
-               :entry-eid         entry-eid
-               :total-cost        new-total
-               :slot-portrait-key (str effective-eid)
-               :budget            (section-budget section-ctx)})))))))
+              reduced-state (update state section-k
+                                    (fn [xs]
+                                      (into [] (concat (subvec xs 0 index) (subvec xs (inc index))))))
+              army-entries  (concat
+                             (keep (fn [e] (when-let [u (get unit-by-eid (:unit-eid e))] (assoc u :section "main")))
+                                   (:main reduced-state))
+                             (keep (fn [e] (when-let [u (get unit-by-eid (:unit-eid e))] (assoc u :section "reinforcements")))
+                                   (:reinforcements reduced-state)))
+              section-cost  (reduce (fn [s entry]
+                                      (if-let [u (get unit-by-eid (:unit-eid entry))]
+                                        (+ s (or (:total-cost entry) (:cost u) 0))
+                                        s))
+                                    0
+                                    (get reduced-state section-k []))
+              violation     (rules.draft/validate-add
+                             army-entries unit section
+                             section-cost section-max new-total)]
+          (if violation
+            (assoc violation :type :draft/update-error)
+            (let [new-entry {:entry-eid  entry-eid
+                             :unit-eid   effective-eid
+                             :mount      (:mount selections)
+                             :level      (or (:level selections) 0)
+                             :abilities  (or (:abilities selections) [])
+                             :spells     (or (:spells selections) [])
+                             :items      (or (:items selections) [])
+                             :total-cost new-total}
+                  new-state (assoc state section-k
+                                   (assoc (vec section-list) index new-entry))]
+              (set-draft-state dependencies draft-eid new-state)
+              (let [section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)]
+                {:type              :draft/update-success
+                 :entry-eid         entry-eid
+                 :total-cost        new-total
+                 :slot-portrait-key (str effective-eid)
+                 :budget            (section-budget section-ctx)}))))))))

@@ -38,15 +38,24 @@
         main-units   (hydrate (:main state))
         reinf-units  (hydrate (:reinforcements state))
         main-ctx     (domain/build-section-context "main" main-units (:eid draft) game-mode)
-        reinf-ctx    (domain/build-section-context "reinforcements" reinf-units (:eid draft) game-mode)]
-    {:faction                faction
-     :game-mode              game-mode
-     :reinforcements-enabled (= 1 (:reinforcements-enabled game-mode))
-     :units-by-category      units-by-cat
-     :main-section           main-ctx
-     :reinf-section          reinf-ctx
-     :game                   (:game (:game-context request))
-     :draft-eid              (:eid draft)}))
+        reinf-ctx    (domain/build-section-context "reinforcements" reinf-units (:eid draft) game-mode)
+        ;; A draft becomes read-only when a tournament match references
+        ;; it (one-way). The lock info carries the linking match + parent
+        ;; tournament so the template can offer a back-link to the
+        ;; context that locked the draft.
+        lock         (domain/draft-lock-info dependencies (:eid draft))]
+    {:faction                 faction
+     :game-mode               game-mode
+     :reinforcements-enabled  (= 1 (:reinforcements-enabled game-mode))
+     :units-by-category       units-by-cat
+     :main-section            main-ctx
+     :reinf-section           reinf-ctx
+     :game                    (:game (:game-context request))
+     :draft-eid               (:eid draft)
+     :locked?                 (some? lock)
+     :locking-match-eid       (:match-eid lock)
+     :locking-tournament-eid  (:tournament-eid lock)
+     :locking-tournament-name (:tournament-name lock)}))
 
 (defmethod integrant.core/init-key ::draft-view
   [_init-key dependencies]
