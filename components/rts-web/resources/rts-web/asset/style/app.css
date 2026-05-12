@@ -437,11 +437,15 @@ table.table tbody tr:hover td { background: color-mix(in srgb, var(--color-accen
 
 .draft-locked-banner a { color: inherit; text-decoration: underline; }
 
-/* Edit affordances disappear in the locked view: the unit roster, the
-   per-slot remove (×), the unit-panel Add buttons, and the empty lord
-   placeholder all stop inviting interaction. The nameplate input keeps
-   its value visible but is `readonly` (set in the template). */
-.draft-page--locked .draft-roster-area,
+/* Edit affordances disappear in the locked view: the unit-picker
+   roster (left column), the per-slot remove (×), the unit-panel Add
+   buttons, and the empty lord placeholder all stop inviting
+   interaction. The slot cards stay clickable so spectators can
+   inspect each unit's loadout in the panel — mutations inside the
+   panel are gated by the panel template's `{% if not locked? %}`
+   guards. The nameplate input keeps its value visible but is
+   `readonly` (set in the template). */
+.draft-page--locked .draft-roster,
 .draft-page--locked .draft-slot-remove,
 .draft-page--locked .draft-add-btn,
 .draft-page--locked .draft-slot:not(.draft-slot--filled) {
@@ -453,20 +457,17 @@ table.table tbody tr:hover td { background: color-mix(in srgb, var(--color-accen
   background: transparent;
 }
 
-/* Defense-in-depth: even when the templates miss a stray hx-* trigger or
-   an enabled input, everything interactive inside the locked page is
-   pointer-blocked. The banner's tournament link is the only exception so
-   spectators can still navigate back to the originating match. */
-.draft-page--locked button:not([disabled]),
+/* Defense-in-depth: even when the templates miss a stray mutation
+   trigger or an enabled input, all mutation hx-* attributes inside the
+   locked page are pointer-blocked. `hx-get` is intentionally left
+   alone so spectators can still load the unit panel for inspection. */
 .draft-page--locked input:not([readonly]),
-.draft-page--locked [hx-get],
 .draft-page--locked [hx-post],
 .draft-page--locked [hx-patch],
 .draft-page--locked [hx-put],
 .draft-page--locked [hx-delete] {
   pointer-events: none;
 }
-.draft-page--locked .draft-locked-banner a { pointer-events: auto; }
 
 /* The army-builder occupies the full pane on its own when the roster
    is hidden — otherwise the grid leaves a blank column. */

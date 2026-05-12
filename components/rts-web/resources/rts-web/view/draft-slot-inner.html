@@ -3,9 +3,9 @@
         hx-preserve="true"
         type="button"
         aria-labelledby="draft-slot-edit-label-{{unit.entry-eid}}"
-        {% if locked? %}disabled aria-disabled="true"{% else %}hx-get="/api/draft/{{section.draft-eid}}/entry/{{unit.entry-eid}}?section={{section.section}}&amp;embed=unit"
+        hx-get="/api/draft/{{section.draft-eid}}/entry/{{unit.entry-eid}}?section={{section.section}}&amp;embed=unit"
         hx-target="#draft-unit"
-        hx-swap="outerHTML"{% endif %}>
+        hx-swap="outerHTML">
     {# Accessible label lives in a child span rather than an inline
        aria-label so a slot-edit OOB swap in draft-update-success.html
        can refresh the label text after a mark change (the parent

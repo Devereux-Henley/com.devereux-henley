@@ -544,6 +544,7 @@
      [:passive-spells {:optional true} [:sequential draft-spell]]
      [:draftable-spells {:optional true} [:sequential draft-spell]]
      [:has-passives {:optional true} :boolean]
+     [:locked? {:optional true} :boolean]
      [:validation {:optional true}
       [:map
        [:can-add-to-reinforcements? :boolean]]]
@@ -574,6 +575,7 @@
      [:abilities {:optional true} [:sequential :string]]
      [:spells {:optional true} [:sequential :string]]
      [:items {:optional true} [:sequential :string]]
+     [:locked? {:optional true} :boolean]
      [:_links
       [:map
        [:self :url]

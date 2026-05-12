@@ -65,6 +65,20 @@
          {:hostname (:hostname dependencies) :router router}
          (constantly result))))))
 
+(defn- with-lock-flag
+  "Attaches `:locked? true/false` to a panel resource so the template
+  can gate mutation triggers (hx-patch/hx-post on mark/lore/mount/
+  abilities/spells/items selectors) without each fragment re-querying
+  the lock state. The flag is computed once per request and propagated
+  to any embedded unit panel so the form controls inside it know about
+  the lock too."
+  [dependencies draft-eid resource]
+  (let [locked? (some? (domain/draft-lock-info dependencies draft-eid))
+        attach  #(assoc % :locked? locked?)]
+    (cond-> (attach resource)
+      (get-in resource [:_embedded :unit])
+      (update-in [:_embedded :unit] attach))))
+
 (defmethod integrant.core/init-key ::get-draft-unit
   [_init-key dependencies]
   (fn [{{{:keys [draft-eid eid]}      :path
@@ -76,7 +90,8 @@
       (web.core/handle-fetch-response
        domain/draft-unit-resource
        {:hostname (:hostname dependencies) :router router}
-       #(domain/get-draft-unit-details dependencies draft-eid unit overrides)))))
+       #(some->> (domain/get-draft-unit-details dependencies draft-eid unit overrides)
+                 (with-lock-flag dependencies draft-eid))))))
 
 (defmethod integrant.core/init-key ::get-draft-entry
   [_init-key dependencies]
@@ -90,7 +105,9 @@
        domain/draft-entry-resource
        {:hostname (:hostname dependencies) :router router}
        #(if-let [details (domain/get-draft-entry-details dependencies draft-eid eid section overrides)]
-          (web.core/apply-embeds draft-entry-embed-registry dependencies embed-set details)
+          (->> details
+               (web.core/apply-embeds draft-entry-embed-registry dependencies embed-set)
+               (with-lock-flag dependencies draft-eid))
           {:type :missing/resource :name "draft-entry" :id eid})))))
 
 (defmethod integrant.core/init-key ::draft-add-unit
