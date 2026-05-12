@@ -189,17 +189,13 @@
      [:bracket-type data-access.contract/bracket-type-enum]
      [:player-one-sub :string]
      [:player-two-sub [:maybe :string]]
-     [:player-one-draft-eid {:optional true :model/link :draft/by-eid} :uuid]
-     [:player-two-draft-eid {:optional true :model/link :draft/by-eid} :uuid]
      [:winner-sub [:maybe :string]]
      [:status data-access.contract/match-status-enum]
      [:format data-access.contract/match-format-enum]
      [:_links
       [:map
        [:self :url]
-       [:tournament :url]
-       [:player-one-draft {:optional true} :url]
-       [:player-two-draft {:optional true} :url]]]])))
+       [:tournament :url]]]])))
 
 (def create-match-specification
   (schema.contract/to-schema

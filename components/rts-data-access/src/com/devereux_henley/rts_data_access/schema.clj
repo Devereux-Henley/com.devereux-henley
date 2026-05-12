@@ -299,8 +299,6 @@
     [:bracket-type bracket-type-enum]
     [:player-one-sub :string]
     [:player-two-sub [:maybe :string]]
-    [:player-one-draft-eid {:optional true} [:maybe :uuid]]
-    [:player-two-draft-eid {:optional true} [:maybe :uuid]]
     [:winner-sub [:maybe :string]]
     [:status match-status-enum]
     [:format match-format-enum]
