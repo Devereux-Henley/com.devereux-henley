@@ -62,13 +62,17 @@ Components are shared units of behaviour consumed by one or more bases.
 
 ### Toolbox
 
-[`dev-env/`](dev-env) packages a [Fedora Toolbx](https://containertoolbx.org/) image with the full development toolchain (Emacs, JDK 21, Clojure CLI, clj-kondo, cljfmt, gh, sqlite, Node/npm + Playwright deps, Claude Code, clojure-mcp). From `dev-env/`:
+[`dev-env/`](dev-env) packages a [Fedora Toolbx](https://containertoolbx.org/) image with the full development toolchain (Emacs, JDK 21, Clojure CLI, clj-kondo, cljfmt, gh, sqlite, Node/npm + Playwright deps, Claude Code, [clojure-mcp](https://github.com/bhauman/clojure-mcp)). From `dev-env/`:
 
 ```
 make build && make create && make enter
 ```
 
 First interactive enter installs Claude Code and clojure-mcp into the shared home directory and starts the Emacs daemon. See [`CLAUDE.md`](CLAUDE.md#toolbox-dev-environment) for details.
+
+### Claude Code + clojure-mcp
+
+The Toolbox installs [`clojure-mcp`](https://github.com/bhauman/clojure-mcp) and registers it as an MCP server for Claude Code, so Claude drives the running nREPL through structured tools (`clojure_eval`, `clojure_edit`, `paren_repair`, etc.) rather than shelling out. Edits are delimiter-checked and auto-repaired before evaluation, which is why this repo has no separate paren-repair hook configured in `.claude/settings.json`. The canonical Claude workflow — start nREPL on `:7888`, then `(claude-workspace/go!)` over MCP — is described in [`CLAUDE.md`](CLAUDE.md#commands).
 
 ### REPL
 
