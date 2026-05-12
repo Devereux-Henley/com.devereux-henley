@@ -95,7 +95,7 @@ test.describe.serial('Mount-selection overrides', () => {
     // the /unit/:eid endpoint, not /entry/:eid.
     await expect(page.locator('.draft-editing-indicator')).not.toBeVisible();
     const formAction = await page.locator('#draft-unit-form').getAttribute('hx-get');
-    expect(formAction).toMatch(/\/api\/draft\/.+\/unit\//);
+    expect(formAction).toMatch(/\/components\/draft\/.+\/unit\//);
 
     const costCell = page.locator('#draft-unit .draft-stats-cost');
     const costBefore = await costCell.textContent();

@@ -354,10 +354,10 @@
             :responses  {200 {:body domain/draft-unit-resource}
                          500 {:body domain/draft-error-response}}
             :handler    (integrant.core/ref ::web.draft.api/get-draft-unit)}
-     :post {:produces   ["application/json" "application/htmx+html"]
+     :post {:produces   ["application/json" "application/hal+json" "application/htmx+html"]
             :openapi    {:summary      "Assigns a unit to the specified draft."
                          :tags         ["draft"]
-                         :produces     ["application/json" "application/htmx+html"]
+                         :produces     ["application/json" "application/hal+json" "application/htmx+html"]
                          :operation-id "draft-unit/create"}
             :parameters {:path  (schema.contract/to-schema
                                  [:map
@@ -396,10 +396,10 @@
                            404 {:body domain/draft-error-response}
                            500 {:body domain/draft-error-response}}
               :handler    (integrant.core/ref ::web.draft.api/get-draft-entry)}
-     :patch  {:produces   ["application/json" "application/htmx+html"]
+     :patch  {:produces   ["application/json" "application/hal+json" "application/htmx+html"]
               :openapi    {:summary      "Updates the selections of a placed draft entry."
                            :tags         ["draft"]
-                           :produces     ["application/json" "application/htmx+html"]
+                           :produces     ["application/json" "application/hal+json" "application/htmx+html"]
                            :operation-id "draft-entry/update"}
               :parameters {:path  (schema.contract/to-schema
                                    [:map
@@ -413,10 +413,10 @@
                            422 {:body domain/draft-error-response}
                            500 {:body domain/draft-error-response}}
               :handler    (integrant.core/ref ::web.draft.api/draft-update-unit)}
-     :delete {:produces   ["application/json" "application/htmx+html"]
+     :delete {:produces   ["application/json" "application/hal+json" "application/htmx+html"]
               :openapi    {:summary      "Removes a placed entry from the specified draft."
                            :tags         ["draft"]
-                           :produces     ["application/json" "application/htmx+html"]
+                           :produces     ["application/json" "application/hal+json" "application/htmx+html"]
                            :operation-id "draft-entry/delete"}
               :parameters {:path  (schema.contract/to-schema
                                    [:map
@@ -432,8 +432,9 @@
     {:name  :draft/by-eid
      :put   {:summary    "Creates a draft with the given eid and version."
              :openapi    {:tags         ["draft"]
-                          :produces     ["application/json" "application/htmx+html"]
+                          :produces     ["application/json" "application/hal+json" "application/htmx+html"]
                           :operation-id "draft/create"}
+             :produces   ["application/json" "application/hal+json" "application/htmx+html"]
              :parameters {:path  schema.contract/id-path-parameter
                           :query schema.contract/version-query-parameter
                           :body  domain/create-draft-specification}
@@ -441,8 +442,9 @@
              :handler    (integrant.core/ref ::web.draft.api/create-draft)}
      :patch {:summary    "Applies a partial update to a draft (currently only :name)."
              :openapi    {:tags         ["draft"]
-                          :produces     ["application/json" "application/htmx+html"]
+                          :produces     ["application/json" "application/hal+json" "application/htmx+html"]
                           :operation-id "draft/update"}
+             :produces   ["application/json" "application/hal+json" "application/htmx+html"]
              :parameters {:path schema.contract/id-path-parameter
                           :body domain/update-draft-specification}
              :responses  {200 {:body domain/draft-resource}
