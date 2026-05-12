@@ -5,6 +5,7 @@
    [com.devereux-henley.content-negotiation.contract :as content-negotiation]
    [com.devereux-henley.resourcekit.contract :as resourcekit]
    [com.devereux-henley.rts-api.extensions.clj-http] ;; Patches multimethod for clj-http
+   [com.devereux-henley.rts-api.method-override :as method-override]
    [com.devereux-henley.rts-web.contract :as rts-web]
    [integrant.core]
    [malli.util]
@@ -258,6 +259,7 @@
                                             :body   "Oopsie"})})
     (ring/create-default-handler))
    {:middleware [ring.middleware.cookies/wrap-cookies
+                 method-override/wrap-method-override
                  auth-middleware]}))
 
 (defmethod integrant.core/init-key ::service
