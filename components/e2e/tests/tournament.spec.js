@@ -635,7 +635,7 @@ test.describe('Tournament Phase Details API', () => {
 
   test('phase details renders an htmx fragment from the components endpoint', async ({ request }) => {
     const eid = await createActiveSwissTournament(request);
-    const res = await request.get(`${BASE}/components/tournament/${eid}/phase/0/panel/phase.html`, {
+    const res = await request.get(`${BASE}/components/tournament/${eid}/phase/0/phase-panel.html`, {
       headers: {
         Accept: 'application/htmx+html',
         Cookie: 'dev_impersonation=dev-admin',

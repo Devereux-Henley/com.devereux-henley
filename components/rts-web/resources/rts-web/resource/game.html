@@ -37,7 +37,7 @@
             {% for faction in data._embedded.factions %}
             <a class="dropdown-item"
                role="menuitem"
-               hx-get="/components/faction/{{faction.eid}}/card/faction.html?embed=units-by-category"
+               hx-get="/components/faction/{{faction.eid}}/faction-card.html?embed=units-by-category"
                hx-target="#content"
                hx-push-url="/view/game/{{data.eid}}/faction/{{faction.eid}}/index.html"
                href="/view/game/{{data.eid}}/faction/{{faction.eid}}/index.html">

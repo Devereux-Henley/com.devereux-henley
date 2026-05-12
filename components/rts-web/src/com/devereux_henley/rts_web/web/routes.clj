@@ -185,13 +185,13 @@
 (def components-routes
   ["/components"
    {:no-doc true}
-   ["/faction/:eid/card/faction.html"
+   ["/faction/:eid/faction-card.html"
     {:get {:produces   ["application/htmx+html"]
            :parameters {:path  schema.contract/id-path-parameter
                         :query web.game.api/faction-query-parameters}
            :responses  {200 {:body domain/faction-resource}}
            :handler    (integrant.core/ref ::web.game.api/get-faction)}}]
-   ["/draft/:draft-eid/panel/unit-preview.html"
+   ["/draft/:draft-eid/unit-panel.html"
     {:get {:produces   ["application/htmx+html"]
            :parameters {:path  (schema.contract/to-schema
                                 [:map
@@ -207,7 +207,7 @@
            :responses  {200 {:body domain/draft-unit-resource}
                         500 {:body domain/draft-error-response}}
            :handler    (integrant.core/ref ::web.draft.api/get-draft-unit)}}]
-   ["/draft/:draft-eid/unit/:eid/panel/unit.html"
+   ["/draft/:draft-eid/unit/:eid/unit-panel.html"
     {:get {:produces   ["application/htmx+html"]
            :parameters {:path  (schema.contract/to-schema
                                 [:map
@@ -223,7 +223,7 @@
            :responses  {200 {:body domain/draft-unit-resource}
                         500 {:body domain/draft-error-response}}
            :handler    (integrant.core/ref ::web.draft.api/get-draft-unit)}}]
-   ["/draft/:draft-eid/entry/:eid/panel/entry.html"
+   ["/draft/:draft-eid/entry/:eid/entry-panel.html"
     {:get {:produces   ["application/htmx+html"]
            :parameters {:path  (schema.contract/to-schema
                                 [:map
@@ -243,12 +243,12 @@
                         404 {:body domain/draft-error-response}
                         500 {:body domain/draft-error-response}}
            :handler    (integrant.core/ref ::web.draft.api/get-draft-entry)}}]
-   ["/tournament/:eid/row/round.html"
+   ["/tournament/:eid/round-row.html"
     {:get {:produces   ["application/htmx+html"]
            :parameters {:path schema.contract/id-path-parameter}
            :responses  {200 {:body domain/round-response}}
            :handler    (integrant.core/ref ::web.tournament.api/get-round)}}]
-   ["/tournament/:eid/phase/:phase-index/panel/phase.html"
+   ["/tournament/:eid/phase/:phase-index/phase-panel.html"
     {:get {:produces   ["application/htmx+html"]
            :parameters {:path (schema.contract/to-schema
                                [:map
