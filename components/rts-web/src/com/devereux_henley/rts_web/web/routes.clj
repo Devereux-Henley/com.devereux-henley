@@ -273,8 +273,9 @@
     {:name :collection/game
      :get  {:summary   "Fetches a list of games."
             :openapi   {:tags         ["game"]
-                        :produces     ["application/json"]
+                        :produces     ["application/json" "application/hal+json"]
                         :operation-id "game/all"}
+            :produces  ["application/json" "application/hal+json"]
             :responses {200 {:body domain/game-collection-resource}}
             :handler   (integrant.core/ref ::web.game.api/get-games)}}]
 
@@ -282,8 +283,9 @@
     {:name :game/by-eid
      :get  {:summary    "Fetches a game by eid."
             :openapi    {:tags         ["game"]
-                         :produces     ["application/json"]
+                         :produces     ["application/json" "application/hal+json"]
                          :operation-id "game/by-eid"}
+            :produces   ["application/json" "application/hal+json"]
             :parameters {:path  schema.contract/id-path-parameter
                          :query web.game.api/game-query-parameters}
             :responses  {200 {:body domain/game-resource}}
@@ -292,8 +294,9 @@
     {:name :game/social-by-eid
      :get  {:summary    "Fetches a link between social media and a game by eid."
             :openapi    {:tags         ["game"]
-                         :produces     ["application/json"]
+                         :produces     ["application/json" "application/hal+json"]
                          :operation-id "game/social-by-eid"}
+            :produces   ["application/json" "application/hal+json"]
             :parameters {:path  schema.contract/id-path-parameter
                          :query schema.contract/version-query-parameter}
             :responses  {200 {:body domain/game-social-link-resource}}
@@ -302,18 +305,19 @@
     {:name :game/faction-by-eid
      :get  {:summary    "Fetches a game faction by eid."
             :openapi    {:tags         ["game"]
-                         :produces     ["application/json"]
+                         :produces     ["application/json" "application/hal+json"]
                          :operation-id "game/faction-by-eid"}
+            :produces   ["application/json" "application/hal+json"]
             :parameters {:path  schema.contract/id-path-parameter
                          :query web.game.api/faction-query-parameters}
             :responses  {200 {:body domain/faction-resource}}
             :handler    (integrant.core/ref ::web.game.api/get-faction)}}]
    ["/draft/:draft-eid/unit"
     {:name :draft-unit/preview
-     :get  {:produces   ["application/json"]
+     :get  {:produces   ["application/json" "application/hal+json"]
             :openapi    {:summary      "Previews a unit variant within the draft context (variant via `unit-eid` query)."
                          :tags         ["draft"]
-                         :produces     ["application/json"]
+                         :produces     ["application/json" "application/hal+json"]
                          :operation-id "draft-unit/preview"}
             :parameters {:path  (schema.contract/to-schema
                                  [:map
@@ -331,10 +335,10 @@
             :handler    (integrant.core/ref ::web.draft.api/get-draft-unit)}}]
    ["/draft/:draft-eid/unit/:eid"
     {:name :draft-unit/by-eid
-     :get  {:produces   ["application/json"]
+     :get  {:produces   ["application/json" "application/hal+json"]
             :openapi    {:summary      "Gets details for a unit that can be assigned to the specific draft."
                          :tags         ["draft"]
-                         :produces     ["application/json"]
+                         :produces     ["application/json" "application/hal+json"]
                          :operation-id "draft-unit/get"}
             :parameters {:path  (schema.contract/to-schema
                                  [:map
@@ -369,10 +373,10 @@
             :handler    (integrant.core/ref ::web.draft.api/draft-add-unit)}}]
    ["/draft/:draft-eid/entry/:eid"
     {:name   :draft-entry/by-eid
-     :get    {:produces   ["application/json"]
+     :get    {:produces   ["application/json" "application/hal+json"]
               :openapi    {:summary      "Gets a placed draft entry with its unit details and selection state."
                            :tags         ["draft"]
-                           :produces     ["application/json"]
+                           :produces     ["application/json" "application/hal+json"]
                            :operation-id "draft-entry/get"}
               :parameters {:path  (schema.contract/to-schema
                                    [:map
@@ -603,8 +607,9 @@
       {:name :tournament/phase
        :get  {:summary    "Phase details (standings + bracket / rounds)."
               :openapi    {:tags         ["tournament"]
-                           :produces     ["application/json"]
+                           :produces     ["application/json" "application/hal+json"]
                            :operation-id "tournament-phase/get"}
+              :produces   ["application/json" "application/hal+json"]
               :parameters {:path (schema.contract/to-schema
                                   [:map
                                    [:eid :uuid]
@@ -615,8 +620,9 @@
       {:name :tournament/round
        :get  {:summary    "Form partial for a tournament round."
               :openapi    {:tags         ["tournament"]
-                           :produces     ["application/json"]
+                           :produces     ["application/json" "application/hal+json"]
                            :operation-id "tournament-round/get"}
+              :produces   ["application/json" "application/hal+json"]
               :parameters {:path schema.contract/id-path-parameter}
               :responses  {200 {:body domain/round-response}}
               :handler    (integrant.core/ref ::web.tournament.api/get-round)}
@@ -724,8 +730,9 @@
     {:name :social-media/by-eid
      :get  {:summary    "Fetches a social media platform by eid."
             :openapi    {:tags         ["social-media"]
-                         :produces     ["application/json"]
+                         :produces     ["application/json" "application/hal+json"]
                          :operation-id "social-media/by-eid"}
+            :produces   ["application/json" "application/hal+json"]
             :parameters {:path  schema.contract/id-path-parameter
                          :query schema.contract/version-query-parameter}
             :responses  {200 {:body domain/social-media-platform-resource}}
