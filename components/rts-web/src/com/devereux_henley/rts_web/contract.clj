@@ -21,6 +21,7 @@
 (def shutdown-route web.routes/shutdown-route)
 (def icon-routes web.routes/icon-routes)
 (def view-routes web.routes/view-routes)
+(def components-routes web.routes/components-routes)
 (def api-routes web.routes/api-routes)
 
 (def render-view render/render)
