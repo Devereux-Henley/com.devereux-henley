@@ -437,18 +437,21 @@ table.table tbody tr:hover td { background: color-mix(in srgb, var(--color-accen
 
 .draft-locked-banner a { color: inherit; text-decoration: underline; }
 
-/* Edit affordances disappear in the locked view: the unit-picker
-   roster (left column), the per-slot remove (×), the unit-panel Add
-   buttons, and the empty lord placeholder all stop inviting
-   interaction. The slot cards stay clickable so spectators can
-   inspect each unit's loadout in the panel — mutations inside the
-   panel are gated by the panel template's `{% if not locked? %}`
-   guards. The nameplate input keeps its value visible but is
-   `readonly` (set in the template). */
-.draft-page--locked .draft-roster,
-.draft-page--locked .draft-slot-remove,
+/* Edit affordances disappear in the locked view: the per-slot
+   remove (×), the unit-panel Add buttons, and the empty lord
+   placeholder all stop inviting interaction. The slot cards stay
+   clickable so spectators can inspect each unit's loadout in the
+   panel — mutations inside the panel are gated by the panel
+   template's `{% if not locked? %}` guards. The unit-picker roster
+   stays visible so spectators can browse what's available; the
+   per-card hx-get still loads the panel in read-only mode. The
+   nameplate input keeps its value visible but is `readonly` (set in
+   the template). The `:hover` rule below would otherwise re-show the
+   remove (×), so we override it explicitly with the locked context. */
 .draft-page--locked .draft-add-btn,
-.draft-page--locked .draft-slot:not(.draft-slot--filled) {
+.draft-page--locked .draft-slot:not(.draft-slot--filled),
+.draft-page--locked .draft-slot-remove,
+.draft-page--locked .draft-slot--filled:hover .draft-slot-remove {
   display: none;
 }
 
@@ -467,12 +470,6 @@ table.table tbody tr:hover td { background: color-mix(in srgb, var(--color-accen
 .draft-page--locked [hx-put],
 .draft-page--locked [hx-delete] {
   pointer-events: none;
-}
-
-/* The army-builder occupies the full pane on its own when the roster
-   is hidden — otherwise the grid leaves a blank column. */
-.draft-page--locked .draft-army-builder {
-  grid-column: 1 / -1;
 }
 
 .draft-army-builder {
@@ -616,6 +613,33 @@ table.table tbody tr:hover td { background: color-mix(in srgb, var(--color-accen
   left: 4px;
   z-index: 1;
 }
+
+/* Engine vs. computed cost mismatch flag. Stays out of the way (top-
+   left, slightly inset) so it doesn't fight the mark dot when both
+   apply. The icon is keyboard-focusable so the tooltip (native title +
+   aria-label) is reachable for non-mouse users. */
+.draft-slot-cost-warning {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-neutral-50);
+  color: var(--color-warning-500, var(--color-accent));
+  border: 1px solid currentColor;
+  border-radius: var(--radius-full);
+  cursor: help;
+  z-index: 2;
+  line-height: 1;
+}
+.draft-slot-cost-warning:focus-visible {
+  outline: 2px solid var(--color-warning-500, var(--color-accent));
+  outline-offset: 1px;
+}
+.draft-slot-cost-warning-icon { display: block; }
 
 .draft-slot-remove {
   display: none; position: absolute; top: 3px; right: 3px;

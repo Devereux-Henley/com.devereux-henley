@@ -20,6 +20,7 @@
                   data-access.contract/get-subfactions-by-keys (fn [_ _] [])
                   data-access.contract/get-units-by-keys       (fn [_ _] [])
                   data-access.contract/get-mounts-for-unit     (fn [_ _] [])
+                  data-access.contract/get-unit-level-costs    (fn [_] {})
                   data-access.contract/create-draft            (fn [_ _] nil)
                   data-access.contract/upsert-draft-state      (fn [_ _ _] nil)]
       (t))))
@@ -226,6 +227,68 @@
         (testing "match_game rows reference the created drafts"
           (is (every? uuid? (mapv :player-one-draft-eid @stored-games)))
           (is (every? uuid? (mapv :player-two-draft-eid @stored-games))))))))
+
+(deftest record-match-resolves-mount-from-parsed-key-suffix
+  ;; Regression: the mount-needing filter previously checked against the
+  ;; resolved-rows-map keys, but the mount-suffixed parser key
+  ;; (e.g. `..._sorcerer_prophet_fire_great_taurus`) never lives there —
+  ;; only its un-mounted prefix does. The filter must consult the
+  ;; engine-emitted keys directly so `get-mounts-for-unit` is hit for
+  ;; rows that have a mounted variant in the parsed game.
+  (let [stored-states     (atom [])
+        unit-eid          (UUID/randomUUID)
+        faction-eid       (UUID/randomUUID)
+        base-key          "wh3_dlc23_chd_cha_sorcerer_prophet_fire"
+        mounted-key       (str base-key "_great_taurus")
+        parsed-with-mount {:schema-version                1
+                           :format                        "CBAB"
+                           :match-id                      "mount-test"
+                           :played-at                     {:year 2026 :month 4 :day 24 :hour 3 :minute 55 :second 5}
+                           :victory-condition             "BATTLE_SETUP_VICTORY_CONDITION_CAPTURE_LOCATION_SCORE"
+                           :uploader-local-alliance-index 0
+                           :alliances                     [{:index 0 :faction-key "wh_main_emp_empire" :model-count 1957 :armies []}
+                                                           {:index       1
+                                                            :faction-key "wh3_dlc23_chd_legion_of_azgorh"
+                                                            :model-count 1816
+                                                            :armies      [{:index            0
+                                                                           :is-reinforcement false
+                                                                           :units            [{:cost          900
+                                                                                               :adjusted-cost 2962
+                                                                                               :key           mounted-key
+                                                                                               :level         0
+                                                                                               :spells        []}]}]}]}]
+    (with-redefs [data-access.contract/get-match-by-eid        (fn [_ _] (assoc bo3-match :format 1))
+                  data-access.contract/get-games-for-match     (fn [_ _] [])
+                  data-access.contract/create-replay           (fn [_ spec] (assoc spec :id 1))
+                  data-access.contract/create-game             (fn [_ _ gi w _] {:game-index gi :winner-sub w})
+                  data-access.contract/update-match-result     (fn [_ _ _] nil)
+                  data-access.contract/get-tournament-by-eid   (fn [_ _] {:name "Mount Cup" :game-eid (UUID/randomUUID)})
+                  data-access.contract/get-game-modes-for-game (fn [_ _] [{:eid (UUID/randomUUID) :name "Land Battle"}])
+                  data-access.contract/get-subfactions-by-keys (fn [_ _] [{:key "wh3_dlc23_chd_legion_of_azgorh" :faction-eid faction-eid}])
+                  data-access.contract/get-units-by-keys       (fn [_ _] [{:eid unit-eid :key base-key :cost 900}])
+                  data-access.contract/get-mounts-for-unit     (fn [_ eid]
+                                                                 (when (= eid unit-eid)
+                                                                   [{:key "mount_great_taurus" :name "Great Taurus" :cost 300}
+                                                                    {:key "mount_lammasu" :name "Lammasu" :cost 200}]))
+                  data-access.contract/create-draft            (fn [_ spec] spec)
+                  data-access.contract/upsert-draft-state      (fn [_ draft-eid json]
+                                                                 (swap! stored-states conj {:draft-eid draft-eid :state json}))]
+      (handlers.replay/record-match-from-parsed
+       deps match-eid
+       {:games           [{:parsed parsed-with-mount :winner-sub "sigmar_42" :source-name "g.replay"}]
+        :uploaded-by-sub "sigmar_42"})
+      (let [chd-state  (->> @stored-states
+                            (map #(jsonista/read-value (:state %) jsonista/keyword-keys-object-mapper))
+                            (some (fn [s] (when (seq (:main s)) s))))
+            main-entry (first (:main chd-state))]
+        (is (= unit-eid (UUID/fromString (:unit-eid main-entry)))
+            "parsed unit resolves to the un-mounted base row")
+        (is (= "mount_great_taurus" (:mount main-entry))
+            "mount suffix on the parsed key picks the matching mount row")
+        (is (= 1200 (:total-cost main-entry))
+            ":total-cost is recomputed (base 900 + mount 300) — slot card and panel agree by construction")
+        (is (= 2962 (:engine-cost main-entry))
+            ":engine-cost preserves the parser-emitted true cost for audit")))))
 
 (deftest record-match-leaves-match-pending-when-not-clinched
   (let [match-completed (atom nil)]

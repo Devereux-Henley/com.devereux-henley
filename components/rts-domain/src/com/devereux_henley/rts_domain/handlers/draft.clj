@@ -341,7 +341,13 @@
     [:abilities  {:optional true, :default []} [:sequential :string]]
     [:spells     {:optional true, :default []} [:sequential :string]]
     [:items      {:optional true, :default []} [:sequential :string]]
-    [:total-cost {:optional true} [:maybe :int]]]))
+    [:total-cost {:optional true} [:maybe :int]]
+    ;; Parser-emitted engine-resolved cost for the unit as played. Stored
+    ;; only on auto-created entries (the post-match replay flow); the
+    ;; manual builder leaves it unset. Used purely as an audit signal —
+    ;; a divergence between :engine-cost and our recomputed :total-cost
+    ;; flags either a seed-data gap or an app computation bug.
+    [:engine-cost {:optional true} [:maybe :int]]]))
 
 (def ^:private state-entry-transformer
   (mt/transformer mt/string-transformer
@@ -502,7 +508,7 @@
              (or (:fixed-cost level-cost-row) 0)))
     (or base 0)))
 
-(defn- compute-unit-total-cost
+(defn compute-unit-total-cost
   "Returns level-adjusted-base-cost + mount-cost + ability-cost + spell-cost + item-cost.
 
    The level adjustment uses the unit_level_cost row matching `:level` (0-9,

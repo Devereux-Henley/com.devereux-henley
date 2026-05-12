@@ -5,6 +5,7 @@
    [clojure.java.shell :as shell]
    [clojure.string :as string]
    [com.devereux-henley.rts-data-access.contract :as db]
+   [com.devereux-henley.rts-domain.handlers.draft :as handlers.draft]
    [com.devereux-henley.rts-domain.rules.tournament :as rules.tournament]
    [jsonista.core :as jsonista])
   (:import
@@ -171,30 +172,47 @@
   "Shapes a single parsed unit into a draft_state entry. Returns nil for
   units the seed table can't resolve so the draft only captures
   recognised rows (a missing seed key is operator noise, not a draft
-  failure). The parser's `:cost`/`:level`/`:spells` carry through; the
-  mount is derived from the parsed key's suffix vs the resolved unit
-  row, and items wait on issue #81."
-  [parsed-unit key->row eid->mount-rows]
+  failure). The parser's `:level`/`:spells` carry through; the mount is
+  derived from the parsed key's suffix vs the resolved unit row, and
+  items wait on issue #81.
+
+  `:total-cost` is computed against the same domain function the unit
+  panel uses, so the slot card and the panel agree by construction.
+  The parser-emitted true engine cost (whichever of `:adjusted-cost` /
+  `:cost` is available) is preserved on `:engine-cost` as an audit
+  signal — a divergence between `:engine-cost` and the recomputed
+  `:total-cost` flags either a seed-data gap or an app computation
+  bug."
+  [parsed-unit key->row eid->mount-rows conn]
   (let [parsed-key (:key parsed-unit)]
     (when-let [row (resolve-unit-row key->row parsed-key)]
-      (let [mount-key (match-mount-key (get eid->mount-rows (:eid row))
-                                       (mount-suffix (:key row) parsed-key))]
-        {:entry-eid  (random-uuid)
-         :unit-eid   (:eid row)
-         :mount      mount-key
-         :level      (or (:level parsed-unit) 0)
-         :abilities  []
-         :spells     (vec (:spells parsed-unit))
-         :items      []
-         :total-cost (:cost parsed-unit)}))))
+      (let [mount-key  (match-mount-key (get eid->mount-rows (:eid row))
+                                        (mount-suffix (:key row) parsed-key))
+            level      (or (:level parsed-unit) 0)
+            spells     (vec (:spells parsed-unit))
+            selections {:mount     mount-key
+                        :level     level
+                        :abilities []
+                        :spells    spells
+                        :items     []}
+            total      (handlers.draft/compute-unit-total-cost row selections conn)]
+        {:entry-eid   (random-uuid)
+         :unit-eid    (:eid row)
+         :mount       mount-key
+         :level       level
+         :abilities   []
+         :spells      spells
+         :items       []
+         :total-cost  total
+         :engine-cost (or (:adjusted-cost parsed-unit) (:cost parsed-unit))}))))
 
 (defn- alliance->state-blob
   "Builds the {:main :reinforcements} draft-state structure from a
   parsed alliance.  The first army's units go to Main; subsequent
   armies (reinforcement chunks) concatenate into Reinforcements."
-  [alliance key->row eid->mount-rows]
+  [alliance key->row eid->mount-rows conn]
   (let [armies  (vec (:armies alliance))
-        unit-fn #(parsed-unit->entry % key->row eid->mount-rows)]
+        unit-fn #(parsed-unit->entry % key->row eid->mount-rows conn)]
     {:main           (vec (keep unit-fn (:units (first armies))))
      :reinforcements (vec (mapcat #(keep unit-fn (:units %)) (rest armies)))}))
 
@@ -242,15 +260,20 @@
         game-mode-eid (pick-game-mode-eid game-modes (:victory-condition parsed))]
     (when (and faction-eid game-mode-eid player-sub)
       (let [key->row        (resolve-units-for-game conn parsed)
+            ;; Mount detection must consult the engine-emitted keys (which carry
+            ;; the `..._great_taurus` suffix), not the resolved-row keys — the
+            ;; mounted variants aren't standalone unit rows, so only their
+            ;; un-mounted prefix lives in `key->row`.
+            parsed-keys     (collect-game-unit-keys parsed)
             mount-needing   (->> (vals key->row)
                                  (filter (fn [row] (some #(mount-suffix (:key row) %)
-                                                         (keys key->row))))
+                                                         parsed-keys)))
                                  (map :eid)
                                  distinct)
             eid->mount-rows (into {}
                                   (map (fn [eid] [eid (db/get-mounts-for-unit conn eid)]))
                                   mount-needing)
-            state-blob      (alliance->state-blob alliance key->row eid->mount-rows)
+            state-blob      (alliance->state-blob alliance key->row eid->mount-rows conn)
             draft-eid       (random-uuid)
             draft-name      (format "%s R%d G%d"
                                     (:name tournament)

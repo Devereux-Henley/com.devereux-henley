@@ -31,9 +31,19 @@
         hydrate      (fn [entries]
                        (vec (keep (fn [entry]
                                     (when-let [u (get unit-by-eid (:unit-eid entry))]
-                                      (assoc u
-                                             :total-cost (or (:total-cost entry) (:cost u))
-                                             :entry-eid  (:entry-eid entry))))
+                                      (let [total     (or (:total-cost entry) (:cost u))
+                                            engine    (:engine-cost entry)
+                                            ;; The engine-cost audit flag fires only when we
+                                            ;; have a parser-reported value AND it diverges
+                                            ;; from what compute-unit-total-cost produced.
+                                            ;; Manual-builder entries (no :engine-cost) skip
+                                            ;; the check entirely.
+                                            mismatch? (and engine total (not= engine total))]
+                                        (assoc u
+                                               :total-cost      total
+                                               :entry-eid       (:entry-eid entry)
+                                               :engine-cost     engine
+                                               :cost-mismatch?  mismatch?))))
                                   entries)))
         main-units   (hydrate (:main state))
         reinf-units  (hydrate (:reinforcements state))

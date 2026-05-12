@@ -27,6 +27,20 @@
     </span>
 </button>
 <div class="draft-slot-cost" id="draft-slot-cost-{{unit.entry-eid}}" aria-hidden="true">{{unit.total-cost}}</div>
+{# Audit indicator: surfaces when the engine-resolved cost from the
+   replay parser doesn't agree with what compute-unit-total-cost
+   produced for the same selections. Usually means missing seed-data
+   (e.g. a spell or item cost row) rather than a user-visible bug; the
+   tooltip shows both numbers so it's actionable. #}
+{% if unit.cost-mismatch? %}
+<span class="draft-slot-cost-warning"
+      role="img"
+      tabindex="0"
+      aria-label="Cost mismatch: engine reported {{unit.engine-cost}}, app computed {{unit.total-cost}}"
+      title="Engine: {{unit.engine-cost}} · Computed: {{unit.total-cost}}">
+    {% with class="draft-slot-cost-warning-icon" size="12" %}{% include "rts-web/view/icon/warning.html" %}{% endwith %}
+</span>
+{% endif %}
 <button class="draft-slot-remove"
         aria-labelledby="draft-slot-remove-label-{{unit.entry-eid}}"
         hx-delete="/api/draft/{{section.draft-eid}}/entry/{{unit.entry-eid}}?section={{section.section}}"

@@ -34,7 +34,7 @@
                 <h3 class="draft-stats-name">
                     <span class="draft-stats-name-text">{{unit.name}}</span>
                     <span class="draft-editing-indicator-slot">
-                        {% if data.section %}
+                        {% if data.section %}{% if not data.locked? %}
                         <span class="draft-editing-indicator{% ifequal data.section "main" %} draft-editing-indicator--main{% else %} draft-editing-indicator--reinf{% endifequal %}"
                               role="status"
                               aria-label="Editing {% ifequal data.section "main" %}Main Army{% else %}Reinforcements{% endifequal %}"
@@ -42,7 +42,7 @@
                             {% with class="draft-editing-icon" size="14" %}{% include "rts-web/view/icon/pencil.html" %}{% endwith %}
                             <span class="sr-only">Editing {% ifequal data.section "main" %}Main Army{% else %}Reinforcements{% endifequal %}. Changes save automatically.</span>
                         </span>
-                        {% endif %}
+                        {% endif %}{% endif %}
                     </span>
                 </h3>
                 <div class="draft-stats-badges">
