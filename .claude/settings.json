@@ -6,39 +6,5 @@
     "rpfm": {
       "url": "http://127.0.0.1:45127/mcp"
     }
-  },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "clj-paren-repair-claude-hook --cljfmt"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "clj-paren-repair-claude-hook --cljfmt"
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "clj-paren-repair-claude-hook --cljfmt"
-          }
-        ]
-      }
-    ]
   }
 }
