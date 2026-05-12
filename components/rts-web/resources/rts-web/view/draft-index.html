@@ -77,7 +77,7 @@
                             role="listitem"
                             aria-pressed="false"
                             aria-label="{{unit.name}}{% if unit.mark %}{% if unit.family-variant-count > 1 %} (Mark of {{unit.mark|capitalize}}){% endif %}{% endif %}, {{unit.unit-type-name}}, cost {{unit.cost}}"
-                            hx-get="/api/draft/{{draft-eid}}/unit/{{unit.eid}}"
+                            hx-get="/components/draft/{{draft-eid}}/unit/{{unit.eid}}/panel/unit.html"
                             hx-target="#draft-unit"
                             hx-swap="outerHTML">
                         <img src="/card/unit/{{unit.eid}}.png"

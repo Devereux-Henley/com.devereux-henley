@@ -182,6 +182,81 @@
                                    [:eid :uuid]])}
               :handler    (integrant.core/ref ::web.season.view/season-view)}}]]]]])
 
+(def components-routes
+  ["/components"
+   {:no-doc true}
+   ["/faction/:eid/card/faction.html"
+    {:get {:produces   ["application/htmx+html"]
+           :parameters {:path  schema.contract/id-path-parameter
+                        :query web.game.api/faction-query-parameters}
+           :responses  {200 {:body domain/faction-resource}}
+           :handler    (integrant.core/ref ::web.game.api/get-faction)}}]
+   ["/draft/:draft-eid/panel/unit-preview.html"
+    {:get {:produces   ["application/htmx+html"]
+           :parameters {:path  (schema.contract/to-schema
+                                [:map
+                                 [:draft-eid :uuid]])
+                        :query (schema.contract/to-schema
+                                [:map
+                                 [:unit-eid  :uuid]
+                                 [:mount     {:optional true} [:maybe :string]]
+                                 [:lore      {:optional true} [:maybe :string]]
+                                 [:items     {:optional true} [:or :string [:sequential :string]]]
+                                 [:spells    {:optional true} [:or :string [:sequential :string]]]
+                                 [:abilities {:optional true} [:or :string [:sequential :string]]]])}
+           :responses  {200 {:body domain/draft-unit-resource}
+                        500 {:body domain/draft-error-response}}
+           :handler    (integrant.core/ref ::web.draft.api/get-draft-unit)}}]
+   ["/draft/:draft-eid/unit/:eid/panel/unit.html"
+    {:get {:produces   ["application/htmx+html"]
+           :parameters {:path  (schema.contract/to-schema
+                                [:map
+                                 [:draft-eid :uuid]
+                                 [:eid :uuid]])
+                        :query (schema.contract/to-schema
+                                [:map
+                                 [:mount     {:optional true} [:maybe :string]]
+                                 [:level     {:optional true} [:int {:min 0 :max 9}]]
+                                 [:items     {:optional true} [:or :string [:sequential :string]]]
+                                 [:spells    {:optional true} [:or :string [:sequential :string]]]
+                                 [:abilities {:optional true} [:or :string [:sequential :string]]]])}
+           :responses  {200 {:body domain/draft-unit-resource}
+                        500 {:body domain/draft-error-response}}
+           :handler    (integrant.core/ref ::web.draft.api/get-draft-unit)}}]
+   ["/draft/:draft-eid/entry/:eid/panel/entry.html"
+    {:get {:produces   ["application/htmx+html"]
+           :parameters {:path  (schema.contract/to-schema
+                                [:map
+                                 [:draft-eid :uuid]
+                                 [:eid :uuid]])
+                        :query (schema.contract/to-schema
+                                [:map
+                                 [:section   [:enum "main" "reinforcements"]]
+                                 [:embed     {:optional true} [:or [:enum "unit"]
+                                                               [:sequential [:enum "unit"]]]]
+                                 [:mount     {:optional true} [:maybe :string]]
+                                 [:level     {:optional true} [:int {:min 0 :max 9}]]
+                                 [:items     {:optional true} [:or :string [:sequential :string]]]
+                                 [:spells    {:optional true} [:or :string [:sequential :string]]]
+                                 [:abilities {:optional true} [:or :string [:sequential :string]]]])}
+           :responses  {200 {:body domain/draft-entry-resource}
+                        404 {:body domain/draft-error-response}
+                        500 {:body domain/draft-error-response}}
+           :handler    (integrant.core/ref ::web.draft.api/get-draft-entry)}}]
+   ["/tournament/:eid/row/round.html"
+    {:get {:produces   ["application/htmx+html"]
+           :parameters {:path schema.contract/id-path-parameter}
+           :responses  {200 {:body domain/round-response}}
+           :handler    (integrant.core/ref ::web.tournament.api/get-round)}}]
+   ["/tournament/:eid/phase/:phase-index/panel/phase.html"
+    {:get {:produces   ["application/htmx+html"]
+           :parameters {:path (schema.contract/to-schema
+                               [:map
+                                [:eid :uuid]
+                                [:phase-index :int]])}
+           :responses  {200 {:body domain/phase-response}}
+           :handler    (integrant.core/ref ::web.tournament.api/get-phase)}}]])
+
 (def api-routes
   ["/api"
    {:openapi {:security [{"ory" ["openid"]}]}}
@@ -198,7 +273,7 @@
     {:name :collection/game
      :get  {:summary   "Fetches a list of games."
             :openapi   {:tags         ["game"]
-                        :produces     ["application/htmx+html" "application/json"]
+                        :produces     ["application/json"]
                         :operation-id "game/all"}
             :responses {200 {:body domain/game-collection-resource}}
             :handler   (integrant.core/ref ::web.game.api/get-games)}}]
@@ -207,7 +282,7 @@
     {:name :game/by-eid
      :get  {:summary    "Fetches a game by eid."
             :openapi    {:tags         ["game"]
-                         :produces     ["application/htmx+html" "application/json"]
+                         :produces     ["application/json"]
                          :operation-id "game/by-eid"}
             :parameters {:path  schema.contract/id-path-parameter
                          :query web.game.api/game-query-parameters}
@@ -217,7 +292,7 @@
     {:name :game/social-by-eid
      :get  {:summary    "Fetches a link between social media and a game by eid."
             :openapi    {:tags         ["game"]
-                         :produces     ["application/htmx+html" "application/json"]
+                         :produces     ["application/json"]
                          :operation-id "game/social-by-eid"}
             :parameters {:path  schema.contract/id-path-parameter
                          :query schema.contract/version-query-parameter}
@@ -227,7 +302,7 @@
     {:name :game/faction-by-eid
      :get  {:summary    "Fetches a game faction by eid."
             :openapi    {:tags         ["game"]
-                         :produces     ["application/htmx+html" "application/json"]
+                         :produces     ["application/json"]
                          :operation-id "game/faction-by-eid"}
             :parameters {:path  schema.contract/id-path-parameter
                          :query web.game.api/faction-query-parameters}
@@ -235,10 +310,10 @@
             :handler    (integrant.core/ref ::web.game.api/get-faction)}}]
    ["/draft/:draft-eid/unit"
     {:name :draft-unit/preview
-     :get  {:produces   ["application/json" "application/htmx+html"]
+     :get  {:produces   ["application/json"]
             :openapi    {:summary      "Previews a unit variant within the draft context (variant via `unit-eid` query)."
                          :tags         ["draft"]
-                         :produces     ["application/json" "application/htmx+html"]
+                         :produces     ["application/json"]
                          :operation-id "draft-unit/preview"}
             :parameters {:path  (schema.contract/to-schema
                                  [:map
@@ -256,10 +331,10 @@
             :handler    (integrant.core/ref ::web.draft.api/get-draft-unit)}}]
    ["/draft/:draft-eid/unit/:eid"
     {:name :draft-unit/by-eid
-     :get  {:produces   ["application/json" "application/htmx+html"]
+     :get  {:produces   ["application/json"]
             :openapi    {:summary      "Gets details for a unit that can be assigned to the specific draft."
                          :tags         ["draft"]
-                         :produces     ["application/json" "application/htmx+html"]
+                         :produces     ["application/json"]
                          :operation-id "draft-unit/get"}
             :parameters {:path  (schema.contract/to-schema
                                  [:map
@@ -294,10 +369,10 @@
             :handler    (integrant.core/ref ::web.draft.api/draft-add-unit)}}]
    ["/draft/:draft-eid/entry/:eid"
     {:name   :draft-entry/by-eid
-     :get    {:produces   ["application/json" "application/htmx+html"]
+     :get    {:produces   ["application/json"]
               :openapi    {:summary      "Gets a placed draft entry with its unit details and selection state."
                            :tags         ["draft"]
-                           :produces     ["application/json" "application/htmx+html"]
+                           :produces     ["application/json"]
                            :operation-id "draft-entry/get"}
               :parameters {:path  (schema.contract/to-schema
                                    [:map
@@ -528,7 +603,7 @@
       {:name :tournament/phase
        :get  {:summary    "Phase details (standings + bracket / rounds)."
               :openapi    {:tags         ["tournament"]
-                           :produces     ["application/json" "application/htmx+html"]
+                           :produces     ["application/json"]
                            :operation-id "tournament-phase/get"}
               :parameters {:path (schema.contract/to-schema
                                   [:map
@@ -540,7 +615,7 @@
       {:name :tournament/round
        :get  {:summary    "Form partial for a tournament round."
               :openapi    {:tags         ["tournament"]
-                           :produces     ["application/json" "application/htmx+html"]
+                           :produces     ["application/json"]
                            :operation-id "tournament-round/get"}
               :parameters {:path schema.contract/id-path-parameter}
               :responses  {200 {:body domain/round-response}}
@@ -649,7 +724,7 @@
     {:name :social-media/by-eid
      :get  {:summary    "Fetches a social media platform by eid."
             :openapi    {:tags         ["social-media"]
-                         :produces     ["application/htmx+html" "application/json"]
+                         :produces     ["application/json"]
                          :operation-id "social-media/by-eid"}
             :parameters {:path  schema.contract/id-path-parameter
                          :query schema.contract/version-query-parameter}

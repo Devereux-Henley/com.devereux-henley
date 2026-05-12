@@ -130,6 +130,7 @@
    rts-web/status-route
    rts-web/icon-routes
    rts-web/view-routes
+   rts-web/components-routes
    rts-web/api-routes])
 
 ;;; ─── Assembled system maps ─────────────────────────────────────────────────

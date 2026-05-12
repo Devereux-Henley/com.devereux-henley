@@ -178,7 +178,7 @@
                 <button type="button" role="tab" id="tab-phase-{{phase-group.phase}}"
                         aria-selected="false" aria-controls="panel-phase-{{phase-group.phase}}"
                         class="tourney-tab"
-                        hx-get="/api/tournament/{{data.eid}}/phase/{{phase-group.phase}}"
+                        hx-get="/components/tournament/{{data.eid}}/phase/{{phase-group.phase}}/panel/phase.html"
                         hx-target="#panel-phase-{{phase-group.phase}}"
                         hx-swap="innerHTML"
                         _="on click
@@ -218,7 +218,7 @@
                      aria-labelledby="tab-phase-{{phase-group.phase}}"
                      class="tourney-tab-panel"
                      hidden
-                     hx-get="/api/tournament/{{data.eid}}/phase/{{phase-group.phase}}"
+                     hx-get="/components/tournament/{{data.eid}}/phase/{{phase-group.phase}}/panel/phase.html"
                      hx-trigger="match-recorded from:body"
                      hx-swap="innerHTML"></section>
             {% endfor %}
