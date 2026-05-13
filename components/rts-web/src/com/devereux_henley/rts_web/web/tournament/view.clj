@@ -70,7 +70,7 @@
                                                 :tournament-count tcount)))
                                      leagues)]
       {:status 200
-       :body   (render/render "competitive.html"
+       :body   (render/render "view/competitive.html"
                               (assoc (web.view/base-context request)
                                      :tournaments enriched-tournaments
                                      :leagues enriched-leagues))})))
@@ -81,7 +81,7 @@
     (let [game-eid (:game-eid (:game-context request))
           leagues  (domain/get-leagues-for-game dependencies game-eid)]
       {:status 200
-       :body   (render/render "create-tournament.html"
+       :body   (render/render "view/create-tournament.html"
                               (assoc (web.view/base-context request)
                                      :tournament-eid   (random-uuid)
                                      :leagues          leagues
@@ -94,14 +94,14 @@
     (let [eid (get-in request [:parameters :path :eid])]
       {:status  200
        :headers {"Content-Type" "text/html; charset=utf-8"}
-       :body    (render/render "tournament-phase-row.html"
+       :body    (render/render "components/tournament-phase-row.html"
                                (assoc (web.view/base-context request) :tournament-eid eid))})))
 
 (defmethod integrant.core/init-key ::tournament-view
   [_init-key dependencies]
   (partial web.view/standard-entity-view-handler
            (fn [eid] (web.tournament.api/get-tournament-by-eid dependencies eid))
-           "tournament-index.html"
+           "view/tournament-index.html"
            (fn [data request]
              (let [tournament-eid        (:eid data)
                    state                 (domain/get-tournament-state dependencies tournament-eid)
@@ -320,7 +320,7 @@
     (if-let [{:keys [match games]}
              (domain/get-record-context dependencies match-eid)]
       {:status 200
-       :body   (render/render "match-record-modal.html"
+       :body   (render/render "components/match-record-modal.html"
                               {:match               match
                                :games               games
                                :viewer-sub          (get-in session [:identity :id])
@@ -544,7 +544,7 @@
                                    enriched)]
             {:status  200
              :headers {"Content-Type" "text/html; charset=utf-8"}
-             :body    (render/render "match-record-review-fragment.html"
+             :body    (render/render "components/match-record-review-fragment.html"
                                      {:match match
                                       :games games})})
           (catch Exception e
@@ -599,7 +599,7 @@
               {:status  201
                :headers {"Content-Type"            "text/html; charset=utf-8"
                          "HX-Trigger-After-Settle" "match-recorded"}
-               :body    (render/render "match-record-submitted-fragment.html"
+               :body    (render/render "components/match-record-submitted-fragment.html"
                                        {:winner-sub  (:winner-sub result)
                                         :p1-wins     (get win-counts p1 0)
                                         :p2-wins     (get win-counts p2 0)

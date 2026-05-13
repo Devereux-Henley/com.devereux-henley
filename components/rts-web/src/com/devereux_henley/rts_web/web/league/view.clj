@@ -9,7 +9,7 @@
   [_init-key _dependencies]
   (fn [request]
     {:status 200
-     :body   (render/render "create-league.html"
+     :body   (render/render "view/create-league.html"
                             (assoc (web.view/base-context request)
                                    :league-eid (random-uuid)))}))
 
@@ -31,7 +31,7 @@
               standings         (domain/get-league-faction-standings dependencies eid)
               user-sub          (get-in request [:ory-session :identity :id])]
           {:status 200
-           :body   (render/render "league-index.html"
+           :body   (render/render "view/league-index.html"
                                   (assoc (web.view/base-context request)
                                          :data league
                                          :seasons seasons

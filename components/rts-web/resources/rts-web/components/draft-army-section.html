@@ -1,7 +1,7 @@
 <div class="draft-section" id="{{section.section-id}}" aria-labelledby="{{section.section-id}}-heading">
     <div class="draft-section-header">
         <h3 class="draft-section-title" id="{{section.section-id}}-heading">{{section.section-label}}</h3>
-        {% with budget=section %}{% include "rts-web/view/draft-budget-group.html" %}{% endwith %}
+        {% with budget=section %}{% include "rts-web/components/draft-budget-group.html" %}{% endwith %}
     </div>
     <div class="draft-slots" id="{{section.section-id}}-slots" role="list" aria-label="{{section.section-label}} units">
         {% if section.is-main %}
@@ -10,17 +10,17 @@
                  class="draft-slot draft-slot--lord draft-slot--filled"
                  role="listitem"
                  aria-label="{{section.lord-unit.name}}{% if section.lord-unit.mark %} (Mark of {{section.lord-unit.mark|capitalize}}){% endif %}">
-                {% with unit=section.lord-unit %}{% include "rts-web/view/draft-slot-inner.html" %}{% endwith %}
+                {% with unit=section.lord-unit %}{% include "rts-web/components/draft-slot-inner.html" %}{% endwith %}
             </div>
             {% else %}
-            {% include "rts-web/view/draft-slot-empty-lord.html" %}
+            {% include "rts-web/components/draft-slot-empty-lord.html" %}
             {% endif %}
             {% for unit in section.non-lord-units %}
             <div id="draft-slot-{{unit.entry-eid}}"
                  class="draft-slot draft-slot--filled"
                  role="listitem"
                  aria-label="{{unit.name}}{% if unit.mark %} (Mark of {{unit.mark|capitalize}}){% endif %}">
-                {% include "rts-web/view/draft-slot-inner.html" %}
+                {% include "rts-web/components/draft-slot-inner.html" %}
             </div>
             {% endfor %}
         {% else %}
@@ -29,7 +29,7 @@
                  class="draft-slot draft-slot--filled"
                  role="listitem"
                  aria-label="{{unit.name}}{% if unit.mark %} (Mark of {{unit.mark|capitalize}}){% endif %}">
-                {% include "rts-web/view/draft-slot-inner.html" %}
+                {% include "rts-web/components/draft-slot-inner.html" %}
             </div>
             {% endfor %}
         {% endif %}

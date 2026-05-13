@@ -49,11 +49,11 @@
     <div class="draft-army-builder" aria-label="Army Builder">
 
         <!-- Main Army Section -->
-        {% with section=main-section %}{% include "rts-web/view/draft-army-section.html" %}{% endwith %}
+        {% with section=main-section %}{% include "rts-web/components/draft-army-section.html" %}{% endwith %}
 
         <!-- Reinforcements Section (conditional) -->
         {% if reinforcements-enabled %}
-        {% with section=reinf-section %}{% include "rts-web/view/draft-army-section.html" %}{% endwith %}
+        {% with section=reinf-section %}{% include "rts-web/components/draft-army-section.html" %}{% endwith %}
         {% endif %}
 
         <div id="draft-error-zone" aria-live="assertive" aria-atomic="true"></div>

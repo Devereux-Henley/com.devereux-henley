@@ -52,14 +52,14 @@
                                    end
                                    on click elsewhere add @hidden to #atlas-menu
                                    then set my @aria-expanded to 'false'">
-                            {% include "rts-web/view/icon/book.html" %}
+                            {% include "rts-web/template/icon/book.html" %}
                             Atlas
                         </button>
                         <div class="dropdown-menu" id="atlas-menu" role="menu" hidden>
                             <a class="dropdown-item dropdown-item-with-icon"
                                role="menuitem"
                                href="/view/game/{{game-eid}}/faction/index.html">
-                                {% include "rts-web/view/icon/sword.html" %}
+                                {% include "rts-web/template/icon/sword.html" %}
                                 Factions
                             </a>
                         </div>
@@ -70,7 +70,7 @@
                 <div id="game-drafts-link">
                     {% if all session game-eid %}
                     <a class="nav-item nav-item-with-icon{% ifequal active-nav "drafts" %} active{% endifequal %}" href="/view/game/{{game-eid}}/draft/me.html">
-                        {% include "rts-web/view/icon/drafts.html" %}
+                        {% include "rts-web/template/icon/drafts.html" %}
                         My Drafts
                     </a>
                     {% endif %}
@@ -78,7 +78,7 @@
                 <div id="game-competitive-link">
                     {% if game-eid %}
                     <a class="nav-item nav-item-with-icon{% ifequal active-nav "competitive" %} active{% endifequal %}" href="/view/game/{{game-eid}}/competitive/index.html">
-                        {% include "rts-web/view/icon/tournaments.html" %}
+                        {% include "rts-web/template/icon/tournaments.html" %}
                         Competitive
                     </a>
                     {% endif %}

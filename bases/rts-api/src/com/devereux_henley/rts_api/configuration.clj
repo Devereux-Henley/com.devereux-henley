@@ -35,10 +35,7 @@
                        :migration-dir rts-data/migration-dir}
    ::db/connection    {:migrations (integrant.core/ref ::rts-data/migrate)}
    ::web/service      {:handler       (integrant.core/ref ::web/app)
-                       :configuration {:port port, :join? false}}
-   :com.devereux-henley.rts-web.web.configuration/configuration
-   {:com.devereux-henley.rts-web.web.configuration/openid-url    (str auth-hostname "/" ".well-known/openid-configuration")
-    :com.devereux-henley.rts-web.web.configuration/auth-hostname auth-hostname}})
+                       :configuration {:port port, :join? false}}})
 
 (def view-configuration
   (merge

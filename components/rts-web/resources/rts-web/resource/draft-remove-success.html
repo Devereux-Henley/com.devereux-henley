@@ -1,8 +1,8 @@
 <div id="draft-error-zone" aria-live="assertive" aria-atomic="true" hx-swap-oob="true"></div>
 <div id="draft-action-error" role="alert" aria-live="polite" hidden hx-swap-oob="true"></div>
 {% if data.removed-is-lord %}
-{% with oob="oob" %}{% include "rts-web/view/draft-slot-empty-lord.html" %}{% endwith %}
+{% with oob="oob" %}{% include "rts-web/components/draft-slot-empty-lord.html" %}{% endwith %}
 {% else %}
 <div id="draft-slot-{{data.removed-entry-eid}}" hx-swap-oob="delete"></div>
 {% endif %}
-{% with budget=data.budget oob="oob" %}{% include "rts-web/view/draft-budget-group.html" %}{% endwith %}
+{% with budget=data.budget oob="oob" %}{% include "rts-web/components/draft-budget-group.html" %}{% endwith %}

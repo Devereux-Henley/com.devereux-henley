@@ -17,7 +17,7 @@
                 <div class="cluster cluster-2">
                     <span class="badge badge-primary">{{data.unit-type-name}}</span>
                     <span class="badge badge-neutral">{{data.unit-category-name}}</span>
-                    {% with mark=data.mark family-variant-count=data.family-variant-count %}{% include "rts-web/view/_partial/unit-mark.html" %}{% endwith %}
+                    {% with mark=data.mark family-variant-count=data.family-variant-count %}{% include "rts-web/template/unit-mark.html" %}{% endwith %}
                 </div>
                 {% if data.description %}
                 <p class="unit-description">{{data.description|safe}}</p>

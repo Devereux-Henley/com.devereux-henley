@@ -84,20 +84,20 @@
                         (assoc game :logo (skin/logo-for-game (:eid game))))
                       (domain/get-games dependencies))]
       {:status 200
-       :body   (render/render "game-selector.html"
+       :body   (render/render "view/game-selector.html"
                               (assoc (base-context request) :games games))})))
 
 (defmethod integrant.core/init-key ::game-view
   [_init-key _dependencies]
-  (partial standard-view-handler "game.html"))
+  (partial standard-view-handler "view/game.html"))
 
 (defmethod integrant.core/init-key ::about-view
   [_init-key _dependencies]
-  (partial standard-view-handler "about.html"))
+  (partial standard-view-handler "view/about.html"))
 
 (defmethod integrant.core/init-key ::contact-view
   [_init-key _dependencies]
-  (partial standard-view-handler "contact.html"))
+  (partial standard-view-handler "view/contact.html"))
 
 (defmethod integrant.core/init-key ::login-view
   [_init-key {:keys [auth-hostname]}]

@@ -13,7 +13,7 @@
                        (domain/get-seasons-for-league dependencies league-eid))]
       {:status  200
        :headers {"Content-Type" "text/html; charset=utf-8"}
-       :body    (render/render "_partial/season-options.html"
+       :body    (render/render "components/season-options.html"
                                (assoc (web.view/base-context request) :seasons seasons))})))
 
 (defmethod integrant.core/init-key ::create-season-view
@@ -24,7 +24,7 @@
       (if (nil? league)
         {:status 404 :body {:type :missing/resource :name "league" :id league-eid}}
         {:status 200
-         :body   (render/render "create-season.html"
+         :body   (render/render "view/create-season.html"
                                 (assoc (web.view/base-context request)
                                        :league league
                                        :league-eid league-eid
@@ -47,7 +47,7 @@
                                     season-tourneys)
               standings       (domain/get-season-faction-standings dependencies eid)]
           {:status 200
-           :body   (render/render "season-index.html"
+           :body   (render/render "view/season-index.html"
                                   (assoc (web.view/base-context request)
                                          :data season
                                          :league league

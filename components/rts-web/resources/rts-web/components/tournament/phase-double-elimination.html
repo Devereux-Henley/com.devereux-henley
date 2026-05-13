@@ -11,7 +11,7 @@
                 </h5>
                 <div class="tourney-bracket-round-matches">
                     {% for match in round-group.matches %}
-                    {% include "rts-web/view/tournament/_bracket-match.html" %}
+                    {% include "rts-web/template/tournament/bracket-match.html" %}
                     {% endfor %}
                 </div>
             </div>
@@ -28,7 +28,7 @@
                 </h5>
                 <div class="tourney-bracket-round-matches">
                     {% for match in round-group.matches %}
-                    {% include "rts-web/view/tournament/_bracket-match.html" %}
+                    {% include "rts-web/template/tournament/bracket-match.html" %}
                     {% endfor %}
                 </div>
             </div>
@@ -43,7 +43,7 @@
         {% for round-group in phase-group.grand-final %}
         <div class="tourney-bracket-round tourney-bracket-round--grand-final">
             {% for match in round-group.matches %}
-            {% include "rts-web/view/tournament/_bracket-match.html" %}
+            {% include "rts-web/template/tournament/bracket-match.html" %}
             {% endfor %}
         </div>
         {% endfor %}
