@@ -42,9 +42,8 @@ async function createTournament(request) {
 
 async function createActiveTournament(request) {
   const eid = await createTournament(request);
-  await request.put(`${BASE}/api/tournament/${eid}/status?version=1`, {
+  await request.post(`${BASE}/api/tournament/${eid}/start`, {
     headers: jsonHeaders('dev-admin'),
-    data: { status: 'active' },
   });
   return eid;
 }

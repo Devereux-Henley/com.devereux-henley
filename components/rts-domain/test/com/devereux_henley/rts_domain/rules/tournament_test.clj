@@ -3,35 +3,19 @@
    [clojure.test :refer [deftest is]]
    [com.devereux-henley.rts-domain.rules.tournament :as rules]))
 
-;; ─── validate-transition ─────────────────────────────────────────────────────
+;; ─── available-transitions ─────────────────────────────────────────────────
 
-(deftest valid-transition-registration-to-active
-  (is (nil? (rules/validate-transition "registration" "active"))))
+(deftest available-transitions-from-registration
+  (is (= #{"active" "cancelled"} (rules/available-transitions "registration"))))
 
-(deftest valid-transition-registration-to-cancelled
-  (is (nil? (rules/validate-transition "registration" "cancelled"))))
+(deftest available-transitions-from-active
+  (is (= #{"complete" "cancelled"} (rules/available-transitions "active"))))
 
-(deftest valid-transition-active-to-complete
-  (is (nil? (rules/validate-transition "active" "complete"))))
+(deftest available-transitions-from-complete
+  (is (= #{} (rules/available-transitions "complete"))))
 
-(deftest valid-transition-active-to-cancelled
-  (is (nil? (rules/validate-transition "active" "cancelled"))))
-
-(deftest invalid-transition-registration-to-complete
-  (let [error (rules/validate-transition "registration" "complete")]
-    (is (= :tournament/transition-error (:type error)))))
-
-(deftest invalid-transition-active-to-registration
-  (let [error (rules/validate-transition "active" "registration")]
-    (is (= :tournament/transition-error (:type error)))))
-
-(deftest invalid-transition-complete-to-anything
-  (is (some? (rules/validate-transition "complete" "active")))
-  (is (some? (rules/validate-transition "complete" "registration"))))
-
-(deftest invalid-transition-cancelled-to-anything
-  (is (some? (rules/validate-transition "cancelled" "active")))
-  (is (some? (rules/validate-transition "cancelled" "registration"))))
+(deftest available-transitions-from-cancelled
+  (is (= #{} (rules/available-transitions "cancelled"))))
 
 ;; ─── close-registration ─────────────────────────────────────────────────────
 

@@ -84,9 +84,11 @@
             :com.devereux-henley.rts-web.web.tournament.api/delete-entry
             :com.devereux-henley.rts-web.web.tournament.api/get-entries
             :com.devereux-henley.rts-web.web.tournament.api/get-status
-            :com.devereux-henley.rts-web.web.tournament.api/update-status
+            :com.devereux-henley.rts-web.web.tournament.api/start-tournament
+            :com.devereux-henley.rts-web.web.tournament.api/complete-tournament
+            :com.devereux-henley.rts-web.web.tournament.api/cancel-tournament
             :com.devereux-henley.rts-web.web.tournament.api/get-registration
-            :com.devereux-henley.rts-web.web.tournament.api/update-registration
+            :com.devereux-henley.rts-web.web.tournament.api/close-registration
             :com.devereux-henley.rts-web.web.tournament.api/get-matches
             :com.devereux-henley.rts-web.web.tournament.api/get-match
             :com.devereux-henley.rts-web.web.tournament.api/create-match
@@ -115,8 +117,10 @@
             :com.devereux-henley.rts-web.web.actions.tournament/create-tournament
             :com.devereux-henley.rts-web.web.actions.tournament/create-entry
             :com.devereux-henley.rts-web.web.actions.tournament/delete-entry
-            :com.devereux-henley.rts-web.web.actions.tournament/update-status
-            :com.devereux-henley.rts-web.web.actions.tournament/update-registration
+            :com.devereux-henley.rts-web.web.actions.tournament/start-tournament
+            :com.devereux-henley.rts-web.web.actions.tournament/complete-tournament
+            :com.devereux-henley.rts-web.web.actions.tournament/cancel-tournament
+            :com.devereux-henley.rts-web.web.actions.tournament/close-registration
             :com.devereux-henley.rts-web.web.actions.tournament/create-round
             :com.devereux-henley.rts-web.web.actions.league/create-league
             :com.devereux-henley.rts-web.web.actions.season/create-season))

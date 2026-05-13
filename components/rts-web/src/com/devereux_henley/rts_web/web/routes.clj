@@ -321,16 +321,22 @@
      :delete {:produces   ["application/htmx+html"]
               :parameters {:path schema.contract/id-path-parameter}
               :handler    (integrant.core/ref ::web.actions.tournament/delete-entry)}}]
-   ["/tournament/:eid/status"
-    {:put {:produces   ["application/htmx+html"]
-           :parameters {:path schema.contract/id-path-parameter
-                        :body domain/update-status-specification}
-           :handler    (integrant.core/ref ::web.actions.tournament/update-status)}}]
-   ["/tournament/:eid/registration"
-    {:patch {:produces   ["application/htmx+html"]
-             :parameters {:path schema.contract/id-path-parameter
-                          :body domain/update-registration-specification}
-             :handler    (integrant.core/ref ::web.actions.tournament/update-registration)}}]
+   ["/tournament/:eid/start"
+    {:post {:produces   ["application/htmx+html"]
+            :parameters {:path schema.contract/id-path-parameter}
+            :handler    (integrant.core/ref ::web.actions.tournament/start-tournament)}}]
+   ["/tournament/:eid/complete"
+    {:post {:produces   ["application/htmx+html"]
+            :parameters {:path schema.contract/id-path-parameter}
+            :handler    (integrant.core/ref ::web.actions.tournament/complete-tournament)}}]
+   ["/tournament/:eid/cancel"
+    {:post {:produces   ["application/htmx+html"]
+            :parameters {:path schema.contract/id-path-parameter}
+            :handler    (integrant.core/ref ::web.actions.tournament/cancel-tournament)}}]
+   ["/tournament/:eid/close-registration"
+    {:post {:produces   ["application/htmx+html"]
+            :parameters {:path schema.contract/id-path-parameter}
+            :handler    (integrant.core/ref ::web.actions.tournament/close-registration)}}]
    ["/tournament/:eid/round"
     {:post {:produces   ["application/htmx+html"]
             :parameters {:path schema.contract/id-path-parameter}
@@ -605,30 +611,47 @@
                           :operation-id "tournament-status/get"}
              :parameters {:path schema.contract/id-path-parameter}
              :responses  {200 {:body domain/tournament-status-response}}
-             :handler    (integrant.core/ref ::web.tournament.api/get-status)}
-       :put {:summary    "Update the tournament status."
+             :handler    (integrant.core/ref ::web.tournament.api/get-status)}}]
+     ["/start"
+      {:post {:summary    "Start the tournament (registration → active)."
+              :openapi    {:tags         ["tournament"]
+                           :produces     ["application/json"]
+                           :operation-id "tournament/start"}
+              :parameters {:path schema.contract/id-path-parameter}
+              :responses  {200 {:body domain/tournament-started-response}}
+              :handler    (integrant.core/ref ::web.tournament.api/start-tournament)}}]
+     ["/complete"
+      {:post {:summary    "Complete the tournament (active → complete)."
+              :openapi    {:tags         ["tournament"]
+                           :produces     ["application/json"]
+                           :operation-id "tournament/complete"}
+              :parameters {:path schema.contract/id-path-parameter}
+              :responses  {200 {:body domain/tournament-completed-response}}
+              :handler    (integrant.core/ref ::web.tournament.api/complete-tournament)}}]
+     ["/cancel"
+      {:post {:summary    "Cancel the tournament from any in-progress state."
+              :openapi    {:tags         ["tournament"]
+                           :produces     ["application/json"]
+                           :operation-id "tournament/cancel"}
+              :parameters {:path schema.contract/id-path-parameter}
+              :responses  {200 {:body domain/tournament-cancelled-response}}
+              :handler    (integrant.core/ref ::web.tournament.api/cancel-tournament)}}]
+     ["/registration"
+      {:get {:summary    "Get the tournament registration window."
              :openapi    {:tags         ["tournament"]
                           :produces     ["application/json"]
-                          :operation-id "tournament-status/update"}
-             :parameters {:path schema.contract/id-path-parameter
-                          :body domain/update-status-specification}
-             :responses  {200 {:body domain/tournament-advance-response}}
-             :handler    (integrant.core/ref ::web.tournament.api/update-status)}}]
-     ["/registration"
-      {:get   {:summary    "Get the tournament registration window."
-               :openapi    {:tags         ["tournament"]
-                            :produces     ["application/json"]
-                            :operation-id "tournament-registration/get"}
-               :parameters {:path schema.contract/id-path-parameter}
-               :responses  {200 {:body domain/tournament-registration-response}}
-               :handler    (integrant.core/ref ::web.tournament.api/get-registration)}
-       :patch {:summary    "Update the tournament registration window."
-               :openapi    {:tags         ["tournament"]
-                            :produces     ["application/json"]
-                            :operation-id "tournament-registration/update"}
-               :parameters {:path schema.contract/id-path-parameter
-                            :body domain/update-registration-specification}
-               :handler    (integrant.core/ref ::web.tournament.api/update-registration)}}]
+                          :operation-id "tournament-registration/get"}
+             :parameters {:path schema.contract/id-path-parameter}
+             :responses  {200 {:body domain/tournament-registration-response}}
+             :handler    (integrant.core/ref ::web.tournament.api/get-registration)}}]
+     ["/close-registration"
+      {:post {:summary    "Close registration early while staying in the registration phase."
+              :openapi    {:tags         ["tournament"]
+                           :produces     ["application/json"]
+                           :operation-id "tournament/close-registration"}
+              :parameters {:path schema.contract/id-path-parameter}
+              :responses  {200 {:body domain/tournament-registration-closed-response}}
+              :handler    (integrant.core/ref ::web.tournament.api/close-registration)}}]
      ["/match"
       [""
        {:get  {:summary    "List matches for a tournament."

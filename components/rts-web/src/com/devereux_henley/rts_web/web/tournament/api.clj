@@ -115,16 +115,37 @@
                 :status                (:status state)
                 :available-transitions (vec (domain/available-transitions dependencies eid))}})))
 
-(defmethod integrant.core/init-key ::update-status
+(defmethod integrant.core/init-key ::start-tournament
   [_init-key dependencies]
-  (fn [{{{:keys [eid]}    :path
-         {:keys [status]} :body} :parameters
-        session                  :ory-session
-        :as                      _request}]
+  (fn [{{{:keys [eid]} :path} :parameters
+        session               :ory-session
+        :as                   _request}]
     (let [user-sub (get-in session [:identity :id])
-          result   (domain/advance-tournament dependencies eid status user-sub)]
+          result   (domain/start-tournament dependencies eid user-sub)]
       (case (:type result)
-        :tournament/advance-success {:status 200 :body result}
+        :tournament/started {:status 200 :body result}
+        {:status 422 :body result}))))
+
+(defmethod integrant.core/init-key ::complete-tournament
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+        session               :ory-session
+        :as                   _request}]
+    (let [user-sub (get-in session [:identity :id])
+          result   (domain/complete-tournament dependencies eid user-sub)]
+      (case (:type result)
+        :tournament/completed {:status 200 :body result}
+        {:status 422 :body result}))))
+
+(defmethod integrant.core/init-key ::cancel-tournament
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+        session               :ory-session
+        :as                   _request}]
+    (let [user-sub (get-in session [:identity :id])
+          result   (domain/cancel-tournament dependencies eid user-sub)]
+      (case (:type result)
+        :tournament/cancelled {:status 200 :body result}
         {:status 422 :body result}))))
 
 (defmethod integrant.core/init-key ::get-registration
@@ -139,18 +160,15 @@
                 :timezone     (get-in state [:registration :timezone])
                 :closed-early (get-in state [:registration :closed-early])}})))
 
-(defmethod integrant.core/init-key ::update-registration
+(defmethod integrant.core/init-key ::close-registration
   [_init-key dependencies]
-  (fn [{{{:keys [eid]}          :path
-         {:keys [closed-early]} :body} :parameters
-        session                        :ory-session
-        :as                            _request}]
+  (fn [{{{:keys [eid]} :path} :parameters
+        session               :ory-session
+        :as                   _request}]
     (let [user-sub (get-in session [:identity :id])
-          result   (if closed-early
-                     (domain/close-registration-early dependencies eid user-sub)
-                     {:type :tournament/registration-error :message "No updates specified."})]
+          result   (domain/close-registration-early dependencies eid user-sub)]
       (case (:type result)
-        :tournament/close-registration-success {:status 200 :body result}
+        :tournament/registration-closed {:status 200 :body result}
         {:status 422 :body result}))))
 
 ;; ─── Match handlers ─────────────────────────────────────────────────────────
