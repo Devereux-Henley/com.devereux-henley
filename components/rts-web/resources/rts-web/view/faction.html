@@ -25,7 +25,7 @@
                     <td>
                         <span class="unit-row-name">
                             <a href="/view/game/{{game-eid}}/unit/{{unit.eid}}/index.html">{{unit.name}}</a>
-                            {% with mark=unit.mark family-variant-count=unit.family-variant-count %}{% include "rts-web/view/_partial/unit-mark.html" %}{% endwith %}
+                            {% with mark=unit.mark family-variant-count=unit.family-variant-count %}{% include "rts-web/components/unit-mark.html" %}{% endwith %}
                         </span>
                     </td>
                     <td>{{unit.unit-type-name}}</td>

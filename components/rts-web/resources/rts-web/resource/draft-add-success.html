@@ -5,7 +5,7 @@
      role="listitem"
      aria-label="{{data.new-unit.name}}"
      hx-swap-oob="true">
-    {% with unit=data.new-unit section=data.section %}{% include "rts-web/view/draft-slot-inner.html" %}{% endwith %}
+    {% with unit=data.new-unit section=data.section %}{% include "rts-web/components/draft-slot-inner.html" %}{% endwith %}
 </div>
 {% else %}
 <div hx-swap-oob="beforeend:#{{data.section.section-id}}-slots">
@@ -13,8 +13,8 @@
          class="draft-slot draft-slot--filled"
          role="listitem"
          aria-label="{{data.new-unit.name}}">
-        {% with unit=data.new-unit section=data.section %}{% include "rts-web/view/draft-slot-inner.html" %}{% endwith %}
+        {% with unit=data.new-unit section=data.section %}{% include "rts-web/components/draft-slot-inner.html" %}{% endwith %}
     </div>
 </div>
 {% endif %}
-{% with budget=data.budget oob="oob" %}{% include "rts-web/view/draft-budget-group.html" %}{% endwith %}
+{% with budget=data.budget oob="oob" %}{% include "rts-web/components/draft-budget-group.html" %}{% endwith %}

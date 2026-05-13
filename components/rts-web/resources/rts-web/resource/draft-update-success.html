@@ -11,5 +11,5 @@
 </span>
 <span class="sr-only" id="draft-slot-edit-label-{{data.entry-eid}}" hx-swap-oob="true">Edit {{data.entry._embedded.unit.name}}{% if data.entry._embedded.unit.mark %}{% if data.entry._embedded.unit.family-variant-count > 1 %} (Mark of {{data.entry._embedded.unit.mark|capitalize}}){% endif %}{% endif %} in {% ifequal data.entry.section "main" %}Main Army{% else %}Reinforcements{% endifequal %}</span>
 <span class="sr-only" id="draft-slot-remove-label-{{data.entry-eid}}" hx-swap-oob="true">Remove {{data.entry._embedded.unit.name}} from {% ifequal data.entry.section "main" %}Main Army{% else %}Reinforcements{% endifequal %}</span>
-{% with budget=data.budget oob="oob" %}{% include "rts-web/view/draft-budget-group.html" %}{% endwith %}
-{% with unit=data.entry._embedded.unit data=data.entry %}{% include "rts-web/view/draft-unit-panel.html" %}{% endwith %}
+{% with budget=data.budget oob="oob" %}{% include "rts-web/components/draft-budget-group.html" %}{% endwith %}
+{% with unit=data.entry._embedded.unit data=data.entry %}{% include "rts-web/components/draft-unit-panel.html" %}{% endwith %}

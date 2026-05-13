@@ -19,7 +19,10 @@
                       "tournament-entry-created"
                       "tournament-entry-deleted"
                       "tournament-registration-closed"
-                      "tournament-round-created"]})
+                      "tournament-round-created"
+                      "tournament-match-created"
+                      "tournament-match-result-recorded"
+                      "tournament-game-recorded"]})
 
 (defmethod integrant.core/init-key ::create-tournament
   [_init-key dependencies]
@@ -123,3 +126,41 @@
       (if (= :tournament/phase-error (:type result))
         {:status 422 :body result}
         (common/trigger-response "tournament-round-created" result)))))
+
+(defmethod integrant.core/init-key ::create-match
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]}                                  :path
+         {:keys [phase-index round-index
+                 player-one-sub player-two-sub format]} :body} :parameters
+        :as                                                    _request}]
+    (let [result (domain/create-match
+                  dependencies
+                  eid
+                  (cond-> {:phase-index    phase-index
+                           :round-index    round-index
+                           :player-one-sub player-one-sub
+                           :player-two-sub player-two-sub}
+                    format (assoc :format format)))]
+      (if (= :tournament/match-error (:type result))
+        {:status 422 :body result}
+        (common/trigger-status-response 201 "tournament-match-created" result)))))
+
+(defmethod integrant.core/init-key ::update-match-result
+  [_init-key dependencies]
+  (fn [{{{:keys [match-eid]}  :path
+         {:keys [winner-sub]} :body} :parameters
+        :as                          _request}]
+    (let [result (domain/update-match-result dependencies match-eid winner-sub)]
+      (if (= :tournament/match-error (:type result))
+        {:status 422 :body result}
+        (common/trigger-response "tournament-match-result-recorded" result)))))
+
+(defmethod integrant.core/init-key ::record-game
+  [_init-key dependencies]
+  (fn [{{{:keys [match-eid]}  :path
+         {:keys [winner-sub]} :body} :parameters
+        :as                          _request}]
+    (let [result (domain/record-game-result dependencies match-eid winner-sub)]
+      (if (= :tournament/match-error (:type result))
+        {:status 422 :body result}
+        (common/trigger-response "tournament-game-recorded" result)))))

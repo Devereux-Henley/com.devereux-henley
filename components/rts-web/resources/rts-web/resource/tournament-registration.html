@@ -1,0 +1,9 @@
+<section class="resource tournament-registration-resource" aria-labelledby="tournament-registration-heading">
+  <h2 id="tournament-registration-heading" data-type="tournament/registration">Registration</h2>
+  <dl>
+    <dt>opens-at</dt><dd>{{ data.opens-at }}</dd>
+    <dt>closes-at</dt><dd>{{ data.closes-at }}</dd>
+    {% if data.timezone %}<dt>timezone</dt><dd>{{ data.timezone }}</dd>{% endif %}
+    <dt>closed-early</dt><dd data-closed-early="{{ data.closed-early }}">{{ data.closed-early }}</dd>
+  </dl>
+</section>

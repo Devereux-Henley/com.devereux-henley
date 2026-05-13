@@ -31,15 +31,11 @@
 ;;; ─── Per-namespace handler configuration ───────────────────────────────────
 
 (def infrastructure-configuration
-  {::rts-data/migrate    {:db-spec       db/db-spec
-                          :migration-dir rts-data/migration-dir}
-   ::db/connection       {:migrations (integrant.core/ref ::rts-data/migrate)}
-   ::web/openapi-handler {}
-   ::web/service         {:handler       (integrant.core/ref ::web/app)
-                          :configuration {:port port, :join? false}}
-   :com.devereux-henley.rts-web.web.configuration/configuration
-   {:com.devereux-henley.rts-web.web.configuration/openid-url    (str auth-hostname "/" ".well-known/openid-configuration")
-    :com.devereux-henley.rts-web.web.configuration/auth-hostname auth-hostname}})
+  {::rts-data/migrate {:db-spec       db/db-spec
+                       :migration-dir rts-data/migration-dir}
+   ::db/connection    {:migrations (integrant.core/ref ::rts-data/migrate)}
+   ::web/service      {:handler       (integrant.core/ref ::web/app)
+                       :configuration {:port port, :join? false}}})
 
 (def view-configuration
   (merge
@@ -66,12 +62,7 @@
 
 (def draft-configuration
   (handlers :com.devereux-henley.rts-web.web.draft.api/get-draft-unit
-            :com.devereux-henley.rts-web.web.draft.api/get-draft-entry
-            :com.devereux-henley.rts-web.web.draft.api/draft-add-unit
-            :com.devereux-henley.rts-web.web.draft.api/draft-update-unit
-            :com.devereux-henley.rts-web.web.draft.api/draft-remove-unit
-            :com.devereux-henley.rts-web.web.draft.api/create-draft
-            :com.devereux-henley.rts-web.web.draft.api/update-draft))
+            :com.devereux-henley.rts-web.web.draft.api/get-draft-entry))
 
 (def social-media-configuration
   (handlers :com.devereux-henley.rts-web.web.social-media.api/get-platform))
@@ -79,26 +70,15 @@
 (def tournament-configuration
   (handlers :com.devereux-henley.rts-web.web.tournament.api/get-tournament
             :com.devereux-henley.rts-web.web.tournament.api/get-tournaments
-            :com.devereux-henley.rts-web.web.tournament.api/create-tournament
-            :com.devereux-henley.rts-web.web.tournament.api/create-entry
-            :com.devereux-henley.rts-web.web.tournament.api/delete-entry
             :com.devereux-henley.rts-web.web.tournament.api/get-entries
             :com.devereux-henley.rts-web.web.tournament.api/get-status
-            :com.devereux-henley.rts-web.web.tournament.api/start-tournament
-            :com.devereux-henley.rts-web.web.tournament.api/complete-tournament
-            :com.devereux-henley.rts-web.web.tournament.api/cancel-tournament
             :com.devereux-henley.rts-web.web.tournament.api/get-registration
-            :com.devereux-henley.rts-web.web.tournament.api/close-registration
             :com.devereux-henley.rts-web.web.tournament.api/get-matches
             :com.devereux-henley.rts-web.web.tournament.api/get-match
-            :com.devereux-henley.rts-web.web.tournament.api/create-match
-            :com.devereux-henley.rts-web.web.tournament.api/update-match-result
-            :com.devereux-henley.rts-web.web.tournament.api/record-game
             :com.devereux-henley.rts-web.web.tournament.api/get-games
-            :com.devereux-henley.rts-web.web.tournament.api/update-phase-configuration
-            :com.devereux-henley.rts-web.web.tournament.api/create-round
             :com.devereux-henley.rts-web.web.tournament.api/get-phase
             :com.devereux-henley.rts-web.web.tournament.api/get-round
+            :com.devereux-henley.rts-web.web.tournament.api/update-phase-configuration
             :com.devereux-henley.rts-web.web.tournament.view/create-tournament-view
             :com.devereux-henley.rts-web.web.tournament.view/tournament-view
             :com.devereux-henley.rts-web.web.tournament.view/tournament-phase-form-view))
@@ -122,6 +102,9 @@
             :com.devereux-henley.rts-web.web.actions.tournament/cancel-tournament
             :com.devereux-henley.rts-web.web.actions.tournament/close-registration
             :com.devereux-henley.rts-web.web.actions.tournament/create-round
+            :com.devereux-henley.rts-web.web.actions.tournament/create-match
+            :com.devereux-henley.rts-web.web.actions.tournament/update-match-result
+            :com.devereux-henley.rts-web.web.actions.tournament/record-game
             :com.devereux-henley.rts-web.web.actions.league/create-league
             :com.devereux-henley.rts-web.web.actions.season/create-season))
 

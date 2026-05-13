@@ -39,7 +39,7 @@
                               role="status"
                               aria-label="Editing {% ifequal data.section "main" %}Main Army{% else %}Reinforcements{% endifequal %}"
                               title="Changes save automatically">
-                            {% with class="draft-editing-icon" size="14" %}{% include "rts-web/view/icon/pencil.html" %}{% endwith %}
+                            {% with class="draft-editing-icon" size="14" %}{% include "rts-web/components/icon/pencil.html" %}{% endwith %}
                             <span class="sr-only">Editing {% ifequal data.section "main" %}Main Army{% else %}Reinforcements{% endifequal %}. Changes save automatically.</span>
                         </span>
                         {% endif %}{% endif %}
@@ -48,7 +48,7 @@
                 <div class="draft-stats-badges">
                     <span class="badge badge-primary">{{unit.unit-type-name}}</span>
                     <span class="badge badge-neutral">{{unit.unit-category-name}}</span>
-                    {% with mark=unit.mark family-variant-count=unit.family-variant-count %}{% include "rts-web/view/_partial/unit-mark.html" %}{% endwith %}
+                    {% with mark=unit.mark family-variant-count=unit.family-variant-count %}{% include "rts-web/components/unit-mark.html" %}{% endwith %}
                 </div>
                 <div class="draft-stats-cost-row">
                     <span class="draft-budget-icon" aria-hidden="true">&#11044;</span>
@@ -67,7 +67,7 @@
                     hx-include="#draft-unit-form"
                     hx-ext="json-enc"
                     hx-swap="none">
-                {% with class="btn-icon-inline icon-sword" %}{% include "rts-web/view/icon/sword.html" %}{% endwith %}
+                {% with class="btn-icon-inline icon-sword" %}{% include "rts-web/components/icon/sword.html" %}{% endwith %}
                 Add to Main Army
             </button>
             {% if unit.validation.can-add-to-reinforcements? %}
@@ -78,7 +78,7 @@
                     hx-include="#draft-unit-form"
                     hx-ext="json-enc"
                     hx-swap="none">
-                {% with class="btn-icon-inline icon-sword" %}{% include "rts-web/view/icon/sword.html" %}{% endwith %}
+                {% with class="btn-icon-inline icon-sword" %}{% include "rts-web/components/icon/sword.html" %}{% endwith %}
                 Add to Reinforcements
             </button>
             {% endifunequal %}

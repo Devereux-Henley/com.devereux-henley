@@ -125,46 +125,4 @@ test.describe.serial('Mount-selection overrides', () => {
     const slotCost = await lordSlot.locator('.draft-slot-cost').textContent();
     expect(Number(slotCost)).toBe(costPreview);
   });
-
-  test('GET with mount query param returns a preview without persisting', async ({ page, request }) => {
-    await createDraft(page);
-    await selectUnit(page, 'Emperor Karl Franz');
-    await addToMain(page);
-
-    const lordSlot = page.locator('#main-army-section-lord-slot');
-    await lordSlot.locator('.draft-slot-card-button').click();
-    await expect(page.locator('.draft-editing-indicator')).toBeVisible({ timeout: 5000 });
-
-    const mountRadios = page.locator('#draft-unit-form input[name="mount"]');
-    if (await mountRadios.count() <= 1) {
-      test.skip(true, 'Karl Franz has no seeded mounts.');
-    }
-
-    const mountKey = await mountRadios.nth(1).getAttribute('value');
-    const entryPatch = await page.locator('#draft-unit-form').getAttribute('hx-patch');
-    expect(entryPatch).toBeTruthy();
-
-    // The form's hx-patch points at /actions/ (mutation surface); the GET
-    // counterpart that returns the entry resource still lives on /api/.
-    // Build the GET URL from the same path with the prefix swapped.
-    const baseEntryUrl = new URL(entryPatch.replace('/actions/', '/api/'), page.url());
-    baseEntryUrl.searchParams.set('embed', 'unit');
-    const previewUrl = new URL(baseEntryUrl);
-    previewUrl.searchParams.set('mount', mountKey);
-
-    const response = await request.get(previewUrl.toString(), {
-      headers: { Accept: 'application/json' },
-    });
-    expect(response.status()).toBe(200);
-    const body = await response.json();
-    expect(body._embedded.unit.mounts.find(m => m.key === mountKey).selected).toBe(true);
-
-    // Persisted state on the draft was NOT touched — reloading the entry with
-    // no query params should still show no mount selected.
-    const baseResponse = await request.get(baseEntryUrl.toString(), {
-      headers: { Accept: 'application/json' },
-    });
-    const baseBody = await baseResponse.json();
-    expect(baseBody.mount).toBeFalsy();
-  });
 });

@@ -44,22 +44,27 @@
     (decode [_ data charset]
       (slurp (java.io.InputStreamReader. ^java.io.InputStream data ^String charset)))))
 
+(defn- encode-html
+  "/view handlers pre-render their templates and hand back a string body.
+   /api handlers return a typed map and let the encoder dispatch through
+   `view-fn` (`view-by-type`) to pick the chrome-less resource template.
+   Both kinds of body get the same text/html content type."
+  [view-fn data]
+  (if (map? data)
+    (safe-render view-fn data)
+    (do (log/trace data) data)))
+
 (defn html-encoder
-  [_options]
+  [{:keys [view-fn]}]
   (reify
     muuntaja.format.core/EncodeToBytes
     (encode-to-bytes [_ data charset]
-      (if (map? data)
-        (do
-          (log/error data)
-          (.getBytes "<div>Something went wrong.</div>" ^String charset))
-        (do
-          (log/trace data)
-          (.getBytes ^String data ^String charset))))
+      (.getBytes ^String (encode-html view-fn data) ^String charset))
     muuntaja.format.core/EncodeToOutputStream
     (encode-to-output-stream [_ data charset]
       (fn [^java.io.OutputStream output-stream]
-        (.write output-stream (.getBytes ^String data ^String charset))))))
+        (.write output-stream
+                (.getBytes ^String (encode-html view-fn data) ^String charset))))))
 
 (def html-htmx-format
   (muuntaja.format.core/map->Format

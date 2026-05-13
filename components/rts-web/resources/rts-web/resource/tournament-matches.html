@@ -1,0 +1,8 @@
+<section class="collection tournament-matches" aria-labelledby="tournament-matches-heading">
+  <h2 id="tournament-matches-heading" data-type="tournament/matches">Matches</h2>
+  <ul>
+    {% for m in data.matches %}
+    <li><a href="/api/tournament/{{ m.tournament-eid }}/match/{{ m.eid }}">match {{ m.phase-index }}/{{ m.round-index }} — {{ m.status }}</a></li>
+    {% endfor %}
+  </ul>
+</section>

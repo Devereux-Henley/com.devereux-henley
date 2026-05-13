@@ -1,0 +1,7 @@
+<section class="resource season-resource" aria-labelledby="season-heading">
+  <h2 id="season-heading" data-type="season/season">{{ data.name }}</h2>
+  <dl>
+    <dt>eid</dt><dd>{{ data.eid }}</dd>
+    {% if data.league-eid %}<dt>league</dt><dd><a href="/api/league/{{ data.league-eid }}">{{ data.league-eid }}</a></dd>{% endif %}
+  </dl>
+</section>

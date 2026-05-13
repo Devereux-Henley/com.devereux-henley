@@ -15,9 +15,9 @@
   [_init-key _dependencies]
   (fn [request]
     {:status 200
-     :body   (render/render "game-index.html"
-                            (assoc (web.view/base-context request)
-                                   :data (:game (:game-context request))))}))
+     :body   (render/render-view "game-index.html"
+                                 (assoc (web.view/base-context request)
+                                        :data (:game (:game-context request))))}))
 
 (defmethod integrant.core/init-key ::faction-view
   [_init-key dependencies]
