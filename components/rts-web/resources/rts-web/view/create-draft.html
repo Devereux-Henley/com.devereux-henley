@@ -8,10 +8,9 @@
     <form id="create-draft-form"
           class="form"
           aria-labelledby="create-draft-heading"
-          hx-put="/api/draft/{{draft-eid}}?version=1"
+          hx-put="/actions/draft/{{draft-eid}}?version=1"
           hx-ext="json-enc"
-          hx-target="#content"
-          hx-swap="innerHTML">
+          hx-swap="none">
         <input type="hidden" name="game-eid" value="{{game-eid}}"/>
         <div class="form-group">
             <label class="form-label required" for="faction-eid">Faction</label>

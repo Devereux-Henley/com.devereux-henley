@@ -19,6 +19,18 @@
            :reitit.core/match {:data {:get {:produces produces}}}}
     accept (assoc :headers {"accept" accept})))
 
+(defn- accept-after
+  "Returns the Accept header the handler observed — used to confirm the
+   middleware rewrote Accept to the route's first produced type."
+  [request]
+  (get-in request [:headers "accept"]))
+
+(def ^:private capture-handler
+  "Echoes the Accept header back so wildcard-rewrite tests can assert on it."
+  (produces-enforcement/wrap-enforce-produces
+   (fn [request]
+     {:status 200 :body (accept-after request)})))
+
 (deftest accept-includes-a-produced-type
   (testing "Accept header listing exactly the produced type → handler runs"
     (is (= :handler-ran (:body (wrapped (request-with ["application/json"] "application/json"))))))
@@ -34,13 +46,21 @@
   (testing "Accept asks for text/html but route produces htmx+html only → 406"
     (is (= 406 (:status (wrapped (request-with ["application/htmx+html"] "text/html")))))))
 
-(deftest accept-wildcards-pass
-  (testing "Accept: */* → handler runs"
-    (is (= :handler-ran (:body (wrapped (request-with ["application/htmx+html"] "*/*"))))))
-  (testing "missing Accept header → handler runs"
-    (is (= :handler-ran (:body (wrapped (request-with ["application/json"] nil))))))
-  (testing "blank Accept header → handler runs"
-    (is (= :handler-ran (:body (wrapped (request-with ["application/json"] "")))))))
+(deftest accept-wildcards-rewritten-to-first-produced
+  (testing "Accept: */* → handler runs; Accept rewritten to route's first produced type"
+    (is (= "application/htmx+html"
+           (:body (capture-handler (request-with ["application/htmx+html"] "*/*"))))))
+  (testing "missing Accept header → handler runs; Accept rewritten"
+    (is (= "application/json"
+           (:body (capture-handler (request-with ["application/json"] nil))))))
+  (testing "blank Accept header → handler runs; Accept rewritten"
+    (is (= "application/json"
+           (:body (capture-handler (request-with ["application/json"] ""))))))
+  (testing "browser Accept (text/html, */* fallback, no produced type listed) → rewritten to produces[0]"
+    (is (= "application/htmx+html"
+           (:body (capture-handler
+                   (request-with ["application/htmx+html"]
+                                 "text/html,application/xhtml+xml,*/*;q=0.8")))))))
 
 (deftest no-produces-on-route-passes
   (testing "matched route without :produces → handler runs regardless of Accept"

@@ -106,6 +106,21 @@
             :com.devereux-henley.rts-web.web.tournament.view/parse-replays-fragment
             :com.devereux-henley.rts-web.web.tournament.view/record-match-fragment))
 
+(def actions-configuration
+  (handlers :com.devereux-henley.rts-web.web.actions.draft/add-unit
+            :com.devereux-henley.rts-web.web.actions.draft/update-entry
+            :com.devereux-henley.rts-web.web.actions.draft/remove-entry
+            :com.devereux-henley.rts-web.web.actions.draft/create-draft
+            :com.devereux-henley.rts-web.web.actions.draft/update-draft
+            :com.devereux-henley.rts-web.web.actions.tournament/create-tournament
+            :com.devereux-henley.rts-web.web.actions.tournament/create-entry
+            :com.devereux-henley.rts-web.web.actions.tournament/delete-entry
+            :com.devereux-henley.rts-web.web.actions.tournament/update-status
+            :com.devereux-henley.rts-web.web.actions.tournament/update-registration
+            :com.devereux-henley.rts-web.web.actions.tournament/create-round
+            :com.devereux-henley.rts-web.web.actions.league/create-league
+            :com.devereux-henley.rts-web.web.actions.season/create-season))
+
 (def league-configuration
   (handlers :com.devereux-henley.rts-web.web.league.api/get-league
             :com.devereux-henley.rts-web.web.league.api/get-leagues
@@ -131,6 +146,7 @@
    rts-web/icon-routes
    rts-web/view-routes
    rts-web/components-routes
+   rts-web/actions-routes
    rts-web/api-routes])
 
 ;;; ─── Assembled system maps ─────────────────────────────────────────────────
@@ -146,7 +162,8 @@
          social-media-configuration
          tournament-configuration
          league-configuration
-         match-record-configuration))
+         match-record-configuration
+         actions-configuration))
 
 (def core-configuration
   "Production profile. Uses Ory for authentication."

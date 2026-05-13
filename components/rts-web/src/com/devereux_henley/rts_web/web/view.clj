@@ -7,6 +7,7 @@
   (:require
    [clojure.string :as string]
    [com.devereux-henley.rts-domain.contract :as domain]
+   [com.devereux-henley.rts-web.orchestration :as orchestration]
    [com.devereux-henley.rts-web.render :as render]
    [com.devereux-henley.rts-web.skin :as skin]
    [integrant.core]
@@ -28,11 +29,13 @@
 
 (defn base-context
   "Template context shared across every view — session, active navbar section,
-   and any game-context assembled by the middleware."
+   any game-context assembled by the middleware, and the HX-Trigger
+   listener registry templates use to wire fragment refresh."
   [request]
-  (merge {:session    (:ory-session request)
-          :active-nav (active-nav (:uri request))}
-         (:game-context request)))
+  (-> {:session    (:ory-session request)
+       :active-nav (active-nav (:uri request))}
+      (merge (:game-context request))
+      orchestration/assoc-listeners))
 
 (selmer.filters/add-filter! :not-empty? (comp boolean seq))
 

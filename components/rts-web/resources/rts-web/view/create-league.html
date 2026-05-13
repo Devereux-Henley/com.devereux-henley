@@ -10,10 +10,9 @@
         <form id="create-league-form"
               class="form league-form"
               aria-labelledby="create-league-heading"
-              hx-put="/api/league/{{league-eid}}?version=1"
+              hx-put="/actions/league/{{league-eid}}?version=1"
               hx-ext="json-enc"
-              hx-target="#content"
-              hx-swap="innerHTML">
+              hx-swap="none">
             <input type="hidden" name="game-eid" value="{{game-eid}}"/>
 
             <fieldset class="league-fieldset">

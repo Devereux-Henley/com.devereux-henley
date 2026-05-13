@@ -5,7 +5,8 @@
 {% block content %}
 <title id="page-title" hx-swap-oob="true">{{data.display-name}} | {{game.name}} | RTS-UI</title>
 
-<div class="draft-page{% if locked? %} draft-page--locked{% endif %}">
+<div id="draft-stage"
+     class="draft-page{% if locked? %} draft-page--locked{% endif %}">
 
     {% if locked? %}
     <aside class="draft-locked-banner" role="status">
@@ -32,7 +33,7 @@
                    autocomplete="off"
                    spellcheck="false"
                    aria-describedby="draft-nameplate-hint"
-                   {% if locked? %}readonly aria-readonly="true"{% else %}hx-patch="/api/draft/{{data.eid}}"
+                   {% if locked? %}readonly aria-readonly="true"{% else %}hx-patch="/actions/draft/{{data.eid}}"
                    hx-ext="json-enc"
                    hx-trigger="input changed delay:500ms, blur changed"
                    hx-swap="none"

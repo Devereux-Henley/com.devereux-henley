@@ -43,7 +43,7 @@
 {% endif %}
 <button class="draft-slot-remove"
         aria-labelledby="draft-slot-remove-label-{{unit.entry-eid}}"
-        hx-delete="/api/draft/{{section.draft-eid}}/entry/{{unit.entry-eid}}?section={{section.section}}"
+        hx-delete="/actions/draft/{{section.draft-eid}}/entry/{{unit.entry-eid}}?section={{section.section}}"
         hx-swap="none">
     <span class="sr-only" id="draft-slot-remove-label-{{unit.entry-eid}}">Remove {{unit.name}} from {{section.section-label}}</span>
     &#10005;

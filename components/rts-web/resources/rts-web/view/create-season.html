@@ -10,10 +10,9 @@
         <form id="create-season-form"
               class="form season-form"
               aria-labelledby="create-season-heading"
-              hx-put="/api/season/{{league-eid}}/{{season-eid}}"
+              hx-put="/actions/season/{{league-eid}}/{{season-eid}}"
               hx-ext="json-enc"
-              hx-target="#content"
-              hx-swap="innerHTML">
+              hx-swap="none">
 
             <fieldset class="season-fieldset">
                 <legend class="season-fieldset-legend">Season Details</legend>

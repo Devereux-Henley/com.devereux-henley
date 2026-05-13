@@ -144,9 +144,10 @@ test.describe.serial('Mount-selection overrides', () => {
     const entryPatch = await page.locator('#draft-unit-form').getAttribute('hx-patch');
     expect(entryPatch).toBeTruthy();
 
-    // Build the GET equivalent from the same path (the form PATCHes to persist;
-    // the GET version accepts ?mount= as an override for preview renders).
-    const baseEntryUrl = new URL(entryPatch, page.url());
+    // The form's hx-patch points at /actions/ (mutation surface); the GET
+    // counterpart that returns the entry resource still lives on /api/.
+    // Build the GET URL from the same path with the prefix swapped.
+    const baseEntryUrl = new URL(entryPatch.replace('/actions/', '/api/'), page.url());
     baseEntryUrl.searchParams.set('embed', 'unit');
     const previewUrl = new URL(baseEntryUrl);
     previewUrl.searchParams.set('mount', mountKey);
