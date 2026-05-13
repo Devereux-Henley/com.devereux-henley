@@ -2,7 +2,7 @@
   <h2 id="tournament-collection-heading" data-type="collection/tournament">Tournaments</h2>
   <ul>
     {% for t in data._embedded.results %}
-    <li><a href="/api/tournament/{{ t.eid }}">{{ t.name }}</a></li>
+    <li><a href="{{ t._links.self }}">{{ t.name }}</a></li>
     {% endfor %}
   </ul>
 </section>

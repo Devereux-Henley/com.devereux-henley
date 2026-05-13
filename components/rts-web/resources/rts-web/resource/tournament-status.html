@@ -1,6 +1,6 @@
 <section class="resource tournament-status-resource" aria-labelledby="tournament-status-heading">
   <h2 id="tournament-status-heading" data-type="tournament/status">Status: <span data-status="{{ data.status }}">{{ data.status }}</span></h2>
-  <nav><a href="/api/tournament/{{ data.eid }}" rel="tournament">tournament</a></nav>
+  <nav><a href="{{ data._links.tournament }}" rel="tournament">tournament</a></nav>
   {% if data.available-transitions|not-empty? %}
   <ul>
     {% for t in data.available-transitions %}
