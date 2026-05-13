@@ -30,7 +30,7 @@
                    end
                    on click elsewhere add @hidden to #factions-menu
                    then set my @aria-expanded to 'false'">
-            {% include "rts-web/template/icon/sword.html" %}
+            {% include "rts-web/components/icon/sword.html" %}
             Factions
         </button>
         <div class="dropdown-menu" id="factions-menu" role="menu" hidden>
@@ -64,7 +64,7 @@
 
 <div id="game-drafts-link" hx-swap-oob="true">
     <a class="nav-item nav-item-with-icon" href="/view/game/{{data.eid}}/draft/me.html">
-        {% include "rts-web/template/icon/drafts.html" %}
+        {% include "rts-web/components/icon/drafts.html" %}
         My Drafts
     </a>
 </div>

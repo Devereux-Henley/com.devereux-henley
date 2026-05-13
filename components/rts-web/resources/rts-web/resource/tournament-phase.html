@@ -1,6 +1,6 @@
 {% with phase-group=data.phase-group tournament-state=data.tournament-state game-eid=data.game-eid %}
-{% ifequal phase-group.phase-type "swiss" %}{% include "rts-web/template/tournament/standings.html" %}{% endifequal %}
-{% ifequal phase-group.phase-type "round-robin" %}{% include "rts-web/template/tournament/standings.html" %}{% endifequal %}
+{% ifequal phase-group.phase-type "swiss" %}{% include "rts-web/components/tournament/standings.html" %}{% endifequal %}
+{% ifequal phase-group.phase-type "round-robin" %}{% include "rts-web/components/tournament/standings.html" %}{% endifequal %}
 
 <section class="tourney-section" aria-labelledby="phase-{{phase-group.phase}}-heading">
     {% ifequal phase-group.phase-type "single-elimination" %}{% include "rts-web/components/tournament/phase-single-elimination.html" %}{% endifequal %}
