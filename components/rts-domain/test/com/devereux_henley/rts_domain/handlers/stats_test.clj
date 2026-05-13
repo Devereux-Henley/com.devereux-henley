@@ -19,8 +19,7 @@
   (with-redefs [data-access.contract/get-faction-standings-for-game (fn [_ _] rows)]
     (let [resp (handlers.stats/get-game-faction-standings test-deps test-eid)]
       (is (= :stats/game-faction-standings (:type resp)))
-      (is (= "game" (:scope resp)))
-      (is (= test-eid (:scope-eid resp)))
+      (is (= test-eid (:game-eid resp)))
       (is (= 2 (count (:rows resp))))
       (is (every? #(= :stats/faction (:type %)) (:rows resp))))))
 
@@ -28,14 +27,14 @@
   (with-redefs [data-access.contract/get-faction-standings-for-league (fn [_ _] rows)]
     (let [resp (handlers.stats/get-league-faction-standings test-deps test-eid)]
       (is (= :stats/league-faction-standings (:type resp)))
-      (is (= "league" (:scope resp)))
+      (is (= test-eid (:league-eid resp)))
       (is (every? #(= :stats/faction (:type %)) (:rows resp))))))
 
 (deftest season-faction-standings-tags-rows
   (with-redefs [data-access.contract/get-faction-standings-for-season (fn [_ _] rows)]
     (let [resp (handlers.stats/get-season-faction-standings test-deps test-eid)]
       (is (= :stats/season-faction-standings (:type resp)))
-      (is (= "season" (:scope resp))))))
+      (is (= test-eid (:season-eid resp))))))
 
 (deftest faction-standings-empty-result
   (with-redefs [data-access.contract/get-faction-standings-for-game (fn [_ _] [])]

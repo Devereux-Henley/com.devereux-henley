@@ -10,16 +10,13 @@
   `_links` shows up automatically, including on any nested
   `:model/model` resources reachable through `:_embedded`.
 
-  Collections (`:model/type :model/collection`) are passed through
-  unchanged here — their `_links.self` requires a
-  `:collection/link`-annotated `:specification` that none of our list
-  endpoints currently use, so collection handlers continue to inject
-  `_links` themselves."
+  Maps without `:model/type :model/model` (notably collection
+  responses) pass through unchanged; collection handlers continue to
+  inject `_links.self` themselves."
   (:require
    [com.devereux-henley.schema.contract :as schema]
    [integrant.core]
    [malli.core]
-   [malli.transform]
    [reitit.core]))
 
 (defn- response-schema
@@ -29,19 +26,6 @@
                 (:uri request))
         method (:request-method request)]
     (get-in match [:result method :data :responses status :body])))
-
-(defn- model-only-transformer
-  "Like `schema.contract/model-transformer` but skips collections.
-   Collections (`:model/type :model/collection`) would otherwise
-   crash because our list responses don't carry `:specification`."
-  [route-data]
-  (malli.transform/transformer
-   {:name     :model
-    :encoders {:map {:compile
-                     (fn [schema _]
-                       (if (= :model/model (:model/type (malli.core/properties schema)))
-                         (schema/handle-model-transform route-data schema)
-                         identity))}}}))
 
 (defn wrap-model-transform
   [hostname]
@@ -56,7 +40,7 @@
         (if (and schema (map? body))
           (assoc response :body
                  (malli.core/encode schema body
-                                    (model-only-transformer
+                                    (schema/model-transformer
                                      {:hostname hostname :router router})))
           response)))))
 

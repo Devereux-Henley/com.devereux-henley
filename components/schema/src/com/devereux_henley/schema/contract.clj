@@ -7,7 +7,6 @@
    [malli.util]
    [reitit.core])
   (:import
-   [java.net URL]
    [java.time Instant LocalDate LocalDateTime ZoneId]
    [java.util UUID]))
 
@@ -147,19 +146,7 @@
 (def base-collection-resource
   (to-schema
    [:map
-    {:model/type :model/collection}
-    [:specification
-     [:map
-      [:since :instant]
-      [:size :pos-int]
-      [:offset :int]]]
-    [:_links
-     [:map
-      [:self url]
-      [:next {:optional true} url]
-      [:previous {:optional true} url]
-      [:first {:optional true} url]
-      [:last {:optional true} url]]]]))
+    [:_links [:map [:self url]]]]))
 
 (defn create-link-schema
   [input-schema]
@@ -248,13 +235,6 @@
    [:map
     [:version {:optional true} :pos-int]]))
 
-(def collection-parameters
-  (to-schema
-   [:map
-    [:since :instant]
-    [:size {:optional true :json-schema/default 10} :pos-int]
-    [:offset {:optional true :json-schema/default 0} :int]]))
-
 (defn key-to-link-mapping
   [schema]
   (reduce (fn [acc [map-key properties _map-value-schema]]
@@ -271,21 +251,6 @@
    (str hostname (-> router
                      (reitit.core/match-by-name! route-name path-parameters)
                      (reitit.core/match->path query-parameters)))))
-
-(defn nav-transformer
-  [route-data]
-  (malli.transform/transformer
-   {:name     :nav
-    :decoders {:map (fn [value] (vary-meta value dissoc `clojure.core.protocols/nav))}
-    :encoders {:map {:compile
-                     (fn [schema _]
-                       (let [mapping (key-to-link-mapping schema)]
-                         (fn [value]
-                           (vary-meta value assoc `clojure.core.protocols/nav
-                                      (fn [_coll k v]
-                                        (if-let [link (get mapping k)]
-                                          (URL. (to-resource-link route-data link {:eid v}))
-                                          v))))))}}}))
 
 (def sqlite-transformer
   (malli.transform/transformer
@@ -320,6 +285,11 @@
              value))
 
 (defn handle-model-transform
+  "Returns a malli encoder fn for a `:map` schema annotated
+   `{:model/type :model/model}`. Walks the input value once: each key
+   whose schema field carries `:model/link <route-name>` becomes a
+   `_links.<key>` entry (or `_links.self` for `:eid`), resolved against
+   the matched reitit route. All other keys pass through unchanged."
   [route-data schema]
   (let [mapping (key-to-link-mapping schema)]
     (fn [value]
@@ -327,10 +297,6 @@
         (reduce-kv
          (fn [acc k v]
            (cond
-             ;; Linked key with a nil value (e.g. an optional foreign-key eid
-             ;; that wasn't set): skip both the field and its link entry so
-             ;; the response stays clean and reitit.core/match->path doesn't
-             ;; receive a nil :eid.
              (and (contains? mapping k) (nil? v))
              acc
 
@@ -349,88 +315,20 @@
 
              :else
              (assoc acc k v)))
-         (vary-meta {}
-                    assoc
-                    `clojure.core.protocols/nav
-                    (get (meta value)
-                         `clojure.core.protocols/nav))
+         {}
          value)))))
 
-(defn next-specification
-  [specification]
-  (let [{:keys [offset size]} specification]
-    (when (and (some? offset) (some? size))
-      (assoc specification
-             :offset
-             (+ offset size)))))
-
-(defn previous-specification
-  [specification]
-  (let [{:keys [offset size]} specification]
-    (when (and (some? offset) (some? size) (> (- offset size) 0))
-      (assoc specification
-             :offset
-             (- offset size)))))
-
-(defn first-specification
-  [specification]
-  (let [{:keys [offset size]} specification]
-    (when (and (some? offset) (some? size))
-      (assoc specification
-             :offset
-             0))))
-
-(defn last-specification
-  [_specification]
-  ;; TODO Implement last.
-  nil)
-
-;; TODO Implement specification query params, additional links.
-(defn handle-collection-transform
-  [route-data schema]
-  (let [link (some (fn [[map-key properties _map-value-schema]]
-                     (and
-                      (= map-key :specification)
-                      (:collection/link properties)))
-                   (malli.core/children schema))]
-    (fn [value]
-      (let [{:keys [specification]} value
-            next                    (next-specification specification)
-            previous                (previous-specification specification)
-            first                   (first-specification specification)
-            last                    (last-specification specification)]
-        (-> value
-            (assoc-in [:_links :self] (to-resource-link route-data link {} specification))
-            (assoc-in [:_links :next] (to-resource-link route-data link {} next))
-            (as-> % (if first
-                      (assoc-in %
-                                [:_links :first]
-                                (to-resource-link route-data link {} first))
-                      %))
-            (as-> % (if previous
-                      (assoc-in %
-                                [:_links :previous]
-                                (to-resource-link route-data link {} previous))
-                      %))
-            (as-> % (if last
-                      (assoc-in %
-                                [:_links :first]
-                                (to-resource-link route-data link {} last))
-                      %)))))))
-
-;; Walk the input value.
-;; For each key in the model, add that key to a links array.
-;; Do this for every map in the model.
 (defn model-transformer
+  "Malli encoder that walks a value against its schema, applying
+   `handle-model-transform` to every `:map` whose properties include
+   `{:model/type :model/model}`. Maps without that annotation (notably
+   collection responses, which manage their own `_links.self` in
+   handlers) pass through unchanged."
   [route-data]
   (malli.transform/transformer
-   (nav-transformer route-data)
    {:name     :model
-    :decoders {}
     :encoders {:map {:compile
                      (fn [schema _]
-                       (let [properties (malli.core/properties schema)]
-                         (case (:model/type properties)
-                           :model/collection (handle-collection-transform route-data schema)
-                           :model/model (handle-model-transform route-data schema)
-                           identity)))}}}))
+                       (if (= :model/model (:model/type (malli.core/properties schema)))
+                         (handle-model-transform route-data schema)
+                         identity))}}}))
