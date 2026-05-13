@@ -5,8 +5,19 @@
   refresh."
   (:require
    [com.devereux-henley.rts-domain.contract :as domain]
+   [com.devereux-henley.rts-web.orchestration :as orchestration]
    [com.devereux-henley.rts-web.web.actions.common :as common]
    [integrant.core]))
+
+(derive ::web-triggers ::orchestration/web-trigger-source)
+
+(defmethod integrant.core/init-key ::web-triggers
+  [_init-key _config]
+  {:tournament-stage ["tournament-status-updated"
+                      "tournament-entry-created"
+                      "tournament-entry-deleted"
+                      "tournament-registration-updated"
+                      "tournament-round-created"]})
 
 (defmethod integrant.core/init-key ::create-tournament
   [_init-key dependencies]

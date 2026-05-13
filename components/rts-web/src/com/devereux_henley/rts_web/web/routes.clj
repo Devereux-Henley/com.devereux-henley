@@ -1,6 +1,7 @@
 (ns com.devereux-henley.rts-web.web.routes
   (:require
    [com.devereux-henley.rts-domain.contract :as domain]
+   [com.devereux-henley.rts-web.orchestration :as orchestration]
    [com.devereux-henley.rts-web.web.actions.draft :as web.actions.draft]
    [com.devereux-henley.rts-web.web.actions.league :as web.actions.league]
    [com.devereux-henley.rts-web.web.actions.season :as web.actions.season]
@@ -57,7 +58,8 @@
 
 (def view-routes
   ["/view"
-   {:no-doc true}
+   {:no-doc     true
+    :middleware [(integrant.core/ref ::orchestration/middleware)]}
    ["/game/index.html"
     {:get {:produces ["text/html"]
            :handler  (integrant.core/ref ::web.view/game-selector-view)}}]
@@ -188,7 +190,8 @@
 
 (def components-routes
   ["/components"
-   {:no-doc true}
+   {:no-doc     true
+    :middleware [(integrant.core/ref ::orchestration/middleware)]}
    ["/faction/:eid/faction-card.html"
     {:get {:produces   ["application/htmx+html"]
            :parameters {:path  schema.contract/id-path-parameter

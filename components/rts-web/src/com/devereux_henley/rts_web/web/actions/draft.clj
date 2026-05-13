@@ -6,8 +6,17 @@
   so future listener-bound /components fragments can react granularly."
   (:require
    [com.devereux-henley.rts-domain.contract :as domain]
+   [com.devereux-henley.rts-web.orchestration :as orchestration]
    [com.devereux-henley.rts-web.web.actions.common :as common]
    [integrant.core]))
+
+(derive ::web-triggers ::orchestration/web-trigger-source)
+
+(defmethod integrant.core/init-key ::web-triggers
+  [_init-key _config]
+  {:unit-panel  ["draft-entry-created" "draft-entry-updated" "draft-entry-deleted"]
+   :draft-stage ["draft-entry-created" "draft-entry-updated" "draft-entry-deleted"
+                 "draft-updated"]})
 
 (defmethod integrant.core/init-key ::add-unit
   [_init-key dependencies]
