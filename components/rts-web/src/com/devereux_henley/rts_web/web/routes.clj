@@ -1,6 +1,11 @@
 (ns com.devereux-henley.rts-web.web.routes
   (:require
    [com.devereux-henley.rts-domain.contract :as domain]
+   [com.devereux-henley.rts-web.orchestration :as orchestration]
+   [com.devereux-henley.rts-web.web.actions.draft :as web.actions.draft]
+   [com.devereux-henley.rts-web.web.actions.league :as web.actions.league]
+   [com.devereux-henley.rts-web.web.actions.season :as web.actions.season]
+   [com.devereux-henley.rts-web.web.actions.tournament :as web.actions.tournament]
    [com.devereux-henley.rts-web.web.asset.api :as web.asset.api]
    [com.devereux-henley.rts-web.web.configuration :as web.configuration]
    [com.devereux-henley.rts-web.web.draft.api :as web.draft.api]
@@ -53,7 +58,8 @@
 
 (def view-routes
   ["/view"
-   {:no-doc true}
+   {:no-doc     true
+    :middleware [(integrant.core/ref ::orchestration/middleware)]}
    ["/game/index.html"
     {:get {:produces ["text/html"]
            :handler  (integrant.core/ref ::web.view/game-selector-view)}}]
@@ -184,7 +190,8 @@
 
 (def components-routes
   ["/components"
-   {:no-doc true}
+   {:no-doc     true
+    :middleware [(integrant.core/ref ::orchestration/middleware)]}
    ["/faction/:eid/faction-card.html"
     {:get {:produces   ["application/htmx+html"]
            :parameters {:path  schema.contract/id-path-parameter
@@ -256,6 +263,92 @@
                                 [:phase-index :int]])}
            :responses  {200 {:body domain/phase-response}}
            :handler    (integrant.core/ref ::web.tournament.api/get-phase)}}]])
+
+(def actions-routes
+  ["/actions"
+   {:no-doc true}
+   ["/draft/:draft-eid/unit/:eid"
+    {:post {:produces   ["application/htmx+html"]
+            :parameters {:path  (schema.contract/to-schema
+                                 [:map
+                                  [:draft-eid :uuid]
+                                  [:eid :uuid]])
+                         :query (schema.contract/to-schema
+                                 [:map
+                                  [:section [:enum "main" "reinforcements"]]])
+                         :body  domain/add-unit-to-draft-specification}
+            :handler    (integrant.core/ref ::web.actions.draft/add-unit)}}]
+   ["/draft/:draft-eid/entry/:eid"
+    {:patch  {:produces   ["application/htmx+html"]
+              :parameters {:path  (schema.contract/to-schema
+                                   [:map
+                                    [:draft-eid :uuid]
+                                    [:eid :uuid]])
+                           :query (schema.contract/to-schema
+                                   [:map
+                                    [:section [:enum "main" "reinforcements"]]])
+                           :body  domain/add-unit-to-draft-specification}
+              :handler    (integrant.core/ref ::web.actions.draft/update-entry)}
+     :delete {:produces   ["application/htmx+html"]
+              :parameters {:path  (schema.contract/to-schema
+                                   [:map
+                                    [:draft-eid :uuid]
+                                    [:eid :uuid]])
+                           :query (schema.contract/to-schema
+                                   [:map
+                                    [:section [:enum "main" "reinforcements"]]])}
+              :handler    (integrant.core/ref ::web.actions.draft/remove-entry)}}]
+   ["/draft/:eid"
+    {:put   {:produces   ["application/htmx+html"]
+             :parameters {:path  schema.contract/id-path-parameter
+                          :query schema.contract/version-query-parameter
+                          :body  domain/create-draft-specification}
+             :handler    (integrant.core/ref ::web.actions.draft/create-draft)}
+     :patch {:produces   ["application/htmx+html"]
+             :parameters {:path schema.contract/id-path-parameter
+                          :body domain/update-draft-specification}
+             :handler    (integrant.core/ref ::web.actions.draft/update-draft)}}]
+   ["/tournament/:eid"
+    {:put {:produces   ["application/htmx+html"]
+           :parameters {:path  schema.contract/id-path-parameter
+                        :query schema.contract/version-query-parameter
+                        :body  domain/create-tournament-specification}
+           :handler    (integrant.core/ref ::web.actions.tournament/create-tournament)}}]
+   ["/tournament/:eid/entry/me"
+    {:post   {:produces   ["application/htmx+html"]
+              :parameters {:path schema.contract/id-path-parameter}
+              :handler    (integrant.core/ref ::web.actions.tournament/create-entry)}
+     :delete {:produces   ["application/htmx+html"]
+              :parameters {:path schema.contract/id-path-parameter}
+              :handler    (integrant.core/ref ::web.actions.tournament/delete-entry)}}]
+   ["/tournament/:eid/status"
+    {:put {:produces   ["application/htmx+html"]
+           :parameters {:path schema.contract/id-path-parameter
+                        :body domain/update-status-specification}
+           :handler    (integrant.core/ref ::web.actions.tournament/update-status)}}]
+   ["/tournament/:eid/registration"
+    {:patch {:produces   ["application/htmx+html"]
+             :parameters {:path schema.contract/id-path-parameter
+                          :body domain/update-registration-specification}
+             :handler    (integrant.core/ref ::web.actions.tournament/update-registration)}}]
+   ["/tournament/:eid/round"
+    {:post {:produces   ["application/htmx+html"]
+            :parameters {:path schema.contract/id-path-parameter}
+            :handler    (integrant.core/ref ::web.actions.tournament/create-round)}}]
+   ["/league/:eid"
+    {:put {:produces   ["application/htmx+html"]
+           :parameters {:path  schema.contract/id-path-parameter
+                        :query schema.contract/version-query-parameter
+                        :body  domain/create-league-specification}
+           :handler    (integrant.core/ref ::web.actions.league/create-league)}}]
+   ["/season/:league-eid/:eid"
+    {:put {:produces   ["application/htmx+html"]
+           :parameters {:path (schema.contract/to-schema
+                               [:map
+                                [:league-eid :uuid]
+                                [:eid :uuid]])
+                        :body domain/create-season-specification}
+           :handler    (integrant.core/ref ::web.actions.season/create-season)}}]])
 
 (def api-routes
   ["/api"
@@ -354,10 +447,10 @@
             :responses  {200 {:body domain/draft-unit-resource}
                          500 {:body domain/draft-error-response}}
             :handler    (integrant.core/ref ::web.draft.api/get-draft-unit)}
-     :post {:produces   ["application/json" "application/hal+json" "application/htmx+html"]
+     :post {:produces   ["application/json" "application/hal+json"]
             :openapi    {:summary      "Assigns a unit to the specified draft."
                          :tags         ["draft"]
-                         :produces     ["application/json" "application/hal+json" "application/htmx+html"]
+                         :produces     ["application/json" "application/hal+json"]
                          :operation-id "draft-unit/create"}
             :parameters {:path  (schema.contract/to-schema
                                  [:map
@@ -396,10 +489,10 @@
                            404 {:body domain/draft-error-response}
                            500 {:body domain/draft-error-response}}
               :handler    (integrant.core/ref ::web.draft.api/get-draft-entry)}
-     :patch  {:produces   ["application/json" "application/hal+json" "application/htmx+html"]
+     :patch  {:produces   ["application/json" "application/hal+json"]
               :openapi    {:summary      "Updates the selections of a placed draft entry."
                            :tags         ["draft"]
-                           :produces     ["application/json" "application/hal+json" "application/htmx+html"]
+                           :produces     ["application/json" "application/hal+json"]
                            :operation-id "draft-entry/update"}
               :parameters {:path  (schema.contract/to-schema
                                    [:map
@@ -413,10 +506,10 @@
                            422 {:body domain/draft-error-response}
                            500 {:body domain/draft-error-response}}
               :handler    (integrant.core/ref ::web.draft.api/draft-update-unit)}
-     :delete {:produces   ["application/json" "application/hal+json" "application/htmx+html"]
+     :delete {:produces   ["application/json" "application/hal+json"]
               :openapi    {:summary      "Removes a placed entry from the specified draft."
                            :tags         ["draft"]
-                           :produces     ["application/json" "application/hal+json" "application/htmx+html"]
+                           :produces     ["application/json" "application/hal+json"]
                            :operation-id "draft-entry/delete"}
               :parameters {:path  (schema.contract/to-schema
                                    [:map
@@ -432,9 +525,9 @@
     {:name  :draft/by-eid
      :put   {:summary    "Creates a draft with the given eid and version."
              :openapi    {:tags         ["draft"]
-                          :produces     ["application/json" "application/hal+json" "application/htmx+html"]
+                          :produces     ["application/json" "application/hal+json"]
                           :operation-id "draft/create"}
-             :produces   ["application/json" "application/hal+json" "application/htmx+html"]
+             :produces   ["application/json" "application/hal+json"]
              :parameters {:path  schema.contract/id-path-parameter
                           :query schema.contract/version-query-parameter
                           :body  domain/create-draft-specification}
@@ -442,9 +535,9 @@
              :handler    (integrant.core/ref ::web.draft.api/create-draft)}
      :patch {:summary    "Applies a partial update to a draft (currently only :name)."
              :openapi    {:tags         ["draft"]
-                          :produces     ["application/json" "application/hal+json" "application/htmx+html"]
+                          :produces     ["application/json" "application/hal+json"]
                           :operation-id "draft/update"}
-             :produces   ["application/json" "application/hal+json" "application/htmx+html"]
+             :produces   ["application/json" "application/hal+json"]
              :parameters {:path schema.contract/id-path-parameter
                           :body domain/update-draft-specification}
              :responses  {200 {:body domain/draft-resource}

@@ -28,11 +28,17 @@
 
 (defn base-context
   "Template context shared across every view — session, active navbar section,
-   and any game-context assembled by the middleware."
+   any game-context assembled by the middleware, and the HX-Trigger
+   registry templates use to wire fragment refresh.
+
+   The trigger registry is injected onto the request by
+   `orchestration/middleware`; this function just surfaces it under
+   `:triggers` for Selmer (`{{ triggers.<event-id> }}`)."
   [request]
-  (merge {:session    (:ory-session request)
-          :active-nav (active-nav (:uri request))}
-         (:game-context request)))
+  (-> {:session    (:ory-session request)
+       :active-nav (active-nav (:uri request))
+       :triggers   (:web-triggers request)}
+      (merge (:game-context request))))
 
 (selmer.filters/add-filter! :not-empty? (comp boolean seq))
 

@@ -8,7 +8,7 @@
              panel shows mark/lore/mount/abilities/spells as chosen, but
              no hx-* triggers fire and every input is `disabled` below. #}
           {% else %}{% if data.section %}
-          hx-patch="/api/draft/{{data.draft-eid}}/entry/{{data.eid}}?section={{data.section}}"
+          hx-patch="/actions/draft/{{data.draft-eid}}/entry/{{data.eid}}?section={{data.section}}"
           hx-ext="json-enc"
           {% else %}
           hx-get="/components/draft/{{unit.draft-eid}}/unit/{{unit.eid}}/unit-panel.html"
@@ -63,7 +63,7 @@
             {% else %}{% if not data.locked? %}
             <button class="btn btn-primary draft-add-btn"
                     type="button"
-                    hx-post="/api/draft/{{unit.draft-eid}}/unit/{{unit.eid}}?section=main"
+                    hx-post="/actions/draft/{{unit.draft-eid}}/unit/{{unit.eid}}?section=main"
                     hx-include="#draft-unit-form"
                     hx-ext="json-enc"
                     hx-swap="none">
@@ -74,7 +74,7 @@
             {% ifunequal unit.unit-category-name "Lord" %}
             <button class="btn btn-primary draft-add-btn draft-add-btn--reinf"
                     type="button"
-                    hx-post="/api/draft/{{unit.draft-eid}}/unit/{{unit.eid}}?section=reinforcements"
+                    hx-post="/actions/draft/{{unit.draft-eid}}/unit/{{unit.eid}}?section=reinforcements"
                     hx-include="#draft-unit-form"
                     hx-ext="json-enc"
                     hx-swap="none">
@@ -420,7 +420,7 @@
        query param. #}
     {% if data.section %}
     <form id="draft-mark-form"
-          hx-patch="/api/draft/{{data.draft-eid}}/entry/{{data.eid}}?section={{data.section}}"
+          hx-patch="/actions/draft/{{data.draft-eid}}/entry/{{data.eid}}?section={{data.section}}"
           hx-ext="json-enc"
           hx-trigger="patchFamily"
           hx-target="#draft-unit-body"
@@ -428,7 +428,7 @@
           hx-swap="outerHTML"
           hx-headers='{"Accept": "application/htmx+html"}'></form>
     <form id="draft-lore-form"
-          hx-patch="/api/draft/{{data.draft-eid}}/entry/{{data.eid}}?section={{data.section}}"
+          hx-patch="/actions/draft/{{data.draft-eid}}/entry/{{data.eid}}?section={{data.section}}"
           hx-ext="json-enc"
           hx-trigger="patchFamily"
           hx-target="#draft-unit-body"

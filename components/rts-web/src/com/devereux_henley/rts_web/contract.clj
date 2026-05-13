@@ -1,6 +1,11 @@
 (ns com.devereux-henley.rts-web.contract
   (:require
+   [com.devereux-henley.rts-web.orchestration]
    [com.devereux-henley.rts-web.render :as render]
+   [com.devereux-henley.rts-web.web.actions.draft]
+   [com.devereux-henley.rts-web.web.actions.league]
+   [com.devereux-henley.rts-web.web.actions.season]
+   [com.devereux-henley.rts-web.web.actions.tournament]
    [com.devereux-henley.rts-web.web.draft.api]
    [com.devereux-henley.rts-web.web.draft.view]
    [com.devereux-henley.rts-web.web.game.api]
@@ -22,6 +27,7 @@
 (def icon-routes web.routes/icon-routes)
 (def view-routes web.routes/view-routes)
 (def components-routes web.routes/components-routes)
+(def actions-routes web.routes/actions-routes)
 (def api-routes web.routes/api-routes)
 
 (def render-view render/render)

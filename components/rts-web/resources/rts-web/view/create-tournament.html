@@ -10,10 +10,9 @@
         <form id="create-tournament-form"
               class="form tournament-form"
               aria-labelledby="create-tournament-heading"
-              hx-put="/api/tournament/{{tournament-eid}}?version=1"
+              hx-put="/actions/tournament/{{tournament-eid}}?version=1"
               hx-ext="json-enc"
-              hx-target="#content"
-              hx-swap="innerHTML">
+              hx-swap="none">
             <input type="hidden" name="game-eid" value="{{game-eid}}"/>
 
             <!-- ─── Basic Info ─────────────────────────────────────── -->

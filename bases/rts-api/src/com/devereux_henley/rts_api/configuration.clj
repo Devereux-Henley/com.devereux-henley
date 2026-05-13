@@ -106,6 +106,36 @@
             :com.devereux-henley.rts-web.web.tournament.view/parse-replays-fragment
             :com.devereux-henley.rts-web.web.tournament.view/record-match-fragment))
 
+(def actions-configuration
+  (handlers :com.devereux-henley.rts-web.web.actions.draft/add-unit
+            :com.devereux-henley.rts-web.web.actions.draft/update-entry
+            :com.devereux-henley.rts-web.web.actions.draft/remove-entry
+            :com.devereux-henley.rts-web.web.actions.draft/create-draft
+            :com.devereux-henley.rts-web.web.actions.draft/update-draft
+            :com.devereux-henley.rts-web.web.actions.tournament/create-tournament
+            :com.devereux-henley.rts-web.web.actions.tournament/create-entry
+            :com.devereux-henley.rts-web.web.actions.tournament/delete-entry
+            :com.devereux-henley.rts-web.web.actions.tournament/update-status
+            :com.devereux-henley.rts-web.web.actions.tournament/update-registration
+            :com.devereux-henley.rts-web.web.actions.tournament/create-round
+            :com.devereux-henley.rts-web.web.actions.league/create-league
+            :com.devereux-henley.rts-web.web.actions.season/create-season))
+
+(def orchestration-configuration
+  "Wires the HX-Trigger registry. Each `::web-triggers` key contributes its
+   `{event-id [event …]}` map; the registry init-key gathers them via
+   `refset` (each contributing key derives from
+   `:com.devereux-henley.rts-web.orchestration/web-trigger-source` in its
+   own namespace) and compiles them into HTMX trigger strings. The
+   middleware then assocs the assembled registry onto every request that
+   flows through view / components routes. `rts-web/contract` requires
+   the orchestration namespace, so its defmethods register transitively
+   when this configuration is loaded."
+  {:com.devereux-henley.rts-web.web.actions.draft/web-triggers      {}
+   :com.devereux-henley.rts-web.web.actions.tournament/web-triggers {}
+   :com.devereux-henley.rts-web.orchestration/registry              {:sources (integrant.core/refset :com.devereux-henley.rts-web.orchestration/web-trigger-source)}
+   :com.devereux-henley.rts-web.orchestration/middleware            {:registry (integrant.core/ref :com.devereux-henley.rts-web.orchestration/registry)}})
+
 (def league-configuration
   (handlers :com.devereux-henley.rts-web.web.league.api/get-league
             :com.devereux-henley.rts-web.web.league.api/get-leagues
@@ -131,6 +161,7 @@
    rts-web/icon-routes
    rts-web/view-routes
    rts-web/components-routes
+   rts-web/actions-routes
    rts-web/api-routes])
 
 ;;; ─── Assembled system maps ─────────────────────────────────────────────────
@@ -146,7 +177,9 @@
          social-media-configuration
          tournament-configuration
          league-configuration
-         match-record-configuration))
+         match-record-configuration
+         actions-configuration
+         orchestration-configuration))
 
 (def core-configuration
   "Production profile. Uses Ory for authentication."
