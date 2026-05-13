@@ -1,0 +1,9 @@
+<section class="resource game-social-link-resource" aria-labelledby="game-social-link-heading">
+  <h2 id="game-social-link-heading" data-type="game/social-link">Social link</h2>
+  <dl>
+    <dt>eid</dt><dd>{{ data.eid }}</dd>
+    <dt>game</dt><dd><a href="/api/game/{{ data.game-eid }}">{{ data.game-eid }}</a></dd>
+    <dt>platform</dt><dd><a href="/api/social-media/{{ data.social-media-eid }}">{{ data.social-media-eid }}</a></dd>
+    <dt>url</dt><dd><a href="{{ data.url }}">{{ data.url }}</a></dd>
+  </dl>
+</section>

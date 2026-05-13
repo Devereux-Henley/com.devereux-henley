@@ -1,0 +1,12 @@
+<section class="resource tournament-match-resource" aria-labelledby="tournament-match-heading">
+  <h2 id="tournament-match-heading" data-type="tournament/match">Match</h2>
+  <dl>
+    <dt>eid</dt><dd>{{ data.eid }}</dd>
+    <dt>phase-index</dt><dd>{{ data.phase-index }}</dd>
+    <dt>round-index</dt><dd>{{ data.round-index }}</dd>
+    <dt>status</dt><dd data-status="{{ data.status }}">{{ data.status }}</dd>
+    {% if data.player-one-sub %}<dt>player-one</dt><dd>{{ data.player-one-sub }}</dd>{% endif %}
+    {% if data.player-two-sub %}<dt>player-two</dt><dd>{{ data.player-two-sub }}</dd>{% endif %}
+    {% if data.winner-sub %}<dt>winner</dt><dd>{{ data.winner-sub }}</dd>{% endif %}
+  </dl>
+</section>

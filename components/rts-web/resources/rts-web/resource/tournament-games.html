@@ -1,0 +1,8 @@
+<section class="collection tournament-games" aria-labelledby="tournament-games-heading">
+  <h2 id="tournament-games-heading" data-type="tournament/games">Games</h2>
+  <ul>
+    {% for g in data.games %}
+    <li data-winner-sub="{{ g.winner-sub }}">{{ g.winner-sub }}</li>
+    {% endfor %}
+  </ul>
+</section>

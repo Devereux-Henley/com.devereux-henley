@@ -1,0 +1,11 @@
+<section class="resource stats-resource" aria-labelledby="stats-heading">
+  <h2 id="stats-heading" data-type="stats/faction-standings">Faction standings</h2>
+  <table>
+    <thead><tr><th scope="col">faction</th><th scope="col">wins</th><th scope="col">losses</th></tr></thead>
+    <tbody>
+    {% for r in data.standings %}
+    <tr><td>{{ r.faction-key }}</td><td>{{ r.wins }}</td><td>{{ r.losses }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>

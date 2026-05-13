@@ -1,0 +1,11 @@
+<section class="resource tournament-resource" aria-labelledby="tournament-heading">
+  <h2 id="tournament-heading">{{ data.name }}</h2>
+  <dl>
+    <dt>eid</dt><dd>{{ data.eid }}</dd>
+    {% if data.description %}<dt>description</dt><dd>{{ data.description }}</dd>{% endif %}
+    {% if data.game-eid %}<dt>game</dt><dd><a href="/api/game/{{ data.game-eid }}">{{ data.game-eid }}</a></dd>{% endif %}
+    {% if data.league-eid %}<dt>league</dt><dd><a href="/api/league/{{ data.league-eid }}">{{ data.league-eid }}</a></dd>{% endif %}
+    {% if data.created-by-sub %}<dt>created-by</dt><dd>{{ data.created-by-sub }}</dd>{% endif %}
+  </dl>
+  <nav><a href="/api/tournament/{{ data.eid }}/status" rel="status">status</a> <a href="/api/tournament/{{ data.eid }}/registration" rel="registration">registration</a> <a href="/api/tournament/{{ data.eid }}/entry" rel="entries">entries</a> <a href="/api/tournament/{{ data.eid }}/match" rel="matches">matches</a></nav>
+</section>

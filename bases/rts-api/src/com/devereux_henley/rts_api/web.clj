@@ -15,14 +15,12 @@
    [reitit.coercion :as coercion-error]
    [reitit.coercion.malli]
    [reitit.dev.pretty :as pretty]
-   [reitit.openapi :as openapi]
    [reitit.ring :as ring]
    [reitit.ring.coercion :as coercion]
    [reitit.ring.middleware.exception :as exception]
    [reitit.ring.middleware.multipart :as multipart]
    [reitit.ring.middleware.muuntaja :as muuntaja]
    [reitit.ring.middleware.parameters :as parameters]
-   [reitit.swagger-ui :as swagger-ui]
    [ring.adapter.jetty :as jetty]
    [ring.middleware.cookies]
    [taoensso.timbre :as log])
@@ -35,6 +33,8 @@
    {:game/game                "rts-web/resource/game.html"
     :game/faction             "rts-web/resource/faction.html"
     :game/draft               "rts-web/resource/draft.html"
+    :game/social-link         "rts-web/resource/game-social-link.html"
+    :collection/game          "rts-web/resource/game-collection.html"
     :draft/unit               "rts-web/resource/draft-unit.html"
     :draft/entry              "rts-web/resource/draft-entry.html"
     :draft/add-success        "rts-web/resource/draft-add-success.html"
@@ -42,11 +42,25 @@
     :draft/update-success     "rts-web/resource/draft-update-success.html"
     :draft/update-error       "rts-web/resource/draft-add-error.html"
     :draft/remove-success     "rts-web/resource/draft-remove-success.html"
+    :tournament/tournament    "rts-web/resource/tournament.html"
+    :collection/tournament    "rts-web/resource/tournament-collection.html"
     :tournament/phase         "rts-web/resource/tournament-phase.html"
     :tournament/round         "rts-web/resource/tournament-round.html"
     :tournament/entry         "rts-web/resource/tournament-entry.html"
     :tournament/entry-deleted "rts-web/resource/tournament-entry-deleted.html"
     :tournament/entry-error   "rts-web/resource/tournament-entry-error.html"
+    :tournament/entries       "rts-web/resource/tournament-entries.html"
+    :tournament/status        "rts-web/resource/tournament-status.html"
+    :tournament/registration  "rts-web/resource/tournament-registration.html"
+    :tournament/match         "rts-web/resource/tournament-match.html"
+    :tournament/matches       "rts-web/resource/tournament-matches.html"
+    :tournament/games         "rts-web/resource/tournament-games.html"
+    :league/league            "rts-web/resource/league.html"
+    :collection/league        "rts-web/resource/league-collection.html"
+    :season/season            "rts-web/resource/season.html"
+    :collection/season        "rts-web/resource/season-collection.html"
+    :stats/faction-standings  "rts-web/resource/stats-faction-standings.html"
+    :social-media/platform    "rts-web/resource/social-media.html"
     :missing/resource         "rts-web/resource/missing.html"
     "exception"               "rts-web/resource/error.html"}
    type
@@ -178,10 +192,6 @@
                                          continuity-key {:value continuity}}))
            request))))))
 
-(defmethod integrant.core/init-key ::openapi-handler
-  [_init-key _dependencies]
-  (openapi/create-openapi-handler))
-
 (defmethod integrant.core/init-key ::ory-auth-middleware
   [_init-key {:keys [auth-hostname session-name]}]
   (fn [handler]
@@ -208,25 +218,29 @@
                                :strip-extra-keys true
                                :default-values   true
                                :options          nil})
+                 ;; HTML hypermedia surface: text/html is the canonical response format,
+                 ;; application/htmx+html serves /components and /actions, form-urlencoded
+                 ;; decodes plain HTML form submissions, and application/json stays only as
+                 ;; a request decoder so htmx's `hx-ext="json-enc"` forms keep working.
+                 ;; application/edn, application/transit+json, and
+                 ;; application/transit+msgpack are intentionally absent — the API does
+                 ;; not negotiate those formats anywhere.
                  :muuntaja   (m/create
                               (-> m/default-options
-                                  (assoc :return :bytes)
-                                  (assoc-in
-                                   [:formats "application/hal+json"]
-                                   (get-in
-                                    m/default-options
-                                    [:formats "application/json"]))
+                                  (assoc :return :bytes
+                                         :default-format "text/html")
+                                  (update :formats dissoc "application/edn"
+                                          "application/transit+json" "application/transit+msgpack")
                                   (assoc-in
                                    [:formats "application/x-www-form-urlencoded"]
                                    muuntaja.format.form/format)
                                   (assoc-in [:formats "text/html"]
                                             content-negotiation/html-format)
+                                  (assoc-in [:formats "text/html" :encoder-opts] {:view-fn view-by-type})
                                   (assoc-in [:formats "application/htmx+html"]
                                             content-negotiation/html-htmx-format)
                                   (assoc-in [:formats "application/htmx+html" :encoder-opts] {:view-fn view-by-type})))
-                 :middleware [;; openapi feature
-                              openapi/openapi-feature
-                              ;; query-params & form-params
+                 :middleware [;; query-params & form-params
                               parameters/parameters-middleware
                               ;; reject Accept that doesn't match the matched
                               ;; route's :produces before muuntaja sees it
@@ -246,14 +260,6 @@
                               ;; multipart
                               multipart/multipart-middleware]}})
    (ring/routes
-    (swagger-ui/create-swagger-ui-handler
-     {:path   "/api"
-      :url    "/api/openapi.json"
-      :config {:validatorUrl     nil
-               :urls             [{:name "openapi", :url "openapi.json"}]
-               :urls.primaryName "openapi"
-               :withCredentials  true
-               :operationsSorter "alpha"}})
     (ring/create-resource-handler {:root resourcekit/asset-root
                                    :path resourcekit/asset-path})
     (ring/create-resource-handler {:root "rts-web/asset"

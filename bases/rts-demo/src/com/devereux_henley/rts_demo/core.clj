@@ -52,11 +52,11 @@
 
 (defn- create-tournament!
   [connection]
-  (let [eid        (random-uuid)
-        now        (Instant/now)
-        opens-at   (LocalDateTime/now)
-        closes-at  (.plusDays opens-at 14)
-        zone       (ZoneId/of "UTC")]
+  (let [eid       (random-uuid)
+        now       (Instant/now)
+        opens-at  (LocalDateTime/now)
+        closes-at (.plusDays opens-at 14)
+        zone      (ZoneId/of "UTC")]
     (data-access/create-tournament
      connection
      {:eid            eid
