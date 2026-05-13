@@ -198,7 +198,7 @@
     (ory-session-middleware auth-hostname session-name handler)))
 
 (defmethod integrant.core/init-key ::app
-  [_init-key {:keys [routes auth-middleware]}]
+  [_init-key {:keys [routes auth-middleware model-transform-middleware]}]
   (ring/ring-handler
    (ring/router
     routes
@@ -248,6 +248,10 @@
                               muuntaja/format-request-middleware
                               ;; coercing response bodys
                               coercion/coerce-response-middleware
+                              ;; resolve :model/link annotations into _links
+                              ;; on response bodies whose route declares
+                              ;; :responses {<status> {:body <schema>}}
+                              model-transform-middleware
                               ;; coercing request parameters
                               coercion/coerce-request-middleware
                               ;; multipart

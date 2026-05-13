@@ -383,25 +383,29 @@
    ;; ─── Game ───────────────────────────────────────────────────────────────
    ["/game"
     {:name :collection/game
-     :get  {:produces ["text/html"]
-            :handler  (integrant.core/ref ::web.game.api/get-games)}}]
+     :get  {:produces  ["text/html"]
+            :responses {200 {:body domain/game-collection-resource}}
+            :handler   (integrant.core/ref ::web.game.api/get-games)}}]
    ["/game/:eid"
     {:name :game/by-eid
      :get  {:produces   ["text/html"]
             :parameters {:path  schema.contract/id-path-parameter
                          :query web.game.api/game-query-parameters}
+            :responses  {200 {:body domain/game-resource}}
             :handler    (integrant.core/ref ::web.game.api/get-game)}}]
    ["/game/social-link/:eid"
     {:name :game/social-by-eid
      :get  {:produces   ["text/html"]
             :parameters {:path  schema.contract/id-path-parameter
                          :query schema.contract/version-query-parameter}
+            :responses  {200 {:body domain/game-social-link-resource}}
             :handler    (integrant.core/ref ::web.game.api/get-game-social-link)}}]
    ["/game/faction/:eid"
     {:name :game/faction-by-eid
      :get  {:produces   ["text/html"]
             :parameters {:path  schema.contract/id-path-parameter
                          :query web.game.api/faction-query-parameters}
+            :responses  {200 {:body domain/faction-resource}}
             :handler    (integrant.core/ref ::web.game.api/get-faction)}}]
 
    ;; ─── Draft (reads only — mutations live on /actions) ────────────────────
@@ -419,6 +423,7 @@
                                   [:items     {:optional true} [:or :string [:sequential :string]]]
                                   [:spells    {:optional true} [:or :string [:sequential :string]]]
                                   [:abilities {:optional true} [:or :string [:sequential :string]]]])}
+            :responses  {200 {:body domain/draft-unit-resource}}
             :handler    (integrant.core/ref ::web.draft.api/get-draft-unit)}}]
    ["/draft/:draft-eid/unit/:eid"
     {:name :draft-unit/by-eid
@@ -434,6 +439,7 @@
                                   [:items     {:optional true} [:or :string [:sequential :string]]]
                                   [:spells    {:optional true} [:or :string [:sequential :string]]]
                                   [:abilities {:optional true} [:or :string [:sequential :string]]]])}
+            :responses  {200 {:body domain/draft-unit-resource}}
             :handler    (integrant.core/ref ::web.draft.api/get-draft-unit)}}]
    ["/draft/:draft-eid/entry/:eid"
     {:name :draft-entry/by-eid
@@ -452,6 +458,7 @@
                                   [:items     {:optional true} [:or :string [:sequential :string]]]
                                   [:spells    {:optional true} [:or :string [:sequential :string]]]
                                   [:abilities {:optional true} [:or :string [:sequential :string]]]])}
+            :responses  {200 {:body domain/draft-entry-resource}}
             :handler    (integrant.core/ref ::web.draft.api/get-draft-entry)}}]
 
    ;; ─── Tournament reads ──────────────────────────────────────────────────
@@ -461,30 +468,36 @@
       :get  {:produces   ["text/html"]
              :parameters {:query (schema.contract/to-schema
                                   [:map [:game-eid :uuid]])}
+             :responses  {200 {:body domain/tournament-collection-resource}}
              :handler    (integrant.core/ref ::web.tournament.api/get-tournaments)}}]
     ["/:eid"
      [""
       {:name :tournament/by-eid
        :get  {:produces   ["text/html"]
               :parameters {:path schema.contract/id-path-parameter}
+              :responses  {200 {:body domain/tournament-resource}}
               :handler    (integrant.core/ref ::web.tournament.api/get-tournament)}}]
      ["/entry"
       [""
        {:get {:produces   ["text/html"]
               :parameters {:path schema.contract/id-path-parameter}
+              :responses  {200 {:body domain/tournament-entries-response}}
               :handler    (integrant.core/ref ::web.tournament.api/get-entries)}}]]
      ["/status"
       {:get {:produces   ["text/html"]
              :parameters {:path schema.contract/id-path-parameter}
+             :responses  {200 {:body domain/tournament-status-response}}
              :handler    (integrant.core/ref ::web.tournament.api/get-status)}}]
      ["/registration"
       {:get {:produces   ["text/html"]
              :parameters {:path schema.contract/id-path-parameter}
+             :responses  {200 {:body domain/tournament-registration-response}}
              :handler    (integrant.core/ref ::web.tournament.api/get-registration)}}]
      ["/match"
       [""
        {:get {:produces   ["text/html"]
               :parameters {:path schema.contract/id-path-parameter}
+              :responses  {200 {:body domain/tournament-matches-response}}
               :handler    (integrant.core/ref ::web.tournament.api/get-matches)}}]
       ["/:match-eid"
        {:name :match/by-eid
@@ -493,6 +506,7 @@
                                    [:map
                                     [:eid :uuid]
                                     [:match-eid :uuid]])}
+               :responses  {200 {:body domain/match-resource}}
                :handler    (integrant.core/ref ::web.tournament.api/get-match)}}]
       ["/:match-eid/game"
        {:get {:produces   ["text/html"]
@@ -500,6 +514,7 @@
                                   [:map
                                    [:eid :uuid]
                                    [:match-eid :uuid]])}
+              :responses  {200 {:body domain/tournament-games-response}}
               :handler    (integrant.core/ref ::web.tournament.api/get-games)}}]]
      ["/phase"
       {:name :tournament/phase-configuration
@@ -514,11 +529,13 @@
                                   [:map
                                    [:eid :uuid]
                                    [:phase-index :int]])}
+              :responses  {200 {:body domain/phase-response}}
               :handler    (integrant.core/ref ::web.tournament.api/get-phase)}}]
      ["/round"
       {:name :tournament/round
        :get  {:produces   ["text/html"]
               :parameters {:path schema.contract/id-path-parameter}
+              :responses  {200 {:body domain/round-response}}
               :handler    (integrant.core/ref ::web.tournament.api/get-round)}}]]]
 
    ;; ─── League ────────────────────────────────────────────────────────────
@@ -528,22 +545,26 @@
       :get  {:produces   ["text/html"]
              :parameters {:query (schema.contract/to-schema
                                   [:map [:game-eid :uuid]])}
+             :responses  {200 {:body domain/league-collection-resource}}
              :handler    (integrant.core/ref ::web.league.api/get-leagues)}}]
     ["/:eid"
      {:name :league/by-eid
       :get  {:produces   ["text/html"]
              :parameters {:path schema.contract/id-path-parameter}
+             :responses  {200 {:body domain/league-resource}}
              :handler    (integrant.core/ref ::web.league.api/get-league)}}]
     ["/:league-eid/season"
      {:name :season/for-league
       :get  {:produces   ["text/html"]
              :parameters {:path (schema.contract/to-schema
                                  [:map [:league-eid :uuid]])}
+             :responses  {200 {:body domain/season-collection-resource}}
              :handler    (integrant.core/ref ::web.season.api/get-seasons-for-league)}}]]
    ["/season/:eid"
     {:name :season/by-eid
      :get  {:produces   ["text/html"]
             :parameters {:path schema.contract/id-path-parameter}
+            :responses  {200 {:body domain/season-resource}}
             :handler    (integrant.core/ref ::web.season.api/get-season)}}]
 
    ;; ─── Stats ─────────────────────────────────────────────────────────────
@@ -552,18 +573,21 @@
      :get  {:produces   ["text/html"]
             :parameters {:path (schema.contract/to-schema
                                 [:map [:game-eid :uuid]])}
+            :responses  {200 {:body domain/faction-standings-response}}
             :handler    (integrant.core/ref ::web.stats.api/get-game-faction-standings)}}]
    ["/stats/league/:league-eid/faction"
     {:name :stats/league-faction
      :get  {:produces   ["text/html"]
             :parameters {:path (schema.contract/to-schema
                                 [:map [:league-eid :uuid]])}
+            :responses  {200 {:body domain/faction-standings-response}}
             :handler    (integrant.core/ref ::web.stats.api/get-league-faction-standings)}}]
    ["/stats/season/:season-eid/faction"
     {:name :stats/season-faction
      :get  {:produces   ["text/html"]
             :parameters {:path (schema.contract/to-schema
                                 [:map [:season-eid :uuid]])}
+            :responses  {200 {:body domain/faction-standings-response}}
             :handler    (integrant.core/ref ::web.stats.api/get-season-faction-standings)}}]
 
    ["/social-media/:eid"
@@ -571,6 +595,7 @@
      :get  {:produces   ["text/html"]
             :parameters {:path  schema.contract/id-path-parameter
                          :query schema.contract/version-query-parameter}
+            :responses  {200 {:body domain/social-media-platform-resource}}
             :handler    (integrant.core/ref ::web.social-media.api/get-platform)}}]])
 
 (defmethod integrant.core/init-key ::routes

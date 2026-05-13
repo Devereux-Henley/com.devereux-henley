@@ -22,23 +22,20 @@
 (defmethod integrant.core/init-key ::get-league
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
-        router                :reitit.core/router
         :as                   _request}]
-    (web.core/handle-fetch-response
-     domain/league-resource
-     {:hostname (:hostname dependencies) :router router}
-     #(get-league-by-eid dependencies eid))))
+    (let [result (get-league-by-eid dependencies eid)]
+      (if (= :missing/resource (:type result))
+        {:status 404 :body result}
+        {:status 200 :body result}))))
 
 (defmethod integrant.core/init-key ::get-leagues
   [_init-key dependencies]
   (fn [{{{:keys [game-eid]} :query} :parameters
         router                      :reitit.core/router
         :as                         _request}]
-    (web.core/handle-fetch-response
-     domain/league-collection-resource
-     {:hostname (:hostname dependencies) :router router}
-     #(get-leagues-for-game dependencies game-eid
-                            {:hostname (:hostname dependencies) :router router}))))
+    {:status 200
+     :body   (get-leagues-for-game dependencies game-eid
+                                   {:hostname (:hostname dependencies) :router router})}))
 
 (defmethod integrant.core/init-key ::create-league
   [_init-key dependencies]

@@ -83,32 +83,28 @@
   [_init-key dependencies]
   (fn [{{{:keys [draft-eid eid]}      :path
          {:keys [unit-eid] :as query} :query} :parameters
-        router                                :reitit.core/router
         :as                                   _request}]
     (let [overrides (selection-overrides query)
-          unit      (or eid unit-eid)]
-      (web.core/handle-fetch-response
-       domain/draft-unit-resource
-       {:hostname (:hostname dependencies) :router router}
-       #(some->> (domain/get-draft-unit-details dependencies draft-eid unit overrides)
-                 (with-lock-flag dependencies draft-eid))))))
+          unit      (or eid unit-eid)
+          result    (some->> (domain/get-draft-unit-details dependencies draft-eid unit overrides)
+                             (with-lock-flag dependencies draft-eid))]
+      (if result
+        {:status 200 :body result}
+        {:status 404 :body {:type :missing/resource :name "draft-unit" :id unit}}))))
 
 (defmethod integrant.core/init-key ::get-draft-entry
   [_init-key dependencies]
   (fn [{{{:keys [draft-eid eid]}           :path
          {:keys [section embed] :as query} :query} :parameters
-        router                                     :reitit.core/router
         :as                                        _request}]
     (let [embed-set (parse-embed-set embed)
           overrides (selection-overrides query)]
-      (web.core/handle-fetch-response
-       domain/draft-entry-resource
-       {:hostname (:hostname dependencies) :router router}
-       #(if-let [details (domain/get-draft-entry-details dependencies draft-eid eid section overrides)]
-          (->> details
-               (web.core/apply-embeds draft-entry-embed-registry dependencies embed-set)
-               (with-lock-flag dependencies draft-eid))
-          {:type :missing/resource :name "draft-entry" :id eid})))))
+      (if-let [details (domain/get-draft-entry-details dependencies draft-eid eid section overrides)]
+        {:status 200
+         :body   (->> details
+                      (web.core/apply-embeds draft-entry-embed-registry dependencies embed-set)
+                      (with-lock-flag dependencies draft-eid))}
+        {:status 404 :body {:type :missing/resource :name "draft-entry" :id eid}}))))
 
 (defmethod integrant.core/init-key ::draft-add-unit
   [_init-key dependencies]

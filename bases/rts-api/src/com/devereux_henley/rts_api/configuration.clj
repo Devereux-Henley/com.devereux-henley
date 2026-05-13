@@ -31,11 +31,12 @@
 ;;; ─── Per-namespace handler configuration ───────────────────────────────────
 
 (def infrastructure-configuration
-  {::rts-data/migrate {:db-spec       db/db-spec
-                       :migration-dir rts-data/migration-dir}
-   ::db/connection    {:migrations (integrant.core/ref ::rts-data/migrate)}
-   ::web/service      {:handler       (integrant.core/ref ::web/app)
-                       :configuration {:port port, :join? false}}})
+  {::rts-data/migrate                                      {:db-spec       db/db-spec
+                                                            :migration-dir rts-data/migration-dir}
+   ::db/connection                                         {:migrations (integrant.core/ref ::rts-data/migrate)}
+   :com.devereux-henley.rts-api.model-transform/middleware {:hostname hostname}
+   ::web/service                                           {:handler       (integrant.core/ref ::web/app)
+                                                            :configuration {:port port, :join? false}}})
 
 (def view-configuration
   (merge
@@ -179,8 +180,9 @@
          base-routes
 
          ::web/app
-         {:routes          (integrant.core/ref :com.devereux-henley.rts-web.web.routes/routes)
-          :auth-middleware (integrant.core/ref ::web/ory-auth-middleware)}))
+         {:routes                     (integrant.core/ref :com.devereux-henley.rts-web.web.routes/routes)
+          :auth-middleware            (integrant.core/ref ::web/ory-auth-middleware)
+          :model-transform-middleware (integrant.core/ref :com.devereux-henley.rts-api.model-transform/middleware)}))
 
 (def development-configuration
   "Dev profile. Swaps Ory for the cookie-based impersonation stub in
@@ -199,5 +201,6 @@
          (into base-routes [rts-web/shutdown-route dev-auth/routes])
 
          ::web/app
-         {:routes          (integrant.core/ref :com.devereux-henley.rts-web.web.routes/routes)
-          :auth-middleware (integrant.core/ref ::dev-auth/impersonation-middleware)}))
+         {:routes                     (integrant.core/ref :com.devereux-henley.rts-web.web.routes/routes)
+          :auth-middleware            (integrant.core/ref ::dev-auth/impersonation-middleware)
+          :model-transform-middleware (integrant.core/ref :com.devereux-henley.rts-api.model-transform/middleware)}))

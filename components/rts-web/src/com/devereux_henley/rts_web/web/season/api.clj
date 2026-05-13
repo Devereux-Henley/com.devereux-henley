@@ -22,23 +22,20 @@
 (defmethod integrant.core/init-key ::get-season
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
-        router                :reitit.core/router
         :as                   _request}]
-    (web.core/handle-fetch-response
-     domain/season-resource
-     {:hostname (:hostname dependencies) :router router}
-     #(get-season-by-eid dependencies eid))))
+    (let [result (get-season-by-eid dependencies eid)]
+      (if (= :missing/resource (:type result))
+        {:status 404 :body result}
+        {:status 200 :body result}))))
 
 (defmethod integrant.core/init-key ::get-seasons-for-league
   [_init-key dependencies]
   (fn [{{{:keys [league-eid]} :path} :parameters
         router                       :reitit.core/router
         :as                          _request}]
-    (web.core/handle-fetch-response
-     domain/season-collection-resource
-     {:hostname (:hostname dependencies) :router router}
-     #(get-seasons-for-league dependencies league-eid
-                              {:hostname (:hostname dependencies) :router router}))))
+    {:status 200
+     :body   (get-seasons-for-league dependencies league-eid
+                                     {:hostname (:hostname dependencies) :router router})}))
 
 (defmethod integrant.core/init-key ::create-season
   [_init-key dependencies]

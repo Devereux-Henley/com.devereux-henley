@@ -90,46 +90,40 @@
                               (reitit.core/match-by-name! :collection/game)
                               :path))}})
 
+(defn- ok-or-404
+  [result]
+  (if (= :missing/resource (:type result))
+    {:status 404 :body result}
+    {:status 200 :body result}))
+
 (defmethod integrant.core/init-key ::get-faction
   [_init-key dependencies]
   (fn [{{{:keys [eid]}   :path
          {:keys [embed]} :query} :parameters
-        router                   :reitit.core/router
         :as                      _request}]
     (let [embed-set (some->> (web.core/query-param->vec embed) (into #{} (map keyword)))]
-      (web.core/handle-fetch-response
-       domain/faction-resource
-       {:hostname (:hostname dependencies) :router router}
-       #(web.core/apply-embeds faction-embed-registry dependencies embed-set
-                               (get-faction-by-eid dependencies eid))))))
+      (ok-or-404
+       (web.core/apply-embeds faction-embed-registry dependencies embed-set
+                              (get-faction-by-eid dependencies eid))))))
 
 (defmethod integrant.core/init-key ::get-game-social-link
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
-        router                :reitit.core/router
         :as                   _request}]
-    (web.core/handle-fetch-response
-     domain/game-social-link-resource
-     {:hostname (:hostname dependencies) :router router}
-     #(get-game-social-link-by-eid dependencies eid))))
+    (ok-or-404 (get-game-social-link-by-eid dependencies eid))))
 
 (defmethod integrant.core/init-key ::get-game
   [_init-key dependencies]
   (fn [{{{:keys [eid]}   :path
          {:keys [embed]} :query} :parameters
-        router                   :reitit.core/router
         :as                      _request}]
     (let [embed-set (some->> (web.core/query-param->vec embed) (into #{} (map keyword)))]
-      (web.core/handle-fetch-response
-       domain/game-resource
-       {:hostname (:hostname dependencies) :router router}
-       #(web.core/apply-embeds game-embed-registry dependencies embed-set
-                               (get-game-by-eid dependencies eid))))))
+      (ok-or-404
+       (web.core/apply-embeds game-embed-registry dependencies embed-set
+                              (get-game-by-eid dependencies eid))))))
 
 (defmethod integrant.core/init-key ::get-games
   [_init-key dependencies]
   (fn [{router :reitit.core/router :as _request}]
-    (web.core/handle-fetch-response
-     domain/game-collection-resource
-     {:hostname (:hostname dependencies) :router router}
-     #(get-games dependencies {:hostname (:hostname dependencies) :router router}))))
+    {:status 200
+     :body   (get-games dependencies {:hostname (:hostname dependencies) :router router})}))
