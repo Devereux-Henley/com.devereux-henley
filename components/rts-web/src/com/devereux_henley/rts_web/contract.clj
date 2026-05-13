@@ -1,5 +1,6 @@
 (ns com.devereux-henley.rts-web.contract
   (:require
+   [com.devereux-henley.rts-web.orchestration]
    [com.devereux-henley.rts-web.render :as render]
    [com.devereux-henley.rts-web.web.actions.draft]
    [com.devereux-henley.rts-web.web.actions.league]

@@ -8,9 +8,6 @@
    [com.devereux-henley.rts-api.web :as web]
    [com.devereux-henley.rts-data.contract :as rts-data]
    [com.devereux-henley.rts-web.contract :as rts-web]
-   [com.devereux-henley.rts-web.orchestration :as orchestration]
-   [com.devereux-henley.rts-web.web.actions.draft :as web.actions.draft]
-   [com.devereux-henley.rts-web.web.actions.tournament :as web.actions.tournament]
    [integrant.core]))
 
 (def port
@@ -128,14 +125,16 @@
   "Wires the HX-Trigger registry. Each `::web-triggers` key contributes its
    `{event-id [event …]}` map; the registry init-key gathers them via
    `refset` (each contributing key derives from
-   `::orchestration/web-trigger-source` in its own namespace) and compiles
-   them into HTMX trigger strings. The middleware then assocs the
-   assembled registry onto every request that flows through view /
-   components routes."
-  {::web.actions.draft/web-triggers      {}
-   ::web.actions.tournament/web-triggers {}
-   ::orchestration/registry              {:sources (integrant.core/refset ::orchestration/web-trigger-source)}
-   ::orchestration/middleware            {:registry (integrant.core/ref ::orchestration/registry)}})
+   `:com.devereux-henley.rts-web.orchestration/web-trigger-source` in its
+   own namespace) and compiles them into HTMX trigger strings. The
+   middleware then assocs the assembled registry onto every request that
+   flows through view / components routes. `rts-web/contract` requires
+   the orchestration namespace, so its defmethods register transitively
+   when this configuration is loaded."
+  {:com.devereux-henley.rts-web.web.actions.draft/web-triggers      {}
+   :com.devereux-henley.rts-web.web.actions.tournament/web-triggers {}
+   :com.devereux-henley.rts-web.orchestration/registry              {:sources (integrant.core/refset :com.devereux-henley.rts-web.orchestration/web-trigger-source)}
+   :com.devereux-henley.rts-web.orchestration/middleware            {:registry (integrant.core/ref :com.devereux-henley.rts-web.orchestration/registry)}})
 
 (def league-configuration
   (handlers :com.devereux-henley.rts-web.web.league.api/get-league
