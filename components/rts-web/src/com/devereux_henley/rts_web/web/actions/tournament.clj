@@ -13,10 +13,12 @@
 
 (defmethod integrant.core/init-key ::web-triggers
   [_init-key _config]
-  {:tournament-stage ["tournament-status-updated"
+  {:tournament-stage ["tournament-started"
+                      "tournament-completed"
+                      "tournament-cancelled"
                       "tournament-entry-created"
                       "tournament-entry-deleted"
-                      "tournament-registration-updated"
+                      "tournament-registration-closed"
                       "tournament-round-created"]})
 
 (defmethod integrant.core/init-key ::create-tournament
@@ -67,30 +69,48 @@
         {:status 422 :body result}
         (common/trigger-response "tournament-entry-deleted" result)))))
 
-(defmethod integrant.core/init-key ::update-status
+(defmethod integrant.core/init-key ::start-tournament
   [_init-key dependencies]
-  (fn [{{{:keys [eid]}    :path
-         {:keys [status]} :body} :parameters
-        session                  :ory-session
-        :as                      _request}]
+  (fn [{{{:keys [eid]} :path} :parameters
+        session               :ory-session
+        :as                   _request}]
     (let [user-sub (get-in session [:identity :id])
-          result   (domain/advance-tournament dependencies eid status user-sub)]
-      (if (= :tournament/advance-success (:type result))
-        (common/trigger-response "tournament-status-updated" result)
+          result   (domain/start-tournament dependencies eid user-sub)]
+      (if (= :tournament/started (:type result))
+        (common/trigger-response "tournament-started" result)
         {:status 422 :body result}))))
 
-(defmethod integrant.core/init-key ::update-registration
+(defmethod integrant.core/init-key ::complete-tournament
   [_init-key dependencies]
-  (fn [{{{:keys [eid]}          :path
-         {:keys [closed-early]} :body} :parameters
-        session                        :ory-session
-        :as                            _request}]
+  (fn [{{{:keys [eid]} :path} :parameters
+        session               :ory-session
+        :as                   _request}]
     (let [user-sub (get-in session [:identity :id])
-          result   (if closed-early
-                     (domain/close-registration-early dependencies eid user-sub)
-                     {:type :tournament/registration-error :message "No updates specified."})]
-      (if (= :tournament/close-registration-success (:type result))
-        (common/trigger-response "tournament-registration-updated" result)
+          result   (domain/complete-tournament dependencies eid user-sub)]
+      (if (= :tournament/completed (:type result))
+        (common/trigger-response "tournament-completed" result)
+        {:status 422 :body result}))))
+
+(defmethod integrant.core/init-key ::cancel-tournament
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+        session               :ory-session
+        :as                   _request}]
+    (let [user-sub (get-in session [:identity :id])
+          result   (domain/cancel-tournament dependencies eid user-sub)]
+      (if (= :tournament/cancelled (:type result))
+        (common/trigger-response "tournament-cancelled" result)
+        {:status 422 :body result}))))
+
+(defmethod integrant.core/init-key ::close-registration
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+        session               :ory-session
+        :as                   _request}]
+    (let [user-sub (get-in session [:identity :id])
+          result   (domain/close-registration-early dependencies eid user-sub)]
+      (if (= :tournament/registration-closed (:type result))
+        (common/trigger-response "tournament-registration-closed" result)
         {:status 422 :body result}))))
 
 (defmethod integrant.core/init-key ::create-round

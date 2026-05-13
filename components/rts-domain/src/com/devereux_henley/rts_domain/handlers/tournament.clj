@@ -147,51 +147,80 @@
 
 ;; ─── State machine ──────────────────────────────────────────────────────────
 
-(defn advance-tournament
-  "Advances a tournament to the target status. Only the organizer (created-by-sub)
-   can advance. When transitioning to 'active', populates standings from entries."
-  [dependencies tournament-eid target-status user-sub]
+(defn- organizer-error
+  "Returns nil if the user can act as the organizer on the given tournament,
+   or an `{:type error-type :message …}` map otherwise. Used by every
+   per-transition handler to short-circuit on missing tournament or
+   non-organizer caller."
+  [dependencies tournament-eid user-sub error-type]
   (let [tournament (get-tournament-by-eid dependencies tournament-eid)]
     (cond
       (nil? tournament)
-      {:type :tournament/advance-error :message "Tournament not found."}
+      {:type error-type :message "Tournament not found."}
 
       (not= user-sub (:created-by-sub tournament))
-      {:type :tournament/advance-error :message "Only the tournament organizer can advance the tournament."}
+      {:type error-type :message "Only the tournament organizer can perform this action."}
 
-      :else
-      (let [state (get-tournament-state dependencies tournament-eid)
-            error (rules/validate-transition (:status state) target-status)]
-        (if error
-          error
-          (let [new-state (if (= "active" target-status)
-                            (let [entries (get-entries dependencies tournament-eid)]
-                              (rules/close-registration state entries))
-                            (assoc state :status target-status))]
-            (set-tournament-state dependencies tournament-eid new-state)
-            {:type  :tournament/advance-success
-             :state new-state}))))))
+      :else nil)))
 
-(defn close-registration-early
-  "Sets the closed-early flag on the tournament state, preventing new entries.
-   Only the organizer can close registration early."
+(defn start-tournament
+  "Transitions a tournament from registration to active. Populates the
+   standings list from current entries via `rules/close-registration`.
+   Only the organizer can start. Returns `:tournament/started` on
+   success, `:tournament/start-error` on failure."
   [dependencies tournament-eid user-sub]
-  (let [tournament (get-tournament-by-eid dependencies tournament-eid)]
-    (cond
-      (nil? tournament)
-      {:type :tournament/advance-error :message "Tournament not found."}
-
-      (not= user-sub (:created-by-sub tournament))
-      {:type :tournament/advance-error :message "Only the tournament organizer can close registration."}
-
-      :else
+  (or (organizer-error dependencies tournament-eid user-sub :tournament/start-error)
       (let [state (get-tournament-state dependencies tournament-eid)]
         (if (not= "registration" (:status state))
-          {:type :tournament/advance-error :message "Tournament is not in registration status."}
+          {:type    :tournament/start-error
+           :message (str "Cannot start: tournament is '" (:status state) "', not 'registration'.")}
+          (let [entries   (get-entries dependencies tournament-eid)
+                new-state (rules/close-registration state entries)]
+            (set-tournament-state dependencies tournament-eid new-state)
+            {:type :tournament/started :state new-state})))))
+
+(defn complete-tournament
+  "Transitions a tournament from active to complete. Only the organizer
+   can complete. Returns `:tournament/completed` on success,
+   `:tournament/complete-error` on failure."
+  [dependencies tournament-eid user-sub]
+  (or (organizer-error dependencies tournament-eid user-sub :tournament/complete-error)
+      (let [state (get-tournament-state dependencies tournament-eid)]
+        (if (not= "active" (:status state))
+          {:type    :tournament/complete-error
+           :message (str "Cannot complete: tournament is '" (:status state) "', not 'active'.")}
+          (let [new-state (assoc state :status "complete")]
+            (set-tournament-state dependencies tournament-eid new-state)
+            {:type :tournament/completed :state new-state})))))
+
+(defn cancel-tournament
+  "Cancels a tournament that hasn't already finished. Only the organizer
+   can cancel. Returns `:tournament/cancelled` on success,
+   `:tournament/cancel-error` on failure."
+  [dependencies tournament-eid user-sub]
+  (or (organizer-error dependencies tournament-eid user-sub :tournament/cancel-error)
+      (let [state (get-tournament-state dependencies tournament-eid)]
+        (if (contains? #{"complete" "cancelled"} (:status state))
+          {:type    :tournament/cancel-error
+           :message (str "Cannot cancel: tournament is already '" (:status state) "'.")}
+          (let [new-state (assoc state :status "cancelled")]
+            (set-tournament-state dependencies tournament-eid new-state)
+            {:type :tournament/cancelled :state new-state})))))
+
+(defn close-registration-early
+  "Sets the closed-early flag on a tournament still in registration,
+   preventing new entries while keeping the registration window open
+   for any in-flight UI. Only the organizer can close registration
+   early. Returns `:tournament/registration-closed` on success,
+   `:tournament/registration-close-error` on failure."
+  [dependencies tournament-eid user-sub]
+  (or (organizer-error dependencies tournament-eid user-sub :tournament/registration-close-error)
+      (let [state (get-tournament-state dependencies tournament-eid)]
+        (if (not= "registration" (:status state))
+          {:type :tournament/registration-close-error :message "Tournament is not in registration status."}
           (let [new-state (assoc-in state [:registration :closed-early] true)]
             (set-tournament-state dependencies tournament-eid new-state)
-            {:type  :tournament/close-registration-success
-             :state new-state}))))))
+            {:type :tournament/registration-closed :state new-state})))))
 
 ;; ─── Matches ─────────────────────────────────────────────────────────────────
 

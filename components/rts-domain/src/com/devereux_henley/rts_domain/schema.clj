@@ -101,16 +101,6 @@
 
 ;; ─── Request body schemas ───────────────────────────────────────────────────
 
-(def update-status-specification
-  (schema.contract/to-schema
-   [:map
-    [:status data-access.contract/tournament-status-enum]]))
-
-(def update-registration-specification
-  (schema.contract/to-schema
-   [:map
-    [:closed-early :boolean]]))
-
 (def phase-round-specification
   (schema.contract/to-schema
    [:map
@@ -259,10 +249,31 @@
     [:status data-access.contract/tournament-status-enum]
     [:available-transitions [:sequential :string]]]))
 
-(def tournament-advance-response
+(def tournament-started-response
   (schema.contract/to-schema
    [:map
-    [:type [:= :tournament/advance-success]]
+    [:type [:= :tournament/started]]
+    [:state [:map {:closed false}
+             [:status data-access.contract/tournament-status-enum]]]]))
+
+(def tournament-completed-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :tournament/completed]]
+    [:state [:map {:closed false}
+             [:status data-access.contract/tournament-status-enum]]]]))
+
+(def tournament-cancelled-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :tournament/cancelled]]
+    [:state [:map {:closed false}
+             [:status data-access.contract/tournament-status-enum]]]]))
+
+(def tournament-registration-closed-response
+  (schema.contract/to-schema
+   [:map
+    [:type [:= :tournament/registration-closed]]
     [:state [:map {:closed false}
              [:status data-access.contract/tournament-status-enum]]]]))
 

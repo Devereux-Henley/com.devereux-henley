@@ -11,17 +11,13 @@
    "cancelled"    #{}})
 
 (defn available-transitions
-  "Returns the set of valid target statuses from the given status."
+  "Returns the set of valid target statuses from the given status. Consumed
+   by `::get-status` so HATEOAS responses can advertise the actions clients
+   may take next; per-verb domain handlers (`start-tournament`,
+   `complete-tournament`, `cancel-tournament`) each enforce their own
+   precondition rather than dispatching through this map."
   [current-status]
   (get valid-transitions current-status #{}))
-
-(defn validate-transition
-  "Returns nil if the transition is valid, or an error map if not."
-  [current-status target-status]
-  (let [allowed (get valid-transitions current-status #{})]
-    (when-not (contains? allowed target-status)
-      {:type    :tournament/transition-error
-       :message (str "Cannot transition from '" current-status "' to '" target-status "'.")})))
 
 (defn close-registration
   "Transitions a tournament state from registration to active.

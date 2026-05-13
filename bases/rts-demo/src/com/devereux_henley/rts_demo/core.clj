@@ -100,9 +100,9 @@
                       organizer-sub)]
     (when (not= :tournament/phase-configured (:type phase-result))
       (throw (ex-info "Phase configuration failed" {:result phase-result}))))
-  (let [advance-result (domain/advance-tournament deps tournament-eid "active" organizer-sub)]
-    (when (not= :tournament/advance-success (:type advance-result))
-      (throw (ex-info "Advancing to active failed" {:result advance-result}))))
+  (let [start-result (domain/start-tournament deps tournament-eid organizer-sub)]
+    (when (not= :tournament/started (:type start-result))
+      (throw (ex-info "Starting tournament failed" {:result start-result}))))
   (let [round-result (domain/generate-next-round deps tournament-eid organizer-sub)]
     (when (not= :tournament/round-generated (:type round-result))
       (throw (ex-info "Round generation failed" {:result round-result})))
