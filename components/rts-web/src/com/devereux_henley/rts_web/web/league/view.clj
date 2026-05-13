@@ -9,9 +9,9 @@
   [_init-key _dependencies]
   (fn [request]
     {:status 200
-     :body   (render/render "view/create-league.html"
-                            (assoc (web.view/base-context request)
-                                   :league-eid (random-uuid)))}))
+     :body   (render/render-view "create-league.html"
+                                 (assoc (web.view/base-context request)
+                                        :league-eid (random-uuid)))}))
 
 (defmethod integrant.core/init-key ::league-view
   [_init-key dependencies]
@@ -31,10 +31,10 @@
               standings         (domain/get-league-faction-standings dependencies eid)
               user-sub          (get-in request [:ory-session :identity :id])]
           {:status 200
-           :body   (render/render "view/league-index.html"
-                                  (assoc (web.view/base-context request)
-                                         :data league
-                                         :seasons seasons
-                                         :tournaments enriched-tourneys
-                                         :standings standings
-                                         :is-organizer (= user-sub (:created-by-sub league))))})))))
+           :body   (render/render-view "league-index.html"
+                                       (assoc (web.view/base-context request)
+                                              :data league
+                                              :seasons seasons
+                                              :tournaments enriched-tourneys
+                                              :standings standings
+                                              :is-organizer (= user-sub (:created-by-sub league))))})))))

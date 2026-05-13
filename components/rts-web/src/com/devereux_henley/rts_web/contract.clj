@@ -30,5 +30,7 @@
 (def actions-routes web.routes/actions-routes)
 (def api-routes web.routes/api-routes)
 
-(def render-view render/render)
+(def render-view render/render-view)
+(def render-component render/render-component)
 (def view-path render/view-path)
+(def component-path render/component-path)

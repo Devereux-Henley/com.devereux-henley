@@ -71,7 +71,7 @@
   [_init-key dependencies]
   (partial web.view/standard-entity-view-handler
            (fn [eid] (web.game.api/get-draft-by-eid dependencies eid))
-           "view/draft-index.html"
+           "draft-index.html"
            (partial build-draft-context dependencies)))
 
 (defmethod integrant.core/init-key ::my-drafts-view
@@ -90,12 +90,12 @@
                            (filterv #(= active-faction (:faction-name %)) all-drafts)
                            all-drafts)]
       {:status 200
-       :body   (render/render "view/my-drafts.html"
-                              (assoc (web.view/base-context request)
-                                     :drafts drafts
-                                     :faction-counts faction-counts
-                                     :active-faction active-faction
-                                     :total-count (count all-drafts)))})))
+       :body   (render/render-view "my-drafts.html"
+                                   (assoc (web.view/base-context request)
+                                          :drafts drafts
+                                          :faction-counts faction-counts
+                                          :active-faction active-faction
+                                          :total-count (count all-drafts)))})))
 
 (defmethod integrant.core/init-key ::create-draft-view
   [_init-key dependencies]
@@ -103,7 +103,7 @@
     (let [game-eid   (:game-eid (:game-context request))
           game-modes (domain/get-game-modes-for-game dependencies game-eid)]
       {:status 200
-       :body   (render/render "view/create-draft.html"
-                              (assoc (web.view/base-context request)
-                                     :game-modes game-modes
-                                     :draft-eid  (random-uuid)))})))
+       :body   (render/render-view "create-draft.html"
+                                   (assoc (web.view/base-context request)
+                                          :game-modes game-modes
+                                          :draft-eid  (random-uuid)))})))

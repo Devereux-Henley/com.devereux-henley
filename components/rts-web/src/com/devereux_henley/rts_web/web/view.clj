@@ -49,7 +49,7 @@
 (defn standard-view-handler
   [view-name request]
   {:status 200
-   :body   (render/render view-name (base-context request))})
+   :body   (render/render-view view-name (base-context request))})
 
 (defn standard-entity-view-handler
   [pipeline-fn template-name extra-data-fn request]
@@ -58,10 +58,10 @@
     (if (= :missing/resource (:type data))
       {:status 404 :body data}
       {:status 200
-       :body   (render/render template-name
-                              (merge (base-context request)
-                                     {:data data}
-                                     (extra-data-fn data request)))})))
+       :body   (render/render-view template-name
+                                   (merge (base-context request)
+                                          {:data data}
+                                          (extra-data-fn data request)))})))
 
 (defmethod integrant.core/init-key ::game-context-middleware
   [_init-key dependencies]
@@ -84,20 +84,20 @@
                         (assoc game :logo (skin/logo-for-game (:eid game))))
                       (domain/get-games dependencies))]
       {:status 200
-       :body   (render/render "view/game-selector.html"
-                              (assoc (base-context request) :games games))})))
+       :body   (render/render-view "game-selector.html"
+                                   (assoc (base-context request) :games games))})))
 
 (defmethod integrant.core/init-key ::game-view
   [_init-key _dependencies]
-  (partial standard-view-handler "view/game.html"))
+  (partial standard-view-handler "game.html"))
 
 (defmethod integrant.core/init-key ::about-view
   [_init-key _dependencies]
-  (partial standard-view-handler "view/about.html"))
+  (partial standard-view-handler "about.html"))
 
 (defmethod integrant.core/init-key ::contact-view
   [_init-key _dependencies]
-  (partial standard-view-handler "view/contact.html"))
+  (partial standard-view-handler "contact.html"))
 
 (defmethod integrant.core/init-key ::login-view
   [_init-key {:keys [auth-hostname]}]

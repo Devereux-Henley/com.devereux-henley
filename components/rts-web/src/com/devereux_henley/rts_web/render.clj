@@ -1,26 +1,30 @@
 (ns com.devereux-henley.rts-web.render
-  "Selmer template rendering. The rts-web/ resource root has five
-  parallel subdirectories — view/, components/, template/, resource/,
-  asset/ — mirroring the URL surface (full pages, htmx fragments,
-  Selmer partials, /api resources, static files). Callers pass the
-  full sub-path so the target surface is explicit at every render site."
   (:require
    [selmer.parser]))
 
-(def ^:private resource-prefix "rts-web/")
+(def ^:private view-prefix "rts-web/view/")
+(def ^:private component-prefix "rts-web/components/")
 
 (defn view-path
-  "Returns the classpath template path for a template name like
-   \"view/foo.html\" or \"components/bar.html\". Use this when only the
-   path is needed (e.g. for a dispatch map). For one-shot rendering,
-   prefer `render`."
+  "Returns the classpath template path for a view name like \"foo.html\"
+   or \"tournament/phase-swiss.html\"."
   [view-name]
-  (str resource-prefix view-name))
+  (str view-prefix view-name))
 
-(defn render
-  "Renders a Selmer template by name (relative to the rts-web resource
-   root) and returns the rendered string. Caller specifies the surface
-   in the name: \"view/foo.html\" / \"components/bar.html\" /
-   \"template/baz.html\"."
+(defn component-path
+  "Returns the classpath template path for a component name like
+   \"draft-unit-panel.html\" or \"icon/sword.html\"."
+  [component-name]
+  (str component-prefix component-name))
+
+(defn render-view
+  "Renders a full-page Selmer view template from `rts-web/view/` and
+   returns the rendered string."
   [view-name context]
   (selmer.parser/render-file (view-path view-name) context))
+
+(defn render-component
+  "Renders a Selmer component template from `rts-web/components/` and
+   returns the rendered string."
+  [component-name context]
+  (selmer.parser/render-file (component-path component-name) context))

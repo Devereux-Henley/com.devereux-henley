@@ -103,7 +103,7 @@
   [status status-text message request]
   {:status  status
    :headers {"Content-Type" "text/html; charset=utf-8"}
-   :body    (rts-web/render-view "view/error.html"
+   :body    (rts-web/render-view "error.html"
                                  {:status-text status-text
                                   :message     message
                                   :session     (:ory-session request)})})

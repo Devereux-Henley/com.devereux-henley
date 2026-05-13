@@ -9,15 +9,15 @@
 
 (defmethod integrant.core/init-key ::faction-list-view
   [_init-key _dependencies]
-  (partial web.view/standard-view-handler "view/faction-list.html"))
+  (partial web.view/standard-view-handler "faction-list.html"))
 
 (defmethod integrant.core/init-key ::game-index-view
   [_init-key _dependencies]
   (fn [request]
     {:status 200
-     :body   (render/render "view/game-index.html"
-                            (assoc (web.view/base-context request)
-                                   :data (:game (:game-context request))))}))
+     :body   (render/render-view "game-index.html"
+                                 (assoc (web.view/base-context request)
+                                        :data (:game (:game-context request))))}))
 
 (defmethod integrant.core/init-key ::faction-view
   [_init-key dependencies]
@@ -26,14 +26,14 @@
              (web.game.api/load-units-by-category-for-faction
               dependencies
               (web.game.api/get-faction-by-eid dependencies eid)))
-           "view/faction.html"
+           "faction.html"
            (fn [_data _request] {})))
 
 (defmethod integrant.core/init-key ::unit-view
   [_init-key dependencies]
   (partial web.view/standard-entity-view-handler
            (fn [eid] (web.game.api/get-unit-by-eid dependencies eid))
-           "view/unit.html"
+           "unit.html"
            (fn [data _request]
              (let [{:keys [stats abilities draftable-spells]} (domain/parse-unit-statistics (:unit-statistics data))
                    lore-key                                   (:lore data)

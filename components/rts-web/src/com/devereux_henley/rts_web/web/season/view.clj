@@ -13,8 +13,8 @@
                        (domain/get-seasons-for-league dependencies league-eid))]
       {:status  200
        :headers {"Content-Type" "text/html; charset=utf-8"}
-       :body    (render/render "components/season-options.html"
-                               (assoc (web.view/base-context request) :seasons seasons))})))
+       :body    (render/render-component "season-options.html"
+                                         (assoc (web.view/base-context request) :seasons seasons))})))
 
 (defmethod integrant.core/init-key ::create-season-view
   [_init-key dependencies]
@@ -24,13 +24,13 @@
       (if (nil? league)
         {:status 404 :body {:type :missing/resource :name "league" :id league-eid}}
         {:status 200
-         :body   (render/render "view/create-season.html"
-                                (assoc (web.view/base-context request)
-                                       :league league
-                                       :league-eid league-eid
-                                       :season-eid (random-uuid)
-                                       :timezones domain/common-timezones
-                                       :default-timezone domain/default-timezone))}))))
+         :body   (render/render-view "create-season.html"
+                                     (assoc (web.view/base-context request)
+                                            :league league
+                                            :league-eid league-eid
+                                            :season-eid (random-uuid)
+                                            :timezones domain/common-timezones
+                                            :default-timezone domain/default-timezone))}))))
 
 (defmethod integrant.core/init-key ::season-view
   [_init-key dependencies]
@@ -47,9 +47,9 @@
                                     season-tourneys)
               standings       (domain/get-season-faction-standings dependencies eid)]
           {:status 200
-           :body   (render/render "view/season-index.html"
-                                  (assoc (web.view/base-context request)
-                                         :data season
-                                         :league league
-                                         :tournaments enriched
-                                         :standings standings))})))))
+           :body   (render/render-view "season-index.html"
+                                       (assoc (web.view/base-context request)
+                                              :data season
+                                              :league league
+                                              :tournaments enriched
+                                              :standings standings))})))))
