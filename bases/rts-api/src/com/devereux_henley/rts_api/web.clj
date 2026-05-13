@@ -218,13 +218,6 @@
                                :strip-extra-keys true
                                :default-values   true
                                :options          nil})
-                 ;; HTML hypermedia surface: text/html is the canonical response format,
-                 ;; application/htmx+html serves /components and /actions, form-urlencoded
-                 ;; decodes plain HTML form submissions, and application/json stays only as
-                 ;; a request decoder so htmx's `hx-ext="json-enc"` forms keep working.
-                 ;; application/edn, application/transit+json, and
-                 ;; application/transit+msgpack are intentionally absent — the API does
-                 ;; not negotiate those formats anywhere.
                  :muuntaja   (m/create
                               (-> m/default-options
                                   (assoc :return :bytes

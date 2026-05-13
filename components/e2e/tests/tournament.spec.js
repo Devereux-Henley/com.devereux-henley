@@ -3,15 +3,17 @@ const { test, expect } = require('@playwright/test');
 const BASE = process.env.RTS_API_BASE_URL || "http://127.0.0.1:3001";
 const GAME_EID = 'eea787d7-1065-45eb-a3f6-e26f32c294a1';
 
-// JSON-shape API contract tests were dropped along with the JSON formats
-// themselves; PR F replaces /api JSON with an HTML hypermedia surface,
-// and /actions is the mutation surface. What remains here is the UI
-// behavior: pages render, controls appear at the right state-machine
-// edges, htmx tabs lazy-load.
-
 function actionHeaders(user) {
   return {
     Accept: 'application/htmx+html',
+    'Content-Type': 'application/json',
+    Cookie: `dev_impersonation=${user}`,
+  };
+}
+
+function apiHeaders(user) {
+  return {
+    Accept: 'text/html',
     'Content-Type': 'application/json',
     Cookie: `dev_impersonation=${user}`,
   };
@@ -47,8 +49,8 @@ async function startTournament(request, eid) {
 }
 
 async function configureSwissPhase(request, eid) {
-  await request.put(`${BASE}/actions/tournament/${eid}/phase`, {
-    headers: actionHeaders('dev-admin'),
+  await request.put(`${BASE}/api/tournament/${eid}/phase`, {
+    headers: apiHeaders('dev-admin'),
     data: {
       phases: [{ 'phase-type': 'swiss', rounds: [{ 'round-index': 0, format: 1 }] }],
     },

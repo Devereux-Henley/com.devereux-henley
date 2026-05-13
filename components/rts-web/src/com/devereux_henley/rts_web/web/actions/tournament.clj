@@ -22,8 +22,7 @@
                       "tournament-round-created"
                       "tournament-match-created"
                       "tournament-match-result-recorded"
-                      "tournament-game-recorded"
-                      "tournament-phase-configured"]})
+                      "tournament-game-recorded"]})
 
 (defmethod integrant.core/init-key ::create-tournament
   [_init-key dependencies]
@@ -165,17 +164,3 @@
       (if (= :tournament/match-error (:type result))
         {:status 422 :body result}
         (common/trigger-response "tournament-game-recorded" result)))))
-
-(defmethod integrant.core/init-key ::update-phase-configuration
-  [_init-key dependencies]
-  (fn [{{{:keys [eid]}                    :path
-         {:keys [phases qualifier-count]} :body} :parameters
-        session                                  :ory-session
-        :as                                      _request}]
-    (let [user-sub (get-in session [:identity :id])
-          result   (domain/configure-phases dependencies eid
-                                            {:phases phases :qualifier-count qualifier-count}
-                                            user-sub)]
-      (if (= :tournament/phase-error (:type result))
-        {:status 422 :body result}
-        (common/trigger-response "tournament-phase-configured" result)))))

@@ -361,11 +361,6 @@
                                  [:match-eid :uuid]])
                          :body domain/record-result-specification}
             :handler    (integrant.core/ref ::web.actions.tournament/record-game)}}]
-   ["/tournament/:eid/phase"
-    {:put {:produces   ["application/htmx+html"]
-           :parameters {:path schema.contract/id-path-parameter
-                        :body domain/configure-phases-specification}
-           :handler    (integrant.core/ref ::web.actions.tournament/update-phase-configuration)}}]
    ["/league/:eid"
     {:put {:produces   ["application/htmx+html"]
            :parameters {:path  schema.contract/id-path-parameter
@@ -506,6 +501,12 @@
                                    [:eid :uuid]
                                    [:match-eid :uuid]])}
               :handler    (integrant.core/ref ::web.tournament.api/get-games)}}]]
+     ["/phase"
+      {:name :tournament/phase-configuration
+       :put  {:produces   ["text/html"]
+              :parameters {:path schema.contract/id-path-parameter
+                           :body domain/configure-phases-specification}
+              :handler    (integrant.core/ref ::web.tournament.api/update-phase-configuration)}}]
      ["/phase/:phase-index"
       {:name :tournament/phase
        :get  {:produces   ["text/html"]

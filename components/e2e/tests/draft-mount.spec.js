@@ -125,9 +125,4 @@ test.describe.serial('Mount-selection overrides', () => {
     const slotCost = await lordSlot.locator('.draft-slot-cost').textContent();
     expect(Number(slotCost)).toBe(costPreview);
   });
-
-  // Note: A test that exercised the GET preview behavior via the JSON API
-  // was dropped in PR F since /api no longer serves JSON. The same preview
-  // semantics are still exercised by the in-browser preview-mode mount
-  // toggle test above (which observes cost updates in the rendered DOM).
 });
