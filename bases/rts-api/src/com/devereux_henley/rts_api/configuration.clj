@@ -5,6 +5,7 @@
   (:require
    [com.devereux-henley.rts-api.db :as db]
    [com.devereux-henley.rts-api.dev-auth :as dev-auth]
+   [com.devereux-henley.rts-api.model-transform]
    [com.devereux-henley.rts-api.web :as web]
    [com.devereux-henley.rts-data.contract :as rts-data]
    [com.devereux-henley.rts-web.contract :as rts-web]
