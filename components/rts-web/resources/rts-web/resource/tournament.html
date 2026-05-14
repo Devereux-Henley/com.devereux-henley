@@ -7,5 +7,5 @@
     {% if data._links.league %}<dt>league</dt><dd><a href="{{ data._links.league }}">{{ data.league-eid }}</a></dd>{% endif %}
     {% if data.created-by-sub %}<dt>created-by</dt><dd>{{ data.created-by-sub }}</dd>{% endif %}
   </dl>
-  <nav><a href="/api/tournament/{{ data.eid }}/status" rel="status">status</a> <a href="/api/tournament/{{ data.eid }}/registration" rel="registration">registration</a> <a href="/api/tournament/{{ data.eid }}/entry" rel="entries">entries</a> <a href="/api/tournament/{{ data.eid }}/match" rel="matches">matches</a></nav>
+  <nav><a href="{{ data._links.status }}" rel="status">status</a> <a href="{{ data._links.registration }}" rel="registration">registration</a> <a href="{{ data._links.entries }}" rel="entries">entries</a> <a href="{{ data._links.matches }}" rel="matches">matches</a></nav>
 </section>

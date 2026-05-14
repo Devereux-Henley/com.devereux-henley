@@ -284,39 +284,73 @@
              {}
              value))
 
+(defn- resource-type-prefix
+  "Returns the namespace of the schema's `:type` literal as a string
+   (e.g. `\"tournament\"` from `[:= :tournament/tournament]`). Used to
+   derive the `:<prefix>-eid` path-param key that sub-resource routes
+   expect for this resource's parent slot."
+  [schema]
+  (some (fn [[k _ child-schema]]
+          (when (= k :type)
+            (let [type-value (first (malli.core/children child-schema))]
+              (when (qualified-keyword? type-value)
+                (namespace type-value)))))
+        (malli.core/children schema)))
+
 (defn handle-model-transform
   "Returns a malli encoder fn for a `:map` schema annotated
    `{:model/type :model/model}`. Walks the input value once: each key
    whose schema field carries `:model/link <route-name>` becomes a
    `_links.<key>` entry (or `_links.self` for `:eid`), resolved against
-   the matched reitit route. All other keys pass through unchanged."
+   the matched reitit route. All other keys pass through unchanged.
+
+   If the schema's properties include `:model/sub-resources
+   {<rel-key> <route-name>, ...}`, every entry also produces a
+   `_links.<rel-key>` resolved with the resource's own eid both as
+   `:eid` and as `:<resource-type>-eid` (derived from the schema's
+   `:type` field), so routes that hang sub-resources off either slot
+   resolve correctly."
   [route-data schema]
-  (let [mapping (key-to-link-mapping schema)]
+  (let [mapping       (key-to-link-mapping schema)
+        props         (malli.core/properties schema)
+        sub-resources (:model/sub-resources props)
+        prefix        (resource-type-prefix schema)]
     (fn [value]
-      (let [parent-params (parent-eid-params value)]
-        (reduce-kv
-         (fn [acc k v]
-           (cond
-             (and (contains? mapping k) (nil? v))
-             acc
+      (let [parent-params   (parent-eid-params value)
+            sub-link-params (cond-> (assoc parent-params :eid (:eid value))
+                              prefix (assoc (keyword (str prefix "-eid"))
+                                            (:eid value)))]
+        (cond-> (reduce-kv
+                 (fn [acc k v]
+                   (cond
+                     (and (contains? mapping k) (nil? v))
+                     acc
 
-             (contains? mapping k)
-             (-> acc
-                 (assoc k v)
-                 (assoc-in [:_links
-                            (if (= k :eid)
-                              :self
-                              (keyword
-                               (clojure.string/replace (name k) #"-eid" "")))]
-                           (to-resource-link
-                            route-data
-                            (get mapping k)
-                            (assoc parent-params :eid v))))
+                     (contains? mapping k)
+                     (-> acc
+                         (assoc k v)
+                         (assoc-in [:_links
+                                    (if (= k :eid)
+                                      :self
+                                      (keyword
+                                       (clojure.string/replace (name k) #"-eid" "")))]
+                                   (to-resource-link
+                                    route-data
+                                    (get mapping k)
+                                    (assoc parent-params :eid v))))
 
-             :else
-             (assoc acc k v)))
-         {}
-         value)))))
+                     :else
+                     (assoc acc k v)))
+                 {}
+                 value)
+          sub-resources
+          ((fn [result]
+             (reduce-kv (fn [acc rel route-name]
+                          (assoc-in acc [:_links rel]
+                                    (to-resource-link route-data route-name
+                                                      sub-link-params)))
+                        result
+                        sub-resources))))))))
 
 (defn model-transformer
   "Malli encoder that walks a value against its schema, applying
