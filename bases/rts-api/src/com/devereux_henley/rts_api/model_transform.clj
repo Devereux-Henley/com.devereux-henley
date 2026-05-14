@@ -10,9 +10,7 @@
   `_links` shows up automatically, including on any nested
   `:model/model` resources reachable through `:_embedded`.
 
-  Maps without `:model/type :model/model` (notably collection
-  responses) pass through unchanged; collection handlers continue to
-  inject `_links.self` themselves."
+  Maps without `:model/type :model/model` pass through unchanged."
   (:require
    [com.devereux-henley.schema.contract :as schema]
    [integrant.core]
