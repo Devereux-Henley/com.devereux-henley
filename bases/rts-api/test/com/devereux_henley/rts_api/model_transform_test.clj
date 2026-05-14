@@ -9,7 +9,7 @@
 
 (def ^:private tournament-resource
   (schema/to-schema
-   [:map {:model/type         :model/model
+   [:map {:model/type          :model/model
           :model/sub-resources {:matches :tournament/matches}}
     [:eid {:model/link :tournament/by-eid} :uuid]
     [:type [:= :tournament/tournament]]
@@ -30,7 +30,7 @@
 
 (def ^:private tournament-with-embedded-match
   (schema/to-schema
-   [:map {:model/type         :model/model
+   [:map {:model/type          :model/model
           :model/sub-resources {:matches :tournament/matches}}
     [:eid {:model/link :tournament/by-eid} :uuid]
     [:type [:= :tournament/tournament]]
@@ -71,9 +71,9 @@
   [path handler]
   (let [middleware (model-transform/wrap-model-transform hostname)
         wrapped    (middleware handler)
-        request    {:request-method        :get
-                    :uri                   path
-                    :reitit.core/router    router}]
+        request    {:request-method     :get
+                    :uri                path
+                    :reitit.core/router router}]
     (wrapped request)))
 
 ;; ─── Happy path ────────────────────────────────────────────────────────────
@@ -114,14 +114,14 @@
   (testing "nested :model/model maps reachable through :_embedded are transformed too"
     (let [response (run-middleware (str "/api/tournament/" tournament-eid "/embedded")
                                    (handler-returning
-                                    {:type           :tournament/tournament
-                                     :eid            tournament-eid
-                                     :name           "T"
-                                     :game-eid       game-eid
-                                     :_embedded      {:current-match
-                                                      {:type           :tournament/match
-                                                       :eid            match-eid
-                                                       :tournament-eid tournament-eid}}}))
+                                    {:type      :tournament/tournament
+                                     :eid       tournament-eid
+                                     :name      "T"
+                                     :game-eid  game-eid
+                                     :_embedded {:current-match
+                                                 {:type           :tournament/match
+                                                  :eid            match-eid
+                                                  :tournament-eid tournament-eid}}}))
           embedded (get-in response [:body :_embedded :current-match :_links])]
       (is (= (str hostname "/api/tournament/" tournament-eid "/match/" match-eid)
              (:self embedded)))
