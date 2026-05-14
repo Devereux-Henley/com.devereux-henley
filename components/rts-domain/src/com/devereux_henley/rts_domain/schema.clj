@@ -133,6 +133,10 @@
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
+     {:model/sub-resources {:status       :tournament/status
+                            :registration :tournament/registration
+                            :entries      :tournament/entries
+                            :matches      :tournament/matches}}
      [:eid {:model/link :tournament/by-eid} :uuid]
      [:type [:= :tournament/tournament]]
      [:name {:min 1} :string]
@@ -146,7 +150,11 @@
        [:self :url]
        [:game :url]
        [:league {:optional true} :url]
-       [:season {:optional true} :url]]]])))
+       [:season {:optional true} :url]
+       [:status :url]
+       [:registration :url]
+       [:entries :url]
+       [:matches :url]]]])))
 
 (def create-tournament-specification
   (schema.contract/to-schema
@@ -301,10 +309,10 @@
 
 (def tournament-match-summary
   (schema.contract/to-schema
-   [:map
-    [:eid :uuid]
+   [:map {:model/type :model/model}
+    [:eid {:model/link :match/by-eid} :uuid]
     [:type [:= :tournament/match]]
-    [:tournament-eid :uuid]
+    [:tournament-eid {:model/link :tournament/by-eid} :uuid]
     [:phase-index :int]
     [:round-index :int]
     [:bracket-type data-access.contract/bracket-type-enum]
@@ -312,7 +320,8 @@
     [:player-two-sub [:maybe :string]]
     [:winner-sub [:maybe :string]]
     [:status data-access.contract/match-status-enum]
-    [:format data-access.contract/match-format-enum]]))
+    [:format data-access.contract/match-format-enum]
+    [:_links [:map [:self :url] [:tournament :url]]]]))
 
 (def tournament-matches-response
   (schema.contract/to-schema
@@ -327,9 +336,9 @@
    [:map {:model/type :model/model}
     [:type [:= :tournament/games]]
     [:tournament-eid {:model/link :tournament/by-eid} :uuid]
-    [:match-eid :uuid]
+    [:match-eid {:model/link :match/by-eid} :uuid]
     [:games [:sequential [:map {:closed false}]]]
-    [:_links [:map [:tournament :url]]]]))
+    [:_links [:map [:tournament :url] [:match :url]]]]))
 
 ;; ─── Bracket-view shapes ────────────────────────────────────────────────────
 ;; Describe the projections built by rules/group-matches-by-round and
@@ -724,6 +733,7 @@
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
+     {:model/sub-resources {:seasons :season/for-league}}
      [:eid {:model/link :league/by-eid} :uuid]
      [:type [:= :league/league]]
      [:name {:min 1} :string]
@@ -733,7 +743,8 @@
      [:_links
       [:map
        [:self :url]
-       [:game :url]]]])))
+       [:game :url]
+       [:seasons :url]]]])))
 
 (def league-collection-resource
   (malli.util/merge

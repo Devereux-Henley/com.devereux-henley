@@ -170,17 +170,17 @@
 
 (defmethod integrant.core/init-key ::get-matches
   [_init-key dependencies]
-  (fn [{{{:keys [eid]} :path} :parameters
-        :as                   _request}]
+  (fn [{{{:keys [tournament-eid]} :path} :parameters
+        :as                              _request}]
     {:status 200
      :body   {:type           :tournament/matches
-              :tournament-eid eid
-              :matches        (domain/get-matches-for-tournament dependencies eid)}}))
+              :tournament-eid tournament-eid
+              :matches        (domain/get-matches-for-tournament dependencies tournament-eid)}}))
 
 (defmethod integrant.core/init-key ::get-match
   [_init-key dependencies]
-  (fn [{{{:keys [match-eid]} :path} :parameters
-        :as                         _request}]
+  (fn [{{{match-eid :eid} :path} :parameters
+        :as                      _request}]
     (if-let [match (domain/get-match-by-eid dependencies match-eid)]
       {:status 200 :body match}
       {:status 404 :body {:type :missing/resource :name "match" :id match-eid}})))
@@ -227,11 +227,12 @@
 
 (defmethod integrant.core/init-key ::get-games
   [_init-key dependencies]
-  (fn [{{{:keys [eid match-eid]} :path} :parameters
+  (fn [{{{:keys     [tournament-eid]
+          match-eid :eid}            :path} :parameters
         :as                             _request}]
     {:status 200
      :body   {:type           :tournament/games
-              :tournament-eid eid
+              :tournament-eid tournament-eid
               :match-eid      match-eid
               :games          (domain/get-games-for-match dependencies match-eid)}}))
 

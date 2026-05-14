@@ -340,25 +340,27 @@
     {:post {:produces   ["application/htmx+html"]
             :parameters {:path schema.contract/id-path-parameter}
             :handler    (integrant.core/ref ::web.actions.tournament/create-round)}}]
-   ["/tournament/:eid/match"
-    {:post {:produces   ["application/htmx+html"]
-            :parameters {:path schema.contract/id-path-parameter
-                         :body domain/create-match-specification}
-            :handler    (integrant.core/ref ::web.actions.tournament/create-match)}}]
-   ["/tournament/:eid/match/:match-eid/result"
-    {:put {:produces   ["application/htmx+html"]
-           :parameters {:path (schema.contract/to-schema
-                               [:map
-                                [:eid :uuid]
-                                [:match-eid :uuid]])
-                        :body domain/record-result-specification}
-           :handler    (integrant.core/ref ::web.actions.tournament/update-match-result)}}]
-   ["/tournament/:eid/match/:match-eid/game"
+   ["/tournament/:tournament-eid/match"
     {:post {:produces   ["application/htmx+html"]
             :parameters {:path (schema.contract/to-schema
                                 [:map
-                                 [:eid :uuid]
-                                 [:match-eid :uuid]])
+                                 [:tournament-eid :uuid]])
+                         :body domain/create-match-specification}
+            :handler    (integrant.core/ref ::web.actions.tournament/create-match)}}]
+   ["/tournament/:tournament-eid/match/:eid/result"
+    {:put {:produces   ["application/htmx+html"]
+           :parameters {:path (schema.contract/to-schema
+                               [:map
+                                [:tournament-eid :uuid]
+                                [:eid :uuid]])
+                        :body domain/record-result-specification}
+           :handler    (integrant.core/ref ::web.actions.tournament/update-match-result)}}]
+   ["/tournament/:tournament-eid/match/:eid/game"
+    {:post {:produces   ["application/htmx+html"]
+            :parameters {:path (schema.contract/to-schema
+                                [:map
+                                 [:tournament-eid :uuid]
+                                 [:eid :uuid]])
                          :body domain/record-result-specification}
             :handler    (integrant.core/ref ::web.actions.tournament/record-game)}}]
    ["/league/:eid"
@@ -479,43 +481,23 @@
               :handler    (integrant.core/ref ::web.tournament.api/get-tournament)}}]
      ["/entry"
       [""
-       {:get {:produces   ["text/html"]
-              :parameters {:path schema.contract/id-path-parameter}
-              :responses  {200 {:body domain/tournament-entries-response}}
-              :handler    (integrant.core/ref ::web.tournament.api/get-entries)}}]]
-     ["/status"
-      {:get {:produces   ["text/html"]
-             :parameters {:path schema.contract/id-path-parameter}
-             :responses  {200 {:body domain/tournament-status-response}}
-             :handler    (integrant.core/ref ::web.tournament.api/get-status)}}]
-     ["/registration"
-      {:get {:produces   ["text/html"]
-             :parameters {:path schema.contract/id-path-parameter}
-             :responses  {200 {:body domain/tournament-registration-response}}
-             :handler    (integrant.core/ref ::web.tournament.api/get-registration)}}]
-     ["/match"
-      [""
-       {:get {:produces   ["text/html"]
-              :parameters {:path schema.contract/id-path-parameter}
-              :responses  {200 {:body domain/tournament-matches-response}}
-              :handler    (integrant.core/ref ::web.tournament.api/get-matches)}}]
-      ["/:match-eid"
-       {:name :match/by-eid
+       {:name :tournament/entries
         :get  {:produces   ["text/html"]
-               :parameters {:path (schema.contract/to-schema
-                                   [:map
-                                    [:eid :uuid]
-                                    [:match-eid :uuid]])}
-               :responses  {200 {:body domain/match-resource}}
-               :handler    (integrant.core/ref ::web.tournament.api/get-match)}}]
-      ["/:match-eid/game"
-       {:get {:produces   ["text/html"]
-              :parameters {:path (schema.contract/to-schema
-                                  [:map
-                                   [:eid :uuid]
-                                   [:match-eid :uuid]])}
-              :responses  {200 {:body domain/tournament-games-response}}
-              :handler    (integrant.core/ref ::web.tournament.api/get-games)}}]]
+               :parameters {:path schema.contract/id-path-parameter}
+               :responses  {200 {:body domain/tournament-entries-response}}
+               :handler    (integrant.core/ref ::web.tournament.api/get-entries)}}]]
+     ["/status"
+      {:name :tournament/status
+       :get  {:produces   ["text/html"]
+              :parameters {:path schema.contract/id-path-parameter}
+              :responses  {200 {:body domain/tournament-status-response}}
+              :handler    (integrant.core/ref ::web.tournament.api/get-status)}}]
+     ["/registration"
+      {:name :tournament/registration
+       :get  {:produces   ["text/html"]
+              :parameters {:path schema.contract/id-path-parameter}
+              :responses  {200 {:body domain/tournament-registration-response}}
+              :handler    (integrant.core/ref ::web.tournament.api/get-registration)}}]
      ["/phase"
       {:name :tournament/phase-configuration
        :put  {:produces   ["text/html"]
@@ -536,7 +518,33 @@
        :get  {:produces   ["text/html"]
               :parameters {:path schema.contract/id-path-parameter}
               :responses  {200 {:body domain/round-response}}
-              :handler    (integrant.core/ref ::web.tournament.api/get-round)}}]]]
+              :handler    (integrant.core/ref ::web.tournament.api/get-round)}}]]
+    ["/:tournament-eid/match"
+     [""
+      {:name :tournament/matches
+       :get  {:produces   ["text/html"]
+              :parameters {:path (schema.contract/to-schema
+                                  [:map
+                                   [:tournament-eid :uuid]])}
+              :responses  {200 {:body domain/tournament-matches-response}}
+              :handler    (integrant.core/ref ::web.tournament.api/get-matches)}}]
+     ["/:eid"
+      {:name :match/by-eid
+       :get  {:produces   ["text/html"]
+              :parameters {:path (schema.contract/to-schema
+                                  [:map
+                                   [:tournament-eid :uuid]
+                                   [:eid :uuid]])}
+              :responses  {200 {:body domain/match-resource}}
+              :handler    (integrant.core/ref ::web.tournament.api/get-match)}}]
+     ["/:eid/game"
+      {:get {:produces   ["text/html"]
+             :parameters {:path (schema.contract/to-schema
+                                 [:map
+                                  [:tournament-eid :uuid]
+                                  [:eid :uuid]])}
+             :responses  {200 {:body domain/tournament-games-response}}
+             :handler    (integrant.core/ref ::web.tournament.api/get-games)}}]]]
 
    ;; ─── League ────────────────────────────────────────────────────────────
    ["/league"

@@ -129,13 +129,13 @@
 
 (defmethod integrant.core/init-key ::create-match
   [_init-key dependencies]
-  (fn [{{{:keys [eid]}                                  :path
+  (fn [{{{:keys [tournament-eid]}                       :path
          {:keys [phase-index round-index
                  player-one-sub player-two-sub format]} :body} :parameters
         :as                                                    _request}]
     (let [result (domain/create-match
                   dependencies
-                  eid
+                  tournament-eid
                   (cond-> {:phase-index    phase-index
                            :round-index    round-index
                            :player-one-sub player-one-sub
@@ -147,7 +147,7 @@
 
 (defmethod integrant.core/init-key ::update-match-result
   [_init-key dependencies]
-  (fn [{{{:keys [match-eid]}  :path
+  (fn [{{{match-eid :eid}     :path
          {:keys [winner-sub]} :body} :parameters
         :as                          _request}]
     (let [result (domain/update-match-result dependencies match-eid winner-sub)]
@@ -157,7 +157,7 @@
 
 (defmethod integrant.core/init-key ::record-game
   [_init-key dependencies]
-  (fn [{{{:keys [match-eid]}  :path
+  (fn [{{{match-eid :eid}     :path
          {:keys [winner-sub]} :body} :parameters
         :as                          _request}]
     (let [result (domain/record-game-result dependencies match-eid winner-sub)]
