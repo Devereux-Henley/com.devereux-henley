@@ -321,9 +321,8 @@
 (defn model-transformer
   "Malli encoder that walks a value against its schema, applying
    `handle-model-transform` to every `:map` whose properties include
-   `{:model/type :model/model}`. Maps without that annotation (notably
-   collection responses, which manage their own `_links.self` in
-   handlers) pass through unchanged."
+   `{:model/type :model/model}`. Maps without that annotation pass
+   through unchanged."
   [route-data]
   (malli.transform/transformer
    {:name     :model
