@@ -229,7 +229,7 @@
   [_init-key dependencies]
   (fn [{{{:keys     [tournament-eid]
           match-eid :eid}            :path} :parameters
-        :as                             _request}]
+        :as                                 _request}]
     {:status 200
      :body   {:type           :tournament/games
               :tournament-eid tournament-eid
