@@ -2,7 +2,7 @@
   <h2 id="league-collection-heading" data-type="collection/league">Leagues</h2>
   <ul>
     {% for l in data._embedded.results %}
-    <li><a href="/api/league/{{ l.eid }}">{{ l.name }}</a></li>
+    <li><a href="{{ l._links.self }}">{{ l.name }}</a></li>
     {% endfor %}
   </ul>
 </section>

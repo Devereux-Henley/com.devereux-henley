@@ -115,9 +115,10 @@
 
 (def round-response
   (schema.contract/to-schema
-   [:map
+   [:map {:model/type :model/model}
     [:type [:= :tournament/round]]
-    [:tournament-eid :uuid]]))
+    [:tournament-eid {:model/link :tournament/by-eid} :uuid]
+    [:_links [:map [:tournament :url]]]]))
 
 (def configure-phases-specification
   (schema.contract/to-schema
@@ -238,16 +239,20 @@
 
 (def tournament-entries-response
   (schema.contract/to-schema
-   [:map
+   [:map {:model/type :model/model}
     [:type [:= :tournament/entries]]
-    [:entries [:sequential tournament-entry-summary]]]))
+    [:tournament-eid {:model/link :tournament/by-eid} :uuid]
+    [:entries [:sequential tournament-entry-summary]]
+    [:_links [:map [:tournament :url]]]]))
 
 (def tournament-status-response
   (schema.contract/to-schema
-   [:map
+   [:map {:model/type :model/model}
     [:type [:= :tournament/status]]
+    [:tournament-eid {:model/link :tournament/by-eid} :uuid]
     [:status data-access.contract/tournament-status-enum]
-    [:available-transitions [:sequential :string]]]))
+    [:available-transitions [:sequential :string]]
+    [:_links [:map [:tournament :url]]]]))
 
 (def tournament-started-response
   (schema.contract/to-schema
@@ -279,12 +284,14 @@
 
 (def tournament-registration-response
   (schema.contract/to-schema
-   [:map
+   [:map {:model/type :model/model}
     [:type [:= :tournament/registration]]
+    [:tournament-eid {:model/link :tournament/by-eid} :uuid]
     [:opens-at [:maybe :string]]
     [:closes-at [:maybe :string]]
     [:timezone [:maybe :string]]
-    [:closed-early :boolean]]))
+    [:closed-early :boolean]
+    [:_links [:map [:tournament :url]]]]))
 
 (def tournament-entry-deleted-response
   (schema.contract/to-schema
@@ -309,9 +316,20 @@
 
 (def tournament-matches-response
   (schema.contract/to-schema
-   [:map
+   [:map {:model/type :model/model}
     [:type [:= :tournament/matches]]
-    [:matches [:sequential tournament-match-summary]]]))
+    [:tournament-eid {:model/link :tournament/by-eid} :uuid]
+    [:matches [:sequential tournament-match-summary]]
+    [:_links [:map [:tournament :url]]]]))
+
+(def tournament-games-response
+  (schema.contract/to-schema
+   [:map {:model/type :model/model}
+    [:type [:= :tournament/games]]
+    [:tournament-eid {:model/link :tournament/by-eid} :uuid]
+    [:match-eid :uuid]
+    [:games [:sequential [:map {:closed false}]]]
+    [:_links [:map [:tournament :url]]]]))
 
 ;; ─── Bracket-view shapes ────────────────────────────────────────────────────
 ;; Describe the projections built by rules/group-matches-by-round and
@@ -364,15 +382,18 @@
    focused phase group plus the tournament-wide standings that back
    the swiss / round-robin view. `:game-eid` rides along so the match
    cards can build `View lineup` URLs to each player's draft (since
-   the draft view path is game-scoped)."
+   the draft view path is game-scoped). `:tournament-eid` drives the
+   parent link via `_links.tournament`."
   (schema.contract/to-schema
-   [:map
+   [:map {:model/type :model/model}
     [:type [:= :tournament/phase]]
+    [:tournament-eid {:model/link :tournament/by-eid} :uuid]
     [:phase-group phase-group]
     [:tournament-state [:map {:closed false}
                         [:standings [:sequential standing-entry]]]]
-    [:game-eid :uuid]
-    [:data [:map [:eid :uuid]]]]))
+    [:game-eid {:model/link :game/by-eid} :uuid]
+    [:data [:map [:eid :uuid]]]
+    [:_links [:map [:tournament :url] [:game :url]]]]))
 
 (def tournament-match-result-response
   (schema.contract/to-schema
@@ -787,8 +808,13 @@
 
 (def faction-standings-response
   (schema.contract/to-schema
-   [:map
+   [:map {:model/type :model/model}
     [:type [:enum :stats/game-faction-standings :stats/league-faction-standings :stats/season-faction-standings]]
-    [:scope [:enum "game" "league" "season"]]
-    [:scope-eid :uuid]
-    [:rows [:sequential faction-standings-row-resource]]]))
+    [:game-eid {:optional true :model/link :game/by-eid} :uuid]
+    [:league-eid {:optional true :model/link :league/by-eid} :uuid]
+    [:season-eid {:optional true :model/link :season/by-eid} :uuid]
+    [:rows [:sequential faction-standings-row-resource]]
+    [:_links [:map
+              [:game {:optional true} :url]
+              [:league {:optional true} :url]
+              [:season {:optional true} :url]]]]))

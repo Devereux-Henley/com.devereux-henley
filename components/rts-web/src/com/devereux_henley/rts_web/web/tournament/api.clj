@@ -10,35 +10,27 @@
   (or (domain/get-tournament-by-eid dependencies eid)
       {:type :missing/resource :name "tournament" :id eid}))
 
-(defn get-tournaments-for-game
-  [dependencies game-eid {:keys [hostname router]}]
-  {:type      :collection/tournament
-   :_embedded {:results (domain/get-tournaments-for-game dependencies game-eid)}
-   :_links    {:self (str hostname
-                          (-> router
-                              (reitit.core/match-by-name! :tournament/for-game)
-                              (reitit.core/match->path {:game-eid game-eid})))}})
-
 (defmethod integrant.core/init-key ::get-tournament
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
-        router                :reitit.core/router
         :as                   _request}]
-    (web.core/handle-fetch-response
-     domain/tournament-resource
-     {:hostname (:hostname dependencies) :router router}
-     #(get-tournament-by-eid dependencies eid))))
+    (let [result (get-tournament-by-eid dependencies eid)]
+      (if (= :missing/resource (:type result))
+        {:status 404 :body result}
+        {:status 200 :body result}))))
 
 (defmethod integrant.core/init-key ::get-tournaments
   [_init-key dependencies]
   (fn [{{{:keys [game-eid]} :query} :parameters
         router                      :reitit.core/router
         :as                         _request}]
-    (web.core/handle-fetch-response
-     domain/tournament-collection-resource
-     {:hostname (:hostname dependencies) :router router}
-     #(get-tournaments-for-game dependencies game-eid
-                                {:hostname (:hostname dependencies) :router router}))))
+    {:status 200
+     :body   {:type      :collection/tournament
+              :_embedded {:results (domain/get-tournaments-for-game dependencies game-eid)}
+              :_links    {:self (str (:hostname dependencies)
+                                     (-> router
+                                         (reitit.core/match-by-name! :tournament/for-game)
+                                         (reitit.core/match->path {:game-eid game-eid})))}}}))
 
 (defmethod integrant.core/init-key ::create-tournament
   [_init-key dependencies]
@@ -102,8 +94,9 @@
   (fn [{{{:keys [eid]} :path} :parameters
         :as                   _request}]
     {:status 200
-     :body   {:type    :tournament/entries
-              :entries (domain/get-entries dependencies eid)}}))
+     :body   {:type           :tournament/entries
+              :tournament-eid eid
+              :entries        (domain/get-entries dependencies eid)}}))
 
 (defmethod integrant.core/init-key ::get-status
   [_init-key dependencies]
@@ -112,6 +105,7 @@
     (let [state (domain/get-tournament-state dependencies eid)]
       {:status 200
        :body   {:type                  :tournament/status
+                :tournament-eid        eid
                 :status                (:status state)
                 :available-transitions (vec (domain/available-transitions dependencies eid))}})))
 
@@ -154,11 +148,12 @@
         :as                   _request}]
     (let [state (domain/get-tournament-state dependencies eid)]
       {:status 200
-       :body   {:type         :tournament/registration
-                :opens-at     (get-in state [:registration :opens-at])
-                :closes-at    (get-in state [:registration :closes-at])
-                :timezone     (get-in state [:registration :timezone])
-                :closed-early (get-in state [:registration :closed-early])}})))
+       :body   {:type           :tournament/registration
+                :tournament-eid eid
+                :opens-at       (get-in state [:registration :opens-at])
+                :closes-at      (get-in state [:registration :closes-at])
+                :timezone       (get-in state [:registration :timezone])
+                :closed-early   (get-in state [:registration :closed-early])}})))
 
 (defmethod integrant.core/init-key ::close-registration
   [_init-key dependencies]
@@ -178,19 +173,17 @@
   (fn [{{{:keys [eid]} :path} :parameters
         :as                   _request}]
     {:status 200
-     :body   {:type    :tournament/matches
-              :matches (domain/get-matches-for-tournament dependencies eid)}}))
+     :body   {:type           :tournament/matches
+              :tournament-eid eid
+              :matches        (domain/get-matches-for-tournament dependencies eid)}}))
 
 (defmethod integrant.core/init-key ::get-match
   [_init-key dependencies]
   (fn [{{{:keys [match-eid]} :path} :parameters
-        router                      :reitit.core/router
         :as                         _request}]
-    (web.core/handle-fetch-response
-     domain/match-resource
-     {:hostname (:hostname dependencies) :router router}
-     #(or (domain/get-match-by-eid dependencies match-eid)
-          {:type :missing/resource :name "match" :id match-eid}))))
+    (if-let [match (domain/get-match-by-eid dependencies match-eid)]
+      {:status 200 :body match}
+      {:status 404 :body {:type :missing/resource :name "match" :id match-eid}})))
 
 (defmethod integrant.core/init-key ::create-match
   [_init-key dependencies]
@@ -234,11 +227,13 @@
 
 (defmethod integrant.core/init-key ::get-games
   [_init-key dependencies]
-  (fn [{{{:keys [match-eid]} :path} :parameters
-        :as                         _request}]
+  (fn [{{{:keys [eid match-eid]} :path} :parameters
+        :as                             _request}]
     {:status 200
-     :body   {:type  :tournament/games
-              :games (domain/get-games-for-match dependencies match-eid)}}))
+     :body   {:type           :tournament/games
+              :tournament-eid eid
+              :match-eid      match-eid
+              :games          (domain/get-games-for-match dependencies match-eid)}}))
 
 ;; ─── Phase handlers ─────────────────────────────────────────────────────────
 
@@ -287,17 +282,14 @@
 
 (defmethod integrant.core/init-key ::get-phase
   [_init-key dependencies]
-  (fn [{{{:keys [eid phase-index]} :path} :parameters}]
+  (fn [{{{:keys [eid phase-index]} :path} :parameters
+        :as                               _request}]
     (let [state           (domain/get-tournament-state dependencies eid)
           phases          (:phases state)
           raw-matches     (domain/get-matches-for-tournament dependencies eid)
           qualifier-count (or (:qualifier-count state) (count (:standings state)))
           grouped         (domain/group-matches-by-phase raw-matches phases qualifier-count)
           phase-group-raw (first (filter #(= phase-index (:phase %)) grouped))
-          ;; Per-match game rows carry the auto-created player draft eids.
-          ;; Fetched per real-match (placeholders / byes skipped) and keyed
-          ;; by match-eid so each match-card can render its lineup links
-          ;; without an extra round-trip from the template.
           real-matches    (filter :eid raw-matches)
           lineups         (into {}
                                 (map (fn [m]
@@ -306,17 +298,12 @@
                                 real-matches)
           phase-group     (when phase-group-raw
                             (attach-lineups-to-matches phase-group-raw lineups))
-          ;; Each match-card surfaces per-game "View lineup" links to the
-          ;; player drafts (read-only since the match references them).
-          ;; The view URL is `/view/game/<game>/draft/<draft>/index.html`,
-          ;; so the fragment template needs the parent tournament's
-          ;; game-eid — pulled from the tournament row here so each match
-          ;; render can build the URL without a second lookup per card.
           tournament      (get-tournament-by-eid dependencies eid)
           game-eid        (:game-eid tournament)]
       (if phase-group
         {:status 200
          :body   {:type             :tournament/phase
+                  :tournament-eid   eid
                   :tournament-state state
                   :phase-group      phase-group
                   :game-eid         game-eid
@@ -325,12 +312,9 @@
          :body   {:type :missing/resource :name "tournament-phase" :id phase-index}}))))
 
 (defmethod integrant.core/init-key ::get-round
-  [_init-key dependencies]
+  [_init-key _dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
-        router                :reitit.core/router
         :as                   _request}]
-    (web.core/handle-fetch-response
-     domain/round-response
-     {:hostname (:hostname dependencies) :router router}
-     (fn [] {:type           :tournament/round
-             :tournament-eid eid}))))
+    {:status 200
+     :body   {:type           :tournament/round
+              :tournament-eid eid}}))

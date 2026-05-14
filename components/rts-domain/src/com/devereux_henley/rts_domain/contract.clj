@@ -121,6 +121,7 @@
 (def tournament-registration-response             schema/tournament-registration-response)
 (def tournament-entry-deleted-response            schema/tournament-entry-deleted-response)
 (def tournament-matches-response                  schema/tournament-matches-response)
+(def tournament-games-response                    schema/tournament-games-response)
 (def tournament-match-result-response             schema/tournament-match-result-response)
 
 (def available-transitions                        handlers.tournament/available-transitions)
