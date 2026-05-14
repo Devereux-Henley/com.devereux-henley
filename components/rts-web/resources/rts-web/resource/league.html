@@ -4,5 +4,5 @@
     <dt>eid</dt><dd>{{ data.eid }}</dd>
     {% if data._links.game %}<dt>game</dt><dd><a href="{{ data._links.game }}">{{ data.game-eid }}</a></dd>{% endif %}
   </dl>
-  <nav><a href="/api/league/{{ data.eid }}/season" rel="seasons">seasons</a></nav>
+  <nav><a href="{{ data._links.seasons }}" rel="seasons">seasons</a></nav>
 </section>
