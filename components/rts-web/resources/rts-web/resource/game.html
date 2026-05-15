@@ -26,7 +26,10 @@
         <h3 id="game-socials-heading">Socials</h3>
         <ul aria-labelledby="game-socials-heading">
             {% for social in data._embedded.socials %}
-            <li><a href="{{social.url}}" rel="noopener noreferrer">{{social.social-media-platform-eid|title}}</a></li>
+            <li>
+                <a href="{{social.url}}" rel="noopener noreferrer">{{social.url}}</a>
+                {% if social._links.self %} (<a href="{{ social._links.self }}">social</a>){% endif %}
+            </li>
             {% endfor %}
         </ul>
     </section>

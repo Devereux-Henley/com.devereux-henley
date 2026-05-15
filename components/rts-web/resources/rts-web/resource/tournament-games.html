@@ -4,15 +4,15 @@
     {% for g in data.games %}
     <li data-winner-sub="{{ g.winner-sub }}">
       <dl>
-        {% if g.player-one-draft-eid %}<dt>player-one draft</dt><dd><a href="/api/draft/{{ g.player-one-draft-eid }}">{{ g.player-one-draft-eid }}</a></dd>{% endif %}
-        {% if g.player-two-draft-eid %}<dt>player-two draft</dt><dd><a href="/api/draft/{{ g.player-two-draft-eid }}">{{ g.player-two-draft-eid }}</a></dd>{% endif %}
+        {% if g.player-one-draft-eid %}<dt>player-one draft</dt><dd><a href="/api/draft/{{ g.player-one-draft-eid }}">draft</a></dd>{% endif %}
+        {% if g.player-two-draft-eid %}<dt>player-two draft</dt><dd><a href="/api/draft/{{ g.player-two-draft-eid }}">draft</a></dd>{% endif %}
         {% if g.winner-sub %}<dt>winner</dt><dd>{{ g.winner-sub }}</dd>{% endif %}
       </dl>
     </li>
     {% endfor %}
   </ol>
   <dl>
-    {% if data._links.tournament %}<dt>tournament</dt><dd><a href="{{ data._links.tournament }}">{{ data.tournament-eid }}</a></dd>{% endif %}
-    {% if data._links.match %}<dt>match</dt><dd><a href="{{ data._links.match }}">{{ data.match-eid }}</a></dd>{% endif %}
+    {% if data._links.tournament %}<dt>tournament</dt><dd><a href="{{ data._links.tournament }}">tournament</a></dd>{% endif %}
+    {% if data._links.match %}<dt>match</dt><dd><a href="{{ data._links.match }}">match</a></dd>{% endif %}
   </dl>
 </section>

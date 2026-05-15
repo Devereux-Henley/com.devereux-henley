@@ -2,7 +2,7 @@
   <h2 id="league-heading" data-type="league/league">{{ data.name }}</h2>
   <dl>
     <dt>eid</dt><dd>{{ data.eid }}</dd>
-    {% if data._links.game %}<dt>game</dt><dd><a href="{{ data._links.game }}">{{ data.game-eid }}</a></dd>{% endif %}
+    {% if data._links.game %}<dt>game</dt><dd><a href="{{ data._links.game }}">game</a></dd>{% endif %}
   </dl>
   <nav><a href="{{ data._links.seasons }}" rel="seasons">seasons</a></nav>
 </section>

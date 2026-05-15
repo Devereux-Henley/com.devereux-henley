@@ -3,8 +3,8 @@
   <dl>
     <dt>eid</dt><dd>{{ data.eid }}</dd>
     {% if data.description %}<dt>description</dt><dd>{{ data.description }}</dd>{% endif %}
-    {% if data._links.game %}<dt>game</dt><dd><a href="{{ data._links.game }}">{{ data.game-eid }}</a></dd>{% endif %}
-    {% if data._links.league %}<dt>league</dt><dd><a href="{{ data._links.league }}">{{ data.league-eid }}</a></dd>{% endif %}
+    {% if data._links.game %}<dt>game</dt><dd><a href="{{ data._links.game }}">game</a></dd>{% endif %}
+    {% if data._links.league %}<dt>league</dt><dd><a href="{{ data._links.league }}">league</a></dd>{% endif %}
     {% if data.created-by-sub %}<dt>created-by</dt><dd>{{ data.created-by-sub }}</dd>{% endif %}
   </dl>
   <nav><a href="{{ data._links.status }}" rel="status">status</a> <a href="{{ data._links.registration }}" rel="registration">registration</a> <a href="{{ data._links.entries }}" rel="entries">entries</a> <a href="{{ data._links.matches }}" rel="matches">matches</a></nav>
