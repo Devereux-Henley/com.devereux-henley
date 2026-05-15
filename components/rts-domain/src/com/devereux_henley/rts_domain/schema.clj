@@ -461,22 +461,8 @@
    [:eid :uuid]
    [:version :int]])
 
-(def draft-resource
-  (malli.util/merge
-   schema.contract/base-resource
-   (schema.contract/to-schema
-    [:map
-     [:eid {:model/link :draft/by-eid} :uuid]
-     [:type [:= :game/draft]]
-     [:game-mode-eid :uuid]
-     [:faction-eid {:model/link :faction/by-eid} :uuid]
-     [:name {:optional true} [:maybe :string]]
-     [:display-name {:optional true} :string]
-     [:player-sub :string]
-     [:_links
-      [:map
-       [:self :url]
-       [:faction :url]]]])))
+;; `draft-resource` is defined below `draft-entry-resource` because it
+;; embeds the entry schema under :_embedded.
 
 (def create-draft-specification
   (schema.contract/to-schema
@@ -589,15 +575,15 @@
    fields (name, stats, abilities, attributes, health/barrier) merged with
    the per-draft option catalog (items, mounts, draftable spells) and a
    flag for whether reinforcements are enabled for the enclosing game mode.
-   The resource's :eid is the unit's own eid; :draft-eid links to the
-   parent draft."
+   Not addressable on its own under /api: it appears under a draft-entry's
+   :_embedded.unit or as the body of a /components panel fragment."
   (malli.util/merge
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
-     [:eid {:model/link :draft-unit/by-eid} :uuid]
+     [:eid :uuid]
      [:type [:= :draft/unit]]
-     [:draft-eid {:model/link :draft/by-eid} :uuid]
+     [:draft-eid :uuid]
      [:game-eid {:model/link :game/by-eid} :uuid]
      [:name :string]
      [:description :string]
@@ -634,28 +620,26 @@
      [:validation {:optional true}
       [:map
        [:can-add-to-reinforcements? :boolean]]]
-     [:_links
+     [:_links {:optional true}
       [:map
-       [:self :url]
-       [:draft :url]
-       [:game :url]]]])))
+       [:self {:optional true} :url]
+       [:game {:optional true} :url]]]])))
 
 (def draft-entry-resource
   "A placed draft entry — addressing (entry eid, draft-eid, unit-eid,
    section) plus the selection state the player has stored on this entry
-   (:mount, :abilities, :spells, :items as key lists). Clients that want
-   the game unit's catalog data request it via `?embed=unit`, which
-   populates :_embedded.unit with a full draft-unit-resource whose
-   draftable options carry :selected flags pre-marked from the entry's
-   stored selections."
+   (:mount, :abilities, :spells, :items as key lists). Not addressable
+   on its own under /api; it appears inline under a draft's :_embedded
+   sections, or as the body of a /components panel fragment. The
+   per-entry unit projection rides under :_embedded.unit."
   (malli.util/merge
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
-     [:eid {:model/link :draft-entry/by-eid} :uuid]
+     [:eid :uuid]
      [:type [:= :draft/entry]]
-     [:draft-eid {:model/link :draft/by-eid} :uuid]
-     [:unit-eid {:model/link :draft-unit/by-eid} :uuid]
+     [:draft-eid :uuid]
+     [:unit-eid :uuid]
      [:section [:enum "main" "reinforcements"]]
      [:mount {:optional true} [:maybe :string]]
      [:level {:optional true} [:int {:min 0 :max 9}]]
@@ -663,14 +647,35 @@
      [:spells {:optional true} [:sequential :string]]
      [:items {:optional true} [:sequential :string]]
      [:locked? {:optional true} :boolean]
-     [:_links
+     [:_links {:optional true}
       [:map
-       [:self :url]
-       [:draft :url]
-       [:unit :url]]]
+       [:self {:optional true} :url]]]
      [:_embedded {:optional true}
       [:map
        [:unit {:optional true} draft-unit-resource]]]])))
+
+(def draft-resource
+  (malli.util/merge
+   schema.contract/base-resource
+   (schema.contract/to-schema
+    [:map
+     [:eid {:model/link :draft/by-eid} :uuid]
+     [:type [:= :game/draft]]
+     [:game-mode-eid :uuid]
+     [:game-eid {:optional true :model/link :game/by-eid} :uuid]
+     [:faction-eid {:model/link :faction/by-eid} :uuid]
+     [:name {:optional true} [:maybe :string]]
+     [:display-name {:optional true} :string]
+     [:player-sub :string]
+     [:_links
+      [:map
+       [:self :url]
+       [:game {:optional true} :url]
+       [:faction :url]]]
+     [:_embedded {:optional true}
+      [:map
+       [:main {:optional true} [:sequential draft-entry-resource]]
+       [:reinforcements {:optional true} [:sequential draft-entry-resource]]]]])))
 
 (def draft-section-unit
   "A unit as it appears inside a rendered draft section: just enough fields

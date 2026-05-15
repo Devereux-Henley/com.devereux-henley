@@ -5,4 +5,54 @@
         {% if data._links.faction %}<dt>faction</dt><dd><a href="{{ data._links.faction }}">faction</a></dd>{% endif %}
         {% if data._links.game %}<dt>game</dt><dd><a href="{{ data._links.game }}">game</a></dd>{% endif %}
     </dl>
+
+    <section aria-labelledby="draft-section-main-heading">
+        <h3 id="draft-section-main-heading">main</h3>
+        {% if data._embedded.main|not-empty? %}
+        <ol>
+            {% for entry in data._embedded.main %}
+            <li>
+                <article aria-label="{{ entry._embedded.unit.name|default:"unit" }}">
+                    <h4>{{ entry._embedded.unit.name|default:entry.unit-eid }}</h4>
+                    <dl>
+                        {% if entry._embedded.unit.total-cost %}<dt>cost</dt><dd>{{ entry._embedded.unit.total-cost }}</dd>{% endif %}
+                        {% if entry.mount %}<dt>mount</dt><dd>{{ entry.mount }}</dd>{% endif %}
+                        {% if entry.level %}<dt>level</dt><dd>{{ entry.level }}</dd>{% endif %}
+                        {% if entry.abilities|not-empty? %}<dt>abilities</dt><dd>{{ entry.abilities|join:", " }}</dd>{% endif %}
+                        {% if entry.spells|not-empty? %}<dt>spells</dt><dd>{{ entry.spells|join:", " }}</dd>{% endif %}
+                        {% if entry.items|not-empty? %}<dt>items</dt><dd>{{ entry.items|join:", " }}</dd>{% endif %}
+                    </dl>
+                </article>
+            </li>
+            {% endfor %}
+        </ol>
+        {% else %}
+        <p>No entries.</p>
+        {% endif %}
+    </section>
+
+    <section aria-labelledby="draft-section-reinforcements-heading">
+        <h3 id="draft-section-reinforcements-heading">reinforcements</h3>
+        {% if data._embedded.reinforcements|not-empty? %}
+        <ol>
+            {% for entry in data._embedded.reinforcements %}
+            <li>
+                <article aria-label="{{ entry._embedded.unit.name|default:"unit" }}">
+                    <h4>{{ entry._embedded.unit.name|default:entry.unit-eid }}</h4>
+                    <dl>
+                        {% if entry._embedded.unit.total-cost %}<dt>cost</dt><dd>{{ entry._embedded.unit.total-cost }}</dd>{% endif %}
+                        {% if entry.mount %}<dt>mount</dt><dd>{{ entry.mount }}</dd>{% endif %}
+                        {% if entry.level %}<dt>level</dt><dd>{{ entry.level }}</dd>{% endif %}
+                        {% if entry.abilities|not-empty? %}<dt>abilities</dt><dd>{{ entry.abilities|join:", " }}</dd>{% endif %}
+                        {% if entry.spells|not-empty? %}<dt>spells</dt><dd>{{ entry.spells|join:", " }}</dd>{% endif %}
+                        {% if entry.items|not-empty? %}<dt>items</dt><dd>{{ entry.items|join:", " }}</dd>{% endif %}
+                    </dl>
+                </article>
+            </li>
+            {% endfor %}
+        </ol>
+        {% else %}
+        <p>No entries.</p>
+        {% endif %}
+    </section>
 </section>

@@ -475,51 +475,11 @@
             :parameters {:path schema.contract/id-path-parameter}
             :responses  {200 {:body domain/draft-resource}}
             :handler    (integrant.core/ref ::web.draft.api/get-draft)}}]
-   ["/draft-unit"
-    {:name :draft-unit/preview
-     :get  {:produces   ["text/html"]
-            :parameters {:query (schema.contract/to-schema
-                                 [:map
-                                  [:draft-eid :uuid]
-                                  [:unit-eid  :uuid]
-                                  [:mount     {:optional true} [:maybe :string]]
-                                  [:lore      {:optional true} [:maybe :string]]
-                                  [:items     {:optional true} [:or :string [:sequential :string]]]
-                                  [:spells    {:optional true} [:or :string [:sequential :string]]]
-                                  [:abilities {:optional true} [:or :string [:sequential :string]]]])}
-            :responses  {200 {:body domain/draft-unit-resource}}
-            :handler    (integrant.core/ref ::web.draft.api/get-draft-unit-by-query)}}]
-   ["/draft-unit/:eid"
-    {:name :draft-unit/by-eid
-     :get  {:produces   ["text/html"]
-            :parameters {:path  schema.contract/id-path-parameter
-                         :query (schema.contract/to-schema
-                                 [:map
-                                  [:draft-eid :uuid]
-                                  [:mount     {:optional true} [:maybe :string]]
-                                  [:level     {:optional true} [:int {:min 0 :max 9}]]
-                                  [:items     {:optional true} [:or :string [:sequential :string]]]
-                                  [:spells    {:optional true} [:or :string [:sequential :string]]]
-                                  [:abilities {:optional true} [:or :string [:sequential :string]]]])}
-            :responses  {200 {:body domain/draft-unit-resource}}
-            :handler    (integrant.core/ref ::web.draft.api/get-draft-unit-by-query)}}]
-   ["/draft-entry/:eid"
-    {:name :draft-entry/by-eid
-     :get  {:produces   ["text/html"]
-            :parameters {:path  schema.contract/id-path-parameter
-                         :query (schema.contract/to-schema
-                                 [:map
-                                  [:draft-eid :uuid]
-                                  [:section   [:enum "main" "reinforcements"]]
-                                  [:embed     {:optional true} [:or [:enum "unit"]
-                                                                [:sequential [:enum "unit"]]]]
-                                  [:mount     {:optional true} [:maybe :string]]
-                                  [:level     {:optional true} [:int {:min 0 :max 9}]]
-                                  [:items     {:optional true} [:or :string [:sequential :string]]]
-                                  [:spells    {:optional true} [:or :string [:sequential :string]]]
-                                  [:abilities {:optional true} [:or :string [:sequential :string]]]])}
-            :responses  {200 {:body domain/draft-entry-resource}}
-            :handler    (integrant.core/ref ::web.draft.api/get-draft-entry-by-query)}}]
+   ;; Draft entries and the per-entry unit projection are not addressable
+   ;; on /api on their own — they only make sense in the context of a draft,
+   ;; so /api/draft/:eid carries the full :main and :reinforcements entry
+   ;; lists inline under :_embedded. The /components routes still expose
+   ;; the entry- and unit-panel fragments for the htmx-driven editor.
 
    ;; ─── Tournament ────────────────────────────────────────────────────────
    ["/tournament"

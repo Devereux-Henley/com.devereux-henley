@@ -79,16 +79,33 @@
       (get-in resource [:_embedded :unit])
       (update-in [:_embedded :unit] attach))))
 
+(defn- hydrate-section
+  "Builds the entry-list for one section of a draft. Each entry is
+   loaded via `get-draft-entry-details` (so it carries the placed
+   selections) and the per-entry unit projection is embedded under
+   `:_embedded.unit`. The result is what /api/draft/:eid emits inline
+   instead of exposing draft-entry / draft-unit as their own /api
+   collections."
+  [dependencies draft-eid section state]
+  (mapv (fn [{:keys [entry-eid]}]
+          (some->> (domain/get-draft-entry-details dependencies draft-eid entry-eid section)
+                   (domain/embed-unit-for-entry dependencies)))
+        (get state (keyword section) [])))
+
 (defmethod integrant.core/init-key ::get-draft
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
         router                :reitit.core/router
         :as                   _request}]
     (if-let [draft (domain/get-draft-by-eid dependencies eid)]
-      (web.core/handle-fetch-response
-       domain/draft-resource
-       {:hostname (:hostname dependencies) :router router}
-       (constantly draft))
+      (let [state          (domain/get-draft-state dependencies eid)
+            main           (hydrate-section dependencies eid "main" state)
+            reinforcements (hydrate-section dependencies eid "reinforcements" state)]
+        (web.core/handle-fetch-response
+         domain/draft-resource
+         {:hostname (:hostname dependencies) :router router}
+         (constantly (assoc draft :_embedded {:main           (filterv some? main)
+                                              :reinforcements (filterv some? reinforcements)}))))
       {:status 404 :body {:type :missing/resource :name "draft" :id eid}})))
 
 (defmethod integrant.core/init-key ::get-draft-unit
@@ -167,36 +184,3 @@
           result                                         (domain/remove-unit-from-draft dependencies draft-eid eid section)]
       {:status (if (= :draft/locked (:type result)) 409 200)
        :body   result})))
-
-(defmethod integrant.core/init-key ::get-draft-unit-by-query
-  [_init-key dependencies]
-  (fn [{{path  :path
-         query :query} :parameters
-        :as            _request}]
-    ;; Flat /api: draft-eid arrives via query. /api/draft-unit       (preview):
-    ;; query carries :unit-eid + selection overrides; /api/draft-unit/:eid
-    ;; (existing entry): :eid path-param is the entry eid.
-    (let [draft-eid (:draft-eid query)
-          entry-eid (:eid path)
-          unit-key  (or entry-eid (:unit-eid query))
-          overrides (selection-overrides query)
-          result    (some->> (domain/get-draft-unit-details dependencies draft-eid unit-key overrides)
-                             (with-lock-flag dependencies draft-eid))]
-      (if result
-        {:status 200 :body result}
-        {:status 404 :body {:type :missing/resource :name "draft-unit" :id unit-key}}))))
-
-(defmethod integrant.core/init-key ::get-draft-entry-by-query
-  [_init-key dependencies]
-  (fn [{{{:keys [eid]}                    :path
-         {:keys [draft-eid section embed]
-          :as   query}                    :query} :parameters
-        :as                                        _request}]
-    (let [embed-set (parse-embed-set embed)
-          overrides (selection-overrides query)]
-      (if-let [details (domain/get-draft-entry-details dependencies draft-eid eid section overrides)]
-        {:status 200
-         :body   (->> details
-                      (web.core/apply-embeds draft-entry-embed-registry dependencies embed-set)
-                      (with-lock-flag dependencies draft-eid))}
-        {:status 404 :body {:type :missing/resource :name "draft-entry" :id eid}}))))
