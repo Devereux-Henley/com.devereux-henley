@@ -117,7 +117,12 @@
   (fn [{{{:keys [eid]}   :path
          {:keys [embed]} :query} :parameters
         :as                      _request}]
-    (let [embed-set (some->> (web.core/query-param->vec embed) (into #{} (map keyword)))]
+    (let [requested (some->> (web.core/query-param->vec embed) (into #{} (map keyword)))
+          ;; Default to every game-embed-registry key so /api/game/:eid is
+          ;; walkable without requiring callers to know the embed names —
+          ;; factions and socials show up automatically. Explicit ?embed=
+          ;; still filters to the requested subset.
+          embed-set (if (seq requested) requested (set (keys game-embed-registry)))]
       (ok-or-404
        (web.core/apply-embeds game-embed-registry dependencies embed-set
                               (get-game-by-eid dependencies eid))))))
