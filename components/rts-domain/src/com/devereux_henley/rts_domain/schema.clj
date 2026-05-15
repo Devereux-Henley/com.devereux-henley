@@ -57,9 +57,9 @@
     [:map [:self :url] [:game {:optional true} :url]]]])
 
 (def unit-resource
-  "Full unit resource served at /api/unit/:eid. unit-summary already
-   carries every field /api needs plus :model/link and :_links — no
-   extra fields necessary, just give it its own :type discriminator."
+  "Full unit resource served at /api/unit/:eid. Carries the parsed
+   unit-statistics (stats, health, barrier, attributes) plus embedded
+   collections of related abilities, spells, items, and mounts."
   (malli.util/merge
    schema.contract/base-resource
    (schema.contract/to-schema
@@ -76,7 +76,17 @@
      [:family-variant-count {:optional true} :int]
      [:game-eid {:optional true :model/link :game/by-eid} :uuid]
      [:is-unique {:optional true} :int]
-     [:_links [:map [:self :url] [:game {:optional true} :url]]]])))
+     [:health {:optional true} [:maybe :int]]
+     [:barrier {:optional true} [:maybe :int]]
+     [:stats {:optional true} [:sequential [:map {:closed false}]]]
+     [:attributes {:optional true} [:sequential [:map {:closed false}]]]
+     [:_links [:map [:self :url] [:game {:optional true} :url]]]
+     [:_embedded {:optional true}
+      [:map
+       [:abilities {:optional true} [:sequential [:map {:closed false}]]]
+       [:spells {:optional true} [:sequential [:map {:closed false}]]]
+       [:items {:optional true} [:sequential [:map {:closed false}]]]
+       [:mounts {:optional true} [:sequential [:map {:closed false}]]]]]])))
 
 (def unit-collection-resource
   (malli.util/merge

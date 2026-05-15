@@ -66,6 +66,30 @@
   (or (domain/get-unit-by-eid dependencies eid)
       {:type :missing/resource :name "unit" :id eid}))
 
+(defn- enrich-unit
+  "Add the parsed unit-statistics plus embedded abilities, spells, items,
+   and mounts to a unit row."
+  [dependencies {:keys [unit-statistics eid] :as unit}]
+  (let [parsed     (when unit-statistics
+                     (domain/parse-unit-statistics unit-statistics))
+        ability-ks (:abilities parsed)
+        spell-ks   (:draftable-spells parsed)
+        abilities  (when (seq ability-ks)
+                     (vals (domain/get-abilities-by-keys dependencies ability-ks)))
+        spells     (when (seq spell-ks)
+                     (vals (domain/get-spells-by-keys dependencies spell-ks)))
+        items      (domain/get-items-for-unit dependencies eid)
+        mounts     (domain/get-mounts-for-unit dependencies eid)]
+    (-> unit
+        (assoc :stats      (vec (:stats parsed))
+               :attributes (vec (:attributes parsed))
+               :health     (:health parsed)
+               :barrier    (:barrier parsed))
+        (assoc :_embedded {:abilities (vec abilities)
+                           :spells    (vec spells)
+                           :items     (vec items)
+                           :mounts    (vec mounts)}))))
+
 (defn get-faction-by-eid
   [dependencies eid]
   (or (domain/get-faction-by-eid dependencies eid)
@@ -171,7 +195,10 @@
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
         :as                   _request}]
-    (ok-or-404 (get-unit-by-eid dependencies eid))))
+    (let [result (get-unit-by-eid dependencies eid)]
+      (if (= :missing/resource (:type result))
+        {:status 404 :body result}
+        {:status 200 :body (enrich-unit dependencies result)}))))
 
 (defmethod integrant.core/init-key ::get-units-collection
   [_init-key dependencies]

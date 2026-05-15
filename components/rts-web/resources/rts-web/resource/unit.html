@@ -1,6 +1,7 @@
 <section class="resource unit-resource" aria-labelledby="unit-heading">
     <h2 id="unit-heading">{{data.name}}</h2>
     {% if data.description %}<p>{{data.description}}</p>{% endif %}
+
     <dl>
         {% if data.family-name %}<dt>family</dt><dd>{{data.family-name}}</dd>{% endif %}
         {% if data.unit-category-name %}<dt>category</dt><dd>{{data.unit-category-name}}</dd>{% endif %}
@@ -9,4 +10,81 @@
         {% if data.mark %}<dt>mark</dt><dd>{{data.mark}}</dd>{% endif %}
         {% if data._links.game %}<dt>game</dt><dd><a href="{{ data._links.game }}">game</a></dd>{% endif %}
     </dl>
+
+    {% if data.stats|not-empty? %}
+    <section aria-labelledby="unit-stats-heading">
+        <h3 id="unit-stats-heading">Statistics</h3>
+        <table class="table" aria-labelledby="unit-stats-heading">
+            <caption class="sr-only">Combat statistics for {{data.name}}</caption>
+            <thead><tr><th scope="col">stat</th><th scope="col">value</th></tr></thead>
+            <tbody>
+                {% if data.health %}<tr><td>health</td><td>{{data.health}}</td></tr>{% endif %}
+                {% if data.barrier %}<tr><td>barrier</td><td>{{data.barrier}}</td></tr>{% endif %}
+                {% for s in data.stats %}
+                <tr><td>{{s.stat}}</td><td>{{s.value}}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    {% endif %}
+
+    {% if data._embedded.spells|not-empty? %}
+    <section aria-labelledby="unit-spells-heading">
+        <h3 id="unit-spells-heading">Spells</h3>
+        <table class="table" aria-labelledby="unit-spells-heading">
+            <caption class="sr-only">Draftable spells for {{data.name}}</caption>
+            <thead><tr><th scope="col">name</th><th scope="col">mana</th><th scope="col">cost</th></tr></thead>
+            <tbody>
+                {% for spell in data._embedded.spells %}
+                <tr><td>{{spell.name}}</td><td>{{spell.mana-cost}}</td><td>{{spell.cost}}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    {% endif %}
+
+    {% if data._embedded.abilities|not-empty? %}
+    <section aria-labelledby="unit-abilities-heading">
+        <h3 id="unit-abilities-heading">Abilities</h3>
+        <table class="table" aria-labelledby="unit-abilities-heading">
+            <caption class="sr-only">Abilities for {{data.name}}</caption>
+            <thead><tr><th scope="col">name</th><th scope="col">description</th><th scope="col">cost</th></tr></thead>
+            <tbody>
+                {% for ability in data._embedded.abilities %}
+                <tr><td>{{ability.name}}</td><td>{{ability.description}}</td><td>{{ability.cost}}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    {% endif %}
+
+    {% if data._embedded.items|not-empty? %}
+    <section aria-labelledby="unit-items-heading">
+        <h3 id="unit-items-heading">Items</h3>
+        <table class="table" aria-labelledby="unit-items-heading">
+            <caption class="sr-only">Draftable items for {{data.name}}</caption>
+            <thead><tr><th scope="col">name</th><th scope="col">category</th><th scope="col">cost</th></tr></thead>
+            <tbody>
+                {% for item in data._embedded.items %}
+                <tr><td>{{item.name}}</td><td>{{item.category}}</td><td>{{item.cost}}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    {% endif %}
+
+    {% if data._embedded.mounts|not-empty? %}
+    <section aria-labelledby="unit-mounts-heading">
+        <h3 id="unit-mounts-heading">Mounts</h3>
+        <table class="table" aria-labelledby="unit-mounts-heading">
+            <caption class="sr-only">Available mounts for {{data.name}}</caption>
+            <thead><tr><th scope="col">name</th><th scope="col">cost</th></tr></thead>
+            <tbody>
+                {% for mount in data._embedded.mounts %}
+                <tr><td>{{mount.name}}</td><td>{{mount.cost}}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    {% endif %}
 </section>
