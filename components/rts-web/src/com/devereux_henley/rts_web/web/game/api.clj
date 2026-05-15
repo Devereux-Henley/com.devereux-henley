@@ -108,11 +108,6 @@
   (or (domain/get-faction-by-eid dependencies eid)
       {:type :missing/resource :name "faction" :id eid}))
 
-(defn get-game-social-link-by-eid
-  [dependencies eid]
-  (or (domain/get-game-social-link-by-eid dependencies eid)
-      {:type :missing/resource :name "social link" :id eid}))
-
 (defn get-games
   [dependencies {:keys [hostname router]}]
   {:type      :collection/game
@@ -138,12 +133,6 @@
        (web.core/apply-embeds faction-embed-registry dependencies embed-set
                               (get-faction-by-eid dependencies eid))))))
 
-(defmethod integrant.core/init-key ::get-game-social-link
-  [_init-key dependencies]
-  (fn [{{{:keys [eid]} :path} :parameters
-        :as                   _request}]
-    (ok-or-404 (get-game-social-link-by-eid dependencies eid))))
-
 (defmethod integrant.core/init-key ::get-game
   [_init-key dependencies]
   (fn [{{{:keys [eid]}   :path
@@ -166,18 +155,6 @@
                               (reitit.core/match->path
                                (when game-eid {:game-eid game-eid}))))}})
 
-(defn get-socials
-  [dependencies game-eid {:keys [hostname router]}]
-  {:type      :collection/social-link
-   :_embedded {:results (if game-eid
-                          (domain/get-socials-for-game dependencies game-eid)
-                          (domain/get-socials dependencies))}
-   :_links    {:self (str hostname
-                          (-> router
-                              (reitit.core/match-by-name! :collection/social-link)
-                              (reitit.core/match->path
-                               (when game-eid {:game-eid game-eid}))))}})
-
 (defmethod integrant.core/init-key ::get-factions-collection
   [_init-key dependencies]
   (fn [{{{:keys [game-eid]} :query} :parameters
@@ -186,15 +163,6 @@
     {:status 200
      :body   (get-factions dependencies game-eid
                            {:hostname (:hostname dependencies) :router router})}))
-
-(defmethod integrant.core/init-key ::get-socials-collection
-  [_init-key dependencies]
-  (fn [{{{:keys [game-eid]} :query} :parameters
-        router                      :reitit.core/router
-        :as                         _request}]
-    {:status 200
-     :body   (get-socials dependencies game-eid
-                          {:hostname (:hostname dependencies) :router router})}))
 
 (defn get-units
   "Collection builder for /api/unit. When `faction-eid` is set the

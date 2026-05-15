@@ -16,20 +16,23 @@
      [:type [:= :social-media/platform]]])))
 
 (def game-social-link-resource
+  "Embedded social-link row exposed under /api/game/:eid?embed=socials.
+   Not addressable on its own under /api — there is no /api/social-link
+   route, so the schema only emits a link to the social-media platform
+   (which is a real /api resource)."
   (malli.util/merge
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
-     [:eid {:model/link :social-link/by-eid} :uuid]
-     [:game-eid {:model/link :game/by-eid} :uuid]
+     [:eid :uuid]
+     [:game-eid :uuid]
      [:social-media-platform-eid {:model/link :social-media/by-eid} :uuid]
      [:type [:= :game/social]]
      [:url :url]
-     [:_links
+     [:_links {:optional true}
       [:map
-       [:self :url]
-       [:game :url]
-       [:social-media-platform :url]]]
+       [:self {:optional true} :url]
+       [:social-media-platform {:optional true} :url]]]
      [:_embedded {:optional true}
       [:map
        [:platform {:optional true} social-media-platform-resource]]]])))
@@ -140,13 +143,6 @@
    (schema.contract/to-schema
     [:map
      [:type [:= :collection/faction]]])))
-
-(def game-social-link-collection-resource
-  (malli.util/merge
-   (schema.contract/make-collection-resource game-social-link-resource)
-   (schema.contract/to-schema
-    [:map
-     [:type [:= :collection/social-link]]])))
 
 (def game-collection-resource
   (malli.util/merge
@@ -788,8 +784,7 @@
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
-     {:model/sub-resources {:seasons           :collection/season
-                            :faction-standings :collection/faction-standings}}
+     {:model/sub-resources {:seasons :collection/season}}
      [:eid {:model/link :league/by-eid} :uuid]
      [:type [:= :league/league]]
      [:name {:min 1} :string]
@@ -800,8 +795,7 @@
       [:map
        [:self :url]
        [:game :url]
-       [:seasons :url]
-       [:faction-standings :url]]]])))
+       [:seasons :url]]]])))
 
 (def league-collection-resource
   (malli.util/merge
@@ -828,7 +822,6 @@
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
-     {:model/sub-resources {:faction-standings :collection/faction-standings}}
      [:eid {:model/link :season/by-eid} :uuid]
      [:type [:= :season/season]]
      [:league-eid {:model/link :league/by-eid} :uuid]
@@ -840,8 +833,7 @@
      [:_links
       [:map
        [:self :url]
-       [:league :url]
-       [:faction-standings :url]]]])))
+       [:league :url]]]])))
 
 (def season-collection-resource
   (malli.util/merge
@@ -864,29 +856,3 @@
    [:map
     [:type [:= :season/error]]
     [:message :string]]))
-
-(def faction-standings-row-resource
-  (schema.contract/to-schema
-   [:map {:model/type :model/model}
-    [:type [:= :stats/faction]]
-    [:faction-eid {:model/link :faction/by-eid} :uuid]
-    [:faction-name :string]
-    [:matches-played :int]
-    [:wins :int]
-    [:losses :int]
-    [:win-percentage :int]
-    [:_links [:map [:faction :url]]]]))
-
-(def faction-standings-response
-  (schema.contract/to-schema
-   [:map {:model/type :model/model}
-    [:type [:= :collection/faction-standings]]
-    [:game-eid {:optional true :model/link :game/by-eid} :uuid]
-    [:league-eid {:optional true :model/link :league/by-eid} :uuid]
-    [:season-eid {:optional true :model/link :season/by-eid} :uuid]
-    [:rows [:sequential faction-standings-row-resource]]
-    [:_links [:map
-              [:self :url]
-              [:game {:optional true} :url]
-              [:league {:optional true} :url]
-              [:season {:optional true} :url]]]]))

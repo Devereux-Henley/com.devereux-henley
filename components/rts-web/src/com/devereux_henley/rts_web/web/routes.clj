@@ -17,7 +17,6 @@
    [com.devereux-henley.rts-web.web.season.api :as web.season.api]
    [com.devereux-henley.rts-web.web.season.view :as web.season.view]
    [com.devereux-henley.rts-web.web.social-media.api :as web.social-media.api]
-   [com.devereux-henley.rts-web.web.stats.api :as web.stats.api]
    [com.devereux-henley.rts-web.web.tournament.api :as web.tournament.api]
    [com.devereux-henley.rts-web.web.tournament.view :as web.tournament.view]
    [com.devereux-henley.rts-web.web.view :as web.view]
@@ -398,13 +397,11 @@
                                                [:self :url]
                                                [:games :url]
                                                [:factions :url]
-                                               [:social-links :url]
                                                [:units :url]
                                                [:tournaments :url]
                                                [:matches :url]
                                                [:leagues :url]
-                                               [:seasons :url]
-                                               [:faction-standings :url]]]])}}
+                                               [:seasons :url]]]])}}
             :handler   (integrant.core/ref ::web.api/get-root)}}]
 
    ;; ─── Game ───────────────────────────────────────────────────────────────
@@ -436,22 +433,6 @@
                          :query web.game.api/faction-query-parameters}
             :responses  {200 {:body domain/faction-resource}}
             :handler    (integrant.core/ref ::web.game.api/get-faction)}}]
-
-   ;; ─── Social link ───────────────────────────────────────────────────────
-   ["/social-link"
-    {:name :collection/social-link
-     :get  {:produces   ["text/html"]
-            :parameters {:query (schema.contract/to-schema
-                                 [:map [:game-eid {:optional true} :uuid]])}
-            :responses  {200 {:body domain/game-social-link-collection-resource}}
-            :handler    (integrant.core/ref ::web.game.api/get-socials-collection)}}]
-   ["/social-link/:eid"
-    {:name :social-link/by-eid
-     :get  {:produces   ["text/html"]
-            :parameters {:path  schema.contract/id-path-parameter
-                         :query schema.contract/version-query-parameter}
-            :responses  {200 {:body domain/game-social-link-resource}}
-            :handler    (integrant.core/ref ::web.game.api/get-game-social-link)}}]
 
    ;; ─── Unit ──────────────────────────────────────────────────────────────
    ["/unit"
@@ -589,18 +570,6 @@
             :parameters {:path schema.contract/id-path-parameter}
             :responses  {200 {:body domain/season-resource}}
             :handler    (integrant.core/ref ::web.season.api/get-season)}}]
-
-   ;; ─── Stats ─────────────────────────────────────────────────────────────
-   ["/faction-standings"
-    {:name :collection/faction-standings
-     :get  {:produces   ["text/html"]
-            :parameters {:query (schema.contract/to-schema
-                                 [:map
-                                  [:game-eid   {:optional true} :uuid]
-                                  [:league-eid {:optional true} :uuid]
-                                  [:season-eid {:optional true} :uuid]])}
-            :responses  {200 {:body domain/faction-standings-response}}
-            :handler    (integrant.core/ref ::web.stats.api/get-faction-standings)}}]
 
    ["/social-media/:eid"
     {:name :social-media/by-eid

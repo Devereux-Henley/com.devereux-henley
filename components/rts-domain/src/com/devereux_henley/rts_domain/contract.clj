@@ -40,7 +40,6 @@
 (def unit-collection-resource schema/unit-collection-resource)
 
 (def game-resource schema/game-resource)
-(def game-social-link-collection-resource schema/game-social-link-collection-resource)
 
 (def game-collection-resource schema/game-collection-resource)
 
@@ -164,9 +163,6 @@
 (def season-collection-resource                   schema/season-collection-resource)
 (def create-season-specification                  schema/create-season-specification)
 (def season-error-response                        schema/season-error-response)
-
-(def faction-standings-row-resource               schema/faction-standings-row-resource)
-(def faction-standings-response                   schema/faction-standings-response)
 
 ;;; ─── League / Season / Stats handler functions ────────────────────────────
 

@@ -4,8 +4,5 @@
     <dt>eid</dt><dd>{{ data.eid }}</dd>
     {% if data._links.game %}<dt>game</dt><dd><a href="{{ data._links.game }}">game</a></dd>{% endif %}
   </dl>
-  <nav>
-    <a href="{{ data._links.seasons }}" rel="seasons">seasons</a>
-    {% if data._links.faction-standings %}<a href="{{ data._links.faction-standings }}">faction-standings</a>{% endif %}
-  </nav>
+  <nav><a href="{{ data._links.seasons }}" rel="seasons">seasons</a></nav>
 </section>
