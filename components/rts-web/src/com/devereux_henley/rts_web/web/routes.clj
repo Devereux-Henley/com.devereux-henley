@@ -426,6 +426,20 @@
                                  [:map [:game-eid :uuid]])}
             :responses  {200 {:body domain/game-social-link-collection-resource}}
             :handler    (integrant.core/ref ::web.game.api/get-socials-collection)}}]
+   ["/unit"
+    [""
+     {:name :unit/for-faction
+      :get  {:produces   ["text/html"]
+             :parameters {:query (schema.contract/to-schema
+                                  [:map [:faction-eid :uuid]])}
+             :responses  {200 {:body domain/unit-collection-resource}}
+             :handler    (integrant.core/ref ::web.game.api/get-units-collection)}}]
+    ["/:eid"
+     {:name :unit/by-eid
+      :get  {:produces   ["text/html"]
+             :parameters {:path schema.contract/id-path-parameter}
+             :responses  {200 {:body domain/unit-resource}}
+             :handler    (integrant.core/ref ::web.game.api/get-unit)}}]]
    ["/game/social-link/:eid"
     {:name :game/social-by-eid
      :get  {:produces   ["text/html"]

@@ -38,6 +38,8 @@
    :collection/game                "rts-web/resource/game-collection.html"
    :collection/faction             "rts-web/resource/faction-collection.html"
    :collection/game-social-link    "rts-web/resource/game-social-link-collection.html"
+   :collection/unit                "rts-web/resource/unit-collection.html"
+   :game/unit                      "rts-web/resource/unit.html"
    :tournament/tournament          "rts-web/resource/tournament.html"
    :collection/tournament          "rts-web/resource/tournament-collection.html"
    :tournament/phase               "rts-web/resource/tournament-phase.html"

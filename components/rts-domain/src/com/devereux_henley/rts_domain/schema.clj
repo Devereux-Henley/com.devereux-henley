@@ -35,12 +35,13 @@
        [:platform {:optional true} social-media-platform-resource]]]])))
 
 (def unit-summary
-  "Slim view of a game unit as it appears inside the faction-resource's
-   :_embedded.units-by-category groups — enough to identify, name, and link
-   to the full unit resource without dragging along unit-statistics JSON or
-   audit columns."
-  [:map
-   [:eid :uuid]
+  "Slim view of a game unit. Used inside faction-resource's
+   :_embedded.units-by-category groups and as the row schema for
+   /api/unit collections. :model/link on :eid lets the transformer
+   resolve :_links.self to /api/unit/:eid so any nesting walks back
+   to the canonical unit resource."
+  [:map {:model/type :model/model}
+   [:eid {:model/link :unit/by-eid} :uuid]
    [:type {:optional true} [:= :game/unit]]
    [:name {:min 1} :string]
    [:family-name {:optional true} [:maybe :string]]
@@ -50,8 +51,39 @@
    [:unit-category-name {:optional true} :string]
    [:mark {:optional true} [:maybe data-access.contract/mark-enum]]
    [:family-variant-count {:optional true} :int]
-   [:game-eid {:optional true} :uuid]
-   [:is-unique {:optional true} :int]])
+   [:game-eid {:optional true :model/link :game/by-eid} :uuid]
+   [:is-unique {:optional true} :int]
+   [:_links {:optional true}
+    [:map [:self :url] [:game {:optional true} :url]]]])
+
+(def unit-resource
+  "Full unit resource served at /api/unit/:eid. unit-summary already
+   carries every field /api needs plus :model/link and :_links — no
+   extra fields necessary, just give it its own :type discriminator."
+  (malli.util/merge
+   schema.contract/base-resource
+   (schema.contract/to-schema
+    [:map
+     [:eid {:model/link :unit/by-eid} :uuid]
+     [:type [:= :game/unit]]
+     [:name :string]
+     [:family-name {:optional true} [:maybe :string]]
+     [:description {:optional true} :string]
+     [:cost {:optional true} [:maybe :int]]
+     [:unit-type-name {:optional true} :string]
+     [:unit-category-name {:optional true} :string]
+     [:mark {:optional true} [:maybe data-access.contract/mark-enum]]
+     [:family-variant-count {:optional true} :int]
+     [:game-eid {:optional true :model/link :game/by-eid} :uuid]
+     [:is-unique {:optional true} :int]
+     [:_links [:map [:self :url] [:game {:optional true} :url]]]])))
+
+(def unit-collection-resource
+  (malli.util/merge
+   (schema.contract/make-collection-resource unit-resource)
+   (schema.contract/to-schema
+    [:map
+     [:type [:= :collection/unit]]])))
 
 (def unit-category-group
   "One group in a faction-resource's :_embedded.units-by-category — the

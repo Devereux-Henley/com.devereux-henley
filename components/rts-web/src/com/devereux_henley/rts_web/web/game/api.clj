@@ -158,6 +158,30 @@
      :body   (get-socials dependencies game-eid
                           {:hostname (:hostname dependencies) :router router})}))
 
+(defn get-units-for-faction-collection
+  [dependencies faction-eid {:keys [hostname router]}]
+  {:type      :collection/unit
+   :_embedded {:results (vec (domain/get-units-for-faction dependencies faction-eid))}
+   :_links    {:self (str hostname
+                          (-> router
+                              (reitit.core/match-by-name! :unit/for-faction)
+                              (reitit.core/match->path {:faction-eid faction-eid})))}})
+
+(defmethod integrant.core/init-key ::get-unit
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+        :as                   _request}]
+    (ok-or-404 (get-unit-by-eid dependencies eid))))
+
+(defmethod integrant.core/init-key ::get-units-collection
+  [_init-key dependencies]
+  (fn [{{{:keys [faction-eid]} :query} :parameters
+        router                         :reitit.core/router
+        :as                            _request}]
+    {:status 200
+     :body   (get-units-for-faction-collection dependencies faction-eid
+                                               {:hostname (:hostname dependencies) :router router})}))
+
 (defmethod integrant.core/init-key ::get-games
   [_init-key dependencies]
   (fn [{router :reitit.core/router :as _request}]

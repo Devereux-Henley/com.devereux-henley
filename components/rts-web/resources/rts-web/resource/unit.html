@@ -1,0 +1,12 @@
+<section class="resource unit-resource" aria-labelledby="unit-heading">
+    <h2 id="unit-heading">{{data.name}}</h2>
+    {% if data.description %}<p>{{data.description}}</p>{% endif %}
+    <dl>
+        {% if data.family-name %}<dt>family</dt><dd>{{data.family-name}}</dd>{% endif %}
+        {% if data.unit-category-name %}<dt>category</dt><dd>{{data.unit-category-name}}</dd>{% endif %}
+        {% if data.unit-type-name %}<dt>type</dt><dd>{{data.unit-type-name}}</dd>{% endif %}
+        {% if data.cost %}<dt>cost</dt><dd>{{data.cost}}</dd>{% endif %}
+        {% if data.mark %}<dt>mark</dt><dd>{{data.mark}}</dd>{% endif %}
+        {% if data._links.game %}<dt>game</dt><dd><a href="{{ data._links.game }}">game</a></dd>{% endif %}
+    </dl>
+</section>
