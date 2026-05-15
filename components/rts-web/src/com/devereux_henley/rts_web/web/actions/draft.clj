@@ -28,8 +28,8 @@
           result     (domain/add-unit-to-draft dependencies draft-eid eid section selections)]
       (case (:type result)
         :draft/add-success (common/trigger-response "draft-entry-created" result)
-        :draft/locked      {:status 409 :body result}
-        {:status 422 :body result}))))
+        :draft/locked      (common/error-oob 409 result)
+        (common/error-oob 422 result)))))
 
 (defmethod integrant.core/init-key ::update-entry
   [_init-key dependencies]
@@ -48,8 +48,8 @@
                              (domain/embed-unit-for-entry dependencies))]
           (common/trigger-response "draft-entry-updated" (assoc result :entry entry)))
 
-        :draft/locked {:status 409 :body result}
-        {:status 422 :body result}))))
+        :draft/locked (common/error-oob 409 result)
+        (common/error-oob 422 result)))))
 
 (defmethod integrant.core/init-key ::remove-entry
   [_init-key dependencies]

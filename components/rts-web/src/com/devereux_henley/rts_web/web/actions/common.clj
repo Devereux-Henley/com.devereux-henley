@@ -54,3 +54,15 @@
                                (string/replace "<" "&lt;")
                                (string/replace ">" "&gt;")) "</p>"
                  "</section>")})
+
+(defn error-oob
+  "Failure: 4xx whose body is rendered via the component view registry
+   (typically an OOB-only template like `actions/draft-add-error.html`)
+   and whose response carries `HX-Reswap: none` so HTMX skips the main
+   swap. Without that header the global `htmx:beforeSwap` listener
+   forces a swap of the (empty, OOB-only) body into the form's hx-target,
+   which wipes the form."
+  [status body]
+  {:status  status
+   :headers {"HX-Reswap" "none"}
+   :body    body})

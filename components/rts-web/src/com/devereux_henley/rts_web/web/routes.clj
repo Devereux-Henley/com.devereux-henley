@@ -384,6 +384,10 @@
    {:no-doc true}
 
    ;; ─── Root ───────────────────────────────────────────────────────────────
+   [""
+    {:get {:no-doc   true
+           :produces ["text/html"]
+           :handler  (fn [_request] {:status 301 :headers {"Location" "/api/index.html"}})}}]
    ["/index.html"
     {:name :api/root
      :get  {:produces  ["text/html"]

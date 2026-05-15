@@ -2,6 +2,14 @@
     <h2 id="game-heading">{{data.name}}</h2>
     <p>{{data.description|linebreaks|safe}}</p>
 
+    <nav aria-label="Game sub-resources">
+        <ul>
+            <li><a href="/api/tournament?game-eid={{data.eid}}">tournaments</a></li>
+            <li><a href="/api/league?game-eid={{data.eid}}">leagues</a></li>
+            <li><a href="/api/stats/game/{{data.eid}}/faction">faction standings</a></li>
+        </ul>
+    </nav>
+
     {% if data._embedded.factions %}
     <section aria-label="Factions">
         <h3 id="game-factions-heading">Factions</h3>
