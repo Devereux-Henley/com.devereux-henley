@@ -1,5 +1,8 @@
 <section class="resource">
-    <h2>Draft Created</h2>
-    <p>Your draft has been created successfully.</p>
-    <a class="btn btn-ghost btn-sm" href="/view/draft/{{data.eid}}/index.html">View Draft</a>
+    <h2>{{ data.display-name|default:"Draft" }}</h2>
+    <dl>
+        <dt>player</dt><dd>{{ data.player-sub }}</dd>
+        {% if data._links.faction %}<dt>faction</dt><dd><a href="{{ data._links.faction }}">{{ data.faction-eid }}</a></dd>{% endif %}
+    </dl>
+    <a class="btn btn-ghost btn-sm" href="/view/draft/{{ data.eid }}/index.html">View Draft</a>
 </section>

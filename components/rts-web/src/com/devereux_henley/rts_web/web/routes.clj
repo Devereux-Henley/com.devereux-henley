@@ -411,6 +411,12 @@
             :handler    (integrant.core/ref ::web.game.api/get-faction)}}]
 
    ;; ─── Draft (reads only — mutations live on /actions) ────────────────────
+   ["/draft/:eid"
+    {:name :draft/by-eid
+     :get  {:produces   ["text/html"]
+            :parameters {:path schema.contract/id-path-parameter}
+            :responses  {200 {:body domain/draft-resource}}
+            :handler    (integrant.core/ref ::web.draft.api/get-draft)}}]
    ["/draft/:draft-eid/unit"
     {:name :draft-unit/preview
      :get  {:produces   ["text/html"]
@@ -538,13 +544,14 @@
               :responses  {200 {:body domain/match-resource}}
               :handler    (integrant.core/ref ::web.tournament.api/get-match)}}]
      ["/:eid/game"
-      {:get {:produces   ["text/html"]
-             :parameters {:path (schema.contract/to-schema
-                                 [:map
-                                  [:tournament-eid :uuid]
-                                  [:eid :uuid]])}
-             :responses  {200 {:body domain/tournament-games-response}}
-             :handler    (integrant.core/ref ::web.tournament.api/get-games)}}]]]
+      {:name :match/games
+       :get  {:produces   ["text/html"]
+              :parameters {:path (schema.contract/to-schema
+                                  [:map
+                                   [:tournament-eid :uuid]
+                                   [:eid :uuid]])}
+              :responses  {200 {:body domain/tournament-games-response}}
+              :handler    (integrant.core/ref ::web.tournament.api/get-games)}}]]]
 
    ;; ─── League ────────────────────────────────────────────────────────────
    ["/league"

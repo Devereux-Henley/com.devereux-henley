@@ -266,11 +266,14 @@
     (assoc draft :display-name (or trimmed (draft-default-name draft)))))
 
 (defn get-draft-by-eid
-  "Fetches a draft by eid and attaches :type :game/draft + :display-name."
+  "Fetches a draft by eid and attaches :type :game/draft + :display-name.
+   Returns nil when no row matches so callers can distinguish missing from
+   present."
   [dependencies eid]
-  (-> (db/get-draft-by-eid (:connection dependencies) eid)
-      with-display-name
-      (assoc :type :game/draft)))
+  (when-let [draft (db/get-draft-by-eid (:connection dependencies) eid)]
+    (-> draft
+        with-display-name
+        (assoc :type :game/draft))))
 
 (defn create-draft
   "Creates a new draft, stamping :created-at and :updated-at, and attaches :type :game/draft."

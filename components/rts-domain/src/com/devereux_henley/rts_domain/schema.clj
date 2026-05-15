@@ -136,7 +136,8 @@
      {:model/sub-resources {:status       :tournament/status
                             :registration :tournament/registration
                             :entries      :tournament/entries
-                            :matches      :tournament/matches}}
+                            :matches      :tournament/matches
+                            :round        :tournament/round}}
      [:eid {:model/link :tournament/by-eid} :uuid]
      [:type [:= :tournament/tournament]]
      [:name {:min 1} :string]
@@ -154,7 +155,8 @@
        [:status :url]
        [:registration :url]
        [:entries :url]
-       [:matches :url]]]])))
+       [:matches :url]
+       [:round :url]]]])))
 
 (def create-tournament-specification
   (schema.contract/to-schema
@@ -180,6 +182,7 @@
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
+     {:model/sub-resources {:games :match/games}}
      [:eid {:model/link :match/by-eid} :uuid]
      [:type [:= :tournament/match]]
      [:tournament-eid {:model/link :tournament/by-eid} :uuid]
@@ -194,7 +197,8 @@
      [:_links
       [:map
        [:self :url]
-       [:tournament :url]]]])))
+       [:tournament :url]
+       [:games :url]]]])))
 
 (def create-match-specification
   (schema.contract/to-schema
@@ -209,21 +213,6 @@
   (schema.contract/to-schema
    [:map
     [:winner-sub :string]]))
-
-(def tournament-entry-resource
-  (malli.util/merge
-   schema.contract/base-resource
-   (schema.contract/to-schema
-    [:map
-     [:eid {:model/link :tournament-entry/by-eid} :uuid]
-     [:type [:= :tournament/entry]]
-     [:tournament-eid {:model/link :tournament/by-eid} :uuid]
-     [:player-sub :string]
-     [:created-at :instant]
-     [:_links
-      [:map
-       [:self :url]
-       [:tournament :url]]]])))
 
 ;; ─── Subresource response schemas ───────────────────────────────────────────
 
@@ -423,11 +412,15 @@
     [:map
      [:eid {:model/link :draft/by-eid} :uuid]
      [:type [:= :game/draft]]
-     [:game-mode-eid {:model/link :game-mode/by-eid} :uuid]
+     [:game-mode-eid :uuid]
      [:faction-eid {:model/link :game/faction-by-eid} :uuid]
      [:name {:optional true} [:maybe :string]]
      [:display-name {:optional true} :string]
-     [:player-sub :string]])))
+     [:player-sub :string]
+     [:_links
+      [:map
+       [:self :url]
+       [:faction :url]]]])))
 
 (def create-draft-specification
   (schema.contract/to-schema
@@ -588,7 +581,8 @@
      [:_links
       [:map
        [:self :url]
-       [:draft :url]]]])))
+       [:draft :url]
+       [:game :url]]]])))
 
 (def draft-entry-resource
   "A placed draft entry — addressing (entry eid, draft-eid, unit-eid,

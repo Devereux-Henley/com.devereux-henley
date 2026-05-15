@@ -91,7 +91,6 @@
 (def tournament-resource                          schema/tournament-resource)
 (def create-tournament-specification              schema/create-tournament-specification)
 (def tournament-collection-resource               schema/tournament-collection-resource)
-(def tournament-entry-resource                     schema/tournament-entry-resource)
 
 (def get-tournament-by-eid                        handlers.tournament/get-tournament-by-eid)
 (def get-tournaments-for-game                     handlers.tournament/get-tournaments-for-game)

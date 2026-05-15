@@ -79,6 +79,18 @@
       (get-in resource [:_embedded :unit])
       (update-in [:_embedded :unit] attach))))
 
+(defmethod integrant.core/init-key ::get-draft
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]} :path} :parameters
+        router                :reitit.core/router
+        :as                   _request}]
+    (if-let [draft (domain/get-draft-by-eid dependencies eid)]
+      (web.core/handle-fetch-response
+       domain/draft-resource
+       {:hostname (:hostname dependencies) :router router}
+       (constantly draft))
+      {:status 404 :body {:type :missing/resource :name "draft" :id eid}})))
+
 (defmethod integrant.core/init-key ::get-draft-unit
   [_init-key dependencies]
   (fn [{{{:keys [draft-eid eid]}      :path
