@@ -10,7 +10,9 @@
   (or (domain/get-league-by-eid dependencies eid)
       {:type :missing/resource :name "league" :id eid}))
 
-(defn get-leagues-for-game
+(defn get-leagues
+  "Collection builder for /api/league. When `game-eid` is set the
+   collection is filtered to that game; nil returns every league."
   [dependencies game-eid {:keys [hostname router]}]
   {:type      :collection/league
    :_embedded {:results (if game-eid
@@ -37,8 +39,8 @@
         router                      :reitit.core/router
         :as                         _request}]
     {:status 200
-     :body   (get-leagues-for-game dependencies game-eid
-                                   {:hostname (:hostname dependencies) :router router})}))
+     :body   (get-leagues dependencies game-eid
+                          {:hostname (:hostname dependencies) :router router})}))
 
 (defmethod integrant.core/init-key ::create-league
   [_init-key dependencies]

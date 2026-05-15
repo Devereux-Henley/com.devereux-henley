@@ -140,7 +140,7 @@
             :com.devereux-henley.rts-web.web.league.api/get-leagues
             :com.devereux-henley.rts-web.web.league.api/create-league
             :com.devereux-henley.rts-web.web.season.api/get-season
-            :com.devereux-henley.rts-web.web.season.api/get-seasons-for-league
+            :com.devereux-henley.rts-web.web.season.api/get-seasons
             :com.devereux-henley.rts-web.web.season.api/create-season
             :com.devereux-henley.rts-web.web.stats.api/get-faction-standings
             :com.devereux-henley.rts-web.web.tournament.view/competitive-view

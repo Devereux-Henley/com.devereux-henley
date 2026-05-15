@@ -10,7 +10,9 @@
   (or (domain/get-season-by-eid dependencies eid)
       {:type :missing/resource :name "season" :id eid}))
 
-(defn get-seasons-for-league
+(defn get-seasons
+  "Collection builder for /api/season. When `league-eid` is set the
+   collection is filtered to that league; nil returns every season."
   [dependencies league-eid {:keys [hostname router]}]
   {:type      :collection/season
    :_embedded {:results (if league-eid
@@ -31,14 +33,14 @@
         {:status 404 :body result}
         {:status 200 :body result}))))
 
-(defmethod integrant.core/init-key ::get-seasons-for-league
+(defmethod integrant.core/init-key ::get-seasons
   [_init-key dependencies]
   (fn [{{{:keys [league-eid]} :query} :parameters
         router                        :reitit.core/router
         :as                           _request}]
     {:status 200
-     :body   (get-seasons-for-league dependencies league-eid
-                                     {:hostname (:hostname dependencies) :router router})}))
+     :body   (get-seasons dependencies league-eid
+                          {:hostname (:hostname dependencies) :router router})}))
 
 (defmethod integrant.core/init-key ::create-season
   [_init-key dependencies]

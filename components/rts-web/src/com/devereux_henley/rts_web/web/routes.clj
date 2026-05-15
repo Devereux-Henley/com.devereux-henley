@@ -582,7 +582,7 @@
             :parameters {:query (schema.contract/to-schema
                                  [:map [:league-eid {:optional true} :uuid]])}
             :responses  {200 {:body domain/season-collection-resource}}
-            :handler    (integrant.core/ref ::web.season.api/get-seasons-for-league)}}]
+            :handler    (integrant.core/ref ::web.season.api/get-seasons)}}]
    ["/season/:eid"
     {:name :season/by-eid
      :get  {:produces   ["text/html"]
