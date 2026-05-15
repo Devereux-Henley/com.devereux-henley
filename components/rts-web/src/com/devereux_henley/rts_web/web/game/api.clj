@@ -68,16 +68,20 @@
 
 (defn- enrich-unit
   "Add the parsed unit-statistics plus embedded abilities, spells, items,
-   and mounts to a unit row."
-  [dependencies {:keys [unit-statistics eid] :as unit}]
+   and mounts to a unit row. Spells come from `draftable-spells` in
+   unit-statistics for fixed-list casters; lore-based casters expose
+   the full lore via `:lore`, in which case we fall back to
+   `get-spells-for-lore`."
+  [dependencies {:keys [unit-statistics eid lore] :as unit}]
   (let [parsed     (when unit-statistics
                      (domain/parse-unit-statistics unit-statistics))
         ability-ks (:abilities parsed)
         spell-ks   (:draftable-spells parsed)
         abilities  (when (seq ability-ks)
                      (vals (domain/get-abilities-by-keys dependencies ability-ks)))
-        spells     (when (seq spell-ks)
-                     (vals (domain/get-spells-by-keys dependencies spell-ks)))
+        spells     (cond
+                     (seq spell-ks) (vals (domain/get-spells-by-keys dependencies spell-ks))
+                     (seq lore)     (domain/get-spells-for-lore dependencies lore))
         items      (domain/get-items-for-unit dependencies eid)
         mounts     (domain/get-mounts-for-unit dependencies eid)]
     (-> unit
