@@ -65,7 +65,9 @@
   (handlers :com.devereux-henley.rts-web.web.game.api/get-game
             :com.devereux-henley.rts-web.web.game.api/get-games
             :com.devereux-henley.rts-web.web.game.api/get-faction
-            :com.devereux-henley.rts-web.web.game.api/get-game-social-link))
+            :com.devereux-henley.rts-web.web.game.api/get-game-social-link
+            :com.devereux-henley.rts-web.web.game.api/get-factions-collection
+            :com.devereux-henley.rts-web.web.game.api/get-socials-collection))
 
 (def draft-configuration
   (handlers :com.devereux-henley.rts-web.web.draft.api/get-draft

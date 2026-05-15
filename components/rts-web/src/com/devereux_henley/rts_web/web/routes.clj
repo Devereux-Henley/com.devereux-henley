@@ -412,6 +412,20 @@
                          :query web.game.api/game-query-parameters}
             :responses  {200 {:body domain/game-resource}}
             :handler    (integrant.core/ref ::web.game.api/get-game)}}]
+   ["/faction"
+    {:name :faction/for-game
+     :get  {:produces   ["text/html"]
+            :parameters {:query (schema.contract/to-schema
+                                 [:map [:game-eid :uuid]])}
+            :responses  {200 {:body domain/faction-collection-resource}}
+            :handler    (integrant.core/ref ::web.game.api/get-factions-collection)}}]
+   ["/social-link"
+    {:name :game-social-link/for-game
+     :get  {:produces   ["text/html"]
+            :parameters {:query (schema.contract/to-schema
+                                 [:map [:game-eid :uuid]])}
+            :responses  {200 {:body domain/game-social-link-collection-resource}}
+            :handler    (integrant.core/ref ::web.game.api/get-socials-collection)}}]
    ["/game/social-link/:eid"
     {:name :game/social-by-eid
      :get  {:produces   ["text/html"]

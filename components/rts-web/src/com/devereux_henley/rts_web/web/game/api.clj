@@ -117,15 +117,46 @@
   (fn [{{{:keys [eid]}   :path
          {:keys [embed]} :query} :parameters
         :as                      _request}]
-    (let [requested (some->> (web.core/query-param->vec embed) (into #{} (map keyword)))
-          ;; Default to every game-embed-registry key so /api/game/:eid is
-          ;; walkable without requiring callers to know the embed names —
-          ;; factions and socials show up automatically. Explicit ?embed=
-          ;; still filters to the requested subset.
-          embed-set (if (seq requested) requested (set (keys game-embed-registry)))]
+    (let [embed-set (some->> (web.core/query-param->vec embed) (into #{} (map keyword)))]
       (ok-or-404
        (web.core/apply-embeds game-embed-registry dependencies embed-set
                               (get-game-by-eid dependencies eid))))))
+
+(defn get-factions
+  [dependencies game-eid {:keys [hostname router]}]
+  {:type      :collection/faction
+   :_embedded {:results (domain/get-factions-for-game dependencies game-eid)}
+   :_links    {:self (str hostname
+                          (-> router
+                              (reitit.core/match-by-name! :faction/for-game)
+                              (reitit.core/match->path {:game-eid game-eid})))}})
+
+(defn get-socials
+  [dependencies game-eid {:keys [hostname router]}]
+  {:type      :collection/game-social-link
+   :_embedded {:results (domain/get-socials-for-game dependencies game-eid)}
+   :_links    {:self (str hostname
+                          (-> router
+                              (reitit.core/match-by-name! :game-social-link/for-game)
+                              (reitit.core/match->path {:game-eid game-eid})))}})
+
+(defmethod integrant.core/init-key ::get-factions-collection
+  [_init-key dependencies]
+  (fn [{{{:keys [game-eid]} :query} :parameters
+        router                      :reitit.core/router
+        :as                         _request}]
+    {:status 200
+     :body   (get-factions dependencies game-eid
+                           {:hostname (:hostname dependencies) :router router})}))
+
+(defmethod integrant.core/init-key ::get-socials-collection
+  [_init-key dependencies]
+  (fn [{{{:keys [game-eid]} :query} :parameters
+        router                      :reitit.core/router
+        :as                         _request}]
+    {:status 200
+     :body   (get-socials dependencies game-eid
+                          {:hostname (:hostname dependencies) :router router})}))
 
 (defmethod integrant.core/init-key ::get-games
   [_init-key dependencies]

@@ -92,6 +92,20 @@
        [:socials {:optional true} [:sequential game-social-link-resource]]
        [:factions {:optional true} [:sequential faction-resource]]]]])))
 
+(def faction-collection-resource
+  (malli.util/merge
+   (schema.contract/make-collection-resource faction-resource)
+   (schema.contract/to-schema
+    [:map
+     [:type [:= :collection/faction]]])))
+
+(def game-social-link-collection-resource
+  (malli.util/merge
+   (schema.contract/make-collection-resource game-social-link-resource)
+   (schema.contract/to-schema
+    [:map
+     [:type [:= :collection/game-social-link]]])))
+
 (def game-collection-resource
   (malli.util/merge
    (schema.contract/make-collection-resource game-resource)

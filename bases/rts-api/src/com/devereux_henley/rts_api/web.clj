@@ -36,6 +36,8 @@
    :game/draft                     "rts-web/resource/draft.html"
    :game/social-link               "rts-web/resource/game-social-link.html"
    :collection/game                "rts-web/resource/game-collection.html"
+   :collection/faction             "rts-web/resource/faction-collection.html"
+   :collection/game-social-link    "rts-web/resource/game-social-link-collection.html"
    :tournament/tournament          "rts-web/resource/tournament.html"
    :collection/tournament          "rts-web/resource/tournament-collection.html"
    :tournament/phase               "rts-web/resource/tournament-phase.html"
