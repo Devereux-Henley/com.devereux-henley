@@ -8,5 +8,7 @@
     {% if data.player-one-sub %}<dt>player-one</dt><dd>{{ data.player-one-sub }}</dd>{% endif %}
     {% if data.player-two-sub %}<dt>player-two</dt><dd>{{ data.player-two-sub }}</dd>{% endif %}
     {% if data.winner-sub %}<dt>winner</dt><dd>{{ data.winner-sub }}</dd>{% endif %}
+    {% if data._links.tournament %}<dt>tournament</dt><dd><a href="{{ data._links.tournament }}">{{ data.tournament-eid }}</a></dd>{% endif %}
+    {% if data._links.games %}<dt>games</dt><dd><a href="{{ data._links.games }}">games</a></dd>{% endif %}
   </dl>
 </section>
