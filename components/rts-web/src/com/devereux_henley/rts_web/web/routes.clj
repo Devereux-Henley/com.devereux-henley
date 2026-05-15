@@ -3,6 +3,7 @@
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.orchestration :as orchestration]
    [com.devereux-henley.rts-web.web.actions.draft :as web.actions.draft]
+   [com.devereux-henley.rts-web.web.api :as web.api]
    [com.devereux-henley.rts-web.web.actions.league :as web.actions.league]
    [com.devereux-henley.rts-web.web.actions.season :as web.actions.season]
    [com.devereux-henley.rts-web.web.actions.tournament :as web.actions.tournament]
@@ -381,6 +382,18 @@
 (def api-routes
   ["/api"
    {:no-doc true}
+
+   ;; ─── Root ───────────────────────────────────────────────────────────────
+   ["/index.html"
+    {:name :api/root
+     :get  {:produces  ["text/html"]
+            :responses {200 {:body (schema.contract/to-schema
+                                    [:map
+                                     [:type [:= :api/root]]
+                                     [:_links [:map
+                                               [:self :url]
+                                               [:games :url]]]])}}
+            :handler   (integrant.core/ref ::web.api/get-root)}}]
 
    ;; ─── Game ───────────────────────────────────────────────────────────────
    ["/game"

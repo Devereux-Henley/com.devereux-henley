@@ -27,44 +27,70 @@
   (:import
    [java.net ConnectException]))
 
-(defn view-by-type
-  [type]
-  (get
-   {:game/game                "rts-web/resource/game.html"
-    :game/faction             "rts-web/resource/faction.html"
-    :game/draft               "rts-web/resource/draft.html"
-    :game/social-link         "rts-web/resource/game-social-link.html"
-    :collection/game          "rts-web/resource/game-collection.html"
-    :draft/unit               "rts-web/resource/draft-unit.html"
-    :draft/entry              "rts-web/resource/draft-entry.html"
-    :draft/add-success        "rts-web/resource/draft-add-success.html"
-    :draft/add-error          "rts-web/resource/draft-add-error.html"
-    :draft/update-success     "rts-web/resource/draft-update-success.html"
-    :draft/update-error       "rts-web/resource/draft-add-error.html"
-    :draft/remove-success     "rts-web/resource/draft-remove-success.html"
-    :tournament/tournament    "rts-web/resource/tournament.html"
-    :collection/tournament    "rts-web/resource/tournament-collection.html"
-    :tournament/phase         "rts-web/resource/tournament-phase.html"
-    :tournament/round         "rts-web/resource/tournament-round.html"
-    :tournament/entry         "rts-web/resource/tournament-entry.html"
-    :tournament/entry-deleted "rts-web/resource/tournament-entry-deleted.html"
-    :tournament/entry-error   "rts-web/resource/tournament-entry-error.html"
-    :tournament/entries       "rts-web/resource/tournament-entries.html"
-    :tournament/status        "rts-web/resource/tournament-status.html"
-    :tournament/registration  "rts-web/resource/tournament-registration.html"
-    :tournament/match         "rts-web/resource/tournament-match.html"
-    :tournament/matches       "rts-web/resource/tournament-matches.html"
-    :tournament/games         "rts-web/resource/tournament-games.html"
-    :league/league            "rts-web/resource/league.html"
-    :collection/league        "rts-web/resource/league-collection.html"
-    :season/season            "rts-web/resource/season.html"
-    :collection/season        "rts-web/resource/season-collection.html"
-    :stats/faction-standings  "rts-web/resource/stats-faction-standings.html"
-    :social-media/platform    "rts-web/resource/social-media.html"
-    :missing/resource         "rts-web/resource/missing.html"
-    "exception"               "rts-web/resource/error.html"}
-   type
-   "rts-web/resource/unknown.html"))
+(def api-view-by-type-map
+  "Plain HTML hypermedia templates served by /api routes (text/html). No
+   htmx, no cross-surface URLs — every `<a href>` targets another /api
+   resource. Walk-only consumers see exactly these templates."
+  {:game/game                      "rts-web/resource/game.html"
+   :game/faction                   "rts-web/resource/faction.html"
+   :game/draft                     "rts-web/resource/draft.html"
+   :game/social-link               "rts-web/resource/game-social-link.html"
+   :collection/game                "rts-web/resource/game-collection.html"
+   :tournament/tournament          "rts-web/resource/tournament.html"
+   :collection/tournament          "rts-web/resource/tournament-collection.html"
+   :tournament/phase               "rts-web/resource/tournament-phase.html"
+   :tournament/round               "rts-web/resource/tournament-round.html"
+   :tournament/entry               "rts-web/resource/tournament-entry.html"
+   :tournament/entry-deleted       "rts-web/resource/tournament-entry-deleted.html"
+   :tournament/entries             "rts-web/resource/tournament-entries.html"
+   :tournament/status              "rts-web/resource/tournament-status.html"
+   :tournament/registration        "rts-web/resource/tournament-registration.html"
+   :tournament/match               "rts-web/resource/tournament-match.html"
+   :tournament/matches             "rts-web/resource/tournament-matches.html"
+   :tournament/games               "rts-web/resource/tournament-games.html"
+   :league/league                  "rts-web/resource/league.html"
+   :collection/league              "rts-web/resource/league-collection.html"
+   :season/season                  "rts-web/resource/season.html"
+   :collection/season              "rts-web/resource/season-collection.html"
+   :stats/game-faction-standings   "rts-web/resource/stats-faction-standings.html"
+   :stats/league-faction-standings "rts-web/resource/stats-faction-standings.html"
+   :stats/season-faction-standings "rts-web/resource/stats-faction-standings.html"
+   :social-media/platform          "rts-web/resource/social-media.html"
+   :api/root                       "rts-web/resource/root.html"
+   :missing/resource               "rts-web/resource/missing.html"
+   "exception"                     "rts-web/resource/error.html"})
+
+(def component-view-by-type-map
+  "Htmx-rich templates served by /components and /actions routes
+   (application/htmx+html). May contain hx-* attributes, OOB swaps,
+   and `/view` / `/components` URLs that drive the in-app navigation."
+  {:game/faction           "rts-web/components/faction-card.html"
+   :draft/unit             "rts-web/components/draft-unit.html"
+   :draft/entry            "rts-web/components/draft-entry.html"
+   :tournament/phase       "rts-web/components/tournament-phase.html"
+   :tournament/round       "rts-web/components/tournament-round.html"
+   :draft/add-success      "rts-web/actions/draft-add-success.html"
+   :draft/add-error        "rts-web/actions/draft-add-error.html"
+   :draft/update-success   "rts-web/actions/draft-update-success.html"
+   :draft/update-error     "rts-web/actions/draft-add-error.html"
+   :draft/remove-success   "rts-web/actions/draft-remove-success.html"
+   :tournament/entry-error "rts-web/actions/tournament-entry-error.html"
+   :missing/resource       "rts-web/resource/missing.html"
+   "exception"             "rts-web/resource/error.html"})
+
+(defn- view-by-type
+  "Closure built from `templates` mapping :type → template path; falls
+   back to the unknown template when no mapping matches."
+  [templates type]
+  (get templates type "rts-web/resource/unknown.html"))
+
+(defmethod integrant.core/init-key ::api-view-registry
+  [_init-key _opts]
+  (partial view-by-type api-view-by-type-map))
+
+(defmethod integrant.core/init-key ::component-view-registry
+  [_init-key _opts]
+  (partial view-by-type component-view-by-type-map))
 
 (def continuity-key "ory_kratos_continuity")
 
@@ -198,7 +224,8 @@
     (ory-session-middleware auth-hostname session-name handler)))
 
 (defmethod integrant.core/init-key ::app
-  [_init-key {:keys [routes auth-middleware model-transform-middleware]}]
+  [_init-key {:keys [routes auth-middleware model-transform-middleware
+                     api-view-registry component-view-registry]}]
   (ring/ring-handler
    (ring/router
     routes
@@ -229,10 +256,10 @@
                                    muuntaja.format.form/format)
                                   (assoc-in [:formats "text/html"]
                                             content-negotiation/html-format)
-                                  (assoc-in [:formats "text/html" :encoder-opts] {:view-fn view-by-type})
+                                  (assoc-in [:formats "text/html" :encoder-opts] {:view-fn api-view-registry})
                                   (assoc-in [:formats "application/htmx+html"]
                                             content-negotiation/html-htmx-format)
-                                  (assoc-in [:formats "application/htmx+html" :encoder-opts] {:view-fn view-by-type})))
+                                  (assoc-in [:formats "application/htmx+html" :encoder-opts] {:view-fn component-view-registry})))
                  :middleware [;; query-params & form-params
                               parameters/parameters-middleware
                               ;; reject Accept that doesn't match the matched

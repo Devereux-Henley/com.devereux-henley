@@ -3,9 +3,18 @@
   <table>
     <thead><tr><th scope="col">faction</th><th scope="col">wins</th><th scope="col">losses</th></tr></thead>
     <tbody>
-    {% for r in data.standings %}
-    <tr><td>{{ r.faction-key }}</td><td>{{ r.wins }}</td><td>{{ r.losses }}</td></tr>
+    {% for r in data.rows %}
+    <tr>
+      <td>{% if r._links.faction %}<a href="{{ r._links.faction }}">{{ r.faction-name }}</a>{% else %}{{ r.faction-name }}{% endif %}</td>
+      <td>{{ r.wins }}</td>
+      <td>{{ r.losses }}</td>
+    </tr>
     {% endfor %}
     </tbody>
   </table>
+  <dl>
+    {% if data._links.game %}<dt>game</dt><dd><a href="{{ data._links.game }}">{{ data.game-eid }}</a></dd>{% endif %}
+    {% if data._links.league %}<dt>league</dt><dd><a href="{{ data._links.league }}">{{ data.league-eid }}</a></dd>{% endif %}
+    {% if data._links.season %}<dt>season</dt><dd><a href="{{ data._links.season }}">{{ data.season-eid }}</a></dd>{% endif %}
+  </dl>
 </section>

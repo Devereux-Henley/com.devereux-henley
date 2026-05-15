@@ -5,4 +5,8 @@
     <li data-winner-sub="{{ g.winner-sub }}">{{ g.winner-sub }}</li>
     {% endfor %}
   </ul>
+  <dl>
+    {% if data._links.tournament %}<dt>tournament</dt><dd><a href="{{ data._links.tournament }}">{{ data.tournament-eid }}</a></dd>{% endif %}
+    {% if data._links.match %}<dt>match</dt><dd><a href="{{ data._links.match }}">{{ data.match-eid }}</a></dd>{% endif %}
+  </dl>
 </section>

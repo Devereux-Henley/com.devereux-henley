@@ -1,1 +1,6 @@
-{% include "rts-web/components/tournament-round-row.html" %}
+<section class="resource" aria-labelledby="tournament-round-heading">
+    <h2 id="tournament-round-heading">Round</h2>
+    <dl>
+        {% if data._links.tournament %}<dt>tournament</dt><dd><a href="{{ data._links.tournament }}">{{data.tournament-eid}}</a></dd>{% endif %}
+    </dl>
+</section>

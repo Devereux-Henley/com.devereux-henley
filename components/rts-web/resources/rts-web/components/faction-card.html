@@ -1,11 +1,12 @@
-<section class="resource" aria-labelledby="faction-heading">
+<title id="page-title" hx-swap-oob="true">{{data.name}} | RTS-UI</title>
+
+<section id="game-browser" class="resource game-resource" aria-labelledby="faction-heading">
     <h2 id="faction-heading">{{data.name}}</h2>
     <p>{{data.description|linebreaks|safe}}</p>
-    {% if data._links.game %}<p><a href="{{ data._links.game }}">game</a></p>{% endif %}
     {% if data._embedded.units-by-category %}
-    <section aria-label="Units by category">
+    <section id="game-section-factions" aria-label="Units by category">
         {% for group in data._embedded.units-by-category %}
-        <h3 id="unit-category-{{forloop.counter}}">{{group.category}}</h3>
+        <h4 id="unit-category-{{forloop.counter}}">{{group.category}}</h4>
         <table class="table" aria-labelledby="unit-category-{{forloop.counter}}">
             <caption class="sr-only">{{group.category}} units for {{data.name}}</caption>
             <thead>
@@ -18,7 +19,7 @@
             <tbody>
                 {% for unit in group.units %}
                 <tr>
-                    <td>{% if unit._links.self %}<a href="{{ unit._links.self }}">{{unit.name}}</a>{% else %}{{unit.name}}{% endif %}</td>
+                    <td><a href="/view/game/{{data.game-eid}}/unit/{{unit.eid}}/index.html">{{unit.name}}</a></td>
                     <td>{{unit.unit-type-name}}</td>
                     <td>{{unit.cost}}</td>
                 </tr>
