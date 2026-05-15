@@ -16,6 +16,11 @@
   (mapv (fn [faction] (assoc faction :type :game/faction))
         (db/get-factions-for-game (:connection dependencies) game-eid)))
 
+(defn get-factions
+  [dependencies]
+  (mapv (fn [faction] (assoc faction :type :game/faction))
+        (db/get-factions (:connection dependencies))))
+
 (defn get-faction-by-eid
   [dependencies eid]
   (when-let [faction (db/get-faction-by-eid (:connection dependencies) eid)]
@@ -25,6 +30,11 @@
   [dependencies game-eid]
   (mapv (fn [social] (assoc social :type :game/social))
         (db/get-socials-for-game (:connection dependencies) game-eid)))
+
+(defn get-socials
+  [dependencies]
+  (mapv (fn [social] (assoc social :type :game/social))
+        (db/get-socials (:connection dependencies))))
 
 (defn get-game-social-link-by-eid
   [dependencies eid]
@@ -45,6 +55,11 @@
   [dependencies faction-eid]
   (mapv (fn [unit] (assoc unit :type :game/unit))
         (db/get-units-for-faction (:connection dependencies) faction-eid)))
+
+(defn get-units
+  [dependencies]
+  (mapv (fn [unit] (assoc unit :type :game/unit))
+        (db/get-units (:connection dependencies))))
 
 (defn get-game-mode-by-eid
   [dependencies eid]

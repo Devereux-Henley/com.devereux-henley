@@ -28,6 +28,12 @@
   (mapv tag-tournament
         (db/get-tournaments-for-game (:connection dependencies) game-eid)))
 
+(defn get-tournaments
+  "Returns every tournament in the system, each tagged with :type :tournament/tournament."
+  [dependencies]
+  (mapv tag-tournament
+        (db/get-tournaments (:connection dependencies))))
+
 (defn get-tournament-state
   "Returns the parsed tournament state map, or a default initial state when none exists."
   [dependencies tournament-eid]
@@ -236,6 +242,11 @@
   "Fetches a match by eid."
   [dependencies match-eid]
   (tag-match (db/get-match-by-eid (:connection dependencies) match-eid)))
+
+(defn get-matches
+  "Returns every match in the system, each tagged with :type :tournament/match."
+  [dependencies]
+  (mapv tag-match (db/get-matches (:connection dependencies))))
 
 (defn get-matches-for-tournament
   "Returns all matches for a tournament."

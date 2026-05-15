@@ -14,5 +14,13 @@
   (fn [{router :reitit.core/router :as _request}]
     {:status 200
      :body   {:type   :api/root
-              :_links {:self  (route-url hostname router :api/root)
-                       :games (route-url hostname router :collection/game)}}}))
+              :_links {:self              (route-url hostname router :api/root)
+                       :games             (route-url hostname router :collection/game)
+                       :factions          (route-url hostname router :collection/faction)
+                       :social-links      (route-url hostname router :collection/social-link)
+                       :units             (route-url hostname router :collection/unit)
+                       :tournaments       (route-url hostname router :collection/tournament)
+                       :matches           (route-url hostname router :collection/match)
+                       :leagues           (route-url hostname router :collection/league)
+                       :seasons           (route-url hostname router :collection/season)
+                       :faction-standings (route-url hostname router :collection/faction-standings)}}}))

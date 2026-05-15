@@ -113,7 +113,7 @@
   [dependencies {:keys [hostname router]}]
   {:type      :collection/game
    :_embedded {:results (domain/get-games dependencies)}
-   :_links    {:self (str hostname "/"
+   :_links    {:self (str hostname
                           (-> router
                               (reitit.core/match-by-name! :collection/game)
                               :path))}})
@@ -153,20 +153,26 @@
 (defn get-factions
   [dependencies game-eid {:keys [hostname router]}]
   {:type      :collection/faction
-   :_embedded {:results (domain/get-factions-for-game dependencies game-eid)}
+   :_embedded {:results (if game-eid
+                          (domain/get-factions-for-game dependencies game-eid)
+                          (domain/get-factions dependencies))}
    :_links    {:self (str hostname
                           (-> router
-                              (reitit.core/match-by-name! :faction/for-game)
-                              (reitit.core/match->path {:game-eid game-eid})))}})
+                              (reitit.core/match-by-name! :collection/faction)
+                              (reitit.core/match->path
+                               (when game-eid {:game-eid game-eid}))))}})
 
 (defn get-socials
   [dependencies game-eid {:keys [hostname router]}]
-  {:type      :collection/game-social-link
-   :_embedded {:results (domain/get-socials-for-game dependencies game-eid)}
+  {:type      :collection/social-link
+   :_embedded {:results (if game-eid
+                          (domain/get-socials-for-game dependencies game-eid)
+                          (domain/get-socials dependencies))}
    :_links    {:self (str hostname
                           (-> router
-                              (reitit.core/match-by-name! :game-social-link/for-game)
-                              (reitit.core/match->path {:game-eid game-eid})))}})
+                              (reitit.core/match-by-name! :collection/social-link)
+                              (reitit.core/match->path
+                               (when game-eid {:game-eid game-eid}))))}})
 
 (defmethod integrant.core/init-key ::get-factions-collection
   [_init-key dependencies]
@@ -189,11 +195,14 @@
 (defn get-units-for-faction-collection
   [dependencies faction-eid {:keys [hostname router]}]
   {:type      :collection/unit
-   :_embedded {:results (vec (domain/get-units-for-faction dependencies faction-eid))}
+   :_embedded {:results (vec (if faction-eid
+                               (domain/get-units-for-faction dependencies faction-eid)
+                               (domain/get-units dependencies)))}
    :_links    {:self (str hostname
                           (-> router
-                              (reitit.core/match-by-name! :unit/for-faction)
-                              (reitit.core/match->path {:faction-eid faction-eid})))}})
+                              (reitit.core/match-by-name! :collection/unit)
+                              (reitit.core/match->path
+                               (when faction-eid {:faction-eid faction-eid}))))}})
 
 (defmethod integrant.core/init-key ::get-unit
   [_init-key dependencies]

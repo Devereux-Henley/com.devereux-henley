@@ -74,7 +74,9 @@
 (def draft-configuration
   (handlers :com.devereux-henley.rts-web.web.draft.api/get-draft
             :com.devereux-henley.rts-web.web.draft.api/get-draft-unit
-            :com.devereux-henley.rts-web.web.draft.api/get-draft-entry))
+            :com.devereux-henley.rts-web.web.draft.api/get-draft-entry
+            :com.devereux-henley.rts-web.web.draft.api/get-draft-unit-by-query
+            :com.devereux-henley.rts-web.web.draft.api/get-draft-entry-by-query))
 
 (def social-media-configuration
   (handlers :com.devereux-henley.rts-web.web.social-media.api/get-platform))
@@ -142,9 +144,7 @@
             :com.devereux-henley.rts-web.web.season.api/get-season
             :com.devereux-henley.rts-web.web.season.api/get-seasons-for-league
             :com.devereux-henley.rts-web.web.season.api/create-season
-            :com.devereux-henley.rts-web.web.stats.api/get-game-faction-standings
-            :com.devereux-henley.rts-web.web.stats.api/get-league-faction-standings
-            :com.devereux-henley.rts-web.web.stats.api/get-season-faction-standings
+            :com.devereux-henley.rts-web.web.stats.api/get-faction-standings
             :com.devereux-henley.rts-web.web.tournament.view/competitive-view
             :com.devereux-henley.rts-web.web.season.view/season-options-fragment-view
             :com.devereux-henley.rts-web.web.league.view/create-league-view

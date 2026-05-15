@@ -10,7 +10,7 @@
 (def ^:private tournament-resource
   (schema/to-schema
    [:map {:model/type          :model/model
-          :model/sub-resources {:matches :tournament/matches}}
+          :model/sub-resources {:matches :collection/match}}
     [:eid {:model/link :tournament/by-eid} :uuid]
     [:type [:= :tournament/tournament]]
     [:name :string]
@@ -23,7 +23,7 @@
 (def ^:private match-resource
   (schema/to-schema
    [:map {:model/type          :model/model
-          :model/sub-resources {:games :match/games}}
+          :model/sub-resources {:games :collection/match-game}}
     [:eid {:model/link :match/by-eid} :uuid]
     [:type [:= :tournament/match]]
     [:tournament-eid {:model/link :tournament/by-eid} :uuid]
@@ -32,7 +32,7 @@
 (def ^:private tournament-with-embedded-match
   (schema/to-schema
    [:map {:model/type          :model/model
-          :model/sub-resources {:matches :tournament/matches}}
+          :model/sub-resources {:matches :collection/match}}
     [:eid {:model/link :tournament/by-eid} :uuid]
     [:type [:= :tournament/tournament]]
     [:name :string]
@@ -47,20 +47,20 @@
 
 (def ^:private router
   (reitit.ring/router
-   [["/api/game/:eid"                                  {:name :game/by-eid :get {:handler noop}}]
-    ["/api/tournament/:eid"                            {:name :tournament/by-eid :get {:handler noop}}]
-    ["/api/tournament/:tournament-eid/match"           {:name :tournament/matches
-                                                        :get  {:handler   noop
-                                                               :responses {200 {:body tournament-resource}}}}]
-    ["/api/tournament/:tournament-eid/match/:eid"      {:name :match/by-eid
-                                                        :get  {:handler   noop
-                                                               :responses {200 {:body match-resource}}}}]
-    ["/api/tournament/:tournament-eid/match/:eid/game" {:name :match/games :get {:handler noop}}]
-    ["/api/tournament/:eid/embedded"                   {:get {:handler   noop
-                                                              :responses {200 {:body tournament-with-embedded-match}}}}]
-    ["/api/tournament/:eid/no-schema"                  {:get {:handler noop}}]
-    ["/api/tournament/:eid/resource"                   {:get {:handler   noop
-                                                              :responses {200 {:body tournament-resource}}}}]]
+   [["/api/game/:eid"                  {:name :game/by-eid :get {:handler noop}}]
+    ["/api/tournament/:eid"            {:name :tournament/by-eid :get {:handler noop}}]
+    ["/api/match"                      {:name :collection/match
+                                        :get  {:handler   noop
+                                               :responses {200 {:body tournament-resource}}}}]
+    ["/api/match/:eid"                 {:name :match/by-eid
+                                        :get  {:handler   noop
+                                               :responses {200 {:body match-resource}}}}]
+    ["/api/match-game"                 {:name :collection/match-game :get {:handler noop}}]
+    ["/api/tournament/:eid/embedded"   {:get {:handler   noop
+                                              :responses {200 {:body tournament-with-embedded-match}}}}]
+    ["/api/tournament/:eid/no-schema"  {:get {:handler noop}}]
+    ["/api/tournament/:eid/resource"   {:get {:handler   noop
+                                              :responses {200 {:body tournament-resource}}}}]]
    {:data {:coercion (reitit.coercion.malli/create
                       {:compile malli.util/closed-schema})}}))
 
@@ -101,30 +101,29 @@
       (is (= (str hostname "/api/game/" game-eid) (:game links))))))
 
 (deftest sub-resource-links-resolve-via-model-sub-resources
-  (testing ":model/sub-resources fills _links for routes that hang off the resource"
+  (testing ":model/sub-resources emits parent-eid as a query parameter on the collection route"
     (let [response (run-middleware (str "/api/tournament/" tournament-eid "/resource")
                                    (handler-returning
                                     {:type     :tournament/tournament
                                      :eid      tournament-eid
                                      :name     "T"
                                      :game-eid game-eid}))]
-      (is (= (str hostname "/api/tournament/" tournament-eid "/match")
+      (is (= (str hostname "/api/match?tournament-eid=" tournament-eid)
              (get-in response [:body :_links :matches]))
-          "matches route uses :tournament-eid slot, filled from resource's own :eid"))))
+          "matches sub-resource URL filters by ?tournament-eid=<eid>"))))
 
-(deftest sub-resource-respects-existing-parent-eid
-  (testing "When the schema's :type namespace matches a parent-eid field already on the
-   value (e.g. :tournament/match carries its parent's :tournament-eid), the
-   sub-resource link must use the carried value, not overwrite it with the
-   resource's own :eid"
-    (let [response (run-middleware (str "/api/tournament/" tournament-eid "/match/" match-eid)
+(deftest sub-resource-uses-own-eid-not-parent-context
+  (testing "A child resource's sub-resource collection filters by the child's
+   eid, not by any parent-eid the child also carries. E.g. /api/match/:eid
+   has games at /api/match-game?match-eid=<match-eid>, not /api/match-game?tournament-eid=…"
+    (let [response (run-middleware (str "/api/match/" match-eid)
                                    (handler-returning
                                     {:type           :tournament/match
                                      :eid            match-eid
                                      :tournament-eid tournament-eid}))]
-      (is (= (str hostname "/api/tournament/" tournament-eid "/match/" match-eid "/game")
+      (is (= (str hostname "/api/match-game?match-eid=" match-eid)
              (get-in response [:body :_links :games]))
-          "games sub-resource URL keeps the real tournament-eid in the parent slot"))))
+          "match's games collection uses ?match-eid=<match-eid>"))))
 
 (deftest nested-embedded-resource-also-gets-links
   (testing "nested :model/model maps reachable through :_embedded are transformed too"
@@ -139,8 +138,7 @@
                                                   :eid            match-eid
                                                   :tournament-eid tournament-eid}}}))
           embedded (get-in response [:body :_embedded :current-match :_links])]
-      (is (= (str hostname "/api/tournament/" tournament-eid "/match/" match-eid)
-             (:self embedded)))
+      (is (= (str hostname "/api/match/" match-eid) (:self embedded)))
       (is (= (str hostname "/api/tournament/" tournament-eid) (:tournament embedded))))))
 
 ;; ─── Pass-through cases ────────────────────────────────────────────────────

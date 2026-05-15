@@ -20,7 +20,7 @@
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
-     [:eid {:model/link :game/social-by-eid} :uuid]
+     [:eid {:model/link :social-link/by-eid} :uuid]
      [:game-eid {:model/link :game/by-eid} :uuid]
      [:social-media-platform-eid {:model/link :social-media/by-eid} :uuid]
      [:type [:= :game/social]]
@@ -107,7 +107,7 @@
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
-     [:eid {:model/link :game/faction-by-eid} :uuid]
+     [:eid {:model/link :faction/by-eid} :uuid]
      [:game-eid {:model/link :game/by-eid} :uuid]
      [:type [:= :game/faction]]
      [:name {:min 1} :string]
@@ -146,7 +146,7 @@
    (schema.contract/make-collection-resource game-social-link-resource)
    (schema.contract/to-schema
     [:map
-     [:type [:= :collection/game-social-link]]])))
+     [:type [:= :collection/social-link]]])))
 
 (def game-collection-resource
   (malli.util/merge
@@ -191,8 +191,8 @@
     [:map
      {:model/sub-resources {:status       :tournament/status
                             :registration :tournament/registration
-                            :entries      :tournament/entries
-                            :matches      :tournament/matches
+                            :entries      :collection/tournament-entry
+                            :matches      :collection/match
                             :round        :tournament/round}}
      [:eid {:model/link :tournament/by-eid} :uuid]
      [:type [:= :tournament/tournament]]
@@ -238,7 +238,7 @@
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
-     {:model/sub-resources {:games :match/games}}
+     {:model/sub-resources {:games :collection/match-game}}
      [:eid {:model/link :match/by-eid} :uuid]
      [:type [:= :tournament/match]]
      [:tournament-eid {:model/link :tournament/by-eid} :uuid]
@@ -371,19 +371,19 @@
 (def tournament-matches-response
   (schema.contract/to-schema
    [:map {:model/type :model/model}
-    [:type [:= :tournament/matches]]
-    [:tournament-eid {:model/link :tournament/by-eid} :uuid]
+    [:type [:= :collection/match]]
+    [:tournament-eid {:optional true :model/link :tournament/by-eid} :uuid]
     [:matches [:sequential tournament-match-summary]]
-    [:_links [:map [:tournament :url]]]]))
+    [:_links {:optional true} [:map [:tournament {:optional true} :url]]]]))
 
 (def tournament-games-response
   (schema.contract/to-schema
    [:map {:model/type :model/model}
-    [:type [:= :tournament/games]]
-    [:tournament-eid {:model/link :tournament/by-eid} :uuid]
+    [:type [:= :collection/match-game]]
+    [:tournament-eid {:optional true :model/link :tournament/by-eid} :uuid]
     [:match-eid {:model/link :match/by-eid} :uuid]
     [:games [:sequential [:map {:closed false}]]]
-    [:_links [:map [:tournament :url] [:match :url]]]]))
+    [:_links [:map [:tournament {:optional true} :url] [:match :url]]]]))
 
 ;; ─── Bracket-view shapes ────────────────────────────────────────────────────
 ;; Describe the projections built by rules/group-matches-by-round and
@@ -469,7 +469,7 @@
      [:eid {:model/link :draft/by-eid} :uuid]
      [:type [:= :game/draft]]
      [:game-mode-eid :uuid]
-     [:faction-eid {:model/link :game/faction-by-eid} :uuid]
+     [:faction-eid {:model/link :faction/by-eid} :uuid]
      [:name {:optional true} [:maybe :string]]
      [:display-name {:optional true} :string]
      [:player-sub :string]
@@ -783,7 +783,8 @@
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
-     {:model/sub-resources {:seasons :season/for-league}}
+     {:model/sub-resources {:seasons           :collection/season
+                            :faction-standings :collection/faction-standings}}
      [:eid {:model/link :league/by-eid} :uuid]
      [:type [:= :league/league]]
      [:name {:min 1} :string]
@@ -794,7 +795,8 @@
       [:map
        [:self :url]
        [:game :url]
-       [:seasons :url]]]])))
+       [:seasons :url]
+       [:faction-standings :url]]]])))
 
 (def league-collection-resource
   (malli.util/merge
@@ -821,6 +823,7 @@
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
+     {:model/sub-resources {:faction-standings :collection/faction-standings}}
      [:eid {:model/link :season/by-eid} :uuid]
      [:type [:= :season/season]]
      [:league-eid {:model/link :league/by-eid} :uuid]
@@ -832,7 +835,8 @@
      [:_links
       [:map
        [:self :url]
-       [:league :url]]]])))
+       [:league :url]
+       [:faction-standings :url]]]])))
 
 (def season-collection-resource
   (malli.util/merge
@@ -860,7 +864,7 @@
   (schema.contract/to-schema
    [:map {:model/type :model/model}
     [:type [:= :stats/faction]]
-    [:faction-eid {:model/link :game/faction-by-eid} :uuid]
+    [:faction-eid {:model/link :faction/by-eid} :uuid]
     [:faction-name :string]
     [:matches-played :int]
     [:wins :int]
@@ -871,12 +875,13 @@
 (def faction-standings-response
   (schema.contract/to-schema
    [:map {:model/type :model/model}
-    [:type [:enum :stats/game-faction-standings :stats/league-faction-standings :stats/season-faction-standings]]
+    [:type [:= :collection/faction-standings]]
     [:game-eid {:optional true :model/link :game/by-eid} :uuid]
     [:league-eid {:optional true :model/link :league/by-eid} :uuid]
     [:season-eid {:optional true :model/link :season/by-eid} :uuid]
     [:rows [:sequential faction-standings-row-resource]]
     [:_links [:map
+              [:self :url]
               [:game {:optional true} :url]
               [:league {:optional true} :url]
               [:season {:optional true} :url]]]]))

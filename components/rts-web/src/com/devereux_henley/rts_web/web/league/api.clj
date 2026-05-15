@@ -13,11 +13,14 @@
 (defn get-leagues-for-game
   [dependencies game-eid {:keys [hostname router]}]
   {:type      :collection/league
-   :_embedded {:results (domain/get-leagues-for-game dependencies game-eid)}
+   :_embedded {:results (if game-eid
+                          (domain/get-leagues-for-game dependencies game-eid)
+                          (domain/get-leagues dependencies))}
    :_links    {:self (str hostname
                           (-> router
-                              (reitit.core/match-by-name! :league/for-game)
-                              (reitit.core/match->path {:game-eid game-eid})))}})
+                              (reitit.core/match-by-name! :collection/league)
+                              (reitit.core/match->path
+                               (when game-eid {:game-eid game-eid}))))}})
 
 (defmethod integrant.core/init-key ::get-league
   [_init-key dependencies]

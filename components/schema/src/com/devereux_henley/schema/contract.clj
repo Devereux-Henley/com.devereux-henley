@@ -245,6 +245,11 @@
           (malli.core/children schema)))
 
 (defn to-resource-link
+  "Builds a URL for the named reitit route. `path-parameters` fills the
+   route's `:`-prefixed slots; `query-parameters` is appended as a
+   query string. Reitit silently ignores extra keys in
+   `path-parameters` that aren't part of the route's path template, so
+   callers may pass a superset."
   ([route-data route-name path-parameters]
    (to-resource-link route-data route-name path-parameters {}))
   ([{:keys [hostname router] :as _route-data} route-name path-parameters query-parameters]
@@ -267,34 +272,15 @@
                :timezone-id    (fn [tz-string] (when-not (empty? tz-string)
                                                  (ZoneId/of tz-string)))}}))
 
-(defn- parent-eid-params
-  "Collects every non-nil `*-eid` keyed field from the map into a path-params
-   map keyed by field name. Enables nested resources to self-link via routes
-   whose path requires more than one eid (e.g. `/draft/:draft-eid/entry/:eid`).
-   Reitit silently drops extras, so passing this set alongside `{:eid v}` is
-   safe for single-param routes as well. Nil values are skipped so optional
-   foreign-key eids don't poison link resolution."
-  [value]
-  (reduce-kv (fn [acc k v]
-               (if (and (keyword? k)
-                        (some? v)
-                        (clojure.string/ends-with? (name k) "-eid"))
-                 (assoc acc k v)
-                 acc))
-             {}
-             value))
-
-(defn- resource-type-prefix
-  "Returns the namespace of the schema's `:type` literal as a string
-   (e.g. `\"tournament\"` from `[:= :tournament/tournament]`). Used to
-   derive the `:<prefix>-eid` path-param key that sub-resource routes
-   expect for this resource's parent slot."
+(defn- self-link-prefix
+  "Returns the singular resource name from the schema's `:eid` field's
+   `:model/link` annotation, as a string. E.g. `:tournament/by-eid`
+   yields `\"tournament\"`. Used to derive the `<prefix>-eid`
+   query-parameter key that sub-resource collection routes accept."
   [schema]
-  (some (fn [[k _ child-schema]]
-          (when (= k :type)
-            (let [type-value (first (malli.core/children child-schema))]
-              (when (qualified-keyword? type-value)
-                (namespace type-value)))))
+  (some (fn [[k props _]]
+          (when (= k :eid)
+            (some-> (:model/link props) namespace)))
         (malli.core/children schema)))
 
 (defn handle-model-transform
@@ -302,58 +288,56 @@
    `{:model/type :model/model}`. Walks the input value once: each key
    whose schema field carries `:model/link <route-name>` becomes a
    `_links.<key>` entry (or `_links.self` for `:eid`), resolved against
-   the matched reitit route. All other keys pass through unchanged.
+   the matched reitit route with the field's value as the `:eid` path
+   parameter. All other keys pass through unchanged.
 
    If the schema's properties include `:model/sub-resources
    {<rel-key> <route-name>, ...}`, every entry also produces a
-   `_links.<rel-key>` resolved with the resource's own eid. The
-   schema's `:type` field's namespace is also tried as a
-   `:<namespace>-eid` slot when the value doesn't already carry one,
-   so a parent resource (e.g. `:type :tournament/tournament`) fills
-   its sub-routes' `:tournament-eid` slot from `:eid` without
-   clobbering an existing `:tournament-eid` field on child resources
-   like `:type :tournament/match`."
+   `_links.<rel-key>` resolved with the resource's own eid passed to
+   the sub-resource collection route as a `?<prefix>-eid=...` query
+   parameter, where `<prefix>` is the namespace of the `:eid` field's
+   `:model/link` annotation (e.g. `:tournament/by-eid` → `tournament-eid`).
+   The /api surface puts every collection at a top-level URL filtered
+   by query params, so a tournament's `:games` sub-resource resolves to
+   `/api/match-game?match-eid=…` style links."
   [route-data schema]
   (let [mapping       (key-to-link-mapping schema)
         props         (malli.core/properties schema)
         sub-resources (:model/sub-resources props)
-        prefix        (resource-type-prefix schema)]
+        prefix        (self-link-prefix schema)
+        parent-eid-q  (some-> prefix (str "-eid") keyword)]
     (fn [value]
-      (let [parent-params   (parent-eid-params value)
-            prefix-key      (some-> prefix (str "-eid") keyword)
-            sub-link-params (cond-> (assoc parent-params :eid (:eid value))
-                              (and prefix-key
-                                   (not (contains? parent-params prefix-key)))
-                              (assoc prefix-key (:eid value)))]
-        (cond-> (reduce-kv
-                 (fn [acc k v]
-                   (cond
-                     (and (contains? mapping k) (nil? v))
-                     acc
+      (cond-> (reduce-kv
+               (fn [acc k v]
+                 (cond
+                   (and (contains? mapping k) (nil? v))
+                   acc
 
-                     (contains? mapping k)
-                     (-> acc
-                         (assoc k v)
-                         (assoc-in [:_links
-                                    (if (= k :eid)
-                                      :self
-                                      (keyword
-                                       (clojure.string/replace (name k) #"-eid" "")))]
-                                   (to-resource-link
-                                    route-data
-                                    (get mapping k)
-                                    (assoc parent-params :eid v))))
+                   (contains? mapping k)
+                   (-> acc
+                       (assoc k v)
+                       (assoc-in [:_links
+                                  (if (= k :eid)
+                                    :self
+                                    (keyword
+                                     (clojure.string/replace (name k) #"-eid" "")))]
+                                 (to-resource-link
+                                  route-data
+                                  (get mapping k)
+                                  {:eid v})))
 
-                     :else
-                     (assoc acc k v)))
-                 {}
-                 value)
-          sub-resources
-          ((fn [result]
+                   :else
+                   (assoc acc k v)))
+               {}
+               value)
+        (and sub-resources parent-eid-q (:eid value))
+        ((fn [result]
+           (let [parent-eid (:eid value)]
              (reduce-kv (fn [acc rel route-name]
                           (assoc-in acc [:_links rel]
                                     (to-resource-link route-data route-name
-                                                      sub-link-params)))
+                                                      {}
+                                                      {parent-eid-q parent-eid})))
                         result
                         sub-resources))))))))
 

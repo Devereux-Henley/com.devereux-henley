@@ -12,6 +12,7 @@
 (def get-tournament-by-eid-query (resource/load-query-resource "tournament" "get-tournament-by-eid.sql"))
 
 (def get-tournaments-for-game-query (resource/load-query-resource "tournament" "get-tournaments-for-game.sql"))
+(def get-tournaments-query (resource/load-query-resource "tournament" "get-tournaments.sql"))
 
 (def get-tournament-state-query (resource/load-query-resource "tournament" "get-tournament-state.sql"))
 
@@ -32,6 +33,14 @@
                    [:sequential schema/tournament-entity]])}
   [connection game-eid]
   (jdbc.contract/query-for-entities connection [get-tournaments-for-game-query game-eid] schema/tournament-entity))
+
+(defn get-tournaments
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection]]
+                   [:sequential schema/tournament-entity]])}
+  [connection]
+  (jdbc.contract/query-for-entities connection [get-tournaments-query] schema/tournament-entity))
 
 (defn get-tournament-state
   {:malli/schema (schema.contract/to-schema
@@ -96,6 +105,7 @@
 (def get-match-by-eid-query (resource/load-query-resource "tournament" "get-match-by-eid.sql"))
 
 (def get-matches-for-tournament-query (resource/load-query-resource "tournament" "get-matches-for-tournament.sql"))
+(def get-matches-query (resource/load-query-resource "tournament" "get-matches.sql"))
 
 (def get-matches-for-round-query (resource/load-query-resource "tournament" "get-matches-for-round.sql"))
 
@@ -129,6 +139,10 @@
 (defn get-matches-for-tournament
   [connection tournament-eid]
   (jdbc.contract/query-for-entities connection [get-matches-for-tournament-query tournament-eid] schema/match-entity))
+
+(defn get-matches
+  [connection]
+  (jdbc.contract/query-for-entities connection [get-matches-query] schema/match-entity))
 
 (defn get-matches-for-round
   [connection tournament-eid phase-index round-index]

@@ -12,6 +12,7 @@
 (def get-league-by-eid-query (resource/load-query-resource "league" "get-league-by-eid.sql"))
 
 (def get-leagues-for-game-query (resource/load-query-resource "league" "get-leagues-for-game.sql"))
+(def get-leagues-query (resource/load-query-resource "league" "get-leagues.sql"))
 
 (def update-league-query (resource/load-query-resource "league" "update-league.sql"))
 
@@ -30,6 +31,14 @@
                    [:sequential schema/league-entity]])}
   [connection game-eid]
   (jdbc.contract/query-for-entities connection [get-leagues-for-game-query game-eid] schema/league-entity))
+
+(defn get-leagues
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection]]
+                   [:sequential schema/league-entity]])}
+  [connection]
+  (jdbc.contract/query-for-entities connection [get-leagues-query] schema/league-entity))
 
 (defn create-league
   {:malli/schema (schema.contract/to-schema
