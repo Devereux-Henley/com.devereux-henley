@@ -1,11 +1,7 @@
-{% with phase-group=data.phase-group tournament-state=data.tournament-state game-eid=data.game-eid %}
-{% ifequal phase-group.phase-type "swiss" %}{% include "rts-web/components/tournament/standings.html" %}{% endifequal %}
-{% ifequal phase-group.phase-type "round-robin" %}{% include "rts-web/components/tournament/standings.html" %}{% endifequal %}
-
-<section class="tourney-section" aria-labelledby="phase-{{phase-group.phase}}-heading">
-    {% ifequal phase-group.phase-type "single-elimination" %}{% include "rts-web/components/tournament/phase-single-elimination.html" %}{% endifequal %}
-    {% ifequal phase-group.phase-type "double-elimination" %}{% include "rts-web/components/tournament/phase-double-elimination.html" %}{% endifequal %}
-    {% ifequal phase-group.phase-type "swiss" %}{% include "rts-web/components/tournament/phase-swiss.html" %}{% endifequal %}
-    {% ifequal phase-group.phase-type "round-robin" %}{% include "rts-web/components/tournament/phase-round-robin.html" %}{% endifequal %}
+<section class="resource" aria-labelledby="tournament-phase-heading">
+    <h2 id="tournament-phase-heading">Phase {{data.phase-group.phase}}{% if data.phase-group.phase-type %} — {{data.phase-group.phase-type}}{% endif %}</h2>
+    <dl>
+        {% if data._links.tournament %}<dt>tournament</dt><dd><a href="{{ data._links.tournament }}">tournament</a></dd>{% endif %}
+        {% if data._links.game %}<dt>game</dt><dd><a href="{{ data._links.game }}">game</a></dd>{% endif %}
+    </dl>
 </section>
-{% endwith %}

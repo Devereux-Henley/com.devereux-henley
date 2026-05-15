@@ -34,8 +34,13 @@
 (def draft-update-response schema/draft-update-response)
 
 (def faction-resource schema/faction-resource)
+(def faction-collection-resource schema/faction-collection-resource)
+
+(def unit-resource schema/unit-resource)
+(def unit-collection-resource schema/unit-collection-resource)
 
 (def game-resource schema/game-resource)
+(def game-social-link-collection-resource schema/game-social-link-collection-resource)
 
 (def game-collection-resource schema/game-collection-resource)
 

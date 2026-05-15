@@ -3,6 +3,7 @@
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.orchestration :as orchestration]
    [com.devereux-henley.rts-web.web.actions.draft :as web.actions.draft]
+   [com.devereux-henley.rts-web.web.api :as web.api]
    [com.devereux-henley.rts-web.web.actions.league :as web.actions.league]
    [com.devereux-henley.rts-web.web.actions.season :as web.actions.season]
    [com.devereux-henley.rts-web.web.actions.tournament :as web.actions.tournament]
@@ -382,6 +383,22 @@
   ["/api"
    {:no-doc true}
 
+   ;; ─── Root ───────────────────────────────────────────────────────────────
+   [""
+    {:get {:no-doc   true
+           :produces ["text/html"]
+           :handler  (fn [_request] {:status 301 :headers {"Location" "/api/index.html"}})}}]
+   ["/index.html"
+    {:name :api/root
+     :get  {:produces  ["text/html"]
+            :responses {200 {:body (schema.contract/to-schema
+                                    [:map
+                                     [:type [:= :api/root]]
+                                     [:_links [:map
+                                               [:self :url]
+                                               [:games :url]]]])}}
+            :handler   (integrant.core/ref ::web.api/get-root)}}]
+
    ;; ─── Game ───────────────────────────────────────────────────────────────
    ["/game"
     {:name :collection/game
@@ -395,6 +412,34 @@
                          :query web.game.api/game-query-parameters}
             :responses  {200 {:body domain/game-resource}}
             :handler    (integrant.core/ref ::web.game.api/get-game)}}]
+   ["/faction"
+    {:name :faction/for-game
+     :get  {:produces   ["text/html"]
+            :parameters {:query (schema.contract/to-schema
+                                 [:map [:game-eid :uuid]])}
+            :responses  {200 {:body domain/faction-collection-resource}}
+            :handler    (integrant.core/ref ::web.game.api/get-factions-collection)}}]
+   ["/social-link"
+    {:name :game-social-link/for-game
+     :get  {:produces   ["text/html"]
+            :parameters {:query (schema.contract/to-schema
+                                 [:map [:game-eid :uuid]])}
+            :responses  {200 {:body domain/game-social-link-collection-resource}}
+            :handler    (integrant.core/ref ::web.game.api/get-socials-collection)}}]
+   ["/unit"
+    [""
+     {:name :unit/for-faction
+      :get  {:produces   ["text/html"]
+             :parameters {:query (schema.contract/to-schema
+                                  [:map [:faction-eid :uuid]])}
+             :responses  {200 {:body domain/unit-collection-resource}}
+             :handler    (integrant.core/ref ::web.game.api/get-units-collection)}}]
+    ["/:eid"
+     {:name :unit/by-eid
+      :get  {:produces   ["text/html"]
+             :parameters {:path schema.contract/id-path-parameter}
+             :responses  {200 {:body domain/unit-resource}}
+             :handler    (integrant.core/ref ::web.game.api/get-unit)}}]]
    ["/game/social-link/:eid"
     {:name :game/social-by-eid
      :get  {:produces   ["text/html"]

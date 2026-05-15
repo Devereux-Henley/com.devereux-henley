@@ -1,0 +1,28 @@
+<section class="resource unit-collection-resource" aria-labelledby="units-heading">
+    <h2 id="units-heading">Units</h2>
+    {% if data._embedded.results %}
+    <table class="table" aria-labelledby="units-heading">
+        <caption class="sr-only">Units for this faction</caption>
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Category</th>
+                <th scope="col">Type</th>
+                <th scope="col">Cost</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for unit in data._embedded.results %}
+            <tr>
+                <td><a href="{{ unit._links.self }}">{{ unit.name }}</a></td>
+                <td>{{ unit.unit-category-name }}</td>
+                <td>{{ unit.unit-type-name }}</td>
+                <td>{{ unit.cost }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No units for this faction.</p>
+    {% endif %}
+</section>

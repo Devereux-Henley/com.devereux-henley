@@ -1,3 +1,12 @@
-<div class="resource game-collection-resource">
-
-</div>
+<section class="resource game-collection-resource" aria-labelledby="games-heading">
+    <h2 id="games-heading">Games</h2>
+    {% if data._embedded.results %}
+    <ul>
+        {% for game in data._embedded.results %}
+        <li><a href="{{ game._links.self }}">{{ game.name }}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No games configured.</p>
+    {% endif %}
+</section>

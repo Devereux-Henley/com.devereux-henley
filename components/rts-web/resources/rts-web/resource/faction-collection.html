@@ -1,0 +1,12 @@
+<section class="resource faction-collection-resource" aria-labelledby="factions-heading">
+    <h2 id="factions-heading">Factions</h2>
+    {% if data._embedded.results %}
+    <ul>
+        {% for faction in data._embedded.results %}
+        <li><a href="{{ faction._links.self }}">{{ faction.name }}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No factions for this game.</p>
+    {% endif %}
+</section>

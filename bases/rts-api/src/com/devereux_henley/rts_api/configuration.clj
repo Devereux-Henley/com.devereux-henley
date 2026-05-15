@@ -36,6 +36,8 @@
                                                             :migration-dir rts-data/migration-dir}
    ::db/connection                                         {:migrations (integrant.core/ref ::rts-data/migrate)}
    :com.devereux-henley.rts-api.model-transform/middleware {:hostname hostname}
+   ::web/api-view-registry                                 {}
+   ::web/component-view-registry                           {}
    ::web/service                                           {:handler       (integrant.core/ref ::web/app)
                                                             :configuration {:port port, :join? false}}})
 
@@ -56,11 +58,18 @@
    {:com.devereux-henley.rts-web.web.view/login-view  {:auth-hostname auth-hostname}
     :com.devereux-henley.rts-web.web.view/logout-view {:auth-hostname auth-hostname}}))
 
+(def api-configuration
+  (handlers :com.devereux-henley.rts-web.web.api/get-root))
+
 (def game-configuration
   (handlers :com.devereux-henley.rts-web.web.game.api/get-game
             :com.devereux-henley.rts-web.web.game.api/get-games
             :com.devereux-henley.rts-web.web.game.api/get-faction
-            :com.devereux-henley.rts-web.web.game.api/get-game-social-link))
+            :com.devereux-henley.rts-web.web.game.api/get-game-social-link
+            :com.devereux-henley.rts-web.web.game.api/get-factions-collection
+            :com.devereux-henley.rts-web.web.game.api/get-socials-collection
+            :com.devereux-henley.rts-web.web.game.api/get-unit
+            :com.devereux-henley.rts-web.web.game.api/get-units-collection))
 
 (def draft-configuration
   (handlers :com.devereux-henley.rts-web.web.draft.api/get-draft
@@ -162,6 +171,7 @@
    can swap Ory for a dev stub without copy-pasting the rest of the system."
   (merge infrastructure-configuration
          view-configuration
+         api-configuration
          game-configuration
          draft-configuration
          social-media-configuration
@@ -184,7 +194,9 @@
          ::web/app
          {:routes                     (integrant.core/ref :com.devereux-henley.rts-web.web.routes/routes)
           :auth-middleware            (integrant.core/ref ::web/ory-auth-middleware)
-          :model-transform-middleware (integrant.core/ref :com.devereux-henley.rts-api.model-transform/middleware)}))
+          :model-transform-middleware (integrant.core/ref :com.devereux-henley.rts-api.model-transform/middleware)
+          :api-view-registry          (integrant.core/ref ::web/api-view-registry)
+          :component-view-registry    (integrant.core/ref ::web/component-view-registry)}))
 
 (def development-configuration
   "Dev profile. Swaps Ory for the cookie-based impersonation stub in
@@ -205,4 +217,6 @@
          ::web/app
          {:routes                     (integrant.core/ref :com.devereux-henley.rts-web.web.routes/routes)
           :auth-middleware            (integrant.core/ref ::dev-auth/impersonation-middleware)
-          :model-transform-middleware (integrant.core/ref :com.devereux-henley.rts-api.model-transform/middleware)}))
+          :model-transform-middleware (integrant.core/ref :com.devereux-henley.rts-api.model-transform/middleware)
+          :api-view-registry          (integrant.core/ref ::web/api-view-registry)
+          :component-view-registry    (integrant.core/ref ::web/component-view-registry)}))

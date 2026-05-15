@@ -2,9 +2,10 @@
   "Shared response builders for /actions handlers.
 
   Every /actions endpoint follows one of three shapes:
-    1. Mutation success → status + body (htmx+html via view-by-type;
-       templates may include OOB swaps that update sidebar/budget
-       in-place) plus an HX-Trigger header naming the kebab-case event.
+    1. Mutation success → status + body (htmx+html via the component
+       view registry; templates may include OOB swaps that update
+       sidebar/budget in-place) plus an HX-Trigger header naming the
+       kebab-case event.
        The Trigger header is the channel future listener-bound
        /components fragments will react to.
     2. Mutation creates a resource users navigate to → 200 + HX-Redirect.
@@ -17,7 +18,7 @@
 
 (defn trigger-response
   "Mutation success with a 200 status. `body` will be encoded as
-   htmx+html by muuntaja via the view-by-type dispatch."
+   htmx+html by muuntaja via the component view registry."
   [event-name body]
   {:status  200
    :headers {"HX-Trigger" event-name}
@@ -53,3 +54,15 @@
                                (string/replace "<" "&lt;")
                                (string/replace ">" "&gt;")) "</p>"
                  "</section>")})
+
+(defn error-oob
+  "Failure: 4xx whose body is rendered via the component view registry
+   (typically an OOB-only template like `actions/draft-add-error.html`)
+   and whose response carries `HX-Reswap: none` so HTMX skips the main
+   swap. Without that header the global `htmx:beforeSwap` listener
+   forces a swap of the (empty, OOB-only) body into the form's hx-target,
+   which wipes the form."
+  [status body]
+  {:status  status
+   :headers {"HX-Reswap" "none"}
+   :body    body})

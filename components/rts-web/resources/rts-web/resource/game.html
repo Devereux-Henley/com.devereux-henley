@@ -1,75 +1,14 @@
-<title id="page-title" hx-swap-oob="true">{{data.name}} | RTS-UI</title>
-
-<div id="game-icon" hx-swap-oob="true" style="width:2rem;height:2rem;flex-shrink:0;">
-    <img id="game-icon-img"
-         alt=""
-         style="width:2rem;height:2rem;object-fit:contain;"
-         _="on load
-            set gameLink to #game-link-{{data.eid}}
-            if gameLink
-              set my @src to gameLink's @data-icon
-              set my style.display to 'block'
-            else
-              set my style.display to 'none'
-            end" />
-</div>
-
-<div id="game-nav" hx-swap-oob="true" class="cluster cluster-2">
-    {% if data._embedded.factions %}
-    <div class="dropdown">
-        <button class="nav-item game-nav-item nav-item-with-icon"
-                id="factions-dropdown-btn"
-                aria-haspopup="true"
-                aria-expanded="false"
-                aria-controls="factions-menu"
-                _="on click toggle @hidden on #factions-menu
-                   then if #factions-menu does not match [hidden]
-                     set my @aria-expanded to 'true'
-                   else
-                     set my @aria-expanded to 'false'
-                   end
-                   on click elsewhere add @hidden to #factions-menu
-                   then set my @aria-expanded to 'false'">
-            {% include "rts-web/components/icon/sword.html" %}
-            Factions
-        </button>
-        <div class="dropdown-menu" id="factions-menu" role="menu" hidden>
-            {% for faction in data._embedded.factions %}
-            <a class="dropdown-item"
-               role="menuitem"
-               hx-get="/components/faction/{{faction.eid}}/faction-card.html?embed=units-by-category"
-               hx-target="#content"
-               hx-push-url="/view/game/{{data.eid}}/faction/{{faction.eid}}/index.html"
-               href="/view/game/{{data.eid}}/faction/{{faction.eid}}/index.html">
-                {{faction.name}}
-            </a>
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
-</div>
-
-<div id="game-socials" hx-swap-oob="true" class="cluster cluster-2">
-    {% if data._embedded.socials %}
-    {% for social in data._embedded.socials %}
-    <a href="{{social.url}}"
-       target="_blank"
-       rel="noopener noreferrer"
-       aria-label="{{social.social-media-platform-eid|title}} (opens in new tab)">
-        <img style="height:20px;width:20px;" alt="" src="/icon/social-media/{{social.social-media-platform-eid}}" />
-    </a>
-    {% endfor %}
-    {% endif %}
-</div>
-
-<div id="game-drafts-link" hx-swap-oob="true">
-    <a class="nav-item nav-item-with-icon" href="/view/game/{{data.eid}}/draft/me.html">
-        {% include "rts-web/components/icon/drafts.html" %}
-        My Drafts
-    </a>
-</div>
-
-<section id="game-browser" class="resource game-resource" aria-labelledby="game-heading">
+<section class="resource" aria-labelledby="game-heading">
     <h2 id="game-heading">{{data.name}}</h2>
     <p>{{data.description|linebreaks|safe}}</p>
+
+    <nav aria-label="Game sub-resources">
+        <ul>
+            <li><a href="/api/faction?game-eid={{data.eid}}">factions</a></li>
+            <li><a href="/api/social-link?game-eid={{data.eid}}">socials</a></li>
+            <li><a href="/api/tournament?game-eid={{data.eid}}">tournaments</a></li>
+            <li><a href="/api/league?game-eid={{data.eid}}">leagues</a></li>
+            <li><a href="/api/stats/game/{{data.eid}}/faction">faction standings</a></li>
+        </ul>
+    </nav>
 </section>

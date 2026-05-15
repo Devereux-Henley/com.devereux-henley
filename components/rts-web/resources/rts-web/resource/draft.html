@@ -1,8 +1,8 @@
-<section class="resource">
-    <h2>{{ data.display-name|default:"Draft" }}</h2>
+<section class="resource" aria-labelledby="draft-heading">
+    <h2 id="draft-heading">{{ data.display-name|default:"Draft" }}</h2>
     <dl>
         <dt>player</dt><dd>{{ data.player-sub }}</dd>
-        {% if data._links.faction %}<dt>faction</dt><dd><a href="{{ data._links.faction }}">{{ data.faction-eid }}</a></dd>{% endif %}
+        {% if data._links.faction %}<dt>faction</dt><dd><a href="{{ data._links.faction }}">faction</a></dd>{% endif %}
+        {% if data._links.game %}<dt>game</dt><dd><a href="{{ data._links.game }}">game</a></dd>{% endif %}
     </dl>
-    <a class="btn btn-ghost btn-sm" href="/view/draft/{{ data.eid }}/index.html">View Draft</a>
 </section>

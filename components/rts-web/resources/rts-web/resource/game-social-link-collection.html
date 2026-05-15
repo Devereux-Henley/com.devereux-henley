@@ -1,0 +1,12 @@
+<section class="resource game-social-link-collection-resource" aria-labelledby="socials-heading">
+    <h2 id="socials-heading">Socials</h2>
+    {% if data._embedded.results %}
+    <ul>
+        {% for social in data._embedded.results %}
+        <li><a href="{{ social._links.self }}">social</a> — <a href="{{ social.url }}" rel="noopener noreferrer">{{ social.url }}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No social links for this game.</p>
+    {% endif %}
+</section>

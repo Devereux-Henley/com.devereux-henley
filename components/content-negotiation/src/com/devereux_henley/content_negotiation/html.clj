@@ -47,7 +47,9 @@
 (defn- encode-html
   "/view handlers pre-render their templates and hand back a string body.
    /api handlers return a typed map and let the encoder dispatch through
-   `view-fn` (`view-by-type`) to pick the chrome-less resource template.
+   `view-fn` (per-content-type view registry) to pick the chrome-less
+   resource template — text/html dispatches via the /api registry,
+   application/htmx+html via the /components+/actions registry.
    Both kinds of body get the same text/html content type."
   [view-fn data]
   (if (map? data)

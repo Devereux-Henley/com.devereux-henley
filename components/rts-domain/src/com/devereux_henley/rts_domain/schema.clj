@@ -35,12 +35,13 @@
        [:platform {:optional true} social-media-platform-resource]]]])))
 
 (def unit-summary
-  "Slim view of a game unit as it appears inside the faction-resource's
-   :_embedded.units-by-category groups — enough to identify, name, and link
-   to the full unit resource without dragging along unit-statistics JSON or
-   audit columns."
-  [:map
-   [:eid :uuid]
+  "Slim view of a game unit. Used inside faction-resource's
+   :_embedded.units-by-category groups and as the row schema for
+   /api/unit collections. :model/link on :eid lets the transformer
+   resolve :_links.self to /api/unit/:eid so any nesting walks back
+   to the canonical unit resource."
+  [:map {:model/type :model/model}
+   [:eid {:model/link :unit/by-eid} :uuid]
    [:type {:optional true} [:= :game/unit]]
    [:name {:min 1} :string]
    [:family-name {:optional true} [:maybe :string]]
@@ -50,8 +51,49 @@
    [:unit-category-name {:optional true} :string]
    [:mark {:optional true} [:maybe data-access.contract/mark-enum]]
    [:family-variant-count {:optional true} :int]
-   [:game-eid {:optional true} :uuid]
-   [:is-unique {:optional true} :int]])
+   [:game-eid {:optional true :model/link :game/by-eid} :uuid]
+   [:is-unique {:optional true} :int]
+   [:_links {:optional true}
+    [:map [:self :url] [:game {:optional true} :url]]]])
+
+(def unit-resource
+  "Full unit resource served at /api/unit/:eid. Carries the parsed
+   unit-statistics (stats, health, barrier, attributes) plus embedded
+   collections of related abilities, spells, items, and mounts."
+  (malli.util/merge
+   schema.contract/base-resource
+   (schema.contract/to-schema
+    [:map
+     [:eid {:model/link :unit/by-eid} :uuid]
+     [:type [:= :game/unit]]
+     [:name :string]
+     [:family-name {:optional true} [:maybe :string]]
+     [:description {:optional true} :string]
+     [:cost {:optional true} [:maybe :int]]
+     [:unit-type-name {:optional true} :string]
+     [:unit-category-name {:optional true} :string]
+     [:mark {:optional true} [:maybe data-access.contract/mark-enum]]
+     [:family-variant-count {:optional true} :int]
+     [:game-eid {:optional true :model/link :game/by-eid} :uuid]
+     [:is-unique {:optional true} :int]
+     [:health {:optional true} [:maybe :int]]
+     [:barrier {:optional true} [:maybe :int]]
+     [:stats {:optional true} [:sequential [:map {:closed false}]]]
+     [:attributes {:optional true} [:sequential [:map {:closed false}]]]
+     [:_links [:map [:self :url] [:game {:optional true} :url]]]
+     [:_embedded {:optional true}
+      [:map
+       [:abilities {:optional true} [:sequential [:map {:closed false}]]]
+       [:spells {:optional true} [:sequential [:map {:closed false}]]]
+       [:items {:optional true} [:sequential [:map {:closed false}]]]
+       [:mounts {:optional true} [:sequential [:map {:closed false}]]]]]])))
+
+(def unit-collection-resource
+  (malli.util/merge
+   (schema.contract/make-collection-resource unit-resource)
+   (schema.contract/to-schema
+    [:map
+     [:type [:= :collection/unit]]])))
 
 (def unit-category-group
   "One group in a faction-resource's :_embedded.units-by-category — the
@@ -91,6 +133,20 @@
       [:map
        [:socials {:optional true} [:sequential game-social-link-resource]]
        [:factions {:optional true} [:sequential faction-resource]]]]])))
+
+(def faction-collection-resource
+  (malli.util/merge
+   (schema.contract/make-collection-resource faction-resource)
+   (schema.contract/to-schema
+    [:map
+     [:type [:= :collection/faction]]])))
+
+(def game-social-link-collection-resource
+  (malli.util/merge
+   (schema.contract/make-collection-resource game-social-link-resource)
+   (schema.contract/to-schema
+    [:map
+     [:type [:= :collection/game-social-link]]])))
 
 (def game-collection-resource
   (malli.util/merge
@@ -802,14 +858,15 @@
 
 (def faction-standings-row-resource
   (schema.contract/to-schema
-   [:map
+   [:map {:model/type :model/model}
     [:type [:= :stats/faction]]
-    [:faction-eid :uuid]
+    [:faction-eid {:model/link :game/faction-by-eid} :uuid]
     [:faction-name :string]
     [:matches-played :int]
     [:wins :int]
     [:losses :int]
-    [:win-percentage :int]]))
+    [:win-percentage :int]
+    [:_links [:map [:faction :url]]]]))
 
 (def faction-standings-response
   (schema.contract/to-schema
