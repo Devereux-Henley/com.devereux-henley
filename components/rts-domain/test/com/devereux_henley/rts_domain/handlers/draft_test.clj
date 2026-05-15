@@ -236,6 +236,10 @@
       (is (= test-faction-eid (:faction-eid result)))
       (is (= test-game-mode-eid (:game-mode-eid result))))))
 
+(deftest get-draft-by-eid-returns-nil-when-row-missing
+  (with-redefs [data-access.contract/get-draft-by-eid (fn [_ _] nil)]
+    (is (nil? (handlers.draft/get-draft-by-eid test-deps test-draft-eid)))))
+
 ;; --- create-draft ---
 
 (deftest create-draft-assigns-type

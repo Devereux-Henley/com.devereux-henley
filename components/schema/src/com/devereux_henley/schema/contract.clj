@@ -306,10 +306,13 @@
 
    If the schema's properties include `:model/sub-resources
    {<rel-key> <route-name>, ...}`, every entry also produces a
-   `_links.<rel-key>` resolved with the resource's own eid both as
-   `:eid` and as `:<resource-type>-eid` (derived from the schema's
-   `:type` field), so routes that hang sub-resources off either slot
-   resolve correctly."
+   `_links.<rel-key>` resolved with the resource's own eid. The
+   schema's `:type` field's namespace is also tried as a
+   `:<namespace>-eid` slot when the value doesn't already carry one,
+   so a parent resource (e.g. `:type :tournament/tournament`) fills
+   its sub-routes' `:tournament-eid` slot from `:eid` without
+   clobbering an existing `:tournament-eid` field on child resources
+   like `:type :tournament/match`."
   [route-data schema]
   (let [mapping       (key-to-link-mapping schema)
         props         (malli.core/properties schema)
@@ -317,9 +320,11 @@
         prefix        (resource-type-prefix schema)]
     (fn [value]
       (let [parent-params   (parent-eid-params value)
+            prefix-key      (some-> prefix (str "-eid") keyword)
             sub-link-params (cond-> (assoc parent-params :eid (:eid value))
-                              prefix (assoc (keyword (str prefix "-eid"))
-                                            (:eid value)))]
+                              (and prefix-key
+                                   (not (contains? parent-params prefix-key)))
+                              (assoc prefix-key (:eid value)))]
         (cond-> (reduce-kv
                  (fn [acc k v]
                    (cond

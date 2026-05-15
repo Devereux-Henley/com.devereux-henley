@@ -63,7 +63,8 @@
             :com.devereux-henley.rts-web.web.game.api/get-game-social-link))
 
 (def draft-configuration
-  (handlers :com.devereux-henley.rts-web.web.draft.api/get-draft-unit
+  (handlers :com.devereux-henley.rts-web.web.draft.api/get-draft
+            :com.devereux-henley.rts-web.web.draft.api/get-draft-unit
             :com.devereux-henley.rts-web.web.draft.api/get-draft-entry))
 
 (def social-media-configuration
