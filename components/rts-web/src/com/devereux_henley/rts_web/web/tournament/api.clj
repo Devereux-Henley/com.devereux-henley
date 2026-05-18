@@ -247,9 +247,9 @@
 (defmethod integrant.core/init-key ::update-phase-configuration
   [_init-key dependencies]
   (fn [{{{:keys [tournament-eid]}         :query
-         {:keys [phases qualifier-count]} :body}   :parameters
-        session                                    :ory-session
-        :as                                        _request}]
+         {:keys [phases qualifier-count]} :body} :parameters
+        session                                  :ory-session
+        :as                                      _request}]
     (let [user-sub (get-in session [:identity :id])
           result   (domain/configure-phases dependencies tournament-eid
                                             {:phases phases :qualifier-count qualifier-count}
