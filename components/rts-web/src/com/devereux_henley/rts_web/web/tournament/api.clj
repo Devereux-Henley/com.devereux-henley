@@ -269,7 +269,7 @@
         {:status 422 :body result}
         {:status 200 :body result}))))
 
-(defn- attach-lineups-to-matches
+(defn attach-lineups-to-matches
   "Walks each round-bucket inside a phase-group and replaces every match
   slot with one carrying `:lineups` — the per-game pair of draft eids
   recorded against `match_game`. Drafts are auto-created on match-record
@@ -287,47 +287,46 @@
       (:losers-bracket phase-group)  (update :losers-bracket   decorate-bucket)
       (:grand-final phase-group)     (update :grand-final      decorate-bucket))))
 
+(defn build-phase-context
+  "Gathers the phase-group, tournament state, and parent game-eid for one
+  phase. Returns nil when no phase with `phase-index` exists. Shared by
+  the /api handler (text/html resource view) and the /components
+  fragment view (htmx panel)."
+  [dependencies tournament-eid phase-index]
+  (let [state           (domain/get-tournament-state dependencies tournament-eid)
+        phases          (:phases state)
+        raw-matches     (domain/get-matches-for-tournament dependencies tournament-eid)
+        qualifier-count (or (:qualifier-count state) (count (:standings state)))
+        grouped         (domain/group-matches-by-phase raw-matches phases qualifier-count)
+        phase-group-raw (first (filter #(= phase-index (:phase %)) grouped))
+        real-matches    (filter :eid raw-matches)
+        lineups         (into {}
+                              (map (fn [m]
+                                     [(:eid m)
+                                      (domain/get-games-for-match dependencies (:eid m))]))
+                              real-matches)]
+    (when phase-group-raw
+      {:tournament-state state
+       :phase-group      (attach-lineups-to-matches phase-group-raw lineups)
+       :game-eid         (:game-eid (get-tournament-by-eid dependencies tournament-eid))})))
+
 (defmethod integrant.core/init-key ::get-phase
   [_init-key dependencies]
-  (fn [{{path :path query :query} :parameters
-        :as                       _request}]
-    ;; Sourced from either path (legacy /components route /tournament/:eid/phase/:phase-index)
-    ;; or query (/api/tournament-phase?tournament-eid=…&phase-index=…).
-    (let [tournament-eid  (or (:eid path) (:tournament-eid query))
-          phase-index     (or (:phase-index path) (:phase-index query))
-          state           (domain/get-tournament-state dependencies tournament-eid)
-          phases          (:phases state)
-          raw-matches     (domain/get-matches-for-tournament dependencies tournament-eid)
-          qualifier-count (or (:qualifier-count state) (count (:standings state)))
-          grouped         (domain/group-matches-by-phase raw-matches phases qualifier-count)
-          phase-group-raw (first (filter #(= phase-index (:phase %)) grouped))
-          real-matches    (filter :eid raw-matches)
-          lineups         (into {}
-                                (map (fn [m]
-                                       [(:eid m)
-                                        (domain/get-games-for-match dependencies (:eid m))]))
-                                real-matches)
-          phase-group     (when phase-group-raw
-                            (attach-lineups-to-matches phase-group-raw lineups))
-          tournament      (get-tournament-by-eid dependencies tournament-eid)
-          game-eid        (:game-eid tournament)]
-      (if phase-group
-        {:status 200
-         :body   {:type             :tournament/phase
-                  :tournament-eid   tournament-eid
-                  :tournament-state state
-                  :phase-group      phase-group
-                  :game-eid         game-eid
-                  :data             {:eid tournament-eid}}}
-        {:status 404
-         :body   {:type :missing/resource :name "tournament-phase" :id phase-index}}))))
+  (fn [{{{:keys [tournament-eid phase-index]} :query} :parameters
+        :as                                           _request}]
+    (if-let [ctx (build-phase-context dependencies tournament-eid phase-index)]
+      {:status 200
+       :body   (assoc ctx
+                      :type :tournament/phase
+                      :tournament-eid tournament-eid
+                      :data {:eid tournament-eid})}
+      {:status 404
+       :body   {:type :missing/resource :name "tournament-phase" :id phase-index}})))
 
 (defmethod integrant.core/init-key ::get-round
   [_init-key _dependencies]
-  (fn [{{path :path query :query} :parameters
-        :as                       _request}]
-    ;; Sourced from either path (legacy /components route) or query (/api).
-    (let [tournament-eid (or (:eid path) (:tournament-eid query))]
-      {:status 200
-       :body   {:type           :tournament/round
-                :tournament-eid tournament-eid}})))
+  (fn [{{{:keys [tournament-eid]} :query} :parameters
+        :as                               _request}]
+    {:status 200
+     :body   {:type           :tournament/round
+              :tournament-eid tournament-eid}}))

@@ -252,16 +252,14 @@
    ["/tournament/:eid/round-row.html"
     {:get {:produces   ["application/htmx+html"]
            :parameters {:path schema.contract/id-path-parameter}
-           :responses  {200 {:body domain/round-response}}
-           :handler    (integrant.core/ref ::web.tournament.api/get-round)}}]
+           :handler    (integrant.core/ref ::web.tournament.view/round-row-view)}}]
    ["/tournament/:eid/phase/:phase-index/phase-panel.html"
     {:get {:produces   ["application/htmx+html"]
            :parameters {:path (schema.contract/to-schema
                                [:map
                                 [:eid :uuid]
                                 [:phase-index :int]])}
-           :responses  {200 {:body domain/phase-response}}
-           :handler    (integrant.core/ref ::web.tournament.api/get-phase)}}]])
+           :handler    (integrant.core/ref ::web.tournament.view/phase-panel-view)}}]])
 
 (def actions-routes
   ["/actions"

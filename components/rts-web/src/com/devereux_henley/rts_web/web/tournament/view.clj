@@ -97,6 +97,24 @@
        :body    (render/render-component "tournament-phase-row.html"
                                          (assoc (web.view/base-context request) :tournament-eid eid))})))
 
+(defmethod integrant.core/init-key ::phase-panel-view
+  [_init-key dependencies]
+  (fn [{{{:keys [eid phase-index]} :path} :parameters
+        :as                               _request}]
+    (if-let [ctx (web.tournament.api/build-phase-context dependencies eid phase-index)]
+      {:status  200
+       :headers {"Content-Type" "text/html; charset=utf-8"}
+       :body    (render/render-component "tournament-phase.html" {:data ctx})}
+      {:status 404
+       :body   {:type :missing/resource :name "tournament-phase" :id phase-index}})))
+
+(defmethod integrant.core/init-key ::round-row-view
+  [_init-key _dependencies]
+  (fn [_request]
+    {:status  200
+     :headers {"Content-Type" "text/html; charset=utf-8"}
+     :body    (render/render-component "tournament-round.html" {})}))
+
 (defmethod integrant.core/init-key ::tournament-view
   [_init-key dependencies]
   (partial web.view/standard-entity-view-handler

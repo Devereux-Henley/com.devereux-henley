@@ -91,7 +91,9 @@
             :com.devereux-henley.rts-web.web.tournament.api/update-phase-configuration
             :com.devereux-henley.rts-web.web.tournament.view/create-tournament-view
             :com.devereux-henley.rts-web.web.tournament.view/tournament-view
-            :com.devereux-henley.rts-web.web.tournament.view/tournament-phase-form-view))
+            :com.devereux-henley.rts-web.web.tournament.view/tournament-phase-form-view
+            :com.devereux-henley.rts-web.web.tournament.view/phase-panel-view
+            :com.devereux-henley.rts-web.web.tournament.view/round-row-view))
 
 (def match-record-configuration
   (handlers :com.devereux-henley.rts-web.web.tournament.view/modal-view
