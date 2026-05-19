@@ -2,19 +2,15 @@
   (:require
    [com.devereux-henley.http.contract :as web.core]
    [com.devereux-henley.rts-domain.contract :as domain]
+   [com.devereux-henley.rts-web.web.tournament.share :as web.tournament.share]
    [integrant.core]
    [reitit.core]))
-
-(defn get-tournament-by-eid
-  [dependencies eid]
-  (or (domain/get-tournament-by-eid dependencies eid)
-      {:type :missing/resource :name "tournament" :id eid}))
 
 (defmethod integrant.core/init-key ::get-tournament
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
         :as                   _request}]
-    (let [result (get-tournament-by-eid dependencies eid)]
+    (let [result (web.tournament.share/get-tournament-by-eid dependencies eid)]
       (if (= :missing/resource (:type result))
         {:status 404 :body result}
         {:status 200 :body result}))))
@@ -269,52 +265,11 @@
         {:status 422 :body result}
         {:status 200 :body result}))))
 
-(defn attach-lineups-to-matches
-  "Walks each round-bucket inside a phase-group and replaces every match
-  slot with one carrying `:lineups` — the per-game pair of draft eids
-  recorded against `match_game`. Drafts are auto-created on match-record
-  submit, so completed matches end up with one lineup row per game."
-  [phase-group lineups-by-match-eid]
-  (let [decorate-match  (fn [m]
-                          (if-let [lineups (get lineups-by-match-eid (:eid m))]
-                            (assoc m :lineups lineups)
-                            m))
-        decorate-round  (fn [r] (update r :matches #(mapv decorate-match %)))
-        decorate-bucket #(when (seq %) (mapv decorate-round %))]
-    (cond-> phase-group
-      (:rounds phase-group)          (update :rounds          decorate-bucket)
-      (:winners-bracket phase-group) (update :winners-bracket  decorate-bucket)
-      (:losers-bracket phase-group)  (update :losers-bracket   decorate-bucket)
-      (:grand-final phase-group)     (update :grand-final      decorate-bucket))))
-
-(defn build-phase-context
-  "Gathers the phase-group, tournament state, and parent game-eid for one
-  phase. Returns nil when no phase with `phase-index` exists. Shared by
-  the /api handler (text/html resource view) and the /components
-  fragment view (htmx panel)."
-  [dependencies tournament-eid phase-index]
-  (let [state           (domain/get-tournament-state dependencies tournament-eid)
-        phases          (:phases state)
-        raw-matches     (domain/get-matches-for-tournament dependencies tournament-eid)
-        qualifier-count (or (:qualifier-count state) (count (:standings state)))
-        grouped         (domain/group-matches-by-phase raw-matches phases qualifier-count)
-        phase-group-raw (first (filter #(= phase-index (:phase %)) grouped))
-        real-matches    (filter :eid raw-matches)
-        lineups         (into {}
-                              (map (fn [m]
-                                     [(:eid m)
-                                      (domain/get-games-for-match dependencies (:eid m))]))
-                              real-matches)]
-    (when phase-group-raw
-      {:tournament-state state
-       :phase-group      (attach-lineups-to-matches phase-group-raw lineups)
-       :game-eid         (:game-eid (get-tournament-by-eid dependencies tournament-eid))})))
-
 (defmethod integrant.core/init-key ::get-phase
   [_init-key dependencies]
   (fn [{{{:keys [tournament-eid phase-index]} :query} :parameters
         :as                                           _request}]
-    (if-let [ctx (build-phase-context dependencies tournament-eid phase-index)]
+    (if-let [ctx (web.tournament.share/build-phase-context dependencies tournament-eid phase-index)]
       {:status 200
        :body   (assoc ctx
                       :type :tournament/phase
