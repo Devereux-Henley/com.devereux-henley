@@ -65,9 +65,7 @@
   (handlers :com.devereux-henley.rts-web.web.game.api/get-game
             :com.devereux-henley.rts-web.web.game.api/get-games
             :com.devereux-henley.rts-web.web.game.api/get-faction
-            :com.devereux-henley.rts-web.web.game.api/get-game-social-link
             :com.devereux-henley.rts-web.web.game.api/get-factions-collection
-            :com.devereux-henley.rts-web.web.game.api/get-socials-collection
             :com.devereux-henley.rts-web.web.game.api/get-unit
             :com.devereux-henley.rts-web.web.game.api/get-units-collection))
 
@@ -93,7 +91,9 @@
             :com.devereux-henley.rts-web.web.tournament.api/update-phase-configuration
             :com.devereux-henley.rts-web.web.tournament.view/create-tournament-view
             :com.devereux-henley.rts-web.web.tournament.view/tournament-view
-            :com.devereux-henley.rts-web.web.tournament.view/tournament-phase-form-view))
+            :com.devereux-henley.rts-web.web.tournament.view/tournament-phase-form-view
+            :com.devereux-henley.rts-web.web.tournament.view/phase-panel-view
+            :com.devereux-henley.rts-web.web.tournament.view/round-row-view))
 
 (def match-record-configuration
   (handlers :com.devereux-henley.rts-web.web.tournament.view/modal-view
@@ -140,11 +140,8 @@
             :com.devereux-henley.rts-web.web.league.api/get-leagues
             :com.devereux-henley.rts-web.web.league.api/create-league
             :com.devereux-henley.rts-web.web.season.api/get-season
-            :com.devereux-henley.rts-web.web.season.api/get-seasons-for-league
+            :com.devereux-henley.rts-web.web.season.api/get-seasons
             :com.devereux-henley.rts-web.web.season.api/create-season
-            :com.devereux-henley.rts-web.web.stats.api/get-game-faction-standings
-            :com.devereux-henley.rts-web.web.stats.api/get-league-faction-standings
-            :com.devereux-henley.rts-web.web.stats.api/get-season-faction-standings
             :com.devereux-henley.rts-web.web.tournament.view/competitive-view
             :com.devereux-henley.rts-web.web.season.view/season-options-fragment-view
             :com.devereux-henley.rts-web.web.league.view/create-league-view

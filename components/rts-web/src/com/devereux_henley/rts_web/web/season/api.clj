@@ -10,14 +10,19 @@
   (or (domain/get-season-by-eid dependencies eid)
       {:type :missing/resource :name "season" :id eid}))
 
-(defn get-seasons-for-league
+(defn get-seasons
+  "Collection builder for /api/season. When `league-eid` is set the
+   collection is filtered to that league; nil returns every season."
   [dependencies league-eid {:keys [hostname router]}]
   {:type      :collection/season
-   :_embedded {:results (domain/get-seasons-for-league dependencies league-eid)}
+   :_embedded {:results (if league-eid
+                          (domain/get-seasons-for-league dependencies league-eid)
+                          (domain/get-seasons dependencies))}
    :_links    {:self (str hostname
                           (-> router
-                              (reitit.core/match-by-name! :season/for-league)
-                              (reitit.core/match->path {:league-eid league-eid})))}})
+                              (reitit.core/match-by-name! :collection/season)
+                              (reitit.core/match->path
+                               (when league-eid {:league-eid league-eid}))))}})
 
 (defmethod integrant.core/init-key ::get-season
   [_init-key dependencies]
@@ -28,14 +33,14 @@
         {:status 404 :body result}
         {:status 200 :body result}))))
 
-(defmethod integrant.core/init-key ::get-seasons-for-league
+(defmethod integrant.core/init-key ::get-seasons
   [_init-key dependencies]
-  (fn [{{{:keys [league-eid]} :path} :parameters
-        router                       :reitit.core/router
-        :as                          _request}]
+  (fn [{{{:keys [league-eid]} :query} :parameters
+        router                        :reitit.core/router
+        :as                           _request}]
     {:status 200
-     :body   (get-seasons-for-league dependencies league-eid
-                                     {:hostname (:hostname dependencies) :router router})}))
+     :body   (get-seasons dependencies league-eid
+                          {:hostname (:hostname dependencies) :router router})}))
 
 (defmethod integrant.core/init-key ::create-season
   [_init-key dependencies]

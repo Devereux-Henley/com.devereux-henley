@@ -23,7 +23,7 @@
    [com.devereux-henley.rts-data-access.contract :as db]
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.render :as render]
-   [com.devereux-henley.rts-web.web.tournament.api :as web.tournament.api]
+   [com.devereux-henley.rts-web.web.tournament.share :as web.tournament.share]
    [com.devereux-henley.rts-web.web.view :as web.view]
    [integrant.core]
    [jsonista.core :as jsonista]
@@ -97,10 +97,28 @@
        :body    (render/render-component "tournament-phase-row.html"
                                          (assoc (web.view/base-context request) :tournament-eid eid))})))
 
+(defmethod integrant.core/init-key ::phase-panel-view
+  [_init-key dependencies]
+  (fn [{{{:keys [eid phase-index]} :path} :parameters
+        :as                               _request}]
+    (if-let [ctx (web.tournament.share/build-phase-context dependencies eid phase-index)]
+      {:status  200
+       :headers {"Content-Type" "text/html; charset=utf-8"}
+       :body    (render/render-component "tournament-phase.html" {:data ctx})}
+      {:status 404
+       :body   {:type :missing/resource :name "tournament-phase" :id phase-index}})))
+
+(defmethod integrant.core/init-key ::round-row-view
+  [_init-key _dependencies]
+  (fn [_request]
+    {:status  200
+     :headers {"Content-Type" "text/html; charset=utf-8"}
+     :body    (render/render-component "tournament-round.html" {})}))
+
 (defmethod integrant.core/init-key ::tournament-view
   [_init-key dependencies]
   (partial web.view/standard-entity-view-handler
-           (fn [eid] (web.tournament.api/get-tournament-by-eid dependencies eid))
+           (fn [eid] (web.tournament.share/get-tournament-by-eid dependencies eid))
            "tournament-index.html"
            (fn [data request]
              (let [tournament-eid        (:eid data)

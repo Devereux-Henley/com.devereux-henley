@@ -16,20 +16,23 @@
      [:type [:= :social-media/platform]]])))
 
 (def game-social-link-resource
+  "Embedded social-link row exposed under /api/game/:eid?embed=socials.
+   Not addressable on its own under /api — there is no /api/social-link
+   route, so the schema only emits a link to the social-media platform
+   (which is a real /api resource)."
   (malli.util/merge
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
-     [:eid {:model/link :game/social-by-eid} :uuid]
-     [:game-eid {:model/link :game/by-eid} :uuid]
+     [:eid :uuid]
+     [:game-eid :uuid]
      [:social-media-platform-eid {:model/link :social-media/by-eid} :uuid]
      [:type [:= :game/social]]
      [:url :url]
-     [:_links
+     [:_links {:optional true}
       [:map
-       [:self :url]
-       [:game :url]
-       [:social-media-platform :url]]]
+       [:self {:optional true} :url]
+       [:social-media-platform {:optional true} :url]]]
      [:_embedded {:optional true}
       [:map
        [:platform {:optional true} social-media-platform-resource]]]])))
@@ -107,7 +110,7 @@
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
-     [:eid {:model/link :game/faction-by-eid} :uuid]
+     [:eid {:model/link :faction/by-eid} :uuid]
      [:game-eid {:model/link :game/by-eid} :uuid]
      [:type [:= :game/faction]]
      [:name {:min 1} :string]
@@ -140,13 +143,6 @@
    (schema.contract/to-schema
     [:map
      [:type [:= :collection/faction]]])))
-
-(def game-social-link-collection-resource
-  (malli.util/merge
-   (schema.contract/make-collection-resource game-social-link-resource)
-   (schema.contract/to-schema
-    [:map
-     [:type [:= :collection/game-social-link]]])))
 
 (def game-collection-resource
   (malli.util/merge
@@ -191,8 +187,8 @@
     [:map
      {:model/sub-resources {:status       :tournament/status
                             :registration :tournament/registration
-                            :entries      :tournament/entries
-                            :matches      :tournament/matches
+                            :entries      :collection/tournament-entry
+                            :matches      :collection/match
                             :round        :tournament/round}}
      [:eid {:model/link :tournament/by-eid} :uuid]
      [:type [:= :tournament/tournament]]
@@ -238,7 +234,7 @@
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
-     {:model/sub-resources {:games :match/games}}
+     {:model/sub-resources {:games :collection/match-game}}
      [:eid {:model/link :match/by-eid} :uuid]
      [:type [:= :tournament/match]]
      [:tournament-eid {:model/link :tournament/by-eid} :uuid]
@@ -371,19 +367,19 @@
 (def tournament-matches-response
   (schema.contract/to-schema
    [:map {:model/type :model/model}
-    [:type [:= :tournament/matches]]
-    [:tournament-eid {:model/link :tournament/by-eid} :uuid]
+    [:type [:= :collection/match]]
+    [:tournament-eid {:optional true :model/link :tournament/by-eid} :uuid]
     [:matches [:sequential tournament-match-summary]]
-    [:_links [:map [:tournament :url]]]]))
+    [:_links {:optional true} [:map [:tournament {:optional true} :url]]]]))
 
 (def tournament-games-response
   (schema.contract/to-schema
    [:map {:model/type :model/model}
-    [:type [:= :tournament/games]]
-    [:tournament-eid {:model/link :tournament/by-eid} :uuid]
+    [:type [:= :collection/match-game]]
+    [:tournament-eid {:optional true :model/link :tournament/by-eid} :uuid]
     [:match-eid {:model/link :match/by-eid} :uuid]
     [:games [:sequential [:map {:closed false}]]]
-    [:_links [:map [:tournament :url] [:match :url]]]]))
+    [:_links [:map [:tournament {:optional true} :url] [:match :url]]]]))
 
 ;; ─── Bracket-view shapes ────────────────────────────────────────────────────
 ;; Describe the projections built by rules/group-matches-by-round and
@@ -461,22 +457,8 @@
    [:eid :uuid]
    [:version :int]])
 
-(def draft-resource
-  (malli.util/merge
-   schema.contract/base-resource
-   (schema.contract/to-schema
-    [:map
-     [:eid {:model/link :draft/by-eid} :uuid]
-     [:type [:= :game/draft]]
-     [:game-mode-eid :uuid]
-     [:faction-eid {:model/link :game/faction-by-eid} :uuid]
-     [:name {:optional true} [:maybe :string]]
-     [:display-name {:optional true} :string]
-     [:player-sub :string]
-     [:_links
-      [:map
-       [:self :url]
-       [:faction :url]]]])))
+;; `draft-resource` is defined below `draft-entry-resource` because it
+;; embeds the entry schema under :_embedded.
 
 (def create-draft-specification
   (schema.contract/to-schema
@@ -589,15 +571,15 @@
    fields (name, stats, abilities, attributes, health/barrier) merged with
    the per-draft option catalog (items, mounts, draftable spells) and a
    flag for whether reinforcements are enabled for the enclosing game mode.
-   The resource's :eid is the unit's own eid; :draft-eid links to the
-   parent draft."
+   Not addressable on its own under /api: it appears under a draft-entry's
+   :_embedded.unit or as the body of a /components panel fragment."
   (malli.util/merge
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
-     [:eid {:model/link :draft-unit/by-eid} :uuid]
+     [:eid :uuid]
      [:type [:= :draft/unit]]
-     [:draft-eid {:model/link :draft/by-eid} :uuid]
+     [:draft-eid :uuid]
      [:game-eid {:model/link :game/by-eid} :uuid]
      [:name :string]
      [:description :string]
@@ -634,28 +616,26 @@
      [:validation {:optional true}
       [:map
        [:can-add-to-reinforcements? :boolean]]]
-     [:_links
+     [:_links {:optional true}
       [:map
-       [:self :url]
-       [:draft :url]
-       [:game :url]]]])))
+       [:self {:optional true} :url]
+       [:game {:optional true} :url]]]])))
 
 (def draft-entry-resource
   "A placed draft entry — addressing (entry eid, draft-eid, unit-eid,
    section) plus the selection state the player has stored on this entry
-   (:mount, :abilities, :spells, :items as key lists). Clients that want
-   the game unit's catalog data request it via `?embed=unit`, which
-   populates :_embedded.unit with a full draft-unit-resource whose
-   draftable options carry :selected flags pre-marked from the entry's
-   stored selections."
+   (:mount, :abilities, :spells, :items as key lists). Not addressable
+   on its own under /api; it appears inline under a draft's :_embedded
+   sections, or as the body of a /components panel fragment. The
+   per-entry unit projection rides under :_embedded.unit."
   (malli.util/merge
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
-     [:eid {:model/link :draft-entry/by-eid} :uuid]
+     [:eid :uuid]
      [:type [:= :draft/entry]]
-     [:draft-eid {:model/link :draft/by-eid} :uuid]
-     [:unit-eid {:model/link :draft-unit/by-eid} :uuid]
+     [:draft-eid :uuid]
+     [:unit-eid :uuid]
      [:section [:enum "main" "reinforcements"]]
      [:mount {:optional true} [:maybe :string]]
      [:level {:optional true} [:int {:min 0 :max 9}]]
@@ -663,14 +643,35 @@
      [:spells {:optional true} [:sequential :string]]
      [:items {:optional true} [:sequential :string]]
      [:locked? {:optional true} :boolean]
-     [:_links
+     [:_links {:optional true}
       [:map
-       [:self :url]
-       [:draft :url]
-       [:unit :url]]]
+       [:self {:optional true} :url]]]
      [:_embedded {:optional true}
       [:map
        [:unit {:optional true} draft-unit-resource]]]])))
+
+(def draft-resource
+  (malli.util/merge
+   schema.contract/base-resource
+   (schema.contract/to-schema
+    [:map
+     [:eid {:model/link :draft/by-eid} :uuid]
+     [:type [:= :game/draft]]
+     [:game-mode-eid :uuid]
+     [:game-eid {:optional true :model/link :game/by-eid} :uuid]
+     [:faction-eid {:model/link :faction/by-eid} :uuid]
+     [:name {:optional true} [:maybe :string]]
+     [:display-name {:optional true} :string]
+     [:player-sub :string]
+     [:_links
+      [:map
+       [:self :url]
+       [:game {:optional true} :url]
+       [:faction :url]]]
+     [:_embedded {:optional true}
+      [:map
+       [:main {:optional true} [:sequential draft-entry-resource]]
+       [:reinforcements {:optional true} [:sequential draft-entry-resource]]]]])))
 
 (def draft-section-unit
   "A unit as it appears inside a rendered draft section: just enough fields
@@ -783,7 +784,7 @@
    schema.contract/base-resource
    (schema.contract/to-schema
     [:map
-     {:model/sub-resources {:seasons :season/for-league}}
+     {:model/sub-resources {:seasons :collection/season}}
      [:eid {:model/link :league/by-eid} :uuid]
      [:type [:= :league/league]]
      [:name {:min 1} :string]
@@ -855,28 +856,3 @@
    [:map
     [:type [:= :season/error]]
     [:message :string]]))
-
-(def faction-standings-row-resource
-  (schema.contract/to-schema
-   [:map {:model/type :model/model}
-    [:type [:= :stats/faction]]
-    [:faction-eid {:model/link :game/faction-by-eid} :uuid]
-    [:faction-name :string]
-    [:matches-played :int]
-    [:wins :int]
-    [:losses :int]
-    [:win-percentage :int]
-    [:_links [:map [:faction :url]]]]))
-
-(def faction-standings-response
-  (schema.contract/to-schema
-   [:map {:model/type :model/model}
-    [:type [:enum :stats/game-faction-standings :stats/league-faction-standings :stats/season-faction-standings]]
-    [:game-eid {:optional true :model/link :game/by-eid} :uuid]
-    [:league-eid {:optional true :model/link :league/by-eid} :uuid]
-    [:season-eid {:optional true :model/link :season/by-eid} :uuid]
-    [:rows [:sequential faction-standings-row-resource]]
-    [:_links [:map
-              [:game {:optional true} :url]
-              [:league {:optional true} :url]
-              [:season {:optional true} :url]]]]))

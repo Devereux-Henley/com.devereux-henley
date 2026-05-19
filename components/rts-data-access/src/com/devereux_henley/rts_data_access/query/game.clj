@@ -25,8 +25,10 @@
 (def get-faction-by-eid-query (resource/load-query-resource "game" "get-faction-by-eid.sql"))
 
 (def get-factions-for-game-query (resource/load-query-resource "game" "get-factions-for-game.sql"))
+(def get-factions-query (resource/load-query-resource "game" "get-factions.sql"))
 
 (def get-socials-for-game-query (resource/load-query-resource "game" "get-socials-for-game.sql"))
+(def get-socials-query (resource/load-query-resource "game" "get-socials.sql"))
 
 (def get-game-social-link-by-eid-query (resource/load-query-resource "game" "get-game-social-link-by-eid.sql"))
 
@@ -43,6 +45,7 @@
 (def get-units-for-game-query (resource/load-query-resource "game" "get-units-for-game.sql"))
 
 (def get-units-for-faction-query (resource/load-query-resource "game" "get-units-for-faction.sql"))
+(def get-units-query (resource/load-query-resource "game" "get-units.sql"))
 
 (def get-family-variants-by-eid-query (resource/load-query-resource "game" "get-family-variants-by-eid.sql"))
 
@@ -103,6 +106,14 @@
   [connection game-eid]
   (jdbc.contract/query-for-entities connection [get-factions-for-game-query game-eid] schema/faction-entity))
 
+(defn get-factions
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection]]
+                   [:sequential schema/faction-entity]])}
+  [connection]
+  (jdbc.contract/query-for-entities connection [get-factions-query] schema/faction-entity))
+
 (defn get-socials-for-game
   {:malli/schema (schema.contract/to-schema
                   [:=>
@@ -110,6 +121,14 @@
                    [:sequential schema/game-social-link-entity]])}
   [connection game-eid]
   (jdbc.contract/query-for-entities connection [get-socials-for-game-query game-eid] schema/game-social-link-entity))
+
+(defn get-socials
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection]]
+                   [:sequential schema/game-social-link-entity]])}
+  [connection]
+  (jdbc.contract/query-for-entities connection [get-socials-query] schema/game-social-link-entity))
 
 (defn get-game-social-link-by-eid
   {:malli/schema (schema.contract/to-schema
@@ -174,6 +193,14 @@
                    [:sequential schema/unit-entity]])}
   [connection faction-eid]
   (jdbc.contract/query-for-entities connection [get-units-for-faction-query faction-eid] schema/unit-entity))
+
+(defn get-units
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection]]
+                   [:sequential schema/unit-entity]])}
+  [connection]
+  (jdbc.contract/query-for-entities connection [get-units-query] schema/unit-entity))
 
 (def family-variant-row-schema
   (schema.contract/to-schema

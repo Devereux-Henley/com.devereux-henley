@@ -11,25 +11,32 @@
   (or (domain/get-game-by-eid dependencies eid)
       {:type :missing/resource :name "game" :id eid}))
 
-(defn get-factions-for-game
+(defn embed-factions
+  "Enrichment fn: returns the game model with the game's factions
+   embedded under :_embedded.factions. Bound into game-embed-registry
+   so /api/game/:eid?embed=factions opts into it."
   [dependencies model]
   (assoc-in model [:_embedded :factions]
             (domain/get-factions-for-game dependencies (:eid model))))
 
-(defn get-game-modes-for-game
+(defn embed-game-modes
+  "Enrichment fn: returns the game model with its game modes embedded
+   under :_embedded.game-modes."
   [dependencies model]
   (assoc-in model [:_embedded :game-modes]
             (domain/get-game-modes-for-game dependencies (:eid model))))
 
-(defn get-socials-for-game
+(defn embed-socials
+  "Enrichment fn: returns the game model with the game's social-link
+   resources embedded under :_embedded.socials."
   [dependencies model]
   (assoc-in model [:_embedded :socials]
             (domain/get-socials-for-game dependencies (:eid model))))
 
 (def game-embed-registry
-  {:factions   get-factions-for-game
-   :game-modes get-game-modes-for-game
-   :socials    get-socials-for-game})
+  {:factions   embed-factions
+   :game-modes embed-game-modes
+   :socials    embed-socials})
 
 (def game-query-parameters
   (schema.contract/to-schema
@@ -37,7 +44,9 @@
     [:version {:optional true} :pos-int]
     [:embed {:optional true} [:or :string [:sequential :string]]]]))
 
-(defn load-units-by-category-for-faction
+(defn embed-units-by-category
+  "Enrichment fn: returns the faction model with its units embedded
+   under :_embedded.units-by-category, grouped by unit category."
   [dependencies model]
   (let [units             (domain/get-units-for-faction dependencies (:eid model))
         units-by-category (->> units
@@ -48,7 +57,7 @@
     (assoc-in model [:_embedded :units-by-category] units-by-category)))
 
 (def faction-embed-registry
-  {:units-by-category load-units-by-category-for-faction})
+  {:units-by-category embed-units-by-category})
 
 (def faction-query-parameters
   (schema.contract/to-schema
@@ -99,21 +108,11 @@
   (or (domain/get-faction-by-eid dependencies eid)
       {:type :missing/resource :name "faction" :id eid}))
 
-(defn load-factions-for-faction-game
-  [dependencies model]
-  (assoc-in model [:_embedded :factions]
-            (domain/get-factions-for-game dependencies (:game-eid model))))
-
-(defn get-game-social-link-by-eid
-  [dependencies eid]
-  (or (domain/get-game-social-link-by-eid dependencies eid)
-      {:type :missing/resource :name "social link" :id eid}))
-
 (defn get-games
   [dependencies {:keys [hostname router]}]
   {:type      :collection/game
    :_embedded {:results (domain/get-games dependencies)}
-   :_links    {:self (str hostname "/"
+   :_links    {:self (str hostname
                           (-> router
                               (reitit.core/match-by-name! :collection/game)
                               :path))}})
@@ -134,12 +133,6 @@
        (web.core/apply-embeds faction-embed-registry dependencies embed-set
                               (get-faction-by-eid dependencies eid))))))
 
-(defmethod integrant.core/init-key ::get-game-social-link
-  [_init-key dependencies]
-  (fn [{{{:keys [eid]} :path} :parameters
-        :as                   _request}]
-    (ok-or-404 (get-game-social-link-by-eid dependencies eid))))
-
 (defmethod integrant.core/init-key ::get-game
   [_init-key dependencies]
   (fn [{{{:keys [eid]}   :path
@@ -153,20 +146,14 @@
 (defn get-factions
   [dependencies game-eid {:keys [hostname router]}]
   {:type      :collection/faction
-   :_embedded {:results (domain/get-factions-for-game dependencies game-eid)}
+   :_embedded {:results (if game-eid
+                          (domain/get-factions-for-game dependencies game-eid)
+                          (domain/get-factions dependencies))}
    :_links    {:self (str hostname
                           (-> router
-                              (reitit.core/match-by-name! :faction/for-game)
-                              (reitit.core/match->path {:game-eid game-eid})))}})
-
-(defn get-socials
-  [dependencies game-eid {:keys [hostname router]}]
-  {:type      :collection/game-social-link
-   :_embedded {:results (domain/get-socials-for-game dependencies game-eid)}
-   :_links    {:self (str hostname
-                          (-> router
-                              (reitit.core/match-by-name! :game-social-link/for-game)
-                              (reitit.core/match->path {:game-eid game-eid})))}})
+                              (reitit.core/match-by-name! :collection/faction)
+                              (reitit.core/match->path
+                               (when game-eid {:game-eid game-eid}))))}})
 
 (defmethod integrant.core/init-key ::get-factions-collection
   [_init-key dependencies]
@@ -177,23 +164,19 @@
      :body   (get-factions dependencies game-eid
                            {:hostname (:hostname dependencies) :router router})}))
 
-(defmethod integrant.core/init-key ::get-socials-collection
-  [_init-key dependencies]
-  (fn [{{{:keys [game-eid]} :query} :parameters
-        router                      :reitit.core/router
-        :as                         _request}]
-    {:status 200
-     :body   (get-socials dependencies game-eid
-                          {:hostname (:hostname dependencies) :router router})}))
-
-(defn get-units-for-faction-collection
+(defn get-units
+  "Collection builder for /api/unit. When `faction-eid` is set the
+   collection is filtered to that faction; nil returns every unit."
   [dependencies faction-eid {:keys [hostname router]}]
   {:type      :collection/unit
-   :_embedded {:results (vec (domain/get-units-for-faction dependencies faction-eid))}
+   :_embedded {:results (vec (if faction-eid
+                               (domain/get-units-for-faction dependencies faction-eid)
+                               (domain/get-units dependencies)))}
    :_links    {:self (str hostname
                           (-> router
-                              (reitit.core/match-by-name! :unit/for-faction)
-                              (reitit.core/match->path {:faction-eid faction-eid})))}})
+                              (reitit.core/match-by-name! :collection/unit)
+                              (reitit.core/match->path
+                               (when faction-eid {:faction-eid faction-eid}))))}})
 
 (defmethod integrant.core/init-key ::get-unit
   [_init-key dependencies]
@@ -210,8 +193,8 @@
         router                         :reitit.core/router
         :as                            _request}]
     {:status 200
-     :body   (get-units-for-faction-collection dependencies faction-eid
-                                               {:hostname (:hostname dependencies) :router router})}))
+     :body   (get-units dependencies faction-eid
+                        {:hostname (:hostname dependencies) :router router})}))
 
 (defmethod integrant.core/init-key ::get-games
   [_init-key dependencies]

@@ -16,6 +16,12 @@
   (mapv #(assoc % :type :league/league)
         (db/get-leagues-for-game (:connection dependencies) game-eid)))
 
+(defn get-leagues
+  "Returns every league in the system, each tagged with :type :league/league."
+  [dependencies]
+  (mapv #(assoc % :type :league/league)
+        (db/get-leagues (:connection dependencies))))
+
 (defn create-league
   "Creates a new league."
   [dependencies create-specification]

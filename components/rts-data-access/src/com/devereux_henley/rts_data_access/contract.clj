@@ -54,8 +54,10 @@
 (def get-faction-by-eid query.game/get-faction-by-eid)
 
 (def get-factions-for-game query.game/get-factions-for-game)
+(def get-factions query.game/get-factions)
 
 (def get-socials-for-game query.game/get-socials-for-game)
+(def get-socials query.game/get-socials)
 
 (def get-game-social-link-by-eid query.game/get-game-social-link-by-eid)
 
@@ -72,6 +74,7 @@
 (def get-units-for-game query.game/get-units-for-game)
 
 (def get-units-for-faction query.game/get-units-for-faction)
+(def get-units query.game/get-units)
 
 (def get-family-variants-by-eid query.game/get-family-variants-by-eid)
 
@@ -118,6 +121,7 @@
 
 (def get-tournament-by-eid query.tournament/get-tournament-by-eid)
 (def get-tournaments-for-game query.tournament/get-tournaments-for-game)
+(def get-tournaments query.tournament/get-tournaments)
 (def create-tournament query.tournament/create-tournament)
 (def get-tournament-state query.tournament/get-tournament-state)
 (def upsert-tournament-state query.tournament/upsert-tournament-state)
@@ -128,6 +132,7 @@
 (def create-match query.tournament/create-match)
 (def get-match-by-eid query.tournament/get-match-by-eid)
 (def get-matches-for-tournament query.tournament/get-matches-for-tournament)
+(def get-matches query.tournament/get-matches)
 (def get-matches-for-round query.tournament/get-matches-for-round)
 (def update-match-result query.tournament/update-match-result)
 (def create-game query.tournament/create-game)
@@ -146,6 +151,7 @@
 
 (def get-league-by-eid query.league/get-league-by-eid)
 (def get-leagues-for-game query.league/get-leagues-for-game)
+(def get-leagues query.league/get-leagues)
 (def create-league query.league/create-league)
 (def update-league query.league/update-league)
 
@@ -153,6 +159,7 @@
 
 (def get-season-by-eid query.season/get-season-by-eid)
 (def get-seasons-for-league query.season/get-seasons-for-league)
+(def get-seasons query.season/get-seasons)
 (def get-current-season-for-league query.season/get-current-season-for-league)
 (def get-max-ordinal-for-league query.season/get-max-ordinal-for-league)
 (def create-season query.season/create-season)

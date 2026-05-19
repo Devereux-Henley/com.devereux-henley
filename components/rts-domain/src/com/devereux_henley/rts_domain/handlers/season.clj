@@ -27,6 +27,11 @@
   [dependencies league-eid]
   (mapv tag-season (db/get-seasons-for-league (:connection dependencies) league-eid)))
 
+(defn get-seasons
+  "Returns every season in the system, each tagged with :type :season/season + :display-name."
+  [dependencies]
+  (mapv tag-season (db/get-seasons (:connection dependencies))))
+
 (defn get-current-season-for-league
   "Returns the most recent season whose end_at is still in the future, or nil."
   [dependencies league-eid]

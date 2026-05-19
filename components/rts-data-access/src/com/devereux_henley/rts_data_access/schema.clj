@@ -41,6 +41,7 @@
     [:eid :uuid]
     [:name {:optional true} [:maybe :string]]
     [:game-mode-eid :uuid]
+    [:game-eid {:optional true} :uuid]
     [:faction-eid :uuid]
     [:faction-name {:optional true} :string]
     [:created-at-display {:optional true} :string]

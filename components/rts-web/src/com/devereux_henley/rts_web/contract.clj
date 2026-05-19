@@ -16,7 +16,6 @@
    [com.devereux-henley.rts-web.web.season.api]
    [com.devereux-henley.rts-web.web.season.view]
    [com.devereux-henley.rts-web.web.social-media.api]
-   [com.devereux-henley.rts-web.web.stats.api]
    [com.devereux-henley.rts-web.web.tournament.api]
    [com.devereux-henley.rts-web.web.tournament.view]
    [com.devereux-henley.rts-web.web.view]))

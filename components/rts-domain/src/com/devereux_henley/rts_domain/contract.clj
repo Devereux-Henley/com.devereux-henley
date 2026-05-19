@@ -40,7 +40,6 @@
 (def unit-collection-resource schema/unit-collection-resource)
 
 (def game-resource schema/game-resource)
-(def game-social-link-collection-resource schema/game-social-link-collection-resource)
 
 (def game-collection-resource schema/game-collection-resource)
 
@@ -53,12 +52,15 @@
 (def get-game-by-eid                            handlers.game/get-game-by-eid)
 (def get-games                                  handlers.game/get-games)
 (def get-factions-for-game                      handlers.game/get-factions-for-game)
+(def get-factions                               handlers.game/get-factions)
 (def get-faction-by-eid                         handlers.game/get-faction-by-eid)
 (def get-socials-for-game                       handlers.game/get-socials-for-game)
+(def get-socials                                handlers.game/get-socials)
 (def get-game-social-link-by-eid                handlers.game/get-game-social-link-by-eid)
 (def get-units-for-game                         handlers.game/get-units-for-game)
 (def get-unit-by-eid                            handlers.game/get-unit-by-eid)
 (def get-units-for-faction                      handlers.game/get-units-for-faction)
+(def get-units                                  handlers.game/get-units)
 (def get-game-mode-by-eid                       handlers.game/get-game-mode-by-eid)
 (def get-game-modes-for-game                    handlers.game/get-game-modes-for-game)
 
@@ -99,6 +101,7 @@
 
 (def get-tournament-by-eid                        handlers.tournament/get-tournament-by-eid)
 (def get-tournaments-for-game                     handlers.tournament/get-tournaments-for-game)
+(def get-tournaments                              handlers.tournament/get-tournaments)
 (def create-tournament                            handlers.tournament/create-tournament)
 (def get-tournament-state                         handlers.tournament/get-tournament-state)
 (def set-tournament-state                         handlers.tournament/set-tournament-state)
@@ -136,6 +139,7 @@
 (def create-match                                 handlers.tournament/create-match)
 (def get-match-by-eid                             handlers.tournament/get-match-by-eid)
 (def get-matches-for-tournament                   handlers.tournament/get-matches-for-tournament)
+(def get-matches                                  handlers.tournament/get-matches)
 (def get-matches-for-round                        handlers.tournament/get-matches-for-round)
 (def update-match-result                          handlers.tournament/update-match-result)
 (def record-game-result                           handlers.tournament/record-game-result)
@@ -160,17 +164,16 @@
 (def create-season-specification                  schema/create-season-specification)
 (def season-error-response                        schema/season-error-response)
 
-(def faction-standings-row-resource               schema/faction-standings-row-resource)
-(def faction-standings-response                   schema/faction-standings-response)
-
 ;;; ─── League / Season / Stats handler functions ────────────────────────────
 
 (def get-league-by-eid                            handlers.league/get-league-by-eid)
 (def get-leagues-for-game                         handlers.league/get-leagues-for-game)
+(def get-leagues                                  handlers.league/get-leagues)
 (def create-league                                handlers.league/create-league)
 
 (def get-season-by-eid                            handlers.season/get-season-by-eid)
 (def get-seasons-for-league                       handlers.season/get-seasons-for-league)
+(def get-seasons                                  handlers.season/get-seasons)
 (def get-current-season-for-league                handlers.season/get-current-season-for-league)
 (def create-season                                handlers.season/create-season)
 

@@ -23,7 +23,7 @@
   [_init-key dependencies]
   (partial web.view/standard-entity-view-handler
            (fn [eid]
-             (web.game.api/load-units-by-category-for-faction
+             (web.game.api/embed-units-by-category
               dependencies
               (web.game.api/get-faction-by-eid dependencies eid)))
            "faction.html"

@@ -1,7 +1,16 @@
 <section class="resource" aria-labelledby="api-root-heading">
     <h2 id="api-root-heading">RTS API</h2>
     <p>Hypermedia entry point. Follow the links to walk the resource graph.</p>
-    <ul>
-        <li><a href="{{ data._links.games }}">games</a></li>
-    </ul>
+    <nav aria-label="Top-level resources">
+        <ul>
+            <li><a href="{{ data._links.games }}">games</a></li>
+            <li><a href="{{ data._links.factions }}">factions</a></li>
+            <li><a href="{{ data._links.social-links }}">social-links</a></li>
+            <li><a href="{{ data._links.units }}">units</a></li>
+            <li><a href="{{ data._links.tournaments }}">tournaments</a></li>
+            <li><a href="{{ data._links.matches }}">matches</a></li>
+            <li><a href="{{ data._links.leagues }}">leagues</a></li>
+            <li><a href="{{ data._links.seasons }}">seasons</a></li>
+        </ul>
+    </nav>
 </section>

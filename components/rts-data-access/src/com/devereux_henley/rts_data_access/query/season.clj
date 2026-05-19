@@ -11,6 +11,7 @@
 (def get-season-by-eid-query (resource/load-query-resource "season" "get-season-by-eid.sql"))
 
 (def get-seasons-for-league-query (resource/load-query-resource "season" "get-seasons-for-league.sql"))
+(def get-seasons-query (resource/load-query-resource "season" "get-seasons.sql"))
 
 (def get-current-season-for-league-query (resource/load-query-resource "season" "get-current-season-for-league.sql"))
 
@@ -31,6 +32,14 @@
                    [:sequential schema/season-entity]])}
   [connection league-eid]
   (jdbc.contract/query-for-entities connection [get-seasons-for-league-query league-eid] schema/season-entity))
+
+(defn get-seasons
+  {:malli/schema (schema.contract/to-schema
+                  [:=>
+                   [:cat [:instance Connection]]
+                   [:sequential schema/season-entity]])}
+  [connection]
+  (jdbc.contract/query-for-entities connection [get-seasons-query] schema/season-entity))
 
 (defn get-current-season-for-league
   [connection league-eid]

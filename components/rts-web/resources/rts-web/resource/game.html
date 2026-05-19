@@ -5,10 +5,19 @@
     <nav aria-label="Game sub-resources">
         <ul>
             <li><a href="/api/faction?game-eid={{data.eid}}">factions</a></li>
-            <li><a href="/api/social-link?game-eid={{data.eid}}">socials</a></li>
             <li><a href="/api/tournament?game-eid={{data.eid}}">tournaments</a></li>
             <li><a href="/api/league?game-eid={{data.eid}}">leagues</a></li>
-            <li><a href="/api/stats/game/{{data.eid}}/faction">faction standings</a></li>
         </ul>
     </nav>
+
+    {% if data._embedded.socials|not-empty? %}
+    <section aria-labelledby="game-socials-heading">
+        <h3 id="game-socials-heading">Socials</h3>
+        <ul>
+            {% for social in data._embedded.socials %}
+            <li><a href="{{ social.url }}" rel="noopener noreferrer">{{ social.url }}</a></li>
+            {% endfor %}
+        </ul>
+    </section>
+    {% endif %}
 </section>

@@ -5,6 +5,7 @@ SELECT
   gm.eid AS game_mode_eid,
   f.eid AS faction_eid,
   f.name AS faction_name,
+  g.eid AS game_eid,
   strftime('%m/%d/%Y', d.created_at) AS created_at_display,
   d.player_sub,
   d.version,
@@ -15,4 +16,5 @@ FROM
   draft d
   INNER JOIN game_mode gm ON gm.id = d.game_mode_id
   INNER JOIN faction f ON f.id = d.faction_id
+  INNER JOIN game g ON g.id = f.game_id
 WHERE d.eid = ?

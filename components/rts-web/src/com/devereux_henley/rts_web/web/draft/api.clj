@@ -79,16 +79,33 @@
       (get-in resource [:_embedded :unit])
       (update-in [:_embedded :unit] attach))))
 
+(defn- hydrate-section
+  "Builds the entry-list for one section of a draft. Each entry is
+   loaded via `get-draft-entry-details` (so it carries the placed
+   selections) and the per-entry unit projection is embedded under
+   `:_embedded.unit`. The result is what /api/draft/:eid emits inline
+   instead of exposing draft-entry / draft-unit as their own /api
+   collections."
+  [dependencies draft-eid section state]
+  (mapv (fn [{:keys [entry-eid]}]
+          (some->> (domain/get-draft-entry-details dependencies draft-eid entry-eid section)
+                   (domain/embed-unit-for-entry dependencies)))
+        (get state (keyword section) [])))
+
 (defmethod integrant.core/init-key ::get-draft
   [_init-key dependencies]
   (fn [{{{:keys [eid]} :path} :parameters
         router                :reitit.core/router
         :as                   _request}]
     (if-let [draft (domain/get-draft-by-eid dependencies eid)]
-      (web.core/handle-fetch-response
-       domain/draft-resource
-       {:hostname (:hostname dependencies) :router router}
-       (constantly draft))
+      (let [state          (domain/get-draft-state dependencies eid)
+            main           (hydrate-section dependencies eid "main" state)
+            reinforcements (hydrate-section dependencies eid "reinforcements" state)]
+        (web.core/handle-fetch-response
+         domain/draft-resource
+         {:hostname (:hostname dependencies) :router router}
+         (constantly (assoc draft :_embedded {:main           (filterv some? main)
+                                              :reinforcements (filterv some? reinforcements)}))))
       {:status 404 :body {:type :missing/resource :name "draft" :id eid}})))
 
 (defmethod integrant.core/init-key ::get-draft-unit

@@ -17,7 +17,6 @@
    [com.devereux-henley.rts-web.web.season.api :as web.season.api]
    [com.devereux-henley.rts-web.web.season.view :as web.season.view]
    [com.devereux-henley.rts-web.web.social-media.api :as web.social-media.api]
-   [com.devereux-henley.rts-web.web.stats.api :as web.stats.api]
    [com.devereux-henley.rts-web.web.tournament.api :as web.tournament.api]
    [com.devereux-henley.rts-web.web.tournament.view :as web.tournament.view]
    [com.devereux-henley.rts-web.web.view :as web.view]
@@ -253,16 +252,14 @@
    ["/tournament/:eid/round-row.html"
     {:get {:produces   ["application/htmx+html"]
            :parameters {:path schema.contract/id-path-parameter}
-           :responses  {200 {:body domain/round-response}}
-           :handler    (integrant.core/ref ::web.tournament.api/get-round)}}]
+           :handler    (integrant.core/ref ::web.tournament.view/round-row-view)}}]
    ["/tournament/:eid/phase/:phase-index/phase-panel.html"
     {:get {:produces   ["application/htmx+html"]
            :parameters {:path (schema.contract/to-schema
                                [:map
                                 [:eid :uuid]
                                 [:phase-index :int]])}
-           :responses  {200 {:body domain/phase-response}}
-           :handler    (integrant.core/ref ::web.tournament.api/get-phase)}}]])
+           :handler    (integrant.core/ref ::web.tournament.view/phase-panel-view)}}]])
 
 (def actions-routes
   ["/actions"
@@ -396,7 +393,13 @@
                                      [:type [:= :api/root]]
                                      [:_links [:map
                                                [:self :url]
-                                               [:games :url]]]])}}
+                                               [:games :url]
+                                               [:factions :url]
+                                               [:units :url]
+                                               [:tournaments :url]
+                                               [:matches :url]
+                                               [:leagues :url]
+                                               [:seasons :url]]]])}}
             :handler   (integrant.core/ref ::web.api/get-root)}}]
 
    ;; ─── Game ───────────────────────────────────────────────────────────────
@@ -412,48 +415,37 @@
                          :query web.game.api/game-query-parameters}
             :responses  {200 {:body domain/game-resource}}
             :handler    (integrant.core/ref ::web.game.api/get-game)}}]
+
+   ;; ─── Faction ────────────────────────────────────────────────────────────
    ["/faction"
-    {:name :faction/for-game
+    {:name :collection/faction
      :get  {:produces   ["text/html"]
             :parameters {:query (schema.contract/to-schema
-                                 [:map [:game-eid :uuid]])}
+                                 [:map [:game-eid {:optional true} :uuid]])}
             :responses  {200 {:body domain/faction-collection-resource}}
             :handler    (integrant.core/ref ::web.game.api/get-factions-collection)}}]
-   ["/social-link"
-    {:name :game-social-link/for-game
-     :get  {:produces   ["text/html"]
-            :parameters {:query (schema.contract/to-schema
-                                 [:map [:game-eid :uuid]])}
-            :responses  {200 {:body domain/game-social-link-collection-resource}}
-            :handler    (integrant.core/ref ::web.game.api/get-socials-collection)}}]
-   ["/unit"
-    [""
-     {:name :unit/for-faction
-      :get  {:produces   ["text/html"]
-             :parameters {:query (schema.contract/to-schema
-                                  [:map [:faction-eid :uuid]])}
-             :responses  {200 {:body domain/unit-collection-resource}}
-             :handler    (integrant.core/ref ::web.game.api/get-units-collection)}}]
-    ["/:eid"
-     {:name :unit/by-eid
-      :get  {:produces   ["text/html"]
-             :parameters {:path schema.contract/id-path-parameter}
-             :responses  {200 {:body domain/unit-resource}}
-             :handler    (integrant.core/ref ::web.game.api/get-unit)}}]]
-   ["/game/social-link/:eid"
-    {:name :game/social-by-eid
-     :get  {:produces   ["text/html"]
-            :parameters {:path  schema.contract/id-path-parameter
-                         :query schema.contract/version-query-parameter}
-            :responses  {200 {:body domain/game-social-link-resource}}
-            :handler    (integrant.core/ref ::web.game.api/get-game-social-link)}}]
-   ["/game/faction/:eid"
-    {:name :game/faction-by-eid
+   ["/faction/:eid"
+    {:name :faction/by-eid
      :get  {:produces   ["text/html"]
             :parameters {:path  schema.contract/id-path-parameter
                          :query web.game.api/faction-query-parameters}
             :responses  {200 {:body domain/faction-resource}}
             :handler    (integrant.core/ref ::web.game.api/get-faction)}}]
+
+   ;; ─── Unit ──────────────────────────────────────────────────────────────
+   ["/unit"
+    {:name :collection/unit
+     :get  {:produces   ["text/html"]
+            :parameters {:query (schema.contract/to-schema
+                                 [:map [:faction-eid {:optional true} :uuid]])}
+            :responses  {200 {:body domain/unit-collection-resource}}
+            :handler    (integrant.core/ref ::web.game.api/get-units-collection)}}]
+   ["/unit/:eid"
+    {:name :unit/by-eid
+     :get  {:produces   ["text/html"]
+            :parameters {:path schema.contract/id-path-parameter}
+            :responses  {200 {:body domain/unit-resource}}
+            :handler    (integrant.core/ref ::web.game.api/get-unit)}}]
 
    ;; ─── Draft (reads only — mutations live on /actions) ────────────────────
    ["/draft/:eid"
@@ -462,193 +454,120 @@
             :parameters {:path schema.contract/id-path-parameter}
             :responses  {200 {:body domain/draft-resource}}
             :handler    (integrant.core/ref ::web.draft.api/get-draft)}}]
-   ["/draft/:draft-eid/unit"
-    {:name :draft-unit/preview
-     :get  {:produces   ["text/html"]
-            :parameters {:path  (schema.contract/to-schema
-                                 [:map
-                                  [:draft-eid :uuid]])
-                         :query (schema.contract/to-schema
-                                 [:map
-                                  [:unit-eid  :uuid]
-                                  [:mount     {:optional true} [:maybe :string]]
-                                  [:lore      {:optional true} [:maybe :string]]
-                                  [:items     {:optional true} [:or :string [:sequential :string]]]
-                                  [:spells    {:optional true} [:or :string [:sequential :string]]]
-                                  [:abilities {:optional true} [:or :string [:sequential :string]]]])}
-            :responses  {200 {:body domain/draft-unit-resource}}
-            :handler    (integrant.core/ref ::web.draft.api/get-draft-unit)}}]
-   ["/draft/:draft-eid/unit/:eid"
-    {:name :draft-unit/by-eid
-     :get  {:produces   ["text/html"]
-            :parameters {:path  (schema.contract/to-schema
-                                 [:map
-                                  [:draft-eid :uuid]
-                                  [:eid :uuid]])
-                         :query (schema.contract/to-schema
-                                 [:map
-                                  [:mount     {:optional true} [:maybe :string]]
-                                  [:level     {:optional true} [:int {:min 0 :max 9}]]
-                                  [:items     {:optional true} [:or :string [:sequential :string]]]
-                                  [:spells    {:optional true} [:or :string [:sequential :string]]]
-                                  [:abilities {:optional true} [:or :string [:sequential :string]]]])}
-            :responses  {200 {:body domain/draft-unit-resource}}
-            :handler    (integrant.core/ref ::web.draft.api/get-draft-unit)}}]
-   ["/draft/:draft-eid/entry/:eid"
-    {:name :draft-entry/by-eid
-     :get  {:produces   ["text/html"]
-            :parameters {:path  (schema.contract/to-schema
-                                 [:map
-                                  [:draft-eid :uuid]
-                                  [:eid :uuid]])
-                         :query (schema.contract/to-schema
-                                 [:map
-                                  [:section   [:enum "main" "reinforcements"]]
-                                  [:embed     {:optional true} [:or [:enum "unit"]
-                                                                [:sequential [:enum "unit"]]]]
-                                  [:mount     {:optional true} [:maybe :string]]
-                                  [:level     {:optional true} [:int {:min 0 :max 9}]]
-                                  [:items     {:optional true} [:or :string [:sequential :string]]]
-                                  [:spells    {:optional true} [:or :string [:sequential :string]]]
-                                  [:abilities {:optional true} [:or :string [:sequential :string]]]])}
-            :responses  {200 {:body domain/draft-entry-resource}}
-            :handler    (integrant.core/ref ::web.draft.api/get-draft-entry)}}]
+   ;; Draft entries and the per-entry unit projection are not addressable
+   ;; on /api on their own — they only make sense in the context of a draft,
+   ;; so /api/draft/:eid carries the full :main and :reinforcements entry
+   ;; lists inline under :_embedded. The /components routes still expose
+   ;; the entry- and unit-panel fragments for the htmx-driven editor.
 
-   ;; ─── Tournament reads ──────────────────────────────────────────────────
+   ;; ─── Tournament ────────────────────────────────────────────────────────
    ["/tournament"
-    [""
-     {:name :tournament/for-game
-      :get  {:produces   ["text/html"]
-             :parameters {:query (schema.contract/to-schema
-                                  [:map [:game-eid :uuid]])}
-             :responses  {200 {:body domain/tournament-collection-resource}}
-             :handler    (integrant.core/ref ::web.tournament.api/get-tournaments)}}]
-    ["/:eid"
-     [""
-      {:name :tournament/by-eid
-       :get  {:produces   ["text/html"]
-              :parameters {:path schema.contract/id-path-parameter}
-              :responses  {200 {:body domain/tournament-resource}}
-              :handler    (integrant.core/ref ::web.tournament.api/get-tournament)}}]
-     ["/entry"
-      [""
-       {:name :tournament/entries
-        :get  {:produces   ["text/html"]
-               :parameters {:path schema.contract/id-path-parameter}
-               :responses  {200 {:body domain/tournament-entries-response}}
-               :handler    (integrant.core/ref ::web.tournament.api/get-entries)}}]]
-     ["/status"
-      {:name :tournament/status
-       :get  {:produces   ["text/html"]
-              :parameters {:path schema.contract/id-path-parameter}
-              :responses  {200 {:body domain/tournament-status-response}}
-              :handler    (integrant.core/ref ::web.tournament.api/get-status)}}]
-     ["/registration"
-      {:name :tournament/registration
-       :get  {:produces   ["text/html"]
-              :parameters {:path schema.contract/id-path-parameter}
-              :responses  {200 {:body domain/tournament-registration-response}}
-              :handler    (integrant.core/ref ::web.tournament.api/get-registration)}}]
-     ["/phase"
-      {:name :tournament/phase-configuration
-       :put  {:produces   ["text/html"]
-              :parameters {:path schema.contract/id-path-parameter
-                           :body domain/configure-phases-specification}
-              :handler    (integrant.core/ref ::web.tournament.api/update-phase-configuration)}}]
-     ["/phase/:phase-index"
-      {:name :tournament/phase
-       :get  {:produces   ["text/html"]
-              :parameters {:path (schema.contract/to-schema
-                                  [:map
-                                   [:eid :uuid]
-                                   [:phase-index :int]])}
-              :responses  {200 {:body domain/phase-response}}
-              :handler    (integrant.core/ref ::web.tournament.api/get-phase)}}]
-     ["/round"
-      {:name :tournament/round
-       :get  {:produces   ["text/html"]
-              :parameters {:path schema.contract/id-path-parameter}
-              :responses  {200 {:body domain/round-response}}
-              :handler    (integrant.core/ref ::web.tournament.api/get-round)}}]]
-    ["/:tournament-eid/match"
-     [""
-      {:name :tournament/matches
-       :get  {:produces   ["text/html"]
-              :parameters {:path (schema.contract/to-schema
-                                  [:map
-                                   [:tournament-eid :uuid]])}
-              :responses  {200 {:body domain/tournament-matches-response}}
-              :handler    (integrant.core/ref ::web.tournament.api/get-matches)}}]
-     ["/:eid"
-      {:name :match/by-eid
-       :get  {:produces   ["text/html"]
-              :parameters {:path (schema.contract/to-schema
-                                  [:map
-                                   [:tournament-eid :uuid]
-                                   [:eid :uuid]])}
-              :responses  {200 {:body domain/match-resource}}
-              :handler    (integrant.core/ref ::web.tournament.api/get-match)}}]
-     ["/:eid/game"
-      {:name :match/games
-       :get  {:produces   ["text/html"]
-              :parameters {:path (schema.contract/to-schema
-                                  [:map
-                                   [:tournament-eid :uuid]
-                                   [:eid :uuid]])}
-              :responses  {200 {:body domain/tournament-games-response}}
-              :handler    (integrant.core/ref ::web.tournament.api/get-games)}}]]]
+    {:name :collection/tournament
+     :get  {:produces   ["text/html"]
+            :parameters {:query (schema.contract/to-schema
+                                 [:map [:game-eid {:optional true} :uuid]])}
+            :responses  {200 {:body domain/tournament-collection-resource}}
+            :handler    (integrant.core/ref ::web.tournament.api/get-tournaments)}}]
+   ["/tournament/:eid"
+    {:name :tournament/by-eid
+     :get  {:produces   ["text/html"]
+            :parameters {:path schema.contract/id-path-parameter}
+            :responses  {200 {:body domain/tournament-resource}}
+            :handler    (integrant.core/ref ::web.tournament.api/get-tournament)}}]
+   ["/tournament-entry"
+    {:name :collection/tournament-entry
+     :get  {:produces   ["text/html"]
+            :parameters {:query (schema.contract/to-schema
+                                 [:map [:tournament-eid :uuid]])}
+            :responses  {200 {:body domain/tournament-entries-response}}
+            :handler    (integrant.core/ref ::web.tournament.api/get-entries)}}]
+   ["/tournament-status"
+    {:name :tournament/status
+     :get  {:produces   ["text/html"]
+            :parameters {:query (schema.contract/to-schema
+                                 [:map [:tournament-eid :uuid]])}
+            :responses  {200 {:body domain/tournament-status-response}}
+            :handler    (integrant.core/ref ::web.tournament.api/get-status)}}]
+   ["/tournament-registration"
+    {:name :tournament/registration
+     :get  {:produces   ["text/html"]
+            :parameters {:query (schema.contract/to-schema
+                                 [:map [:tournament-eid :uuid]])}
+            :responses  {200 {:body domain/tournament-registration-response}}
+            :handler    (integrant.core/ref ::web.tournament.api/get-registration)}}]
+   ["/tournament-phase-configuration"
+    {:name :tournament/phase-configuration
+     :put  {:produces   ["text/html"]
+            :parameters {:query (schema.contract/to-schema
+                                 [:map [:tournament-eid :uuid]])
+                         :body  domain/configure-phases-specification}
+            :handler    (integrant.core/ref ::web.tournament.api/update-phase-configuration)}}]
+   ["/tournament-phase"
+    {:name :tournament/phase
+     :get  {:produces   ["text/html"]
+            :parameters {:query (schema.contract/to-schema
+                                 [:map
+                                  [:tournament-eid :uuid]
+                                  [:phase-index :int]])}
+            :responses  {200 {:body domain/phase-response}}
+            :handler    (integrant.core/ref ::web.tournament.api/get-phase)}}]
+   ["/tournament-round"
+    {:name :tournament/round
+     :get  {:produces   ["text/html"]
+            :parameters {:query (schema.contract/to-schema
+                                 [:map [:tournament-eid :uuid]])}
+            :responses  {200 {:body domain/round-response}}
+            :handler    (integrant.core/ref ::web.tournament.api/get-round)}}]
 
-   ;; ─── League ────────────────────────────────────────────────────────────
+   ;; ─── Match ─────────────────────────────────────────────────────────────
+   ["/match"
+    {:name :collection/match
+     :get  {:produces   ["text/html"]
+            :parameters {:query (schema.contract/to-schema
+                                 [:map [:tournament-eid {:optional true} :uuid]])}
+            :responses  {200 {:body domain/tournament-matches-response}}
+            :handler    (integrant.core/ref ::web.tournament.api/get-matches)}}]
+   ["/match/:eid"
+    {:name :match/by-eid
+     :get  {:produces   ["text/html"]
+            :parameters {:path schema.contract/id-path-parameter}
+            :responses  {200 {:body domain/match-resource}}
+            :handler    (integrant.core/ref ::web.tournament.api/get-match)}}]
+   ["/match-game"
+    {:name :collection/match-game
+     :get  {:produces   ["text/html"]
+            :parameters {:query (schema.contract/to-schema
+                                 [:map [:match-eid :uuid]])}
+            :responses  {200 {:body domain/tournament-games-response}}
+            :handler    (integrant.core/ref ::web.tournament.api/get-games)}}]
+
+   ;; ─── League / Season ───────────────────────────────────────────────────
    ["/league"
-    [""
-     {:name :league/for-game
-      :get  {:produces   ["text/html"]
-             :parameters {:query (schema.contract/to-schema
-                                  [:map [:game-eid :uuid]])}
-             :responses  {200 {:body domain/league-collection-resource}}
-             :handler    (integrant.core/ref ::web.league.api/get-leagues)}}]
-    ["/:eid"
-     {:name :league/by-eid
-      :get  {:produces   ["text/html"]
-             :parameters {:path schema.contract/id-path-parameter}
-             :responses  {200 {:body domain/league-resource}}
-             :handler    (integrant.core/ref ::web.league.api/get-league)}}]
-    ["/:league-eid/season"
-     {:name :season/for-league
-      :get  {:produces   ["text/html"]
-             :parameters {:path (schema.contract/to-schema
-                                 [:map [:league-eid :uuid]])}
-             :responses  {200 {:body domain/season-collection-resource}}
-             :handler    (integrant.core/ref ::web.season.api/get-seasons-for-league)}}]]
+    {:name :collection/league
+     :get  {:produces   ["text/html"]
+            :parameters {:query (schema.contract/to-schema
+                                 [:map [:game-eid {:optional true} :uuid]])}
+            :responses  {200 {:body domain/league-collection-resource}}
+            :handler    (integrant.core/ref ::web.league.api/get-leagues)}}]
+   ["/league/:eid"
+    {:name :league/by-eid
+     :get  {:produces   ["text/html"]
+            :parameters {:path schema.contract/id-path-parameter}
+            :responses  {200 {:body domain/league-resource}}
+            :handler    (integrant.core/ref ::web.league.api/get-league)}}]
+   ["/season"
+    {:name :collection/season
+     :get  {:produces   ["text/html"]
+            :parameters {:query (schema.contract/to-schema
+                                 [:map [:league-eid {:optional true} :uuid]])}
+            :responses  {200 {:body domain/season-collection-resource}}
+            :handler    (integrant.core/ref ::web.season.api/get-seasons)}}]
    ["/season/:eid"
     {:name :season/by-eid
      :get  {:produces   ["text/html"]
             :parameters {:path schema.contract/id-path-parameter}
             :responses  {200 {:body domain/season-resource}}
             :handler    (integrant.core/ref ::web.season.api/get-season)}}]
-
-   ;; ─── Stats ─────────────────────────────────────────────────────────────
-   ["/stats/game/:game-eid/faction"
-    {:name :stats/game-faction
-     :get  {:produces   ["text/html"]
-            :parameters {:path (schema.contract/to-schema
-                                [:map [:game-eid :uuid]])}
-            :responses  {200 {:body domain/faction-standings-response}}
-            :handler    (integrant.core/ref ::web.stats.api/get-game-faction-standings)}}]
-   ["/stats/league/:league-eid/faction"
-    {:name :stats/league-faction
-     :get  {:produces   ["text/html"]
-            :parameters {:path (schema.contract/to-schema
-                                [:map [:league-eid :uuid]])}
-            :responses  {200 {:body domain/faction-standings-response}}
-            :handler    (integrant.core/ref ::web.stats.api/get-league-faction-standings)}}]
-   ["/stats/season/:season-eid/faction"
-    {:name :stats/season-faction
-     :get  {:produces   ["text/html"]
-            :parameters {:path (schema.contract/to-schema
-                                [:map [:season-eid :uuid]])}
-            :responses  {200 {:body domain/faction-standings-response}}
-            :handler    (integrant.core/ref ::web.stats.api/get-season-faction-standings)}}]
 
    ["/social-media/:eid"
     {:name :social-media/by-eid
