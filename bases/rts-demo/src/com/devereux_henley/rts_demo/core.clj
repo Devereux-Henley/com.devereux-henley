@@ -206,6 +206,12 @@
                                      :rounds     [{:format 1} {:format 1} {:format 1}]}]
                   :qualifier-count 4}}])
 
+(def ^:private registration-tournament-specs
+  [{:eid              #uuid "44444444-4444-4444-8444-444444444444"
+    :name             "Wolves of Norsca Cup"
+    :description      "Open registration — first eight to sign on take the bracket."
+    :initial-entrants 3}])
+
 (defn- build-tournament!
   [connection {:keys [eid name description phase-spec]}]
   (let [deps           {:connection connection}
@@ -220,25 +226,43 @@
        :tournament-eid tournament-eid
        :pending-eids   (mapv :eid final-pending)})))
 
+(defn- build-registration-tournament!
+  "Creates a tournament left in `registration` status with a partial
+   roster so the viewer's registration UI has a live demo target."
+  [connection {:keys [eid name description initial-entrants]}]
+  (let [deps           {:connection connection}
+        tournament-eid (create-tournament! connection {:eid eid :name name :description description})
+        roster         (take initial-entrants player-subs)]
+    (enter-players! deps tournament-eid roster)
+    {:name             name
+     :phase-type       "registration"
+     :tournament-eid   tournament-eid
+     :pending-eids     []
+     :registered-count (count roster)}))
+
 (defn setup!
   "Wipes the SQLite database, reapplies migrations, seeds baseline data,
-  and creates three demo tournaments (single-elim, double-elim, Swiss),
-  each advanced to its last-match state. Returns a vector of summary
-  maps describing each tournament."
+  and creates demo tournaments: three advanced to their last-match
+  state (single-elim, double-elim, Swiss), plus one left in open
+  registration. Returns a vector of summary maps describing each
+  tournament."
   []
   (delete-database-file!)
   (migratus/migrate migratus-config)
   (rts-data/seed-db db-spec)
   (with-open [connection (jdbc/get-connection jdbc-spec)]
-    (mapv #(build-tournament! connection %) tournament-specs)))
+    (into (mapv #(build-tournament! connection %) tournament-specs)
+          (mapv #(build-registration-tournament! connection %) registration-tournament-specs))))
 
 (defn -main [& _args]
   (let [tournaments (setup!)]
     (println "Demo tournaments ready.")
     (println "  game-eid:" warhammer-iii-eid)
-    (doseq [{:keys [name phase-type tournament-eid pending-eids]} tournaments]
+    (doseq [{:keys [name phase-type tournament-eid pending-eids registered-count]} tournaments]
       (println)
       (println (format "  %s (%s)" name phase-type))
       (println (format "    tournament-eid: %s" tournament-eid))
+      (when registered-count
+        (println (format "    registered:     %d of %d slots" registered-count (count player-subs))))
       (doseq [match-eid pending-eids]
         (println (format "    pending match:  %s" match-eid))))))

@@ -3,7 +3,12 @@
 {% block title %}{{data.name}} | {{game.name}} | RTS-UI{% endblock %}
 
 {% block content %}
-<div id="tournament-stage" class="viewer-page">
+<div id="tournament-stage" class="viewer-page"
+     hx-get="/view/game/{{game-eid}}/tournament/{{data.eid}}/index.html"
+     hx-trigger="{{ triggers.tournament-stage }}"
+     hx-target="this"
+     hx-swap="outerHTML"
+     hx-select="#tournament-stage">
 
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- Hero                                                           -->
