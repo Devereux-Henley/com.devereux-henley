@@ -2096,10 +2096,6 @@ h3.draft-category-header {
   white-space: nowrap;
 }
 
-.standings-table thead th[scope="col"]:not(:first-child) {
-  text-align: right;
-}
-
 .standings-table tbody td {
   padding: var(--space-2) var(--space-4);
   border-bottom: 1px solid
@@ -2117,7 +2113,6 @@ h3.draft-category-header {
 }
 
 .standings-table tbody td:not(:first-child) {
-  text-align: right;
   color: var(--color-text);
 }
 
@@ -2493,3 +2488,627 @@ h3.draft-category-header {
 .pm-draft-unit-mark--tzeentch { --mark-fg: #4ea3e8; --mark-bg-edge: #143e6b; }
 .unit-mark--undivided,
 .pm-draft-unit-mark--undivided { --mark-fg: #9c8c63; --mark-bg-edge: #3b2f18; }
+
+/* ============================================================================
+   TOURNAMENT VIEWER — hero, bracket, standings, schedule
+   ============================================================================ */
+
+.viewer-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100%;
+}
+
+/* --- Hero ---------------------------------------------------------------- */
+
+.viewer-hero {
+  position: relative;
+  padding: var(--space-6) var(--space-8) var(--space-5);
+  background:
+    radial-gradient(ellipse 70% 130% at 90% 50%, color-mix(in srgb, var(--color-primary-600) 8%, transparent) 0%, transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-primary-700) 5%, var(--color-bg)) 0%, var(--color-bg) 100%);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary-500) 22%, transparent);
+  overflow: hidden;
+}
+.viewer-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 100% at 95% 50%, transparent 48%, color-mix(in srgb, var(--color-primary-600) 12%, transparent) 48.3%, transparent 49.2%),
+    radial-gradient(ellipse 60% 100% at 95% 50%, transparent 62%, color-mix(in srgb, var(--color-primary-600) 10%, transparent) 62.3%, transparent 63.2%),
+    radial-gradient(ellipse 60% 100% at 95% 50%, transparent 78%, color-mix(in srgb, var(--color-primary-600) 8%, transparent) 78.3%, transparent 79.2%);
+  pointer-events: none;
+  z-index: 0;
+}
+.viewer-hero-inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-8);
+  align-items: end;
+  width: 100%;
+  max-width: 92rem;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+.viewer-hero-left { min-width: 0; }
+
+.viewer-hero-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+  flex-wrap: wrap;
+}
+.viewer-hero-status-live {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 4px var(--space-3);
+  background: var(--color-danger-500);
+  color: var(--color-neutral-900);
+  font-family: var(--font-family-heading);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border: 1px solid color-mix(in srgb, var(--color-danger-400) 70%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-danger-500) 40%, transparent),
+    0 0 12px -1px color-mix(in srgb, var(--color-danger-500) 60%, transparent);
+  animation: viewer-pulse-live 2.2s ease-in-out infinite;
+  white-space: nowrap;
+}
+.viewer-hero-status-live::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-neutral-900);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--color-primary-700) 80%, transparent);
+}
+.viewer-hero-status-live--reg {
+  background: var(--color-primary-600);
+  border-color: color-mix(in srgb, var(--color-primary-500) 70%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-primary-500) 40%, transparent),
+    0 0 12px -1px color-mix(in srgb, var(--color-primary-500) 60%, transparent);
+  animation: none;
+}
+.viewer-hero-status-live--done {
+  background: transparent;
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+  box-shadow: none;
+  animation: none;
+}
+.viewer-hero-status-live--done::before { background: var(--color-text-muted); box-shadow: none; }
+@keyframes viewer-pulse-live {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--color-danger-500) 40%, transparent),
+      0 0 12px -1px color-mix(in srgb, var(--color-danger-500) 60%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--color-danger-500) 80%, transparent),
+      0 0 24px 0 color-mix(in srgb, var(--color-danger-500) 70%, transparent);
+  }
+}
+.viewer-hero-status-phase {
+  font-family: var(--font-family-heading);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.viewer-hero-status-phase strong { color: var(--color-primary-700); font-weight: 600; }
+
+.viewer-hero-title {
+  font-family: var(--font-family-heading);
+  font-size: clamp(2rem, 4.2vw, 3.25rem);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1.05;
+  margin: 0;
+  color: var(--color-text-strong);
+  text-shadow: 0 1px 0 #000, 0 0 30px color-mix(in srgb, var(--color-primary-500) 15%, transparent);
+  text-wrap: balance;
+}
+.viewer-hero-subtitle {
+  font-family: var(--font-family-base);
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  margin: var(--space-3) 0 var(--space-4);
+  max-width: 60ch;
+}
+
+.viewer-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5) var(--space-6);
+  align-items: flex-end;
+}
+.viewer-hero-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.viewer-hero-meta-label {
+  font-family: var(--font-family-heading);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.viewer-hero-meta-value {
+  font-family: var(--font-family-heading);
+  font-size: 1rem;
+  color: var(--color-text-strong);
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.viewer-hero-meta-value--link {
+  color: var(--color-primary-700);
+  text-decoration: none;
+}
+.viewer-hero-meta-value--link:hover { color: var(--color-primary-800); text-decoration: underline; }
+
+.viewer-hero-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-3);
+}
+.viewer-hero-roles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: flex-end;
+}
+.viewer-hero-roles-label {
+  font-family: var(--font-family-heading);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.viewer-role-links {
+  display: flex;
+  gap: var(--space-2);
+}
+.viewer-role-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: color-mix(in srgb, var(--color-primary-500) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary-500) 30%, transparent);
+  font-family: var(--font-family-heading);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-primary-800);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+.viewer-role-link:hover {
+  background: color-mix(in srgb, var(--color-primary-500) 12%, transparent);
+  border-color: var(--color-primary-600);
+  color: var(--color-primary-900);
+}
+.viewer-role-link--disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.viewer-role-link--disabled:hover {
+  background: color-mix(in srgb, var(--color-primary-500) 6%, transparent);
+  border-color: color-mix(in srgb, var(--color-primary-500) 30%, transparent);
+  color: var(--color-primary-800);
+}
+.viewer-role-link-icon {
+  font-size: 0.6rem;
+  color: var(--color-primary-600);
+}
+
+/* --- Body and sections --------------------------------------------------- */
+
+.viewer-body {
+  padding: var(--space-6) var(--space-8);
+  width: 100%;
+  max-width: 92rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  box-sizing: border-box;
+}
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary-500) 22%, var(--color-border));
+  position: relative;
+  flex-wrap: wrap;
+}
+.section-header::before {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 80px;
+  height: 2px;
+  background: var(--color-primary-600);
+}
+.section-header-title {
+  font-family: var(--font-family-heading);
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-strong);
+  margin: 0;
+}
+.section-header-subtitle {
+  font-family: var(--font-family-mono);
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+/* --- Bracket ------------------------------------------------------------ */
+
+.bracket {
+  position: relative;
+  display: grid;
+  /* grid-template-columns / -rows come from inline style on the bracket
+     element so the layout can be SE (single row of N) or DE (two rows
+     where Losers Semis stack under Semifinals, Losers Final stacks
+     under Winners Final, and Grand Final spans both rows at the right). */
+  gap: var(--space-5) var(--space-6);
+  padding: var(--space-4);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--color-primary-600) 3%, var(--color-surface)) 0%, var(--color-surface) 100%);
+  border: 1px solid var(--color-border);
+  overflow-x: auto;
+  min-width: 0;
+}
+.bracket-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  justify-content: center;
+}
+.bracket-divider {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  align-self: center;
+  height: 0;
+  border-top: 1px dashed color-mix(in srgb, var(--color-primary-500) 35%, var(--color-border));
+}
+
+/* Connector-line SVG overlay drawn over the bracket grid. The JS at the
+   bottom of viewer-bracket.html sizes the viewBox to the grid's actual
+   pixel dimensions; this rule just positions it and pipes colour
+   through `color`. */
+.bracket-connector-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  color: color-mix(in srgb, var(--color-primary-600) 75%, var(--color-border));
+  z-index: 0;
+}
+.bracket-connector-svg path.is-winner {
+  stroke: var(--color-primary-500);
+  stroke-width: 2;
+  opacity: 0.9;
+}
+.bracket-col {
+  position: relative;
+  z-index: 1;
+}
+.bracket-col-label {
+  font-family: var(--font-family-heading);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-primary-700);
+  text-align: center;
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary-500) 25%, transparent);
+}
+.bracket-col-matches {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-around;
+  gap: var(--space-4);
+}
+
+.bracket-match {
+  position: relative;
+  background: color-mix(in srgb, var(--color-neutral-100) 80%, var(--color-surface));
+  border: 1px solid var(--color-border);
+  min-width: 11rem;
+}
+.bracket-match--pending {
+  border-color: color-mix(in srgb, var(--color-primary-500) 35%, var(--color-border));
+}
+.bracket-match--complete {
+  border-color: color-mix(in srgb, var(--color-success-500) 35%, var(--color-border));
+}
+.bracket-match--tbd {
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--color-border) 60%, transparent);
+  opacity: 0.78;
+}
+
+.bracket-match-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px var(--space-3);
+  font-family: var(--font-family-heading);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: color-mix(in srgb, var(--color-primary-500) 6%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary-500) 18%, var(--color-border));
+  color: var(--color-text-muted);
+}
+.bracket-match-head-label { color: var(--color-text); }
+.bracket-match-head-format { font-family: var(--font-family-mono); }
+
+.bracket-match-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: 4px var(--space-3);
+  font-family: var(--font-family-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+.bracket-match-status-primary { color: var(--color-text); }
+.bracket-match-status-secondary { color: var(--color-text-muted); }
+
+.bracket-slot {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-2);
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent);
+  font-family: var(--font-family-mono);
+  font-size: 0.82rem;
+  color: var(--color-text);
+}
+.bracket-slot:last-of-type { border-bottom: none; }
+.bracket-slot-handle {
+  font-size: 0.85rem;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bracket-slot-score {
+  font-family: var(--font-family-heading);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--color-text-muted);
+  min-width: 1rem;
+  text-align: right;
+}
+.bracket-slot--winner {
+  background: color-mix(in srgb, var(--color-primary-500) 8%, transparent);
+}
+.bracket-slot--winner .bracket-slot-handle {
+  color: var(--color-primary-800);
+  font-weight: 600;
+}
+.bracket-slot--winner .bracket-slot-score { color: var(--color-primary-700); }
+.bracket-slot--tbd .bracket-slot-handle { color: var(--color-text-muted); font-style: italic; }
+.bracket-slot--bye .bracket-slot-handle { color: var(--color-text-muted); }
+
+/* --- Standings + Schedule strip ----------------------------------------- */
+
+.viewer-strip {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: var(--space-6);
+}
+@media (max-width: 1180px) {
+  .viewer-strip { grid-template-columns: 1fr; }
+}
+
+.standings-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: var(--font-family-base);
+}
+.standings-table thead th {
+  font-family: var(--font-family-heading);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary-500) 25%, var(--color-border));
+}
+/* table-layout: fixed holds col-num and col-record at their declared widths
+   so col-player absorbs the remainder. table. prefix beats the older theme
+   rules. */
+table.standings-table { table-layout: fixed; }
+table.standings-table thead th.col-num { text-align: left; width: 3rem; }
+table.standings-table thead th.col-player,
+table.standings-table tbody td.col-player { text-align: left; padding-left: 0; width: auto; }
+table.standings-table thead th.col-record,
+table.standings-table tbody td.col-record { text-align: left; width: 6rem; }
+table.standings-table thead th.col-status,
+table.standings-table tbody td.col-status { text-align: left; width: 8rem; }
+/* Override the theme's wide first-column padding so the roman-numeral
+   col-num cell stays compact. table. prefix bumps specificity past
+   warhammer3-app.css's .standings-table td:first-child rule. */
+table.standings-table tbody tr td.col-num {
+  width: 2rem;
+  padding-left: 0;
+  padding-right: 0;
+}
+table.standings-table tbody tr td.col-num::before {
+  left: var(--space-3);
+  width: auto;
+  text-align: left;
+}
+.standings-table tbody td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+  font-size: 0.88rem;
+  color: var(--color-text);
+}
+.standings-table tbody tr.standings-row--advanced td {
+  background: color-mix(in srgb, var(--color-primary-500) 4%, transparent);
+}
+.standings-table td.col-num {
+  text-align: left;
+  font-family: var(--font-family-heading);
+  font-weight: 700;
+  color: var(--color-primary-700);
+}
+.standings-table td.col-record {
+  text-align: left;
+  font-family: var(--font-family-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+}
+.standings-table td.col-status { text-align: left; }
+.standings-handle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.standings-handle-text {
+  font-family: var(--font-family-mono);
+  font-size: 0.86rem;
+  color: inherit;
+}
+.standings-status {
+  font-family: var(--font-family-heading);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 2px var(--space-2);
+  border: 1px solid currentColor;
+  white-space: nowrap;
+}
+.standings-status--alive { color: var(--color-primary-700); }
+
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+}
+.schedule-row {
+  display: grid;
+  grid-template-columns: 7rem 1fr auto;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-3) var(--space-2);
+  border-bottom: 1px dashed color-mix(in srgb, var(--color-border) 70%, transparent);
+}
+.schedule-row:last-child { border-bottom: none; }
+.schedule-time {
+  font-family: var(--font-family-mono);
+  font-size: 0.84rem;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+.schedule-time-label {
+  display: block;
+  font-family: var(--font-family-heading);
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.schedule-match {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.schedule-match-pair {
+  font-family: var(--font-family-mono);
+  font-size: 0.86rem;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.schedule-match-pair-vs {
+  color: var(--color-text-muted);
+  margin: 0 var(--space-2);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.schedule-match-meta {
+  font-family: var(--font-family-mono);
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+}
+.schedule-state {
+  font-family: var(--font-family-heading);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 2px var(--space-2);
+  border: 1px solid currentColor;
+  white-space: nowrap;
+}
+.schedule-state--next { color: var(--color-primary-700); }
+.schedule-state--upcoming { color: var(--color-text-muted); }
+.schedule-row--next { background: color-mix(in srgb, var(--color-primary-500) 4%, transparent); }
+
+/* --- Entry + organizer panels at page bottom ---------------------------- */
+
+.viewer-action-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: color-mix(in srgb, var(--color-primary-500) 4%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-primary-500) 22%, var(--color-border));
+  border-left: 3px solid var(--color-primary-600);
+  flex-wrap: wrap;
+}
+.viewer-action-card-text {
+  flex: 1;
+  font-size: 0.92rem;
+  color: var(--color-text);
+}
+.viewer-action-card-text.muted { color: var(--color-text-muted); }
+.viewer-action .entry-error {
+  flex-basis: 100%;
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-danger-400);
+  border: 1px solid color-mix(in srgb, var(--color-danger-500) 50%, transparent);
+  background: color-mix(in srgb, var(--color-danger-500) 6%, transparent);
+}
+
+.muted { color: var(--color-text-muted); }

@@ -556,7 +556,15 @@
               ;; Generate next round in current phase
               :else
               (let [format    (or (:format round-config) 1)
-                    pairings  (generate-pairings (:phase-type phase) (:standings state) all-matches qualified)
+                    pairings  (if (and (= "single-elimination" (:phase-type phase))
+                                       (pos? next-round))
+                                ;; Subsequent SE rounds advance the bracket
+                                ;; from the previous round's winners; only
+                                ;; round 0 seeds from standings.
+                                (rules/advance-winners-bracket-round
+                                 (filter #(= (dec next-round) (:round-index %))
+                                         phase-matches))
+                                (generate-pairings (:phase-type phase) (:standings state) all-matches qualified))
                     matches   (create-round-matches dependencies tournament-eid phase-index next-round "winners" format pairings)
                     new-state (update-in state [:phases phase-index :rounds next-round]
                                          assoc :match-eids (mapv :eid matches)
