@@ -115,38 +115,293 @@
      :headers {"Content-Type" "text/html; charset=utf-8"}
      :body    (render/render-component "tournament-round.html" {})}))
 
+(def ^:private phase-type-labels
+  {"single-elimination" "Single Elimination"
+   "double-elimination" "Double Elimination"
+   "swiss"              "Swiss"
+   "round-robin"        "Round Robin"})
+
+(defn- column-label
+  "Bracket column heading. Branches by bracket type so DE's losers/grand-final
+   rounds get appropriate labels instead of `Final` clashing with WB."
+  [bracket round-index total-rounds]
+  (let [distance-from-end (- (dec total-rounds) round-index)]
+    (case bracket
+      "grand-final" "Grand Final"
+      "losers"      (case distance-from-end
+                      0 "Losers Final"
+                      1 "Losers Semis"
+                      (str "Losers R" (inc round-index)))
+      "winners"     (case distance-from-end
+                      0 "Final"
+                      1 "Semifinals"
+                      2 "Quarterfinals"
+                      (str "Round " (inc round-index)))
+      ;; fallback for swiss/round-robin rounds rendered through this
+      ;; same helper.
+      (str "Round " (inc round-index)))))
+
+(defn- match-label
+  "Per-card label inside a bracket column."
+  [bracket round-index total-rounds match-position]
+  (let [distance-from-end (- (dec total-rounds) round-index)]
+    (case bracket
+      "grand-final" "GF"
+      "losers"      (str "LB R" (inc round-index) " M" match-position)
+      "winners"     (case distance-from-end
+                      0 "F"
+                      1 (str "SF " match-position)
+                      2 (str "QF " match-position)
+                      (str "R" (inc round-index) " M" match-position))
+      (str "R" (inc round-index) " M" match-position))))
+
+(defn- with-game-counts
+  "Adds :p1-games-won and :p2-games-won to a match by counting :winner-sub
+   in the match's games. Bracket cells display these instead of W/L."
+  [dependencies match]
+  (let [games (domain/get-games-for-match dependencies (:eid match))
+        wins  (frequencies (keep :winner-sub games))]
+    (assoc match
+           :p1-games-won (get wins (:player-one-sub match) 0)
+           :p2-games-won (get wins (:player-two-sub match) 0))))
+
+(defn- match-status-subheader
+  "Returns :status-primary + :status-secondary strings for a bracket match
+   based on its state. The viewer renders these as a two-line subfooter
+   under the card."
+  [{:keys [placeholder? p1-tbd? p2-tbd? p1-games-won p2-games-won status]}]
+  (let [games-played (+ (or p1-games-won 0) (or p2-games-won 0))
+        awaiting?    (or placeholder?
+                         (and (= "pending" status) (or p1-tbd? p2-tbd?)))]
+    (cond
+      awaiting?
+      {:status-primary "Awaiting bracket" :status-secondary "·"}
+
+      (= "complete" status)
+      {:status-primary "Final" :status-secondary "Settled"}
+
+      (and (= "pending" status) (pos? games-played))
+      {:status-primary (str "Game " (inc games-played)) :status-secondary "Live"}
+
+      :else
+      {:status-primary "Scheduled" :status-secondary "—"})))
+
+(defn- decorate-bracket-round
+  "Annotates one round of a bracket with the labels and per-match flags
+   the template needs (Selmer can't do arithmetic comparisons, so it all
+   has to be precomputed). `bracket` is `winners` / `losers` /
+   `grand-final` so column/match labels branch correctly for DE."
+  [bracket {:keys [round total-rounds matches] :as round-group}]
+  (assoc round-group
+         :column-label (column-label bracket round total-rounds)
+         :matches      (mapv (fn [position match]
+                               (let [p1         (:player-one-sub match)
+                                     p2         (:player-two-sub match)
+                                     winner     (:winner-sub match)
+                                     complete?  (= "complete" (:status match))
+                                     base-match (assoc match
+                                                       :match-label  (match-label bracket round total-rounds position)
+                                                       :p1-winner?   (and complete? (= winner p1))
+                                                       :p2-winner?   (and complete? (= winner p2))
+                                                       :p1-loser?    (and complete? (some? p1) (not= winner p1))
+                                                       :p2-loser?    (and complete? (some? p2) (not= winner p2))
+                                                       :p1-tbd?      (nil? p1)
+                                                       :p2-tbd?      (nil? p2)
+                                                       :p2-bye?      (and (some? p1) (nil? p2))
+                                                       :placeholder? (nil? (:eid match)))]
+                                 (merge base-match (match-status-subheader base-match))))
+                             (iterate inc 1)
+                             matches)))
+
+(defn- relabel-winners-final
+  "In a double-elimination bracket the last WB round is the 'Winners Final',
+   not the tournament final — that's the grand final. Override the column
+   label + per-match label so the unified bracket strip reads correctly."
+  [wb-rounds]
+  (if (seq wb-rounds)
+    (update wb-rounds (dec (count wb-rounds))
+            (fn [round]
+              (-> round
+                  (assoc :column-label "Winners Final")
+                  (update :matches
+                          (fn [matches]
+                            (mapv #(assoc % :match-label "WF") matches))))))
+    wb-rounds))
+
+(defn- assign-grid
+  "Decorates each round-cell with grid placement metadata: `:grid-style`
+   (CSS fragment for inline style), plus `:bracket-col`, `:bracket-row`,
+   `:bracket-row-span` for the connector JS to pair adjacent cells."
+  ([column row cell] (assign-grid column row 1 cell))
+  ([column row row-span cell]
+   (assoc cell
+          :grid-style       (format "grid-column: %d; grid-row: %d / span %d;"
+                                    column row row-span)
+          :bracket-col      column
+          :bracket-row      row
+          :bracket-row-span row-span)))
+
+(defn- decorate-bracket-phase
+  "Annotates a phase group with grid-positioned cells for the unified
+   viewer bracket. Covers SE, DE (WB on top, LB stacked below, GF as the
+   final column spanning both rows), and Swiss / round-robin (flat row).
+
+   Exposes:
+   - `:bracket-cells` — the flat list of decorated round-cells, each
+     carrying `:grid-style` for explicit grid placement.
+   - `:bracket-cols`  — column count for `grid-template-columns`.
+   - `:bracket-rows`  — row count (1 for SE/Swiss/RR, 2 for DE)."
+  [phase-group]
+  (let [decorated (cond-> phase-group
+                    (:winners-bracket phase-group) (update :winners-bracket #(mapv (partial decorate-bracket-round "winners") %))
+                    (:losers-bracket phase-group)  (update :losers-bracket  #(mapv (partial decorate-bracket-round "losers") %))
+                    (:grand-final phase-group)     (update :grand-final     #(mapv (partial decorate-bracket-round "grand-final") %))
+                    (:rounds phase-group)          (update :rounds          #(mapv (partial decorate-bracket-round "rounds") %)))
+        de?       (boolean (or (:losers-bracket decorated) (:grand-final decorated)))
+        wb        (cond-> (:winners-bracket decorated)
+                    de? relabel-winners-final)
+        lb        (or (:losers-bracket decorated) [])
+        gf        (or (:grand-final decorated) [])
+        rounds    (or (:rounds decorated) [])
+        cells     (cond
+                    de?
+                    (let [n     (count wb)
+                          ;; 3-row grid: WB on row 1, dashed divider on
+                          ;; row 2, LB on row 3. GF spans all three so
+                          ;; it sits flush at the right edge.
+                          wb-cs (map-indexed (fn [i r] (assign-grid (inc i) 1 r)) wb)
+                          ;; Drop the per-LB column label — the WB
+                          ;; column above already labels each column.
+                          lb-cs (map-indexed (fn [i r]
+                                               (assign-grid (+ i 2) 3 (assoc r :column-label nil)))
+                                             lb)
+                          gf-cs (map (fn [r] (assign-grid (inc n) 1 3 r)) gf)]
+                      (vec (concat wb-cs lb-cs gf-cs)))
+
+                    (seq rounds)
+                    (vec (map-indexed (fn [i r] (assign-grid (inc i) 1 r)) rounds))
+
+                    :else
+                    (vec (map-indexed (fn [i r] (assign-grid (inc i) 1 r)) wb)))
+        cols      (cond
+                    de?         (inc (count wb))
+                    (seq rounds) (count rounds)
+                    :else        (count wb))
+        rows      (if de? 3 1)]
+    (assoc decorated
+           :bracket-cells cells
+           :bracket-cols  cols
+           :bracket-rows  rows
+           :bracket-divider? de?)))
+
+(def ^:private bracket-labels
+  {"winners"     "Winners"
+   "losers"      "Losers"
+   "grand-final" "Grand Final"})
+
+(defn- round-buckets-for-phase
+  "Flattens every bucket inside a phase-group into a flat round-list,
+   tagged with the bracket it came from. Covers Swiss/RR `:rounds`, SE
+   `:winners-bracket`, plus DE's `:losers-bracket` and `:grand-final`."
+  [phase-group]
+  (let [tag-bracket (fn [bracket rounds]
+                      (mapv #(assoc % :bracket-label (bracket-labels bracket))
+                            (or rounds [])))]
+    (concat (tag-bracket "winners"     (or (:rounds phase-group) (:winners-bracket phase-group)))
+            (tag-bracket "losers"      (:losers-bracket phase-group))
+            (tag-bracket "grand-final" (:grand-final phase-group)))))
+
+(defn- pending-matches-schedule
+  "Flat, round-ordered list of pending matches across every phase and
+   bracket, shaped for the viewer's Schedule list. Drops placeholder
+   rows (no :eid) and complete matches. First entry is marked `:up-next?`
+   so the template highlights it without peeking at forloop.first."
+  [matches-by-phase]
+  (let [round-buckets (mapcat round-buckets-for-phase matches-by-phase)
+        rows          (->> round-buckets
+                           (mapcat (fn [{:keys [round phase-type matches bracket-label]}]
+                                     (let [phase-label (or (phase-type-labels phase-type)
+                                                           phase-type)
+                                           round-label (cond
+                                                         (= "Grand Final" bracket-label) bracket-label
+                                                         (= "Winners"     bracket-label) (str "Round " (inc round))
+                                                         :else                           (str bracket-label " R" (inc round)))]
+                                       (->> matches
+                                            (filter :eid)
+                                            (filter #(= "pending" (:status %)))
+                                            (map #(assoc %
+                                                         :round-label round-label
+                                                         :phase-label phase-label))))))
+                           vec)]
+    (if (empty? rows)
+      rows
+      (assoc-in rows [0 :up-next?] true))))
+
+(defn- current-round-label
+  "Returns the column-label of the bracket cell containing the next
+   pending match across all phases. Used in the hero pill so the viewer
+   shows e.g. `Quarterfinals` while QF matches are still being played."
+  [decorated-phases up-next-eid]
+  (when up-next-eid
+    (let [cells (mapcat :bracket-cells decorated-phases)
+          cell  (first (filter (fn [c]
+                                 (some #(= up-next-eid (:eid %)) (:matches c)))
+                               cells))]
+      (:column-label cell))))
+
+(defn- decorate-standings
+  "Sorts standings by points descending, then annotates each row with its
+   1-based rank and a boolean for whether it falls within the qualifier cut."
+  [standings qualifier-count]
+  (mapv (fn [rank row]
+          (assoc row
+                 :rank      rank
+                 :advanced? (and qualifier-count (<= rank qualifier-count))))
+        (iterate inc 1)
+        (sort-by #(- (or (:points %) 0)) standings)))
+
 (defmethod integrant.core/init-key ::tournament-view
   [_init-key dependencies]
   (partial web.view/standard-entity-view-handler
            (fn [eid] (web.tournament.share/get-tournament-by-eid dependencies eid))
            "tournament-index.html"
            (fn [data request]
-             (let [tournament-eid        (:eid data)
-                   state                 (domain/get-tournament-state dependencies tournament-eid)
-                   entries               (domain/get-entries dependencies tournament-eid)
-                   raw-matches           (domain/get-matches-for-tournament dependencies tournament-eid)
-                   phases                (:phases state)
-                   qualifier-count       (or (:qualifier-count state) (count (:standings state)))
-                   user-sub              (get-in request [:ory-session :identity :id])
-                   has-entry             (some #(= user-sub (:player-sub %)) entries)
-                   now                   (java.time.Instant/now)
-                   reg-open              (domain/is-registration-open? state now)
-                   is-organizer          (= user-sub (:created-by-sub data))
-                   organizer-has-actions (and is-organizer
-                                              (contains? #{"registration" "active"} (:status state)))
-                   league                (when (:league-eid data)
-                                           (domain/get-league-by-eid dependencies (:league-eid data)))
-                   season                (when (:season-eid data)
-                                           (domain/get-season-by-eid dependencies (:season-eid data)))]
-               {:tournament-state      state
-                :entries               entries
-                :matches-by-phase      (domain/group-matches-by-phase raw-matches phases qualifier-count)
-                :league                league
-                :season                season
-                :has-entry             has-entry
-                :registration-open     reg-open
-                :is-organizer          is-organizer
-                :organizer-has-actions organizer-has-actions}))))
+             (let [tournament-eid       (:eid data)
+                   state                (domain/get-tournament-state dependencies tournament-eid)
+                   entries              (domain/get-entries dependencies tournament-eid)
+                   raw-matches          (mapv (partial with-game-counts dependencies)
+                                              (domain/get-matches-for-tournament dependencies tournament-eid))
+                   phases               (:phases state)
+                   qualifier-count      (or (:qualifier-count state) (count (:standings state)))
+                   user-sub             (get-in request [:ory-session :identity :id])
+                   has-entry            (some #(= user-sub (:player-sub %)) entries)
+                   now                  (java.time.Instant/now)
+                   reg-open             (domain/is-registration-open? state now)
+                   is-organizer         (= user-sub (:created-by-sub data))
+                   league               (when (:league-eid data)
+                                          (domain/get-league-by-eid dependencies (:league-eid data)))
+                   season               (when (:season-eid data)
+                                          (domain/get-season-by-eid dependencies (:season-eid data)))
+                   matches-by-phase     (domain/group-matches-by-phase raw-matches phases qualifier-count)
+                   decorated-phases     (mapv decorate-bracket-phase matches-by-phase)
+                   current-phase-config (get phases (:current-phase state))
+                   current-phase-label  (or (phase-type-labels (:phase-type current-phase-config))
+                                            (:phase-type current-phase-config))
+                   phase-count          (count phases)
+                   schedule             (pending-matches-schedule matches-by-phase)]
+               {:tournament-state    (update state :standings decorate-standings (:qualifier-count state))
+                :entries             entries
+                :matches-by-phase    decorated-phases
+                :schedule            schedule
+                :current-phase-label current-phase-label
+                :current-round-label (current-round-label decorated-phases (:eid (first schedule)))
+                :phase-count         phase-count
+                :single-phase?       (= 1 phase-count)
+                :league              league
+                :season              season
+                :has-entry           has-entry
+                :registration-open   reg-open
+                :is-organizer        is-organizer}))))
 
 ;; ─── Post-match modal helpers ───────────────────────────────────────────────
 

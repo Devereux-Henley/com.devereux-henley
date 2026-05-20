@@ -49,12 +49,24 @@ async function startTournament(request, eid) {
 }
 
 async function configureSwissPhase(request, eid) {
-  await request.put(`${BASE}/api/tournament/${eid}/phase`, {
+  const res = await request.put(`${BASE}/api/tournament-phase-configuration?tournament-eid=${eid}`, {
     headers: apiHeaders('dev-admin'),
     data: {
       phases: [{ 'phase-type': 'swiss', rounds: [{ 'round-index': 0, format: 1 }] }],
     },
   });
+  expect(res.status()).toBe(200);
+}
+
+async function configureSinglePhase(request, eid) {
+  const res = await request.put(`${BASE}/api/tournament-phase-configuration?tournament-eid=${eid}`, {
+    headers: apiHeaders('dev-admin'),
+    data: {
+      phases: [{ 'phase-type': 'single-elimination', rounds: [{ 'round-index': 0, format: 1 }] }],
+      'qualifier-count': 2,
+    },
+  });
+  expect(res.status()).toBe(200);
 }
 
 async function generateRound(request, eid) {
@@ -94,12 +106,12 @@ test.describe('Tournament UI', () => {
     await expect(page.locator('#registration-closes-at')).toBeVisible();
   });
 
-  test('tournament detail page shows entries section', async ({ page, request }) => {
+  test('tournament detail page shows standings + entry action', async ({ page, request }) => {
     const eid = await createTournament(request);
     await page.goto(`/view/game/${GAME_EID}/tournament/${eid}/index.html`);
     await expect(page).toHaveTitle(/E2E Test Tournament/);
-    await expect(page.locator('h3', { hasText: 'Entries' })).toBeVisible();
-    await expect(page.locator('button', { hasText: 'Enter' })).toBeVisible();
+    await expect(page.locator('h3', { hasText: 'Standings' })).toBeVisible();
+    await expect(page.locator('button', { hasText: 'Enter Tournament' })).toBeVisible();
   });
 
   test('tournament detail shows withdraw button after entering', async ({ page, request }) => {
@@ -107,18 +119,11 @@ test.describe('Tournament UI', () => {
     await enter(request, eid, 'dev-admin');
     await page.goto(`/view/game/${GAME_EID}/tournament/${eid}/index.html`);
     await expect(page.locator('button', { hasText: 'Withdraw' })).toBeVisible();
-    await expect(page.locator('li', { hasText: 'dev-admin' })).toBeVisible();
-  });
-
-  test('organizer sees Start Tournament button', async ({ page, request }) => {
-    const eid = await createTournament(request);
-    await page.goto(`/view/game/${GAME_EID}/tournament/${eid}/index.html`);
-    await expect(page.locator('button', { hasText: 'Start Tournament' })).toBeVisible();
-    await expect(page.locator('button', { hasText: 'Close Registration' })).toBeVisible();
+    await expect(page.locator('table.standings-table tbody tr', { hasText: 'dev-admin' })).toBeVisible();
   });
 });
 
-test.describe('Tournament Detail UI — Tabs', () => {
+test.describe('Tournament Viewer page', () => {
   test.beforeEach(async ({ context }) => {
     await context.addCookies([
       {
@@ -132,31 +137,28 @@ test.describe('Tournament Detail UI — Tabs', () => {
     ]);
   });
 
-  test('entrants tab is selected on initial load', async ({ page, request }) => {
+  test('viewer hero shows status badge and title', async ({ page, request }) => {
     const eid = await createTournament(request);
     await page.goto(`/view/game/${GAME_EID}/tournament/${eid}/index.html`);
-    await expect(page.locator('#tab-entrants')).toHaveAttribute('aria-selected', 'true');
-    await expect(page.locator('#panel-entrants')).toBeVisible();
+    await expect(page.locator('.viewer-hero-title', { hasText: 'E2E Test Tournament' })).toBeVisible();
+    await expect(page.locator('.viewer-hero-status-live')).toBeVisible();
   });
 
-  test('clicking a phase tab lazy-loads the phase panel via htmx', async ({ page, request }) => {
+  test('after start + round generation, bracket section renders matches and schedule lists pending', async ({ page, request }) => {
     const eid = await createTournament(request);
-    await configureSwissPhase(request, eid);
+    await configureSinglePhase(request, eid);
     await enter(request, eid, 'dev-admin');
     await enter(request, eid, 'dev-player-one');
     await startTournament(request, eid);
     await generateRound(request, eid);
 
     await page.goto(`/view/game/${GAME_EID}/tournament/${eid}/index.html`);
-    await expect(page.locator('#panel-phase-0')).toBeHidden();
 
-    await page.locator('#tab-phase-0').click();
+    await expect(page.locator('h3', { hasText: 'Bracket' })).toBeVisible();
+    await expect(page.locator('.bracket-col-label')).toHaveText('Final');
+    await expect(page.locator('.bracket-slot', { hasText: 'dev-admin' })).toBeVisible();
 
-    await expect(page.locator('#tab-phase-0')).toHaveAttribute('aria-selected', 'true');
-    await expect(page.locator('#panel-phase-0')).toBeVisible();
-    await expect(page.locator('#panel-phase-0 table')).toBeVisible();
-    await expect(page.locator('#panel-phase-0 .tourney-match-list')).toBeVisible();
-    await expect(page.locator('#tab-entrants')).toHaveAttribute('aria-selected', 'false');
-    await expect(page.locator('#panel-entrants')).toBeHidden();
+    await expect(page.locator('h3', { hasText: 'Schedule' })).toBeVisible();
+    await expect(page.locator('.schedule-row.schedule-row--next')).toBeVisible();
   });
 });

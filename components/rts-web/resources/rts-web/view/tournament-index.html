@@ -2,217 +2,231 @@
 
 {% block title %}{{data.name}} | {{game.name}} | RTS-UI{% endblock %}
 
-{% block page-styles %}
-<link rel="preload" href="/style/post-match.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
-<noscript><link rel="stylesheet" href="/style/post-match.css"/></noscript>
-{% endblock %}
-
 {% block content %}
-<div id="tournament-stage" class="tourney-page">
+<div id="tournament-stage" class="viewer-page">
 
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- Hero                                                           -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
-    <header class="tourney-hero" aria-labelledby="tournament-heading">
-        <div class="tourney-hero-inner">
-            <div>
-                <div class="cluster cluster-2" style="align-items: center; gap: var(--space-3);">
-                    <h2 id="tournament-heading" class="tourney-hero-title">{{data.name}}</h2>
-                    <span class="badge
-                        {% ifequal tournament-state.status "registration" %}badge-primary{% endifequal %}
-                        {% ifequal tournament-state.status "active" %}badge-success{% endifequal %}
-                        {% ifequal tournament-state.status "complete" %}badge-danger{% endifequal %}
-                        {% ifequal tournament-state.status "cancelled" %}badge-danger{% endifequal %}
-                    ">{{tournament-state.status}}</span>
+    <header class="viewer-hero" aria-labelledby="tournament-heading">
+        <div class="viewer-hero-inner">
+            <div class="viewer-hero-left">
+                <div class="viewer-hero-status">
+                    {% ifequal tournament-state.status "active" %}
+                    <span class="viewer-hero-status-live">Live</span>
+                    {% endifequal %}
+                    {% ifequal tournament-state.status "registration" %}
+                    <span class="viewer-hero-status-live viewer-hero-status-live--reg">Registration</span>
+                    {% endifequal %}
+                    {% ifequal tournament-state.status "complete" %}
+                    <span class="viewer-hero-status-live viewer-hero-status-live--done">Complete</span>
+                    {% endifequal %}
+                    {% ifequal tournament-state.status "cancelled" %}
+                    <span class="viewer-hero-status-live viewer-hero-status-live--done">Cancelled</span>
+                    {% endifequal %}
+                    {% if current-phase-label %}
+                    <span class="viewer-hero-status-phase">
+                        Phase {{tournament-state.current-phase|add:1}} of {{phase-count}} ·
+                        <strong>{{current-phase-label}}</strong>
+                        {% if current-round-label %} · {{current-round-label}}{% endif %}
+                    </span>
+                    {% endif %}
+                </div>
+                <h2 id="tournament-heading" class="viewer-hero-title">{{data.name}}</h2>
+                {% if data.description %}
+                <p class="viewer-hero-subtitle">{{data.description}}</p>
+                {% endif %}
+                <div class="viewer-hero-meta">
+                    <div class="viewer-hero-meta-item">
+                        <span class="viewer-hero-meta-label">Hosted by</span>
+                        <span class="viewer-hero-meta-value">{{data.created-by-sub}}</span>
+                    </div>
                     {% if league %}
-                    <a class="badge badge-league"
-                       href="/view/game/{{game-eid}}/league/{{league.eid}}/index.html"
-                       title="Part of league {{league.name}}">
-                        {{league.name}}{% if season %} · {{season.display-name}}{% endif %}
+                    <div class="viewer-hero-meta-item">
+                        <span class="viewer-hero-meta-label">League</span>
+                        <a class="viewer-hero-meta-value viewer-hero-meta-value--link"
+                           href="/view/game/{{game-eid}}/league/{{league.eid}}/index.html">
+                            {{league.name}}{% if season %} · {{season.display-name}}{% endif %}
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if any has-entry is-organizer %}
+            <div class="viewer-hero-right">
+                <div class="viewer-role-links">
+                    {% if has-entry %}
+                    <a class="viewer-role-link viewer-role-link--disabled"
+                       aria-disabled="true"
+                       title="Player console — coming soon">
+                        <span class="viewer-role-link-icon" aria-hidden="true">▶</span>
+                        Player Console
+                    </a>
+                    {% endif %}
+                    {% if is-organizer %}
+                    <a class="viewer-role-link viewer-role-link--disabled"
+                       aria-disabled="true"
+                       title="Organizer console — coming soon">
+                        <span class="viewer-role-link-icon" aria-hidden="true">⚙</span>
+                        Organizer Console
                     </a>
                     {% endif %}
                 </div>
-                <p class="tourney-hero-desc">{{data.description}}</p>
             </div>
+            {% endif %}
         </div>
     </header>
 
-    <div class="tourney-body">
+    <div class="viewer-body">
 
-        <!-- ═══════════════════════════════════════════════════════════ -->
-        <!-- Sidebar: Status, Registration, Actions                     -->
-        <!-- ═══════════════════════════════════════════════════════════ -->
-        <aside class="tourney-sidebar" aria-label="Tournament info">
-
-            <!-- Registration card -->
-            <div class="tourney-info-card">
-                <div class="tourney-info-card-header">Registration</div>
-                <div class="tourney-info-card-body">
-                    <dl class="tourney-dl">
-                        {% if tournament-state.registration.opens-at %}
-                        <dt>Opens</dt>
-                        <dd>{{tournament-state.registration.opens-at}}</dd>
-                        {% endif %}
-                        {% if tournament-state.registration.closes-at %}
-                        <dt>Closes</dt>
-                        <dd>{{tournament-state.registration.closes-at}}</dd>
-                        {% endif %}
-                        {% if tournament-state.registration.timezone %}
-                        <dt>Timezone</dt>
-                        <dd>{{tournament-state.registration.timezone}}</dd>
-                        {% endif %}
-                        {% if tournament-state.registration.closed-early %}
-                        <dt>Early Close</dt>
-                        <dd><span class="badge badge-warning">Closed early</span></dd>
-                        {% endif %}
-                    </dl>
-                </div>
-            </div>
-
-            <!-- Player action -->
-            {% if session %}
-            {% ifequal tournament-state.status "registration" %}
-            <div class="tourney-info-card">
-                <div class="tourney-info-card-header">Your Entry</div>
-                <div class="tourney-info-card-body">
-                    {% if has-entry %}
-                    <p style="margin-bottom: var(--space-3);">You are registered.</p>
-                    <form hx-delete="/actions/tournament/{{data.eid}}/entry/me" hx-swap="none">
-                        <button type="submit" class="btn btn-danger btn-sm" style="width:100%;">Withdraw</button>
-                    </form>
-                    {% elif registration-open %}
-                    <form hx-post="/actions/tournament/{{data.eid}}/entry/me" hx-swap="none">
-                        <button type="submit" class="btn btn-primary" style="width:100%;">Enter Tournament</button>
-                    </form>
+        <!-- ─── Bracket ─── -->
+        {% for phase-group in matches-by-phase %}
+        {% if phase-group.bracket-cells|not-empty? %}
+        <section aria-labelledby="bracket-{{phase-group.phase}}-heading">
+            <header class="section-header">
+                <h3 class="section-header-title" id="bracket-{{phase-group.phase}}-heading">
+                    {% if single-phase? %}
+                        {% ifequal phase-group.phase-type "swiss" %}Rounds{% endifequal %}
+                        {% ifequal phase-group.phase-type "round-robin" %}Rounds{% endifequal %}
+                        {% ifequal phase-group.phase-type "single-elimination" %}Bracket{% endifequal %}
+                        {% ifequal phase-group.phase-type "double-elimination" %}Bracket{% endifequal %}
                     {% else %}
-                    <p class="tourney-closed-msg">Registration is closed.</p>
+                        Phase {{phase-group.phase|add:1}}
                     {% endif %}
-                    <div id="entry-error" class="entry-error" role="alert" aria-live="assertive" hidden></div>
-                </div>
-            </div>
-            {% endifequal %}
-            {% endif %}
+                </h3>
+            </header>
+            {% with cells=phase-group.bracket-cells cols=phase-group.bracket-cols rows=phase-group.bracket-rows divider?=phase-group.bracket-divider? %}{% include "rts-web/components/tournament/viewer-bracket.html" %}{% endwith %}
+        </section>
+        {% endif %}
+        {% endfor %}
 
-            <!-- Phase config display -->
-            {% if tournament-state.phases|not-empty? %}
-            <div class="tourney-info-card">
-                <div class="tourney-info-card-header">Phases</div>
-                <div class="tourney-info-card-body">
-                    {% for phase in tournament-state.phases %}
-                    <div class="tourney-phase-item {% ifequal forloop.counter0 tournament-state.current-phase %}tourney-phase-item--active{% endifequal %}">
-                        <span class="tourney-phase-label">{{phase.phase-type}}</span>
-                        <span class="tourney-phase-rounds">{{phase.rounds|length}} rounds</span>
+        <!-- ─── Standings + Schedule ─── -->
+        <section class="viewer-strip" aria-labelledby="standings-heading schedule-heading">
+            <div>
+                <header class="section-header">
+                    <h3 class="section-header-title" id="standings-heading">Standings</h3>
+                    <span class="section-header-subtitle">
+                        {% if tournament-state.qualifier-count %}Top {{tournament-state.qualifier-count}} advance{% else %}{{entries|length}} entrants{% endif %}
+                    </span>
+                </header>
+                {% if tournament-state.standings|not-empty? %}
+                <table class="standings-table">
+                    <caption class="sr-only">Tournament standings sorted by points</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col" class="col-num">#</th>
+                            <th scope="col" class="col-player">Player</th>
+                            <th scope="col" class="col-record">Record</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for standing in tournament-state.standings %}
+                        <tr class="standings-row{% if standing.advanced? %} standings-row--advanced{% endif %}">
+                            <td class="col-num"></td>
+                            <td class="col-player">
+                                <span class="standings-handle">
+                                    <span class="standings-handle-text">{{standing.player-sub}}</span>
+                                </span>
+                            </td>
+                            <td class="col-record">{{standing.wins}}-{{standing.losses}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% elif entries|not-empty? %}
+                <table class="standings-table">
+                    <caption class="sr-only">Tournament entrants</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col" class="col-num">#</th>
+                            <th scope="col" class="col-player">Player</th>
+                            <th scope="col" class="col-status">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in entries %}
+                        <tr class="standings-row standings-row--entry">
+                            <td class="col-num"></td>
+                            <td class="col-player">
+                                <span class="standings-handle">
+                                    <span class="standings-handle-text">{{entry.player-sub}}</span>
+                                </span>
+                            </td>
+                            <td class="col-status">
+                                <span class="standings-status standings-status--alive">Entered</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="muted">No entrants yet.</p>
+                {% endif %}
+            </div>
+            <div>
+                <header class="section-header">
+                    <h3 class="section-header-title" id="schedule-heading">Schedule</h3>
+                    <span class="section-header-subtitle">Pending matches</span>
+                </header>
+                {% if schedule|not-empty? %}
+                <div class="schedule-list">
+                    {% for s in schedule %}
+                    <div class="schedule-row{% if s.up-next? %} schedule-row--next{% else %} schedule-row--upcoming{% endif %}">
+                        <div class="schedule-time">
+                            <span class="schedule-time-label">{{s.phase-label}}</span>
+                            {{s.round-label}}
+                        </div>
+                        <div class="schedule-match">
+                            <div class="schedule-match-pair">
+                                {{s.player-one-sub}}
+                                <span class="schedule-match-pair-vs">vs</span>
+                                {% if s.player-two-sub %}{{s.player-two-sub}}{% else %}TBD{% endif %}
+                            </div>
+                            <div class="schedule-match-meta">Bo{{s.format}}</div>
+                        </div>
+                        <span class="schedule-state{% if s.up-next? %} schedule-state--next{% else %} schedule-state--upcoming{% endif %}">
+                            {% if s.up-next? %}Up Next{% else %}Scheduled{% endif %}
+                        </span>
                     </div>
                     {% endfor %}
-                    {% if tournament-state.qualifier-count %}
-                    <div class="tourney-qualifier-note">Top {{tournament-state.qualifier-count}} advance</div>
-                    {% endif %}
                 </div>
+                {% else %}
+                <p class="muted">No pending matches.</p>
+                {% endif %}
             </div>
-            {% endif %}
+        </section>
 
-            <!-- Organizer controls -->
-            {% if organizer-has-actions %}
-            <div class="tourney-info-card tourney-organizer-card">
-                <div class="tourney-info-card-header">Organizer Controls</div>
-                <div class="tourney-info-card-body stack stack-2">
-                    {% ifequal tournament-state.status "registration" %}
-                    <form hx-post="/actions/tournament/{{data.eid}}/close-registration" hx-swap="none">
-                        <button type="submit" class="btn btn-secondary btn-sm" style="width:100%;">Close Registration</button>
-                    </form>
-                    <form hx-post="/actions/tournament/{{data.eid}}/start" hx-swap="none">
-                        <button type="submit" class="btn btn-primary btn-sm" style="width:100%;">Start Tournament</button>
-                    </form>
-                    {% endifequal %}
-                    {% ifequal tournament-state.status "active" %}
-                    <form hx-post="/actions/tournament/{{data.eid}}/round" hx-swap="none">
-                        <button type="submit" class="btn btn-primary btn-sm" style="width:100%;">Generate Next Round</button>
-                    </form>
-                    <form hx-post="/actions/tournament/{{data.eid}}/complete" hx-swap="none">
-                        <button type="submit" class="btn btn-secondary btn-sm" style="width:100%;">Complete Tournament</button>
-                    </form>
-                    {% endifequal %}
-                    {% ifequal tournament-state.status "registration" %}
-                    <form hx-post="/actions/tournament/{{data.eid}}/cancel" hx-swap="none">
-                        <button type="submit" class="btn btn-danger btn-sm" style="width:100%;">Cancel Tournament</button>
-                    </form>
-                    {% endifequal %}
-                    {% ifequal tournament-state.status "active" %}
-                    <form hx-post="/actions/tournament/{{data.eid}}/cancel" hx-swap="none">
-                        <button type="submit" class="btn btn-danger btn-sm" style="width:100%;">Cancel Tournament</button>
-                    </form>
-                    {% endifequal %}
-                </div>
+        <!-- ─── Player entry action ─── -->
+        {% if session %}
+        {% ifequal tournament-state.status "registration" %}
+        <section class="viewer-action" aria-labelledby="entry-heading">
+            <header class="section-header">
+                <h3 class="section-header-title" id="entry-heading">Your Entry</h3>
+                <span class="section-header-subtitle">
+                    {% if tournament-state.registration.closes-at %}Closes {{tournament-state.registration.closes-at}}{% endif %}
+                </span>
+            </header>
+            <div class="viewer-action-card">
+                {% if has-entry %}
+                <div class="viewer-action-card-text">You are registered for this tournament.</div>
+                <form hx-delete="/actions/tournament/{{data.eid}}/entry/me" hx-swap="none">
+                    <button type="submit" class="btn btn-danger btn-sm">Withdraw</button>
+                </form>
+                {% elif registration-open %}
+                <div class="viewer-action-card-text">Registration is open.</div>
+                <form hx-post="/actions/tournament/{{data.eid}}/entry/me" hx-swap="none">
+                    <button type="submit" class="btn btn-primary">Enter Tournament</button>
+                </form>
+                {% else %}
+                <div class="viewer-action-card-text muted">Registration is closed.</div>
+                {% endif %}
+                <div id="entry-error" class="entry-error" role="alert" aria-live="assertive" hidden></div>
             </div>
-            {% endif %}
-        </aside>
+        </section>
+        {% endifequal %}
+        {% endif %}
 
-        <!-- ═══════════════════════════════════════════════════════════ -->
-        <!-- Main content: Standings, Matches, Entries                  -->
-        <!-- ═══════════════════════════════════════════════════════════ -->
-        <div class="tourney-main">
-
-            <div class="tourney-tabs" role="tablist" aria-label="Tournament sections">
-                <button type="button" role="tab" id="tab-entrants"
-                        aria-selected="true" aria-controls="panel-entrants"
-                        class="tourney-tab"
-                        _="on click
-                           add @hidden to <[role=tabpanel]/> in the closest .tourney-main
-                           then remove @hidden from #panel-entrants
-                           then set @aria-selected of <[role=tab]/> in my parentElement to 'false'
-                           then set my @aria-selected to 'true'">
-                    Entrants
-                </button>
-                {% for phase-group in matches-by-phase %}
-                <button type="button" role="tab" id="tab-phase-{{phase-group.phase}}"
-                        aria-selected="false" aria-controls="panel-phase-{{phase-group.phase}}"
-                        class="tourney-tab"
-                        hx-get="/components/tournament/{{data.eid}}/phase/{{phase-group.phase}}/phase-panel.html"
-                        hx-target="#panel-phase-{{phase-group.phase}}"
-                        hx-swap="innerHTML"
-                        _="on click
-                           add @hidden to <[role=tabpanel]/> in the closest .tourney-main
-                           then remove @hidden from #panel-phase-{{phase-group.phase}}
-                           then set @aria-selected of <[role=tab]/> in my parentElement to 'false'
-                           then set my @aria-selected to 'true'">
-                    Phase {{phase-group.phase|add:1}}
-                    <span class="tourney-tab-sub">{% ifequal phase-group.phase-type "single-elimination" %}Single Elimination{% endifequal %}{% ifequal phase-group.phase-type "double-elimination" %}Double Elimination{% endifequal %}{% ifequal phase-group.phase-type "swiss" %}Swiss{% endifequal %}{% ifequal phase-group.phase-type "round-robin" %}Round Robin{% endifequal %}</span>
-                </button>
-                {% endfor %}
-            </div>
-
-            <section id="panel-entrants" role="tabpanel" aria-labelledby="tab-entrants" class="tourney-tab-panel">
-                <section class="tourney-section" aria-labelledby="entries-heading">
-                    <h3 class="tourney-section-heading" id="entries-heading">
-                        Entries
-                        {% if entries %}<span class="tourney-entry-count">{{entries|length}}</span>{% endif %}
-                    </h3>
-                    {% if entries %}
-                    <ul class="tourney-entry-grid">
-                        {% for entry in entries %}
-                        <li class="tourney-entry-chip">
-                            <span class="tourney-entry-name">{{entry.player-sub}}</span>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                    {% else %}
-                    <p class="tourney-empty-msg">No entries yet.</p>
-                    {% endif %}
-                </section>
-            </section>
-
-            {% for phase-group in matches-by-phase %}
-            <section id="panel-phase-{{phase-group.phase}}"
-                     role="tabpanel"
-                     aria-labelledby="tab-phase-{{phase-group.phase}}"
-                     class="tourney-tab-panel"
-                     hidden
-                     hx-get="/components/tournament/{{data.eid}}/phase/{{phase-group.phase}}/phase-panel.html"
-                     hx-trigger="match-recorded from:body"
-                     hx-swap="innerHTML"></section>
-            {% endfor %}
-
-        </div>
     </div>
 </div>
 {% endblock %}
