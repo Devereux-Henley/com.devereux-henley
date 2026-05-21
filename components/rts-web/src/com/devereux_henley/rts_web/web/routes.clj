@@ -148,7 +148,40 @@
      ["/:eid/phase.html"
       {:get {:produces   ["application/htmx+html"]
              :parameters {:path schema.contract/game-and-id-path-parameter}
-             :handler    (integrant.core/ref ::web.tournament.view/tournament-phase-form-view)}}]]
+             :handler    (integrant.core/ref ::web.tournament.view/tournament-phase-form-view)}}]
+     ["/:eid/player"
+      ["/check-in.html"
+       {:get {:produces   ["application/htmx+html"]
+              :parameters {:path schema.contract/game-and-id-path-parameter}
+              :handler    (integrant.core/ref ::web.tournament.view/player-check-in-view)}}]
+      ["/series.html"
+       {:get {:produces   ["application/htmx+html"]
+              :parameters {:path  schema.contract/game-and-id-path-parameter
+                           :query (schema.contract/to-schema
+                                   [:map
+                                    [:step {:optional true} [:maybe :string]]])}
+              :handler    (integrant.core/ref ::web.tournament.view/player-series-view)}}]
+      ["/match/:match-eid/parse"
+       {:post {:summary    "Parse a single uploaded replay and return the player-console review fragment."
+               :openapi    {:tags         ["player-console"]              :consumes ["multipart/form-data"] :produces ["text/html"]
+                            :operation-id "player-console/parse-fragment"}
+               :parameters {:path      (schema.contract/to-schema
+                                        [:map
+                                         [:game-eid :uuid]
+                                         [:eid :uuid]
+                                         [:match-eid :uuid]])
+                            :multipart (schema.contract/to-schema [:map {:closed false}])}
+               :handler    (integrant.core/ref ::web.tournament.view/player-replay-parse-fragment)}}]
+      ["/match/:match-eid/submit"
+       {:post {:summary    "Commit a single parsed replay as a per-game match result."
+               :openapi    {:tags     ["player-console"] :consumes     ["application/x-www-form-urlencoded"]
+                            :produces ["text/html"]      :operation-id "player-console/submit-fragment"}
+               :parameters {:path (schema.contract/to-schema
+                                   [:map
+                                    [:game-eid :uuid]
+                                    [:eid :uuid]
+                                    [:match-eid :uuid]])}
+               :handler    (integrant.core/ref ::web.tournament.view/player-replay-submit-fragment)}}]]]
     ["/competitive"
      ["/index.html"
       {:get {:produces   ["application/htmx+html"]

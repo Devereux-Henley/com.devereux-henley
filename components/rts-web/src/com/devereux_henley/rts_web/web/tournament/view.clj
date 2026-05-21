@@ -403,6 +403,176 @@
                 :registration-open   reg-open
                 :is-organizer        is-organizer}))))
 
+;; ─── Player console (check-in + series) ─────────────────────────────────────
+;;
+;; Static demo surface for the new player experience. Until check-in,
+;; lobby-code, and per-game replay-submission state machines are modelled in
+;; the domain, these handlers return hand-rolled view-models that match the
+;; design's QF1 Bo5 mid-series state.
+
+(def ^:private demo-player-me
+  {:handle        "sigmar_42" :name   "Sigmar" :faction-name "The Empire" :faction-sigil "✠"
+   :faction-color "#c4a04a"   :record "3-0"    :group        "A"          :seed          "A1"})
+
+(def ^:private demo-player-opponent
+  {:handle        "chaos_undivided" :name          "Archaon" :faction-name "Warriors of Chaos"
+   :faction-sigil "✷"               :faction-color "#b52424" :record       "2-1"               :group "B" :seed "B2"})
+
+(def ^:private demo-match-label "QF 1")
+
+(def ^:private demo-games
+  [{:num          1           :map          "Battle for Eight Peaks" :result "W"      :winner "sigmar_42"
+    :submitted-by "sigmar_42" :confirmed-by "chaos_undivided"        :size   "4.2 MB"}
+   {:num          2                 :map          "Path of the Old Ones" :result "L"      :winner "chaos_undivided"
+    :submitted-by "chaos_undivided" :confirmed-by "sigmar_42"            :size   "5.8 MB"}
+   {:num          3           :map          "Karak Kadrin Crossing" :result "W"      :winner "sigmar_42"
+    :submitted-by "sigmar_42" :confirmed-by "chaos_undivided"       :size   "3.7 MB"}
+   {:num          4                 :map          "Black Crag Foothills" :result "L"      :winner "chaos_undivided"
+    :submitted-by "chaos_undivided" :confirmed-by "sigmar_42"            :size   "6.1 MB"}
+   {:num          5   :map          "Skull Pass — Winter" :result nil      :winner nil
+    :submitted-by nil :confirmed-by nil                   :size   "5.2 MB"}])
+
+(def ^:private demo-path
+  [{:stage "Group Stage A" :label "3-0" :state "done" :detail "Top seed Group A"}
+   {:stage "QF 1" :label "vs chaos_undivided" :state "active" :detail "Bo5 · live"}
+   {:stage "SF 1" :label "vs QF2 winner" :state "pending" :detail "Bo5 · 20:30 UTC"}
+   {:stage "Grand Final" :label "vs SF2 winner" :state "pending" :detail "Bo7 · May 21"}])
+
+(defn- decorate-game
+  "Adds per-game UI flags + a derived replay filename so templates stay flat."
+  [{:keys [num map result] :as game} current-num current-step]
+  (let [slug    (-> (or map "")
+                    str/lower-case
+                    (str/replace #"[^a-z0-9]+" "_")
+                    (str/replace #"^_|_$" ""))
+        current (and (= num current-num) (nil? result))
+        cls     (cond
+                  (= result "W")        "series-game--win"
+                  (= result "L")        "series-game--loss"
+                  current               (str "series-game--current series-game--" current-step)
+                  :else                 "series-game--pending")]
+    (assoc game
+           :filename (str "qf1_g" num "_" slug ".rep")
+           :current? current
+           :i-won? (= result "W")
+           :pip (cond (= result "W") "w" (= result "L") "l" current "live" :else "pending")
+           :pip-label (cond (= result "W") "W" (= result "L") "L" current "●" :else "·")
+           :css cls)))
+
+(defn- series-view-model
+  [current-step]
+  (let [games        (mapv #(decorate-game % 5 current-step)
+                           demo-games)
+        settled      (filterv :result games)
+        my-wins      (count (filterv #(= "W" (:result %)) games))
+        opp-wins     (count (filterv #(= "L" (:result %)) games))
+        current-game (or (->> games (filter :current?) first :num) (count games))
+        current-map  (-> games (nth (dec current-game)) :map)
+        wins-needed  (-> games count (/ 2) Math/ceil long)
+        next-round   "Semifinal 1"
+        if-i-win     (if (>= (inc my-wins) wins-needed)
+                       (str next-round " lobby opens")
+                       (str "Game " (inc current-game) " unlocks"))
+        if-opp-win   (if (>= (inc opp-wins) wins-needed)
+                       (str next-round " lobby opens")
+                       (str "Game " (inc current-game) " unlocks"))
+        generic-next (if (= if-i-win if-opp-win) if-i-win "the series advances")]
+    {:match-label          demo-match-label
+     :me                   demo-player-me
+     :opponent             demo-player-opponent
+     :games                games
+     :settled-games        settled
+     :total-games          (count games)
+     :current-game         current-game
+     :current-map          current-map
+     :my-wins              my-wins
+     :opp-wins             opp-wins
+     :my-leading?          (> my-wins opp-wins)
+     :opp-leading?         (> opp-wins my-wins)
+     :current-step         current-step
+     :step-live?           (= current-step "live")
+     :step-declare?        (= current-step "declare")
+     :step-submitting?     (= current-step "submitting")
+     :step-opp-uploading?  (= current-step "opp_uploading")
+     :step-label           (case current-step
+                             "live"          (str "Game " current-game " of " (count games) " · in progress")
+                             "declare"       (str "Game " current-game " ended · declare winner")
+                             "submitting"    (str "Game " current-game " · submitting replay")
+                             "opp_uploading" (str "Game " current-game " · opponent uploading replay")
+                             (str "Game " current-game " of " (count games)))
+     :step-subtitle        (case current-step
+                             "live"          "Live in the series lobby"
+                             "declare"       "Game finished · winner submits the replay"
+                             "submitting"    "You won this game · upload + submit"
+                             "opp_uploading" (str "You lost this game · waiting for "
+                                                  (:handle demo-player-opponent))
+                             "Live in the series lobby")
+     :if-i-win-next        if-i-win
+     :if-opp-wins-next     if-opp-win
+     :generic-next         generic-next
+     :continues-if-i-win   (< (inc my-wins) wins-needed)
+     :continues-if-opp-win (< (inc opp-wins) wins-needed)
+     :next-round-label     next-round}))
+
+(defmethod integrant.core/init-key ::player-check-in-view
+  [_init-key dependencies]
+  (partial web.view/standard-entity-view-handler
+           (fn [eid] (web.tournament.share/get-tournament-by-eid dependencies eid))
+           "player-check-in.html"
+           (fn [_data _request]
+             {:match-label          demo-match-label
+              :me                   demo-player-me
+              :opponent             demo-player-opponent
+              :path                 demo-path
+              :check-in-window      "Window closes at 13:55 UTC · 7 min remaining · one check-in covers all five games"
+              :opponent-checked-in? true})))
+
+(defn- find-current-player-match
+  "Returns the first pending match in the tournament where `user-sub` is one
+   of the players, or nil if none exists."
+  [dependencies tournament-eid user-sub]
+  (->> (domain/get-matches-for-tournament dependencies tournament-eid)
+       (filter (fn [m]
+                 (and (= "pending" (:status m))
+                      (or (= user-sub (:player-one-sub m))
+                          (= user-sub (:player-two-sub m))))))
+       first))
+
+(def ^:private parse-log-stagger-ms 280)
+
+(def ^:private parse-log-labels
+  ["Reading replay"
+   "Verifying header"
+   "Detecting players & factions"
+   "Resolving draft compositions"
+   "Reading map & duration"])
+
+(defn- single-game-parse-log
+  "Five staggered log rows for the parse animation (one game)."
+  []
+  (vec (map-indexed (fn [idx label] {:label label :delay-ms (* idx parse-log-stagger-ms)})
+                    parse-log-labels)))
+
+(defmethod integrant.core/init-key ::player-series-view
+  [_init-key dependencies]
+  (partial web.view/standard-entity-view-handler
+           (fn [eid] (web.tournament.share/get-tournament-by-eid dependencies eid))
+           "player-series.html"
+           (fn [data request]
+             (let [step          (or (get-in request [:parameters :query :step]) "live")
+                   step          (if (#{"live" "declare" "submitting" "opp_uploading"} step) step "live")
+                   user-sub      (get-in request [:ory-session :identity :id])
+                   current-match (find-current-player-match dependencies (:eid data) user-sub)]
+               (cond-> (assoc (series-view-model step)
+                              :parse-log-rows      (single-game-parse-log)
+                              ;; Defer the swap so the parse animation plays through
+                              ;; even when the parser returns instantly. Hold back
+                              ;; the last few rows' stagger so the response lands
+                              ;; mid-animation rather than after it.
+                              :parse-swap-delay-ms (* 2 parse-log-stagger-ms))
+                 current-match (assoc :current-match current-match
+                                      :match-eid (:eid current-match)))))))
+
 ;; ─── Post-match modal helpers ───────────────────────────────────────────────
 
 (defn- parsed->snake
@@ -877,6 +1047,138 @@
                                                   :p1-wins     (get win-counts p1 0)
                                                   :p2-wins     (get win-counts p2 0)
                                                   :result-rows result-rows})})
+
+            :match-record/error
+            (error-fragment (:message result))))))))
+
+;; ─── Player console replay submission ──────────────────────────────────────
+;;
+;; Per-game submit flow specific to the player console, paralleling the
+;; modal's all-games-at-once `/match-record/.../parse` + `/submit` but
+;; targeting a single match_game row at a time and returning fragments
+;; styled for the player console's active-game-panel.
+
+(defn- build-review-context
+  "Shapes parsed + enriched replay data into the player-console review
+   fragment context."
+  [dependencies match parsed source-name viewer-sub]
+  (let [key->row     (resolve-units dependencies [parsed])
+        level-costs  (db/get-unit-level-costs (:connection dependencies))
+        enriched     (enrich-parsed key->row level-costs parsed)
+        faction->row (resolve-faction-keys dependencies [parsed])
+        existing     (domain/get-games-for-match dependencies (:eid match))
+        game-index   (count existing)
+        game-num     (inc game-index)
+        ctx          (build-game-context match viewer-sub game-index source-name enriched faction->row)
+        ;; Section caps come from the tournament's game-mode, matched against the
+        ;; replay's victory-condition. Each section's max is the relevant budget
+        ;; (main → :draft-value, reinforcements → :reinforcement-value).
+        tournament   (domain/get-tournament-by-eid dependencies (:tournament-eid match))
+        game-modes   (db/get-game-modes-for-game (:connection dependencies) (:game-eid tournament))
+        game-mode    (domain/pick-game-mode game-modes (:victory-condition enriched))
+        section-max  (fn [section-key]
+                       (case section-key
+                         "main"           (:draft-value game-mode)
+                         "reinforcements" (:reinforcement-value game-mode)
+                         (:draft-value game-mode)))
+        with-max     (fn [side]
+                       (update side :sections
+                               #(mapv (fn [s] (assoc s :section-max (section-max (:section s)))) %)))
+        me-key       (if (= viewer-sub (:player-one-sub match)) :p1 :p2)
+        opp-key      (if (= me-key :p1) :p2 :p1)
+        me-side      (with-max (get ctx me-key))
+        opp-side     (with-max (get ctx opp-key))
+        ;; Convention from the design's declare step: only the winning player
+        ;; uploads the replay (the losing side waits). So the uploader is the
+        ;; winner. Either side can dispute later if the replay disagrees.
+        winner-sub   viewer-sub
+        i-won?       true]
+    {:match       match
+     :game-num    game-num
+     :total-games (:format match)
+     :source-name source-name
+     :parsed-json (:parsed-json ctx)
+     :match-id    (:match-id ctx)
+     :played-at   (:played-at ctx)
+     :map-name    (or (:map enriched) (:map-name enriched) (:battle-map enriched))
+     :winner-sub  winner-sub
+     :i-won?      i-won?
+     :me          me-side
+     :opponent    opp-side
+     :pts-cap     (or (:points-cap enriched) (:max-points enriched) (:army-cap enriched))}))
+
+(defmethod integrant.core/init-key ::player-replay-parse-fragment
+  [_init-key dependencies]
+  (fn [{{{:keys [game-eid eid match-eid]} :path} :parameters
+        multipart-params                         :multipart-params
+        session                                  :ory-session
+        :as                                      _request}]
+    (let [files (collect-game-files multipart-params)
+          match (some-> (db/get-match-by-eid (:connection dependencies) match-eid)
+                        (assoc :game-eid game-eid :tournament-eid eid))]
+      (cond
+        (nil? match)
+        (error-fragment "Match not found.")
+
+        (empty? files)
+        (error-fragment "No replay file supplied.")
+
+        (> (count files) 1)
+        (error-fragment "Per-game submission accepts exactly one replay.")
+
+        :else
+        (try
+          (let [{:keys [source-name file-path]} (first files)
+                parsed                          (domain/parse-replay-file dependencies file-path)
+                viewer-sub                      (get-in session [:identity :id])
+                ctx                             (build-review-context dependencies match parsed source-name viewer-sub)]
+            {:status  200
+             :headers {"Content-Type" "text/html; charset=utf-8"}
+             :body    (render/render-component "player-replay-review-fragment.html" ctx)})
+          (catch Exception e
+            (error-fragment (str "Replay parse failed: " (.getMessage e)))))))))
+
+(defmethod integrant.core/init-key ::player-replay-submit-fragment
+  [_init-key dependencies]
+  (fn [{{{:keys [game-eid eid match-eid]} :path} :parameters
+        session                                  :ory-session
+        form-params                              :form-params
+        :as                                      _request}]
+    (let [parsed-json (get form-params "parsed-json")
+          source-name (get form-params "source-name")
+          winner-sub  (get form-params "winner-sub")
+          uploader    (get-in session [:identity :id])]
+      (cond
+        (str/blank? parsed-json) (error-fragment "Parsed replay payload missing.")
+        (str/blank? winner-sub)  (error-fragment "Winner not declared.")
+        :else
+        (let [parsed (-> parsed-json
+                         (jsonista/read-value (jsonista/object-mapper {:decode-key-fn keyword}))
+                         snake->kebab)
+              result (domain/record-game-from-parsed
+                      dependencies match-eid
+                      {:parsed          parsed
+                       :winner-sub      winner-sub
+                       :source-name     source-name
+                       :uploaded-by-sub uploader})]
+          (case (:type result)
+            :match-record/game-recorded
+            (let [match (-> (db/get-match-by-eid (:connection dependencies) match-eid)
+                            (assoc :game-eid game-eid :tournament-eid eid))]
+              {:status  200
+               :headers {"Content-Type"            "text/html; charset=utf-8"
+                         "HX-Trigger-After-Settle" "match-game-recorded"}
+               :body    (render/render-component
+                         "player-replay-submitted-fragment.html"
+                         {:match           match
+                          :game-num        (inc (:game-index result))
+                          :total-games     (:format match)
+                          :winner-sub      (:winner-sub result)
+                          :i-won?          (= (:winner-sub result) uploader)
+                          :opponent-sub    (if (= uploader (:player-one-sub match))
+                                             (:player-two-sub match) (:player-one-sub match))
+                          :match-complete? (:match-complete? result)
+                          :match-winner    (:match-winner result)})})
 
             :match-record/error
             (error-fragment (:message result))))))))

@@ -1,0 +1,16 @@
+{# Shared header for the player console pages.
+   Vars in scope: data (tournament), game-eid, match-label, mode-label #}
+<header class="console-header">
+    <div class="console-header-inner">
+        <div class="console-header-left">
+            <div class="console-breadcrumb">
+                <a href="/view/game/{{game-eid}}/tournament/{{data.eid}}/index.html">← {{data.name}}</a>
+                <span class="console-breadcrumb-sep">/</span>
+                <span>Player Console</span>
+            </div>
+            <div class="console-title-row">
+                <h1 class="console-title">{{mode-label}}</h1>
+            </div>
+        </div>
+    </div>
+</header>

@@ -112,13 +112,17 @@
   (domain/generate-next-round deps tournament-eid organizer-sub))
 
 (defn- resolve-match!
-  "Records the minimum games needed for player-one to win the match.
-   Going through record-game-result (rather than update-match-result)
-   leaves real match_game rows behind so the bracket viewer can show
-   per-player game counts."
-  [deps match]
+  "Records the minimum games needed to settle the match. When
+   `preferred-winner` is one of the players, they win; otherwise
+   player-one wins. Going through record-game-result (rather than
+   update-match-result) leaves real match_game rows behind so the
+   bracket viewer can show per-player game counts."
+  [deps match preferred-winner]
   (let [wins-needed (inc (quot (:format match) 2))
-        winner      (:player-one-sub match)]
+        winner      (cond
+                      (= preferred-winner (:player-one-sub match)) preferred-winner
+                      (= preferred-winner (:player-two-sub match)) preferred-winner
+                      :else (:player-one-sub match))]
     (dotimes [_ wins-needed]
       (domain/record-game-result deps (:eid match) winner))))
 
@@ -158,9 +162,11 @@
 (defn- advance-to-last-match!
   "Drives a tournament forward by alternately resolving pending matches
    and generating the next round, until the type-specific stop predicate
-   says we're at the final/decisive match state. Returns the final
-   pending-match list."
-  [deps tournament-eid phase-type]
+   says we're at the final/decisive match state. When `preferred-winner`
+   is non-nil, any match they appear in resolves in their favor — handy
+   for guaranteeing a specific player reaches the final. Returns the
+   final pending-match list."
+  [deps tournament-eid phase-type preferred-winner]
   (let [stop? (or (stop-predicates phase-type)
                   (throw (ex-info "Unknown phase type" {:phase-type phase-type})))]
     (loop [safety 50]
@@ -183,7 +189,7 @@
 
           :else
           (do
-            (run! #(resolve-match! deps %) pending)
+            (run! #(resolve-match! deps % preferred-winner) pending)
             (recur (dec safety))))))))
 
 (def ^:private tournament-specs
@@ -204,7 +210,15 @@
     :description "Three-round Swiss. Every entrant plays every round; no one is eliminated until the final tally."
     :phase-spec  {:phases          [{:phase-type "swiss"
                                      :rounds     [{:format 1} {:format 1} {:format 1}]}]
-                  :qualifier-count 4}}])
+                  :qualifier-count 4}}
+   {:eid              #uuid "55555555-5555-4555-8555-555555555555"
+    :name             "Trial of the Everchosen"
+    :description      "Single-elimination Bo5 — dev-admin marches to the Grand Final for the player-console walkthrough."
+    :phase-spec       {:phases          [{:phase-type "single-elimination"
+                                          :rounds     [{:format 5} {:format 5} {:format 5}]}]
+                       :qualifier-count 8}
+    :roster           (into ["dev-admin"] (take 7 player-subs))
+    :preferred-winner "dev-admin"}])
 
 (def ^:private registration-tournament-specs
   [{:eid              #uuid "44444444-4444-4444-8444-444444444444"
@@ -213,14 +227,15 @@
     :initial-entrants 3}])
 
 (defn- build-tournament!
-  [connection {:keys [eid name description phase-spec]}]
+  [connection {:keys [eid name description phase-spec roster preferred-winner]}]
   (let [deps           {:connection connection}
         phase-type     (-> phase-spec :phases first :phase-type)
+        roster         (or roster player-subs)
         tournament-eid (create-tournament! connection {:eid eid :name name :description description})]
-    (enter-players! deps tournament-eid player-subs)
+    (enter-players! deps tournament-eid roster)
     (configure-phases! deps tournament-eid phase-spec)
     (start! deps tournament-eid)
-    (let [final-pending (advance-to-last-match! deps tournament-eid phase-type)]
+    (let [final-pending (advance-to-last-match! deps tournament-eid phase-type preferred-winner)]
       {:name           name
        :phase-type     phase-type
        :tournament-eid tournament-eid

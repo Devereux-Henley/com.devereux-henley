@@ -190,4 +190,6 @@
 (def parse-replay-file              handlers.replay/parse-replay-file)
 (def parse-replay-files             handlers.replay/parse-replay-files)
 (def record-match-from-parsed       handlers.replay/record-match-from-parsed)
+(def record-game-from-parsed        handlers.replay/record-game-from-parsed)
 (def get-record-context             handlers.replay/get-record-context)
+(def pick-game-mode                 handlers.replay/pick-game-mode)

@@ -1,0 +1,33 @@
+{# Per-game "submitted" fragment swapped into the active-game-panel body
+   after the player-console /submit endpoint records the game. Shows the
+   locked-in result and what's next (opponent confirmation, or series
+   finalization if this game clinched the match). #}
+<div class="replay-submitted{% if match-complete? %} replay-submitted--match-complete{% endif %}"
+     role="status"
+     aria-live="polite">
+    <div class="replay-submitted-mark" aria-hidden="true">✓</div>
+    <div class="replay-submitted-body">
+        <div class="eyebrow">Game {{game-num}} submitted</div>
+        <h3 class="replay-submitted-headline">
+            {% if i-won? %}You won Game {{game-num}}{% else %}{{winner-sub}} won Game {{game-num}}{% endif %}
+        </h3>
+        <p class="replay-submitted-sub">
+            {% if match-complete? %}
+            That clinches the series — <strong>{{match-winner}}</strong> wins.
+            The bracket will advance once results are confirmed.
+            {% else %}
+            <strong>{{opponent-sub}}</strong> will be asked to confirm the replay
+            and either side can dispute the auto-detected winner.
+            {% endif %}
+        </p>
+        <ul class="replay-submitted-checklist">
+            <li><span class="replay-submitted-pip replay-submitted-pip--done" aria-hidden="true">✓</span> Replay uploaded</li>
+            <li><span class="replay-submitted-pip replay-submitted-pip--done" aria-hidden="true">✓</span> Auto-detect winner · {{winner-sub}}</li>
+            <li><span class="replay-submitted-pip replay-submitted-pip--live" aria-hidden="true">●</span> Waiting on {{opponent-sub}} to confirm</li>
+            <li>
+                <span class="replay-submitted-pip replay-submitted-pip--pending" aria-hidden="true">·</span>
+                {% if match-complete? %}Series finalizes{% else %}Game {{game-num|add:1}} of {{total-games}}{% endif %}
+            </li>
+        </ul>
+    </div>
+</div>

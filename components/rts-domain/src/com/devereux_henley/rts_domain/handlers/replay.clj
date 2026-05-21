@@ -99,16 +99,21 @@
   cosmetic when the mapping is ambiguous."
   #{"BATTLE_SETUP_VICTORY_CONDITION_CAPTURE_LOCATION_SCORE"})
 
-(defn- pick-game-mode-eid
-  "Picks a game-mode eid from `game-modes` keyed on the parsed
+(defn pick-game-mode
+  "Picks a game-mode entity from `game-modes` keyed on the parsed
   `victory_condition`. Falls back to the first game-mode (typically
   `Land Battle`) when no mapping matches."
   [game-modes victory-condition]
   (let [target (if (contains? domination-victory-conditions victory-condition)
                  "Domination"
-                 "Land Battle")
-        chosen (first (filter #(= target (:name %)) game-modes))]
-    (:eid (or chosen (first game-modes)))))
+                 "Land Battle")]
+    (or (first (filter #(= target (:name %)) game-modes))
+        (first game-modes))))
+
+(defn- pick-game-mode-eid
+  "Convenience wrapper around `pick-game-mode` for callers that only need the eid."
+  [game-modes victory-condition]
+  (:eid (pick-game-mode game-modes victory-condition)))
 
 (defn- alliance-sides
   "Builds a 2-vector of {:player-sub :alliance} pairs aligned with
@@ -406,6 +411,80 @@
              :games      stored
              :winner-sub match-winner
              :complete?  true}))))))
+
+(defn record-game-from-parsed
+  "Records a single game in a tournament match from one already-parsed
+  replay plus a declared winner. Used by the player-console submitting
+  step where games are submitted one at a time.
+
+  `submission` shape:
+    {:parsed          <map>            ; output of parse-replay-file
+     :winner-sub      \"sigmar_42\"    ; declared winner
+     :source-name     \"foo.replay\"   ; optional, fallback for match-id
+     :uploaded-by-sub \"sigmar_42\"}
+
+  Behaviour mirrors `record-match-from-parsed` for a single game: persists
+  a `replay`, builds and persists per-side drafts, creates the next
+  `match_game` row, and updates the match if the series is now clinched.
+
+  Validation errors short-circuit (no DB writes)."
+  [dependencies match-eid {:keys [parsed winner-sub source-name uploaded-by-sub]}]
+  (let [match (db/get-match-by-eid (:connection dependencies) match-eid)]
+    (cond
+      (nil? match)
+      (short-circuit-error "Match not found.")
+
+      (= "complete" (:status match))
+      (short-circuit-error "Match is already complete.")
+
+      (nil? parsed)
+      (short-circuit-error "No parsed replay supplied.")
+
+      (not (valid-winner? match winner-sub))
+      (short-circuit-error "Declared winner must match one of the match's players.")
+
+      :else
+      (let [conn           (:connection dependencies)
+            existing-games (db/get-games-for-match conn match-eid)
+            game-index     (count existing-games)]
+        (if (>= game-index (:format match))
+          (short-circuit-error (format "Match already has its maximum %d games." (:format match)))
+          (let [tournament (db/get-tournament-by-eid conn (:tournament-eid match))
+                game-modes (db/get-game-modes-for-game conn (:game-eid tournament))
+                now        (Instant/now)
+                replay     (persist-replay dependencies
+                                           {:parsed          parsed
+                                            :source-name     source-name
+                                            :uploaded-by-sub uploaded-by-sub})
+                {:keys [player-one-draft-eid player-two-draft-eid]}
+                (build-and-persist-drafts-for-game
+                 dependencies
+                 {:match           match
+                  :parsed          parsed
+                  :round-num       (:round-index match)
+                  :game-num        game-index
+                  :tournament      tournament
+                  :game-modes      game-modes
+                  :uploaded-by-sub uploaded-by-sub
+                  :now             now})
+                stored     (db/create-game
+                            conn match-eid game-index winner-sub
+                            {:replay-eid                    (:eid replay)
+                             :uploader-local-alliance-index (:uploader-local-alliance-index replay)
+                             :player-one-draft-eid          player-one-draft-eid
+                             :player-two-draft-eid          player-two-draft-eid})
+                all-games  (conj (mapv #(select-keys % [:winner-sub]) existing-games)
+                                 {:winner-sub winner-sub})
+                clincher   (rules.tournament/check-match-complete all-games (:format match))]
+            (when clincher
+              (db/update-match-result conn match-eid clincher))
+            (cond-> {:type            :match-record/game-recorded
+                     :match-eid       match-eid
+                     :game            stored
+                     :game-index      game-index
+                     :winner-sub      winner-sub
+                     :match-complete? (boolean clincher)}
+              clincher (assoc :match-winner clincher))))))))
 
 (defn get-record-context
   "Fetches the data needed to render the post-match modal for a match:
