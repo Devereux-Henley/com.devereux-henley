@@ -13,8 +13,10 @@
    [com.devereux-henley.rts-web.render :as render]
    [com.devereux-henley.rts-web.web.tournament.share :as web.tournament.share]
    [com.devereux-henley.rts-web.web.view :as web.view]
+   [com.devereux-henley.schema.contract :as schema.contract]
    [integrant.core]
    [jsonista.core :as jsonista]
+   [malli.core :as m]
    [taoensso.timbre :as log]))
 
 ;; ─── Tournament list / detail / config views ────────────────────────────────
@@ -952,35 +954,62 @@
      :opponent    opp-side
      :pts-cap     (or (:points-cap enriched) (:max-points enriched) (:army-cap enriched))}))
 
+(defn- participant-or-error
+  "Fetches the match, validates it belongs to `tournament-eid` and that
+   `viewer-sub` is one of its participants. Returns `[:ok match]` or
+   `[:error fragment]` so the calling handler stays branch-flat."
+  [dependencies match-eid tournament-eid viewer-sub]
+  (let [match (db/get-match-by-eid (:connection dependencies) match-eid)]
+    (cond
+      (nil? match)
+      [:error (error-fragment "Match not found.")]
+
+      (not= tournament-eid (:tournament-eid match))
+      [:error (error-fragment "Match does not belong to this tournament.")]
+
+      (not (or (= viewer-sub (:player-one-sub match))
+               (= viewer-sub (:player-two-sub match))))
+      [:error (error-fragment "Only match participants can act on this match.")]
+
+      :else
+      [:ok match])))
+
+(def ^:private parse-multipart-spec
+  "Multipart payload must carry exactly one replay file (named `game-0`)."
+  (schema.contract/to-schema
+   [:and
+    [:sequential {:min 1 :max 1} [:map [:source-name :string] [:file-path :string]]]]))
+
+(def ^:private submit-form-spec
+  "Form fields echoed back from the review fragment. `parsed-json` is the
+   hidden parser output, `winner-sub` the declared winner. Both must be
+   non-blank; `source-name` is the original replay filename."
+  (schema.contract/to-schema
+   [:map
+    [:parsed-json [:and :string [:fn {:error/message "must be non-blank"} (complement str/blank?)]]]
+    [:winner-sub  [:and :string [:fn {:error/message "must be non-blank"} (complement str/blank?)]]]
+    [:source-name {:optional true} [:maybe :string]]]))
+
 (defmethod integrant.core/init-key ::player-replay-parse-fragment
   [_init-key dependencies]
   (fn [{{{:keys [tournament-eid match-eid]} :path} :parameters
         multipart-params                           :multipart-params
         session                                    :ory-session
         :as                                        _request}]
-    (let [files      (collect-game-files multipart-params)
-          match      (db/get-match-by-eid (:connection dependencies) match-eid)
-          viewer-sub (get-in session [:identity :id])]
+    (let [viewer-sub (get-in session [:identity :id])
+          files      (collect-game-files multipart-params)
+          [status v] (participant-or-error dependencies match-eid tournament-eid viewer-sub)]
       (cond
-        (nil? match)
-        (error-fragment "Match not found.")
+        (= :error status)
+        v
 
-        (not= tournament-eid (:tournament-eid match))
-        (error-fragment "Match does not belong to this tournament.")
-
-        (not (or (= viewer-sub (:player-one-sub match))
-                 (= viewer-sub (:player-two-sub match))))
-        (error-fragment "Only match participants can upload a replay.")
-
-        (empty? files)
-        (error-fragment "No replay file supplied.")
-
-        (> (count files) 1)
-        (error-fragment "Per-game submission accepts exactly one replay.")
+        (not (m/validate parse-multipart-spec files))
+        (error-fragment "Per-game submission accepts exactly one replay file.")
 
         :else
         (try
-          (let [{:keys [source-name file-path]} (first files)
+          (let [match                           v
+                {:keys [source-name file-path]} (first files)
                 parsed                          (domain/parse-replay-file dependencies file-path)
                 tournament                      (domain/get-tournament-by-eid dependencies tournament-eid)
                 ctx                             (build-review-context dependencies
@@ -998,33 +1027,27 @@
         session                                    :ory-session
         form-params                                :form-params
         :as                                        _request}]
-    (let [parsed-json (get form-params "parsed-json")
-          source-name (get form-params "source-name")
-          winner-sub  (get form-params "winner-sub")
-          uploader    (get-in session [:identity :id])
-          match       (db/get-match-by-eid (:connection dependencies) match-eid)]
+    (let [uploader   (get-in session [:identity :id])
+          form       {:parsed-json (get form-params "parsed-json")
+                      :winner-sub  (get form-params "winner-sub")
+                      :source-name (get form-params "source-name")}
+          [status v] (participant-or-error dependencies match-eid tournament-eid uploader)]
       (cond
-        (nil? match)
-        (error-fragment "Match not found.")
+        (= :error status)
+        v
 
-        (not= tournament-eid (:tournament-eid match))
-        (error-fragment "Match does not belong to this tournament.")
+        (not (m/validate submit-form-spec form))
+        (error-fragment "Required form fields missing or blank.")
 
-        (not (or (= uploader (:player-one-sub match))
-                 (= uploader (:player-two-sub match))))
-        (error-fragment "Only match participants can submit a replay.")
-
-        (str/blank? parsed-json) (error-fragment "Parsed replay payload missing.")
-        (str/blank? winner-sub)  (error-fragment "Winner not declared.")
         :else
-        (let [parsed (-> parsed-json
+        (let [parsed (-> (:parsed-json form)
                          (jsonista/read-value (jsonista/object-mapper {:decode-key-fn keyword}))
                          snake->kebab)
               result (domain/record-game-from-parsed
                       dependencies match-eid
                       {:parsed          parsed
-                       :winner-sub      winner-sub
-                       :source-name     source-name
+                       :winner-sub      (:winner-sub form)
+                       :source-name     (:source-name form)
                        :uploaded-by-sub uploader})]
           (case (:type result)
             :match-record/game-recorded
