@@ -1,0 +1,35 @@
+{# Read-only summary of already-submitted, confirmed games in the series.
+   Iterates `settled-games`; expects each item carrying :num :map
+   :filename :size :submitted-by :confirmed-by :result. #}
+<section class="panel" aria-labelledby="earlier-games-heading">
+    <header class="panel-head">
+        <h2 class="panel-title" id="earlier-games-heading">Earlier Games</h2>
+        <span class="panel-subtitle">{{settled-games|length}} of {{total-games}} confirmed</span>
+    </header>
+    <div class="panel-body stack">
+        {% for game in settled-games %}
+        <div class="replay-row">
+            <span class="replay-row-pip" data-result="{{game.result}}">{{game.result}}</span>
+            <div class="replay-row-meta">
+                <div class="replay-row-game">
+                    <span class="eyebrow">Game {{game.num}}</span>
+                    <span class="replay-row-map">{{game.map}}</span>
+                </div>
+                <div class="mono muted replay-row-file">{{game.filename}} · {{game.size}}</div>
+            </div>
+            <div class="replay-row-actors">
+                <div>
+                    <span class="eyebrow">Submitted by</span>
+                    <span class="replay-row-actor {% ifequal game.submitted-by me.handle %}replay-row-actor--me{% endifequal %}">{{game.submitted-by}}</span>
+                </div>
+                <div>
+                    <span class="eyebrow">Confirmed by</span>
+                    <span class="replay-row-actor {% ifequal game.confirmed-by me.handle %}replay-row-actor--me{% endifequal %}">{{game.confirmed-by}}</span>
+                </div>
+            </div>
+            <span class="badge badge-success">✓ Verified</span>
+            <button type="button" class="btn btn-ghost btn-sm">Watch</button>
+        </div>
+        {% endfor %}
+    </div>
+</section>

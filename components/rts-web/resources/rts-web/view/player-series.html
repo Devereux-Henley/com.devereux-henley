@@ -10,32 +10,7 @@
     <div class="console-body">
         {% include "rts-web/components/tournament/player-stepper.html" with active="playing" %}
 
-        <section class="series-progress" aria-labelledby="series-progress-heading">
-            <header class="series-progress-head">
-                <div class="series-progress-head-left">
-                    <span class="eyebrow" id="series-progress-heading">Series · Best of {{total-games}}</span>
-                    <span class="series-progress-score">
-                        <span class="series-progress-score-side {% if my-leading? %}series-progress-score-side--leading{% endif %}">{{my-wins}}</span>
-                        <span class="series-progress-score-sep">—</span>
-                        <span class="series-progress-score-side {% if opp-leading? %}series-progress-score-side--leading{% endif %}">{{opp-wins}}</span>
-                    </span>
-                </div>
-                <div class="series-progress-head-right mono muted">
-                    {{match-label}} · {{me.handle}} vs {{opponent.handle}}
-                </div>
-            </header>
-            <ol class="series-progress-list">
-                {% for game in games %}
-                <li class="series-game {{game.css}}">
-                    <span class="series-game-num">Game {{game.num}}</span>
-                    <span class="series-game-map">{{game.map}}</span>
-                    <span class="series-game-result">
-                        <span class="series-game-pip series-game-pip--{{game.pip}}">{{game.pip-label}}</span>
-                    </span>
-                </li>
-                {% endfor %}
-            </ol>
-        </section>
+        {% include "rts-web/components/tournament/player-series-progress.html" %}
 
         <section class="panel active-game-panel active-game-panel--{{current-step}}" aria-labelledby="active-game-heading">
             <header class="panel-head">
@@ -47,140 +22,16 @@
             <div class="panel-body">
 
                 {% if step-live? %}
-                <div class="game-live">
-                    <div class="game-live-pulse">
-                        <span class="game-live-dot" aria-hidden="true"></span>
-                        <span class="game-live-label">In Game</span>
-                    </div>
-                    <div class="game-live-info">
-                        <div class="eyebrow">Game {{current-game}} · {{current-map}}</div>
-                        <p>
-                            Stay in the series lobby until the game resolves. As soon as it ends,
-                            the winner uploads the replay and the loser confirms it before the series
-                            advances.
-                        </p>
-                        <div class="mono muted game-live-elapsed">Elapsed · 14:32 · auto-detect listening for replay file</div>
-                    </div>
-                    <a class="btn btn-primary btn-sm"
-                       href="/view/game/{{game-eid}}/tournament/{{data.eid}}/player/series.html?step=declare">
-                        Game {{current-game}} ended →
-                    </a>
-                </div>
+                {% include "rts-web/components/tournament/player-step-live.html" %}
                 {% endif %}
 
                 {% if step-declare? %}
-                <div class="declare-view">
-                    <div class="declare-prompt">
-                        <div class="eyebrow">Game {{current-game}} · who won?</div>
-                        <h3 class="declare-headline">Whoever won uploads the replay</h3>
-                        <p class="declare-sub">
-                            Only the winner can submit. The losing player will be asked to confirm or
-                            dispute · then {{generic-next}}.
-                        </p>
-                    </div>
-                    <div class="declare-buttons">
-                        <a class="declare-btn declare-btn--won"
-                           href="/view/game/{{game-eid}}/tournament/{{data.eid}}/player/series.html?step=submitting">
-                            <span class="declare-btn-icon" aria-hidden="true">⚔</span>
-                            <span class="declare-btn-label">I won Game {{current-game}}</span>
-                            <span class="declare-btn-sub">Continue to replay upload</span>
-                        </a>
-                        <a class="declare-btn declare-btn--lost"
-                           href="/view/game/{{game-eid}}/tournament/{{data.eid}}/player/series.html?step=opp_uploading">
-                            <span class="declare-btn-icon" aria-hidden="true">⌛</span>
-                            <span class="declare-btn-label">{{opponent.handle}} won</span>
-                            <span class="declare-btn-sub">Wait for them to upload</span>
-                        </a>
-                    </div>
-                </div>
+                {% include "rts-web/components/tournament/player-step-declare.html" %}
                 {% endif %}
 
                 {% if step-submitting? %}
                 {% if match-eid %}
-                <form class="stack replay-upload-form"
-                      hx-post="/actions/tournament/{{data.eid}}/match/{{match-eid}}/replay/parse"
-                      hx-encoding="multipart/form-data"
-                      hx-target="closest .panel-body"
-                      hx-swap="innerHTML swap:{{parse-swap-delay-ms}}ms"
-                      hx-on:htmx:before-request="this.classList.add('replay-upload-form--parsing')"
-                      hx-on:htmx:after-swap="this.classList.remove('replay-upload-form--parsing')"
-                      hx-on:htmx:response-error="this.classList.remove('replay-upload-form--parsing')">
-                    <label class="replay-drop"
-                           _="on dragover halt the event then add .replay-drop--over
-                              on dragleave remove .replay-drop--over
-                              on drop remove .replay-drop--over">
-                        <input type="file"
-                               name="game-0"
-                               accept=".rep,.replay"
-                               class="replay-drop-input"
-                               required
-                               _="on change
-                                    if my files's length > 0
-                                      set f to my files[0]
-                                      set drop to the closest .replay-drop
-                                      put f.name into the first .replay-drop-filename in drop
-                                      put ((f.size / 1048576).toFixed(1) + ' MB · ready to parse') into the first .replay-drop-filemeta in drop
-                                      add .replay-drop--filled to drop
-                                      remove @disabled from the first .replay-submit-btn in the closest <form/>
-                                    end
-                                  end">
-                        <span class="replay-drop-icon" aria-hidden="true">↥</span>
-                        <span class="replay-drop-headline">
-                            <span class="replay-drop-placeholder">Drop your Game {{current-game}} replay here</span>
-                            <span class="replay-drop-filename mono"></span>
-                        </span>
-                        <span class="replay-drop-sub">
-                            <span class="replay-drop-placeholder"><code>.rep</code> file from your Battle Replays folder · map and winner auto-detected</span>
-                            <span class="replay-drop-filemeta mono"></span>
-                        </span>
-                        <span class="replay-drop-browse btn btn-secondary btn-sm" aria-hidden="true">Browse local files</span>
-                    </label>
-
-                    <div class="parse-overlay" aria-hidden="true">
-                        <div class="parse-overlay-spinner">
-                            <svg viewBox="0 0 88 88" aria-hidden="true">
-                                <defs>
-                                    <linearGradient id="parse-spin-g" x1="0" y1="0" x2="1" y2="1">
-                                        <stop offset="0%"   stop-color="var(--color-primary-700)"/>
-                                        <stop offset="100%" stop-color="var(--color-primary-500)" stop-opacity="0.2"/>
-                                    </linearGradient>
-                                </defs>
-                                <circle cx="44" cy="44" r="40" fill="none" stroke="var(--color-border)" stroke-width="1"/>
-                                <circle cx="44" cy="44" r="40" fill="none" stroke="url(#parse-spin-g)" stroke-width="2"
-                                        stroke-dasharray="60 200" stroke-linecap="round"/>
-                                <circle cx="44" cy="44" r="32" fill="none" stroke="var(--color-border)" stroke-width="1" stroke-dasharray="2 4"/>
-                            </svg>
-                            <span class="parse-overlay-spinner-inner">Reading</span>
-                        </div>
-                        <div class="parse-overlay-status">Parsing replay archive</div>
-                        <ul class="parse-overlay-log">
-                            {% for row in parse-log-rows %}
-                            <li class="parse-log-row" style="animation-delay: {{row.delay-ms}}ms;">
-                                <span class="parse-log-mark">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                         stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="m5 12 5 5L20 7"/>
-                                    </svg>
-                                </span>
-                                <span>{{row.label}}</span>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-
-                    <div class="submit-actions">
-                        <div class="submit-actions-context mono muted">
-                            Drop your .rep file or browse to attach it · the parser auto-detects winner + map.
-                        </div>
-                        <div class="cluster">
-                            <a class="btn btn-ghost btn-sm"
-                               href="/view/game/{{game-eid}}/tournament/{{data.eid}}/player/series.html?step=declare">← Back</a>
-                            <button type="submit" class="btn btn-primary btn-sm replay-submit-btn" disabled>
-                                Parse replay →
-                            </button>
-                        </div>
-                    </div>
-                </form>
+                {% include "rts-web/components/tournament/player-replay-upload-form.html" %}
                 {% else %}
                 <div class="replay-upload-missing-match" role="alert">
                     <div class="eyebrow">No pending match</div>
@@ -190,72 +41,14 @@
                 {% endif %}
 
                 {% if step-opp-uploading? %}
-                <div class="await-view">
-                    <div class="await-view-spinner" aria-hidden="true">
-                        <span class="await-view-spinner-ring await-view-spinner-ring--progress" style="--p: 48%"></span>
-                        <span class="await-view-spinner-label mono">48%</span>
-                    </div>
-                    <div class="await-view-info">
-                        <div class="eyebrow">Opponent uploading</div>
-                        <h3 class="await-view-headline">{{opponent.handle}} is uploading the Game {{current-game}} replay</h3>
-                        <p class="await-view-sub">
-                            Hang tight — only the winning player can submit. When the replay lands you'll
-                            be asked to confirm or dispute it · then {{if-opp-wins-next|lower}}.
-                        </p>
-                        <ul class="await-view-checklist">
-                            <li><span class="await-view-pip await-view-pip--done" aria-hidden="true">✓</span> Game {{current-game}} ended · {{current-map}}</li>
-                            <li><span class="await-view-pip await-view-pip--live" aria-hidden="true">●</span> {{opponent.handle}} uploading · 48%</li>
-                            <li><span class="await-view-pip await-view-pip--pending" aria-hidden="true">·</span> You confirm or dispute</li>
-                            <li><span class="await-view-pip await-view-pip--pending" aria-hidden="true">·</span>
-                                {% if continues-if-opp-win %}Bracket updates · {% else %}Series finalizes · {% endif %}{{if-opp-wins-next}}
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="await-view-actions">
-                        <a class="btn btn-ghost btn-sm"
-                           href="/view/game/{{game-eid}}/tournament/{{data.eid}}/player/series.html?step=declare">
-                            I actually won — submit instead
-                        </a>
-                    </div>
-                </div>
+                {% include "rts-web/components/tournament/player-step-await.html" %}
                 {% endif %}
 
             </div>
         </section>
 
         {% if settled-games|not-empty? %}
-        <section class="panel" aria-labelledby="earlier-games-heading">
-            <header class="panel-head">
-                <h2 class="panel-title" id="earlier-games-heading">Earlier Games</h2>
-                <span class="panel-subtitle">{{settled-games|length}} of {{total-games}} confirmed</span>
-            </header>
-            <div class="panel-body stack">
-                {% for game in settled-games %}
-                <div class="replay-row">
-                    <span class="replay-row-pip" data-result="{{game.result}}">{{game.result}}</span>
-                    <div class="replay-row-meta">
-                        <div class="replay-row-game">
-                            <span class="eyebrow">Game {{game.num}}</span>
-                            <span class="replay-row-map">{{game.map}}</span>
-                        </div>
-                        <div class="mono muted replay-row-file">{{game.filename}} · {{game.size}}</div>
-                    </div>
-                    <div class="replay-row-actors">
-                        <div>
-                            <span class="eyebrow">Submitted by</span>
-                            <span class="replay-row-actor {% ifequal game.submitted-by me.handle %}replay-row-actor--me{% endifequal %}">{{game.submitted-by}}</span>
-                        </div>
-                        <div>
-                            <span class="eyebrow">Confirmed by</span>
-                            <span class="replay-row-actor {% ifequal game.confirmed-by me.handle %}replay-row-actor--me{% endifequal %}">{{game.confirmed-by}}</span>
-                        </div>
-                    </div>
-                    <span class="badge badge-success">✓ Verified</span>
-                    <button type="button" class="btn btn-ghost btn-sm">Watch</button>
-                </div>
-                {% endfor %}
-            </div>
-        </section>
+        {% include "rts-web/components/tournament/player-earlier-games.html" %}
         {% endif %}
     </div>
 </div>

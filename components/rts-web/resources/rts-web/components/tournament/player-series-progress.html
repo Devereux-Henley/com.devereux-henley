@@ -1,0 +1,30 @@
+{# Series-wide progress timeline shown above the active-game panel:
+   score header + per-game pill row with current-state CSS. Pure render;
+   pulls `total-games`, `games`, `my-wins`, `opp-wins`, `my-leading?`,
+   `opp-leading?`, `match-label`, `me`, `opponent` from the parent ctx. #}
+<section class="series-progress" aria-labelledby="series-progress-heading">
+    <header class="series-progress-head">
+        <div class="series-progress-head-left">
+            <span class="eyebrow" id="series-progress-heading">Series · Best of {{total-games}}</span>
+            <span class="series-progress-score">
+                <span class="series-progress-score-side {% if my-leading? %}series-progress-score-side--leading{% endif %}">{{my-wins}}</span>
+                <span class="series-progress-score-sep">—</span>
+                <span class="series-progress-score-side {% if opp-leading? %}series-progress-score-side--leading{% endif %}">{{opp-wins}}</span>
+            </span>
+        </div>
+        <div class="series-progress-head-right mono muted">
+            {{match-label}} · {{me.handle}} vs {{opponent.handle}}
+        </div>
+    </header>
+    <ol class="series-progress-list">
+        {% for game in games %}
+        <li class="series-game {{game.css}}">
+            <span class="series-game-num">Game {{game.num}}</span>
+            <span class="series-game-map">{{game.map}}</span>
+            <span class="series-game-result">
+                <span class="series-game-pip series-game-pip--{{game.pip}}">{{game.pip-label}}</span>
+            </span>
+        </li>
+        {% endfor %}
+    </ol>
+</section>

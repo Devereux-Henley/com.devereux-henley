@@ -1,0 +1,31 @@
+{# Active-game step body for the "opp_uploading" state: progress ring +
+   checklist of what's pending while the opponent uploads their replay,
+   plus an escape hatch back to declare. #}
+<div class="await-view">
+    <div class="await-view-spinner" aria-hidden="true">
+        <span class="await-view-spinner-ring await-view-spinner-ring--progress" style="--p: 48%"></span>
+        <span class="await-view-spinner-label mono">48%</span>
+    </div>
+    <div class="await-view-info">
+        <div class="eyebrow">Opponent uploading</div>
+        <h3 class="await-view-headline">{{opponent.handle}} is uploading the Game {{current-game}} replay</h3>
+        <p class="await-view-sub">
+            Hang tight — only the winning player can submit. When the replay lands you'll
+            be asked to confirm or dispute it · then {{if-opp-wins-next|lower}}.
+        </p>
+        <ul class="await-view-checklist">
+            <li><span class="await-view-pip await-view-pip--done" aria-hidden="true">✓</span> Game {{current-game}} ended · {{current-map}}</li>
+            <li><span class="await-view-pip await-view-pip--live" aria-hidden="true">●</span> {{opponent.handle}} uploading · 48%</li>
+            <li><span class="await-view-pip await-view-pip--pending" aria-hidden="true">·</span> You confirm or dispute</li>
+            <li><span class="await-view-pip await-view-pip--pending" aria-hidden="true">·</span>
+                {% if continues-if-opp-win %}Bracket updates · {% else %}Series finalizes · {% endif %}{{if-opp-wins-next}}
+            </li>
+        </ul>
+    </div>
+    <div class="await-view-actions">
+        <a class="btn btn-ghost btn-sm"
+           href="/view/game/{{game-eid}}/tournament/{{data.eid}}/player/series.html?step=declare">
+            I actually won — submit instead
+        </a>
+    </div>
+</div>
