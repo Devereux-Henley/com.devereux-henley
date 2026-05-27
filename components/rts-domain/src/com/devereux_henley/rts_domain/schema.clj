@@ -266,6 +266,18 @@
    [:map
     [:winner-sub :string]]))
 
+(def record-game-submission-spec
+  "Player-console per-game replay submission. `:parsed` is the kebab-case
+   replay map produced by `parse-replay-file`; `:winner-sub` is the
+   declared winner (must match one of the match's players, validated
+   contextually); `:uploaded-by-sub` is the submitter's id."
+  (schema.contract/to-schema
+   [:map
+    [:parsed [:map {:closed false}]]
+    [:winner-sub :string]
+    [:source-name {:optional true} [:maybe :string]]
+    [:uploaded-by-sub :string]]))
+
 ;; ─── Subresource response schemas ───────────────────────────────────────────
 
 (def standing-entry

@@ -112,6 +112,7 @@
 (def match-resource                               schema/match-resource)
 (def create-match-specification                   schema/create-match-specification)
 (def record-result-specification                  schema/record-result-specification)
+(def record-game-submission-spec                   schema/record-game-submission-spec)
 (def configure-phases-specification               schema/configure-phases-specification)
 (def phase-response                                schema/phase-response)
 (def round-response                                schema/round-response)
