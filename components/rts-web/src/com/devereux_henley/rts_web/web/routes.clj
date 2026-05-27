@@ -77,18 +77,6 @@
    ["/logout.html"
     {:get {:produces ["text/html"]
            :handler  (integrant.core/ref ::web.view/logout-view)}}]
-   ["/match-record/:match-eid"
-    ["/index.html"
-     {:get {:produces   ["text/html" "application/htmx+html"]
-            :parameters {:path (schema.contract/to-schema [:map [:match-eid :uuid]])}
-            :handler    (integrant.core/ref ::web.tournament.view/modal-view)}}]
-    ["/parse"
-     {:post {:parameters {:path      (schema.contract/to-schema [:map [:match-eid :uuid]])
-                          :multipart (schema.contract/to-schema [:map {:closed false}])}
-             :handler    (integrant.core/ref ::web.tournament.view/parse-replays-fragment)}}]
-    ["/submit"
-     {:post {:parameters {:path (schema.contract/to-schema [:map [:match-eid :uuid]])}
-             :handler    (integrant.core/ref ::web.tournament.view/record-match-fragment)}}]]
    ["/game/:game-eid"
     {:middleware [(integrant.core/ref ::web.view/game-context-middleware)]}
     ["/index.html"

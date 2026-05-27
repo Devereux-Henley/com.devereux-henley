@@ -77,14 +77,6 @@
   [message]
   {:type :match-record/error :message message})
 
-(defn parse-replay-files
-  "Parses N uploaded replays without touching the DB. Returns a vector of
-  parsed maps in the same order as the input. Used by the modal's Phase 1
-  (Step 1 → Step 2) so the client can render parsed drafts in Step 3 before
-  any winners are declared."
-  [dependencies file-paths]
-  (mapv #(parse-replay-file dependencies %) file-paths))
-
 ;; ─── Auto-create drafts on submit ───────────────────────────────────────────
 ;;
 ;; Each game in the submission yields a pair of drafts (one per alliance →
@@ -319,115 +311,16 @@
     {:player-one-draft-eid (build p1)
      :player-two-draft-eid (build p2)}))
 
-(defn record-match-from-parsed
-  "Atomically records a tournament match from N already-parsed replays plus
-  per-game declared winners.
-
-  `submission` shape:
-    {:games [{:parsed     <map>            ; output of parse-replay-files
-              :winner-sub \"sigmar_42\"   ; declared winner for this game
-              :source-name \"foo.replay\"  ; optional, fallback for match-id
-              }
-             …]
-     :uploaded-by-sub \"sigmar_42\"}
-
-  Behaviour:
-    * Persists a `replay` row per parsed map.
-    * Persists a `match_game` row per game, linked to the replay and tagged
-      with the uploader's local alliance index from the parsed header.
-    * Updates the parent `match` if the series is mathematically clinched.
-
-  Validation errors short-circuit (no DB writes).  Match must be `pending`
-  and must not already have any games recorded — re-uploads on a partially
-  recorded match are rejected to keep the modal flow simple."
-  [dependencies match-eid submission]
-  (let [match (db/get-match-by-eid (:connection dependencies) match-eid)]
-    (cond
-      (nil? match)
-      (short-circuit-error "Match not found.")
-
-      (= "complete" (:status match))
-      (short-circuit-error "Match is already complete.")
-
-      (seq (db/get-games-for-match (:connection dependencies) match-eid))
-      (short-circuit-error "Match already has recorded games.")
-
-      (not (<= 1 (count (:games submission)) (:format match)))
-      (short-circuit-error
-       (format "A Bo%d match accepts between 1 and %d games; got %d."
-               (:format match) (:format match) (count (:games submission))))
-
-      (not (every? #(valid-winner? match (:winner-sub %)) (:games submission)))
-      (short-circuit-error "Declared winner must match one of the match's players.")
-
-      :else
-      (let [provisional  (mapv (fn [g] {:winner-sub (:winner-sub g)}) (:games submission))
-            match-winner (rules.tournament/check-match-complete provisional (:format match))]
-        (cond
-          (nil? match-winner)
-          (short-circuit-error
-           (format "Submitted games do not decide the series — no player reached the Bo%d win threshold."
-                   (:format match)))
-
-          :else
-          (let [conn            (:connection dependencies)
-                tournament      (db/get-tournament-by-eid conn (:tournament-eid match))
-                game-modes      (db/get-game-modes-for-game conn (:game-eid tournament))
-                uploaded-by-sub (:uploaded-by-sub submission)
-                now             (Instant/now)
-                stored
-                (mapv (fn [game-index {:keys [parsed winner-sub source-name]}]
-                        (let [replay (persist-replay dependencies
-                                                     {:parsed          parsed
-                                                      :source-name     source-name
-                                                      :uploaded-by-sub uploaded-by-sub})
-                              ;; Auto-create one draft per side from the parsed
-                              ;; replay so the match_game row can lock both
-                              ;; players' lineups. Either eid can come back nil
-                              ;; when the alliance's faction_key isn't in the
-                              ;; seed; in that case the game records normally
-                              ;; with that side's draft slot left empty.
-                              {:keys [player-one-draft-eid player-two-draft-eid]}
-                              (build-and-persist-drafts-for-game
-                               dependencies
-                               {:match           match
-                                :parsed          parsed
-                                :round-num       (:round-index match)
-                                :game-num        game-index
-                                :tournament      tournament
-                                :game-modes      game-modes
-                                :uploaded-by-sub uploaded-by-sub
-                                :now             now})]
-                          (db/create-game
-                           conn match-eid game-index winner-sub
-                           {:replay-eid                    (:eid replay)
-                            :uploader-local-alliance-index (:uploader-local-alliance-index replay)
-                            :player-one-draft-eid          player-one-draft-eid
-                            :player-two-draft-eid          player-two-draft-eid})))
-                      (range)
-                      (:games submission))]
-            (handlers.tournament/update-match-result dependencies match-eid match-winner)
-            {:type       :match-record/recorded
-             :match-eid  match-eid
-             :games      stored
-             :winner-sub match-winner
-             :complete?  true}))))))
-
 (defn record-game-from-parsed
   "Records a single game in a tournament match from one already-parsed
   replay plus a declared winner. Used by the player-console submitting
   step where games are submitted one at a time.
 
-  `submission` shape:
-    {:parsed          <map>            ; output of parse-replay-file
-     :winner-sub      \"sigmar_42\"    ; declared winner
-     :source-name     \"foo.replay\"   ; optional, fallback for match-id
-     :uploaded-by-sub \"sigmar_42\"}
+  Persists a `replay` row, builds and persists per-side drafts, creates
+  the next `match_game` row, and updates the parent match if the series
+  is now clinched.
 
-  Behaviour mirrors `record-match-from-parsed` for a single game: persists
-  a `replay`, builds and persists per-side drafts, creates the next
-  `match_game` row, and updates the match if the series is now clinched.
-
+  Submission shape is described by `record-game-submission-spec`.
   Validation errors short-circuit (no DB writes)."
   [dependencies match-eid {:keys [parsed winner-sub source-name uploaded-by-sub]}]
   (let [match (db/get-match-by-eid (:connection dependencies) match-eid)]
@@ -490,13 +383,3 @@
                      :winner-sub      winner-sub
                      :match-complete? (boolean clincher)}
               clincher (assoc :match-winner clincher))))))))
-
-(defn get-record-context
-  "Fetches the data needed to render the post-match modal for a match:
-   the match itself plus any already-recorded games (which determines whether
-   to surface the recorder UI or a read-only summary)."
-  [dependencies match-eid]
-  (let [match (db/get-match-by-eid (:connection dependencies) match-eid)]
-    (when match
-      {:match match
-       :games (db/get-games-for-match (:connection dependencies) match-eid)})))

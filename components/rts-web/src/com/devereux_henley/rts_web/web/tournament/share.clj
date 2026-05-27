@@ -20,7 +20,7 @@
 (defn attach-lineups-to-matches
   "Walks each round-bucket inside a phase-group and replaces every match
   slot with one carrying `:lineups` — the per-game pair of draft eids
-  recorded against `match_game`. Drafts are auto-created on match-record
+  recorded against `match_game`. Drafts are auto-created on replay
   submit, so completed matches end up with one lineup row per game."
   [phase-group lineups-by-match-eid]
   (let [decorate-match  (fn [m]
