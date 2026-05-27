@@ -975,10 +975,18 @@
       [:ok match])))
 
 (def ^:private parse-multipart-spec
-  "Multipart payload must carry exactly one replay file (named `game-0`)."
+  "Multipart payload must carry exactly one replay file (named `game-0`).
+   `:error/fn` distinguishes the empty / too-many cases so humanize gives
+   the player the message that matches what they actually did."
   (schema.contract/to-schema
-   [:and
-    [:sequential {:min 1 :max 1} [:map [:source-name :string] [:file-path :string]]]]))
+   [:sequential
+    {:min      1
+     :max      1
+     :error/fn (fn [{:keys [value]} _]
+                 (if (empty? value)
+                   "no replay file supplied"
+                   "per-game submission accepts exactly one replay file"))}
+    [:map [:source-name :string] [:file-path :string]]]))
 
 (def ^:private submit-form-spec
   "Form fields echoed back from the review fragment. `parsed-json` is the
@@ -986,8 +994,12 @@
    non-blank; `source-name` is the original replay filename."
   (schema.contract/to-schema
    [:map
-    [:parsed-json [:and :string [:fn {:error/message "must be non-blank"} (complement str/blank?)]]]
-    [:winner-sub  [:and :string [:fn {:error/message "must be non-blank"} (complement str/blank?)]]]
+    [:parsed-json [:and
+                   [:string {:error/message "parsed replay payload missing"}]
+                   [:fn {:error/message "parsed replay payload is blank"} (complement str/blank?)]]]
+    [:winner-sub  [:and
+                   [:string {:error/message "winner not declared"}]
+                   [:fn {:error/message "winner not declared"} (complement str/blank?)]]]
     [:source-name {:optional true} [:maybe :string]]]))
 
 (defmethod integrant.core/init-key ::player-replay-parse-fragment
@@ -996,15 +1008,17 @@
         multipart-params                           :multipart-params
         session                                    :ory-session
         :as                                        _request}]
-    (let [viewer-sub (get-in session [:identity :id])
-          files      (collect-game-files multipart-params)
-          [status v] (participant-or-error dependencies match-eid tournament-eid viewer-sub)]
+    (let [viewer-sub  (get-in session [:identity :id])
+          files       (collect-game-files multipart-params)
+          [status v]  (participant-or-error dependencies match-eid tournament-eid viewer-sub)
+          shape-error (schema.contract/explain->message
+                       (m/explain parse-multipart-spec files))]
       (cond
         (= :error status)
         v
 
-        (not (m/validate parse-multipart-spec files))
-        (error-fragment "Per-game submission accepts exactly one replay file.")
+        shape-error
+        (error-fragment shape-error)
 
         :else
         (try
@@ -1027,17 +1041,19 @@
         session                                    :ory-session
         form-params                                :form-params
         :as                                        _request}]
-    (let [uploader   (get-in session [:identity :id])
-          form       {:parsed-json (get form-params "parsed-json")
-                      :winner-sub  (get form-params "winner-sub")
-                      :source-name (get form-params "source-name")}
-          [status v] (participant-or-error dependencies match-eid tournament-eid uploader)]
+    (let [uploader    (get-in session [:identity :id])
+          form        {:parsed-json (get form-params "parsed-json")
+                       :winner-sub  (get form-params "winner-sub")
+                       :source-name (get form-params "source-name")}
+          [status v]  (participant-or-error dependencies match-eid tournament-eid uploader)
+          shape-error (schema.contract/explain->message
+                       (m/explain submit-form-spec form))]
       (cond
         (= :error status)
         v
 
-        (not (m/validate submit-form-spec form))
-        (error-fragment "Required form fields missing or blank.")
+        shape-error
+        (error-fragment shape-error)
 
         :else
         (let [parsed (-> (:parsed-json form)

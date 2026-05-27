@@ -9,6 +9,7 @@
    [com.devereux-henley.rts-domain.handlers.tournament :as handlers.tournament]
    [com.devereux-henley.rts-domain.rules.tournament :as rules.tournament]
    [com.devereux-henley.rts-domain.schema :as schema]
+   [com.devereux-henley.schema.contract :as schema.contract]
    [jsonista.core :as jsonista]
    [malli.core :as m])
   (:import
@@ -322,11 +323,9 @@
   match complete, winner not in match) likewise short-circuit. No DB
   writes on any error path."
   [dependencies match-eid {:keys [winner-sub source-name uploaded-by-sub parsed] :as submission}]
-  (cond
-    (not (m/validate schema/record-game-submission-spec submission))
-    (short-circuit-error "Submission shape is invalid.")
-
-    :else
+  (if-let [shape-error (schema.contract/explain->message
+                        (m/explain schema/record-game-submission-spec submission))]
+    (short-circuit-error shape-error)
     (let [match (db/get-match-by-eid (:connection dependencies) match-eid)]
       (cond
         (nil? match)

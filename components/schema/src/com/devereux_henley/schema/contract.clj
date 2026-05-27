@@ -3,6 +3,7 @@
    [clojure.core.protocols]
    [clojure.string]
    [malli.core]
+   [malli.error]
    [malli.transform]
    [malli.util]
    [reitit.core])
@@ -354,3 +355,28 @@
                        (if (= :model/model (:model/type (malli.core/properties schema)))
                          (handle-model-transform route-data schema)
                          identity))}}}))
+
+(def ^:private humanize-errors
+  "Overrides `malli.error/default-errors` so a `:malli.core/missing-key`
+   failure falls back to the value-schema's `:error/message`. Without
+   this, missing keys always render as the generic \"missing required
+   key\" regardless of how the inner schema is annotated."
+  (assoc-in malli.error/default-errors
+            [:malli.core/missing-key :error/fn]
+            (fn [{:keys [in schema]} _]
+              (or (some-> schema (malli.util/get (last in)) malli.core/properties :error/message)
+                  "is required"))))
+
+(defn explain->message
+  "Renders a `malli.core/explain` result as a single human-facing string.
+   Walks `malli.error/humanize`'s nested output (with the missing-key
+   override above so per-field `:error/message` annotations apply even
+   when the key is absent) and joins every leaf message with `; `.
+   Returns nil when there is no error (so callers can `if-let`)."
+  [explanation]
+  (when explanation
+    (let [parts (->> (malli.error/humanize explanation {:errors humanize-errors})
+                     (tree-seq coll? seq)
+                     (filter string?))]
+      (when (seq parts)
+        (clojure.string/join "; " parts)))))

@@ -273,10 +273,10 @@
    contextually); `:uploaded-by-sub` is the submitter's id."
   (schema.contract/to-schema
    [:map
-    [:parsed [:map {:closed false}]]
-    [:winner-sub :string]
+    [:parsed [:map {:closed false :error/message "parsed replay payload missing or malformed"}]]
+    [:winner-sub [:string {:error/message "declared winner is required"}]]
     [:source-name {:optional true} [:maybe :string]]
-    [:uploaded-by-sub :string]]))
+    [:uploaded-by-sub [:string {:error/message "uploader identity is required"}]]]))
 
 ;; ─── Subresource response schemas ───────────────────────────────────────────
 
