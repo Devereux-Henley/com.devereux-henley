@@ -83,21 +83,11 @@
             :parameters {:path (schema.contract/to-schema [:map [:match-eid :uuid]])}
             :handler    (integrant.core/ref ::web.tournament.view/modal-view)}}]
     ["/parse"
-     {:post {:summary    "Parse uploaded replays and return the review-step fragment."
-             :openapi    {:tags         ["match-record"]
-                          :consumes     ["multipart/form-data"]
-                          :produces     ["text/html"]
-                          :operation-id "match-record/parse-fragment"}
-             :parameters {:path      (schema.contract/to-schema [:map [:match-eid :uuid]])
+     {:post {:parameters {:path      (schema.contract/to-schema [:map [:match-eid :uuid]])
                           :multipart (schema.contract/to-schema [:map {:closed false}])}
              :handler    (integrant.core/ref ::web.tournament.view/parse-replays-fragment)}}]
     ["/submit"
-     {:post {:summary    "Commit a parsed-replay submission and return the submitted-step fragment."
-             :openapi    {:tags         ["match-record"]
-                          :consumes     ["application/x-www-form-urlencoded"]
-                          :produces     ["text/html"]
-                          :operation-id "match-record/submit-fragment"}
-             :parameters {:path (schema.contract/to-schema [:map [:match-eid :uuid]])}
+     {:post {:parameters {:path (schema.contract/to-schema [:map [:match-eid :uuid]])}
              :handler    (integrant.core/ref ::web.tournament.view/record-match-fragment)}}]]
    ["/game/:game-eid"
     {:middleware [(integrant.core/ref ::web.view/game-context-middleware)]}
@@ -162,10 +152,7 @@
                                     [:step {:optional true} [:maybe :string]]])}
               :handler    (integrant.core/ref ::web.tournament.view/player-series-view)}}]
       ["/match/:match-eid/parse"
-       {:post {:summary    "Parse a single uploaded replay and return the player-console review fragment."
-               :openapi    {:tags         ["player-console"]              :consumes ["multipart/form-data"] :produces ["text/html"]
-                            :operation-id "player-console/parse-fragment"}
-               :parameters {:path      (schema.contract/to-schema
+       {:post {:parameters {:path      (schema.contract/to-schema
                                         [:map
                                          [:game-eid :uuid]
                                          [:eid :uuid]
@@ -173,10 +160,7 @@
                             :multipart (schema.contract/to-schema [:map {:closed false}])}
                :handler    (integrant.core/ref ::web.tournament.view/player-replay-parse-fragment)}}]
       ["/match/:match-eid/submit"
-       {:post {:summary    "Commit a single parsed replay as a per-game match result."
-               :openapi    {:tags     ["player-console"] :consumes     ["application/x-www-form-urlencoded"]
-                            :produces ["text/html"]      :operation-id "player-console/submit-fragment"}
-               :parameters {:path (schema.contract/to-schema
+       {:post {:parameters {:path (schema.contract/to-schema
                                    [:map
                                     [:game-eid :uuid]
                                     [:eid :uuid]
