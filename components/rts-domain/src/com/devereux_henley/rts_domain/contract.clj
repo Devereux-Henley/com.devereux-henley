@@ -152,6 +152,9 @@
 (def default-timezone                             rules.tournament/default-timezone)
 (def group-matches-by-round                       rules.tournament/group-matches-by-round)
 (def group-matches-by-phase                       rules.tournament/group-matches-by-phase)
+(def series-current-game-num                      rules.tournament/series-current-game-num)
+(def series-win-counts                            rules.tournament/series-win-counts)
+(def series-clinches?                             rules.tournament/series-clinches?)
 
 ;;; ─── League / Season / Stats schemas ───────────────────────────────────────
 

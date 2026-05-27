@@ -82,6 +82,33 @@
         counts    (frequencies (keep :winner-sub games))]
     (some (fn [[player wins]] (when (>= wins threshold) player)) counts)))
 
+;; ─── Player-console series projections ──────────────────────────────────────
+;;
+;; Pure projections over the per-game series timeline that the player console
+;; renders. Games carry `:num` (1-based index in the series) and `:result`
+;; from the active player's perspective (`\"W\"` / `\"L\"` / nil for unplayed).
+
+(defn series-current-game-num
+  "1-based number of the first game whose `:result` is nil, or `(count games)`
+   when every game is settled. Used to highlight the active row in the
+   timeline."
+  [games]
+  (or (->> games (filter #(nil? (:result %))) first :num)
+      (count games)))
+
+(defn series-win-counts
+  "Counts settled `:result` entries from the player's perspective. Returns
+   `{:wins n :losses n}`."
+  [games]
+  {:wins   (count (filter #(= "W" (:result %)) games))
+   :losses (count (filter #(= "L" (:result %)) games))})
+
+(defn series-clinches?
+  "Would one more win at `current-wins` reach the best-of-`format` win
+   threshold?"
+  [current-wins format]
+  (>= (inc current-wins) (match-win-threshold format)))
+
 ;; ─── Swiss pairing ──────────────────────────────────────────────────────────
 
 (defn- played-set

@@ -449,48 +449,45 @@
 
 (defn- series-view-model
   [current-step]
-  (let [current-num  (or (->> demo-games (filter #(nil? (:result %))) first :num)
-                         (count demo-games))
-        games        (mapv #(decorate-game % current-num current-step)
-                           demo-games)
-        settled      (filterv :result games)
-        my-wins      (count (filterv #(= "W" (:result %)) games))
-        opp-wins     (count (filterv #(= "L" (:result %)) games))
-        current-game (or (->> games (filter :current?) first :num) (count games))
-        current-map  (when (pos? current-game)
-                       (-> games (nth (dec current-game)) :map))
-        wins-needed  (-> games count (/ 2) Math/ceil long)
-        next-round   "Semifinal 1"
-        if-i-win     (if (>= (inc my-wins) wins-needed)
-                       (str next-round " lobby opens")
-                       (str "Game " (inc current-game) " unlocks"))
-        if-opp-win   (if (>= (inc opp-wins) wins-needed)
-                       (str next-round " lobby opens")
-                       (str "Game " (inc current-game) " unlocks"))
-        generic-next (if (= if-i-win if-opp-win) if-i-win "the series advances")]
+  (let [current-num           (domain/series-current-game-num demo-games)
+        games                 (mapv #(decorate-game % current-num current-step) demo-games)
+        settled               (filterv :result games)
+        total-games           (count games)
+        {:keys [wins losses]} (domain/series-win-counts games)
+        current-game          (or (->> games (filter :current?) first :num) total-games)
+        current-map           (when (pos? current-game)
+                                (-> games (nth (dec current-game)) :map))
+        my-clinches?          (domain/series-clinches? wins total-games)
+        opp-clinches?         (domain/series-clinches? losses total-games)
+        next-round            "Semifinal 1"
+        next-game-text        (str "Game " (inc current-game) " unlocks")
+        round-opens-text      (str next-round " lobby opens")
+        if-i-win              (if my-clinches? round-opens-text next-game-text)
+        if-opp-win            (if opp-clinches? round-opens-text next-game-text)
+        generic-next          (if (= if-i-win if-opp-win) if-i-win "the series advances")]
     {:match-label          demo-match-label
      :me                   demo-player-me
      :opponent             demo-player-opponent
      :games                games
      :settled-games        settled
-     :total-games          (count games)
+     :total-games          total-games
      :current-game         current-game
      :current-map          current-map
-     :my-wins              my-wins
-     :opp-wins             opp-wins
-     :my-leading?          (> my-wins opp-wins)
-     :opp-leading?         (> opp-wins my-wins)
+     :my-wins              wins
+     :opp-wins             losses
+     :my-leading?          (> wins losses)
+     :opp-leading?         (> losses wins)
      :current-step         current-step
      :step-live?           (= current-step "live")
      :step-declare?        (= current-step "declare")
      :step-submitting?     (= current-step "submitting")
      :step-opp-uploading?  (= current-step "opp_uploading")
      :step-label           (case current-step
-                             "live"          (str "Game " current-game " of " (count games) " · in progress")
+                             "live"          (str "Game " current-game " of " total-games " · in progress")
                              "declare"       (str "Game " current-game " ended · declare winner")
                              "submitting"    (str "Game " current-game " · submitting replay")
                              "opp_uploading" (str "Game " current-game " · opponent uploading replay")
-                             (str "Game " current-game " of " (count games)))
+                             (str "Game " current-game " of " total-games))
      :step-subtitle        (case current-step
                              "live"          "Live in the series lobby"
                              "declare"       "Game finished · winner submits the replay"
@@ -501,8 +498,8 @@
      :if-i-win-next        if-i-win
      :if-opp-wins-next     if-opp-win
      :generic-next         generic-next
-     :continues-if-i-win   (< (inc my-wins) wins-needed)
-     :continues-if-opp-win (< (inc opp-wins) wins-needed)
+     :continues-if-i-win   (not my-clinches?)
+     :continues-if-opp-win (not opp-clinches?)
      :next-round-label     next-round}))
 
 (defmethod integrant.core/init-key ::player-check-in-view
