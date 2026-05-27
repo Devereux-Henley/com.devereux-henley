@@ -1,7 +1,5 @@
-{# Series-wide progress timeline shown above the active-game panel:
-   score header + per-game pill row with current-state CSS. Pure render;
-   pulls `total-games`, `games`, `my-wins`, `opp-wins`, `my-leading?`,
-   `opp-leading?`, `match-label`, `me`, `opponent` from the parent ctx. #}
+{# At-a-glance view of the series: who's ahead, the current score, and
+   a row of pills marking each game as won, lost, live, or pending. #}
 <section class="series-progress" aria-labelledby="series-progress-heading">
     <header class="series-progress-head">
         <div class="series-progress-head-left">

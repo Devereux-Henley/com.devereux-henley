@@ -1,8 +1,7 @@
-{# Per-game replay upload form for the player console's submitting step.
-   Isolates the hyperscript drag-over interactions, htmx multipart POST,
-   and the parse-overlay animation so the parent series view stays a
-   plain scaffold. Posts to /actions/.../replay/parse and swaps the
-   review fragment into the surrounding panel-body. #}
+{# Drop or browse to attach a .rep file. While the parser runs, a
+   stepped progress overlay shows what's being checked; when it finishes
+   the review screen replaces this form so the player can confirm the
+   detected winner and armies before submitting. #}
 <form class="stack replay-upload-form"
       hx-post="/actions/tournament/{{data.eid}}/match/{{match-eid}}/replay/parse"
       hx-encoding="multipart/form-data"

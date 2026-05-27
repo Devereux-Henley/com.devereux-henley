@@ -1,7 +1,6 @@
-{# Per-game review fragment swapped into the active-game-panel body after
-   the player-console /parse endpoint runs. Carries the hidden parsed JSON
-   so the /submit endpoint can echo it back to the domain without a second
-   parse. #}
+{# Shows the player what was detected from the replay — winner, both
+   armies side-by-side with their units and costs — so they can verify
+   it before locking the game in. #}
 <form class="replay-review"
       hx-post="/actions/tournament/{{match.tournament-eid}}/match/{{match.eid}}/replay/submit"
       hx-target="closest .panel-body"

@@ -1,7 +1,6 @@
-{# Per-game "submitted" fragment swapped into the active-game-panel body
-   after the player-console /submit endpoint records the game. Shows the
-   locked-in result and what's next (opponent confirmation, or series
-   finalization if this game clinched the match). #}
+{# Confirms the game has been recorded and tells the player what
+   happens next — the opponent confirming, or the match wrapping up if
+   this game clinched the series. #}
 <div class="replay-submitted{% if match-complete? %} replay-submitted--match-complete{% endif %}"
      role="status"
      aria-live="polite">

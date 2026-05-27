@@ -1,6 +1,6 @@
-{# Active-game step body for the "opp_uploading" state: progress ring +
-   checklist of what's pending while the opponent uploads their replay,
-   plus an escape hatch back to declare. #}
+{# Shown to the losing player while the winner uploads the replay:
+   a progress indicator, a checklist of what happens next, and a way to
+   step back if they actually won and need to upload themselves. #}
 <div class="await-view">
     <div class="await-view-spinner" aria-hidden="true">
         <span class="await-view-spinner-ring await-view-spinner-ring--progress" style="--p: 48%"></span>

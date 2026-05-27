@@ -1,6 +1,6 @@
-{# Three-step flow stepper for the player console.
-   `active` ∈ "checkin" | "playing" | "finalize". Steps before active are
-   marked done; subsequent steps are pending. #}
+{# Shows the player which of the three stages — check in, play the
+   series, finalize — they're currently in, with earlier stages marked
+   done and later ones marked pending. #}
 <ol class="flow-stepper" aria-label="Player flow">
     {% ifequal active "checkin" %}
     <li class="flow-step flow-step--active">
