@@ -1115,10 +1115,10 @@
 
 (defmethod integrant.core/init-key ::player-replay-parse-fragment
   [_init-key dependencies]
-  (fn [{{{:keys [game-eid eid match-eid]} :path} :parameters
-        multipart-params                         :multipart-params
-        session                                  :ory-session
-        :as                                      _request}]
+  (fn [{{{:keys [tournament-eid match-eid]} :path} :parameters
+        multipart-params                           :multipart-params
+        session                                    :ory-session
+        :as                                        _request}]
     (let [files      (collect-game-files multipart-params)
           match      (db/get-match-by-eid (:connection dependencies) match-eid)
           viewer-sub (get-in session [:identity :id])]
@@ -1126,7 +1126,7 @@
         (nil? match)
         (error-fragment "Match not found.")
 
-        (not= eid (:tournament-eid match))
+        (not= tournament-eid (:tournament-eid match))
         (error-fragment "Match does not belong to this tournament.")
 
         (not (or (= viewer-sub (:player-one-sub match))
@@ -1143,8 +1143,9 @@
         (try
           (let [{:keys [source-name file-path]} (first files)
                 parsed                          (domain/parse-replay-file dependencies file-path)
+                tournament                      (domain/get-tournament-by-eid dependencies tournament-eid)
                 ctx                             (build-review-context dependencies
-                                                                      (assoc match :game-eid game-eid)
+                                                                      (assoc match :game-eid (:game-eid tournament))
                                                                       parsed source-name viewer-sub)]
             {:status  200
              :headers {"Content-Type" "text/html; charset=utf-8"}
@@ -1154,10 +1155,10 @@
 
 (defmethod integrant.core/init-key ::player-replay-submit-fragment
   [_init-key dependencies]
-  (fn [{{{:keys [game-eid eid match-eid]} :path} :parameters
-        session                                  :ory-session
-        form-params                              :form-params
-        :as                                      _request}]
+  (fn [{{{:keys [tournament-eid match-eid]} :path} :parameters
+        session                                    :ory-session
+        form-params                                :form-params
+        :as                                        _request}]
     (let [parsed-json (get form-params "parsed-json")
           source-name (get form-params "source-name")
           winner-sub  (get form-params "winner-sub")
@@ -1167,7 +1168,7 @@
         (nil? match)
         (error-fragment "Match not found.")
 
-        (not= eid (:tournament-eid match))
+        (not= tournament-eid (:tournament-eid match))
         (error-fragment "Match does not belong to this tournament.")
 
         (not (or (= uploader (:player-one-sub match))
@@ -1188,8 +1189,9 @@
                        :uploaded-by-sub uploader})]
           (case (:type result)
             :match-record/game-recorded
-            (let [fresh-match (-> (db/get-match-by-eid (:connection dependencies) match-eid)
-                                  (assoc :game-eid game-eid))]
+            (let [tournament  (domain/get-tournament-by-eid dependencies tournament-eid)
+                  fresh-match (-> (db/get-match-by-eid (:connection dependencies) match-eid)
+                                  (assoc :game-eid (:game-eid tournament)))]
               {:status  200
                :headers {"Content-Type"            "text/html; charset=utf-8"
                          "HX-Trigger-After-Settle" "match-game-recorded"}

@@ -150,22 +150,7 @@
                            :query (schema.contract/to-schema
                                    [:map
                                     [:step {:optional true} [:maybe :string]]])}
-              :handler    (integrant.core/ref ::web.tournament.view/player-series-view)}}]
-      ["/match/:match-eid/parse"
-       {:post {:parameters {:path      (schema.contract/to-schema
-                                        [:map
-                                         [:game-eid :uuid]
-                                         [:eid :uuid]
-                                         [:match-eid :uuid]])
-                            :multipart (schema.contract/to-schema [:map {:closed false}])}
-               :handler    (integrant.core/ref ::web.tournament.view/player-replay-parse-fragment)}}]
-      ["/match/:match-eid/submit"
-       {:post {:parameters {:path (schema.contract/to-schema
-                                   [:map
-                                    [:game-eid :uuid]
-                                    [:eid :uuid]
-                                    [:match-eid :uuid]])}
-               :handler    (integrant.core/ref ::web.tournament.view/player-replay-submit-fragment)}}]]]
+              :handler    (integrant.core/ref ::web.tournament.view/player-series-view)}}]]]
     ["/competitive"
      ["/index.html"
       {:get {:produces   ["application/htmx+html"]
@@ -378,6 +363,21 @@
                                  [:eid :uuid]])
                          :body domain/record-result-specification}
             :handler    (integrant.core/ref ::web.actions.tournament/record-game)}}]
+   ["/tournament/:tournament-eid/match/:match-eid/replay/parse"
+    {:post {:produces   ["application/htmx+html"]
+            :parameters {:path      (schema.contract/to-schema
+                                     [:map
+                                      [:tournament-eid :uuid]
+                                      [:match-eid :uuid]])
+                         :multipart (schema.contract/to-schema [:map {:closed false}])}
+            :handler    (integrant.core/ref ::web.tournament.view/player-replay-parse-fragment)}}]
+   ["/tournament/:tournament-eid/match/:match-eid/replay/submit"
+    {:post {:produces   ["application/htmx+html"]
+            :parameters {:path (schema.contract/to-schema
+                                [:map
+                                 [:tournament-eid :uuid]
+                                 [:match-eid :uuid]])}
+            :handler    (integrant.core/ref ::web.tournament.view/player-replay-submit-fragment)}}]
    ["/league/:eid"
     {:put {:produces   ["application/htmx+html"]
            :parameters {:path  schema.contract/id-path-parameter

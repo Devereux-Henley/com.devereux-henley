@@ -3,7 +3,7 @@
    so the /submit endpoint can echo it back to the domain without a second
    parse. #}
 <form class="replay-review"
-      hx-post="/view/game/{{match.game-eid}}/tournament/{{match.tournament-eid}}/player/match/{{match.eid}}/submit"
+      hx-post="/actions/tournament/{{match.tournament-eid}}/match/{{match.eid}}/replay/submit"
       hx-target="closest .panel-body"
       hx-swap="innerHTML">
 

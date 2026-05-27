@@ -98,7 +98,7 @@
                 {% if step-submitting? %}
                 {% if match-eid %}
                 <form class="stack replay-upload-form"
-                      hx-post="/view/game/{{game-eid}}/tournament/{{data.eid}}/player/match/{{match-eid}}/parse"
+                      hx-post="/actions/tournament/{{data.eid}}/match/{{match-eid}}/replay/parse"
                       hx-encoding="multipart/form-data"
                       hx-target="closest .panel-body"
                       hx-swap="innerHTML swap:{{parse-swap-delay-ms}}ms"
