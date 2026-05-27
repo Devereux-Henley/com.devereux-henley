@@ -461,13 +461,16 @@
 
 (defn- series-view-model
   [current-step]
-  (let [games        (mapv #(decorate-game % 5 current-step)
+  (let [current-num  (or (->> demo-games (filter #(nil? (:result %))) first :num)
+                         (count demo-games))
+        games        (mapv #(decorate-game % current-num current-step)
                            demo-games)
         settled      (filterv :result games)
         my-wins      (count (filterv #(= "W" (:result %)) games))
         opp-wins     (count (filterv #(= "L" (:result %)) games))
         current-game (or (->> games (filter :current?) first :num) (count games))
-        current-map  (-> games (nth (dec current-game)) :map)
+        current-map  (when (pos? current-game)
+                       (-> games (nth (dec current-game)) :map))
         wins-needed  (-> games count (/ 2) Math/ceil long)
         next-round   "Semifinal 1"
         if-i-win     (if (>= (inc my-wins) wins-needed)
@@ -528,14 +531,17 @@
               :opponent-checked-in? true})))
 
 (defn- find-current-player-match
-  "Returns the first pending match in the tournament where `user-sub` is one
-   of the players, or nil if none exists."
+  "Returns the earliest pending match (lowest phase-index, then round-index)
+   in the tournament where `user-sub` is one of the players, or nil if none
+   exists. Ordering matters in double-elim, where a player can have
+   simultaneous Winners- and Losers-bracket matches pending."
   [dependencies tournament-eid user-sub]
   (->> (domain/get-matches-for-tournament dependencies tournament-eid)
        (filter (fn [m]
                  (and (= "pending" (:status m))
                       (or (= user-sub (:player-one-sub m))
                           (= user-sub (:player-two-sub m))))))
+       (sort-by (juxt :phase-index :round-index))
        first))
 
 (def ^:private parse-log-stagger-ms 280)
@@ -1113,12 +1119,19 @@
         multipart-params                         :multipart-params
         session                                  :ory-session
         :as                                      _request}]
-    (let [files (collect-game-files multipart-params)
-          match (some-> (db/get-match-by-eid (:connection dependencies) match-eid)
-                        (assoc :game-eid game-eid :tournament-eid eid))]
+    (let [files      (collect-game-files multipart-params)
+          match      (db/get-match-by-eid (:connection dependencies) match-eid)
+          viewer-sub (get-in session [:identity :id])]
       (cond
         (nil? match)
         (error-fragment "Match not found.")
+
+        (not= eid (:tournament-eid match))
+        (error-fragment "Match does not belong to this tournament.")
+
+        (not (or (= viewer-sub (:player-one-sub match))
+                 (= viewer-sub (:player-two-sub match))))
+        (error-fragment "Only match participants can upload a replay.")
 
         (empty? files)
         (error-fragment "No replay file supplied.")
@@ -1130,8 +1143,9 @@
         (try
           (let [{:keys [source-name file-path]} (first files)
                 parsed                          (domain/parse-replay-file dependencies file-path)
-                viewer-sub                      (get-in session [:identity :id])
-                ctx                             (build-review-context dependencies match parsed source-name viewer-sub)]
+                ctx                             (build-review-context dependencies
+                                                                      (assoc match :game-eid game-eid)
+                                                                      parsed source-name viewer-sub)]
             {:status  200
              :headers {"Content-Type" "text/html; charset=utf-8"}
              :body    (render/render-component "player-replay-review-fragment.html" ctx)})
@@ -1147,8 +1161,19 @@
     (let [parsed-json (get form-params "parsed-json")
           source-name (get form-params "source-name")
           winner-sub  (get form-params "winner-sub")
-          uploader    (get-in session [:identity :id])]
+          uploader    (get-in session [:identity :id])
+          match       (db/get-match-by-eid (:connection dependencies) match-eid)]
       (cond
+        (nil? match)
+        (error-fragment "Match not found.")
+
+        (not= eid (:tournament-eid match))
+        (error-fragment "Match does not belong to this tournament.")
+
+        (not (or (= uploader (:player-one-sub match))
+                 (= uploader (:player-two-sub match))))
+        (error-fragment "Only match participants can submit a replay.")
+
         (str/blank? parsed-json) (error-fragment "Parsed replay payload missing.")
         (str/blank? winner-sub)  (error-fragment "Winner not declared.")
         :else
@@ -1163,20 +1188,21 @@
                        :uploaded-by-sub uploader})]
           (case (:type result)
             :match-record/game-recorded
-            (let [match (-> (db/get-match-by-eid (:connection dependencies) match-eid)
-                            (assoc :game-eid game-eid :tournament-eid eid))]
+            (let [fresh-match (-> (db/get-match-by-eid (:connection dependencies) match-eid)
+                                  (assoc :game-eid game-eid))]
               {:status  200
                :headers {"Content-Type"            "text/html; charset=utf-8"
                          "HX-Trigger-After-Settle" "match-game-recorded"}
                :body    (render/render-component
                          "player-replay-submitted-fragment.html"
-                         {:match           match
+                         {:match           fresh-match
                           :game-num        (inc (:game-index result))
-                          :total-games     (:format match)
+                          :total-games     (:format fresh-match)
                           :winner-sub      (:winner-sub result)
                           :i-won?          (= (:winner-sub result) uploader)
-                          :opponent-sub    (if (= uploader (:player-one-sub match))
-                                             (:player-two-sub match) (:player-one-sub match))
+                          :opponent-sub    (if (= uploader (:player-one-sub fresh-match))
+                                             (:player-two-sub fresh-match)
+                                             (:player-one-sub fresh-match))
                           :match-complete? (:match-complete? result)
                           :match-winner    (:match-winner result)})})
 

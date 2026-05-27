@@ -6,6 +6,7 @@
    [clojure.string :as string]
    [com.devereux-henley.rts-data-access.contract :as db]
    [com.devereux-henley.rts-domain.handlers.draft :as handlers.draft]
+   [com.devereux-henley.rts-domain.handlers.tournament :as handlers.tournament]
    [com.devereux-henley.rts-domain.rules.tournament :as rules.tournament]
    [jsonista.core :as jsonista])
   (:import
@@ -405,7 +406,7 @@
                             :player-two-draft-eid          player-two-draft-eid})))
                       (range)
                       (:games submission))]
-            (db/update-match-result conn match-eid match-winner)
+            (handlers.tournament/update-match-result dependencies match-eid match-winner)
             {:type       :match-record/recorded
              :match-eid  match-eid
              :games      stored
@@ -477,7 +478,11 @@
                                  {:winner-sub winner-sub})
                 clincher   (rules.tournament/check-match-complete all-games (:format match))]
             (when clincher
-              (db/update-match-result conn match-eid clincher))
+              ;; Route through the public domain function so standings get
+              ;; recalculated and tournament-complete check fires — going
+              ;; straight to db/update-match-result here would leave the
+              ;; state blob stale.
+              (handlers.tournament/update-match-result dependencies match-eid clincher))
             (cond-> {:type            :match-record/game-recorded
                      :match-eid       match-eid
                      :game            stored

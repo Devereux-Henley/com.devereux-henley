@@ -13,6 +13,12 @@
 ;; defaulted here to safe no-ops so the existing validation-focused tests
 ;; don't need to know about them; the persistence-flow tests below
 ;; override the relevant stubs to assert draft side-effects.
+;;
+;; When a match clinches, record-match-from-parsed / record-game-from-parsed
+;; now delegate to handlers.tournament/update-match-result (so standings
+;; recalculate) — which pulls in the tournament-state + all-matches stubs
+;; below; defaulted to a minimal empty state with no phases so
+;; recalculate-and-check-completion is a no-op for these tests.
 (use-fixtures :each
   (fn [t]
     (with-redefs [data-access.contract/get-tournament-by-eid   (fn [_ _] {:name "Practice" :game-eid (UUID/randomUUID)})
@@ -22,7 +28,10 @@
                   data-access.contract/get-mounts-for-unit     (fn [_ _] [])
                   data-access.contract/get-unit-level-costs    (fn [_] {})
                   data-access.contract/create-draft            (fn [_ _] nil)
-                  data-access.contract/upsert-draft-state      (fn [_ _ _] nil)]
+                  data-access.contract/upsert-draft-state      (fn [_ _ _] nil)
+                  data-access.contract/get-tournament-state    (fn [_ _] nil)
+                  data-access.contract/upsert-tournament-state (fn [_ _ _] nil)
+                  data-access.contract/get-matches-for-tournament (fn [_ _] [])]
       (t))))
 
 (def ^:private match-eid (UUID/fromString "00000000-0000-4000-8000-000000000001"))

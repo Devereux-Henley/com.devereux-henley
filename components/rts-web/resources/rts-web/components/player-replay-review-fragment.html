@@ -24,14 +24,10 @@
         </div>
         <button type="button"
                 class="btn btn-ghost btn-sm replay-file-card-replace"
-                _="on click set form to closest <form/>
-                   then set body to closest .panel-body
-                   then set body's innerHTML to ''
-                   then send replay-replace to body"
                 hx-get="/view/game/{{match.game-eid}}/tournament/{{match.tournament-eid}}/player/series.html?step=submitting"
                 hx-target="closest .panel-body"
                 hx-swap="innerHTML"
-                hx-select=".panel-body > *">
+                hx-select=".active-game-panel .panel-body > *">
             Replace file
         </button>
     </section>
