@@ -11,6 +11,27 @@
    [java.time Instant LocalDate LocalDateTime ZoneId]
    [java.util UUID]))
 
+(defmacro =>*
+  "Declare a malli function schema and apply it to multiple vars at
+  once. Pass any number of var symbols followed by the schema as the
+  last argument; emits one `malli.core/=>` per symbol. Handy when a
+  fn lives behind several vars (e.g. a `contract.clj` alias of an
+  upstream query fn) and they all need to be instrumented.
+
+  Each symbol is resolved through the calling ns at macroexpansion
+  time so aliased names like `other-ns/foo` reach the actual var
+  rather than registering under the alias string."
+  [& syms-and-schema]
+  (let [syms        (butlast syms-and-schema)
+        schema      (last syms-and-schema)
+        ->qualified (fn [s]
+                      (if-let [v (ns-resolve *ns* s)]
+                        (symbol (str (.ns ^clojure.lang.Var v))
+                                (str (.sym ^clojure.lang.Var v)))
+                        (throw (ex-info (str "=>* cannot resolve symbol: " s)
+                                        {:symbol s :ns *ns*}))))]
+    `(do ~@(for [s syms] `(malli.core/=> ~(->qualified s) ~schema)))))
+
 (def milliseconds-in-a-second 1000)
 (def seconds-in-a-minute 60)
 (def minutes-in-an-hour 60)

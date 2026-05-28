@@ -73,7 +73,6 @@
 (def update-draft                               handlers.draft/update-draft)
 (def draft-lock-info                            handlers.draft/lock-info)
 (def get-draft-state                            handlers.draft/get-draft-state)
-(def set-draft-state                            handlers.draft/set-draft-state)
 (def parse-unit-statistics                      handlers.draft/parse-unit-statistics)
 (def get-spells-by-keys                         handlers.draft/get-spells-by-keys)
 (def get-abilities-by-keys                      handlers.draft/get-abilities-by-keys)

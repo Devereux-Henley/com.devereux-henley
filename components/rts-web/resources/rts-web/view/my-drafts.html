@@ -46,7 +46,7 @@
                     {{draft.display-name}}
                 </a>
                 <span class="draft-faction">{{draft.faction-name}}</span>
-                <span class="draft-date">{{draft.updated-at-display}}</span>
+                <span class="draft-date">{{draft.updated-at|date:"MM/dd/yyyy"}}</span>
             </li>
             {% endfor %}
         </ul>
