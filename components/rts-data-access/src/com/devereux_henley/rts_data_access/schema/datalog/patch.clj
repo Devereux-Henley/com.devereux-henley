@@ -15,13 +15,13 @@
                  :in $ ?unit-eid
                  :where
                  [?u :unit/eid ?unit-eid]
-                 [?u :unit/unit-statistics ?s]
+                 [?s :unit-statistics/unit ?u]
                  [?s :unit-statistics/patch ?p]
                  [?p :patch/released-at ?ts]
                  [(q '[:find (max ?ts2) .
                        :in $ ?u
                        :where
-                       [?u :unit/unit-statistics ?s2]
+                       [?s2 :unit-statistics/unit ?u]
                        [?s2 :unit-statistics/patch ?p2]
                        [?p2 :patch/released-at ?ts2]]
                      $ ?u) ?max-ts]

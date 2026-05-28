@@ -44,7 +44,7 @@
               :stats-override
               "{\"cost\":1600,\"is_large\":false,\"unit_size\":1,\"health\":6596,\"barrier\":0,\"armor\":90,\"leadership\":75,\"speed\":90,\"melee_attack\":47,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":35,\"weapon_strength\":450,\"weapon_damage\":160,\"weapon_ap_damage\":290,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":70,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh_main_mount_passive_bloodroar\"]"]}
+              ["wh_main_mount_passive_bloodroar"]}
  #:unit-mount{:eid #uuid "c83ffd0d-de8b-3389-ac5d-9dc63503d3c0",
               :unit
               [:unit/eid #uuid "00010003-0000-4000-8000-000000000000"],
@@ -73,7 +73,7 @@
               :stats-override
               "{\"cost\":2550,\"is_large\":true,\"unit_size\":1,\"health\":8222,\"barrier\":0,\"armor\":70,\"leadership\":75,\"speed\":95,\"melee_attack\":50,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":44,\"weapon_strength\":500,\"weapon_damage\":150,\"weapon_ap_damage\":350,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":55,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc25_unit_abilities_coruscating_blast\"]"]}
+              ["wh3_dlc25_unit_abilities_coruscating_blast"]}
  #:unit-mount{:eid #uuid "2a51159a-800c-3de9-8fe9-ee026767627f",
               :unit
               [:unit/eid #uuid "00010005-0000-4000-8000-000000000000"],
@@ -93,7 +93,7 @@
               :stats-override
               "{\"cost\":1900,\"is_large\":false,\"unit_size\":1,\"health\":6828,\"barrier\":0,\"armor\":100,\"leadership\":80,\"speed\":90,\"melee_attack\":56,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":38,\"weapon_strength\":490,\"weapon_damage\":145,\"weapon_ap_damage\":345,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":90,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh_main_mount_passive_bloodroar\"]"]}
+              ["wh_main_mount_passive_bloodroar"]}
  #:unit-mount{:eid #uuid "b2fd8592-bf5a-349b-a227-cd5e7a878421",
               :unit
               [:unit/eid #uuid "00010005-0000-4000-8000-000000000000"],
@@ -122,7 +122,7 @@
               :stats-override
               "{\"cost\":1400,\"is_large\":false,\"unit_size\":1,\"health\":6376,\"barrier\":0,\"armor\":90,\"leadership\":70,\"speed\":90,\"melee_attack\":47,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":450,\"weapon_damage\":160,\"weapon_ap_damage\":290,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":70,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh_main_mount_passive_bloodroar\"]"]}
+              ["wh_main_mount_passive_bloodroar"]}
  #:unit-mount{:eid #uuid "84f7994a-ff6e-3e1a-86de-8d8fd06a1249",
               :unit
               [:unit/eid #uuid "00010006-0000-4000-8000-000000000000"],
@@ -178,7 +178,7 @@
               :stats-override
               "{\"cost\":1550,\"is_large\":false,\"unit_size\":2,\"health\":13216,\"barrier\":0,\"armor\":100,\"leadership\":80,\"speed\":50,\"melee_attack\":30,\"melee_attack_types\":[\"magical\",\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":25,\"weapon_strength\":400,\"weapon_damage\":240,\"weapon_ap_damage\":160,\"bonus_vs_infantry\":25,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"unbreakable\"]}",
               :granted-ability-keys
-              ["[\"wh_dlc04_spell_bound_banishment_innate\"]"]}
+              ["wh_dlc04_spell_bound_banishment_innate"]}
  #:unit-mount{:eid #uuid "36b58e2c-535f-39e9-9bb9-f905976d6d7f",
               :unit
               [:unit/eid #uuid "0001000b-0000-4000-8000-000000000000"],
@@ -198,7 +198,7 @@
               :stats-override
               "{\"cost\":1300,\"is_large\":false,\"unit_size\":1,\"health\":5728,\"barrier\":0,\"armor\":50,\"leadership\":55,\"speed\":90,\"melee_attack\":40,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":450,\"weapon_damage\":160,\"weapon_ap_damage\":290,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":60,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh_main_mount_passive_bloodroar\"]"]}
+              ["wh_main_mount_passive_bloodroar"]}
  #:unit-mount{:eid #uuid "d7fc74c7-9cbc-3854-9f90-b5a8427d0d96",
               :unit
               [:unit/eid #uuid "0001000b-0000-4000-8000-000000000000"],
@@ -632,7 +632,7 @@
               :stats-override
               "{\"cost\":650,\"is_large\":false,\"unit_size\":1,\"health\":4168,\"barrier\":0,\"armor\":105,\"leadership\":65,\"speed\":84,\"melee_attack\":45,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":390,\"weapon_damage\":255,\"weapon_ap_damage\":135,\"bonus_vs_infantry\":0,\"bonus_vs_large\":20,\"charge_bonus\":70,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"encourages\",\"hide_forest\",\"knight\"]}",
               :granted-ability-keys
-              ["[\"wh_main_character_abilities_deadly_onslaught\"]"]}
+              ["wh_main_character_abilities_deadly_onslaught"]}
  #:unit-mount{:eid #uuid "4a2c873c-6f19-3bc3-b61e-2248319e6459",
               :unit
               [:unit/eid #uuid "0003000f-0000-4000-8000-000000000000"],
@@ -643,7 +643,7 @@
               :stats-override
               "{\"cost\":875,\"is_large\":false,\"unit_size\":1,\"health\":4456,\"barrier\":0,\"armor\":85,\"leadership\":65,\"speed\":105,\"melee_attack\":45,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":390,\"weapon_damage\":255,\"weapon_ap_damage\":135,\"bonus_vs_infantry\":0,\"bonus_vs_large\":20,\"charge_bonus\":85,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"encourages\",\"flying\",\"knight\"]}",
               :granted-ability-keys
-              ["[\"wh_main_character_abilities_deadly_onslaught\"]"]}
+              ["wh_main_character_abilities_deadly_onslaught"]}
  #:unit-mount{:eid #uuid "6d4a7fa6-b1e6-3355-9788-570cc7af34d0",
               :unit
               [:unit/eid #uuid "00040002-0000-4000-8000-000000000000"],
@@ -654,8 +654,8 @@
               :stats-override
               "{\"cost\":2300,\"is_large\":false,\"unit_size\":1,\"health\":8656,\"barrier\":0,\"armor\":80,\"leadership\":85,\"speed\":90,\"melee_attack\":64,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":46,\"weapon_strength\":565,\"weapon_damage\":140,\"weapon_ap_damage\":425,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_unit_abilities_flaming_breath\""
-               "\"wh3_dlc23_unit_passive_blazing_body\"]"]}
+              ["wh3_dlc23_unit_abilities_flaming_breath"
+               "wh3_dlc23_unit_passive_blazing_body"]}
  #:unit-mount{:eid #uuid "ea26732d-5ae7-31ed-a65e-d81aa1b77d12",
               :unit
               [:unit/eid #uuid "00040003-0000-4000-8000-000000000000"],
@@ -666,7 +666,7 @@
               :stats-override
               "{\"cost\":1300,\"is_large\":true,\"unit_size\":1,\"health\":6668,\"barrier\":0,\"armor\":60,\"leadership\":80,\"speed\":80,\"melee_attack\":46,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":28,\"weapon_strength\":450,\"weapon_damage\":130,\"weapon_ap_damage\":320,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_unit_passive_blazing_body\"]"]}
+              ["wh3_dlc23_unit_passive_blazing_body"]}
  #:unit-mount{:eid #uuid "0196e8bd-5126-3040-83a3-b6888d122557",
               :unit
               [:unit/eid #uuid "00040003-0000-4000-8000-000000000000"],
@@ -677,9 +677,9 @@
               :stats-override
               "{\"cost\":1400,\"is_large\":true,\"unit_size\":1,\"health\":6048,\"barrier\":0,\"armor\":60,\"leadership\":80,\"speed\":85,\"melee_attack\":54,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":34,\"weapon_strength\":450,\"weapon_damage\":270,\"weapon_ap_damage\":180,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_spell_bound_enfeebling_foe\""
-               "\"wh3_dlc23_spell_bound_the_withering\""
-               "\"wh3_dlc23_unit_passive_sorcerous_miasma\"]"]}
+              ["wh3_dlc23_spell_bound_enfeebling_foe"
+               "wh3_dlc23_spell_bound_the_withering"
+               "wh3_dlc23_unit_passive_sorcerous_miasma"]}
  #:unit-mount{:eid #uuid "ded1fcad-20b8-3f54-8969-8a400dbfe0e7",
               :unit
               [:unit/eid #uuid "00040004-0000-4000-8000-000000000000"],
@@ -690,8 +690,8 @@
               :stats-override
               "{\"cost\":2200,\"is_large\":true,\"unit_size\":1,\"health\":8258,\"barrier\":0,\"armor\":70,\"leadership\":75,\"speed\":90,\"melee_attack\":56,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":540,\"weapon_damage\":140,\"weapon_ap_damage\":400,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_unit_abilities_flaming_breath\""
-               "\"wh3_dlc23_unit_passive_blazing_body\"]"]}
+              ["wh3_dlc23_unit_abilities_flaming_breath"
+               "wh3_dlc23_unit_passive_blazing_body"]}
  #:unit-mount{:eid #uuid "2121776c-7a08-3b01-9029-9a1e5f790361",
               :unit
               [:unit/eid #uuid "00040004-0000-4000-8000-000000000000"],
@@ -702,7 +702,7 @@
               :stats-override
               "{\"cost\":1500,\"is_large\":true,\"unit_size\":1,\"health\":6668,\"barrier\":0,\"armor\":60,\"leadership\":75,\"speed\":80,\"melee_attack\":46,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":28,\"weapon_strength\":450,\"weapon_damage\":130,\"weapon_ap_damage\":320,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_unit_passive_blazing_body\"]"]}
+              ["wh3_dlc23_unit_passive_blazing_body"]}
  #:unit-mount{:eid #uuid "909472a4-67cc-30d5-8dfa-98bf889a964f",
               :unit
               [:unit/eid #uuid "00040004-0000-4000-8000-000000000000"],
@@ -713,9 +713,9 @@
               :stats-override
               "{\"cost\":1600,\"is_large\":true,\"unit_size\":1,\"health\":6048,\"barrier\":0,\"armor\":60,\"leadership\":75,\"speed\":85,\"melee_attack\":40,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":48,\"weapon_strength\":450,\"weapon_damage\":270,\"weapon_ap_damage\":180,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":40,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_spell_bound_enfeebling_foe\""
-               "\"wh3_dlc23_spell_bound_the_withering\""
-               "\"wh3_dlc23_unit_passive_sorcerous_miasma\"]"]}
+              ["wh3_dlc23_spell_bound_enfeebling_foe"
+               "wh3_dlc23_spell_bound_the_withering"
+               "wh3_dlc23_unit_passive_sorcerous_miasma"]}
  #:unit-mount{:eid #uuid "023a0edc-c149-3a18-a7e9-3a3157932318",
               :unit
               [:unit/eid #uuid "00040008-0000-4000-8000-000000000000"],
@@ -726,7 +726,7 @@
               :stats-override
               "{\"cost\":1450,\"is_large\":true,\"unit_size\":1,\"health\":6668,\"barrier\":0,\"armor\":60,\"leadership\":85,\"speed\":80,\"melee_attack\":46,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":28,\"weapon_strength\":450,\"weapon_damage\":130,\"weapon_ap_damage\":320,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_unit_passive_blazing_body\"]"]}
+              ["wh3_dlc23_unit_passive_blazing_body"]}
  #:unit-mount{:eid #uuid "0a39d363-9e5a-33ed-818d-ccef2dc364c0",
               :unit
               [:unit/eid #uuid "00040008-0000-4000-8000-000000000000"],
@@ -737,9 +737,9 @@
               :stats-override
               "{\"cost\":1550,\"is_large\":true,\"unit_size\":1,\"health\":6848,\"barrier\":0,\"armor\":60,\"leadership\":85,\"speed\":85,\"melee_attack\":44,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":52,\"weapon_strength\":450,\"weapon_damage\":270,\"weapon_ap_damage\":180,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":40,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_spell_bound_enfeebling_foe\""
-               "\"wh3_dlc23_spell_bound_the_withering\""
-               "\"wh3_dlc23_unit_passive_sorcerous_miasma\"]"]}
+              ["wh3_dlc23_spell_bound_enfeebling_foe"
+               "wh3_dlc23_spell_bound_the_withering"
+               "wh3_dlc23_unit_passive_sorcerous_miasma"]}
  #:unit-mount{:eid #uuid "c035a751-f5d8-3277-a408-a0f02adda2e8",
               :unit
               [:unit/eid #uuid "0004000a-0000-4000-8000-000000000000"],
@@ -750,8 +750,8 @@
               :stats-override
               "{\"cost\":2000,\"is_large\":true,\"unit_size\":1,\"health\":8258,\"barrier\":0,\"armor\":70,\"leadership\":70,\"speed\":90,\"melee_attack\":56,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":540,\"weapon_damage\":140,\"weapon_ap_damage\":400,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_unit_abilities_flaming_breath\""
-               "\"wh3_dlc23_unit_passive_blazing_body\"]"]}
+              ["wh3_dlc23_unit_abilities_flaming_breath"
+               "wh3_dlc23_unit_passive_blazing_body"]}
  #:unit-mount{:eid #uuid "26400145-78da-3ae4-b60d-b8c4c3ec94bd",
               :unit
               [:unit/eid #uuid "0004000a-0000-4000-8000-000000000000"],
@@ -762,7 +762,7 @@
               :stats-override
               "{\"cost\":1200,\"is_large\":true,\"unit_size\":1,\"health\":6668,\"barrier\":0,\"armor\":60,\"leadership\":70,\"speed\":80,\"melee_attack\":46,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":28,\"weapon_strength\":450,\"weapon_damage\":130,\"weapon_ap_damage\":320,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_unit_passive_blazing_body\"]"]}
+              ["wh3_dlc23_unit_passive_blazing_body"]}
  #:unit-mount{:eid #uuid "cfe77d55-06b3-3f50-85e1-1172a87287c8",
               :unit
               [:unit/eid #uuid "0004000a-0000-4000-8000-000000000000"],
@@ -773,9 +773,9 @@
               :stats-override
               "{\"cost\":1300,\"is_large\":true,\"unit_size\":1,\"health\":6048,\"barrier\":0,\"armor\":60,\"leadership\":70,\"speed\":85,\"melee_attack\":40,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":48,\"weapon_strength\":450,\"weapon_damage\":270,\"weapon_ap_damage\":180,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":40,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_spell_bound_enfeebling_foe\""
-               "\"wh3_dlc23_spell_bound_the_withering\""
-               "\"wh3_dlc23_unit_passive_sorcerous_miasma\"]"]}
+              ["wh3_dlc23_spell_bound_enfeebling_foe"
+               "wh3_dlc23_spell_bound_the_withering"
+               "wh3_dlc23_unit_passive_sorcerous_miasma"]}
  #:unit-mount{:eid #uuid "91327dcd-3ee5-3d64-9071-ba2db61c36f0",
               :unit
               [:unit/eid #uuid "0004000e-0000-4000-8000-000000000000"],
@@ -795,8 +795,8 @@
               :stats-override
               "{\"cost\":1800,\"is_large\":false,\"unit_size\":3,\"health\":21024,\"barrier\":0,\"armor\":80,\"leadership\":80,\"speed\":50,\"melee_attack\":40,\"melee_attack_types\":[],\"melee_modifiers\":[\"poison\"],\"melee_defence\":28,\"weapon_strength\":350,\"weapon_damage\":105,\"weapon_ap_damage\":245,\"bonus_vs_infantry\":20,\"bonus_vs_large\":0,\"charge_bonus\":35,\"ammunition\":25,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_fury_of_khaine\""
-               "\"wh2_main_unit_passive_bloodshield_of_khaine\"]"]}
+              ["wh2_main_unit_abilities_fury_of_khaine"
+               "wh2_main_unit_passive_bloodshield_of_khaine"]}
  #:unit-mount{:eid #uuid "ec09c8e2-9367-3e2f-8ac6-178fd82ae5a9",
               :unit
               [:unit/eid #uuid "00060001-0000-4000-8000-000000000000"],
@@ -825,7 +825,7 @@
               :stats-override
               "{\"cost\":2100,\"is_large\":false,\"unit_size\":1,\"health\":8436,\"barrier\":0,\"armor\":90,\"leadership\":80,\"speed\":95,\"melee_attack\":52,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":46,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":40,\"missile_damage_types\":[],\"missile_modifiers\":[],\"range\":125,\"missile_damage\":180,\"missile_base_damage\":40,\"missile_ap_damage\":140,\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\",\"mounted_fire_move\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_noxious_breath\"]"]}
+              ["wh2_main_unit_abilities_noxious_breath"]}
  #:unit-mount{:eid #uuid "d4c2cb02-f275-3803-a294-37bd73face8f",
               :unit
               [:unit/eid #uuid "00060002-0000-4000-8000-000000000000"],
@@ -863,7 +863,7 @@
               :stats-override
               "{\"cost\":2100,\"is_large\":false,\"unit_size\":1,\"health\":8436,\"barrier\":0,\"armor\":90,\"leadership\":80,\"speed\":95,\"melee_attack\":52,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":46,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_noxious_breath\"]"]}
+              ["wh2_main_unit_abilities_noxious_breath"]}
  #:unit-mount{:eid #uuid "01c99121-0d49-3d17-b6a5-7ce17807d7ed",
               :unit
               [:unit/eid #uuid "00060003-0000-4000-8000-000000000000"],
@@ -919,7 +919,7 @@
               :stats-override
               "{\"cost\":2100,\"is_large\":false,\"unit_size\":1,\"health\":8436,\"barrier\":0,\"armor\":90,\"leadership\":80,\"speed\":95,\"melee_attack\":60,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":46,\"weapon_strength\":560,\"weapon_damage\":150,\"weapon_ap_damage\":410,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_noxious_breath\"]"]}
+              ["wh2_main_unit_abilities_noxious_breath"]}
  #:unit-mount{:eid #uuid "1ca06a39-e3ee-31c9-a7b1-d3445bbd9492",
               :unit
               [:unit/eid #uuid "00060006-0000-4000-8000-000000000000"],
@@ -930,7 +930,7 @@
               :stats-override
               "{\"cost\":2500,\"is_large\":true,\"unit_size\":1,\"health\":8436,\"barrier\":0,\"armor\":90,\"leadership\":85,\"speed\":95,\"melee_attack\":60,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":50,\"weapon_strength\":560,\"weapon_damage\":150,\"weapon_ap_damage\":410,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_noxious_breath\"]"]}
+              ["wh2_main_unit_abilities_noxious_breath"]}
  #:unit-mount{:eid #uuid "c9b91d39-b61f-3010-b299-ff70540d0f2b",
               :unit
               [:unit/eid #uuid "00060006-0000-4000-8000-000000000000"],
@@ -959,7 +959,7 @@
               :stats-override
               "{\"cost\":1950,\"is_large\":false,\"unit_size\":1,\"health\":4972,\"barrier\":0,\"armor\":110,\"leadership\":85,\"speed\":68,\"melee_attack\":60,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":60,\"weapon_strength\":450,\"weapon_damage\":135,\"weapon_ap_damage\":315,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":65,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"hide_forest\"]}",
               :granted-ability-keys
-              ["[\"wh2_dlc14_lord_abilities_tzarkan_spite_mp\"]"]}
+              ["wh2_dlc14_lord_abilities_tzarkan_spite_mp"]}
  #:unit-mount{:eid #uuid "797c30a2-0e2f-3829-ac88-88492f75853e",
               :unit
               [:unit/eid #uuid "00060008-0000-4000-8000-000000000000"],
@@ -979,7 +979,7 @@
               :stats-override
               "{\"cost\":2200,\"is_large\":false,\"unit_size\":1,\"health\":8436,\"barrier\":0,\"armor\":90,\"leadership\":80,\"speed\":95,\"melee_attack\":55,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":50,\"weapon_strength\":560,\"weapon_damage\":150,\"weapon_ap_damage\":410,\"bonus_vs_infantry\":0,\"bonus_vs_large\":15,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_noxious_breath\"]"]}
+              ["wh2_main_unit_abilities_noxious_breath"]}
  #:unit-mount{:eid #uuid "1f49dc05-fe79-3084-a4f0-01714b858b5e",
               :unit
               [:unit/eid #uuid "00060009-0000-4000-8000-000000000000"],
@@ -1008,7 +1008,7 @@
               :stats-override
               "{\"cost\":2100,\"is_large\":false,\"unit_size\":1,\"health\":8324,\"barrier\":0,\"armor\":90,\"leadership\":75,\"speed\":95,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":46,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_noxious_breath\"]"]}
+              ["wh2_main_unit_abilities_noxious_breath"]}
  #:unit-mount{:eid #uuid "73f6a781-1d0f-3c02-b7ad-81f1bbb75eda",
               :unit
               [:unit/eid #uuid "0006000a-0000-4000-8000-000000000000"],
@@ -1055,8 +1055,8 @@
               :stats-override
               "{\"cost\":1350,\"is_large\":false,\"unit_size\":3,\"health\":17124,\"barrier\":0,\"armor\":80,\"leadership\":75,\"speed\":50,\"melee_attack\":34,\"melee_attack_types\":[],\"melee_modifiers\":[\"poison\"],\"melee_defence\":28,\"weapon_strength\":290,\"weapon_damage\":85,\"weapon_ap_damage\":205,\"bonus_vs_infantry\":20,\"bonus_vs_large\":0,\"charge_bonus\":35,\"ammunition\":25,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_fury_of_khaine\""
-               "\"wh2_main_unit_passive_bloodshield_of_khaine\"]"]}
+              ["wh2_main_unit_abilities_fury_of_khaine"
+               "wh2_main_unit_passive_bloodshield_of_khaine"]}
  #:unit-mount{:eid #uuid "c5305d81-9c01-3e5b-aca2-0a9fbf482845",
               :unit
               [:unit/eid #uuid "00060011-0000-4000-8000-000000000000"],
@@ -1130,7 +1130,7 @@
               :stats-override
               "{\"cost\":1200,\"is_large\":true,\"unit_size\":1,\"health\":5552,\"barrier\":0,\"armor\":120,\"leadership\":85,\"speed\":30,\"melee_attack\":40,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":47,\"weapon_strength\":340,\"weapon_damage\":240,\"weapon_ap_damage\":100,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":18,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"encourages\",\"hide_forest\"]}",
               :granted-ability-keys
-              ["[\"wh_dlc06_lord_passive_locus_of_power\"]"]}
+              ["wh_dlc06_lord_passive_locus_of_power"]}
  #:unit-mount{:eid #uuid "fbb2026a-5452-3641-b101-6d857569f9e4",
               :unit
               [:unit/eid #uuid "00070007-0000-4000-8000-000000000000"],
@@ -1141,8 +1141,8 @@
               :stats-override
               "{\"cost\":1550,\"is_large\":true,\"unit_size\":1,\"health\":6628,\"barrier\":0,\"armor\":120,\"leadership\":90,\"speed\":30,\"melee_attack\":45,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":50,\"weapon_strength\":400,\"weapon_damage\":140,\"weapon_ap_damage\":260,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":18,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"encourages\",\"hide_forest\"]}",
               :granted-ability-keys
-              ["[\"wh2_dlc17_lord_abilities_rune_of_doom\""
-               "\"wh_dlc06_lord_passive_locus_of_power\"]"]}
+              ["wh2_dlc17_lord_abilities_rune_of_doom"
+               "wh_dlc06_lord_passive_locus_of_power"]}
  #:unit-mount{:eid #uuid "838c7e4e-ae2e-3b3b-a16f-92062d025806",
               :unit
               [:unit/eid #uuid "00080001-0000-4000-8000-000000000000"],
@@ -1153,8 +1153,8 @@
               :stats-override
               "{\"cost\":1550,\"is_large\":false,\"unit_size\":1,\"health\":6576,\"barrier\":0,\"armor\":80,\"leadership\":80,\"speed\":85,\"melee_attack\":50,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":36,\"weapon_strength\":470,\"weapon_damage\":190,\"weapon_ap_damage\":280,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":65,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc24_mount_passive_wounded_pride\""
-               "\"wh3_dlc24_unit_abilities_fearsome_roar\"]"]}
+              ["wh3_dlc24_mount_passive_wounded_pride"
+               "wh3_dlc24_unit_abilities_fearsome_roar"]}
  #:unit-mount{:eid #uuid "25d7234f-e149-3786-b42e-a85be14dea9b",
               :unit
               [:unit/eid #uuid "00080001-0000-4000-8000-000000000000"],
@@ -1201,7 +1201,7 @@
               :stats-override
               "{\"cost\":850,\"is_large\":false,\"unit_size\":5,\"health\":35040,\"barrier\":0,\"armor\":30,\"leadership\":70,\"speed\":35,\"melee_attack\":20,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":20,\"weapon_strength\":26,\"weapon_damage\":20,\"weapon_ap_damage\":6,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":1,\"ammunition\":50,\"missile_damage_types\":[],\"missile_modifiers\":[\"armour-break\"],\"range\":275,\"missile_damage\":130,\"missile_base_damage\":22,\"missile_ap_damage\":108,\"attributes\":[\"always_flying\",\"encourages\",\"mounted_fire_move\"]}",
               :granted-ability-keys
-              ["[\"wh3_main_unit_passive_eye_of_the_dragon\"]"]}
+              ["wh3_main_unit_passive_eye_of_the_dragon"]}
  #:unit-mount{:eid #uuid "854d7e4f-24a0-3059-b696-7ec97f62aa77",
               :unit
               [:unit/eid #uuid "00080004-0000-4000-8000-000000000000"],
@@ -1230,7 +1230,7 @@
               :stats-override
               "{\"cost\":1700,\"is_large\":true,\"unit_size\":1,\"health\":7298,\"barrier\":0,\"armor\":40,\"leadership\":60,\"speed\":120,\"melee_attack\":44,\"melee_attack_types\":[\"magical\",\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":50,\"weapon_strength\":560,\"weapon_damage\":360,\"weapon_ap_damage\":200,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":46,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\",\"spell_mastery\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc24_unit_abilities_moon_flare\"]"]}
+              ["wh3_dlc24_unit_abilities_moon_flare"]}
  #:unit-mount{:eid #uuid "553b8867-5130-326b-935b-b420f012c7b6",
               :unit
               [:unit/eid #uuid "00080009-0000-4000-8000-000000000000"],
@@ -1250,9 +1250,9 @@
               :stats-override
               "{\"cost\":950,\"is_large\":false,\"unit_size\":1,\"health\":6608,\"barrier\":0,\"armor\":80,\"leadership\":60,\"speed\":30,\"melee_attack\":30,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":20,\"weapon_strength\":300,\"weapon_damage\":210,\"weapon_ap_damage\":90,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":20,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"encourages\",\"spell_mastery\"]}",
               :granted-ability-keys
-              ["[\"wh3_main_mount_bound_celestial_comet\""
-               "\"wh3_main_mount_bound_celestial_lightning\""
-               "\"wh3_main_unit_passive_nexus_of_the_elemental_winds\"]"]}
+              ["wh3_main_mount_bound_celestial_comet"
+               "wh3_main_mount_bound_celestial_lightning"
+               "wh3_main_unit_passive_nexus_of_the_elemental_winds"]}
  #:unit-mount{:eid #uuid "f1478e97-b581-301b-8b8c-4f9ccd095fcf",
               :unit
               [:unit/eid #uuid "0008000b-0000-4000-8000-000000000000"],
@@ -1452,7 +1452,7 @@
               :stats-override
               "{\"cost\":1400,\"is_large\":false,\"unit_size\":1,\"health\":4848,\"barrier\":0,\"armor\":60,\"leadership\":80,\"speed\":110,\"melee_attack\":63,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":440,\"weapon_damage\":264,\"weapon_ap_damage\":176,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":75,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh_main_character_abilities_foe_seeker\"]"]}
+              ["wh_main_character_abilities_foe_seeker"]}
  #:unit-mount{:eid #uuid "1de8388d-b82c-37ea-9957-8cc449e254fe",
               :unit
               [:unit/eid #uuid "000a0002-0000-4000-8000-000000000000"],
@@ -1463,8 +1463,8 @@
               :stats-override
               "{\"cost\":2550,\"is_large\":false,\"unit_size\":1,\"health\":9436,\"barrier\":0,\"armor\":90,\"leadership\":80,\"speed\":85,\"melee_attack\":64,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":50,\"weapon_strength\":580,\"weapon_damage\":145,\"weapon_ap_damage\":435,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":45,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_star_dragons_breath\""
-               "\"wh_main_character_abilities_foe_seeker\"]"]}
+              ["wh2_main_unit_abilities_star_dragons_breath"
+               "wh_main_character_abilities_foe_seeker"]}
  #:unit-mount{:eid #uuid "2f078512-a2f1-3465-b2c8-e92be2c32bcf",
               :unit
               [:unit/eid #uuid "000a0002-0000-4000-8000-000000000000"],
@@ -1475,8 +1475,8 @@
               :stats-override
               "{\"cost\":1950,\"is_large\":false,\"unit_size\":1,\"health\":6868,\"barrier\":0,\"armor\":80,\"leadership\":80,\"speed\":100,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":44,\"weapon_strength\":460,\"weapon_damage\":135,\"weapon_ap_damage\":325,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":65,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_sun_dragons_breath\""
-               "\"wh_main_character_abilities_foe_seeker\"]"]}
+              ["wh2_main_unit_abilities_sun_dragons_breath"
+               "wh_main_character_abilities_foe_seeker"]}
  #:unit-mount{:eid #uuid "57646291-0f68-3012-a67c-ce2642f572dd",
               :unit
               [:unit/eid #uuid "000a0002-0000-4000-8000-000000000000"],
@@ -1487,7 +1487,7 @@
               :stats-override
               "{\"cost\":1550,\"is_large\":false,\"unit_size\":2,\"health\":10944,\"barrier\":0,\"armor\":110,\"leadership\":80,\"speed\":84,\"melee_attack\":42,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":24,\"weapon_strength\":420,\"weapon_damage\":120,\"weapon_ap_damage\":300,\"bonus_vs_infantry\":25,\"bonus_vs_large\":0,\"charge_bonus\":68,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"hide_forest\"]}",
               :granted-ability-keys
-              ["[\"wh_main_character_abilities_foe_seeker\"]"]}
+              ["wh_main_character_abilities_foe_seeker"]}
  #:unit-mount{:eid #uuid "5e6dfddc-52c1-359d-861c-ef94d612a5eb",
               :unit
               [:unit/eid #uuid "000a0004-0000-4000-8000-000000000000"],
@@ -1525,7 +1525,7 @@
               :stats-override
               "{\"cost\":2000,\"is_large\":false,\"unit_size\":1,\"health\":8436,\"barrier\":0,\"armor\":70,\"leadership\":75,\"speed\":95,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":44,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_moon_dragons_breath\"]"]}
+              ["wh2_main_unit_abilities_moon_dragons_breath"]}
  #:unit-mount{:eid #uuid "23e2b134-2fa6-30b2-af90-ba6b88dec42c",
               :unit
               [:unit/eid #uuid "000a000d-0000-4000-8000-000000000000"],
@@ -1563,7 +1563,7 @@
               :stats-override
               "{\"cost\":2550,\"is_large\":false,\"unit_size\":1,\"health\":9570,\"barrier\":0,\"armor\":90,\"leadership\":85,\"speed\":85,\"melee_attack\":74,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":56,\"weapon_strength\":580,\"weapon_damage\":130,\"weapon_ap_damage\":450,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_star_dragons_breath\"]"]}
+              ["wh2_main_unit_abilities_star_dragons_breath"]}
  #:unit-mount{:eid #uuid "3ff5189a-a493-3faa-b92e-778e5cf24902",
               :unit
               [:unit/eid #uuid "000a000f-0000-4000-8000-000000000000"],
@@ -1601,7 +1601,7 @@
               :stats-override
               "{\"cost\":2400,\"is_large\":false,\"unit_size\":1,\"health\":9436,\"barrier\":0,\"armor\":90,\"leadership\":80,\"speed\":85,\"melee_attack\":68,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":54,\"weapon_strength\":580,\"weapon_damage\":145,\"weapon_ap_damage\":435,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":45,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_star_dragons_breath\"]"]}
+              ["wh2_main_unit_abilities_star_dragons_breath"]}
  #:unit-mount{:eid #uuid "25366339-4afc-36d2-9fcd-a49132681d7b",
               :unit
               [:unit/eid #uuid "000a000f-0000-4000-8000-000000000000"],
@@ -1612,7 +1612,7 @@
               :stats-override
               "{\"cost\":1800,\"is_large\":false,\"unit_size\":1,\"health\":7116,\"barrier\":0,\"armor\":80,\"leadership\":80,\"speed\":100,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":44,\"weapon_strength\":460,\"weapon_damage\":135,\"weapon_ap_damage\":325,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":65,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_sun_dragons_breath\"]"]}
+              ["wh2_main_unit_abilities_sun_dragons_breath"]}
  #:unit-mount{:eid #uuid "150b10c2-edc2-36a5-b979-9f9df4fc01cd",
               :unit
               [:unit/eid #uuid "000a0010-0000-4000-8000-000000000000"],
@@ -1650,7 +1650,7 @@
               :stats-override
               "{\"cost\":2000,\"is_large\":false,\"unit_size\":1,\"health\":8436,\"barrier\":0,\"armor\":70,\"leadership\":80,\"speed\":95,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":44,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":40,\"missile_damage_types\":[],\"missile_modifiers\":[],\"range\":180,\"missile_damage\":270,\"missile_base_damage\":190,\"missile_ap_damage\":80,\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\",\"mounted_fire_move\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_moon_dragons_breath\"]"]}
+              ["wh2_main_unit_abilities_moon_dragons_breath"]}
  #:unit-mount{:eid #uuid "d76b4f4a-f7b1-38f5-abec-aa0e9ffc312d",
               :unit
               [:unit/eid #uuid "000a0010-0000-4000-8000-000000000000"],
@@ -1661,7 +1661,7 @@
               :stats-override
               "{\"cost\":2400,\"is_large\":false,\"unit_size\":1,\"health\":9436,\"barrier\":0,\"armor\":90,\"leadership\":80,\"speed\":85,\"melee_attack\":64,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":50,\"weapon_strength\":580,\"weapon_damage\":145,\"weapon_ap_damage\":435,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":45,\"ammunition\":40,\"missile_damage_types\":[],\"missile_modifiers\":[],\"range\":180,\"missile_damage\":270,\"missile_base_damage\":190,\"missile_ap_damage\":80,\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\",\"mounted_fire_move\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_star_dragons_breath\"]"]}
+              ["wh2_main_unit_abilities_star_dragons_breath"]}
  #:unit-mount{:eid #uuid "eda20302-3fc0-34bd-aa19-f30ae9d6055e",
               :unit
               [:unit/eid #uuid "000a0011-0000-4000-8000-000000000000"],
@@ -1681,7 +1681,7 @@
               :stats-override
               "{\"cost\":1450,\"is_large\":false,\"unit_size\":2,\"health\":12888,\"barrier\":0,\"armor\":80,\"leadership\":80,\"speed\":90,\"melee_attack\":48,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":38,\"weapon_strength\":450,\"weapon_damage\":230,\"weapon_ap_damage\":220,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":75,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc27_unit_passive_momentum\"]"]}
+              ["wh3_dlc27_unit_passive_momentum"]}
  #:unit-mount{:eid #uuid "737f8fa9-0233-3342-9c53-a2fbc6cbb68c",
               :unit
               [:unit/eid #uuid "000a0012-0000-4000-8000-000000000000"],
@@ -1692,7 +1692,7 @@
               :stats-override
               "{\"cost\":1600,\"is_large\":false,\"unit_size\":2,\"health\":13488,\"barrier\":0,\"armor\":80,\"leadership\":80,\"speed\":90,\"melee_attack\":52,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":35,\"weapon_strength\":450,\"weapon_damage\":230,\"weapon_ap_damage\":220,\"bonus_vs_infantry\":28,\"bonus_vs_large\":0,\"charge_bonus\":75,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc27_unit_passive_momentum\"]"]}
+              ["wh3_dlc27_unit_passive_momentum"]}
  #:unit-mount{:eid #uuid "dc9ab727-9935-3b72-8bbf-64b65e7c0715",
               :unit
               [:unit/eid #uuid "000a0012-0000-4000-8000-000000000000"],
@@ -1703,7 +1703,7 @@
               :stats-override
               "{\"cost\":2400,\"is_large\":false,\"unit_size\":1,\"health\":9442,\"barrier\":0,\"armor\":90,\"leadership\":85,\"speed\":85,\"melee_attack\":69,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":57,\"weapon_strength\":580,\"weapon_damage\":140,\"weapon_ap_damage\":440,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_star_dragons_breath\"]"]}
+              ["wh2_main_unit_abilities_star_dragons_breath"]}
  #:unit-mount{:eid #uuid "fcd6c85f-d149-3d88-b026-9857f9c3ea1d",
               :unit
               [:unit/eid #uuid "000a0013-0000-4000-8000-000000000000"],
@@ -1714,7 +1714,7 @@
               :stats-override
               "{\"cost\":2200,\"is_large\":false,\"unit_size\":1,\"health\":6898,\"barrier\":0,\"armor\":50,\"leadership\":85,\"speed\":120,\"melee_attack\":46,\"melee_attack_types\":[\"magical\",\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":460,\"weapon_damage\":140,\"weapon_ap_damage\":320,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":58,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_passive_attuned_to_magic\"]"]}
+              ["wh2_main_unit_passive_attuned_to_magic"]}
  #:unit-mount{:eid #uuid "fa64bad8-0200-3dc1-9af1-07920005abda",
               :unit
               [:unit/eid #uuid "000a0013-0000-4000-8000-000000000000"],
@@ -1743,8 +1743,8 @@
               :stats-override
               "{\"cost\":1800,\"is_large\":false,\"unit_size\":1,\"health\":6998,\"barrier\":0,\"armor\":80,\"leadership\":90,\"speed\":100,\"melee_attack\":43,\"melee_attack_types\":[\"magical\",\"flaming\"],\"melee_modifiers\":[\"frostfire\"],\"melee_defence\":51,\"weapon_strength\":420,\"weapon_damage\":120,\"weapon_ap_damage\":300,\"bonus_vs_infantry\":0,\"bonus_vs_large\":25,\"charge_bonus\":45,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_passive_attuned_to_magic\""
-               "\"wh2_main_unit_passive_blizzard_aura\"]"]}
+              ["wh2_main_unit_passive_attuned_to_magic"
+               "wh2_main_unit_passive_blizzard_aura"]}
  #:unit-mount{:eid #uuid "029ff703-3364-30f9-8d94-9d6439865063",
               :unit
               [:unit/eid #uuid "000a0015-0000-4000-8000-000000000000"],
@@ -1809,7 +1809,7 @@
               :stats-override
               "{\"cost\":1050,\"is_large\":false,\"unit_size\":2,\"health\":12888,\"barrier\":0,\"armor\":80,\"leadership\":70,\"speed\":90,\"melee_attack\":45,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":450,\"weapon_damage\":230,\"weapon_ap_damage\":220,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":60,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc27_unit_passive_momentum\"]"]}
+              ["wh3_dlc27_unit_passive_momentum"]}
  #:unit-mount{:eid #uuid "96e6d03f-b48c-3c79-848e-ab70d5f44b86",
               :unit
               [:unit/eid #uuid "000a0023-0000-4000-8000-000000000000"],
@@ -1865,8 +1865,8 @@
               :stats-override
               "{\"cost\":1400,\"is_large\":false,\"unit_size\":1,\"health\":11542,\"barrier\":0,\"armor\":70,\"leadership\":70,\"speed\":38,\"melee_attack\":35,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":25,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"mark_khorne\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_furious_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_furious_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "8091f632-5f7a-304b-85e8-211a39e1501f",
               :unit
               [:unit/eid #uuid "000b0006-0000-4000-8000-000000000000"],
@@ -1877,8 +1877,8 @@
               :stats-override
               "{\"cost\":1400,\"is_large\":false,\"unit_size\":1,\"health\":5548,\"barrier\":0,\"armor\":110,\"leadership\":70,\"speed\":68,\"melee_attack\":40,\"melee_attack_types\":[\"magical\",\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":20,\"weapon_strength\":385,\"weapon_damage\":120,\"weapon_ap_damage\":265,\"bonus_vs_infantry\":25,\"bonus_vs_large\":0,\"charge_bonus\":55,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"daemonic\",\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh3_main_mount_passive_totem_of_endless_bloodletting\""
-               "\"wh3_main_unit_passive_gorefeast\"]"]}
+              ["wh3_main_mount_passive_totem_of_endless_bloodletting"
+               "wh3_main_unit_passive_gorefeast"]}
  #:unit-mount{:eid #uuid "6feccbf1-2edb-3308-8481-ee69cdbc9f42",
               :unit
               [:unit/eid #uuid "000b0006-0000-4000-8000-000000000000"],
@@ -1898,8 +1898,8 @@
               :stats-override
               "{\"cost\":1650,\"is_large\":false,\"unit_size\":1,\"health\":6948,\"barrier\":0,\"armor\":130,\"leadership\":80,\"speed\":68,\"melee_attack\":45,\"melee_attack_types\":[\"magical\",\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":25,\"weapon_strength\":510,\"weapon_damage\":220,\"weapon_ap_damage\":290,\"bonus_vs_infantry\":25,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"daemonic\",\"encourages\",\"unyielding_assault\"]}",
               :granted-ability-keys
-              ["[\"wh3_main_mount_passive_totem_of_endless_bloodletting\""
-               "\"wh3_main_unit_passive_gorefeast\"]"]}
+              ["wh3_main_mount_passive_totem_of_endless_bloodletting"
+               "wh3_main_unit_passive_gorefeast"]}
  #:unit-mount{:eid #uuid "489e28c9-3ea1-360e-8c2c-4f1e031fa4eb",
               :unit
               [:unit/eid #uuid "000b0008-0000-4000-8000-000000000000"],
@@ -1919,8 +1919,8 @@
               :stats-override
               "{\"cost\":1200,\"is_large\":false,\"unit_size\":1,\"health\":5148,\"barrier\":0,\"armor\":110,\"leadership\":65,\"speed\":68,\"melee_attack\":35,\"melee_attack_types\":[\"magical\",\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":20,\"weapon_strength\":355,\"weapon_damage\":110,\"weapon_ap_damage\":245,\"bonus_vs_infantry\":25,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"daemonic\",\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh3_main_mount_passive_totem_of_endless_bloodletting\""
-               "\"wh3_main_unit_passive_gorefeast\"]"]}
+              ["wh3_main_mount_passive_totem_of_endless_bloodletting"
+               "wh3_main_unit_passive_gorefeast"]}
  #:unit-mount{:eid #uuid "74bbc934-c2f7-35f3-b784-c9b7406f7eeb",
               :unit
               [:unit/eid #uuid "000b000a-0000-4000-8000-000000000000"],
@@ -1949,8 +1949,8 @@
               :stats-override
               "{\"cost\":1400,\"is_large\":false,\"unit_size\":1,\"health\":11242,\"barrier\":0,\"armor\":70,\"leadership\":65,\"speed\":38,\"melee_attack\":35,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":25,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"mark_khorne\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_furious_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_furious_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "31a7506d-b799-3d0b-817a-2bbd649f6b56",
               :unit
               [:unit/eid #uuid "000c0002-0000-4000-8000-000000000000"],
@@ -2140,8 +2140,7 @@
               :cost 950,
               :stats-override
               "{\"cost\":1850,\"is_large\":false,\"unit_size\":1,\"health\":8668,\"barrier\":0,\"armor\":95,\"leadership\":80,\"speed\":75,\"melee_attack\":55,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":530,\"weapon_damage\":130,\"weapon_ap_damage\":400,\"bonus_vs_infantry\":0,\"bonus_vs_large\":35,\"charge_bonus\":67,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"wallbreaker\"]}",
-              :granted-ability-keys
-              ["[\"wh_main_unit_passive_frenzy\"]"]}
+              :granted-ability-keys ["wh_main_unit_passive_frenzy"]}
  #:unit-mount{:eid #uuid "cac81e38-4edf-3f45-8771-1859500fb7e3",
               :unit
               [:unit/eid #uuid "000d0002-0000-4000-8000-000000000000"],
@@ -2187,8 +2186,7 @@
               :cost 1000,
               :stats-override
               "{\"cost\":1750,\"is_large\":false,\"unit_size\":1,\"health\":8552,\"barrier\":0,\"armor\":95,\"leadership\":75,\"speed\":75,\"melee_attack\":45,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":44,\"weapon_strength\":495,\"weapon_damage\":125,\"weapon_ap_damage\":370,\"bonus_vs_infantry\":0,\"bonus_vs_large\":35,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\"]}",
-              :granted-ability-keys
-              ["[\"wh_main_unit_passive_frenzy\"]"]}
+              :granted-ability-keys ["wh_main_unit_passive_frenzy"]}
  #:unit-mount{:eid #uuid "98b961a1-4883-38aa-9999-83ae820da34a",
               :unit
               [:unit/eid #uuid "000d0007-0000-4000-8000-000000000000"],
@@ -2226,9 +2224,9 @@
               :stats-override
               "{\"cost\":2150,\"is_large\":true,\"unit_size\":5,\"health\":50380,\"barrier\":0,\"armor\":130,\"leadership\":85,\"speed\":50,\"melee_attack\":26,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":32,\"weapon_strength\":480,\"weapon_damage\":140,\"weapon_ap_damage\":340,\"bonus_vs_infantry\":18,\"bonus_vs_large\":0,\"charge_bonus\":70,\"ammunition\":80,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"ignore_imbue_contact_effects_enemy\",\"mounted_fire_move\",\"wallbreaker\"]}",
               :granted-ability-keys
-              ["[\"wh2_dlc12_unit_abilities_burning_alignment\""
-               "\"wh2_dlc12_unit_passive_arcane_configuration\""
-               "\"wh2_dlc12_unit_passive_portent_of_warding\"]"]}
+              ["wh2_dlc12_unit_abilities_burning_alignment"
+               "wh2_dlc12_unit_passive_arcane_configuration"
+               "wh2_dlc12_unit_passive_portent_of_warding"]}
  #:unit-mount{:eid #uuid "01d25a84-9131-33e6-bb98-5009a297c497",
               :unit
               [:unit/eid #uuid "000d0009-0000-4000-8000-000000000000"],
@@ -2238,8 +2236,7 @@
               :cost 1100,
               :stats-override
               "{\"cost\":1750,\"is_large\":true,\"unit_size\":1,\"health\":7944,\"barrier\":0,\"armor\":95,\"leadership\":75,\"speed\":75,\"melee_attack\":45,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":480,\"weapon_damage\":120,\"weapon_ap_damage\":360,\"bonus_vs_infantry\":0,\"bonus_vs_large\":35,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\"]}",
-              :granted-ability-keys
-              ["[\"wh_main_unit_passive_frenzy\"]"]}
+              :granted-ability-keys ["wh_main_unit_passive_frenzy"]}
  #:unit-mount{:eid #uuid "02788c86-45c6-321f-8e88-c4ac43ac21f9",
               :unit
               [:unit/eid #uuid "000d0009-0000-4000-8000-000000000000"],
@@ -2277,7 +2274,7 @@
               :stats-override
               "{\"cost\":700,\"is_large\":true,\"unit_size\":1,\"health\":4000,\"barrier\":0,\"armor\":30,\"leadership\":60,\"speed\":90,\"melee_attack\":33,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":36,\"weapon_strength\":310,\"weapon_damage\":230,\"weapon_ap_damage\":80,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":26,\"ammunition\":82,\"missile_damage_types\":[],\"missile_modifiers\":[\"poison\"],\"range\":100,\"missile_damage\":150,\"missile_base_damage\":115,\"missile_ap_damage\":35,\"attributes\":[\"causes_fear\",\"encourages\",\"flying\",\"ignore_trees\",\"mounted_fire_move\"]}",
               :granted-ability-keys
-              ["[\"wh2_dlc12_unit_abilities_drop_rocks_character\"]"]}
+              ["wh2_dlc12_unit_abilities_drop_rocks_character"]}
  #:unit-mount{:eid #uuid "c77e23c1-c88c-34d0-b6f8-6e15d2ccf600",
               :unit
               [:unit/eid #uuid "000d000b-0000-4000-8000-000000000000"],
@@ -2306,9 +2303,9 @@
               :stats-override
               "{\"cost\":2150,\"is_large\":true,\"unit_size\":5,\"health\":49280,\"barrier\":0,\"armor\":130,\"leadership\":70,\"speed\":50,\"melee_attack\":26,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":32,\"weapon_strength\":480,\"weapon_damage\":140,\"weapon_ap_damage\":340,\"bonus_vs_infantry\":18,\"bonus_vs_large\":0,\"charge_bonus\":70,\"ammunition\":80,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"mounted_fire_move\",\"wallbreaker\"]}",
               :granted-ability-keys
-              ["[\"wh2_dlc12_unit_abilities_burning_alignment\""
-               "\"wh2_dlc12_unit_passive_arcane_configuration\""
-               "\"wh2_dlc12_unit_passive_portent_of_warding\"]"]}
+              ["wh2_dlc12_unit_abilities_burning_alignment"
+               "wh2_dlc12_unit_passive_arcane_configuration"
+               "wh2_dlc12_unit_passive_portent_of_warding"]}
  #:unit-mount{:eid #uuid "1ad09110-0140-32a8-b194-ed7aa4826289",
               :unit
               [:unit/eid #uuid "000d000b-0000-4000-8000-000000000000"],
@@ -2319,7 +2316,7 @@
               :stats-override
               "{\"cost\":700,\"is_large\":true,\"unit_size\":1,\"health\":3684,\"barrier\":0,\"armor\":30,\"leadership\":55,\"speed\":90,\"melee_attack\":22,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":26,\"weapon_strength\":300,\"weapon_damage\":220,\"weapon_ap_damage\":80,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":20,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"flying\",\"ignore_trees\"]}",
               :granted-ability-keys
-              ["[\"wh2_dlc12_unit_abilities_drop_rocks_character\"]"]}
+              ["wh2_dlc12_unit_abilities_drop_rocks_character"]}
  #:unit-mount{:eid #uuid "0e181559-f771-3dc0-bc21-8a6c830d344a",
               :unit
               [:unit/eid #uuid "000d0036-0000-4000-8000-000000000000"],
@@ -2330,7 +2327,7 @@
               :stats-override
               "{\"cost\":1900,\"is_large\":true,\"unit_size\":3,\"health\":30228,\"barrier\":0,\"armor\":130,\"leadership\":85,\"speed\":50,\"melee_attack\":26,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":32,\"weapon_strength\":480,\"weapon_damage\":140,\"weapon_ap_damage\":340,\"bonus_vs_infantry\":18,\"bonus_vs_large\":0,\"charge_bonus\":70,\"ammunition\":30,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"mounted_fire_move\",\"wallbreaker\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_passive_primal_instincts\"]"]}
+              ["wh2_main_unit_passive_primal_instincts"]}
  #:unit-mount{:eid #uuid "b5fcf190-b305-3390-bcc2-9a86866d23e2",
               :unit
               [:unit/eid #uuid "000d003a-0000-4000-8000-000000000000"],
@@ -2359,8 +2356,8 @@
               :stats-override
               "{\"cost\":2250,\"is_large\":true,\"unit_size\":1,\"health\":13596,\"barrier\":0,\"armor\":80,\"leadership\":70,\"speed\":56,\"melee_attack\":34,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":525,\"weapon_damage\":155,\"weapon_ap_damage\":370,\"bonus_vs_infantry\":34,\"bonus_vs_large\":0,\"charge_bonus\":68,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "71a43988-d63f-37cc-af5e-5f1db053570c",
               :unit
               [:unit/eid #uuid "000e0003-0000-4000-8000-000000000000"],
@@ -2416,8 +2413,8 @@
               :stats-override
               "{\"cost\":2300,\"is_large\":false,\"unit_size\":1,\"health\":13766,\"barrier\":0,\"armor\":80,\"leadership\":75,\"speed\":56,\"melee_attack\":34,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":525,\"weapon_damage\":155,\"weapon_ap_damage\":370,\"bonus_vs_infantry\":34,\"bonus_vs_large\":0,\"charge_bonus\":68,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "587afb7b-0bb8-3d0d-92cc-fe4ce44825fc",
               :unit
               [:unit/eid #uuid "000e0007-0000-4000-8000-000000000000"],
@@ -2500,7 +2497,7 @@
               :stats-override
               "{\"cost\":2300,\"is_large\":true,\"unit_size\":1,\"health\":11962,\"barrier\":0,\"armor\":60,\"leadership\":85,\"speed\":60,\"melee_attack\":62,\"melee_attack_types\":[],\"melee_modifiers\":[\"poison\"],\"melee_defence\":36,\"weapon_strength\":650,\"weapon_damage\":300,\"weapon_ap_damage\":350,\"bonus_vs_infantry\":25,\"bonus_vs_large\":0,\"charge_bonus\":42,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"mark_nurgle\",\"strider\",\"unbreakable\",\"wallbreaker\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc25_unit_abilities_unspeakable_foulness\"]"]}
+              ["wh3_dlc25_unit_abilities_unspeakable_foulness"]}
  #:unit-mount{:eid #uuid "ffd4e84e-e068-302a-bd87-6834b2c59e91",
               :unit
               [:unit/eid #uuid "000f000e-0000-4000-8000-000000000000"],
@@ -2520,8 +2517,8 @@
               :stats-override
               "{\"cost\":1400,\"is_large\":false,\"unit_size\":1,\"health\":12368,\"barrier\":0,\"armor\":60,\"leadership\":65,\"speed\":38,\"melee_attack\":30,\"melee_attack_types\":[],\"melee_modifiers\":[\"poison\"],\"melee_defence\":35,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"mark_nurgle\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_abundant_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_abundant_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "1d2d6353-7fc4-3461-944f-f8786dfdd84d",
               :unit
               [:unit/eid #uuid "000f0014-0000-4000-8000-000000000000"],
@@ -2559,9 +2556,9 @@
               :stats-override
               "{\"cost\":1150,\"is_large\":false,\"unit_size\":1,\"health\":6268,\"barrier\":0,\"armor\":100,\"leadership\":85,\"speed\":44,\"melee_attack\":30,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":34,\"weapon_strength\":200,\"weapon_damage\":60,\"weapon_ap_damage\":140,\"bonus_vs_infantry\":20,\"bonus_vs_large\":0,\"charge_bonus\":15,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_mount_abilities_unholy_clamour\""
-               "\"wh2_main_mount_bound_scorch\""
-               "\"wh2_main_mount_passive_wall_of_unholy_sound\"]"]}
+              ["wh2_main_mount_abilities_unholy_clamour"
+               "wh2_main_mount_bound_scorch"
+               "wh2_main_mount_passive_wall_of_unholy_sound"]}
  #:unit-mount{:eid #uuid "3acf64a5-b74e-3351-8fc1-2ea408390843",
               :unit
               [:unit/eid #uuid "00110004-0000-4000-8000-000000000000"],
@@ -2572,7 +2569,7 @@
               :stats-override
               "{\"cost\":1150,\"is_large\":false,\"unit_size\":1,\"health\":5288,\"barrier\":0,\"armor\":110,\"leadership\":65,\"speed\":72,\"melee_attack\":40,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":36,\"weapon_strength\":270,\"weapon_damage\":95,\"weapon_ap_damage\":175,\"bonus_vs_infantry\":35,\"bonus_vs_large\":0,\"charge_bonus\":55,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh2_dlc12_unit_passive_the_best_defence\"]"]}
+              ["wh2_dlc12_unit_passive_the_best_defence"]}
  #:unit-mount{:eid #uuid "ff626447-e49a-392a-8b17-3c253f1de0a4",
               :unit
               [:unit/eid #uuid "00110004-0000-4000-8000-000000000000"],
@@ -2591,8 +2588,7 @@
               :cost 500,
               :stats-override
               "{\"cost\":1300,\"is_large\":false,\"unit_size\":1,\"health\":6609,\"barrier\":0,\"armor\":45,\"leadership\":60,\"speed\":95,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[\"poison\"],\"melee_defence\":45,\"weapon_strength\":410,\"weapon_damage\":135,\"weapon_ap_damage\":275,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":65,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"hide_forest\",\"moulder_monster\"]}",
-              :granted-ability-keys
-              ["[\"wh_main_unit_passive_frenzy\"]"]}
+              :granted-ability-keys ["wh_main_unit_passive_frenzy"]}
  #:unit-mount{:eid #uuid "9d5bae5f-e2e5-3433-8eda-c5e1925b7020",
               :unit
               [:unit/eid #uuid "0011000a-0000-4000-8000-000000000000"],
@@ -2603,7 +2599,7 @@
               :stats-override
               "{\"cost\":1100,\"is_large\":false,\"unit_size\":1,\"health\":4920,\"barrier\":0,\"armor\":100,\"leadership\":60,\"speed\":72,\"melee_attack\":35,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":32,\"weapon_strength\":270,\"weapon_damage\":95,\"weapon_ap_damage\":175,\"bonus_vs_infantry\":35,\"bonus_vs_large\":0,\"charge_bonus\":55,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh2_dlc12_unit_passive_the_best_defence\"]"]}
+              ["wh2_dlc12_unit_passive_the_best_defence"]}
  #:unit-mount{:eid #uuid "65ce5b1e-1e6a-3869-a22a-b1cdbef8f692",
               :unit
               [:unit/eid #uuid "0011000a-0000-4000-8000-000000000000"],
@@ -2623,8 +2619,8 @@
               :stats-override
               "{\"cost\":1225,\"is_large\":false,\"unit_size\":1,\"health\":6016,\"barrier\":0,\"armor\":60,\"leadership\":60,\"speed\":95,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[\"poison\"],\"melee_defence\":40,\"weapon_strength\":375,\"weapon_damage\":125,\"weapon_ap_damage\":250,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":65,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"hide_forest\",\"moulder_monster\"]}",
               :granted-ability-keys
-              ["[\"wh_main_unit_passive_frenzy\""
-               "\"wh_main_unit_passive_regeneration\"]"]}
+              ["wh_main_unit_passive_frenzy"
+               "wh_main_unit_passive_regeneration"]}
  #:unit-mount{:eid #uuid "f5bc41a0-6f8a-3020-bf8b-86b06e14d8af",
               :unit
               [:unit/eid #uuid "0011000b-0000-4000-8000-000000000000"],
@@ -2634,8 +2630,7 @@
               :cost 450,
               :stats-override
               "{\"cost\":975,\"is_large\":false,\"unit_size\":1,\"health\":6376,\"barrier\":0,\"armor\":70,\"leadership\":60,\"speed\":60,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":55,\"weapon_strength\":460,\"weapon_damage\":140,\"weapon_ap_damage\":320,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":55,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"hide_forest\",\"moulder_monster\"]}",
-              :granted-ability-keys
-              ["[\"wh_main_unit_passive_frenzy\"]"]}
+              :granted-ability-keys ["wh_main_unit_passive_frenzy"]}
  #:unit-mount{:eid #uuid "3f7c6ab1-c391-3f37-812c-b5632f62fea0",
               :unit
               [:unit/eid #uuid "0011000d-0000-4000-8000-000000000000"],
@@ -2645,8 +2640,7 @@
               :cost 450,
               :stats-override
               "{\"cost\":1000,\"is_large\":false,\"unit_size\":1,\"health\":6091,\"barrier\":0,\"armor\":70,\"leadership\":60,\"speed\":60,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":410,\"weapon_damage\":120,\"weapon_ap_damage\":290,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"hide_forest\",\"moulder_monster\"]}",
-              :granted-ability-keys
-              ["[\"wh_main_unit_passive_frenzy\"]"]}
+              :granted-ability-keys ["wh_main_unit_passive_frenzy"]}
  #:unit-mount{:eid #uuid "8f86be6f-9d5d-3ba9-a00e-3130d42aa24c",
               :unit
               [:unit/eid #uuid "00110010-0000-4000-8000-000000000000"],
@@ -2657,8 +2651,8 @@
               :stats-override
               "{\"cost\":1200,\"is_large\":false,\"unit_size\":1,\"health\":6003,\"barrier\":0,\"armor\":40,\"leadership\":55,\"speed\":95,\"melee_attack\":40,\"melee_attack_types\":[],\"melee_modifiers\":[\"poison\"],\"melee_defence\":30,\"weapon_strength\":375,\"weapon_damage\":125,\"weapon_ap_damage\":250,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":65,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"hide_forest\",\"moulder_monster\"]}",
               :granted-ability-keys
-              ["[\"wh_main_unit_passive_frenzy\""
-               "\"wh_main_unit_passive_regeneration\"]"]}
+              ["wh_main_unit_passive_frenzy"
+               "wh_main_unit_passive_regeneration"]}
  #:unit-mount{:eid #uuid "40e05a95-7254-3b10-b294-e6560446676d",
               :unit
               [:unit/eid #uuid "00110011-0000-4000-8000-000000000000"],
@@ -2669,8 +2663,8 @@
               :stats-override
               "{\"cost\":1350,\"is_large\":false,\"unit_size\":1,\"health\":5868,\"barrier\":0,\"armor\":90,\"leadership\":85,\"speed\":42,\"melee_attack\":30,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[\"overhead-morale\"],\"melee_defence\":26,\"weapon_strength\":200,\"weapon_damage\":60,\"weapon_ap_damage\":140,\"bonus_vs_infantry\":20,\"bonus_vs_large\":0,\"charge_bonus\":20,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_mount_bound_pestilent_breath\""
-               "\"wh2_main_mount_passive_billowing_death\"]"]}
+              ["wh2_main_mount_bound_pestilent_breath"
+               "wh2_main_mount_passive_billowing_death"]}
  #:unit-mount{:eid #uuid "1a05d633-0bc9-3c75-9fb2-18230ffc1050",
               :unit
               [:unit/eid #uuid "00120009-0000-4000-8000-000000000000"],
@@ -2762,8 +2756,8 @@
               :stats-override
               "{\"cost\":1400,\"is_large\":false,\"unit_size\":1,\"health\":11242,\"barrier\":0,\"armor\":60,\"leadership\":65,\"speed\":43,\"melee_attack\":35,\"melee_attack_types\":[],\"melee_modifiers\":[\"dazed\"],\"melee_defence\":30,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"immune_to_psychology\",\"mark_slaanesh\",\"strider\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_torturous_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_torturous_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "c35907ff-344f-3dcf-be85-a509ad5d93e7",
               :unit
               [:unit/eid #uuid "00120013-0000-4000-8000-000000000000"],
@@ -2828,7 +2822,7 @@
               :stats-override
               "{\"cost\":1250,\"is_large\":false,\"unit_size\":1,\"health\":4808,\"barrier\":0,\"armor\":80,\"leadership\":75,\"speed\":26,\"melee_attack\":28,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":20,\"weapon_strength\":350,\"weapon_damage\":230,\"weapon_ap_damage\":120,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":8,\"ammunition\":20,\"missile_damage_types\":[\"magical\"],\"missile_modifiers\":[],\"range\":440,\"missile_damage\":130,\"missile_base_damage\":40,\"missile_ap_damage\":90,\"attributes\":[\"causes_fear\",\"encourages\",\"undead\"]}",
               :granted-ability-keys
-              ["[\"wh2_dlc09_unit_passive_covenant_of_power\"]"]}
+              ["wh2_dlc09_unit_passive_covenant_of_power"]}
  #:unit-mount{:eid #uuid "5c23a19e-9bde-3a33-8d47-71f0505188f7",
               :unit
               [:unit/eid #uuid "00130002-0000-4000-8000-000000000000"],
@@ -2992,8 +2986,8 @@
               :stats-override
               "{\"cost\":1400,\"is_large\":false,\"unit_size\":1,\"health\":11242,\"barrier\":800,\"armor\":60,\"leadership\":55,\"speed\":38,\"melee_attack\":35,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"mark_tzeentch\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_arcane_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_arcane_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "dc6af593-c090-319c-be72-cba6a7c51a10",
               :unit
               [:unit/eid #uuid "00140012-0000-4000-8000-000000000000"],
@@ -3031,8 +3025,8 @@
               :stats-override
               "{\"cost\":2100,\"is_large\":false,\"unit_size\":1,\"health\":9867,\"barrier\":0,\"armor\":75,\"leadership\":75,\"speed\":45,\"melee_attack\":46,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":34,\"weapon_strength\":475,\"weapon_damage\":125,\"weapon_ap_damage\":350,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":20,\"ammunition\":22,\"missile_damage_types\":[],\"missile_modifiers\":[],\"range\":330,\"missile_damage\":180,\"missile_base_damage\":35,\"missile_ap_damage\":145,\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"mounted_fire_move\",\"undead\"]}",
               :granted-ability-keys
-              ["[\"wh2_dlc11_unit_passive_abandon_ship\""
-               "\"wh2_dlc11_unit_passive_extra_powder\"]"]}
+              ["wh2_dlc11_unit_passive_abandon_ship"
+               "wh2_dlc11_unit_passive_extra_powder"]}
  #:unit-mount{:eid #uuid "df7e71b0-5247-34a8-940e-b3b608b420ce",
               :unit
               [:unit/eid #uuid "00150003-0000-4000-8000-000000000000"],
@@ -3052,8 +3046,8 @@
               :stats-override
               "{\"cost\":2400,\"is_large\":false,\"unit_size\":1,\"health\":8489,\"barrier\":0,\"armor\":80,\"leadership\":80,\"speed\":90,\"melee_attack\":45,\"melee_attack_types\":[],\"melee_modifiers\":[\"poison\"],\"melee_defence\":47,\"weapon_strength\":530,\"weapon_damage\":145,\"weapon_ap_damage\":385,\"bonus_vs_infantry\":0,\"bonus_vs_large\":25,\"charge_bonus\":40,\"ammunition\":30,\"missile_damage_types\":[],\"missile_modifiers\":[\"dazed\"],\"range\":90,\"missile_damage\":160,\"missile_base_damage\":40,\"missile_ap_damage\":120,\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\",\"mounted_fire_move\",\"undead\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_death_shriek\""
-               "\"wh_main_unit_passive_regeneration\"]"]}
+              ["wh2_main_unit_abilities_death_shriek"
+               "wh_main_unit_passive_regeneration"]}
  #:unit-mount{:eid #uuid "e1e1d9c5-ee74-3bae-ba05-e14c0425b95f",
               :unit
               [:unit/eid #uuid "00150005-0000-4000-8000-000000000000"],
@@ -3154,8 +3148,8 @@
               :stats-override
               "{\"cost\":2200,\"is_large\":false,\"unit_size\":1,\"health\":7736,\"barrier\":0,\"armor\":70,\"leadership\":80,\"speed\":95,\"melee_attack\":44,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":36,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":40,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"flying\",\"undead\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_pestilential_breath\""
-               "\"wh_main_hero_passive_swarm_of_flies\"]"]}
+              ["wh2_main_unit_abilities_pestilential_breath"
+               "wh_main_hero_passive_swarm_of_flies"]}
  #:unit-mount{:eid #uuid "5b438532-831f-3ae6-8203-46eecb3ff94e",
               :unit
               [:unit/eid #uuid "00160002-0000-4000-8000-000000000000"],
@@ -3175,9 +3169,9 @@
               :stats-override
               "{\"cost\":1000,\"is_large\":false,\"unit_size\":1,\"health\":5860,\"barrier\":0,\"armor\":45,\"leadership\":70,\"speed\":23,\"melee_attack\":30,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":44,\"weapon_strength\":340,\"weapon_damage\":220,\"weapon_ap_damage\":120,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":13,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"hide_forest\",\"undead\"]}",
               :granted-ability-keys
-              ["[\"wh_dlc04_unit_passive_the_reliquary_corruption\""
-               "\"wh_dlc04_unit_passive_unholy_lodestone\""
-               "\"wh_dlc04_unit_passive_vigour_mortis\"]"]}
+              ["wh_dlc04_unit_passive_the_reliquary_corruption"
+               "wh_dlc04_unit_passive_unholy_lodestone"
+               "wh_dlc04_unit_passive_vigour_mortis"]}
  #:unit-mount{:eid #uuid "da438bac-f323-3905-b3cf-94b71e43be9a",
               :unit
               [:unit/eid #uuid "00160004-0000-4000-8000-000000000000"],
@@ -3224,8 +3218,8 @@
               :stats-override
               "{\"cost\":2100,\"is_large\":false,\"unit_size\":1,\"health\":7736,\"barrier\":0,\"armor\":70,\"leadership\":80,\"speed\":95,\"melee_attack\":40,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":48,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":40,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\",\"undead\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_pestilential_breath\""
-               "\"wh_main_hero_passive_swarm_of_flies\"]"]}
+              ["wh2_main_unit_abilities_pestilential_breath"
+               "wh_main_hero_passive_swarm_of_flies"]}
  #:unit-mount{:eid #uuid "080eddab-d1ab-36e9-8935-c82764487b1c",
               :unit
               [:unit/eid #uuid "00160006-0000-4000-8000-000000000000"],
@@ -3254,8 +3248,8 @@
               :stats-override
               "{\"cost\":2150,\"is_large\":false,\"unit_size\":1,\"health\":7736,\"barrier\":0,\"armor\":70,\"leadership\":80,\"speed\":95,\"melee_attack\":46,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":46,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":40,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\",\"undead\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_pestilential_breath\""
-               "\"wh_main_hero_passive_swarm_of_flies\"]"]}
+              ["wh2_main_unit_abilities_pestilential_breath"
+               "wh_main_hero_passive_swarm_of_flies"]}
  #:unit-mount{:eid #uuid "5406c034-60c1-385c-84f9-4d0850f257f8",
               :unit
               [:unit/eid #uuid "00160007-0000-4000-8000-000000000000"],
@@ -3266,8 +3260,8 @@
               :stats-override
               "{\"cost\":450,\"is_large\":false,\"unit_size\":1,\"health\":5660,\"barrier\":0,\"armor\":45,\"leadership\":66,\"speed\":23,\"melee_attack\":33,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":33,\"weapon_strength\":300,\"weapon_damage\":210,\"weapon_ap_damage\":90,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":12,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"hide_forest\",\"undead\"]}",
               :granted-ability-keys
-              ["[\"wh_dlc04_unit_passive_vigour_mortis\""
-               "\"wh_main_unit_passive_regeneration\"]"]}
+              ["wh_dlc04_unit_passive_vigour_mortis"
+               "wh_main_unit_passive_regeneration"]}
  #:unit-mount{:eid #uuid "aaaaae64-3c76-3fc5-8a50-71f49a5a1347",
               :unit
               [:unit/eid #uuid "00160007-0000-4000-8000-000000000000"],
@@ -3278,9 +3272,9 @@
               :stats-override
               "{\"cost\":650,\"is_large\":false,\"unit_size\":1,\"health\":5660,\"barrier\":0,\"armor\":45,\"leadership\":66,\"speed\":23,\"melee_attack\":33,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":33,\"weapon_strength\":300,\"weapon_damage\":210,\"weapon_ap_damage\":90,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":12,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"hide_forest\",\"undead\"]}",
               :granted-ability-keys
-              ["[\"wh_dlc04_unit_passive_balefire\""
-               "\"wh_dlc04_unit_passive_vigour_mortis\""
-               "\"wh_main_unit_passive_regeneration\"]"]}
+              ["wh_dlc04_unit_passive_balefire"
+               "wh_dlc04_unit_passive_vigour_mortis"
+               "wh_main_unit_passive_regeneration"]}
  #:unit-mount{:eid #uuid "147ac0d4-bc78-3e1e-802c-6690f21b74ef",
               :unit
               [:unit/eid #uuid "00160007-0000-4000-8000-000000000000"],
@@ -3291,9 +3285,9 @@
               :stats-override
               "{\"cost\":650,\"is_large\":false,\"unit_size\":1,\"health\":5660,\"barrier\":0,\"armor\":45,\"leadership\":66,\"speed\":23,\"melee_attack\":33,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":33,\"weapon_strength\":300,\"weapon_damage\":210,\"weapon_ap_damage\":90,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":12,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"hide_forest\",\"undead\"]}",
               :granted-ability-keys
-              ["[\"wh_dlc04_unit_passive_unholy_lodestone\""
-               "\"wh_dlc04_unit_passive_vigour_mortis\""
-               "\"wh_main_unit_passive_regeneration\"]"]}
+              ["wh_dlc04_unit_passive_unholy_lodestone"
+               "wh_dlc04_unit_passive_vigour_mortis"
+               "wh_main_unit_passive_regeneration"]}
  #:unit-mount{:eid #uuid "2222e073-59d5-3a7a-896d-e0280df44857",
               :unit
               [:unit/eid #uuid "00160007-0000-4000-8000-000000000000"],
@@ -3340,8 +3334,8 @@
               :stats-override
               "{\"cost\":2050,\"is_large\":false,\"unit_size\":1,\"health\":7736,\"barrier\":0,\"armor\":70,\"leadership\":80,\"speed\":95,\"melee_attack\":42,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":40,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\",\"undead\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_pestilential_breath\""
-               "\"wh_main_hero_passive_swarm_of_flies\"]"]}
+              ["wh2_main_unit_abilities_pestilential_breath"
+               "wh_main_hero_passive_swarm_of_flies"]}
  #:unit-mount{:eid #uuid "74822d6f-5bbe-315e-ac1f-33a8dcbce2da",
               :unit
               [:unit/eid #uuid "00160009-0000-4000-8000-000000000000"],
@@ -3352,7 +3346,7 @@
               :stats-override
               "{\"cost\":2100,\"is_large\":false,\"unit_size\":1,\"health\":8289,\"barrier\":0,\"armor\":80,\"leadership\":60,\"speed\":90,\"melee_attack\":52,\"melee_attack_types\":[],\"melee_modifiers\":[\"poison\"],\"melee_defence\":47,\"weapon_strength\":530,\"weapon_damage\":145,\"weapon_ap_damage\":385,\"bonus_vs_infantry\":0,\"bonus_vs_large\":35,\"charge_bonus\":45,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\",\"undead\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_death_shriek\"]"]}
+              ["wh2_main_unit_abilities_death_shriek"]}
  #:unit-mount{:eid #uuid "8601ac94-f188-3498-9fd1-db672a8efb5a",
               :unit
               [:unit/eid #uuid "0016000a-0000-4000-8000-000000000000"],
@@ -3363,7 +3357,7 @@
               :stats-override
               "{\"cost\":2200,\"is_large\":false,\"unit_size\":1,\"health\":8289,\"barrier\":0,\"armor\":80,\"leadership\":70,\"speed\":90,\"melee_attack\":52,\"melee_attack_types\":[],\"melee_modifiers\":[\"poison\"],\"melee_defence\":47,\"weapon_strength\":530,\"weapon_damage\":145,\"weapon_ap_damage\":385,\"bonus_vs_infantry\":0,\"bonus_vs_large\":35,\"charge_bonus\":45,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\",\"undead\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_death_shriek\"]"]}
+              ["wh2_main_unit_abilities_death_shriek"]}
  #:unit-mount{:eid #uuid "2e824a3b-df59-3815-88f3-5851517ca816",
               :unit
               [:unit/eid #uuid "0016000b-0000-4000-8000-000000000000"],
@@ -3392,8 +3386,8 @@
               :stats-override
               "{\"cost\":2250,\"is_large\":false,\"unit_size\":1,\"health\":7736,\"barrier\":0,\"armor\":70,\"leadership\":80,\"speed\":95,\"melee_attack\":44,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":44,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":40,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\",\"undead\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_pestilential_breath\""
-               "\"wh_main_hero_passive_swarm_of_flies\"]"]}
+              ["wh2_main_unit_abilities_pestilential_breath"
+               "wh_main_hero_passive_swarm_of_flies"]}
  #:unit-mount{:eid #uuid "f5d9cb2f-8bb1-30ed-bb3c-0a6ee8ea1463",
               :unit
               [:unit/eid #uuid "0016000c-0000-4000-8000-000000000000"],
@@ -3422,8 +3416,8 @@
               :stats-override
               "{\"cost\":2050,\"is_large\":false,\"unit_size\":1,\"health\":7736,\"barrier\":0,\"armor\":70,\"leadership\":80,\"speed\":95,\"melee_attack\":44,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":50,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":40,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\",\"undead\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_pestilential_breath\""
-               "\"wh_main_hero_passive_swarm_of_flies\"]"]}
+              ["wh2_main_unit_abilities_pestilential_breath"
+               "wh_main_hero_passive_swarm_of_flies"]}
  #:unit-mount{:eid #uuid "2d8f2862-9cc4-38e8-9707-0f6e8729a769",
               :unit
               [:unit/eid #uuid "0016000e-0000-4000-8000-000000000000"],
@@ -3452,8 +3446,8 @@
               :stats-override
               "{\"cost\":2100,\"is_large\":false,\"unit_size\":1,\"health\":7736,\"barrier\":0,\"armor\":70,\"leadership\":80,\"speed\":95,\"melee_attack\":44,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":44,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":40,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\",\"undead\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_pestilential_breath\""
-               "\"wh_main_hero_passive_swarm_of_flies\"]"]}
+              ["wh2_main_unit_abilities_pestilential_breath"
+               "wh_main_hero_passive_swarm_of_flies"]}
  #:unit-mount{:eid #uuid "bc734a72-3bdc-3ed7-8f6f-e4877dbe3ea5",
               :unit
               [:unit/eid #uuid "00160011-0000-4000-8000-000000000000"],
@@ -3464,8 +3458,8 @@
               :stats-override
               "{\"cost\":500,\"is_large\":false,\"unit_size\":1,\"health\":5660,\"barrier\":0,\"armor\":45,\"leadership\":55,\"speed\":23,\"melee_attack\":33,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":33,\"weapon_strength\":300,\"weapon_damage\":210,\"weapon_ap_damage\":90,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":12,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"hide_forest\",\"undead\"]}",
               :granted-ability-keys
-              ["[\"wh_dlc04_unit_passive_vigour_mortis\""
-               "\"wh_main_unit_passive_regeneration\"]"]}
+              ["wh_dlc04_unit_passive_vigour_mortis"
+               "wh_main_unit_passive_regeneration"]}
  #:unit-mount{:eid #uuid "5312f17c-192e-3190-99be-a5938e5a7125",
               :unit
               [:unit/eid #uuid "00160011-0000-4000-8000-000000000000"],
@@ -3476,9 +3470,9 @@
               :stats-override
               "{\"cost\":700,\"is_large\":false,\"unit_size\":1,\"health\":5660,\"barrier\":0,\"armor\":45,\"leadership\":55,\"speed\":23,\"melee_attack\":33,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":33,\"weapon_strength\":300,\"weapon_damage\":210,\"weapon_ap_damage\":90,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":12,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"hide_forest\",\"undead\"]}",
               :granted-ability-keys
-              ["[\"wh_dlc04_unit_passive_balefire\""
-               "\"wh_dlc04_unit_passive_vigour_mortis\""
-               "\"wh_main_unit_passive_regeneration\"]"]}
+              ["wh_dlc04_unit_passive_balefire"
+               "wh_dlc04_unit_passive_vigour_mortis"
+               "wh_main_unit_passive_regeneration"]}
  #:unit-mount{:eid #uuid "f2cb35f0-c0af-3444-b73c-01b1a326af15",
               :unit
               [:unit/eid #uuid "00160011-0000-4000-8000-000000000000"],
@@ -3489,9 +3483,9 @@
               :stats-override
               "{\"cost\":700,\"is_large\":false,\"unit_size\":1,\"health\":5660,\"barrier\":0,\"armor\":45,\"leadership\":55,\"speed\":23,\"melee_attack\":33,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":33,\"weapon_strength\":300,\"weapon_damage\":210,\"weapon_ap_damage\":90,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":12,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"hide_forest\",\"undead\"]}",
               :granted-ability-keys
-              ["[\"wh_dlc04_unit_passive_unholy_lodestone\""
-               "\"wh_dlc04_unit_passive_vigour_mortis\""
-               "\"wh_main_unit_passive_regeneration\"]"]}
+              ["wh_dlc04_unit_passive_unholy_lodestone"
+               "wh_dlc04_unit_passive_vigour_mortis"
+               "wh_main_unit_passive_regeneration"]}
  #:unit-mount{:eid #uuid "36e144fb-3aa5-3063-a318-12086020464d",
               :unit
               [:unit/eid #uuid "00160011-0000-4000-8000-000000000000"],
@@ -3556,7 +3550,7 @@
               :stats-override
               "{\"cost\":2100,\"is_large\":false,\"unit_size\":1,\"health\":8436,\"barrier\":0,\"armor\":70,\"leadership\":75,\"speed\":95,\"melee_attack\":54,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":44,\"weapon_strength\":550,\"weapon_damage\":140,\"weapon_ap_damage\":410,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_dark_fire_of_chaos\"]"]}
+              ["wh2_main_unit_abilities_dark_fire_of_chaos"]}
  #:unit-mount{:eid #uuid "bb8db1c7-eb06-3ab4-b1b5-047f7e3d7057",
               :unit
               [:unit/eid #uuid "00170004-0000-4000-8000-000000000000"],
@@ -3693,7 +3687,7 @@
               :stats-override
               "{\"cost\":2000,\"is_large\":false,\"unit_size\":1,\"health\":8308,\"barrier\":0,\"armor\":70,\"leadership\":70,\"speed\":95,\"melee_attack\":46,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":45,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_dark_fire_of_chaos\"]"]}
+              ["wh2_main_unit_abilities_dark_fire_of_chaos"]}
  #:unit-mount{:eid #uuid "f0b8a7ec-823a-3120-ab24-1ba77e329d00",
               :unit
               [:unit/eid #uuid "00170009-0000-4000-8000-000000000000"],
@@ -3722,8 +3716,8 @@
               :stats-override
               "{\"cost\":1400,\"is_large\":false,\"unit_size\":1,\"health\":11542,\"barrier\":0,\"armor\":60,\"leadership\":70,\"speed\":38,\"melee_attack\":35,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "243f3903-58ed-3e45-931d-8c8896c8fc06",
               :unit
               [:unit/eid #uuid "0017000d-0000-4000-8000-000000000000"],
@@ -3752,8 +3746,8 @@
               :stats-override
               "{\"cost\":1500,\"is_large\":false,\"unit_size\":1,\"health\":12698,\"barrier\":0,\"armor\":60,\"leadership\":70,\"speed\":38,\"melee_attack\":30,\"melee_attack_types\":[],\"melee_modifiers\":[\"poison\"],\"melee_defence\":35,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"mark_nurgle\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_abundant_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_abundant_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "20e9ae02-f86c-3a10-9e77-8872f817f976",
               :unit
               [:unit/eid #uuid "0017000f-0000-4000-8000-000000000000"],
@@ -3773,9 +3767,9 @@
               :stats-override
               "{\"cost\":1500,\"is_large\":false,\"unit_size\":1,\"health\":11242,\"barrier\":0,\"armor\":60,\"leadership\":70,\"speed\":43,\"melee_attack\":35,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"immune_to_psychology\",\"mark_slaanesh\",\"spell_mastery\",\"strider\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_character_passive_soul_feeder\""
-               "\"wh3_dlc20_unit_passive_giver_of_torturous_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_character_passive_soul_feeder"
+               "wh3_dlc20_unit_passive_giver_of_torturous_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "0fb197dc-2a3e-3955-8cca-d7a94a65b5fc",
               :unit
               [:unit/eid #uuid "0017000f-0000-4000-8000-000000000000"],
@@ -3813,8 +3807,8 @@
               :stats-override
               "{\"cost\":1500,\"is_large\":false,\"unit_size\":1,\"health\":11542,\"barrier\":800,\"armor\":60,\"leadership\":70,\"speed\":38,\"melee_attack\":35,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"mark_tzeentch\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_arcane_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_arcane_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "046a9fe1-e624-384e-99eb-60a341ec8a4c",
               :unit
               [:unit/eid #uuid "00170020-0000-4000-8000-000000000000"],
@@ -3843,8 +3837,8 @@
               :stats-override
               "{\"cost\":1300,\"is_large\":false,\"unit_size\":1,\"health\":11242,\"barrier\":0,\"armor\":60,\"leadership\":60,\"speed\":38,\"melee_attack\":35,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "c4ab734e-f124-3621-8b48-5684e0d120de",
               :unit
               [:unit/eid #uuid "00170024-0000-4000-8000-000000000000"],
@@ -3873,8 +3867,8 @@
               :stats-override
               "{\"cost\":1400,\"is_large\":false,\"unit_size\":1,\"health\":12365,\"barrier\":0,\"armor\":80,\"leadership\":60,\"speed\":38,\"melee_attack\":30,\"melee_attack_types\":[],\"melee_modifiers\":[\"poison\"],\"melee_defence\":35,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"immune_to_psychology\",\"mark_nurgle\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_abundant_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_abundant_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "bf8a83f1-f5e3-3d94-8d9b-d556925ba6cd",
               :unit
               [:unit/eid #uuid "00170026-0000-4000-8000-000000000000"],
@@ -3903,8 +3897,8 @@
               :stats-override
               "{\"cost\":1400,\"is_large\":false,\"unit_size\":1,\"health\":11242,\"barrier\":0,\"armor\":60,\"leadership\":60,\"speed\":43,\"melee_attack\":35,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"immune_to_psychology\",\"mark_slaanesh\",\"strider\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_torturous_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_torturous_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "8198c280-dd76-37d5-b307-d420d1c89099",
               :unit
               [:unit/eid #uuid "00170028-0000-4000-8000-000000000000"],
@@ -3933,8 +3927,8 @@
               :stats-override
               "{\"cost\":1400,\"is_large\":false,\"unit_size\":1,\"health\":11242,\"barrier\":800,\"armor\":60,\"leadership\":60,\"speed\":38,\"melee_attack\":35,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"mark_tzeentch\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_arcane_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_arcane_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "6552d761-321e-3f31-96d5-5dc9f9b28dc7",
               :unit
               [:unit/eid #uuid "0017002a-0000-4000-8000-000000000000"],
@@ -4107,7 +4101,7 @@
               :stats-override
               "{\"cost\":2000,\"is_large\":false,\"unit_size\":1,\"health\":7616,\"barrier\":0,\"armor\":60,\"leadership\":75,\"speed\":95,\"melee_attack\":48,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[\"poison\"],\"melee_defence\":42,\"weapon_strength\":440,\"weapon_damage\":135,\"weapon_ap_damage\":305,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":60,\"ammunition\":30,\"missile_damage_types\":[\"magical\"],\"missile_modifiers\":[],\"range\":190,\"missile_damage\":280,\"missile_base_damage\":196,\"missile_ap_damage\":84,\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\",\"mounted_fire_move\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_soporific_breath\"]"]}
+              ["wh2_main_unit_abilities_soporific_breath"]}
  #:unit-mount{:eid #uuid "a9d9a7cb-c103-35ae-8cc2-015d7ffaccfb",
               :unit
               [:unit/eid #uuid "00180004-0000-4000-8000-000000000000"],
@@ -4208,8 +4202,8 @@
               :stats-override
               "{\"cost\":2450,\"is_large\":false,\"unit_size\":2,\"health\":15344,\"barrier\":0,\"armor\":60,\"leadership\":80,\"speed\":95,\"melee_attack\":48,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[\"poison\"],\"melee_defence\":42,\"weapon_strength\":480,\"weapon_damage\":165,\"weapon_ap_damage\":315,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":60,\"ammunition\":30,\"missile_damage_types\":[],\"missile_modifiers\":[\"armour-break\"],\"range\":190,\"missile_damage\":120,\"missile_base_damage\":30,\"missile_ap_damage\":90,\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\",\"mounted_fire_move\"]}",
               :granted-ability-keys
-              ["[\"wh2_dlc16_lord_passive_ceithin_hars_tenacity\""
-               "\"wh2_main_unit_abilities_soporific_breath\"]"]}
+              ["wh2_dlc16_lord_passive_ceithin_hars_tenacity"
+               "wh2_main_unit_abilities_soporific_breath"]}
  #:unit-mount{:eid #uuid "bbd4a77b-00fb-320a-ba7c-8aa5e317a700",
               :unit
               [:unit/eid #uuid "0002000e-0000-4000-8000-000000000000"],
@@ -4400,8 +4394,8 @@
               :stats-override
               "{\"cost\":2200,\"is_large\":true,\"unit_size\":1,\"health\":8258,\"barrier\":0,\"armor\":70,\"leadership\":75,\"speed\":90,\"melee_attack\":56,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":540,\"weapon_damage\":140,\"weapon_ap_damage\":400,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_unit_abilities_flaming_breath\""
-               "\"wh3_dlc23_unit_passive_blazing_body\"]"]}
+              ["wh3_dlc23_unit_abilities_flaming_breath"
+               "wh3_dlc23_unit_passive_blazing_body"]}
  #:unit-mount{:eid #uuid "719d865d-50b2-3572-8454-45852c954642",
               :unit
               [:unit/eid #uuid "00040006-0000-4000-8000-000000000000"],
@@ -4412,7 +4406,7 @@
               :stats-override
               "{\"cost\":1500,\"is_large\":true,\"unit_size\":1,\"health\":6668,\"barrier\":0,\"armor\":60,\"leadership\":75,\"speed\":80,\"melee_attack\":46,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":28,\"weapon_strength\":450,\"weapon_damage\":130,\"weapon_ap_damage\":320,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_unit_passive_blazing_body\"]"]}
+              ["wh3_dlc23_unit_passive_blazing_body"]}
  #:unit-mount{:eid #uuid "e6512f43-1b20-3bc3-aa5c-28a44472bf4f",
               :unit
               [:unit/eid #uuid "00040006-0000-4000-8000-000000000000"],
@@ -4423,9 +4417,9 @@
               :stats-override
               "{\"cost\":1600,\"is_large\":true,\"unit_size\":1,\"health\":6048,\"barrier\":0,\"armor\":60,\"leadership\":75,\"speed\":85,\"melee_attack\":40,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":48,\"weapon_strength\":450,\"weapon_damage\":270,\"weapon_ap_damage\":180,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":40,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_spell_bound_enfeebling_foe\""
-               "\"wh3_dlc23_spell_bound_the_withering\""
-               "\"wh3_dlc23_unit_passive_sorcerous_miasma\"]"]}
+              ["wh3_dlc23_spell_bound_enfeebling_foe"
+               "wh3_dlc23_spell_bound_the_withering"
+               "wh3_dlc23_unit_passive_sorcerous_miasma"]}
  #:unit-mount{:eid #uuid "873beb4e-6a4c-3943-a634-293e83c662d6",
               :unit
               [:unit/eid #uuid "00040005-0000-4000-8000-000000000000"],
@@ -4436,8 +4430,8 @@
               :stats-override
               "{\"cost\":2200,\"is_large\":true,\"unit_size\":1,\"health\":8258,\"barrier\":0,\"armor\":70,\"leadership\":75,\"speed\":90,\"melee_attack\":56,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":540,\"weapon_damage\":140,\"weapon_ap_damage\":400,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_unit_abilities_flaming_breath\""
-               "\"wh3_dlc23_unit_passive_blazing_body\"]"]}
+              ["wh3_dlc23_unit_abilities_flaming_breath"
+               "wh3_dlc23_unit_passive_blazing_body"]}
  #:unit-mount{:eid #uuid "1c9f7691-0000-347d-9825-e33bc39c870c",
               :unit
               [:unit/eid #uuid "00040005-0000-4000-8000-000000000000"],
@@ -4448,7 +4442,7 @@
               :stats-override
               "{\"cost\":1500,\"is_large\":true,\"unit_size\":1,\"health\":6668,\"barrier\":0,\"armor\":60,\"leadership\":75,\"speed\":80,\"melee_attack\":46,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":28,\"weapon_strength\":450,\"weapon_damage\":130,\"weapon_ap_damage\":320,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_unit_passive_blazing_body\"]"]}
+              ["wh3_dlc23_unit_passive_blazing_body"]}
  #:unit-mount{:eid #uuid "b737ca43-952a-3e18-85f4-8bdf265041e0",
               :unit
               [:unit/eid #uuid "00040005-0000-4000-8000-000000000000"],
@@ -4459,9 +4453,9 @@
               :stats-override
               "{\"cost\":1600,\"is_large\":true,\"unit_size\":1,\"health\":6048,\"barrier\":0,\"armor\":60,\"leadership\":75,\"speed\":85,\"melee_attack\":40,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":48,\"weapon_strength\":450,\"weapon_damage\":270,\"weapon_ap_damage\":180,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":40,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_spell_bound_enfeebling_foe\""
-               "\"wh3_dlc23_spell_bound_the_withering\""
-               "\"wh3_dlc23_unit_passive_sorcerous_miasma\"]"]}
+              ["wh3_dlc23_spell_bound_enfeebling_foe"
+               "wh3_dlc23_spell_bound_the_withering"
+               "wh3_dlc23_unit_passive_sorcerous_miasma"]}
  #:unit-mount{:eid #uuid "3ae1092f-7ddc-3183-b780-3eb53a359015",
               :unit
               [:unit/eid #uuid "00040007-0000-4000-8000-000000000000"],
@@ -4472,8 +4466,8 @@
               :stats-override
               "{\"cost\":2200,\"is_large\":true,\"unit_size\":1,\"health\":8258,\"barrier\":0,\"armor\":70,\"leadership\":75,\"speed\":90,\"melee_attack\":56,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":540,\"weapon_damage\":140,\"weapon_ap_damage\":400,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_unit_abilities_flaming_breath\""
-               "\"wh3_dlc23_unit_passive_blazing_body\"]"]}
+              ["wh3_dlc23_unit_abilities_flaming_breath"
+               "wh3_dlc23_unit_passive_blazing_body"]}
  #:unit-mount{:eid #uuid "d152a500-876b-3176-befe-4abcc46c10ed",
               :unit
               [:unit/eid #uuid "00040007-0000-4000-8000-000000000000"],
@@ -4484,7 +4478,7 @@
               :stats-override
               "{\"cost\":1500,\"is_large\":true,\"unit_size\":1,\"health\":6668,\"barrier\":0,\"armor\":60,\"leadership\":75,\"speed\":80,\"melee_attack\":46,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":28,\"weapon_strength\":450,\"weapon_damage\":130,\"weapon_ap_damage\":320,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_unit_passive_blazing_body\"]"]}
+              ["wh3_dlc23_unit_passive_blazing_body"]}
  #:unit-mount{:eid #uuid "bb9dabb3-bc29-3b95-974c-843188141a9c",
               :unit
               [:unit/eid #uuid "00040007-0000-4000-8000-000000000000"],
@@ -4495,9 +4489,9 @@
               :stats-override
               "{\"cost\":1600,\"is_large\":true,\"unit_size\":1,\"health\":6048,\"barrier\":0,\"armor\":60,\"leadership\":75,\"speed\":85,\"melee_attack\":40,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":48,\"weapon_strength\":450,\"weapon_damage\":270,\"weapon_ap_damage\":180,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":40,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_spell_bound_enfeebling_foe\""
-               "\"wh3_dlc23_spell_bound_the_withering\""
-               "\"wh3_dlc23_unit_passive_sorcerous_miasma\"]"]}
+              ["wh3_dlc23_spell_bound_enfeebling_foe"
+               "wh3_dlc23_spell_bound_the_withering"
+               "wh3_dlc23_unit_passive_sorcerous_miasma"]}
  #:unit-mount{:eid #uuid "09bc9c23-ec3f-38c2-b99b-58aede8451b7",
               :unit
               [:unit/eid #uuid "0004000c-0000-4000-8000-000000000000"],
@@ -4508,8 +4502,8 @@
               :stats-override
               "{\"cost\":2000,\"is_large\":true,\"unit_size\":1,\"health\":8258,\"barrier\":0,\"armor\":70,\"leadership\":70,\"speed\":90,\"melee_attack\":56,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":540,\"weapon_damage\":140,\"weapon_ap_damage\":400,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_unit_abilities_flaming_breath\""
-               "\"wh3_dlc23_unit_passive_blazing_body\"]"]}
+              ["wh3_dlc23_unit_abilities_flaming_breath"
+               "wh3_dlc23_unit_passive_blazing_body"]}
  #:unit-mount{:eid #uuid "e896e3e8-d9e3-3dc4-901b-93132d1469ff",
               :unit
               [:unit/eid #uuid "0004000c-0000-4000-8000-000000000000"],
@@ -4520,7 +4514,7 @@
               :stats-override
               "{\"cost\":1200,\"is_large\":true,\"unit_size\":1,\"health\":6668,\"barrier\":0,\"armor\":60,\"leadership\":70,\"speed\":80,\"melee_attack\":46,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":28,\"weapon_strength\":450,\"weapon_damage\":130,\"weapon_ap_damage\":320,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_unit_passive_blazing_body\"]"]}
+              ["wh3_dlc23_unit_passive_blazing_body"]}
  #:unit-mount{:eid #uuid "a2296717-74a5-3582-a099-d9f8e1dcfe07",
               :unit
               [:unit/eid #uuid "0004000c-0000-4000-8000-000000000000"],
@@ -4531,9 +4525,9 @@
               :stats-override
               "{\"cost\":1300,\"is_large\":true,\"unit_size\":1,\"health\":6048,\"barrier\":0,\"armor\":60,\"leadership\":70,\"speed\":85,\"melee_attack\":40,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":48,\"weapon_strength\":450,\"weapon_damage\":270,\"weapon_ap_damage\":180,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":40,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_spell_bound_enfeebling_foe\""
-               "\"wh3_dlc23_spell_bound_the_withering\""
-               "\"wh3_dlc23_unit_passive_sorcerous_miasma\"]"]}
+              ["wh3_dlc23_spell_bound_enfeebling_foe"
+               "wh3_dlc23_spell_bound_the_withering"
+               "wh3_dlc23_unit_passive_sorcerous_miasma"]}
  #:unit-mount{:eid #uuid "56d1cced-327e-335d-a5cd-a2954d9e1d67",
               :unit
               [:unit/eid #uuid "0004000b-0000-4000-8000-000000000000"],
@@ -4544,8 +4538,8 @@
               :stats-override
               "{\"cost\":2000,\"is_large\":true,\"unit_size\":1,\"health\":8258,\"barrier\":0,\"armor\":70,\"leadership\":70,\"speed\":90,\"melee_attack\":56,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":540,\"weapon_damage\":140,\"weapon_ap_damage\":400,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_unit_abilities_flaming_breath\""
-               "\"wh3_dlc23_unit_passive_blazing_body\"]"]}
+              ["wh3_dlc23_unit_abilities_flaming_breath"
+               "wh3_dlc23_unit_passive_blazing_body"]}
  #:unit-mount{:eid #uuid "165996b4-f8bf-3aaf-99a3-f2a4e22e8af9",
               :unit
               [:unit/eid #uuid "0004000b-0000-4000-8000-000000000000"],
@@ -4556,7 +4550,7 @@
               :stats-override
               "{\"cost\":1200,\"is_large\":true,\"unit_size\":1,\"health\":6668,\"barrier\":0,\"armor\":60,\"leadership\":70,\"speed\":80,\"melee_attack\":46,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":28,\"weapon_strength\":450,\"weapon_damage\":130,\"weapon_ap_damage\":320,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_unit_passive_blazing_body\"]"]}
+              ["wh3_dlc23_unit_passive_blazing_body"]}
  #:unit-mount{:eid #uuid "c7b301c4-1a82-3197-b69b-3cbd7e9b630f",
               :unit
               [:unit/eid #uuid "0004000b-0000-4000-8000-000000000000"],
@@ -4567,9 +4561,9 @@
               :stats-override
               "{\"cost\":1300,\"is_large\":true,\"unit_size\":1,\"health\":6048,\"barrier\":0,\"armor\":60,\"leadership\":70,\"speed\":85,\"melee_attack\":40,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":48,\"weapon_strength\":450,\"weapon_damage\":270,\"weapon_ap_damage\":180,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":40,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_spell_bound_enfeebling_foe\""
-               "\"wh3_dlc23_spell_bound_the_withering\""
-               "\"wh3_dlc23_unit_passive_sorcerous_miasma\"]"]}
+              ["wh3_dlc23_spell_bound_enfeebling_foe"
+               "wh3_dlc23_spell_bound_the_withering"
+               "wh3_dlc23_unit_passive_sorcerous_miasma"]}
  #:unit-mount{:eid #uuid "d2102784-8f46-342e-947c-fa58ef873538",
               :unit
               [:unit/eid #uuid "0004000d-0000-4000-8000-000000000000"],
@@ -4580,8 +4574,8 @@
               :stats-override
               "{\"cost\":2000,\"is_large\":true,\"unit_size\":1,\"health\":8258,\"barrier\":0,\"armor\":70,\"leadership\":70,\"speed\":90,\"melee_attack\":56,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":540,\"weapon_damage\":140,\"weapon_ap_damage\":400,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_unit_abilities_flaming_breath\""
-               "\"wh3_dlc23_unit_passive_blazing_body\"]"]}
+              ["wh3_dlc23_unit_abilities_flaming_breath"
+               "wh3_dlc23_unit_passive_blazing_body"]}
  #:unit-mount{:eid #uuid "78551818-ae24-3177-8960-a7c33166dbb2",
               :unit
               [:unit/eid #uuid "0004000d-0000-4000-8000-000000000000"],
@@ -4592,7 +4586,7 @@
               :stats-override
               "{\"cost\":1200,\"is_large\":true,\"unit_size\":1,\"health\":6668,\"barrier\":0,\"armor\":60,\"leadership\":70,\"speed\":80,\"melee_attack\":46,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":28,\"weapon_strength\":450,\"weapon_damage\":130,\"weapon_ap_damage\":320,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":80,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_unit_passive_blazing_body\"]"]}
+              ["wh3_dlc23_unit_passive_blazing_body"]}
  #:unit-mount{:eid #uuid "388c27d6-39cd-3ca7-b886-06a7aed09af6",
               :unit
               [:unit/eid #uuid "0004000d-0000-4000-8000-000000000000"],
@@ -4603,9 +4597,9 @@
               :stats-override
               "{\"cost\":1300,\"is_large\":true,\"unit_size\":1,\"health\":6048,\"barrier\":0,\"armor\":60,\"leadership\":70,\"speed\":85,\"melee_attack\":40,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":48,\"weapon_strength\":450,\"weapon_damage\":270,\"weapon_ap_damage\":180,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":40,\"ammunition\":45,\"missile_damage_types\":[\"flaming\"],\"missile_modifiers\":[\"flammable\"],\"range\":110,\"missile_damage\":86,\"missile_base_damage\":22,\"missile_ap_damage\":64,\"attributes\":[\"causes_fear\",\"causes_terror\",\"contempt\",\"encourages\",\"flying\",\"immune_to_psychology\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc23_spell_bound_enfeebling_foe\""
-               "\"wh3_dlc23_spell_bound_the_withering\""
-               "\"wh3_dlc23_unit_passive_sorcerous_miasma\"]"]}
+              ["wh3_dlc23_spell_bound_enfeebling_foe"
+               "wh3_dlc23_spell_bound_the_withering"
+               "wh3_dlc23_unit_passive_sorcerous_miasma"]}
  #:unit-mount{:eid #uuid "55c99f42-08f5-3712-83f8-5c6f53a7060c",
               :unit
               [:unit/eid #uuid "00060013-0000-4000-8000-000000000000"],
@@ -4724,7 +4718,7 @@
               :stats-override
               "{\"cost\":2100,\"is_large\":false,\"unit_size\":1,\"health\":8324,\"barrier\":0,\"armor\":90,\"leadership\":75,\"speed\":95,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":46,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_noxious_breath\"]"]}
+              ["wh2_main_unit_abilities_noxious_breath"]}
  #:unit-mount{:eid #uuid "4b48af7b-1765-3351-9989-3871e8443e5c",
               :unit
               [:unit/eid #uuid "0006000b-0000-4000-8000-000000000000"],
@@ -4771,7 +4765,7 @@
               :stats-override
               "{\"cost\":2100,\"is_large\":false,\"unit_size\":1,\"health\":8324,\"barrier\":0,\"armor\":90,\"leadership\":75,\"speed\":95,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":46,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_noxious_breath\"]"]}
+              ["wh2_main_unit_abilities_noxious_breath"]}
  #:unit-mount{:eid #uuid "3f0fcdca-9ab2-34f0-a65a-de7a5a7b3061",
               :unit
               [:unit/eid #uuid "0006000e-0000-4000-8000-000000000000"],
@@ -4818,7 +4812,7 @@
               :stats-override
               "{\"cost\":2100,\"is_large\":false,\"unit_size\":1,\"health\":8324,\"barrier\":0,\"armor\":90,\"leadership\":75,\"speed\":95,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":46,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_noxious_breath\"]"]}
+              ["wh2_main_unit_abilities_noxious_breath"]}
  #:unit-mount{:eid #uuid "e0ec466f-1df0-320d-98fd-b6aa5996bbc6",
               :unit
               [:unit/eid #uuid "0006000c-0000-4000-8000-000000000000"],
@@ -4865,7 +4859,7 @@
               :stats-override
               "{\"cost\":2100,\"is_large\":false,\"unit_size\":1,\"health\":8324,\"barrier\":0,\"armor\":90,\"leadership\":75,\"speed\":95,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":46,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_noxious_breath\"]"]}
+              ["wh2_main_unit_abilities_noxious_breath"]}
  #:unit-mount{:eid #uuid "aef461c5-fa68-3a55-9729-9f465fdc9323",
               :unit
               [:unit/eid #uuid "0006000d-0000-4000-8000-000000000000"],
@@ -5020,7 +5014,7 @@
               :stats-override
               "{\"cost\":1750,\"is_large\":false,\"unit_size\":1,\"health\":7116,\"barrier\":0,\"armor\":70,\"leadership\":70,\"speed\":100,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":44,\"weapon_strength\":460,\"weapon_damage\":135,\"weapon_ap_damage\":325,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":65,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_sun_dragons_breath\"]"]}
+              ["wh2_main_unit_abilities_sun_dragons_breath"]}
  #:unit-mount{:eid #uuid "ebbd175c-e2fc-3753-b7b5-5dadd33f6703",
               :unit
               [:unit/eid #uuid "000a001c-0000-4000-8000-000000000000"],
@@ -5112,7 +5106,7 @@
               :stats-override
               "{\"cost\":2000,\"is_large\":false,\"unit_size\":1,\"health\":8436,\"barrier\":0,\"armor\":70,\"leadership\":75,\"speed\":95,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":44,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_moon_dragons_breath\"]"]}
+              ["wh2_main_unit_abilities_moon_dragons_breath"]}
  #:unit-mount{:eid #uuid "99b2abe1-1887-3b3c-a3c4-add851ae48db",
               :unit
               [:unit/eid #uuid "000a0009-0000-4000-8000-000000000000"],
@@ -5150,7 +5144,7 @@
               :stats-override
               "{\"cost\":2000,\"is_large\":false,\"unit_size\":1,\"health\":8436,\"barrier\":0,\"armor\":70,\"leadership\":75,\"speed\":95,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":44,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_moon_dragons_breath\"]"]}
+              ["wh2_main_unit_abilities_moon_dragons_breath"]}
  #:unit-mount{:eid #uuid "b02617bb-d5bf-3e25-ba89-8dd8a66b3954",
               :unit
               [:unit/eid #uuid "000a000c-0000-4000-8000-000000000000"],
@@ -5188,7 +5182,7 @@
               :stats-override
               "{\"cost\":2000,\"is_large\":false,\"unit_size\":1,\"health\":8436,\"barrier\":0,\"armor\":70,\"leadership\":75,\"speed\":95,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":44,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_moon_dragons_breath\"]"]}
+              ["wh2_main_unit_abilities_moon_dragons_breath"]}
  #:unit-mount{:eid #uuid "1b237e03-df7e-35c9-848f-bdbe137c6e9f",
               :unit
               [:unit/eid #uuid "000a0005-0000-4000-8000-000000000000"],
@@ -5226,7 +5220,7 @@
               :stats-override
               "{\"cost\":2000,\"is_large\":false,\"unit_size\":1,\"health\":8436,\"barrier\":0,\"armor\":70,\"leadership\":75,\"speed\":95,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":44,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_moon_dragons_breath\"]"]}
+              ["wh2_main_unit_abilities_moon_dragons_breath"]}
  #:unit-mount{:eid #uuid "8542124e-0419-38f6-8ab4-33a88c0087c2",
               :unit
               [:unit/eid #uuid "000a0006-0000-4000-8000-000000000000"],
@@ -5264,7 +5258,7 @@
               :stats-override
               "{\"cost\":2000,\"is_large\":false,\"unit_size\":1,\"health\":8436,\"barrier\":0,\"armor\":70,\"leadership\":75,\"speed\":95,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":44,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_moon_dragons_breath\"]"]}
+              ["wh2_main_unit_abilities_moon_dragons_breath"]}
  #:unit-mount{:eid #uuid "3a33bf51-ea01-3288-8e43-1a4d16b58478",
               :unit
               [:unit/eid #uuid "000a0007-0000-4000-8000-000000000000"],
@@ -5302,7 +5296,7 @@
               :stats-override
               "{\"cost\":2000,\"is_large\":false,\"unit_size\":1,\"health\":8436,\"barrier\":0,\"armor\":70,\"leadership\":75,\"speed\":95,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":44,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_moon_dragons_breath\"]"]}
+              ["wh2_main_unit_abilities_moon_dragons_breath"]}
  #:unit-mount{:eid #uuid "2ff010ab-2f5b-3773-85ff-8a5060ac3598",
               :unit
               [:unit/eid #uuid "000a000a-0000-4000-8000-000000000000"],
@@ -5340,7 +5334,7 @@
               :stats-override
               "{\"cost\":2000,\"is_large\":false,\"unit_size\":1,\"health\":8436,\"barrier\":0,\"armor\":70,\"leadership\":75,\"speed\":95,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":44,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_moon_dragons_breath\"]"]}
+              ["wh2_main_unit_abilities_moon_dragons_breath"]}
  #:unit-mount{:eid #uuid "8a9b4aea-c977-34fc-9bb2-c39055d60cce",
               :unit
               [:unit/eid #uuid "000a000b-0000-4000-8000-000000000000"],
@@ -5378,7 +5372,7 @@
               :stats-override
               "{\"cost\":2000,\"is_large\":false,\"unit_size\":1,\"health\":8436,\"barrier\":0,\"armor\":70,\"leadership\":75,\"speed\":95,\"melee_attack\":50,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":44,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":50,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_moon_dragons_breath\"]"]}
+              ["wh2_main_unit_abilities_moon_dragons_breath"]}
  #:unit-mount{:eid #uuid "6c5e49ec-c62e-3d60-84af-f05b52a3c94e",
               :unit
               [:unit/eid #uuid "000c000b-0000-4000-8000-000000000000"],
@@ -5452,9 +5446,9 @@
               :stats-override
               "{\"cost\":2150,\"is_large\":true,\"unit_size\":5,\"health\":49280,\"barrier\":0,\"armor\":130,\"leadership\":70,\"speed\":50,\"melee_attack\":26,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":32,\"weapon_strength\":480,\"weapon_damage\":140,\"weapon_ap_damage\":340,\"bonus_vs_infantry\":18,\"bonus_vs_large\":0,\"charge_bonus\":70,\"ammunition\":80,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"mounted_fire_move\",\"wallbreaker\"]}",
               :granted-ability-keys
-              ["[\"wh2_dlc12_unit_abilities_burning_alignment\""
-               "\"wh2_dlc12_unit_passive_arcane_configuration\""
-               "\"wh2_dlc12_unit_passive_portent_of_warding\"]"]}
+              ["wh2_dlc12_unit_abilities_burning_alignment"
+               "wh2_dlc12_unit_passive_arcane_configuration"
+               "wh2_dlc12_unit_passive_portent_of_warding"]}
  #:unit-mount{:eid #uuid "d1484f76-db5e-351a-9ba0-3d56592bba14",
               :unit
               [:unit/eid #uuid "000d000c-0000-4000-8000-000000000000"],
@@ -5465,7 +5459,7 @@
               :stats-override
               "{\"cost\":700,\"is_large\":true,\"unit_size\":1,\"health\":3684,\"barrier\":0,\"armor\":30,\"leadership\":55,\"speed\":90,\"melee_attack\":22,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":26,\"weapon_strength\":300,\"weapon_damage\":220,\"weapon_ap_damage\":80,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":20,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"flying\",\"ignore_trees\"]}",
               :granted-ability-keys
-              ["[\"wh2_dlc12_unit_abilities_drop_rocks_character\"]"]}
+              ["wh2_dlc12_unit_abilities_drop_rocks_character"]}
  #:unit-mount{:eid #uuid "ecf28d03-92fe-35bb-8a8c-b75265966a31",
               :unit
               [:unit/eid #uuid "000e0010-0000-4000-8000-000000000000"],
@@ -5521,8 +5515,8 @@
               :stats-override
               "{\"cost\":2250,\"is_large\":true,\"unit_size\":1,\"health\":13596,\"barrier\":0,\"armor\":80,\"leadership\":70,\"speed\":56,\"melee_attack\":34,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":525,\"weapon_damage\":155,\"weapon_ap_damage\":370,\"bonus_vs_infantry\":34,\"bonus_vs_large\":0,\"charge_bonus\":68,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "bb9ce479-bf2f-3016-a941-6f2729b401a2",
               :unit
               [:unit/eid #uuid "000e0004-0000-4000-8000-000000000000"],
@@ -5551,8 +5545,8 @@
               :stats-override
               "{\"cost\":2250,\"is_large\":true,\"unit_size\":1,\"health\":13596,\"barrier\":0,\"armor\":80,\"leadership\":70,\"speed\":56,\"melee_attack\":34,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":525,\"weapon_damage\":155,\"weapon_ap_damage\":370,\"bonus_vs_infantry\":34,\"bonus_vs_large\":0,\"charge_bonus\":68,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "845f5e3f-e5d9-3f40-9972-f22fbcb5b3ce",
               :unit
               [:unit/eid #uuid "000e0005-0000-4000-8000-000000000000"],
@@ -5608,9 +5602,9 @@
               :stats-override
               "{\"cost\":1150,\"is_large\":false,\"unit_size\":1,\"health\":6268,\"barrier\":0,\"armor\":100,\"leadership\":85,\"speed\":44,\"melee_attack\":30,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":34,\"weapon_strength\":200,\"weapon_damage\":60,\"weapon_ap_damage\":140,\"bonus_vs_infantry\":20,\"bonus_vs_large\":0,\"charge_bonus\":15,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_mount_abilities_unholy_clamour\""
-               "\"wh2_main_mount_bound_scorch\""
-               "\"wh2_main_mount_passive_wall_of_unholy_sound\"]"]}
+              ["wh2_main_mount_abilities_unholy_clamour"
+               "wh2_main_mount_bound_scorch"
+               "wh2_main_mount_passive_wall_of_unholy_sound"]}
  #:unit-mount{:eid #uuid "387e121d-cd34-3e58-9858-1c257fef999d",
               :unit
               [:unit/eid #uuid "0012000f-0000-4000-8000-000000000000"],
@@ -5810,8 +5804,8 @@
               :stats-override
               "{\"cost\":1400,\"is_large\":false,\"unit_size\":1,\"health\":11242,\"barrier\":800,\"armor\":60,\"leadership\":60,\"speed\":38,\"melee_attack\":35,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"mark_tzeentch\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_arcane_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_arcane_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "51bdc333-e3f8-3a7a-825f-ebace56b373b",
               :unit
               [:unit/eid #uuid "00170012-0000-4000-8000-000000000000"],
@@ -5840,8 +5834,8 @@
               :stats-override
               "{\"cost\":1500,\"is_large\":false,\"unit_size\":1,\"health\":11542,\"barrier\":800,\"armor\":60,\"leadership\":70,\"speed\":38,\"melee_attack\":35,\"melee_attack_types\":[\"magical\"],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"mark_tzeentch\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_arcane_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_arcane_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "0a7acd28-0fa9-351e-81e0-58f7e5cd44c9",
               :unit
               [:unit/eid #uuid "00170010-0000-4000-8000-000000000000"],
@@ -5861,9 +5855,9 @@
               :stats-override
               "{\"cost\":1500,\"is_large\":false,\"unit_size\":1,\"health\":11242,\"barrier\":0,\"armor\":60,\"leadership\":70,\"speed\":43,\"melee_attack\":35,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"immune_to_psychology\",\"mark_slaanesh\",\"spell_mastery\",\"strider\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_character_passive_soul_feeder\""
-               "\"wh3_dlc20_unit_passive_giver_of_torturous_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_character_passive_soul_feeder"
+               "wh3_dlc20_unit_passive_giver_of_torturous_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "ba0c02a1-13ab-3087-b03e-2478febc5611",
               :unit
               [:unit/eid #uuid "00170010-0000-4000-8000-000000000000"],
@@ -5901,8 +5895,8 @@
               :stats-override
               "{\"cost\":1300,\"is_large\":false,\"unit_size\":1,\"health\":11242,\"barrier\":0,\"armor\":60,\"leadership\":60,\"speed\":38,\"melee_attack\":35,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "13881676-14f1-3557-a691-c7caccc670a9",
               :unit
               [:unit/eid #uuid "00170021-0000-4000-8000-000000000000"],
@@ -5931,8 +5925,8 @@
               :stats-override
               "{\"cost\":1300,\"is_large\":false,\"unit_size\":1,\"health\":11242,\"barrier\":0,\"armor\":60,\"leadership\":60,\"speed\":38,\"melee_attack\":35,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "469b4477-be88-3d92-bed4-6c1fec630df5",
               :unit
               [:unit/eid #uuid "00170022-0000-4000-8000-000000000000"],
@@ -5961,8 +5955,8 @@
               :stats-override
               "{\"cost\":1300,\"is_large\":false,\"unit_size\":1,\"health\":11242,\"barrier\":0,\"armor\":60,\"leadership\":60,\"speed\":38,\"melee_attack\":35,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "c49cc44a-fdbc-3963-86f0-d0cef4e69c39",
               :unit
               [:unit/eid #uuid "00170027-0000-4000-8000-000000000000"],
@@ -5991,8 +5985,8 @@
               :stats-override
               "{\"cost\":1400,\"is_large\":false,\"unit_size\":1,\"health\":11242,\"barrier\":0,\"armor\":60,\"leadership\":60,\"speed\":43,\"melee_attack\":35,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"immune_to_psychology\",\"mark_slaanesh\",\"strider\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_torturous_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_torturous_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "05156a0a-8744-396b-8bef-5fef51917a71",
               :unit
               [:unit/eid #uuid "00170025-0000-4000-8000-000000000000"],
@@ -6021,8 +6015,8 @@
               :stats-override
               "{\"cost\":1400,\"is_large\":false,\"unit_size\":1,\"health\":12365,\"barrier\":0,\"armor\":60,\"leadership\":60,\"speed\":38,\"melee_attack\":30,\"melee_attack_types\":[],\"melee_modifiers\":[\"poison\"],\"melee_defence\":35,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"immune_to_psychology\",\"mark_nurgle\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_abundant_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_abundant_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "ba7003c0-b558-3c0d-802b-e9a7d95638ca",
               :unit
               [:unit/eid #uuid "0017000c-0000-4000-8000-000000000000"],
@@ -6033,7 +6027,7 @@
               :stats-override
               "{\"cost\":2000,\"is_large\":false,\"unit_size\":1,\"health\":8308,\"barrier\":0,\"armor\":70,\"leadership\":70,\"speed\":95,\"melee_attack\":46,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":45,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_dark_fire_of_chaos\"]"]}
+              ["wh2_main_unit_abilities_dark_fire_of_chaos"]}
  #:unit-mount{:eid #uuid "89c745ed-7492-32ee-8bf5-efb73c1ae685",
               :unit
               [:unit/eid #uuid "0017000c-0000-4000-8000-000000000000"],
@@ -6062,8 +6056,8 @@
               :stats-override
               "{\"cost\":1400,\"is_large\":false,\"unit_size\":1,\"health\":11542,\"barrier\":0,\"armor\":60,\"leadership\":70,\"speed\":38,\"melee_attack\":35,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "113693b3-3da9-391e-b8ff-4118fa4f90e0",
               :unit
               [:unit/eid #uuid "0017000a-0000-4000-8000-000000000000"],
@@ -6074,7 +6068,7 @@
               :stats-override
               "{\"cost\":2000,\"is_large\":false,\"unit_size\":1,\"health\":8308,\"barrier\":0,\"armor\":70,\"leadership\":70,\"speed\":95,\"melee_attack\":46,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":45,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_dark_fire_of_chaos\"]"]}
+              ["wh2_main_unit_abilities_dark_fire_of_chaos"]}
  #:unit-mount{:eid #uuid "e029788a-b618-3d52-aa05-cf35e9d2177c",
               :unit
               [:unit/eid #uuid "0017000a-0000-4000-8000-000000000000"],
@@ -6103,8 +6097,8 @@
               :stats-override
               "{\"cost\":1400,\"is_large\":false,\"unit_size\":1,\"health\":11542,\"barrier\":0,\"armor\":60,\"leadership\":70,\"speed\":38,\"melee_attack\":35,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "c8b94ecd-aaa0-3a8b-a6ae-38f1b51b9714",
               :unit
               [:unit/eid #uuid "0017000b-0000-4000-8000-000000000000"],
@@ -6115,7 +6109,7 @@
               :stats-override
               "{\"cost\":2000,\"is_large\":false,\"unit_size\":1,\"health\":8308,\"barrier\":0,\"armor\":70,\"leadership\":70,\"speed\":95,\"melee_attack\":46,\"melee_attack_types\":[\"flaming\"],\"melee_modifiers\":[],\"melee_defence\":40,\"weapon_strength\":520,\"weapon_damage\":140,\"weapon_ap_damage\":380,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":45,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"causes_terror\",\"encourages\",\"flying\"]}",
               :granted-ability-keys
-              ["[\"wh2_main_unit_abilities_dark_fire_of_chaos\"]"]}
+              ["wh2_main_unit_abilities_dark_fire_of_chaos"]}
  #:unit-mount{:eid #uuid "a8dc62b4-8b87-3163-b481-ebb851870b98",
               :unit
               [:unit/eid #uuid "0017000b-0000-4000-8000-000000000000"],
@@ -6144,8 +6138,8 @@
               :stats-override
               "{\"cost\":1400,\"is_large\":false,\"unit_size\":1,\"health\":11542,\"barrier\":0,\"armor\":60,\"leadership\":70,\"speed\":38,\"melee_attack\":35,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":30,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "07a167e0-1fde-3181-8861-0864fc353fca",
               :unit
               [:unit/eid #uuid "0017000e-0000-4000-8000-000000000000"],
@@ -6174,8 +6168,8 @@
               :stats-override
               "{\"cost\":1500,\"is_large\":false,\"unit_size\":1,\"health\":12698,\"barrier\":0,\"armor\":60,\"leadership\":70,\"speed\":38,\"melee_attack\":30,\"melee_attack_types\":[],\"melee_modifiers\":[\"poison\"],\"melee_defence\":35,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":25,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"causes_fear\",\"encourages\",\"mark_nurgle\"]}",
               :granted-ability-keys
-              ["[\"wh3_dlc20_unit_passive_giver_of_abundant_glory\""
-               "\"wh_dlc08_unit_passive_favour_of_the_ruinous_powers\"]"]}
+              ["wh3_dlc20_unit_passive_giver_of_abundant_glory"
+               "wh_dlc08_unit_passive_favour_of_the_ruinous_powers"]}
  #:unit-mount{:eid #uuid "cd53723f-8b22-3695-9291-4205ddd1487f",
               :unit
               [:unit/eid #uuid "0018000a-0000-4000-8000-000000000000"],
