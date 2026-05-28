@@ -27,15 +27,15 @@
                   data-access.contract/get-units-by-keys          (fn [_ _] [])
                   data-access.contract/get-mounts-for-unit        (fn [_ _] [])
                   data-access.contract/get-unit-level-costs       (fn [_] {})
-                  data-access.contract/create-draft               (fn [_ _] nil)
-                  data-access.contract/upsert-draft-state         (fn [_ _ _] nil)
+                  data-access.contract/create-draft!              (fn [_ spec] (assoc spec :version 1))
+                  data-access.contract/add-entries!               (fn [_ _ _] nil)
                   data-access.contract/get-tournament-state       (fn [_ _] nil)
                   data-access.contract/upsert-tournament-state    (fn [_ _ _] nil)
                   data-access.contract/get-matches-for-tournament (fn [_ _] [])]
       (t))))
 
 (def ^:private match-eid (UUID/fromString "00000000-0000-4000-8000-000000000001"))
-(def ^:private deps      {:connection nil :replay-parser-bin "/fake/tw-replay-parser"})
+(def ^:private deps      {:connection nil :datalog-connection nil :replay-parser-bin "/fake/tw-replay-parser"})
 
 (def ^:private bo1-match
   {:eid            match-eid
@@ -177,21 +177,24 @@
                                                                  (when (= eid unit-eid)
                                                                    [{:key "mount_great_taurus" :name "Great Taurus" :cost 300}
                                                                     {:key "mount_lammasu" :name "Lammasu" :cost 200}]))
-                  data-access.contract/create-draft            (fn [_ spec] spec)
-                  data-access.contract/upsert-draft-state      (fn [_ draft-eid json]
-                                                                 (swap! stored-states conj {:draft-eid draft-eid :state json}))]
+                  data-access.contract/create-draft!           (fn [_ spec] (assoc spec :version 1))
+                  data-access.contract/add-entries!            (fn [_ draft-eid entries]
+                                                                 (swap! stored-states into (map #(assoc % :draft-eid draft-eid) entries)))]
       (handlers.replay/record-game-from-parsed
        deps match-eid
        {:parsed          parsed-with-mount
         :winner-sub      "sigmar_42"
         :source-name     "g.replay"
         :uploaded-by-sub "sigmar_42"})
-      (let [chd-state  (->> @stored-states
-                            (map #(jsonista/read-value (:state %) jsonista/keyword-keys-object-mapper))
-                            (some (fn [s] (when (seq (:main s)) s))))
-            main-entry (first (:main chd-state))]
-        (is (= unit-eid (UUID/fromString (:unit-eid main-entry)))
-            "parsed unit resolves to the un-mounted base row")
+      ;; A `:main` entry whose unit-eid matches the Chaos Dwarfs sorcerer
+      ;; row must have been transacted with the mount, total, and engine
+      ;; costs the parser+domain agreed on.
+      (let [main-entry (some (fn [e]
+                               (when (and (= :main (:section e))
+                                          (= unit-eid (:unit-eid e)))
+                                 e))
+                             @stored-states)]
+        (is (some? main-entry) "main-section entry for the resolved unit was transacted")
         (is (= "mount_great_taurus" (:mount main-entry))
             "mount suffix on the parsed key picks the matching mount row")
         (is (= 1200 (:total-cost main-entry))
@@ -231,9 +234,10 @@
                                                                      (= k "wh3_dlc23_chd_legion_of_azgorh")
                                                                      [{:key k :faction-eid chd-faction-eid}]
                                                                      :else [])))
-                  data-access.contract/create-draft            (fn [_ spec]
+                  data-access.contract/create-draft!           (fn [_ spec]
                                                                  (swap! stored-drafts conj spec)
-                                                                 spec)]
+                                                                 (assoc spec :version 1))
+                  data-access.contract/add-entries!            (fn [_ _ _] nil)]
       (let [result (handlers.replay/record-game-from-parsed
                     deps match-eid (valid-submission "sigmar_42"))]
         (testing "one replay row persisted"

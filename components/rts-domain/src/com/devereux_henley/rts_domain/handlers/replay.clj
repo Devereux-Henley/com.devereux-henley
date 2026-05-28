@@ -243,14 +243,11 @@
     (first (db/get-subfactions-by-keys connection [fk]))))
 
 (defn- build-and-persist-draft
-  "Creates one draft (row + state) for the given side of a parsed game.
-  Returns the created draft's eid, or nil when the parsed alliance
-  can't be resolved to a seeded faction — without that we can't pick a
-  faction-eid for the row, so we skip rather than insert a row with a
-  bogus FK."
+  "Creates a draft matching that of the specified player in a game."
   [dependencies {:keys [parsed alliance player-sub round-num game-num
-                        tournament game-modes uploaded-by-sub now]}]
+                        tournament game-modes uploaded-by-sub _now]}]
   (let [conn          (:connection dependencies)
+        datalog-conn  (:datalog-connection dependencies)
         subfaction    (resolve-subfaction-for-alliance conn alliance)
         faction-eid   (:faction-eid subfaction)
         game-mode-eid (:eid (pick-game-mode game-modes (:victory-condition parsed)))]
@@ -274,18 +271,22 @@
             draft-name      (format "%s R%d G%d"
                                     (:name tournament)
                                     (inc round-num)
-                                    (inc game-num))]
-        (db/create-draft conn
-                         {:eid            draft-eid
-                          :name           draft-name
-                          :game-mode-eid  game-mode-eid
-                          :faction-eid    faction-eid
-                          :player-sub     player-sub
-                          :version        1
-                          :created-by-sub uploaded-by-sub
-                          :created-at     (str now)
-                          :updated-at     (str now)})
-        (db/upsert-draft-state conn draft-eid (jsonista/write-value-as-string state-blob))
+                                    (inc game-num))
+            entries         (concat
+                             (map-indexed
+                              (fn [i e] (assoc e :section :main :ordinal i))
+                              (:main state-blob))
+                             (map-indexed
+                              (fn [i e] (assoc e :section :reinforcements :ordinal i))
+                              (:reinforcements state-blob)))]
+        (db/create-draft! datalog-conn
+                          {:eid            draft-eid
+                           :name           draft-name
+                           :game-mode-eid  game-mode-eid
+                           :faction-eid    faction-eid
+                           :player-sub     player-sub
+                           :created-by-sub uploaded-by-sub})
+        (db/add-entries! datalog-conn draft-eid entries)
         draft-eid))))
 
 (defn- build-and-persist-drafts-for-game

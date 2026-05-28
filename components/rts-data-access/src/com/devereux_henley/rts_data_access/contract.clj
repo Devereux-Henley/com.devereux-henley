@@ -20,10 +20,6 @@
 
 ;;; ─── Game DB entities ──────────────────────────────────────────────────────
 
-(def create-draft-params schema/create-draft-params)
-
-(def draft-entity schema/draft-entity)
-
 (def game-mode-entity schema/game-mode-entity)
 
 (def game-entity schema/game-entity)
@@ -40,17 +36,8 @@
 
 ;;; ─── Game DB queries ───────────────────────────────────────────────────────
 
-(def get-draft-by-eid query.game/get-draft-by-eid)
-
-(def get-drafts-for-player query.game/get-drafts-for-player)
-
-(def get-drafts-for-player-by-game query.game/get-drafts-for-player-by-game)
-
 (def get-draft-lock-info query.game/get-draft-lock-info)
 (def draft-lock-info-schema query.game/draft-lock-info-schema)
-
-(def create-draft query.game/create-draft)
-(def update-draft query.game/update-draft)
 
 (def get-game-mode-by-eid query.game/get-game-mode-by-eid)
 
@@ -100,10 +87,6 @@
 (def lore-entity schema/lore-entity)
 (def get-spells-for-lore query.game/get-spells-for-lore)
 
-(def draft-state-entity schema/draft-state-entity)
-(def get-draft-state-by-draft query.game/get-draft-state-by-draft)
-(def upsert-draft-state query.game/upsert-draft-state)
-
 (def unit-level-cost-entity schema/unit-level-cost-entity)
 (def get-unit-level-costs query.game/get-unit-level-costs)
 
@@ -143,6 +126,7 @@
 (def create-draft!                   query.datalog.draft/create-draft!)
 (def update-draft-name!              query.datalog.draft/update-draft-name!)
 (def add-entry!                      query.datalog.draft/add-entry!)
+(def add-entries!                    query.datalog.draft/add-entries!)
 (def remove-entry!                   query.datalog.draft/remove-entry!)
 (def update-entry!                   query.datalog.draft/update-entry!)
 
@@ -181,6 +165,11 @@
 
 (schema.contract/=>* add-entry! query.datalog.draft/add-entry!
                      [:=> [:cat schema.draft/conn-schema :uuid schema.draft/entry-add-spec-schema]
+                      schema.draft/tx-report-schema])
+
+(schema.contract/=>* add-entries! query.datalog.draft/add-entries!
+                     [:=> [:cat schema.draft/conn-schema :uuid
+                           [:sequential schema.draft/entry-batch-spec-schema]]
                       schema.draft/tx-report-schema])
 
 (schema.contract/=>* remove-entry! query.datalog.draft/remove-entry!

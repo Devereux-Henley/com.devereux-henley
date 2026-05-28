@@ -227,6 +227,24 @@
                                             (dl/lookup-ref :draft/eid draft-eid)))
                                   1))}])))
 
+(defn add-entries!
+  "Bulk-add entries to a draft in a single transact. Each entry spec
+  must carry its own `:ordinal` — the caller already knows the
+  insertion order (e.g. an index from a parsed source), so this skips
+  the per-entry `next-ordinal` pull `add-entry!` does. One tx per
+  caller, one version bump, one updated-at touch."
+  [conn draft-eid entries]
+  (when (seq entries)
+    (dl/transact!
+     conn
+     [{:draft/eid        draft-eid
+       :draft/entries    (mapv entry-tx entries)
+       :draft/updated-at (now-date)
+       :draft/version    (inc (or (:draft/version
+                                   (dl/pull (dl/db conn) [:draft/version]
+                                            (dl/lookup-ref :draft/eid draft-eid)))
+                                  1))}])))
+
 (defn remove-entry!
   "Retract an entry by eid. The cardinality-many link from the parent's
   `:draft/entries` drops out as a side effect of `:db/retractEntity`."

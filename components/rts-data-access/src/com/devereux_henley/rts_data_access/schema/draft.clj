@@ -66,6 +66,25 @@
     [:total-cost  {:optional true} [:maybe :int]]
     [:engine-cost {:optional true} [:maybe :int]]]))
 
+(def entry-batch-spec-schema
+  "Like `entry-add-spec-schema`, but `:ordinal` is required — bulk
+  inserters know the order up-front, so the data-access layer doesn't
+  recompute it."
+  (schema.contract/to-schema
+   [:map
+    [:entry-eid   :uuid]
+    [:unit-eid    :uuid]
+    [:section     [:enum :main :reinforcements]]
+    [:ordinal     [:int {:min 0}]]
+    [:level       {:optional true} :int]
+    [:mount       {:optional true} [:maybe :string]]
+    [:lore        {:optional true} [:maybe :string]]
+    [:abilities   {:optional true} [:sequential :string]]
+    [:spells      {:optional true} [:sequential :string]]
+    [:items       {:optional true} [:sequential :string]]
+    [:total-cost  {:optional true} [:maybe :int]]
+    [:engine-cost {:optional true} [:maybe :int]]]))
+
 (def entry-update-attrs-schema
   (schema.contract/to-schema
    [:map

@@ -4,17 +4,9 @@
    [com.devereux-henley.jdbc.contract :as jdbc.contract]
    [com.devereux-henley.rts-data-access.resource :as resource]
    [com.devereux-henley.rts-data-access.schema :as schema]
-   [com.devereux-henley.schema.contract :as schema.contract]
-   [next.jdbc :as jdbc])
+   [com.devereux-henley.schema.contract :as schema.contract])
   (:import
-   [java.sql Connection]
-   [java.time Instant]))
-
-(def get-draft-by-eid-query (resource/load-query-resource "game" "get-draft-by-eid.sql"))
-
-(def get-drafts-for-player-query (resource/load-query-resource "game" "get-drafts-for-player.sql"))
-
-(def get-drafts-for-player-by-game-query (resource/load-query-resource "game" "get-drafts-for-player-by-game.sql"))
+   [java.sql Connection]))
 
 (def get-game-mode-by-eid-query (resource/load-query-resource "game" "get-game-mode-by-eid.sql"))
 
@@ -49,8 +41,6 @@
 
 (def get-family-variants-by-eid-query (resource/load-query-resource "game" "get-family-variants-by-eid.sql"))
 
-(def get-draft-state-by-draft-query (resource/load-query-resource "game" "get-draft-state-by-draft.sql"))
-
 (def get-items-for-unit-query (resource/load-query-resource "game" "get-items-for-unit.sql"))
 
 (def get-mounts-for-unit-query (resource/load-query-resource "game" "get-mounts-for-unit.sql"))
@@ -60,8 +50,6 @@
 
 (def get-unit-level-costs-query (resource/load-query-resource "game" "get-unit-level-costs.sql"))
 
-(def upsert-draft-state-query (resource/load-query-resource "game" "upsert-draft-state.sql"))
-(def update-draft-query (resource/load-query-resource "game" "update-draft.sql"))
 (def get-draft-lock-info-query (resource/load-query-resource "game" "get-draft-lock-info.sql"))
 
 (def draft-lock-info-schema
@@ -227,14 +215,6 @@
    [get-family-variants-by-eid-query unit-eid]
    family-variant-row-schema))
 
-(defn get-draft-by-eid
-  {:malli/schema (schema.contract/to-schema
-                  [:=>
-                   [:cat [:instance Connection] :uuid]
-                   schema/draft-entity])}
-  [connection eid]
-  (jdbc.contract/query-for-entity connection [get-draft-by-eid-query eid] schema/draft-entity))
-
 (defn get-draft-lock-info
   "Returns the first tournament match that references the given draft
   (by eid) or `nil` if no match does. The presence of any match row is
@@ -247,22 +227,6 @@
                    [:maybe draft-lock-info-schema]])}
   [connection eid]
   (jdbc.contract/query-for-entity connection [get-draft-lock-info-query eid] draft-lock-info-schema))
-
-(defn get-drafts-for-player
-  {:malli/schema (schema.contract/to-schema
-                  [:=>
-                   [:cat [:instance Connection] :string]
-                   [:sequential schema/draft-entity]])}
-  [connection player-sub]
-  (jdbc.contract/query-for-entities connection [get-drafts-for-player-query player-sub] schema/draft-entity))
-
-(defn get-drafts-for-player-by-game
-  {:malli/schema (schema.contract/to-schema
-                  [:=>
-                   [:cat [:instance Connection] :string :uuid]
-                   [:sequential schema/draft-entity]])}
-  [connection player-sub game-eid]
-  (jdbc.contract/query-for-entities connection [get-drafts-for-player-by-game-query player-sub game-eid] schema/draft-entity))
 
 (defn get-game-mode-by-eid
   {:malli/schema (schema.contract/to-schema
@@ -329,41 +293,3 @@
   to this lore drafts from this same pool."
   [connection lore-key]
   (jdbc.contract/query-for-entities connection [get-spells-for-lore-query lore-key] schema/spell-entity))
-
-(defn get-draft-state-by-draft
-  [connection draft-eid]
-  (jdbc.contract/query-for-entity connection [get-draft-state-by-draft-query draft-eid] schema/draft-state-entity))
-
-(defn upsert-draft-state
-  [connection draft-eid state-json-str]
-  (let [draft (get-draft-by-eid connection draft-eid)]
-    (jdbc.contract/execute-one!
-     connection
-     [upsert-draft-state-query (:id draft) state-json-str (str (Instant/now))])))
-
-(defn create-draft
-  {:malli/schema (schema.contract/to-schema
-                  [:=>
-                   [:cat [:instance Connection] schema/create-draft-params]
-                   schema/draft-entity])}
-  [connection specification]
-  (let [game-mode (get-game-mode-by-eid connection (:game-mode-eid specification))
-        faction   (get-faction-by-eid connection (:faction-eid specification))]
-    (jdbc/with-transaction [tx connection]
-      (jdbc.contract/insert! tx
-                             :draft
-                             (-> specification
-                                 (dissoc :game-mode-eid :faction-eid)
-                                 (assoc :game-mode-id (:id game-mode))
-                                 (assoc :faction-id (:id faction))))
-      (get-draft-by-eid connection (:eid specification)))))
-
-(defn update-draft
-  "Applies a partial update to a draft. Currently the only mutable field
-  is :name (nil clears the custom name and lets the default render).
-  Returns the refreshed entity."
-  [connection draft-eid {:keys [name]}]
-  (jdbc.contract/execute-one!
-   connection
-   [update-draft-query name (str (Instant/now)) draft-eid])
-  (get-draft-by-eid connection draft-eid))

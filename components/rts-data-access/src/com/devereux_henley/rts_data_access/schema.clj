@@ -21,37 +21,6 @@
     [:updated-at :instant]
     [:deleted-at [:maybe :instant]]]))
 
-(def create-draft-params
-  (schema.contract/to-schema
-   [:map
-    [:eid :uuid]
-    [:name {:optional true} [:maybe :string]]
-    [:game-mode-eid :uuid]
-    [:faction-eid :uuid]
-    [:player-sub :string]
-    [:version :int]
-    [:created-by-sub :string]
-    [:created-at :instant]
-    [:updated-at :instant]]))
-
-(def draft-entity
-  (schema.contract/to-schema
-   [:map
-    [:id :int]
-    [:eid :uuid]
-    [:name {:optional true} [:maybe :string]]
-    [:game-mode-eid :uuid]
-    [:game-eid {:optional true} :uuid]
-    [:faction-eid :uuid]
-    [:faction-name {:optional true} :string]
-    [:created-at-display {:optional true} :string]
-    [:updated-at-display {:optional true} :string]
-    [:player-sub :string]
-    [:version :int]
-    [:created-at :instant]
-    [:updated-at :instant]
-    [:deleted-at [:maybe :instant]]]))
-
 (def game-entity
   (schema.contract/to-schema
    [:map
@@ -221,13 +190,6 @@
     [:fatigue :int]
     [:melee-cp :double]
     [:missile-cp :double]]))
-
-(def draft-state-entity
-  (schema.contract/to-schema
-   [:map
-    [:id :int]
-    [:state :string]
-    [:updated-at :instant]]))
 
 (def tournament-entity
   (schema.contract/to-schema
