@@ -381,9 +381,10 @@
    patch's new numeric stats. `:cost` is denormalized as a queryable
    scalar; it stays in the document too so the doc remains the
    engine-shaped source of truth."
-  [{:keys [unit-statistics-eid patch-eid stats-json]}]
+  [{:keys [unit-eid unit-statistics-eid patch-eid stats-json]}]
   (let [decoded (jsonista/read-value stats-json object-mapper)]
     (cond-> {:unit-statistics/eid   unit-statistics-eid
+             :unit-statistics/unit  [:unit/eid unit-eid]
              :unit-statistics/patch [:patch/eid patch-eid]
              :unit-statistics/data  decoded}
       (get decoded "cost")
@@ -462,14 +463,7 @@
          (spit-edn! (io/file dest "unit-mounts.edn")
                     (dump-unit-mounts conn))
          (spit-edn! (io/file dest "unit-statistics.edn")
-                    (mapv ->unit-statistics-tx stats))
-         ;; Back-link units → unit-statistics (cardinality-many ref).
-         (spit-edn! (io/file dest "unit-unit-statistics.edn")
-                    (mapv
-                     (fn [{:keys [unit-eid unit-statistics-eid]}]
-                       {:unit/eid             unit-eid
-                        :unit/unit-statistics [:unit-statistics/eid unit-statistics-eid]})
-                     stats))))
+                    (mapv ->unit-statistics-tx stats))))
      (println (format "\nDone. %s seed published." patch-version)))))
 
 (comment

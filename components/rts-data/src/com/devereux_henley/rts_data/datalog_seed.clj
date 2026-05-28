@@ -43,9 +43,8 @@
    ;; Phase 5: junctions hanging off units
    "unit-items.edn"
    "unit-mounts.edn"
-   ;; Phase 6: unit-statistics + back-link onto units
-   "unit-statistics.edn"
-   "unit-unit-statistics.edn"])
+   ;; Phase 6: per-patch statline snapshots (point back at unit + patch)
+   "unit-statistics.edn"])
 
 (defn- seed-resource
   [patch-version file-name]

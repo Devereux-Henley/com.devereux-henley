@@ -10,22 +10,22 @@
   the SQLite era stored only the key and the views resolve lores by key
   separately.
 
-  `:unit/unit-statistics` is cardinality-many so a unit can carry one
-  `:unit-statistics` snapshot per `:patch`.")
+  Per-patch statlines hang off `:unit` via the reverse of
+  `:unit-statistics/unit` — pull `{:unit-statistics/_unit [...]}` to get
+  every snapshot for a unit; query `[?s :unit-statistics/unit ?u]` for
+  filter / join shapes.")
 
 (def schema
-  {:unit/eid             {:db/valueType :db.type/uuid
-                          :db/unique    :db.unique/identity}
-   :unit/key             {:db/valueType :db.type/string}
-   :unit/name            {:db/valueType :db.type/string}
-   :unit/family-name     {:db/valueType :db.type/string}
-   :unit/description     {:db/valueType :db.type/string}
-   :unit/game            {:db/valueType :db.type/ref}
-   :unit/faction         {:db/valueType :db.type/ref}
-   :unit/unit-type       {:db/valueType :db.type/ref}
-   :unit/unit-category   {:db/valueType :db.type/ref}
-   :unit/unit-statistics {:db/valueType   :db.type/ref
-                          :db/cardinality :db.cardinality/many}
-   :unit/mark            {:db/valueType :db.type/keyword}
-   :unit/lore            {:db/valueType :db.type/string}
-   :unit/is-unique       {:db/valueType :db.type/boolean}})
+  {:unit/eid           {:db/valueType :db.type/uuid
+                        :db/unique    :db.unique/identity}
+   :unit/key           {:db/valueType :db.type/string}
+   :unit/name          {:db/valueType :db.type/string}
+   :unit/family-name   {:db/valueType :db.type/string}
+   :unit/description   {:db/valueType :db.type/string}
+   :unit/game          {:db/valueType :db.type/ref}
+   :unit/faction       {:db/valueType :db.type/ref}
+   :unit/unit-type     {:db/valueType :db.type/ref}
+   :unit/unit-category {:db/valueType :db.type/ref}
+   :unit/mark          {:db/valueType :db.type/keyword}
+   :unit/lore          {:db/valueType :db.type/string}
+   :unit/is-unique     {:db/valueType :db.type/boolean}})

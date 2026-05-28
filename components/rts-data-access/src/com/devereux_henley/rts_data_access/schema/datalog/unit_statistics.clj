@@ -23,6 +23,10 @@
 (def schema
   {:unit-statistics/eid   {:db/valueType :db.type/uuid
                            :db/unique    :db.unique/identity}
+   ;; Owning ref lives on the many side. Reverse-ref pull
+   ;; (`{:unit/_unit-statistics [...]}`) gets every snapshot for a unit;
+   ;; `[?s :unit-statistics/unit ?u]` is the query form.
+   :unit-statistics/unit  {:db/valueType :db.type/ref}
    :unit-statistics/patch {:db/valueType :db.type/ref}
    :unit-statistics/cost  {:db/valueType :db.type/long}
    :unit-statistics/data  {:db/valueType  :db.type/idoc
