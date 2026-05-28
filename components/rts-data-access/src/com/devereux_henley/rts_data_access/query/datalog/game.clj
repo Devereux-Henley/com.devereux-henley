@@ -1,25 +1,9 @@
 (ns com.devereux-henley.rts-data-access.query.datalog.game
-  "Per-template Datalevin pull/q queries for the game domain. Each public
-  fn matches one template's data shape (game-collection, game detail,
-  faction-collection, faction detail, unit-collection, unit detail,
-  game-selector). Handlers reach these through `rts-data-access.contract`
-  alongside the SQLite-era `query/game.clj` fns; the SQL path lives until
-  `rts-khy` retires it.
-
-  Result maps use unqualified keys (`:eid`, `:name`, `:game-eid`, …) so
-  the existing resource schemas in `rts-domain` and Selmer templates
-  render unchanged. Foreign-key refs are pulled as `{<ns>/eid uuid}`
-  sub-maps and flattened to `:<thing>-eid` to match the SQLite-era entity
-  shape.
-
-  Each public fn snapshots the current db at entry (`(dl/db conn)`) and
-  uses it for the single pull/q it issues. The snapshot is cheap (one
-  atomic deref) and binds the query to a consistent point-in-time view —
-  later transacts don't change the result mid-fn."
+  "Datalevin reads for the game domain."
   (:require
    [com.devereux-henley.datalog.contract :as dl]))
 
-;; ─── Pull patterns ─────────────────────────────────────────────────────────
+;;; ─── Pull patterns ─────────────────────────────────────────────────────────
 
 (def ^:private game-pattern
   [:game/eid :game/name :game/description])
@@ -29,9 +13,6 @@
    {:faction/game [:game/eid]}])
 
 (def ^:private unit-summary-pattern
-  "Shape for unit lists / cards. Includes only the fields list templates and
-   the resource collection schemas read; full statline lives on the detail
-   pattern."
   [:unit/eid :unit/key :unit/name :unit/family-name :unit/description
    :unit/mark :unit/lore :unit/is-unique
    {:unit/game [:game/eid]}
@@ -42,7 +23,6 @@
                             {:unit-statistics/patch [:patch/released-at]}]}])
 
 (def ^:private unit-detail-pattern
-  "Adds the full statistics document for the unit detail view."
   [:unit/eid :unit/key :unit/name :unit/family-name :unit/description
    :unit/mark :unit/lore :unit/is-unique
    {:unit/game [:game/eid]}
@@ -79,7 +59,17 @@
 (def ^:private ability-pattern
   [:ability/eid :ability/key :ability/name :ability/description :ability/cost])
 
-;; ─── Result builders ───────────────────────────────────────────────────────
+(def ^:private unit-level-cost-pattern
+  [:unit-level-cost/level :unit-level-cost/fixed-cost
+   :unit-level-cost/cost-multiplier :unit-level-cost/fatigue
+   :unit-level-cost/melee-cp :unit-level-cost/missile-cp])
+
+(def ^:private family-variant-pattern
+  [:unit/eid :unit/name :unit/mark :unit/lore
+   {:unit-statistics/_unit [:unit-statistics/cost
+                            {:unit-statistics/patch [:patch/released-at]}]}])
+
+;;; ─── Result builders ──────────────────────────────────────────────────────
 
 (defn- latest-stats
   "Pick the unit-statistics record with the most recent patch released-at
@@ -108,10 +98,6 @@
      :game-eid    (some-> m :faction/game :game/eid)}))
 
 (defn- ->unit-row
-  "Build the row shape `unit-entity` consumers expect from a pull result.
-  `stats-rows` is the `:unit-statistics/_unit` vector; the latest patch's
-  cost lands on `:cost`, and `:unit-statistics` carries the decoded doc
-  (only populated by `->unit-detail`)."
   [m {:keys [include-data?]}]
   (when m
     (let [stats                         (latest-stats (:unit-statistics/_unit m))
@@ -209,10 +195,32 @@
      :description (:ability/description m)
      :cost        (:ability/cost m)}))
 
-;; ─── Game queries ──────────────────────────────────────────────────────────
+(defn- ->unit-level-cost
+  [m]
+  (when m
+    {:level           (:unit-level-cost/level m)
+     :fixed-cost      (:unit-level-cost/fixed-cost m)
+     :cost-multiplier (:unit-level-cost/cost-multiplier m)
+     :fatigue         (:unit-level-cost/fatigue m)
+     :melee-cp        (:unit-level-cost/melee-cp m)
+     :missile-cp      (:unit-level-cost/missile-cp m)}))
+
+(defn- ->family-variant
+  [m lore-key->name]
+  (when m
+    (let [stats (latest-stats (:unit-statistics/_unit m))
+          lore  (:unit/lore m)]
+      {:eid       (:unit/eid m)
+       :name      (:unit/name m)
+       :mark      (some-> (:unit/mark m) name)
+       :lore      lore
+       :lore-name (get lore-key->name lore)
+       :cost      (:unit-statistics/cost stats)})))
+
+;;; ─── Reads ────────────────────────────────────────────────────────────────
 
 (defn games
-  "All games. Drives the `game-collection` template and `game-selector`."
+  "All games, sorted by name."
   [conn]
   (let [db (dl/db conn)]
     (->> (dl/q '[:find [(pull ?g pattern) ...]
@@ -224,14 +232,12 @@
          vec)))
 
 (defn game-by-eid
-  "Single game for the `game` detail template. Returns nil when not found."
+  "Fetch a game by eid. Returns nil when not found."
   [conn eid]
   (->game (dl/pull (dl/db conn) game-pattern (dl/lookup-ref :game/eid eid))))
 
-;; ─── Faction queries ───────────────────────────────────────────────────────
-
 (defn factions-for-game
-  "Factions for a game, sorted by name. Drives `faction-collection`."
+  "Factions for a game, sorted by name."
   [conn game-eid]
   (let [db (dl/db conn)]
     (->> (dl/q '[:find [(pull ?f pattern) ...]
@@ -245,7 +251,7 @@
          vec)))
 
 (defn factions
-  "Every faction in the system, sorted by name."
+  "Every faction, sorted by name."
   [conn]
   (let [db (dl/db conn)]
     (->> (dl/q '[:find [(pull ?f pattern) ...]
@@ -257,14 +263,12 @@
          vec)))
 
 (defn faction-by-eid
-  "Single faction for the `faction` detail template."
+  "Fetch a faction by eid. Returns nil when not found."
   [conn eid]
   (->faction (dl/pull (dl/db conn) faction-pattern (dl/lookup-ref :faction/eid eid))))
 
-;; ─── Unit queries ──────────────────────────────────────────────────────────
-
 (defn units-for-faction
-  "Unit summary rows for a faction, sorted by `(unit-category-name, name)`."
+  "Unit summaries for a faction, sorted by `(unit-category-name, name)`."
   [conn faction-eid]
   (let [db (dl/db conn)]
     (->> (dl/q '[:find [(pull ?u pattern) ...]
@@ -278,7 +282,7 @@
          vec)))
 
 (defn units-for-game
-  "Unit summary rows for a game."
+  "Unit summaries for a game."
   [conn game-eid]
   (let [db (dl/db conn)]
     (->> (dl/q '[:find [(pull ?u pattern) ...]
@@ -304,18 +308,17 @@
          vec)))
 
 (defn unit-by-eid
-  "Full unit row including the decoded `:unit-statistics` document."
+  "Full unit including the decoded `:unit-statistics` document."
   [conn eid]
   (->unit-detail (dl/pull (dl/db conn) unit-detail-pattern (dl/lookup-ref :unit/eid eid))))
 
-;; ─── Embed queries (game detail + faction detail enrichments) ──────────────
-
 (defn game-mode-by-eid
-  "Single game-mode by eid."
+  "Fetch a game-mode by eid. Returns nil when not found."
   [conn eid]
   (->game-mode (dl/pull (dl/db conn) game-mode-pattern (dl/lookup-ref :game-mode/eid eid))))
 
 (defn game-modes-for-game
+  "Game-modes for a game, sorted by name."
   [conn game-eid]
   (let [db (dl/db conn)]
     (->> (dl/q '[:find [(pull ?gm pattern) ...]
@@ -329,6 +332,7 @@
          vec)))
 
 (defn socials-for-game
+  "Game social links, sorted by platform name."
   [conn game-eid]
   (let [db (dl/db conn)]
     (->> (dl/q '[:find [(pull ?s pattern) ...]
@@ -341,9 +345,8 @@
          (sort-by :platform-name)
          vec)))
 
-;; ─── Unit enrichments (detail page) ────────────────────────────────────────
-
 (defn mounts-for-unit
+  "Mounts available to a unit, sorted by name."
   [conn unit-eid]
   (let [db (dl/db conn)]
     (->> (dl/q '[:find [(pull ?um pattern) ...]
@@ -357,6 +360,7 @@
          vec)))
 
 (defn items-for-unit
+  "Items available to a unit, sorted by name."
   [conn unit-eid]
   (let [db (dl/db conn)]
     (->> (dl/q '[:find [(pull ?i pattern) ...]
@@ -371,7 +375,8 @@
          vec)))
 
 (defn spells-by-keys
-  "Resolve a seq of spell keys into a `{key spell-resource}` map."
+  "Resolve a seq of spell keys into a `{key spell}` map. Returns nil
+  for an empty input."
   [conn spell-keys]
   (when (seq spell-keys)
     (let [results (dl/q '[:find [(pull ?s pattern) ...]
@@ -381,7 +386,7 @@
       (into {} (map (fn [m] [(:spell/key m) (->spell m)])) results))))
 
 (defn spells-for-lore
-  "All spells assigned to a given lore key (resolved via spell-lore)."
+  "All spells assigned to a lore (resolved via spell-lore), sorted by name."
   [conn lore-key]
   (let [db (dl/db conn)]
     (->> (dl/q '[:find [(pull ?s pattern) ...]
@@ -396,7 +401,8 @@
          vec)))
 
 (defn abilities-by-keys
-  "Resolve a seq of ability keys into a `{key ability-resource}` map."
+  "Resolve a seq of ability keys into a `{key ability}` map. Returns nil
+  for an empty input."
   [conn ability-keys]
   (when (seq ability-keys)
     (let [results (dl/q '[:find [(pull ?a pattern) ...]
@@ -405,25 +411,8 @@
                         (dl/db conn) ability-pattern (vec ability-keys))]
       (into {} (map (fn [m] [(:ability/key m) (->ability m)])) results))))
 
-;; ─── Misc draft-handler dependencies ──────────────────────────────────────
-
-(def ^:private unit-level-cost-pattern
-  [:unit-level-cost/level :unit-level-cost/fixed-cost
-   :unit-level-cost/cost-multiplier :unit-level-cost/fatigue
-   :unit-level-cost/melee-cp :unit-level-cost/missile-cp])
-
-(defn- ->unit-level-cost [m]
-  (when m
-    {:level           (:unit-level-cost/level m)
-     :fixed-cost      (:unit-level-cost/fixed-cost m)
-     :cost-multiplier (:unit-level-cost/cost-multiplier m)
-     :fatigue         (:unit-level-cost/fatigue m)
-     :melee-cp        (:unit-level-cost/melee-cp m)
-     :missile-cp      (:unit-level-cost/missile-cp m)}))
-
 (defn unit-level-costs
-  "All veteran-rank cost rows as a sorted `{level -> row}` map. Matches
-  the shape the draft handler's level-cost lookup expects."
+  "All veteran-rank cost rows as a sorted `{level -> row}` map."
   [conn]
   (into (sorted-map)
         (map (juxt :level identity))
@@ -433,27 +422,10 @@
                    (dl/db conn) unit-level-cost-pattern)
              (map ->unit-level-cost))))
 
-(def ^:private family-variant-pattern
-  [:unit/eid :unit/name :unit/mark :unit/lore
-   {:unit-statistics/_unit [:unit-statistics/cost
-                            {:unit-statistics/patch [:patch/released-at]}]}])
-
-(defn- ->family-variant
-  [m lore-key->name]
-  (when m
-    (let [stats (latest-stats (:unit-statistics/_unit m))
-          lore  (:unit/lore m)]
-      {:eid       (:unit/eid m)
-       :name      (:unit/name m)
-       :mark      (some-> (:unit/mark m) name)
-       :lore      lore
-       :lore-name (get lore-key->name lore)
-       :cost      (:unit-statistics/cost stats)})))
-
 (defn family-variants-by-eid
-  "Every unit row sharing the family-name + faction of the given unit.
-  Single-variant families come back with one row; the draft unit panel
-  uses the count to decide whether to render the mark / lore selectors."
+  "Every unit sharing the family-name + faction of the given unit.
+  Single-variant families return one row; the draft unit panel uses
+  the count to decide whether to render the mark/lore selectors."
   [conn unit-eid]
   (let [db          (dl/db conn)
         seed        (dl/pull db
