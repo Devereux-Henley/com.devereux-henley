@@ -38,6 +38,11 @@ make ory_local            # create Ory Cloud tunnel for local auth
 
 # Refresh game data seed files from RPFM (after a patch)
 clojure -M:dev -m com.devereux-henley.rpfm-scraper.core --data-dir bases/rpfm-scraper/data
+
+# Publish a fresh Datalog seed snapshot for the new patch (one EDN file per entity
+# under components/rts-data/resources/rts-data/seed/datalog/<version>/).
+# Run after the rpfm-scraper above so the SQL seeds it dumps from are current.
+clojure -M:dev -e "(require 'dump-datalog-seed) (dump-datalog-seed/dump! \"8.0\")"
 ```
 
 See `docs/rpfm-scraper/game-data.md` for the full RPFM data refresh workflow.

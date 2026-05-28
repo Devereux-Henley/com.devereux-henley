@@ -1,6 +1,7 @@
 (ns com.devereux-henley.rts-data.contract
   (:require
    [clojure.java.io :as io]
+   [com.devereux-henley.rts-data.datalog-seed :as datalog-seed]
    [com.devereux-henley.rts-data.migrations :as migrations]
    [integrant.core]
    [next.jdbc :as jdbc]))
@@ -80,3 +81,11 @@
   (let [conn (jdbc/get-connection db-spec)]
     (doseq [file-name seed-files]
       (jdbc/execute! conn [(load-seed file-name)]))))
+
+;;; ─── Datalog seed (re-exports from rts-data.datalog-seed) ─────────────────
+
+(def datalog-seed-files          datalog-seed/seed-files)
+(def load-datalog-seed-file      datalog-seed/load-file-tx)
+(def load-datalog-seed           datalog-seed/load-all)
+(def ensure-datalog-patch        datalog-seed/ensure-patch-version)
+(def available-datalog-patches   datalog-seed/available-patches)
