@@ -7,7 +7,12 @@
    [com.devereux-henley.rts-data-access.query.social-media :as query.social-media]
    [com.devereux-henley.rts-data-access.query.stats :as query.stats]
    [com.devereux-henley.rts-data-access.query.tournament :as query.tournament]
-   [com.devereux-henley.rts-data-access.schema :as schema]))
+   [com.devereux-henley.rts-data-access.schema :as schema]
+   [com.devereux-henley.rts-data-access.schema.datalog :as schema.datalog]))
+
+;;; ─── Datalog schema-as-code ────────────────────────────────────────────────
+
+(def datalog-schema schema.datalog/schema)
 
 ;;; ─── Game DB entities ──────────────────────────────────────────────────────
 

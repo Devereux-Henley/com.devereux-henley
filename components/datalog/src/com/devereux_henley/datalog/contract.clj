@@ -43,6 +43,13 @@
   ([conn tx-data tx-meta]
    (datalevin/transact! conn tx-data tx-meta)))
 
+(defn update-schema
+  "Apply additive schema changes to `conn` without restarting the JVM. Use at
+   the REPL after editing `schema.datalog/schema`; the initial schema applied
+   at `get-conn` only sees the snapshot captured when the connection opened."
+  [conn schema-update]
+  (datalevin/update-schema conn schema-update))
+
 (defn lookup-ref
   "Build a lookup ref vector `[attr value]`. Convention: every domain has a
    `:<domain>/eid` attribute of `:db.unique/identity`, so
