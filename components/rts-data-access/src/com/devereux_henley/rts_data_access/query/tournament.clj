@@ -201,22 +201,21 @@
 ;; ─── Tournament CRUD ─────────────────────────────────────────────────────────
 
 (defn create-tournament
+  "Insert a tournament row. `:league-eid` / `:season-eid` on the spec are
+  dropped — leagues and seasons live in Datalevin while this table is
+  still SQLite, so the legacy `league_id` / `season_id` FK columns
+  can't be populated. Tournament's full move to Datalevin (rts-5b6)
+  restores the linkage."
   {:malli/schema (schema.contract/to-schema
                   [:=>
                    [:cat [:instance Connection] schema/create-tournament-params]
                    schema/tournament-entity])}
   [connection specification]
-  (let [game      (jdbc.contract/entity-by-eid connection :game (:game-eid specification) schema/game-entity)
-        league-id (when-let [leid (:league-eid specification)]
-                    (:id (jdbc.contract/entity-by-eid connection :league leid schema/league-entity)))
-        season-id (when-let [seid (:season-eid specification)]
-                    (:id (jdbc.contract/entity-by-eid connection :season seid schema/season-entity)))]
+  (let [game (jdbc.contract/entity-by-eid connection :game (:game-eid specification) schema/game-entity)]
     (jdbc/with-transaction [tx connection]
       (jdbc.contract/insert! tx
                              :tournament
                              (-> specification
                                  (dissoc :game-eid :league-eid :season-eid)
-                                 (assoc :game-id (:id game))
-                                 (cond-> league-id (assoc :league-id league-id))
-                                 (cond-> season-id (assoc :season-id season-id))))
+                                 (assoc :game-id (:id game))))
       (get-tournament-by-eid connection (:eid specification)))))

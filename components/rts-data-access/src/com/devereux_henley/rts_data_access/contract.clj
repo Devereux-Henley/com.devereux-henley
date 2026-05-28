@@ -2,10 +2,10 @@
   (:require
    [com.devereux-henley.rts-data-access.query.datalog.draft :as query.datalog.draft]
    [com.devereux-henley.rts-data-access.query.datalog.game :as query.datalog.game]
+   [com.devereux-henley.rts-data-access.query.datalog.league :as query.datalog.league]
+   [com.devereux-henley.rts-data-access.query.datalog.season :as query.datalog.season]
    [com.devereux-henley.rts-data-access.query.game :as query.game]
-   [com.devereux-henley.rts-data-access.query.league :as query.league]
    [com.devereux-henley.rts-data-access.query.replay :as query.replay]
-   [com.devereux-henley.rts-data-access.query.season :as query.season]
    [com.devereux-henley.rts-data-access.query.social-media :as query.social-media]
    [com.devereux-henley.rts-data-access.query.stats :as query.stats]
    [com.devereux-henley.rts-data-access.query.tournament :as query.tournament]
@@ -13,6 +13,8 @@
    [com.devereux-henley.rts-data-access.schema.datalog :as schema.datalog]
    [com.devereux-henley.rts-data-access.schema.draft :as schema.draft]
    [com.devereux-henley.rts-data-access.schema.game :as schema.game]
+   [com.devereux-henley.rts-data-access.schema.league :as schema.league]
+   [com.devereux-henley.rts-data-access.schema.season :as schema.season]
    [com.devereux-henley.schema.contract :as schema.contract]))
 
 ;;; ─── Datalog schema-as-code ────────────────────────────────────────────────
@@ -257,31 +259,65 @@
 (def create-game query.tournament/create-game)
 (def get-games-for-match query.tournament/get-games-for-match)
 
-;;; ─── League / Season DB entities ───────────────────────────────────────────
+;;; ─── Stats DB entities ─────────────────────────────────────────────────────
 
-(def league-entity schema/league-entity)
-(def create-league-params schema/create-league-params)
-(def season-entity schema/season-entity)
-(def create-season-params schema/create-season-params)
 (def faction-standings-row-entity schema/faction-standings-row-entity)
-(def max-ordinal-entity schema/max-ordinal-entity)
 
-;;; ─── League DB queries ─────────────────────────────────────────────────────
+;;; ─── League Datalog queries + mutations ───────────────────────────────────
 
-(def get-league-by-eid query.league/get-league-by-eid)
-(def get-leagues-for-game query.league/get-leagues-for-game)
-(def get-leagues query.league/get-leagues)
-(def create-league query.league/create-league)
-(def update-league query.league/update-league)
+(def league-by-eid       query.datalog.league/league-by-eid)
+(def leagues             query.datalog.league/leagues)
+(def leagues-for-game    query.datalog.league/leagues-for-game)
+(def create-league!      query.datalog.league/create-league!)
 
-;;; ─── Season DB queries ─────────────────────────────────────────────────────
+(schema.contract/=>* league-by-eid query.datalog.league/league-by-eid
+                     [:=> [:cat schema.league/conn-schema :uuid]
+                      [:maybe schema.league/league-result-schema]])
 
-(def get-season-by-eid query.season/get-season-by-eid)
-(def get-seasons-for-league query.season/get-seasons-for-league)
-(def get-seasons query.season/get-seasons)
-(def get-current-season-for-league query.season/get-current-season-for-league)
-(def get-max-ordinal-for-league query.season/get-max-ordinal-for-league)
-(def create-season query.season/create-season)
+(schema.contract/=>* leagues query.datalog.league/leagues
+                     [:=> [:cat schema.league/conn-schema]
+                      [:sequential schema.league/league-result-schema]])
+
+(schema.contract/=>* leagues-for-game query.datalog.league/leagues-for-game
+                     [:=> [:cat schema.league/conn-schema :uuid]
+                      [:sequential schema.league/league-result-schema]])
+
+(schema.contract/=>* create-league! query.datalog.league/create-league!
+                     [:=> [:cat schema.league/conn-schema schema.league/create-spec-schema]
+                      schema.league/league-result-schema])
+
+;;; ─── Season Datalog queries + mutations ───────────────────────────────────
+
+(def season-by-eid              query.datalog.season/season-by-eid)
+(def seasons                    query.datalog.season/seasons)
+(def seasons-for-league         query.datalog.season/seasons-for-league)
+(def current-season-for-league  query.datalog.season/current-season-for-league)
+(def max-ordinal-for-league     query.datalog.season/max-ordinal-for-league)
+(def create-season!             query.datalog.season/create-season!)
+
+(schema.contract/=>* season-by-eid query.datalog.season/season-by-eid
+                     [:=> [:cat schema.season/conn-schema :uuid]
+                      [:maybe schema.season/season-result-schema]])
+
+(schema.contract/=>* seasons query.datalog.season/seasons
+                     [:=> [:cat schema.season/conn-schema]
+                      [:sequential schema.season/season-result-schema]])
+
+(schema.contract/=>* seasons-for-league query.datalog.season/seasons-for-league
+                     [:=> [:cat schema.season/conn-schema :uuid]
+                      [:sequential schema.season/season-result-schema]])
+
+(schema.contract/=>* current-season-for-league query.datalog.season/current-season-for-league
+                     [:=> [:cat schema.season/conn-schema :uuid]
+                      [:maybe schema.season/season-result-schema]])
+
+(schema.contract/=>* max-ordinal-for-league query.datalog.season/max-ordinal-for-league
+                     [:=> [:cat schema.season/conn-schema :uuid]
+                      schema.season/max-ordinal-schema])
+
+(schema.contract/=>* create-season! query.datalog.season/create-season!
+                     [:=> [:cat schema.season/conn-schema schema.season/create-spec-schema]
+                      schema.season/season-result-schema])
 
 ;;; ─── Stats DB queries ──────────────────────────────────────────────────────
 
