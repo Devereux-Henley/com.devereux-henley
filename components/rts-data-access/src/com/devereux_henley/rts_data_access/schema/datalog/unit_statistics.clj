@@ -5,9 +5,10 @@
 
   Dynamic per-engine numeric stats (`armor`, `leadership`, `speed`, …) hang
   off `:unit-statistics/stats` as `:unit-stat` sub-entities so the set of
-  stats can grow per-patch without a schema migration. The sub-entity has
-  no public `eid` — nothing routes to a single stat — so it is transacted
-  inline via nested-map form under `:unit-statistics/stats`.
+  stats can grow per-patch without a schema migration. Each sub-entity
+  carries a deterministic `:unit-stat/eid` derived from
+  `(unit-statistics-eid, stat-key)` so re-running the seed loader upserts
+  in place instead of accumulating duplicate stats under the parent.
 
   Equipment retains the engine's \"vector of arbitrary maps\" shape via an
   EDN-serialized string until a domain epic needs to query into it;
@@ -34,6 +35,10 @@
 
    ;; Sub-entity: one per (unit-statistics, stat name) pair. Engine emits
    ;; some stats as numbers (`"armor": 80`) and others as strings
-   ;; (`"ammunition": "30"`), so the value is stored as a string.
+   ;; (`"ammunition": "30"`), so the value is stored as a string. `eid` is
+   ;; deterministic (UUIDv3 of `unit-statistics-eid + "/" + key`) so the
+   ;; seed loader can upsert without leaking stale sub-entities.
+   :unit-stat/eid                          {:db/valueType :db.type/uuid
+                                            :db/unique    :db.unique/identity}
    :unit-stat/key                          {:db/valueType :db.type/string}
    :unit-stat/value                        {:db/valueType :db.type/string}})

@@ -9,6 +9,8 @@
    [com.devereux-henley.rts-data.contract :as rts-data]
    [integrant.core]
    [integrant.repl :refer [go halt reset]]
+   [integrant.repl.state :as ig-state]
+   [migrate-game]
    [migratus.core :as migratus]
    [selmer.parser]))
 
@@ -73,10 +75,20 @@
   (go))
 
 (defn seed-datalog!
-  "Seed the Datalevin store with the canonical dev dataset. No-op while the
-   schema is empty; per-domain epics extend this as they migrate off SQLite."
-  []
-  nil)
+  "Mirror the current SQLite seed into the running Datalevin store. Call after
+   `(seed-sqlite!)` while the system is up so `:datalog/connection` already
+   holds an open conn. Idempotent — re-runs upsert via `:db.unique/identity`
+   on every eid.
+
+   `opts`:
+     :patch-version  — string version label for the unit-statistics
+                       snapshot (default `\"current\"`)."
+  ([] (seed-datalog! {}))
+  ([opts]
+   (let [conn (get ig-state/system :com.devereux-henley.rts-api.datalog/connection)]
+     (when-not conn
+       (throw (ex-info "seed-datalog! requires the system to be running — call (go!) first" {})))
+     (migrate-game/migrate! rts-db/db conn opts))))
 
 ;; -- Impersonation helpers ---------------------------------------------------
 
@@ -107,6 +119,7 @@
   ;; Datalog
   (reset-datalog!)
   (seed-datalog!)
+  (seed-datalog! {:patch-version "5.3.4"})
 
   ;; Impersonation (development profile only)
   (keys dev-users)
