@@ -4,7 +4,7 @@
    [com.devereux-henley.rts-data-access.contract :as data-access.contract]
    [com.devereux-henley.rts-domain.handlers.draft :as handlers.draft])
   (:import
-   [java.util UUID]))
+   [java.util Date UUID]))
 
 ;; Every mutation handler now starts with a lock check that calls
 ;; `data-access.contract/get-draft-lock-info`. Default each test to the
@@ -248,17 +248,22 @@
 
 ;; --- display name ---
 
+(def ^:private fixed-created-at
+  ;; Picked at noon UTC so the MM/dd/yyyy fallback renders the same date
+  ;; (04/21/2026) regardless of the JVM's local time zone.
+  (Date/from (java.time.Instant/parse "2026-04-21T12:00:00Z")))
+
 (def ^:private named-draft
   (assoc test-draft
-         :name               "Teclis Expeditionary Force"
-         :faction-name       "High Elves"
-         :created-at-display "04/21/2026"))
+         :name         "Teclis Expeditionary Force"
+         :faction-name "High Elves"
+         :created-at   fixed-created-at))
 
 (def ^:private unnamed-draft
   (assoc test-draft
-         :name               nil
-         :faction-name       "High Elves"
-         :created-at-display "04/21/2026"))
+         :name         nil
+         :faction-name "High Elves"
+         :created-at   fixed-created-at))
 
 (deftest get-draft-by-eid-uses-custom-name-for-display
   (with-redefs [data-access.contract/draft-by-eid (fn [_ _] named-draft)]

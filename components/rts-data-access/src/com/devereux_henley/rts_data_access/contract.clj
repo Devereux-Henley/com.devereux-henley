@@ -129,6 +129,9 @@
 
 ;;; ─── Draft Datalog queries + mutations ────────────────────────────────────
 
+(def draft-entry-schema              query.datalog.draft/draft-entry-schema)
+(def draft-state-schema              query.datalog.draft/draft-state-schema)
+
 (def draft-by-eid                    query.datalog.draft/draft-by-eid)
 (def drafts-for-player               query.datalog.draft/drafts-for-player)
 (def drafts-for-player-by-game       query.datalog.draft/drafts-for-player-by-game)

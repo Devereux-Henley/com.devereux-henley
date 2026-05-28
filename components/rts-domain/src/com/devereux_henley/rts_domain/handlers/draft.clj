@@ -258,13 +258,23 @@
 
 ;; ─── Draft state ──────────────────────────────────────────────────────────────
 
+(def ^:private mm-dd-yyyy
+  (java.time.format.DateTimeFormatter/ofPattern "MM/dd/yyyy"))
+
+(defn- format-mm-dd-yyyy
+  [^java.util.Date d]
+  (when d
+    (-> (.toInstant d)
+        (.atZone (java.time.ZoneId/systemDefault))
+        .toLocalDate
+        (.format mm-dd-yyyy))))
+
 (defn- draft-default-name
-  "Fallback display name when a draft hasn't been renamed: 'Faction draft
-  mm/dd/yyyy'. Both inputs come from the SQL projection (faction-name +
-  created-at-display)."
-  [{:keys [faction-name created-at-display]}]
-  (when (and faction-name created-at-display)
-    (str faction-name " draft " created-at-display)))
+  "Fallback display name when a draft hasn't been renamed:
+  'Faction draft mm/dd/yyyy'."
+  [{:keys [faction-name created-at]}]
+  (when-let [d (and faction-name (format-mm-dd-yyyy created-at))]
+    (str faction-name " draft " d)))
 
 (defn- with-display-name
   "Attaches :display-name — the custom :name (trimmed, ignored when
@@ -342,11 +352,8 @@
         (db/drafts-for-player-by-game (:datalog-connection dependencies) player-sub game-eid)))
 
 (defn get-draft-state
-  "Returns `{:main [entry …] :reinforcements [entry …]}` where each entry
-  carries `:entry-eid :unit-eid :section :ordinal` plus any optional
-  selection attrs (mount, lore, level, abilities, spells, items,
-  total-cost, engine-cost). Returns empty collections when no entries
-  exist."
+  "Fetches the draft's army state. Result conforms to
+  `data-access.contract/draft-state-schema`."
   [dependencies draft-eid]
   (db/draft-state-by-eid (:datalog-connection dependencies) draft-eid))
 

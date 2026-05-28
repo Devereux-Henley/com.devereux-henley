@@ -1,20 +1,10 @@
 (ns com.devereux-henley.rts-data-access.query.datalog.draft
-  "Datalevin reads and tx-builders for the draft domain. Mirrors the
-  game-domain pattern (`query.datalog.game`) — each public fn snapshots
-  the current db once at entry, runs a single pull/q, and returns the
-  flat unqualified-key shape the existing `rts-domain` handlers expect
-  so resource schemas + Selmer templates render unchanged.
-
-  Mutations are split into pure tx-builders (compute the tx-data) and
-  transact entry points (apply via `datalog.contract/transact!`). The
-  split keeps validation/business logic in `rts-domain` free of conn
-  argument plumbing while letting the domain layer compose a single tx
-  per mutation."
+  "Datalevin reads and mutations for the draft domain."
   (:require
-   [com.devereux-henley.datalog.contract :as dl])
+   [clojure.set :as set]
+   [com.devereux-henley.datalog.contract :as dl]
+   [com.devereux-henley.schema.contract :as schema.contract])
   (:import
-   [java.time ZoneId]
-   [java.time.format DateTimeFormatter]
    [java.util Date]))
 
 ;;; ─── Pull patterns ─────────────────────────────────────────────────────────
@@ -32,46 +22,54 @@
    :draft-entry/total-cost :draft-entry/engine-cost
    {:draft-entry/unit [:unit/eid]}])
 
-;;; ─── Display helpers ──────────────────────────────────────────────────────
+;;; ─── Return schemas ───────────────────────────────────────────────────────
 
-(def ^:private mm-dd-yyyy
-  (DateTimeFormatter/ofPattern "MM/dd/yyyy"))
+(def draft-entry-schema
+  "Flat-state shape returned by `draft-state-by-eid` and
+  `draft-entry-by-eid`."
+  (schema.contract/to-schema
+   [:map
+    [:entry-eid   :uuid]
+    [:unit-eid    :uuid]
+    [:section     [:enum :main :reinforcements]]
+    [:ordinal     [:int {:min 0}]]
+    [:level       [:int {:min 0}]]
+    [:mount       {:optional true} :string]
+    [:lore        {:optional true} :string]
+    [:abilities   {:optional true} [:sequential :string]]
+    [:spells      {:optional true} [:sequential :string]]
+    [:items       {:optional true} [:sequential :string]]
+    [:total-cost  {:optional true} :int]
+    [:engine-cost {:optional true} :int]]))
 
-(defn- ->display
-  "Render a `java.util.Date` (Datalevin's instant return type) as
-  `MM/dd/yyyy` for templates that surface a created/updated string."
-  [d]
-  (when d
-    (-> (.toInstant ^Date d)
-        (.atZone (ZoneId/systemDefault))
-        .toLocalDate
-        (.format mm-dd-yyyy))))
+(def draft-state-schema
+  "Sectioned bag of entries returned by `draft-state-by-eid`."
+  (schema.contract/to-schema
+   [:map
+    [:main           [:sequential draft-entry-schema]]
+    [:reinforcements [:sequential draft-entry-schema]]]))
 
 ;;; ─── Result builders ──────────────────────────────────────────────────────
 
 (defn- ->draft
   "Flatten a draft pull result into the unqualified-key shape the
-  SQLite-era handlers expect: ref sub-maps become flat `*-eid` fields,
-  date display strings get added, and ordering metadata stays out of the
-  draft itself (entries are returned via `draft-state`)."
+  SQLite-era handlers expect: ref sub-maps become flat `*-eid` fields.
+  Dates stay as canonical `java.util.Date` values — formatting belongs
+  to the web layer (Selmer `:date` filter on the template)."
   [m]
   (when m
-    (let [created-at (:draft/created-at m)
-          updated-at (:draft/updated-at m)
-          faction    (:draft/faction m)
-          game-mode  (:draft/game-mode m)]
-      (cond-> {:eid                (:draft/eid m)
-               :name               (:draft/name m)
-               :player-sub         (:draft/player-sub m)
-               :version            (:draft/version m)
-               :game-mode-eid      (some-> game-mode :game-mode/eid)
-               :faction-eid        (some-> faction :faction/eid)
-               :faction-name       (some-> faction :faction/name)
-               :game-eid           (some-> game-mode :game-mode/game :game/eid)
-               :created-at         created-at
-               :updated-at         updated-at
-               :created-at-display (->display created-at)
-               :updated-at-display (->display updated-at)}
+    (let [faction   (:draft/faction m)
+          game-mode (:draft/game-mode m)]
+      (cond-> {:eid           (:draft/eid m)
+               :name          (:draft/name m)
+               :player-sub    (:draft/player-sub m)
+               :version       (:draft/version m)
+               :game-mode-eid (some-> game-mode :game-mode/eid)
+               :faction-eid   (some-> faction :faction/eid)
+               :faction-name  (some-> faction :faction/name)
+               :game-eid      (some-> game-mode :game-mode/game :game/eid)
+               :created-at    (:draft/created-at m)
+               :updated-at    (:draft/updated-at m)}
         (:draft/created-by-sub m) (assoc :created-by-sub (:draft/created-by-sub m))))))
 
 (defn- ->entry
@@ -285,32 +283,54 @@
                                           (dl/lookup-ref :draft/eid draft-eid)))
                                 1))}]))
 
+(defn- cardinality-many-diff-ops
+  "Compute the minimal retract/add tx-data to transition a
+  cardinality-many attribute from the current value set to the desired
+  one. Only the symmetric difference is emitted — values present in
+  both stay put, so a typical edit that only changes a mount issues
+  zero ops for abilities/spells/items."
+  [ref attr current desired]
+  (let [current-set (set current)
+        desired-set (set desired)
+        to-retract  (set/difference current-set desired-set)
+        to-add      (set/difference desired-set current-set)]
+    (concat (map (fn [v] [:db/retract ref attr v]) to-retract)
+            (map (fn [v] [:db/add ref attr v])     to-add))))
+
 (defn update-entry!
   "Replace an entry's selections with `new-attrs`. Cardinality-many attrs
-  (abilities/spells/items) get a clean retract-all-then-set so the new
-  vector is canonical; cardinality-one upserts auto-replace. The entry's
-  section and ordinal can be re-pinned to move the entry between sections."
+  (abilities/spells/items) are reconciled with a symmetric-difference
+  pass; cardinality-one upserts auto-replace. The entry's section and
+  ordinal can be re-pinned to move the entry between sections."
   [conn draft-eid entry-eid new-attrs]
-  (let [db       (dl/db conn)
-        current  (dl/pull db
-                          [:draft-entry/abilities :draft-entry/spells :draft-entry/items
-                           :draft-entry/mount :draft-entry/lore]
-                          (dl/lookup-ref :draft-entry/eid entry-eid))
-        ref      (dl/lookup-ref :draft-entry/eid entry-eid)
-        retracts (concat
-                  (map (fn [v] [:db/retract ref :draft-entry/abilities v]) (:draft-entry/abilities current))
-                  (map (fn [v] [:db/retract ref :draft-entry/spells v])    (:draft-entry/spells current))
-                  (map (fn [v] [:db/retract ref :draft-entry/items v])     (:draft-entry/items current))
-                  (when (and (:draft-entry/mount current)
-                             (nil? (:mount new-attrs)))
-                    [[:db/retract ref :draft-entry/mount (:draft-entry/mount current)]])
-                  (when (and (:draft-entry/lore current)
-                             (nil? (:lore new-attrs)))
-                    [[:db/retract ref :draft-entry/lore (:draft-entry/lore current)]]))
-        upsert   (entry-tx (merge new-attrs {:entry-eid entry-eid}))]
+  (let [db          (dl/db conn)
+        current     (dl/pull db
+                             [:draft-entry/abilities :draft-entry/spells :draft-entry/items
+                              :draft-entry/mount :draft-entry/lore]
+                             (dl/lookup-ref :draft-entry/eid entry-eid))
+        ref         (dl/lookup-ref :draft-entry/eid entry-eid)
+        cm-ops      (concat
+                     (cardinality-many-diff-ops ref :draft-entry/abilities
+                                                (:draft-entry/abilities current)
+                                                (:abilities new-attrs))
+                     (cardinality-many-diff-ops ref :draft-entry/spells
+                                                (:draft-entry/spells current)
+                                                (:spells new-attrs))
+                     (cardinality-many-diff-ops ref :draft-entry/items
+                                                (:draft-entry/items current)
+                                                (:items new-attrs)))
+        co-retracts (concat
+                     (when (and (:draft-entry/mount current)
+                                (nil? (:mount new-attrs)))
+                       [[:db/retract ref :draft-entry/mount (:draft-entry/mount current)]])
+                     (when (and (:draft-entry/lore current)
+                                (nil? (:lore new-attrs)))
+                       [[:db/retract ref :draft-entry/lore (:draft-entry/lore current)]]))
+        upsert      (entry-tx (merge (dissoc new-attrs :abilities :spells :items)
+                                     {:entry-eid entry-eid}))]
     (dl/transact!
      conn
-     (concat retracts
+     (concat cm-ops co-retracts
              [upsert
               {:draft/eid        draft-eid
                :draft/updated-at (now-date)
