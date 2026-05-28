@@ -3,6 +3,7 @@
    boot a development profile that stubs Ory authentication, while production
    jars still use `core-configuration` with real Ory wiring."
   (:require
+   [com.devereux-henley.rts-api.datalog :as datalog]
    [com.devereux-henley.rts-api.db :as db]
    [com.devereux-henley.rts-api.dev-auth :as dev-auth]
    [com.devereux-henley.rts-api.model-transform]
@@ -35,6 +36,7 @@
   {::rts-data/migrate                                      {:db-spec       db/db-spec
                                                             :migration-dir rts-data/migration-dir}
    ::db/connection                                         {:migrations (integrant.core/ref ::rts-data/migrate)}
+   ::datalog/connection                                    {}
    :com.devereux-henley.rts-api.model-transform/middleware {:hostname hostname}
    ::web/api-view-registry                                 {}
    ::web/component-view-registry                           {}

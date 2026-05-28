@@ -1,4 +1,6 @@
 {:aliases  {:dev {:extra-paths ["development/src"]
+                  :jvm-opts ["--add-opens=java.base/java.nio=ALL-UNNAMED"
+                             "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED"]
                   :extra-deps {org.clojure/clojure {:mvn/version "1.11.1"}
                                integrant/repl {:mvn/version "0.5.1"}
                                mono/schema {:local/root "components/schema"}
@@ -25,7 +27,9 @@
                                  "components/rts-data-access"
                                  "components/rts-domain"
                                  "components/e2e"
-                                 "bases/rts-api"]}
+                                 "bases/rts-api"]
+                   :jvm-opts ["--add-opens=java.base/java.nio=ALL-UNNAMED"
+                              "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED"]}
 
             :poly {:main-opts ["-m" "polylith.clj.core.poly-cli.core"]
                    :extra-deps {polyfy/polylith
