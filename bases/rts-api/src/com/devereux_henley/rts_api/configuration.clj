@@ -21,9 +21,10 @@
 (def auth-hostname (or (System/getenv "AUTH_HOSTNAME") "http://localhost:4000"))
 (def session-name (str "ory_session_" (or (System/getenv "AUTH_SLUG") "eloquentyalowwhtijq6my4")))
 (def replay-parser-bin (or (System/getenv "REPLAY_PARSER_BIN") "tw-replay-parser"))
-(def default-dependencies {:hostname          hostname
-                           :connection        (integrant.core/ref ::db/connection)
-                           :replay-parser-bin replay-parser-bin})
+(def default-dependencies {:hostname           hostname
+                           :connection         (integrant.core/ref ::db/connection)
+                           :datalog-connection (integrant.core/ref ::datalog/connection)
+                           :replay-parser-bin  replay-parser-bin})
 
 (defn- handlers
   "Maps each Integrant key to default-dependencies."

@@ -1,9 +1,9 @@
 (ns com.devereux-henley.rts-web.web.game.view
   (:require
    [clojure.java.io :as io]
+   [com.devereux-henley.rts-data-access.contract :as db]
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.render :as render]
-   [com.devereux-henley.rts-web.web.game.api :as web.game.api]
    [com.devereux-henley.rts-web.web.view :as web.view]
    [integrant.core]))
 
@@ -19,55 +19,72 @@
                                  (assoc (web.view/base-context request)
                                         :data (:game (:game-context request))))}))
 
+(defn- units-by-category
+  "Group a faction's units by category. The query sorts by
+  `(unit-category-name, name)` so a sequential partition produces stable
+  groups without resorting."
+  [units]
+  (mapv (fn [group]
+          {:category (:unit-category-name (first group))
+           :units    (vec group)})
+        (partition-by :unit-category-name units)))
+
 (defmethod integrant.core/init-key ::faction-view
-  [_init-key dependencies]
+  [_init-key {:keys [datalog-connection]}]
   (partial web.view/standard-entity-view-handler
            (fn [eid]
-             (web.game.api/embed-units-by-category
-              dependencies
-              (web.game.api/get-faction-by-eid dependencies eid)))
+             (if-let [faction (db/faction-by-eid datalog-connection eid)]
+               (assoc-in faction [:_embedded :units-by-category]
+                         (units-by-category
+                          (db/units-for-faction datalog-connection eid)))
+               {:type :missing/resource :name "faction" :id eid}))
            "faction.html"
            (fn [_data _request] {})))
 
+(defn- resolve-spells
+  "Spell resolution for unit detail: lore-based wizards pull from the
+  `spell-lore` table; fixed-list casters resolve `draftable-spells` keys
+  against the spell table."
+  [conn lore-key draftable-spells]
+  (if lore-key
+    (mapv (fn [{:keys [eid key name mana-cost cost]}]
+            {:eid eid :key key :name name :mana-cost mana-cost :cost cost})
+          (db/spells-for-lore conn lore-key))
+    (let [key->spell (db/spells-by-keys conn draftable-spells)]
+      (mapv (fn [k]
+              (let [spell (get key->spell k)]
+                {:name      (or (:name spell) k)
+                 :eid       (:eid spell)
+                 :mana-cost (:mana-cost spell)
+                 :cost      (:cost spell)}))
+            draftable-spells))))
+
+(defn- resolve-abilities
+  "Resolve ability keys against the ability table, preserving the input
+  order so the rendered list matches the order the unit lists them."
+  [conn ability-keys]
+  (let [key->ability (db/abilities-by-keys conn ability-keys)]
+    (mapv (fn [k]
+            (let [a (get key->ability k)]
+              {:name        (:name a)
+               :eid         (:eid a)
+               :description (:description a)}))
+          ability-keys)))
+
 (defmethod integrant.core/init-key ::unit-view
-  [_init-key dependencies]
+  [_init-key {:keys [datalog-connection]}]
   (partial web.view/standard-entity-view-handler
-           (fn [eid] (web.game.api/get-unit-by-eid dependencies eid))
+           (fn [eid]
+             (or (db/unit-by-eid datalog-connection eid)
+                 {:type :missing/resource :name "unit" :id eid}))
            "unit.html"
            (fn [data _request]
              (let [{:keys [stats abilities draftable-spells]} (domain/parse-unit-statistics (:unit-statistics data))
                    lore-key                                   (:lore data)
-                   ;; Wizard rows carry a `lore` column.  When set, the
-                   ;; spell pool comes from the canonical spell_lore
-                   ;; junction (one source of truth per lore); otherwise
-                   ;; the unit's own draftable-spells from
-                   ;; unit_statistics applies (unique characters / non-
-                   ;; spellcasters).
-                   resolved-spells                            (if lore-key
-                                                                (mapv (fn [{:keys [key eid name mana-cost cost]}]
-                                                                        {:name      name
-                                                                         :key       key
-                                                                         :eid       eid
-                                                                         :mana-cost mana-cost
-                                                                         :cost      cost})
-                                                                      (domain/get-spells-for-lore dependencies lore-key))
-                                                                (let [key->spell (domain/get-spells-by-keys dependencies draftable-spells)]
-                                                                  (mapv (fn [k]
-                                                                          (let [spell (get key->spell k)]
-                                                                            {:name      (or (:name spell) k)
-                                                                             :eid       (:eid spell)
-                                                                             :mana-cost (:mana-cost spell)
-                                                                             :cost      (:cost spell)}))
-                                                                        draftable-spells)))
-                   key->ability                               (domain/get-abilities-by-keys dependencies abilities)
-                   resolved-abilities                         (mapv (fn [k]
-                                                                      (let [a (get key->ability k)]
-                                                                        {:name        (:name a)
-                                                                         :eid         (:eid a)
-                                                                         :description (:description a)}))
-                                                                    abilities)
-                   mounts                                     (domain/get-mounts-for-unit dependencies (:eid data))
-                   items                                      (domain/get-items-for-unit dependencies (:eid data))
+                   resolved-spells                            (resolve-spells datalog-connection lore-key draftable-spells)
+                   resolved-abilities                         (resolve-abilities datalog-connection abilities)
+                   mounts                                     (db/mounts-for-unit datalog-connection (:eid data))
+                   items                                      (db/items-for-unit datalog-connection (:eid data))
                    portrait-stem                              (:eid data)]
                {:unit-statistics  stats
                 :abilities        (not-empty resolved-abilities)

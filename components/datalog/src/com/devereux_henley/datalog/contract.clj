@@ -25,6 +25,13 @@
   [query & inputs]
   (apply datalevin/q query inputs))
 
+(defn db
+  "Snapshot the current db value from a connection. Cheap (single atomic
+   deref); call once at the top of a read fn so a multi-step query sees a
+   consistent point-in-time view."
+  [conn]
+  (datalevin/db conn))
+
 (defn pull
   "Pull `pattern` for the entity identified by `eid-or-lookup-ref` from `db-or-conn`.
    Accepts either a numeric entity id, a lookup ref like

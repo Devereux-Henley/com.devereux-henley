@@ -72,29 +72,29 @@
 
 (deftest parse-unit-statistics-extracts-stats
   (let [json   "{\"leadership\":75,\"speed\":30,\"armor\":25}"
-        result (handlers.draft/parse-unit-statistics json)]
+        result (handlers.draft/parse-unit-statistics (handlers.draft/decode-unit-statistics-json json))]
     (is (= 3 (count (:stats result))))))
 
 (deftest parse-unit-statistics-excludes-reserved-keys
   (let [json   "{\"leadership\":75,\"abilities\":[\"Frenzy\"],\"mounts\":[{\"name\":\"Horse\",\"mp_cost\":50}]}"
-        result (handlers.draft/parse-unit-statistics json)]
+        result (handlers.draft/parse-unit-statistics (handlers.draft/decode-unit-statistics-json json))]
     (is (every? #(not= "abilities" (:stat %)) (:stats result)))
     (is (every? #(not= "mounts" (:stat %)) (:stats result)))))
 
 (deftest parse-unit-statistics-parses-abilities
   (let [json   "{\"abilities\":[\"Frenzy\",\"Fear\"]}"
-        result (handlers.draft/parse-unit-statistics json)]
+        result (handlers.draft/parse-unit-statistics (handlers.draft/decode-unit-statistics-json json))]
     (is (= ["Frenzy" "Fear"] (:abilities result)))))
 
 (deftest parse-unit-statistics-omits-zero-values
   (let [json   "{\"charge bonus\":0,\"leadership\":50}"
-        result (handlers.draft/parse-unit-statistics json)]
+        result (handlers.draft/parse-unit-statistics (handlers.draft/decode-unit-statistics-json json))]
     (is (= 1 (count (:stats result))))
     (is (= "leadership" (:stat (first (:stats result)))))))
 
 (deftest parse-unit-statistics-omits-empty-vectors
   (let [json   "{\"abilities\":[],\"leadership\":50}"
-        result (handlers.draft/parse-unit-statistics json)]
+        result (handlers.draft/parse-unit-statistics (handlers.draft/decode-unit-statistics-json json))]
     (is (= 1 (count (:stats result))))))
 
 ;; --- hydrate-units-with-stats ---
