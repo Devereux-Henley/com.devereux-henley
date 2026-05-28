@@ -12,7 +12,7 @@
    [com.devereux-henley.rts-data-access.schema :as schema]
    [com.devereux-henley.rts-data-access.schema.datalog :as schema.datalog]
    [com.devereux-henley.rts-data-access.schema.draft :as schema.draft]
-   [malli.core :as m]))
+   [com.devereux-henley.schema.contract :as schema.contract]))
 
 ;;; ─── Datalog schema-as-code ────────────────────────────────────────────────
 
@@ -146,50 +146,50 @@
 (def remove-entry!                   query.datalog.draft/remove-entry!)
 (def update-entry!                   query.datalog.draft/update-entry!)
 
-(m/=> draft-by-eid
-      [:=> [:cat schema.draft/conn-schema :uuid]
-       [:maybe schema.draft/draft-result-schema]])
+(schema.contract/=>* draft-by-eid query.datalog.draft/draft-by-eid
+                     [:=> [:cat schema.draft/conn-schema :uuid]
+                      [:maybe schema.draft/draft-result-schema]])
 
-(m/=> drafts-for-player
-      [:=> [:cat schema.draft/conn-schema :string]
-       [:sequential schema.draft/draft-result-schema]])
+(schema.contract/=>* drafts-for-player query.datalog.draft/drafts-for-player
+                     [:=> [:cat schema.draft/conn-schema :string]
+                      [:sequential schema.draft/draft-result-schema]])
 
-(m/=> drafts-for-player-by-game
-      [:=> [:cat schema.draft/conn-schema :string :uuid]
-       [:sequential schema.draft/draft-result-schema]])
+(schema.contract/=>* drafts-for-player-by-game query.datalog.draft/drafts-for-player-by-game
+                     [:=> [:cat schema.draft/conn-schema :string :uuid]
+                      [:sequential schema.draft/draft-result-schema]])
 
-(m/=> draft-state-by-eid
-      [:=> [:cat schema.draft/conn-schema :uuid] schema.draft/draft-state-schema])
+(schema.contract/=>* draft-state-by-eid query.datalog.draft/draft-state-by-eid
+                     [:=> [:cat schema.draft/conn-schema :uuid] schema.draft/draft-state-schema])
 
-(m/=> draft-entry-by-eid
-      [:=> [:cat schema.draft/conn-schema :uuid]
-       [:maybe schema.draft/draft-entry-schema]])
+(schema.contract/=>* draft-entry-by-eid query.datalog.draft/draft-entry-by-eid
+                     [:=> [:cat schema.draft/conn-schema :uuid]
+                      [:maybe schema.draft/draft-entry-schema]])
 
-(m/=> draft-entry-section-and-ordinal
-      [:=> [:cat schema.draft/conn-schema :uuid]
-       [:maybe [:map
-                [:section [:enum :main :reinforcements]]
-                [:ordinal :int]]]])
+(schema.contract/=>* draft-entry-section-and-ordinal query.datalog.draft/draft-entry-section-and-ordinal
+                     [:=> [:cat schema.draft/conn-schema :uuid]
+                      [:maybe [:map
+                               [:section [:enum :main :reinforcements]]
+                               [:ordinal :int]]]])
 
-(m/=> create-draft!
-      [:=> [:cat schema.draft/conn-schema schema.draft/create-spec-schema]
-       schema.draft/draft-result-schema])
+(schema.contract/=>* create-draft! query.datalog.draft/create-draft!
+                     [:=> [:cat schema.draft/conn-schema schema.draft/create-spec-schema]
+                      schema.draft/draft-result-schema])
 
-(m/=> update-draft-name!
-      [:=> [:cat schema.draft/conn-schema :uuid [:maybe :string]]
-       schema.draft/draft-result-schema])
+(schema.contract/=>* update-draft-name! query.datalog.draft/update-draft-name!
+                     [:=> [:cat schema.draft/conn-schema :uuid [:maybe :string]]
+                      schema.draft/draft-result-schema])
 
-(m/=> add-entry!
-      [:=> [:cat schema.draft/conn-schema :uuid schema.draft/entry-add-spec-schema]
-       schema.draft/tx-report-schema])
+(schema.contract/=>* add-entry! query.datalog.draft/add-entry!
+                     [:=> [:cat schema.draft/conn-schema :uuid schema.draft/entry-add-spec-schema]
+                      schema.draft/tx-report-schema])
 
-(m/=> remove-entry!
-      [:=> [:cat schema.draft/conn-schema :uuid :uuid]
-       schema.draft/tx-report-schema])
+(schema.contract/=>* remove-entry! query.datalog.draft/remove-entry!
+                     [:=> [:cat schema.draft/conn-schema :uuid :uuid]
+                      schema.draft/tx-report-schema])
 
-(m/=> update-entry!
-      [:=> [:cat schema.draft/conn-schema :uuid :uuid schema.draft/entry-update-attrs-schema]
-       schema.draft/tx-report-schema])
+(schema.contract/=>* update-entry! query.datalog.draft/update-entry!
+                     [:=> [:cat schema.draft/conn-schema :uuid :uuid schema.draft/entry-update-attrs-schema]
+                      schema.draft/tx-report-schema])
 
 ;;; ─── Tournament DB entities ────────────────────────────────────────────────
 

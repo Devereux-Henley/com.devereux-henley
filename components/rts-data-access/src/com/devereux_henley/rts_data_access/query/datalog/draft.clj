@@ -2,9 +2,7 @@
   "Datalevin reads and mutations for the draft domain."
   (:require
    [clojure.set :as set]
-   [com.devereux-henley.datalog.contract :as dl]
-   [com.devereux-henley.rts-data-access.schema.draft :as schema.draft]
-   [malli.core :as m])
+   [com.devereux-henley.datalog.contract :as dl])
   (:import
    [java.util Date]))
 
@@ -298,50 +296,3 @@
                                            (dl/pull db [:draft/version]
                                                     (dl/lookup-ref :draft/eid draft-eid)))
                                           1))}]))))
-
-;;; ─── Function schemas ─────────────────────────────────────────────────────
-
-(m/=> draft-by-eid
-      [:=> [:cat schema.draft/conn-schema :uuid]
-       [:maybe schema.draft/draft-result-schema]])
-
-(m/=> drafts-for-player
-      [:=> [:cat schema.draft/conn-schema :string]
-       [:sequential schema.draft/draft-result-schema]])
-
-(m/=> drafts-for-player-by-game
-      [:=> [:cat schema.draft/conn-schema :string :uuid]
-       [:sequential schema.draft/draft-result-schema]])
-
-(m/=> draft-state-by-eid
-      [:=> [:cat schema.draft/conn-schema :uuid] schema.draft/draft-state-schema])
-
-(m/=> draft-entry-by-eid
-      [:=> [:cat schema.draft/conn-schema :uuid]
-       [:maybe schema.draft/draft-entry-schema]])
-
-(m/=> draft-entry-section-and-ordinal
-      [:=> [:cat schema.draft/conn-schema :uuid]
-       [:maybe [:map
-                [:section [:enum :main :reinforcements]]
-                [:ordinal :int]]]])
-
-(m/=> create-draft!
-      [:=> [:cat schema.draft/conn-schema schema.draft/create-spec-schema]
-       schema.draft/draft-result-schema])
-
-(m/=> update-draft-name!
-      [:=> [:cat schema.draft/conn-schema :uuid [:maybe :string]]
-       schema.draft/draft-result-schema])
-
-(m/=> add-entry!
-      [:=> [:cat schema.draft/conn-schema :uuid schema.draft/entry-add-spec-schema]
-       schema.draft/tx-report-schema])
-
-(m/=> remove-entry!
-      [:=> [:cat schema.draft/conn-schema :uuid :uuid]
-       schema.draft/tx-report-schema])
-
-(m/=> update-entry!
-      [:=> [:cat schema.draft/conn-schema :uuid :uuid schema.draft/entry-update-attrs-schema]
-       schema.draft/tx-report-schema])
