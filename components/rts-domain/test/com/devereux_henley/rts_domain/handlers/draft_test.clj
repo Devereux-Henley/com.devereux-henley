@@ -8,10 +8,11 @@
    [java.util Date UUID]))
 
 ;; Turn on malli instrumentation for the test run so any `m/=>`-declared
-;; query/mutation fn that does get called for real (not stubbed) checks
-;; its inputs/outputs. Stubs `with-redefs`-installed via the contract
-;; alias bypass instrumentation, so this only catches drift on the live
-;; pull/q calls that aren't stubbed out — partial coverage, but free.
+;; query/mutation fn — both on the upstream `query.datalog.draft` ns
+;; and on the `data-access.contract` aliases — checks its inputs/outputs.
+;; `with-redefs`-installed stubs on the contract alias get instrumented
+;; too because the schema is re-declared on the alias, so a stub that
+;; returns the wrong shape fails fast.
 (use-fixtures :once
   (fn [t]
     (mi/instrument!)

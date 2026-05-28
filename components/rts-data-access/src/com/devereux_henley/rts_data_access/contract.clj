@@ -10,7 +10,8 @@
    [com.devereux-henley.rts-data-access.query.stats :as query.stats]
    [com.devereux-henley.rts-data-access.query.tournament :as query.tournament]
    [com.devereux-henley.rts-data-access.schema :as schema]
-   [com.devereux-henley.rts-data-access.schema.datalog :as schema.datalog]))
+   [com.devereux-henley.rts-data-access.schema.datalog :as schema.datalog]
+   [malli.core :as m]))
 
 ;;; ─── Datalog schema-as-code ────────────────────────────────────────────────
 
@@ -143,6 +144,48 @@
 (def add-entry!                      query.datalog.draft/add-entry!)
 (def remove-entry!                   query.datalog.draft/remove-entry!)
 (def update-entry!                   query.datalog.draft/update-entry!)
+
+;; Re-declare the function schemas on the contract aliases so
+;; `malli.instrument/instrument!` instruments the var that callers
+;; (handlers, tests, web layer) actually reach. The `(def foo bar/foo)`
+;; aliasing pattern captures the un-wrapped fn ref at def time, so
+;; instrumenting the upstream var alone doesn't propagate down to the
+;; alias — restating `m/=>` here gets both sides covered.
+(m/=> draft-by-eid
+      [:=> [:cat query.datalog.draft/conn-schema :uuid]
+       [:maybe query.datalog.draft/draft-result-schema]])
+(m/=> drafts-for-player
+      [:=> [:cat query.datalog.draft/conn-schema :string]
+       [:sequential query.datalog.draft/draft-result-schema]])
+(m/=> drafts-for-player-by-game
+      [:=> [:cat query.datalog.draft/conn-schema :string :uuid]
+       [:sequential query.datalog.draft/draft-result-schema]])
+(m/=> draft-state-by-eid
+      [:=> [:cat query.datalog.draft/conn-schema :uuid]
+       query.datalog.draft/draft-state-schema])
+(m/=> draft-entry-by-eid
+      [:=> [:cat query.datalog.draft/conn-schema :uuid]
+       [:maybe query.datalog.draft/draft-entry-schema]])
+(m/=> draft-entry-section-and-ordinal
+      [:=> [:cat query.datalog.draft/conn-schema :uuid]
+       [:maybe [:map
+                [:section [:enum :main :reinforcements]]
+                [:ordinal :int]]]])
+(m/=> create-draft!
+      [:=> [:cat query.datalog.draft/conn-schema query.datalog.draft/create-spec-schema]
+       query.datalog.draft/draft-result-schema])
+(m/=> update-draft-name!
+      [:=> [:cat query.datalog.draft/conn-schema :uuid [:maybe :string]]
+       query.datalog.draft/draft-result-schema])
+(m/=> add-entry!
+      [:=> [:cat query.datalog.draft/conn-schema :uuid query.datalog.draft/entry-add-spec-schema]
+       query.datalog.draft/tx-report-schema])
+(m/=> remove-entry!
+      [:=> [:cat query.datalog.draft/conn-schema :uuid :uuid]
+       query.datalog.draft/tx-report-schema])
+(m/=> update-entry!
+      [:=> [:cat query.datalog.draft/conn-schema :uuid :uuid query.datalog.draft/entry-update-attrs-schema]
+       query.datalog.draft/tx-report-schema])
 
 ;;; ─── Tournament DB entities ────────────────────────────────────────────────
 

@@ -66,7 +66,7 @@
     [:updated-at    [:maybe inst?]]
     [:created-by-sub {:optional true} :string]]))
 
-(def ^:private create-spec-schema
+(def create-spec-schema
   (schema.contract/to-schema
    [:map
     [:eid            :uuid]
@@ -76,7 +76,7 @@
     [:name           {:optional true} [:maybe :string]]
     [:created-by-sub {:optional true} [:maybe :string]]]))
 
-(def ^:private entry-add-spec-schema
+(def entry-add-spec-schema
   (schema.contract/to-schema
    [:map
     [:entry-eid   :uuid]
@@ -91,7 +91,7 @@
     [:total-cost  {:optional true} [:maybe :int]]
     [:engine-cost {:optional true} [:maybe :int]]]))
 
-(def ^:private entry-update-attrs-schema
+(def entry-update-attrs-schema
   (schema.contract/to-schema
    [:map
     [:unit-eid    {:optional true} :uuid]
@@ -105,12 +105,12 @@
     [:total-cost  {:optional true} [:maybe :int]]
     [:engine-cost {:optional true} [:maybe :int]]]))
 
-(def ^:private conn-schema
+(def conn-schema
   "Opaque Datalevin connection — pre-validating it costs more than the
   fns it'd be wrapping and would couple this ns to datalevin internals."
   :any)
 
-(def ^:private tx-report-schema
+(def tx-report-schema
   "Datalevin transact!'s return is the full tx report; queries pass it
   through unchanged."
   :any)
