@@ -3,6 +3,7 @@
         mono/content-negotiation     {:local/root "../../components/content-negotiation"}
         mono/http                    {:local/root "../../components/http"}
         mono/jdbc                    {:local/root "../../components/jdbc"}
+        mono/datalog                 {:local/root "../../components/datalog"}
         mono/resourcekit             {:local/root "../../components/resourcekit"}
         mono/rts-data                {:local/root "../../components/rts-data"}
         mono/rts-data-access         {:local/root "../../components/rts-data-access"}
