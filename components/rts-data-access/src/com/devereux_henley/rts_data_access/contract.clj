@@ -11,6 +11,7 @@
    [com.devereux-henley.rts-data-access.query.tournament :as query.tournament]
    [com.devereux-henley.rts-data-access.schema :as schema]
    [com.devereux-henley.rts-data-access.schema.datalog :as schema.datalog]
+   [com.devereux-henley.rts-data-access.schema.draft :as schema.draft]
    [malli.core :as m]))
 
 ;;; ─── Datalog schema-as-code ────────────────────────────────────────────────
@@ -130,8 +131,8 @@
 
 ;;; ─── Draft Datalog queries + mutations ────────────────────────────────────
 
-(def draft-entry-schema              query.datalog.draft/draft-entry-schema)
-(def draft-state-schema              query.datalog.draft/draft-state-schema)
+(def draft-entry-schema              schema.draft/draft-entry-schema)
+(def draft-state-schema              schema.draft/draft-state-schema)
 
 (def draft-by-eid                    query.datalog.draft/draft-by-eid)
 (def drafts-for-player               query.datalog.draft/drafts-for-player)
@@ -145,47 +146,50 @@
 (def remove-entry!                   query.datalog.draft/remove-entry!)
 (def update-entry!                   query.datalog.draft/update-entry!)
 
-;; Re-declare the function schemas on the contract aliases so
-;; `malli.instrument/instrument!` instruments the var that callers
-;; (handlers, tests, web layer) actually reach. The `(def foo bar/foo)`
-;; aliasing pattern captures the un-wrapped fn ref at def time, so
-;; instrumenting the upstream var alone doesn't propagate down to the
-;; alias — restating `m/=>` here gets both sides covered.
 (m/=> draft-by-eid
-      [:=> [:cat query.datalog.draft/conn-schema :uuid]
-       [:maybe query.datalog.draft/draft-result-schema]])
+      [:=> [:cat schema.draft/conn-schema :uuid]
+       [:maybe schema.draft/draft-result-schema]])
+
 (m/=> drafts-for-player
-      [:=> [:cat query.datalog.draft/conn-schema :string]
-       [:sequential query.datalog.draft/draft-result-schema]])
+      [:=> [:cat schema.draft/conn-schema :string]
+       [:sequential schema.draft/draft-result-schema]])
+
 (m/=> drafts-for-player-by-game
-      [:=> [:cat query.datalog.draft/conn-schema :string :uuid]
-       [:sequential query.datalog.draft/draft-result-schema]])
+      [:=> [:cat schema.draft/conn-schema :string :uuid]
+       [:sequential schema.draft/draft-result-schema]])
+
 (m/=> draft-state-by-eid
-      [:=> [:cat query.datalog.draft/conn-schema :uuid]
-       query.datalog.draft/draft-state-schema])
+      [:=> [:cat schema.draft/conn-schema :uuid] schema.draft/draft-state-schema])
+
 (m/=> draft-entry-by-eid
-      [:=> [:cat query.datalog.draft/conn-schema :uuid]
-       [:maybe query.datalog.draft/draft-entry-schema]])
+      [:=> [:cat schema.draft/conn-schema :uuid]
+       [:maybe schema.draft/draft-entry-schema]])
+
 (m/=> draft-entry-section-and-ordinal
-      [:=> [:cat query.datalog.draft/conn-schema :uuid]
+      [:=> [:cat schema.draft/conn-schema :uuid]
        [:maybe [:map
                 [:section [:enum :main :reinforcements]]
                 [:ordinal :int]]]])
+
 (m/=> create-draft!
-      [:=> [:cat query.datalog.draft/conn-schema query.datalog.draft/create-spec-schema]
-       query.datalog.draft/draft-result-schema])
+      [:=> [:cat schema.draft/conn-schema schema.draft/create-spec-schema]
+       schema.draft/draft-result-schema])
+
 (m/=> update-draft-name!
-      [:=> [:cat query.datalog.draft/conn-schema :uuid [:maybe :string]]
-       query.datalog.draft/draft-result-schema])
+      [:=> [:cat schema.draft/conn-schema :uuid [:maybe :string]]
+       schema.draft/draft-result-schema])
+
 (m/=> add-entry!
-      [:=> [:cat query.datalog.draft/conn-schema :uuid query.datalog.draft/entry-add-spec-schema]
-       query.datalog.draft/tx-report-schema])
+      [:=> [:cat schema.draft/conn-schema :uuid schema.draft/entry-add-spec-schema]
+       schema.draft/tx-report-schema])
+
 (m/=> remove-entry!
-      [:=> [:cat query.datalog.draft/conn-schema :uuid :uuid]
-       query.datalog.draft/tx-report-schema])
+      [:=> [:cat schema.draft/conn-schema :uuid :uuid]
+       schema.draft/tx-report-schema])
+
 (m/=> update-entry!
-      [:=> [:cat query.datalog.draft/conn-schema :uuid :uuid query.datalog.draft/entry-update-attrs-schema]
-       query.datalog.draft/tx-report-schema])
+      [:=> [:cat schema.draft/conn-schema :uuid :uuid schema.draft/entry-update-attrs-schema]
+       schema.draft/tx-report-schema])
 
 ;;; ─── Tournament DB entities ────────────────────────────────────────────────
 

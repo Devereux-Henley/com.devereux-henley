@@ -3,7 +3,7 @@
   (:require
    [clojure.set :as set]
    [com.devereux-henley.datalog.contract :as dl]
-   [com.devereux-henley.schema.contract :as schema.contract]
+   [com.devereux-henley.rts-data-access.schema.draft :as schema.draft]
    [malli.core :as m])
   (:import
    [java.util Date]))
@@ -22,98 +22,6 @@
    :draft-entry/abilities :draft-entry/spells :draft-entry/items
    :draft-entry/total-cost :draft-entry/engine-cost
    {:draft-entry/unit [:unit/eid]}])
-
-;;; ─── Return schemas ───────────────────────────────────────────────────────
-
-(def draft-entry-schema
-  "Flat-state shape returned by `draft-state-by-eid` and
-  `draft-entry-by-eid`."
-  (schema.contract/to-schema
-   [:map
-    [:entry-eid   :uuid]
-    [:unit-eid    :uuid]
-    [:section     [:enum :main :reinforcements]]
-    [:ordinal     [:int {:min 0}]]
-    [:level       [:int {:min 0}]]
-    [:mount       {:optional true} :string]
-    [:lore        {:optional true} :string]
-    [:abilities   {:optional true} [:sequential :string]]
-    [:spells      {:optional true} [:sequential :string]]
-    [:items       {:optional true} [:sequential :string]]
-    [:total-cost  {:optional true} :int]
-    [:engine-cost {:optional true} :int]]))
-
-(def draft-state-schema
-  "Sectioned bag of entries returned by `draft-state-by-eid`."
-  (schema.contract/to-schema
-   [:map
-    [:main           [:sequential draft-entry-schema]]
-    [:reinforcements [:sequential draft-entry-schema]]]))
-
-(def draft-result-schema
-  "Flat draft row returned by `draft-by-eid` + the listing queries."
-  (schema.contract/to-schema
-   [:map
-    [:eid            :uuid]
-    [:name           [:maybe :string]]
-    [:player-sub     :string]
-    [:version       :int]
-    [:game-mode-eid [:maybe :uuid]]
-    [:faction-eid   [:maybe :uuid]]
-    [:faction-name  [:maybe :string]]
-    [:game-eid      [:maybe :uuid]]
-    [:created-at    [:maybe inst?]]
-    [:updated-at    [:maybe inst?]]
-    [:created-by-sub {:optional true} :string]]))
-
-(def create-spec-schema
-  (schema.contract/to-schema
-   [:map
-    [:eid            :uuid]
-    [:player-sub     :string]
-    [:game-mode-eid  :uuid]
-    [:faction-eid    :uuid]
-    [:name           {:optional true} [:maybe :string]]
-    [:created-by-sub {:optional true} [:maybe :string]]]))
-
-(def entry-add-spec-schema
-  (schema.contract/to-schema
-   [:map
-    [:entry-eid   :uuid]
-    [:unit-eid    :uuid]
-    [:section     [:enum :main :reinforcements]]
-    [:level       {:optional true} :int]
-    [:mount       {:optional true} [:maybe :string]]
-    [:lore        {:optional true} [:maybe :string]]
-    [:abilities   {:optional true} [:sequential :string]]
-    [:spells      {:optional true} [:sequential :string]]
-    [:items       {:optional true} [:sequential :string]]
-    [:total-cost  {:optional true} [:maybe :int]]
-    [:engine-cost {:optional true} [:maybe :int]]]))
-
-(def entry-update-attrs-schema
-  (schema.contract/to-schema
-   [:map
-    [:unit-eid    {:optional true} :uuid]
-    [:section     {:optional true} [:enum :main :reinforcements]]
-    [:level       {:optional true} :int]
-    [:mount       {:optional true} [:maybe :string]]
-    [:lore        {:optional true} [:maybe :string]]
-    [:abilities   {:optional true} [:sequential :string]]
-    [:spells      {:optional true} [:sequential :string]]
-    [:items       {:optional true} [:sequential :string]]
-    [:total-cost  {:optional true} [:maybe :int]]
-    [:engine-cost {:optional true} [:maybe :int]]]))
-
-(def conn-schema
-  "Opaque Datalevin connection — pre-validating it costs more than the
-  fns it'd be wrapping and would couple this ns to datalevin internals."
-  :any)
-
-(def tx-report-schema
-  "Datalevin transact!'s return is the full tx report; queries pass it
-  through unchanged."
-  :any)
 
 ;;; ─── Result builders ──────────────────────────────────────────────────────
 
@@ -140,9 +48,8 @@
 
 (defn- ->entry
   "Flatten a draft-entry pull result into the JSON-state-shaped map the
-  existing draft handlers operate on: `{:entry-eid :unit-eid :mount …
-  :section :ordinal}`. Cardinality-many vectors come back from datalevin
-  as sets; sort to keep template output stable."
+  existing draft handlers operate on. Cardinality-many vectors come
+  back from datalevin as sets; sort to keep template output stable."
   [m]
   (when m
     (let [maybe-vec (fn [coll] (when (seq coll) (vec (sort coll))))]
@@ -151,18 +58,17 @@
                :section   (:draft-entry/section m)
                :ordinal   (:draft-entry/ordinal m)
                :level     (or (:draft-entry/level m) 0)}
-        (:draft-entry/mount m)        (assoc :mount       (:draft-entry/mount m))
-        (:draft-entry/lore m)         (assoc :lore        (:draft-entry/lore m))
-        (:draft-entry/total-cost m)   (assoc :total-cost  (:draft-entry/total-cost m))
-        (:draft-entry/engine-cost m)  (assoc :engine-cost (:draft-entry/engine-cost m))
+        (:draft-entry/mount m)           (assoc :mount       (:draft-entry/mount m))
+        (:draft-entry/lore m)            (assoc :lore        (:draft-entry/lore m))
+        (:draft-entry/total-cost m)      (assoc :total-cost  (:draft-entry/total-cost m))
+        (:draft-entry/engine-cost m)     (assoc :engine-cost (:draft-entry/engine-cost m))
         (seq (:draft-entry/abilities m)) (assoc :abilities (maybe-vec (:draft-entry/abilities m)))
         (seq (:draft-entry/spells m))    (assoc :spells    (maybe-vec (:draft-entry/spells m)))
         (seq (:draft-entry/items m))     (assoc :items     (maybe-vec (:draft-entry/items m)))))))
 
 (defn- entries->state
   "Group a vector of entry maps by section and sort each section by
-  ordinal, producing the `{:main […] :reinforcements […]}` shape the
-  existing draft handlers (and the rules engine) operate on."
+  ordinal, producing the shape the rules engine consumes."
   [entries]
   (let [groups (group-by :section entries)]
     {:main           (vec (sort-by :ordinal (get groups :main [])))
@@ -175,9 +81,6 @@
   [conn eid]
   (->draft (dl/pull (dl/db conn) draft-pattern (dl/lookup-ref :draft/eid eid))))
 
-(m/=> draft-by-eid
-      [:=> [:cat conn-schema :uuid] [:maybe draft-result-schema]])
-
 (defn drafts-for-player
   "All drafts a player owns, sorted updated-at desc (eid tiebreak)."
   [conn player-sub]
@@ -189,9 +92,6 @@
          (mapv ->draft)
          (sort-by (juxt (comp - (fnil #(.getTime ^Date %) (Date. 0)) :updated-at) :eid))
          vec)))
-
-(m/=> drafts-for-player
-      [:=> [:cat conn-schema :string] [:sequential draft-result-schema]])
 
 (defn drafts-for-player-by-game
   "Drafts a player owns, scoped through the game-mode's parent game ref.
@@ -210,9 +110,6 @@
          (sort-by (juxt (comp - (fnil #(.getTime ^Date %) (Date. 0)) :updated-at) :eid))
          vec)))
 
-(m/=> drafts-for-player-by-game
-      [:=> [:cat conn-schema :string :uuid] [:sequential draft-result-schema]])
-
 (defn draft-state-by-eid
   "Sectioned army state for a draft."
   [conn draft-eid]
@@ -227,16 +124,10 @@
                         (dl/lookup-ref :draft/eid draft-eid))]
     (entries->state (mapv ->entry (:draft/entries pulled)))))
 
-(m/=> draft-state-by-eid
-      [:=> [:cat conn-schema :uuid] draft-state-schema])
-
 (defn draft-entry-by-eid
   "Fetch a single entry by eid, or nil when not found."
   [conn entry-eid]
   (->entry (dl/pull (dl/db conn) entry-pattern (dl/lookup-ref :draft-entry/eid entry-eid))))
-
-(m/=> draft-entry-by-eid
-      [:=> [:cat conn-schema :uuid] [:maybe draft-entry-schema]])
 
 (defn draft-entry-section-and-ordinal
   "Where an entry sits — its section + ordinal. Avoids re-reading the
@@ -247,12 +138,6 @@
     (when (:draft-entry/section m)
       {:section (:draft-entry/section m)
        :ordinal (:draft-entry/ordinal m)})))
-
-(m/=> draft-entry-section-and-ordinal
-      [:=> [:cat conn-schema :uuid]
-       [:maybe [:map
-                [:section [:enum :main :reinforcements]]
-                [:ordinal :int]]]])
 
 ;;; ─── Tx-builders + transact entry points ──────────────────────────────────
 
@@ -276,9 +161,6 @@
         name (assoc :draft/name name))])
     (draft-by-eid conn eid)))
 
-(m/=> create-draft!
-      [:=> [:cat conn-schema create-spec-schema] draft-result-schema])
-
 (defn update-draft-name!
   "Update a draft's mutable name, bumping version + updated-at. Passing
   `nil` retracts the stored name so the faction+date default renders
@@ -297,9 +179,6 @@
                         name (assoc :draft/name name))]
     (dl/transact! conn (cons upsert retract-ops))
     (draft-by-eid conn draft-eid)))
-
-(m/=> update-draft-name!
-      [:=> [:cat conn-schema :uuid [:maybe :string]] draft-result-schema])
 
 (defn- next-ordinal
   "Compute the next ordinal for a section, defaulting to 0 when empty."
@@ -350,9 +229,6 @@
                                             (dl/lookup-ref :draft/eid draft-eid)))
                                   1))}])))
 
-(m/=> add-entry!
-      [:=> [:cat conn-schema :uuid entry-add-spec-schema] tx-report-schema])
-
 (defn remove-entry!
   "Retract an entry by eid. The cardinality-many link from the parent's
   `:draft/entries` drops out as a side effect of `:db/retractEntity`."
@@ -366,9 +242,6 @@
                                  (dl/pull (dl/db conn) [:draft/version]
                                           (dl/lookup-ref :draft/eid draft-eid)))
                                 1))}]))
-
-(m/=> remove-entry!
-      [:=> [:cat conn-schema :uuid :uuid] tx-report-schema])
 
 (defn- cardinality-many-diff-ops
   "Compute the minimal retract/add tx-data to transition a
@@ -426,5 +299,49 @@
                                                     (dl/lookup-ref :draft/eid draft-eid)))
                                           1))}]))))
 
+;;; ─── Function schemas ─────────────────────────────────────────────────────
+
+(m/=> draft-by-eid
+      [:=> [:cat schema.draft/conn-schema :uuid]
+       [:maybe schema.draft/draft-result-schema]])
+
+(m/=> drafts-for-player
+      [:=> [:cat schema.draft/conn-schema :string]
+       [:sequential schema.draft/draft-result-schema]])
+
+(m/=> drafts-for-player-by-game
+      [:=> [:cat schema.draft/conn-schema :string :uuid]
+       [:sequential schema.draft/draft-result-schema]])
+
+(m/=> draft-state-by-eid
+      [:=> [:cat schema.draft/conn-schema :uuid] schema.draft/draft-state-schema])
+
+(m/=> draft-entry-by-eid
+      [:=> [:cat schema.draft/conn-schema :uuid]
+       [:maybe schema.draft/draft-entry-schema]])
+
+(m/=> draft-entry-section-and-ordinal
+      [:=> [:cat schema.draft/conn-schema :uuid]
+       [:maybe [:map
+                [:section [:enum :main :reinforcements]]
+                [:ordinal :int]]]])
+
+(m/=> create-draft!
+      [:=> [:cat schema.draft/conn-schema schema.draft/create-spec-schema]
+       schema.draft/draft-result-schema])
+
+(m/=> update-draft-name!
+      [:=> [:cat schema.draft/conn-schema :uuid [:maybe :string]]
+       schema.draft/draft-result-schema])
+
+(m/=> add-entry!
+      [:=> [:cat schema.draft/conn-schema :uuid schema.draft/entry-add-spec-schema]
+       schema.draft/tx-report-schema])
+
+(m/=> remove-entry!
+      [:=> [:cat schema.draft/conn-schema :uuid :uuid]
+       schema.draft/tx-report-schema])
+
 (m/=> update-entry!
-      [:=> [:cat conn-schema :uuid :uuid entry-update-attrs-schema] tx-report-schema])
+      [:=> [:cat schema.draft/conn-schema :uuid :uuid schema.draft/entry-update-attrs-schema]
+       schema.draft/tx-report-schema])
