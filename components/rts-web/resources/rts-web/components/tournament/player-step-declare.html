@@ -1,0 +1,26 @@
+{# Asks the player who won the just-finished game so the winner can be
+   sent on to upload the replay and the loser to wait for confirmation. #}
+<div class="declare-view">
+    <div class="declare-prompt">
+        <div class="eyebrow">Game {{current-game}} · who won?</div>
+        <h3 class="declare-headline">Whoever won uploads the replay</h3>
+        <p class="declare-sub">
+            Only the winner can submit. The losing player will be asked to confirm or
+            dispute · then {{generic-next}}.
+        </p>
+    </div>
+    <div class="declare-buttons">
+        <a class="declare-btn declare-btn--won"
+           href="/view/game/{{game-eid}}/tournament/{{data.eid}}/player/series.html?step=submitting">
+            <span class="declare-btn-icon" aria-hidden="true">⚔</span>
+            <span class="declare-btn-label">I won Game {{current-game}}</span>
+            <span class="declare-btn-sub">Continue to replay upload</span>
+        </a>
+        <a class="declare-btn declare-btn--lost"
+           href="/view/game/{{game-eid}}/tournament/{{data.eid}}/player/series.html?step=opp_uploading">
+            <span class="declare-btn-icon" aria-hidden="true">⌛</span>
+            <span class="declare-btn-label">{{opponent.handle}} won</span>
+            <span class="declare-btn-sub">Wait for them to upload</span>
+        </a>
+    </div>
+</div>

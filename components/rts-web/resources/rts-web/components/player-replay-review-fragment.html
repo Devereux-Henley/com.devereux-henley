@@ -1,0 +1,146 @@
+{# Shows the player what was detected from the replay — winner, both
+   armies side-by-side with their units and costs — so they can verify
+   it before locking the game in. #}
+<form class="replay-review"
+      hx-post="/actions/tournament/{{match.tournament-eid}}/match/{{match.eid}}/replay/submit"
+      hx-target="closest .panel-body"
+      hx-swap="innerHTML">
+
+    <input type="hidden" name="parsed-json" value="{{parsed-json}}"/>
+    <input type="hidden" name="source-name" value="{{source-name}}"/>
+    <input type="hidden" name="winner-sub"  value="{{winner-sub}}"/>
+
+    <section class="replay-file-card{% if i-won? %} replay-file-card--won{% else %} replay-file-card--lost{% endif %}"
+             aria-label="Parsed replay summary">
+        <span class="replay-file-card-check" aria-hidden="true">✓</span>
+        <div class="replay-file-card-body">
+            <div class="replay-file-card-name mono">{{source-name}}</div>
+            <div class="replay-file-card-meta mono muted">
+                {% if played-at %}{{played-at}} · {% endif %}auto-detected:
+                <span class="replay-file-card-winner">{{winner-sub}} wins</span>
+                {% if map-name %} on {{map-name}}{% endif %}
+            </div>
+        </div>
+        <button type="button"
+                class="btn btn-ghost btn-sm replay-file-card-replace"
+                hx-get="/view/game/{{match.game-eid}}/tournament/{{match.tournament-eid}}/player/series.html?step=submitting"
+                hx-target="closest .panel-body"
+                hx-swap="innerHTML"
+                hx-select=".active-game-panel .panel-body > *">
+            Replace file
+        </button>
+    </section>
+
+    <section class="armies-panel" aria-labelledby="armies-heading">
+        <header class="armies-panel-head">
+            <h3 class="armies-panel-title" id="armies-heading">Armies detected from replay</h3>
+        </header>
+
+        <div class="armies-grid">
+            <article class="army-side{% if i-won? %} army-side--won{% endif %}"
+                     aria-labelledby="me-side-heading">
+                <header class="army-side-head">
+                    <div class="army-side-handle">
+                        <div class="eyebrow">You</div>
+                        <h4 id="me-side-heading" class="army-side-name">{{me.handle}}</h4>
+                        <div class="mono muted army-side-faction">{{me.faction-display}}</div>
+                    </div>
+                    <div class="army-side-cost">
+                        <span class="army-side-cost-num">{{me.total-num}}</span>
+                        <span class="army-side-cost-cap mono muted">{{me.total-unit}}</span>
+                    </div>
+                    <span class="army-side-badge {% if i-won? %}army-side-badge--won{% else %}army-side-badge--placeholder{% endif %}"
+                          {% if i-won? %}{% else %}aria-hidden="true"{% endif %}>
+                        {% if i-won? %}Won game{% else %}—{% endif %}
+                    </span>
+                </header>
+
+                {% for section in me.sections %}
+                <section class="army-section"
+                         aria-labelledby="me-section-{{section.section}}-heading">
+                    <header class="army-section-head">
+                        <h5 id="me-section-{{section.section}}-heading" class="army-section-label">{{section.section-label}}</h5>
+                        <span class="army-section-meta mono muted">
+                            {{section.section-unit-count}} {% ifequal section.section-unit-count 1 %}unit{% else %}units{% endifequal %}
+                            · {{section.section-num}} / {{section.section-max}} {{section.section-unit}}
+                        </span>
+                    </header>
+                    <div class="unit-grid">
+                        {% for unit in section.section-units %}
+                        <div class="unit-tile{% if unit.is-lord %} unit-tile--lord{% endif %}"
+                             title="{{unit.display}}">
+                            <img class="unit-tile-portrait"
+                                 src="/card/unit/{% if unit.unit-eid %}{{unit.unit-eid}}{% else %}placeholder{% endif %}.png"
+                                 alt="{{unit.display}}"
+                                 onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;"/>
+                            {% if unit.is-lord %}<span class="unit-tile-lord">LORD</span>{% endif %}
+                            <span class="unit-tile-cost">{% if unit.adjusted-cost %}{{unit.adjusted-cost}}{% else %}{% if unit.cost %}{{unit.cost}}{% else %}—{% endif %}{% endif %}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </section>
+                {% endfor %}
+            </article>
+
+            <article class="army-side{% if i-won? %}{% else %} army-side--won{% endif %}"
+                     aria-labelledby="opp-side-heading">
+                <header class="army-side-head">
+                    <div class="army-side-handle">
+                        <div class="eyebrow">Opponent</div>
+                        <h4 id="opp-side-heading" class="army-side-name">{{opponent.handle}}</h4>
+                        <div class="mono muted army-side-faction">{{opponent.faction-display}}</div>
+                    </div>
+                    <div class="army-side-cost">
+                        <span class="army-side-cost-num">{{opponent.total-num}}</span>
+                        <span class="army-side-cost-cap mono muted">{{opponent.total-unit}}</span>
+                    </div>
+                    <span class="army-side-badge {% if i-won? %}army-side-badge--placeholder{% else %}army-side-badge--won{% endif %}"
+                          {% if i-won? %}aria-hidden="true"{% endif %}>
+                        {% if i-won? %}—{% else %}Won game{% endif %}
+                    </span>
+                </header>
+
+                {% for section in opponent.sections %}
+                <section class="army-section"
+                         aria-labelledby="opp-section-{{section.section}}-heading">
+                    <header class="army-section-head">
+                        <h5 id="opp-section-{{section.section}}-heading" class="army-section-label">{{section.section-label}}</h5>
+                        <span class="army-section-meta mono muted">
+                            {{section.section-unit-count}} {% ifequal section.section-unit-count 1 %}unit{% else %}units{% endifequal %}
+                            · {{section.section-num}} / {{section.section-max}} {{section.section-unit}}
+                        </span>
+                    </header>
+                    <div class="unit-grid">
+                        {% for unit in section.section-units %}
+                        <div class="unit-tile{% if unit.is-lord %} unit-tile--lord{% endif %}"
+                             title="{{unit.display}}">
+                            <img class="unit-tile-portrait"
+                                 src="/card/unit/{% if unit.unit-eid %}{{unit.unit-eid}}{% else %}placeholder{% endif %}.png"
+                                 alt="{{unit.display}}"
+                                 onerror="this.src='/card/unit/placeholder.png'; this.onerror=null;"/>
+                            {% if unit.is-lord %}<span class="unit-tile-lord">LORD</span>{% endif %}
+                            <span class="unit-tile-cost">{% if unit.adjusted-cost %}{{unit.adjusted-cost}}{% else %}{% if unit.cost %}{{unit.cost}}{% else %}—{% endif %}{% endif %}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </section>
+                {% endfor %}
+            </article>
+        </div>
+    </section>
+
+    <footer class="replay-review-foot">
+        <div class="replay-review-context mono muted">
+            Submit result to prompt <strong>{{opponent.handle}}</strong> to confirm.
+        </div>
+        <div class="cluster">
+            <a class="btn btn-ghost btn-sm"
+               href="/view/game/{{match.game-eid}}/tournament/{{match.tournament-eid}}/player/series.html?step=declare">
+                ← Back
+            </a>
+            <button type="submit" class="btn btn-primary btn-sm">
+                Submit Game {{game-num}} replay →
+            </button>
+        </div>
+    </footer>
+</form>

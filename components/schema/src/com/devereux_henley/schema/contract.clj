@@ -3,6 +3,7 @@
    [clojure.core.protocols]
    [clojure.string]
    [malli.core]
+   [malli.error]
    [malli.transform]
    [malli.util]
    [reitit.core])
@@ -354,3 +355,14 @@
                        (if (= :model/model (:model/type (malli.core/properties schema)))
                          (handle-model-transform route-data schema)
                          identity))}}}))
+
+(defn explain->message
+  "Renders a `malli.core/explain` result as a single human-facing string —
+   the first leaf message from `malli.error/humanize`'s nested output.
+   Returns nil when there is no error (so callers can `if-let`)."
+  [explanation]
+  (when explanation
+    (->> (malli.error/humanize explanation)
+         (tree-seq coll? seq)
+         (filter string?)
+         first)))

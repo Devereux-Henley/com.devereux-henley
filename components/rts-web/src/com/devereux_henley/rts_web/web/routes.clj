@@ -77,28 +77,6 @@
    ["/logout.html"
     {:get {:produces ["text/html"]
            :handler  (integrant.core/ref ::web.view/logout-view)}}]
-   ["/match-record/:match-eid"
-    ["/index.html"
-     {:get {:produces   ["text/html" "application/htmx+html"]
-            :parameters {:path (schema.contract/to-schema [:map [:match-eid :uuid]])}
-            :handler    (integrant.core/ref ::web.tournament.view/modal-view)}}]
-    ["/parse"
-     {:post {:summary    "Parse uploaded replays and return the review-step fragment."
-             :openapi    {:tags         ["match-record"]
-                          :consumes     ["multipart/form-data"]
-                          :produces     ["text/html"]
-                          :operation-id "match-record/parse-fragment"}
-             :parameters {:path      (schema.contract/to-schema [:map [:match-eid :uuid]])
-                          :multipart (schema.contract/to-schema [:map {:closed false}])}
-             :handler    (integrant.core/ref ::web.tournament.view/parse-replays-fragment)}}]
-    ["/submit"
-     {:post {:summary    "Commit a parsed-replay submission and return the submitted-step fragment."
-             :openapi    {:tags         ["match-record"]
-                          :consumes     ["application/x-www-form-urlencoded"]
-                          :produces     ["text/html"]
-                          :operation-id "match-record/submit-fragment"}
-             :parameters {:path (schema.contract/to-schema [:map [:match-eid :uuid]])}
-             :handler    (integrant.core/ref ::web.tournament.view/record-match-fragment)}}]]
    ["/game/:game-eid"
     {:middleware [(integrant.core/ref ::web.view/game-context-middleware)]}
     ["/index.html"
@@ -148,7 +126,19 @@
      ["/:eid/phase.html"
       {:get {:produces   ["application/htmx+html"]
              :parameters {:path schema.contract/game-and-id-path-parameter}
-             :handler    (integrant.core/ref ::web.tournament.view/tournament-phase-form-view)}}]]
+             :handler    (integrant.core/ref ::web.tournament.view/tournament-phase-form-view)}}]
+     ["/:eid/player"
+      ["/check-in.html"
+       {:get {:produces   ["application/htmx+html"]
+              :parameters {:path schema.contract/game-and-id-path-parameter}
+              :handler    (integrant.core/ref ::web.tournament.view/player-check-in-view)}}]
+      ["/series.html"
+       {:get {:produces   ["application/htmx+html"]
+              :parameters {:path  schema.contract/game-and-id-path-parameter
+                           :query (schema.contract/to-schema
+                                   [:map
+                                    [:step {:optional true} [:maybe :string]]])}
+              :handler    (integrant.core/ref ::web.tournament.view/player-series-view)}}]]]
     ["/competitive"
      ["/index.html"
       {:get {:produces   ["application/htmx+html"]
@@ -361,6 +351,21 @@
                                  [:eid :uuid]])
                          :body domain/record-result-specification}
             :handler    (integrant.core/ref ::web.actions.tournament/record-game)}}]
+   ["/tournament/:tournament-eid/match/:match-eid/replay/parse"
+    {:post {:produces   ["application/htmx+html"]
+            :parameters {:path      (schema.contract/to-schema
+                                     [:map
+                                      [:tournament-eid :uuid]
+                                      [:match-eid :uuid]])
+                         :multipart (schema.contract/to-schema [:map {:closed false}])}
+            :handler    (integrant.core/ref ::web.tournament.view/player-replay-parse-fragment)}}]
+   ["/tournament/:tournament-eid/match/:match-eid/replay/submit"
+    {:post {:produces   ["application/htmx+html"]
+            :parameters {:path (schema.contract/to-schema
+                                [:map
+                                 [:tournament-eid :uuid]
+                                 [:match-eid :uuid]])}
+            :handler    (integrant.core/ref ::web.tournament.view/player-replay-submit-fragment)}}]
    ["/league/:eid"
     {:put {:produces   ["application/htmx+html"]
            :parameters {:path  schema.contract/id-path-parameter

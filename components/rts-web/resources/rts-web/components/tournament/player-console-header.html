@@ -1,0 +1,17 @@
+{# The bar across the top of every player console page: shows the
+   tournament name, the player's current match, and what mode of the
+   console they're in. #}
+<header class="console-header">
+    <div class="console-header-inner">
+        <div class="console-header-left">
+            <div class="console-breadcrumb">
+                <a href="/view/game/{{game-eid}}/tournament/{{data.eid}}/index.html">← {{data.name}}</a>
+                <span class="console-breadcrumb-sep">/</span>
+                <span>Player Console</span>
+            </div>
+            <div class="console-title-row">
+                <h1 class="console-title">{{mode-label}}</h1>
+            </div>
+        </div>
+    </div>
+</header>

@@ -93,12 +93,11 @@
             :com.devereux-henley.rts-web.web.tournament.view/tournament-view
             :com.devereux-henley.rts-web.web.tournament.view/tournament-phase-form-view
             :com.devereux-henley.rts-web.web.tournament.view/phase-panel-view
-            :com.devereux-henley.rts-web.web.tournament.view/round-row-view))
-
-(def match-record-configuration
-  (handlers :com.devereux-henley.rts-web.web.tournament.view/modal-view
-            :com.devereux-henley.rts-web.web.tournament.view/parse-replays-fragment
-            :com.devereux-henley.rts-web.web.tournament.view/record-match-fragment))
+            :com.devereux-henley.rts-web.web.tournament.view/round-row-view
+            :com.devereux-henley.rts-web.web.tournament.view/player-check-in-view
+            :com.devereux-henley.rts-web.web.tournament.view/player-series-view
+            :com.devereux-henley.rts-web.web.tournament.view/player-replay-parse-fragment
+            :com.devereux-henley.rts-web.web.tournament.view/player-replay-submit-fragment))
 
 (def actions-configuration
   (handlers :com.devereux-henley.rts-web.web.actions.draft/add-unit
@@ -174,7 +173,6 @@
          social-media-configuration
          tournament-configuration
          league-configuration
-         match-record-configuration
          actions-configuration
          orchestration-configuration))
 

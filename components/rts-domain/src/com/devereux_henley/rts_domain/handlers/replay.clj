@@ -6,8 +6,12 @@
    [clojure.string :as string]
    [com.devereux-henley.rts-data-access.contract :as db]
    [com.devereux-henley.rts-domain.handlers.draft :as handlers.draft]
+   [com.devereux-henley.rts-domain.handlers.tournament :as handlers.tournament]
    [com.devereux-henley.rts-domain.rules.tournament :as rules.tournament]
-   [jsonista.core :as jsonista])
+   [com.devereux-henley.rts-domain.schema :as schema]
+   [com.devereux-henley.schema.contract :as schema.contract]
+   [jsonista.core :as jsonista]
+   [malli.core :as m])
   (:import
    [java.time Instant]))
 
@@ -76,14 +80,6 @@
   [message]
   {:type :match-record/error :message message})
 
-(defn parse-replay-files
-  "Parses N uploaded replays without touching the DB. Returns a vector of
-  parsed maps in the same order as the input. Used by the modal's Phase 1
-  (Step 1 → Step 2) so the client can render parsed drafts in Step 3 before
-  any winners are declared."
-  [dependencies file-paths]
-  (mapv #(parse-replay-file dependencies %) file-paths))
-
 ;; ─── Auto-create drafts on submit ───────────────────────────────────────────
 ;;
 ;; Each game in the submission yields a pair of drafts (one per alliance →
@@ -99,16 +95,16 @@
   cosmetic when the mapping is ambiguous."
   #{"BATTLE_SETUP_VICTORY_CONDITION_CAPTURE_LOCATION_SCORE"})
 
-(defn- pick-game-mode-eid
-  "Picks a game-mode eid from `game-modes` keyed on the parsed
+(defn pick-game-mode
+  "Picks a game-mode entity from `game-modes` keyed on the parsed
   `victory_condition`. Falls back to the first game-mode (typically
   `Land Battle`) when no mapping matches."
   [game-modes victory-condition]
   (let [target (if (contains? domination-victory-conditions victory-condition)
                  "Domination"
-                 "Land Battle")
-        chosen (first (filter #(= target (:name %)) game-modes))]
-    (:eid (or chosen (first game-modes)))))
+                 "Land Battle")]
+    (or (first (filter #(= target (:name %)) game-modes))
+        (first game-modes))))
 
 (defn- alliance-sides
   "Builds a 2-vector of {:player-sub :alliance} pairs aligned with
@@ -257,7 +253,7 @@
   (let [conn          (:connection dependencies)
         subfaction    (resolve-subfaction-for-alliance conn alliance)
         faction-eid   (:faction-eid subfaction)
-        game-mode-eid (pick-game-mode-eid game-modes (:victory-condition parsed))]
+        game-mode-eid (:eid (pick-game-mode game-modes (:victory-condition parsed)))]
     (when (and faction-eid game-mode-eid player-sub)
       (let [key->row        (resolve-units-for-game conn parsed)
             ;; Mount detection must consult the engine-emitted keys (which carry
@@ -313,106 +309,77 @@
     {:player-one-draft-eid (build p1)
      :player-two-draft-eid (build p2)}))
 
-(defn record-match-from-parsed
-  "Atomically records a tournament match from N already-parsed replays plus
-  per-game declared winners.
+(defn record-game-from-parsed
+  "Records a single game in a tournament match from one already-parsed
+  replay plus a declared winner. Used by the player-console submitting
+  step where games are submitted one at a time.
 
-  `submission` shape:
-    {:games [{:parsed     <map>            ; output of parse-replay-files
-              :winner-sub \"sigmar_42\"   ; declared winner for this game
-              :source-name \"foo.replay\"  ; optional, fallback for match-id
-              }
-             …]
-     :uploaded-by-sub \"sigmar_42\"}
+  Persists a `replay` row, builds and persists per-side drafts, creates
+  the next `match_game` row, and updates the parent match if the series
+  is now clinched.
 
-  Behaviour:
-    * Persists a `replay` row per parsed map.
-    * Persists a `match_game` row per game, linked to the replay and tagged
-      with the uploader's local alliance index from the parsed header.
-    * Updates the parent `match` if the series is mathematically clinched.
+  Submission shape is `schema/record-game-submission-spec`. Shape errors
+  return :type :match-record/error; contextual errors (match not found,
+  match complete, winner not in match) likewise short-circuit. No DB
+  writes on any error path."
+  [dependencies match-eid {:keys [winner-sub source-name uploaded-by-sub parsed] :as submission}]
+  (if-let [shape-error (schema.contract/explain->message
+                        (m/explain schema/record-game-submission-spec submission))]
+    (short-circuit-error shape-error)
+    (let [match (db/get-match-by-eid (:connection dependencies) match-eid)]
+      (cond
+        (nil? match)
+        (short-circuit-error "Match not found.")
 
-  Validation errors short-circuit (no DB writes).  Match must be `pending`
-  and must not already have any games recorded — re-uploads on a partially
-  recorded match are rejected to keep the modal flow simple."
-  [dependencies match-eid submission]
-  (let [match (db/get-match-by-eid (:connection dependencies) match-eid)]
-    (cond
-      (nil? match)
-      (short-circuit-error "Match not found.")
+        (= "complete" (:status match))
+        (short-circuit-error "Match is already complete.")
 
-      (= "complete" (:status match))
-      (short-circuit-error "Match is already complete.")
+        (not (valid-winner? match winner-sub))
+        (short-circuit-error "Declared winner must match one of the match's players.")
 
-      (seq (db/get-games-for-match (:connection dependencies) match-eid))
-      (short-circuit-error "Match already has recorded games.")
-
-      (not (<= 1 (count (:games submission)) (:format match)))
-      (short-circuit-error
-       (format "A Bo%d match accepts between 1 and %d games; got %d."
-               (:format match) (:format match) (count (:games submission))))
-
-      (not (every? #(valid-winner? match (:winner-sub %)) (:games submission)))
-      (short-circuit-error "Declared winner must match one of the match's players.")
-
-      :else
-      (let [provisional  (mapv (fn [g] {:winner-sub (:winner-sub g)}) (:games submission))
-            match-winner (rules.tournament/check-match-complete provisional (:format match))]
-        (cond
-          (nil? match-winner)
-          (short-circuit-error
-           (format "Submitted games do not decide the series — no player reached the Bo%d win threshold."
-                   (:format match)))
-
-          :else
-          (let [conn            (:connection dependencies)
-                tournament      (db/get-tournament-by-eid conn (:tournament-eid match))
-                game-modes      (db/get-game-modes-for-game conn (:game-eid tournament))
-                uploaded-by-sub (:uploaded-by-sub submission)
-                now             (Instant/now)
-                stored
-                (mapv (fn [game-index {:keys [parsed winner-sub source-name]}]
-                        (let [replay (persist-replay dependencies
-                                                     {:parsed          parsed
-                                                      :source-name     source-name
-                                                      :uploaded-by-sub uploaded-by-sub})
-                              ;; Auto-create one draft per side from the parsed
-                              ;; replay so the match_game row can lock both
-                              ;; players' lineups. Either eid can come back nil
-                              ;; when the alliance's faction_key isn't in the
-                              ;; seed; in that case the game records normally
-                              ;; with that side's draft slot left empty.
-                              {:keys [player-one-draft-eid player-two-draft-eid]}
-                              (build-and-persist-drafts-for-game
-                               dependencies
-                               {:match           match
-                                :parsed          parsed
-                                :round-num       (:round-index match)
-                                :game-num        game-index
-                                :tournament      tournament
-                                :game-modes      game-modes
-                                :uploaded-by-sub uploaded-by-sub
-                                :now             now})]
-                          (db/create-game
-                           conn match-eid game-index winner-sub
-                           {:replay-eid                    (:eid replay)
-                            :uploader-local-alliance-index (:uploader-local-alliance-index replay)
-                            :player-one-draft-eid          player-one-draft-eid
-                            :player-two-draft-eid          player-two-draft-eid})))
-                      (range)
-                      (:games submission))]
-            (db/update-match-result conn match-eid match-winner)
-            {:type       :match-record/recorded
-             :match-eid  match-eid
-             :games      stored
-             :winner-sub match-winner
-             :complete?  true}))))))
-
-(defn get-record-context
-  "Fetches the data needed to render the post-match modal for a match:
-   the match itself plus any already-recorded games (which determines whether
-   to surface the recorder UI or a read-only summary)."
-  [dependencies match-eid]
-  (let [match (db/get-match-by-eid (:connection dependencies) match-eid)]
-    (when match
-      {:match match
-       :games (db/get-games-for-match (:connection dependencies) match-eid)})))
+        :else
+        (let [conn           (:connection dependencies)
+              existing-games (db/get-games-for-match conn match-eid)
+              game-index     (count existing-games)]
+          (if (>= game-index (:format match))
+            (short-circuit-error (format "Match already has its maximum %d games." (:format match)))
+            (let [tournament (db/get-tournament-by-eid conn (:tournament-eid match))
+                  game-modes (db/get-game-modes-for-game conn (:game-eid tournament))
+                  now        (Instant/now)
+                  replay     (persist-replay dependencies
+                                             {:parsed          parsed
+                                              :source-name     source-name
+                                              :uploaded-by-sub uploaded-by-sub})
+                  {:keys [player-one-draft-eid player-two-draft-eid]}
+                  (build-and-persist-drafts-for-game
+                   dependencies
+                   {:match           match
+                    :parsed          parsed
+                    :round-num       (:round-index match)
+                    :game-num        game-index
+                    :tournament      tournament
+                    :game-modes      game-modes
+                    :uploaded-by-sub uploaded-by-sub
+                    :now             now})
+                  stored     (db/create-game
+                              conn match-eid game-index winner-sub
+                              {:replay-eid                    (:eid replay)
+                               :uploader-local-alliance-index (:uploader-local-alliance-index replay)
+                               :player-one-draft-eid          player-one-draft-eid
+                               :player-two-draft-eid          player-two-draft-eid})
+                  all-games  (conj (mapv #(select-keys % [:winner-sub]) existing-games)
+                                   {:winner-sub winner-sub})
+                  clincher   (rules.tournament/check-match-complete all-games (:format match))]
+              (when clincher
+              ;; Route through the public domain function so standings get
+              ;; recalculated and tournament-complete check fires — going
+              ;; straight to db/update-match-result here would leave the
+              ;; state blob stale.
+                (handlers.tournament/update-match-result dependencies match-eid clincher))
+              (cond-> {:type            :match-record/game-recorded
+                       :match-eid       match-eid
+                       :game            stored
+                       :game-index      game-index
+                       :winner-sub      winner-sub
+                       :match-complete? (boolean clincher)}
+                clincher (assoc :match-winner clincher)))))))))

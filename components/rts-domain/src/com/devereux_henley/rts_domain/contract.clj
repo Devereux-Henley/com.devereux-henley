@@ -112,6 +112,7 @@
 (def match-resource                               schema/match-resource)
 (def create-match-specification                   schema/create-match-specification)
 (def record-result-specification                  schema/record-result-specification)
+(def record-game-submission-spec                   schema/record-game-submission-spec)
 (def configure-phases-specification               schema/configure-phases-specification)
 (def phase-response                                schema/phase-response)
 (def round-response                                schema/round-response)
@@ -151,6 +152,9 @@
 (def default-timezone                             rules.tournament/default-timezone)
 (def group-matches-by-round                       rules.tournament/group-matches-by-round)
 (def group-matches-by-phase                       rules.tournament/group-matches-by-phase)
+(def series-current-game-num                      rules.tournament/series-current-game-num)
+(def series-win-counts                            rules.tournament/series-win-counts)
+(def series-clinches?                             rules.tournament/series-clinches?)
 
 ;;; ─── League / Season / Stats schemas ───────────────────────────────────────
 
@@ -188,6 +192,5 @@
 ;;; ─── Match record (replay-driven) ──────────────────────────────────────────
 
 (def parse-replay-file              handlers.replay/parse-replay-file)
-(def parse-replay-files             handlers.replay/parse-replay-files)
-(def record-match-from-parsed       handlers.replay/record-match-from-parsed)
-(def get-record-context             handlers.replay/get-record-context)
+(def record-game-from-parsed        handlers.replay/record-game-from-parsed)
+(def pick-game-mode                 handlers.replay/pick-game-mode)

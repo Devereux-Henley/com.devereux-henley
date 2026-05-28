@@ -1,0 +1,42 @@
+{# Shows the player which of the three stages — check in, play the
+   series, finalize — they're currently in, with earlier stages marked
+   done and later ones marked pending. #}
+<ol class="flow-stepper" aria-label="Player flow">
+    {% ifequal active "checkin" %}
+    <li class="flow-step flow-step--active">
+        <span class="flow-step-num">Step 01</span>
+        <span class="flow-step-title">Check In</span>
+        <span class="flow-step-state">Awaiting confirmation</span>
+    </li>
+    <li class="flow-step flow-step--pending">
+        <span class="flow-step-num">Step 02</span>
+        <span class="flow-step-title">Play Series</span>
+        <span class="flow-step-state">Locked</span>
+    </li>
+    <li class="flow-step flow-step--pending">
+        <span class="flow-step-num">Step 03</span>
+        <span class="flow-step-title">Finalize</span>
+        <span class="flow-step-state">Locked</span>
+    </li>
+    {% endifequal %}
+
+    {% ifequal active "playing" %}
+    <li class="flow-step flow-step--done">
+        <a href="/view/game/{{game-eid}}/tournament/{{data.eid}}/player/check-in.html">
+            <span class="flow-step-num">Step 01</span>
+            <span class="flow-step-title">Check In</span>
+            <span class="flow-step-state">Confirmed · 13:47 UTC</span>
+        </a>
+    </li>
+    <li class="flow-step flow-step--active">
+        <span class="flow-step-num">Step 02</span>
+        <span class="flow-step-title">Play Series</span>
+        <span class="flow-step-state">{{step-label}}</span>
+    </li>
+    <li class="flow-step flow-step--pending">
+        <span class="flow-step-num">Step 03</span>
+        <span class="flow-step-title">Finalize</span>
+        <span class="flow-step-state">Locked</span>
+    </li>
+    {% endifequal %}
+</ol>

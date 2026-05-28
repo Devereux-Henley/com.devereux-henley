@@ -352,3 +352,25 @@
         next-round (rules/next-ready-double-elim-round matches ["a" "b" "x" "y"] 2 1)]
     (is (= "grand-final" (:bracket next-round)))
     (is (= [{:player-one-sub "a" :player-two-sub "x"}] (:pairings next-round)))))
+
+;; ─── Player-console series projections ──────────────────────────────────────
+
+(deftest series-current-game-num-active-game
+  (is (= 3 (rules/series-current-game-num
+            [{:num 1 :result "W"} {:num 2 :result "L"} {:num 3 :result nil} {:num 4 :result nil}]))))
+
+(deftest series-current-game-num-all-settled-returns-count
+  (is (= 5 (rules/series-current-game-num
+            [{:num 1 :result "W"} {:num 2 :result "W"} {:num 3 :result "L"}
+             {:num 4 :result "W"} {:num 5 :result "L"}]))))
+
+(deftest series-win-counts-perspective
+  (is (= {:wins 2 :losses 1}
+         (rules/series-win-counts
+          [{:result "W"} {:result "L"} {:result "W"} {:result nil}]))))
+
+(deftest series-clinches-bo5
+  ;; Bo5 threshold = 3 wins
+  (is (true? (rules/series-clinches? 2 5))  "2 wins + 1 = 3 → clinches Bo5")
+  (is (false? (rules/series-clinches? 1 5)) "1 win + 1 = 2 → does not clinch Bo5")
+  (is (true? (rules/series-clinches? 0 1))  "1 win clinches Bo1"))

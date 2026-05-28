@@ -1,0 +1,55 @@
+{% extends "rts-web/template/entrypoint.html" %}
+
+{% block title %}Play Series · {{data.name}} | RTS-UI{% endblock %}
+
+{% block content %}
+<div class="console-page">
+
+    {% include "rts-web/components/tournament/player-console-header.html" with mode-label="Play Series" %}
+
+    <div class="console-body">
+        {% include "rts-web/components/tournament/player-stepper.html" with active="playing" %}
+
+        {% include "rts-web/components/tournament/player-series-progress.html" %}
+
+        <section class="panel active-game-panel active-game-panel--{{current-step}}" aria-labelledby="active-game-heading">
+            <header class="panel-head">
+                <h2 class="panel-title" id="active-game-heading">
+                    <span class="active-game-tag">Game {{current-game}} / {{total-games}}</span>
+                    <span class="active-game-map">{{current-map}}</span>
+                </h2>
+            </header>
+            <div class="panel-body">
+
+                {% if step-live? %}
+                {% include "rts-web/components/tournament/player-step-live.html" %}
+                {% endif %}
+
+                {% if step-declare? %}
+                {% include "rts-web/components/tournament/player-step-declare.html" %}
+                {% endif %}
+
+                {% if step-submitting? %}
+                {% if match-eid %}
+                {% include "rts-web/components/tournament/player-replay-upload-form.html" %}
+                {% else %}
+                <div class="replay-upload-missing-match" role="alert">
+                    <div class="eyebrow">No pending match</div>
+                    <p>You have no pending match in this tournament — there's nothing to upload a replay against.</p>
+                </div>
+                {% endif %}
+                {% endif %}
+
+                {% if step-opp-uploading? %}
+                {% include "rts-web/components/tournament/player-step-await.html" %}
+                {% endif %}
+
+            </div>
+        </section>
+
+        {% if settled-games|not-empty? %}
+        {% include "rts-web/components/tournament/player-earlier-games.html" %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

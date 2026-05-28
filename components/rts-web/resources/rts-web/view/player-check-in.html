@@ -1,0 +1,83 @@
+{% extends "rts-web/template/entrypoint.html" %}
+
+{% block title %}Check In · {{data.name}} | RTS-UI{% endblock %}
+
+{% block content %}
+<div class="console-page">
+
+    {% include "rts-web/components/tournament/player-console-header.html" with mode-label="Check In" %}
+
+    <div class="console-body">
+        {% include "rts-web/components/tournament/player-stepper.html" with active="checkin" %}
+
+        <section class="panel" aria-labelledby="check-in-heading">
+            <header class="panel-head">
+                <h2 class="panel-title" id="check-in-heading">Series Check-In · {{match-label}}</h2>
+                <span class="panel-subtitle">{{check-in-window}}</span>
+            </header>
+            <div class="panel-body">
+                <div class="checkin-block">
+                    <div>
+                        <h3 class="checkin-headline">Confirm you're ready for this series</h3>
+                        <p class="checkin-sub">
+                            You only check in once for the whole Bo5. The series lobby code is revealed
+                            as soon as both you and your opponent confirm — share it with the caster,
+                            then play through all five games in the same lobby.
+                        </p>
+                    </div>
+                    <a class="btn-primary-lg"
+                       href="/view/game/{{game-eid}}/tournament/{{data.eid}}/player/series.html">
+                        Check me in for the series
+                    </a>
+                </div>
+
+                <div class="checkin-grid">
+                    <div class="checkin-player checkin-player--pending">
+                        <span class="faction-crest"
+                              style="color: {{me.faction-color}}; border-color: color-mix(in srgb, {{me.faction-color}} 60%, transparent); background: color-mix(in srgb, {{me.faction-color}} 8%, transparent);"
+                              aria-hidden="true">{{me.faction-sigil}}</span>
+                        <div class="checkin-player-info">
+                            <div class="eyebrow">You</div>
+                            <div class="checkin-player-handle">{{me.handle}}</div>
+                            <div class="mono muted checkin-player-faction">{{me.faction-name}}</div>
+                        </div>
+                        <div class="checkin-player-status">· Awaiting ·</div>
+                    </div>
+
+                    <div class="checkin-player {% if opponent-checked-in? %}checkin-player--ready{% else %}checkin-player--pending{% endif %}">
+                        <span class="faction-crest"
+                              style="color: {{opponent.faction-color}}; border-color: color-mix(in srgb, {{opponent.faction-color}} 60%, transparent); background: color-mix(in srgb, {{opponent.faction-color}} 8%, transparent);"
+                              aria-hidden="true">{{opponent.faction-sigil}}</span>
+                        <div class="checkin-player-info">
+                            <div class="eyebrow">Opponent</div>
+                            <div class="checkin-player-handle">{{opponent.handle}}</div>
+                            <div class="mono muted checkin-player-faction">{{opponent.faction-name}}</div>
+                        </div>
+                        <div class="checkin-player-status">
+                            {% if opponent-checked-in? %}✓ Checked In{% else %}· Awaiting ·{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel" aria-labelledby="path-heading">
+            <header class="panel-head">
+                <h2 class="panel-title" id="path-heading">Your Path to the Crown</h2>
+                <span class="panel-subtitle">Two wins from the Grand Final</span>
+            </header>
+            <div class="panel-body">
+                <ol class="path-strip">
+                    {% for stage in path %}
+                    <li class="path-stage path-stage--{{stage.state}}">
+                        <span class="eyebrow">{{stage.stage}}</span>
+                        <span class="path-stage-label">{{stage.label}}</span>
+                        <span class="mono muted path-stage-detail">{{stage.detail}}</span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

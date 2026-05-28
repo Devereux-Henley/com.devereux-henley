@@ -1,0 +1,21 @@
+{# Tells the player a game is currently in progress and gives them
+   somewhere to click once it ends. #}
+<div class="game-live">
+    <div class="game-live-pulse">
+        <span class="game-live-dot" aria-hidden="true"></span>
+        <span class="game-live-label">In Game</span>
+    </div>
+    <div class="game-live-info">
+        <div class="eyebrow">Game {{current-game}} · {{current-map}}</div>
+        <p>
+            Stay in the series lobby until the game resolves. As soon as it ends,
+            the winner uploads the replay and the loser confirms it before the series
+            advances.
+        </p>
+        <div class="mono muted game-live-elapsed">Elapsed · 14:32 · auto-detect listening for replay file</div>
+    </div>
+    <a class="btn btn-primary btn-sm"
+       href="/view/game/{{game-eid}}/tournament/{{data.eid}}/player/series.html?step=declare">
+        Game {{current-game}} ended →
+    </a>
+</div>

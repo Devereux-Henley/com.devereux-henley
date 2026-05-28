@@ -1,0 +1,88 @@
+{# Drop or browse to attach a .rep file. While the parser runs, a
+   stepped progress overlay shows what's being checked; when it finishes
+   the review screen replaces this form so the player can confirm the
+   detected winner and armies before submitting. #}
+<form class="stack replay-upload-form"
+      hx-post="/actions/tournament/{{data.eid}}/match/{{match-eid}}/replay/parse"
+      hx-encoding="multipart/form-data"
+      hx-target="closest .panel-body"
+      hx-swap="innerHTML swap:{{parse-swap-delay-ms}}ms"
+      hx-on:htmx:before-request="this.classList.add('replay-upload-form--parsing')"
+      hx-on:htmx:after-swap="this.classList.remove('replay-upload-form--parsing')"
+      hx-on:htmx:response-error="this.classList.remove('replay-upload-form--parsing')">
+    <label class="replay-drop"
+           _="on dragover halt the event then add .replay-drop--over
+              on dragleave remove .replay-drop--over
+              on drop remove .replay-drop--over">
+        <input type="file"
+               name="game-0"
+               accept=".rep,.replay"
+               class="replay-drop-input"
+               required
+               _="on change
+                    if my files's length > 0
+                      set f to my files[0]
+                      set drop to the closest .replay-drop
+                      put f.name into the first .replay-drop-filename in drop
+                      put ((f.size / 1048576).toFixed(1) + ' MB · ready to parse') into the first .replay-drop-filemeta in drop
+                      add .replay-drop--filled to drop
+                      remove @disabled from the first .replay-submit-btn in the closest <form/>
+                    end
+                  end">
+        <span class="replay-drop-icon" aria-hidden="true">↥</span>
+        <span class="replay-drop-headline">
+            <span class="replay-drop-placeholder">Drop your Game {{current-game}} replay here</span>
+            <span class="replay-drop-filename mono"></span>
+        </span>
+        <span class="replay-drop-sub">
+            <span class="replay-drop-placeholder"><code>.rep</code> file from your Battle Replays folder · map and winner auto-detected</span>
+            <span class="replay-drop-filemeta mono"></span>
+        </span>
+        <span class="replay-drop-browse btn btn-secondary btn-sm" aria-hidden="true">Browse local files</span>
+    </label>
+
+    <div class="parse-overlay" aria-hidden="true">
+        <div class="parse-overlay-spinner">
+            <svg viewBox="0 0 88 88" aria-hidden="true">
+                <defs>
+                    <linearGradient id="parse-spin-g" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%"   stop-color="var(--color-primary-700)"/>
+                        <stop offset="100%" stop-color="var(--color-primary-500)" stop-opacity="0.2"/>
+                    </linearGradient>
+                </defs>
+                <circle cx="44" cy="44" r="40" fill="none" stroke="var(--color-border)" stroke-width="1"/>
+                <circle cx="44" cy="44" r="40" fill="none" stroke="url(#parse-spin-g)" stroke-width="2"
+                        stroke-dasharray="60 200" stroke-linecap="round"/>
+                <circle cx="44" cy="44" r="32" fill="none" stroke="var(--color-border)" stroke-width="1" stroke-dasharray="2 4"/>
+            </svg>
+            <span class="parse-overlay-spinner-inner">Reading</span>
+        </div>
+        <div class="parse-overlay-status">Parsing replay archive</div>
+        <ul class="parse-overlay-log">
+            {% for row in parse-log-rows %}
+            <li class="parse-log-row" style="animation-delay: {{row.delay-ms}}ms;">
+                <span class="parse-log-mark">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m5 12 5 5L20 7"/>
+                    </svg>
+                </span>
+                <span>{{row.label}}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="submit-actions">
+        <div class="submit-actions-context mono muted">
+            Drop your .rep file or browse to attach it · the parser auto-detects winner + map.
+        </div>
+        <div class="cluster">
+            <a class="btn btn-ghost btn-sm"
+               href="/view/game/{{game-eid}}/tournament/{{data.eid}}/player/series.html?step=declare">← Back</a>
+            <button type="submit" class="btn btn-primary btn-sm replay-submit-btn" disabled>
+                Parse replay →
+            </button>
+        </div>
+    </div>
+</form>
