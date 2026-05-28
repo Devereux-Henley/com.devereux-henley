@@ -1,9 +1,9 @@
 (ns com.devereux-henley.rts-web.web.game.view
   (:require
    [clojure.java.io :as io]
+   [com.devereux-henley.rts-data-access.contract :as db]
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.render :as render]
-   [com.devereux-henley.rts-web.web.game.queries :as queries]
    [com.devereux-henley.rts-web.web.view :as web.view]
    [integrant.core]))
 
@@ -33,10 +33,10 @@
   [_init-key {:keys [datalog-connection]}]
   (partial web.view/standard-entity-view-handler
            (fn [eid]
-             (if-let [faction (queries/faction-by-eid datalog-connection eid)]
+             (if-let [faction (db/faction-by-eid datalog-connection eid)]
                (assoc-in faction [:_embedded :units-by-category]
                          (units-by-category
-                          (queries/units-for-faction datalog-connection eid)))
+                          (db/units-for-faction datalog-connection eid)))
                {:type :missing/resource :name "faction" :id eid}))
            "faction.html"
            (fn [_data _request] {})))
@@ -49,8 +49,8 @@
   (if lore-key
     (mapv (fn [{:keys [eid key name mana-cost cost]}]
             {:eid eid :key key :name name :mana-cost mana-cost :cost cost})
-          (queries/spells-for-lore conn lore-key))
-    (let [key->spell (queries/spells-by-keys conn draftable-spells)]
+          (db/spells-for-lore conn lore-key))
+    (let [key->spell (db/spells-by-keys conn draftable-spells)]
       (mapv (fn [k]
               (let [spell (get key->spell k)]
                 {:name      (or (:name spell) k)
@@ -63,7 +63,7 @@
   "Resolve ability keys against the ability table, preserving the input
   order so the rendered list matches the order the unit lists them."
   [conn ability-keys]
-  (let [key->ability (queries/abilities-by-keys conn ability-keys)]
+  (let [key->ability (db/abilities-by-keys conn ability-keys)]
     (mapv (fn [k]
             (let [a (get key->ability k)]
               {:name        (:name a)
@@ -75,7 +75,7 @@
   [_init-key {:keys [datalog-connection]}]
   (partial web.view/standard-entity-view-handler
            (fn [eid]
-             (or (queries/unit-by-eid datalog-connection eid)
+             (or (db/unit-by-eid datalog-connection eid)
                  {:type :missing/resource :name "unit" :id eid}))
            "unit.html"
            (fn [data _request]
@@ -83,8 +83,8 @@
                    lore-key                                   (:lore data)
                    resolved-spells                            (resolve-spells datalog-connection lore-key draftable-spells)
                    resolved-abilities                         (resolve-abilities datalog-connection abilities)
-                   mounts                                     (queries/mounts-for-unit datalog-connection (:eid data))
-                   items                                      (queries/items-for-unit datalog-connection (:eid data))
+                   mounts                                     (db/mounts-for-unit datalog-connection (:eid data))
+                   items                                      (db/items-for-unit datalog-connection (:eid data))
                    portrait-stem                              (:eid data)]
                {:unit-statistics  stats
                 :abilities        (not-empty resolved-abilities)

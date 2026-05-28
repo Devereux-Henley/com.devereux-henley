@@ -1,15 +1,21 @@
-(ns com.devereux-henley.rts-web.web.game.queries
-  "Per-template Datalevin pull/q queries for the game domain. Each public fn
-  matches one template's data shape (game-collection, game detail,
+(ns com.devereux-henley.rts-data-access.query.datalog.game
+  "Per-template Datalevin pull/q queries for the game domain. Each public
+  fn matches one template's data shape (game-collection, game detail,
   faction-collection, faction detail, unit-collection, unit detail,
-  game-selector). Handlers in `web.game.view`, `web.game.api`, and
-  `web.view` call these instead of the SQLite-era `query/game.clj` fns;
-  the SQL path lives until `rts-khy` retires it.
+  game-selector). Handlers reach these through `rts-data-access.contract`
+  alongside the SQLite-era `query/game.clj` fns; the SQL path lives until
+  `rts-khy` retires it.
 
-  Result maps use unqualified keys (`:eid`, `:name`, `:game-eid`, …) so the
-  existing resource schemas in `rts-domain` and Selmer templates render
-  unchanged. Foreign-key refs are pulled as `{<ns>/eid uuid}` sub-maps and
-  flattened to `:<thing>-eid` to match the SQLite-era entity shape."
+  Result maps use unqualified keys (`:eid`, `:name`, `:game-eid`, …) so
+  the existing resource schemas in `rts-domain` and Selmer templates
+  render unchanged. Foreign-key refs are pulled as `{<ns>/eid uuid}`
+  sub-maps and flattened to `:<thing>-eid` to match the SQLite-era entity
+  shape.
+
+  Each public fn snapshots the current db at entry (`(dl/db conn)`) and
+  uses it for the single pull/q it issues. The snapshot is cheap (one
+  atomic deref) and binds the query to a consistent point-in-time view —
+  later transacts don't change the result mid-fn."
   (:require
    [com.devereux-henley.datalog.contract :as dl]))
 
@@ -208,146 +214,156 @@
 (defn games
   "All games. Drives the `game-collection` template and `game-selector`."
   [conn]
-  (->> (dl/q '[:find [(pull ?g pattern) ...]
-               :in $ pattern
-               :where [?g :game/eid]]
-             conn game-pattern)
-       (mapv ->game)
-       (sort-by :name)
-       vec))
+  (let [db (dl/db conn)]
+    (->> (dl/q '[:find [(pull ?g pattern) ...]
+                 :in $ pattern
+                 :where [?g :game/eid]]
+               db game-pattern)
+         (mapv ->game)
+         (sort-by :name)
+         vec)))
 
 (defn game-by-eid
   "Single game for the `game` detail template. Returns nil when not found."
   [conn eid]
-  (->game (dl/pull conn game-pattern (dl/lookup-ref :game/eid eid))))
+  (->game (dl/pull (dl/db conn) game-pattern (dl/lookup-ref :game/eid eid))))
 
 ;; ─── Faction queries ───────────────────────────────────────────────────────
 
 (defn factions-for-game
   "Factions for a game, sorted by name. Drives `faction-collection`."
   [conn game-eid]
-  (->> (dl/q '[:find [(pull ?f pattern) ...]
-               :in $ pattern ?game-eid
-               :where
-               [?g :game/eid ?game-eid]
-               [?f :faction/game ?g]]
-             conn faction-pattern game-eid)
-       (mapv ->faction)
-       (sort-by :name)
-       vec))
+  (let [db (dl/db conn)]
+    (->> (dl/q '[:find [(pull ?f pattern) ...]
+                 :in $ pattern ?game-eid
+                 :where
+                 [?g :game/eid ?game-eid]
+                 [?f :faction/game ?g]]
+               db faction-pattern game-eid)
+         (mapv ->faction)
+         (sort-by :name)
+         vec)))
 
 (defn factions
   "Every faction in the system, sorted by name."
   [conn]
-  (->> (dl/q '[:find [(pull ?f pattern) ...]
-               :in $ pattern
-               :where [?f :faction/eid]]
-             conn faction-pattern)
-       (mapv ->faction)
-       (sort-by :name)
-       vec))
+  (let [db (dl/db conn)]
+    (->> (dl/q '[:find [(pull ?f pattern) ...]
+                 :in $ pattern
+                 :where [?f :faction/eid]]
+               db faction-pattern)
+         (mapv ->faction)
+         (sort-by :name)
+         vec)))
 
 (defn faction-by-eid
   "Single faction for the `faction` detail template."
   [conn eid]
-  (->faction (dl/pull conn faction-pattern (dl/lookup-ref :faction/eid eid))))
+  (->faction (dl/pull (dl/db conn) faction-pattern (dl/lookup-ref :faction/eid eid))))
 
 ;; ─── Unit queries ──────────────────────────────────────────────────────────
 
 (defn units-for-faction
   "Unit summary rows for a faction, sorted by `(unit-category-name, name)`."
   [conn faction-eid]
-  (->> (dl/q '[:find [(pull ?u pattern) ...]
-               :in $ pattern ?faction-eid
-               :where
-               [?f :faction/eid ?faction-eid]
-               [?u :unit/faction ?f]]
-             conn unit-summary-pattern faction-eid)
-       (mapv ->unit-summary)
-       (sort-by (juxt :unit-category-name :name))
-       vec))
+  (let [db (dl/db conn)]
+    (->> (dl/q '[:find [(pull ?u pattern) ...]
+                 :in $ pattern ?faction-eid
+                 :where
+                 [?f :faction/eid ?faction-eid]
+                 [?u :unit/faction ?f]]
+               db unit-summary-pattern faction-eid)
+         (mapv ->unit-summary)
+         (sort-by (juxt :unit-category-name :name))
+         vec)))
 
 (defn units-for-game
   "Unit summary rows for a game."
   [conn game-eid]
-  (->> (dl/q '[:find [(pull ?u pattern) ...]
-               :in $ pattern ?game-eid
-               :where
-               [?g :game/eid ?game-eid]
-               [?u :unit/game ?g]]
-             conn unit-summary-pattern game-eid)
-       (mapv ->unit-summary)
-       (sort-by (juxt :unit-category-name :name))
-       vec))
+  (let [db (dl/db conn)]
+    (->> (dl/q '[:find [(pull ?u pattern) ...]
+                 :in $ pattern ?game-eid
+                 :where
+                 [?g :game/eid ?game-eid]
+                 [?u :unit/game ?g]]
+               db unit-summary-pattern game-eid)
+         (mapv ->unit-summary)
+         (sort-by (juxt :unit-category-name :name))
+         vec)))
 
 (defn units
   "Every unit summary in the system."
   [conn]
-  (->> (dl/q '[:find [(pull ?u pattern) ...]
-               :in $ pattern
-               :where [?u :unit/eid]]
-             conn unit-summary-pattern)
-       (mapv ->unit-summary)
-       (sort-by (juxt :unit-category-name :name))
-       vec))
+  (let [db (dl/db conn)]
+    (->> (dl/q '[:find [(pull ?u pattern) ...]
+                 :in $ pattern
+                 :where [?u :unit/eid]]
+               db unit-summary-pattern)
+         (mapv ->unit-summary)
+         (sort-by (juxt :unit-category-name :name))
+         vec)))
 
 (defn unit-by-eid
   "Full unit row including the decoded `:unit-statistics` document."
   [conn eid]
-  (->unit-detail (dl/pull conn unit-detail-pattern (dl/lookup-ref :unit/eid eid))))
+  (->unit-detail (dl/pull (dl/db conn) unit-detail-pattern (dl/lookup-ref :unit/eid eid))))
 
 ;; ─── Embed queries (game detail + faction detail enrichments) ──────────────
 
 (defn game-modes-for-game
   [conn game-eid]
-  (->> (dl/q '[:find [(pull ?gm pattern) ...]
-               :in $ pattern ?game-eid
-               :where
-               [?g :game/eid ?game-eid]
-               [?gm :game-mode/game ?g]]
-             conn game-mode-pattern game-eid)
-       (mapv ->game-mode)
-       (sort-by :name)
-       vec))
+  (let [db (dl/db conn)]
+    (->> (dl/q '[:find [(pull ?gm pattern) ...]
+                 :in $ pattern ?game-eid
+                 :where
+                 [?g :game/eid ?game-eid]
+                 [?gm :game-mode/game ?g]]
+               db game-mode-pattern game-eid)
+         (mapv ->game-mode)
+         (sort-by :name)
+         vec)))
 
 (defn socials-for-game
   [conn game-eid]
-  (->> (dl/q '[:find [(pull ?s pattern) ...]
-               :in $ pattern ?game-eid
-               :where
-               [?g :game/eid ?game-eid]
-               [?s :game-social-link/game ?g]]
-             conn social-link-pattern game-eid)
-       (mapv ->social)
-       (sort-by :platform-name)
-       vec))
+  (let [db (dl/db conn)]
+    (->> (dl/q '[:find [(pull ?s pattern) ...]
+                 :in $ pattern ?game-eid
+                 :where
+                 [?g :game/eid ?game-eid]
+                 [?s :game-social-link/game ?g]]
+               db social-link-pattern game-eid)
+         (mapv ->social)
+         (sort-by :platform-name)
+         vec)))
 
 ;; ─── Unit enrichments (detail page) ────────────────────────────────────────
 
 (defn mounts-for-unit
   [conn unit-eid]
-  (->> (dl/q '[:find [(pull ?um pattern) ...]
-               :in $ pattern ?unit-eid
-               :where
-               [?u :unit/eid ?unit-eid]
-               [?um :unit-mount/unit ?u]]
-             conn mount-pattern unit-eid)
-       (mapv ->mount)
-       (sort-by :name)
-       vec))
+  (let [db (dl/db conn)]
+    (->> (dl/q '[:find [(pull ?um pattern) ...]
+                 :in $ pattern ?unit-eid
+                 :where
+                 [?u :unit/eid ?unit-eid]
+                 [?um :unit-mount/unit ?u]]
+               db mount-pattern unit-eid)
+         (mapv ->mount)
+         (sort-by :name)
+         vec)))
 
 (defn items-for-unit
   [conn unit-eid]
-  (->> (dl/q '[:find [(pull ?i pattern) ...]
-               :in $ pattern ?unit-eid
-               :where
-               [?u :unit/eid ?unit-eid]
-               [?ui :unit-item/unit ?u]
-               [?ui :unit-item/item ?i]]
-             conn item-pattern unit-eid)
-       (mapv ->item)
-       (sort-by :name)
-       vec))
+  (let [db (dl/db conn)]
+    (->> (dl/q '[:find [(pull ?i pattern) ...]
+                 :in $ pattern ?unit-eid
+                 :where
+                 [?u :unit/eid ?unit-eid]
+                 [?ui :unit-item/unit ?u]
+                 [?ui :unit-item/item ?i]]
+               db item-pattern unit-eid)
+         (mapv ->item)
+         (sort-by :name)
+         vec)))
 
 (defn spells-by-keys
   "Resolve a seq of spell keys into a `{key spell-resource}` map."
@@ -356,22 +372,23 @@
     (let [results (dl/q '[:find [(pull ?s pattern) ...]
                           :in $ pattern [?key ...]
                           :where [?s :spell/key ?key]]
-                        conn spell-pattern (vec spell-keys))]
+                        (dl/db conn) spell-pattern (vec spell-keys))]
       (into {} (map (fn [m] [(:spell/key m) (->spell m)])) results))))
 
 (defn spells-for-lore
   "All spells assigned to a given lore key (resolved via spell-lore)."
   [conn lore-key]
-  (->> (dl/q '[:find [(pull ?s pattern) ...]
-               :in $ pattern ?lore-key
-               :where
-               [?l :lore/key ?lore-key]
-               [?sl :spell-lore/lore ?l]
-               [?sl :spell-lore/spell ?s]]
-             conn spell-pattern lore-key)
-       (mapv ->spell)
-       (sort-by :name)
-       vec))
+  (let [db (dl/db conn)]
+    (->> (dl/q '[:find [(pull ?s pattern) ...]
+                 :in $ pattern ?lore-key
+                 :where
+                 [?l :lore/key ?lore-key]
+                 [?sl :spell-lore/lore ?l]
+                 [?sl :spell-lore/spell ?s]]
+               db spell-pattern lore-key)
+         (mapv ->spell)
+         (sort-by :name)
+         vec)))
 
 (defn abilities-by-keys
   "Resolve a seq of ability keys into a `{key ability-resource}` map."
@@ -380,5 +397,5 @@
     (let [results (dl/q '[:find [(pull ?a pattern) ...]
                           :in $ pattern [?key ...]
                           :where [?a :ability/key ?key]]
-                        conn ability-pattern (vec ability-keys))]
+                        (dl/db conn) ability-pattern (vec ability-keys))]
       (into {} (map (fn [m] [(:ability/key m) (->ability m)])) results))))

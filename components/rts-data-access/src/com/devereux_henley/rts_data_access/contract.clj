@@ -1,5 +1,6 @@
 (ns com.devereux-henley.rts-data-access.contract
   (:require
+   [com.devereux-henley.rts-data-access.query.datalog.game :as query.datalog.game]
    [com.devereux-henley.rts-data-access.query.game :as query.game]
    [com.devereux-henley.rts-data-access.query.league :as query.league]
    [com.devereux-henley.rts-data-access.query.replay :as query.replay]
@@ -105,6 +106,25 @@
 
 (def unit-statistics-raw-schema schema/unit-statistics-raw-schema)
 (def unit-statistics-transformer schema/unit-statistics-transformer)
+
+;;; ─── Game Datalog queries (per-template) ───────────────────────────────────
+
+(def games                query.datalog.game/games)
+(def game-by-eid          query.datalog.game/game-by-eid)
+(def factions             query.datalog.game/factions)
+(def factions-for-game    query.datalog.game/factions-for-game)
+(def faction-by-eid       query.datalog.game/faction-by-eid)
+(def units                query.datalog.game/units)
+(def units-for-game       query.datalog.game/units-for-game)
+(def units-for-faction    query.datalog.game/units-for-faction)
+(def unit-by-eid          query.datalog.game/unit-by-eid)
+(def game-modes-for-game  query.datalog.game/game-modes-for-game)
+(def socials-for-game     query.datalog.game/socials-for-game)
+(def mounts-for-unit      query.datalog.game/mounts-for-unit)
+(def items-for-unit       query.datalog.game/items-for-unit)
+(def spells-by-keys       query.datalog.game/spells-by-keys)
+(def spells-for-lore      query.datalog.game/spells-for-lore)
+(def abilities-by-keys    query.datalog.game/abilities-by-keys)
 
 ;;; ─── Tournament DB entities ────────────────────────────────────────────────
 
