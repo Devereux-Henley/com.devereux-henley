@@ -1,7 +1,9 @@
 (ns claude-workspace
   "Claude Code dev helpers. Loaded via the :dev alias alongside workspace.clj."
   (:require
+   [clojure.java.io :as io]
    [com.devereux-henley.rts-api.configuration :as configuration]
+   [com.devereux-henley.rts-api.datalog :as rts-datalog]
    [com.devereux-henley.rts-api.db :as rts-db]
    [com.devereux-henley.rts-api.dev-auth :as dev-auth]
    [com.devereux-henley.rts-data.contract :as rts-data]
@@ -49,7 +51,32 @@
 (defn migrate! [] (migratus/migrate migratus-config))
 (defn rollback! [] (migratus/rollback migratus-config))
 (defn reset-db! [] (migratus/reset migratus-config))
-(defn seed-db! [] (rts-data/seed-db rts-db/db-spec))
+(defn seed-sqlite! [] (rts-data/seed-db rts-db/db-spec))
+
+;; -- Datalog helpers ---------------------------------------------------------
+
+(defn- delete-recursively!
+  "Depth-first delete; tolerates a missing directory."
+  [^java.io.File f]
+  (when (.exists f)
+    (doseq [child (reverse (file-seq f))]
+      (.delete ^java.io.File child))))
+
+(defn reset-datalog!
+  "Halt the system, wipe the Datalevin LMDB directory, and restart so the
+   conn re-opens against an empty store. Use when the schema changed in a
+   non-additive way (rename/retract attribute) or when a fresh fixture state
+   is needed."
+  []
+  (halt)
+  (delete-recursively! (io/file rts-datalog/dir))
+  (go))
+
+(defn seed-datalog!
+  "Seed the Datalevin store with the canonical dev dataset. No-op while the
+   schema is empty; per-domain epics extend this as they migrate off SQLite."
+  []
+  nil)
 
 ;; -- Impersonation helpers ---------------------------------------------------
 
@@ -71,11 +98,15 @@
   (halt!)
   (restart!)
 
-  ;; Migrations
+  ;; SQLite migrations
   (migrate!)
   (rollback!)
   (reset-db!)
-  (seed-db!)
+  (seed-sqlite!)
+
+  ;; Datalog
+  (reset-datalog!)
+  (seed-datalog!)
 
   ;; Impersonation (development profile only)
   (keys dev-users)
