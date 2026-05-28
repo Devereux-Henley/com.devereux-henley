@@ -126,6 +126,7 @@
 (def create-draft!                   query.datalog.draft/create-draft!)
 (def update-draft-name!              query.datalog.draft/update-draft-name!)
 (def add-entry!                      query.datalog.draft/add-entry!)
+(def add-entries!                    query.datalog.draft/add-entries!)
 (def remove-entry!                   query.datalog.draft/remove-entry!)
 (def update-entry!                   query.datalog.draft/update-entry!)
 
@@ -164,6 +165,11 @@
 
 (schema.contract/=>* add-entry! query.datalog.draft/add-entry!
                      [:=> [:cat schema.draft/conn-schema :uuid schema.draft/entry-add-spec-schema]
+                      schema.draft/tx-report-schema])
+
+(schema.contract/=>* add-entries! query.datalog.draft/add-entries!
+                     [:=> [:cat schema.draft/conn-schema :uuid
+                           [:sequential schema.draft/entry-batch-spec-schema]]
                       schema.draft/tx-report-schema])
 
 (schema.contract/=>* remove-entry! query.datalog.draft/remove-entry!

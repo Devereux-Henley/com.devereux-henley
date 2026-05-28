@@ -28,7 +28,7 @@
                   data-access.contract/get-mounts-for-unit        (fn [_ _] [])
                   data-access.contract/get-unit-level-costs       (fn [_] {})
                   data-access.contract/create-draft!              (fn [_ spec] (assoc spec :version 1))
-                  data-access.contract/add-entry!                 (fn [_ _ _] nil)
+                  data-access.contract/add-entries!               (fn [_ _ _] nil)
                   data-access.contract/get-tournament-state       (fn [_ _] nil)
                   data-access.contract/upsert-tournament-state    (fn [_ _ _] nil)
                   data-access.contract/get-matches-for-tournament (fn [_ _] [])]
@@ -178,8 +178,8 @@
                                                                    [{:key "mount_great_taurus" :name "Great Taurus" :cost 300}
                                                                     {:key "mount_lammasu" :name "Lammasu" :cost 200}]))
                   data-access.contract/create-draft!           (fn [_ spec] (assoc spec :version 1))
-                  data-access.contract/add-entry!              (fn [_ draft-eid entry]
-                                                                 (swap! stored-states conj (assoc entry :draft-eid draft-eid)))]
+                  data-access.contract/add-entries!            (fn [_ draft-eid entries]
+                                                                 (swap! stored-states into (map #(assoc % :draft-eid draft-eid) entries)))]
       (handlers.replay/record-game-from-parsed
        deps match-eid
        {:parsed          parsed-with-mount
@@ -237,7 +237,7 @@
                   data-access.contract/create-draft!           (fn [_ spec]
                                                                  (swap! stored-drafts conj spec)
                                                                  (assoc spec :version 1))
-                  data-access.contract/add-entry!              (fn [_ _ _] nil)]
+                  data-access.contract/add-entries!            (fn [_ _ _] nil)]
       (let [result (handlers.replay/record-game-from-parsed
                     deps match-eid (valid-submission "sigmar_42"))]
         (testing "one replay row persisted"

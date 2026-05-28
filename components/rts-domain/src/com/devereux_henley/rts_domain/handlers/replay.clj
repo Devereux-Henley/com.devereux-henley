@@ -243,12 +243,7 @@
     (first (db/get-subfactions-by-keys connection [fk]))))
 
 (defn- build-and-persist-draft
-  "Creates one draft for the given side of a parsed game and writes the
-  decomposed army entries into Datalevin via `add-entry!`. Returns the
-  created draft's eid, or nil when the parsed alliance can't be
-  resolved to a seeded faction — without that we can't pick a
-  faction-eid for the draft, so we skip rather than create one with a
-  bogus FK."
+  "Creates a draft matching that of the specified player in a game."
   [dependencies {:keys [parsed alliance player-sub round-num game-num
                         tournament game-modes uploaded-by-sub _now]}]
   (let [conn          (:connection dependencies)
@@ -276,7 +271,14 @@
             draft-name      (format "%s R%d G%d"
                                     (:name tournament)
                                     (inc round-num)
-                                    (inc game-num))]
+                                    (inc game-num))
+            entries         (concat
+                             (map-indexed
+                              (fn [i e] (assoc e :section :main :ordinal i))
+                              (:main state-blob))
+                             (map-indexed
+                              (fn [i e] (assoc e :section :reinforcements :ordinal i))
+                              (:reinforcements state-blob)))]
         (db/create-draft! datalog-conn
                           {:eid            draft-eid
                            :name           draft-name
@@ -284,10 +286,7 @@
                            :faction-eid    faction-eid
                            :player-sub     player-sub
                            :created-by-sub uploaded-by-sub})
-        (doseq [entry (:main state-blob)]
-          (db/add-entry! datalog-conn draft-eid (assoc entry :section :main)))
-        (doseq [entry (:reinforcements state-blob)]
-          (db/add-entry! datalog-conn draft-eid (assoc entry :section :reinforcements)))
+        (db/add-entries! datalog-conn draft-eid entries)
         draft-eid))))
 
 (defn- build-and-persist-drafts-for-game
