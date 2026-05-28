@@ -23,8 +23,8 @@
     the pull patterns.
   - Audit columns (`created-by-sub`, `version`, `deleted-at`) from the
     SQLite era are intentionally dropped where the data is regenerated
-    from source (e.g. RPFM seeds) rather than mutated. Domains that
-    accept user mutations keep them.
+    from an upstream source (per-game seed loaders) rather than mutated.
+    Domains that accept user mutations keep them.
   - Datalevin is additive at runtime: opening a conn with a superset
     schema only adds the new attributes. Use
     `datalog.contract/update-schema` at the REPL to apply a change

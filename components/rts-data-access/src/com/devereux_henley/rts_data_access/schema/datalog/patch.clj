@@ -1,8 +1,9 @@
 (ns com.devereux-henley.rts-data-access.schema.datalog.patch
-  "Datalevin attributes for the `:patch` entity — the engine patch (e.g.
-  `\"4.0.1\"`) a given `:unit-statistics` snapshot was scraped against. The
-  seed loader inserts one `:patch` per RPFM run and links every freshly
-  scraped `:unit-statistics` to it.
+  "Datalevin attributes for the `:patch` entity — a published version of a
+  game (e.g. `\"4.0.1\"`). Game data attached to a patch (e.g.
+  `:unit-statistics`) is a snapshot of that data as of the patch. The seed
+  loader inserts a `:patch` for each game version it knows about and links
+  the freshly loaded entities to it.
 
   `:patch/version` is the display string. Use `:patch/released-at`
   (not the version string) to order patches — lexicographic comparison on
