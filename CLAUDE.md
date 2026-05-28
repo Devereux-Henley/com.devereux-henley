@@ -44,7 +44,7 @@ See `docs/rpfm-scraper/game-data.md` for the full RPFM data refresh workflow.
 
 **REPL (primary dev workflow):** Jack-in from the repo root with `M-x cider-jack-in`. The `:dev` alias (configured in `.dir-locals.el`) puts all components and bases on the classpath.
 
-**Claude's dev workspace:** `development/src/claude_workspace.clj` — Claude Code's own scratch namespace with system lifecycle helpers (`go!`, `halt!`, `restart!`) and migration helpers (`migrate!`, `rollback!`, `reset-db!`, `seed-db!`). Keep dev helpers here rather than polluting `workspace.clj`.
+**Claude's dev workspace:** `development/src/claude_workspace.clj` — Claude Code's own scratch namespace with system lifecycle helpers (`go!`, `halt!`, `restart!`), SQLite helpers (`migrate!`, `rollback!`, `reset-db!`, `seed-sqlite!`), and Datalog helpers (`reset-datalog!`, `seed-datalog!`). Keep dev helpers here rather than polluting `workspace.clj`.
 
 **Claude's REPL workflow (preferred over starting the dev server script):**
 
@@ -57,7 +57,7 @@ See `docs/rpfm-scraper/game-data.md` for the full RPFM data refresh workflow.
 2. Drive the running system through the clojure-mcp tools:
    - `(require 'claude-workspace :reload)`
    - `(claude-workspace/go!)` — migrations + Jetty on :3001
-   - `(claude-workspace/seed-db!)` — seed game data
+   - `(claude-workspace/seed-sqlite!)` — seed SQLite with game data
    - `(claude-workspace/restart!)` — reload + restart after code changes
    - `(claude-workspace/halt!)` — stop the system
 
