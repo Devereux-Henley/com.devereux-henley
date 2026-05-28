@@ -49,6 +49,12 @@ RUN curl -fsSL -o /tmp/cljfmt.tar.gz \
     && tar -xzf /tmp/cljfmt.tar.gz -C /usr/local/bin \
     && rm /tmp/cljfmt.tar.gz
 
+RUN curl -fsSL -o /tmp/beads-install.sh \
+      https://raw.githubusercontent.com/gastownhall/beads/main/scripts/install.sh \
+    && chmod +x /tmp/beads-install.sh \
+    && /tmp/beads-install.sh \
+    && rm /tmp/beads-install.sh
+
 RUN cat >/etc/profile.d/00-local-bin-path.sh <<'EOF'
 case ":$PATH:" in
     *":$HOME/.local/bin:"*) ;;
