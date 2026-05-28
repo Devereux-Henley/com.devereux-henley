@@ -22,8 +22,8 @@
   time so aliased names like `other-ns/foo` reach the actual var
   rather than registering under the alias string."
   [& syms-and-schema]
-  (let [syms   (butlast syms-and-schema)
-        schema (last syms-and-schema)
+  (let [syms        (butlast syms-and-schema)
+        schema      (last syms-and-schema)
         ->qualified (fn [s]
                       (if-let [v (ns-resolve *ns* s)]
                         (symbol (str (.ns ^clojure.lang.Var v))
