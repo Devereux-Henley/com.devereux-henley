@@ -341,14 +341,7 @@
           "SELECT level, fixed_cost, cost_multiplier, fatigue, melee_cp, missile_cp
              FROM unit_level_cost")))
 
-;;; ─── Units + unit-statistics decomposition ────────────────────────────────
-
-(def ^:private known-statistics-keys
-  "Top-level keys in `unit.unit_statistics` JSON that map to first-class
-  `:unit-statistics/*` attrs; everything else becomes a `:unit-stat`
-  sub-entity hung off `:unit-statistics/stats`."
-  #{"health" "barrier" "abilities" "draftable-spells" "draftable-abilities"
-    "attributes" "equipment" "mounts"})
+;;; ─── Units + unit-statistics ──────────────────────────────────────────────
 
 (defn- dump-unit-rows
   [conn]
@@ -381,45 +374,20 @@
     (:mark r)        (assoc :unit/mark (keyword (:mark r)))
     (:lore r)        (assoc :unit/lore (:lore r))))
 
-(defn- ->unit-stat-tx
-  [unit-statistics-eid stat-key raw-value]
-  {:unit-stat/eid   (derived-uuid "unit-stat" unit-statistics-eid stat-key)
-   :unit-stat/key   stat-key
-   :unit-stat/value (str raw-value)})
-
 (defn- ->unit-statistics-tx
+  "Build a `:unit-statistics` tx map. The full engine document goes into
+   `:unit-statistics/data` as an idoc — we don't query into most stat
+   fields, so keeping it opaque sidesteps schema evolution for every
+   patch's new numeric stats. `:cost` is denormalized as a queryable
+   scalar; it stays in the document too so the doc remains the
+   engine-shaped source of truth."
   [{:keys [unit-statistics-eid patch-eid stats-json]}]
   (let [decoded (jsonista/read-value stats-json object-mapper)]
     (cond-> {:unit-statistics/eid   unit-statistics-eid
-             :unit-statistics/patch [:patch/eid patch-eid]}
-      (get decoded "health")
-      (assoc :unit-statistics/health (long (get decoded "health")))
-
-      (and (get decoded "barrier") (pos? (get decoded "barrier")))
-      (assoc :unit-statistics/barrier (long (get decoded "barrier")))
-
-      (seq (get decoded "abilities"))
-      (assoc :unit-statistics/abilities (vec (get decoded "abilities")))
-
-      (seq (get decoded "draftable-spells"))
-      (assoc :unit-statistics/draftable-spell-keys
-             (mapv #(get % "key") (get decoded "draftable-spells")))
-
-      (seq (get decoded "draftable-abilities"))
-      (assoc :unit-statistics/draftable-ability-keys
-             (vec (get decoded "draftable-abilities")))
-
-      (seq (get decoded "attributes"))
-      (assoc :unit-statistics/attributes (vec (get decoded "attributes")))
-
-      (seq (get decoded "equipment"))
-      (assoc :unit-statistics/equipment (pr-str (get decoded "equipment")))
-
-      (seq (remove (fn [[k _]] (contains? known-statistics-keys k)) decoded))
-      (assoc :unit-statistics/stats
-             (->> decoded
-                  (remove (fn [[k _]] (contains? known-statistics-keys k)))
-                  (mapv (fn [[k v]] (->unit-stat-tx unit-statistics-eid k v))))))))
+             :unit-statistics/patch [:patch/eid patch-eid]
+             :unit-statistics/data  decoded}
+      (get decoded "cost")
+      (assoc :unit-statistics/cost (long (get decoded "cost"))))))
 
 ;;; ─── Orchestrator ─────────────────────────────────────────────────────────
 
