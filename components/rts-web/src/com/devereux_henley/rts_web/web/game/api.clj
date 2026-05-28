@@ -2,36 +2,37 @@
   (:require
    [com.devereux-henley.http.contract :as web.core]
    [com.devereux-henley.rts-domain.contract :as domain]
+   [com.devereux-henley.rts-web.web.game.queries :as queries]
    [com.devereux-henley.schema.contract :as schema.contract]
    [integrant.core]
    [reitit.core]))
 
 (defn get-game-by-eid
-  [dependencies eid]
-  (or (domain/get-game-by-eid dependencies eid)
+  [{:keys [datalog-connection]} eid]
+  (or (queries/game-by-eid datalog-connection eid)
       {:type :missing/resource :name "game" :id eid}))
 
 (defn embed-factions
   "Enrichment fn: returns the game model with the game's factions
    embedded under :_embedded.factions. Bound into game-embed-registry
    so /api/game/:eid?embed=factions opts into it."
-  [dependencies model]
+  [{:keys [datalog-connection]} model]
   (assoc-in model [:_embedded :factions]
-            (domain/get-factions-for-game dependencies (:eid model))))
+            (queries/factions-for-game datalog-connection (:eid model))))
 
 (defn embed-game-modes
   "Enrichment fn: returns the game model with its game modes embedded
    under :_embedded.game-modes."
-  [dependencies model]
+  [{:keys [datalog-connection]} model]
   (assoc-in model [:_embedded :game-modes]
-            (domain/get-game-modes-for-game dependencies (:eid model))))
+            (queries/game-modes-for-game datalog-connection (:eid model))))
 
 (defn embed-socials
   "Enrichment fn: returns the game model with the game's social-link
    resources embedded under :_embedded.socials."
-  [dependencies model]
+  [{:keys [datalog-connection]} model]
   (assoc-in model [:_embedded :socials]
-            (domain/get-socials-for-game dependencies (:eid model))))
+            (queries/socials-for-game datalog-connection (:eid model))))
 
 (def game-embed-registry
   {:factions   embed-factions
@@ -47,8 +48,8 @@
 (defn embed-units-by-category
   "Enrichment fn: returns the faction model with its units embedded
    under :_embedded.units-by-category, grouped by unit category."
-  [dependencies model]
-  (let [units             (domain/get-units-for-faction dependencies (:eid model))
+  [{:keys [datalog-connection]} model]
+  (let [units             (queries/units-for-faction datalog-connection (:eid model))
         units-by-category (->> units
                                (partition-by :unit-category-name)
                                (mapv (fn [group]
@@ -71,8 +72,8 @@
       {:type :missing/resource :name "draft" :id eid}))
 
 (defn get-unit-by-eid
-  [dependencies eid]
-  (or (domain/get-unit-by-eid dependencies eid)
+  [{:keys [datalog-connection]} eid]
+  (or (queries/unit-by-eid datalog-connection eid)
       {:type :missing/resource :name "unit" :id eid}))
 
 (defn- enrich-unit
@@ -80,19 +81,20 @@
    and mounts to a unit row. Spells come from `draftable-spells` in
    unit-statistics for fixed-list casters; lore-based casters expose
    the full lore via `:lore`, in which case we fall back to
-   `get-spells-for-lore`."
-  [dependencies {:keys [unit-statistics eid lore] :as unit}]
+   `queries/spells-for-lore`."
+  [{:keys [datalog-connection] :as _dependencies}
+   {:keys [unit-statistics eid lore] :as unit}]
   (let [parsed     (when unit-statistics
                      (domain/parse-unit-statistics unit-statistics))
         ability-ks (:abilities parsed)
         spell-ks   (:draftable-spells parsed)
         abilities  (when (seq ability-ks)
-                     (vals (domain/get-abilities-by-keys dependencies ability-ks)))
+                     (vals (queries/abilities-by-keys datalog-connection ability-ks)))
         spells     (cond
-                     (seq spell-ks) (vals (domain/get-spells-by-keys dependencies spell-ks))
-                     (seq lore)     (domain/get-spells-for-lore dependencies lore))
-        items      (domain/get-items-for-unit dependencies eid)
-        mounts     (domain/get-mounts-for-unit dependencies eid)]
+                     (seq spell-ks) (vals (queries/spells-by-keys datalog-connection spell-ks))
+                     (seq lore)     (queries/spells-for-lore datalog-connection lore))
+        items      (queries/items-for-unit datalog-connection eid)
+        mounts     (queries/mounts-for-unit datalog-connection eid)]
     (-> unit
         (assoc :stats      (vec (:stats parsed))
                :attributes (vec (:attributes parsed))
@@ -104,14 +106,14 @@
                            :mounts    (vec mounts)}))))
 
 (defn get-faction-by-eid
-  [dependencies eid]
-  (or (domain/get-faction-by-eid dependencies eid)
+  [{:keys [datalog-connection]} eid]
+  (or (queries/faction-by-eid datalog-connection eid)
       {:type :missing/resource :name "faction" :id eid}))
 
 (defn get-games
-  [dependencies {:keys [hostname router]}]
+  [{:keys [datalog-connection]} {:keys [hostname router]}]
   {:type      :collection/game
-   :_embedded {:results (domain/get-games dependencies)}
+   :_embedded {:results (queries/games datalog-connection)}
    :_links    {:self (str hostname
                           (-> router
                               (reitit.core/match-by-name! :collection/game)
@@ -144,11 +146,11 @@
                               (get-game-by-eid dependencies eid))))))
 
 (defn get-factions
-  [dependencies game-eid {:keys [hostname router]}]
+  [{:keys [datalog-connection]} game-eid {:keys [hostname router]}]
   {:type      :collection/faction
    :_embedded {:results (if game-eid
-                          (domain/get-factions-for-game dependencies game-eid)
-                          (domain/get-factions dependencies))}
+                          (queries/factions-for-game datalog-connection game-eid)
+                          (queries/factions datalog-connection))}
    :_links    {:self (str hostname
                           (-> router
                               (reitit.core/match-by-name! :collection/faction)
@@ -167,11 +169,11 @@
 (defn get-units
   "Collection builder for /api/unit. When `faction-eid` is set the
    collection is filtered to that faction; nil returns every unit."
-  [dependencies faction-eid {:keys [hostname router]}]
+  [{:keys [datalog-connection]} faction-eid {:keys [hostname router]}]
   {:type      :collection/unit
    :_embedded {:results (vec (if faction-eid
-                               (domain/get-units-for-faction dependencies faction-eid)
-                               (domain/get-units dependencies)))}
+                               (queries/units-for-faction datalog-connection faction-eid)
+                               (queries/units datalog-connection)))}
    :_links    {:self (str hostname
                           (-> router
                               (reitit.core/match-by-name! :collection/unit)

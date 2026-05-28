@@ -6,9 +6,9 @@
   Domain-specific view handlers live in `web/<domain>/view.clj`."
   (:require
    [clojure.string :as string]
-   [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.render :as render]
    [com.devereux-henley.rts-web.skin :as skin]
+   [com.devereux-henley.rts-web.web.game.queries :as queries]
    [integrant.core]
    [selmer.filters]
    [taoensso.timbre :as log]))
@@ -64,25 +64,25 @@
                                           (extra-data-fn data request)))})))
 
 (defmethod integrant.core/init-key ::game-context-middleware
-  [_init-key dependencies]
+  [_init-key {:keys [datalog-connection]}]
   (fn [handler]
     (fn [request]
       (let [game-eid (get-in request [:parameters :path :game-eid])
-            game     (domain/get-game-by-eid dependencies game-eid)]
+            game     (queries/game-by-eid datalog-connection game-eid)]
         (if game
           (handler (assoc request :game-context {:game-eid game-eid
                                                  :game     (assoc game :logo (skin/logo-for-game game-eid))
-                                                 :factions (domain/get-factions-for-game dependencies game-eid)
-                                                 :socials  (domain/get-socials-for-game dependencies game-eid)
+                                                 :factions (queries/factions-for-game datalog-connection game-eid)
+                                                 :socials  (queries/socials-for-game datalog-connection game-eid)
                                                  :skin     (skin/skin-for-game game-eid)}))
           {:status 404 :body {:type :missing/resource :name "game" :id game-eid}})))))
 
 (defmethod integrant.core/init-key ::game-selector-view
-  [_init-key dependencies]
+  [_init-key {:keys [datalog-connection]}]
   (fn [request]
     (let [games (mapv (fn [game]
                         (assoc game :logo (skin/logo-for-game (:eid game))))
-                      (domain/get-games dependencies))]
+                      (queries/games datalog-connection))]
       {:status 200
        :body   (render/render-view "game-selector.html"
                                    (assoc (base-context request) :games games))})))

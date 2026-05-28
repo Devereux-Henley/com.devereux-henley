@@ -20,10 +20,14 @@
   (datalevin/close conn))
 
 (defn q
-  "Run a datalog query. `query` is a datalog form (vector or map); `inputs` are the
-   sources/bindings (typically the db plus any parameters)."
-  [query & inputs]
-  (apply datalevin/q query inputs))
+  "Run a datalog query. `query` is a datalog form (vector or map); the first
+   input is the source — either a db value or a connection (unwrapped to its
+   current db). Remaining inputs are the query parameters."
+  [query db-or-conn & inputs]
+  (apply datalevin/q
+         query
+         (if (datalevin/conn? db-or-conn) (datalevin/db db-or-conn) db-or-conn)
+         inputs))
 
 (defn pull
   "Pull `pattern` for the entity identified by `eid-or-lookup-ref` from `db-or-conn`.

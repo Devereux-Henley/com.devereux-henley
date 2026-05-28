@@ -89,8 +89,19 @@
               (assoc :attack-modifiers (vec miss-mods))))
           stats)))
 
+(def ^:private stats-object-mapper
+  (jsonista/object-mapper {:decode-key-fn name}))
+
+(defn decode-unit-statistics-json
+  "Decode a SQLite-era unit-statistics JSON string into the string-keyed
+  map shape `parse-unit-statistics` expects. Datalevin callers skip this
+  step — the `:unit-statistics/data` idoc already comes back decoded."
+  [s]
+  (jsonista/read-value s stats-object-mapper))
+
 (defn parse-unit-statistics
-  "Parses a unit-statistics JSON string into a structured map with keys:
+  "Parses a decoded unit-statistics document (string-keyed map) into a
+  structured map with keys:
      :stats            — vector of {:stat name :value val :tooltip str-or-nil} for numeric/list fields
      :health           — integer HP value (rendered separately as a health bar)
      :barrier          — integer barrier value, or nil if absent/zero
@@ -101,9 +112,9 @@
   Mounts are no longer embedded in unit_statistics — they live in the
   `mount` / `unit_mount` tables and are fetched via
   `db/get-mounts-for-unit`."
-  [unit-statistics-str]
+  [stats-doc]
   (let [decoded (m/decode db/unit-statistics-raw-schema
-                          (jsonista/read-value unit-statistics-str (jsonista/object-mapper {:decode-key-fn name}))
+                          stats-doc
                           db/unit-statistics-transformer)]
     {:stats
      (-> (into [] (keep stat-entry) decoded)
@@ -155,7 +166,8 @@
   (m/schema
    [:map {:decode/unit-hydrate
           (fn [unit]
-            (let [{:keys [stats abilities]} (parse-unit-statistics (:unit-statistics unit))]
+            (let [{:keys [stats abilities]} (parse-unit-statistics
+                                             (decode-unit-statistics-json (:unit-statistics unit)))]
               (assoc unit
                      :parsed-stats     stats
                      :parsed-abilities abilities
@@ -455,7 +467,7 @@
   (let [raw-stats    (:stats-override mount)
         raw-granted  (:granted-ability-keys mount)
         parsed       (when (and raw-stats (seq raw-stats))
-                       (parse-unit-statistics raw-stats))
+                       (parse-unit-statistics (decode-unit-statistics-json raw-stats)))
         granted-keys (parse-granted-ability-keys raw-granted)
         granted      (hydrate-granted-abilities conn granted-keys)]
     (cond-> (assoc mount :granted-abilities (or granted []))
@@ -711,7 +723,8 @@
         draft                                                                (db/get-draft-by-eid conn draft-eid)
         game-mode                                                            (db/get-game-mode-by-eid conn (:game-mode-eid draft))
         unit                                                                 (db/get-unit-by-eid conn unit-eid)
-        {:keys [stats health barrier abilities draftable-spells attributes]} (parse-unit-statistics (:unit-statistics unit))
+        {:keys [stats health barrier abilities draftable-spells attributes]} (parse-unit-statistics
+                                                                              (decode-unit-statistics-json (:unit-statistics unit)))
         unit-statistics                                                      (mapv add-stat-percentage stats)
         mounts                                                               (mapv #(hydrate-mount-overrides conn %)
                                                                                    (db/get-mounts-for-unit conn unit-eid))
