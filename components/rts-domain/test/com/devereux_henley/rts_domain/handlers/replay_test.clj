@@ -26,7 +26,7 @@
                   data-access.contract/get-subfactions-by-keys    (fn [_ _] [])
                   data-access.contract/get-units-by-keys          (fn [_ _] [])
                   data-access.contract/get-mounts-for-unit        (fn [_ _] [])
-                  data-access.contract/get-unit-level-costs       (fn [_] {})
+                  data-access.contract/unit-level-costs           (fn [_] {})
                   data-access.contract/create-draft!              (fn [_ spec] (assoc spec :version 1))
                   data-access.contract/add-entries!               (fn [_ _ _] nil)
                   data-access.contract/get-tournament-state       (fn [_ _] nil)
@@ -177,6 +177,19 @@
                                                                  (when (= eid unit-eid)
                                                                    [{:key "mount_great_taurus" :name "Great Taurus" :cost 300}
                                                                     {:key "mount_lammasu" :name "Lammasu" :cost 200}]))
+                  ;; compute-unit-total-cost (transitively reached from
+                  ;; replay via parsed-unit->entry) hits the datalog
+                  ;; mounts + level-cost reads, so mirror the SQLite
+                  ;; stubs above on the datalog names.
+                  data-access.contract/mounts-for-unit         (fn [_ eid]
+                                                                 (when (= eid unit-eid)
+                                                                   [{:key "mount_great_taurus" :name "Great Taurus" :cost 300}
+                                                                    {:key "mount_lammasu" :name "Lammasu" :cost 200}]))
+                  data-access.contract/unit-level-costs        (fn [_] {0 {:level   0 :fixed-cost 0   :cost-multiplier 1.0
+                                                                           :fatigue 0 :melee-cp   0.0 :missile-cp      0.0}})
+                  data-access.contract/abilities-by-keys       (fn [_ _] {})
+                  data-access.contract/spells-by-keys          (fn [_ _] {})
+                  data-access.contract/items-for-unit          (fn [_ _] [])
                   data-access.contract/create-draft!           (fn [_ spec] (assoc spec :version 1))
                   data-access.contract/add-entries!            (fn [_ draft-eid entries]
                                                                  (swap! stored-states into (map #(assoc % :draft-eid draft-eid) entries)))]

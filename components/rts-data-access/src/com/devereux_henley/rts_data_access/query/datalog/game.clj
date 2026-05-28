@@ -310,6 +310,11 @@
 
 ;; ─── Embed queries (game detail + faction detail enrichments) ──────────────
 
+(defn game-mode-by-eid
+  "Single game-mode by eid."
+  [conn eid]
+  (->game-mode (dl/pull (dl/db conn) game-mode-pattern (dl/lookup-ref :game-mode/eid eid))))
+
 (defn game-modes-for-game
   [conn game-eid]
   (let [db (dl/db conn)]
@@ -399,3 +404,82 @@
                           :where [?a :ability/key ?key]]
                         (dl/db conn) ability-pattern (vec ability-keys))]
       (into {} (map (fn [m] [(:ability/key m) (->ability m)])) results))))
+
+;; ─── Misc draft-handler dependencies ──────────────────────────────────────
+
+(def ^:private unit-level-cost-pattern
+  [:unit-level-cost/level :unit-level-cost/fixed-cost
+   :unit-level-cost/cost-multiplier :unit-level-cost/fatigue
+   :unit-level-cost/melee-cp :unit-level-cost/missile-cp])
+
+(defn- ->unit-level-cost [m]
+  (when m
+    {:level           (:unit-level-cost/level m)
+     :fixed-cost      (:unit-level-cost/fixed-cost m)
+     :cost-multiplier (:unit-level-cost/cost-multiplier m)
+     :fatigue         (:unit-level-cost/fatigue m)
+     :melee-cp        (:unit-level-cost/melee-cp m)
+     :missile-cp      (:unit-level-cost/missile-cp m)}))
+
+(defn unit-level-costs
+  "All veteran-rank cost rows as a sorted `{level -> row}` map. Matches
+  the shape the draft handler's level-cost lookup expects."
+  [conn]
+  (into (sorted-map)
+        (map (juxt :level identity))
+        (->> (dl/q '[:find [(pull ?c pattern) ...]
+                     :in $ pattern
+                     :where [?c :unit-level-cost/level]]
+                   (dl/db conn) unit-level-cost-pattern)
+             (map ->unit-level-cost))))
+
+(def ^:private family-variant-pattern
+  [:unit/eid :unit/name :unit/mark :unit/lore
+   {:unit-statistics/_unit [:unit-statistics/cost
+                            {:unit-statistics/patch [:patch/released-at]}]}])
+
+(defn- ->family-variant
+  [m lore-key->name]
+  (when m
+    (let [stats (latest-stats (:unit-statistics/_unit m))
+          lore  (:unit/lore m)]
+      {:eid       (:unit/eid m)
+       :name      (:unit/name m)
+       :mark      (some-> (:unit/mark m) name)
+       :lore      lore
+       :lore-name (get lore-key->name lore)
+       :cost      (:unit-statistics/cost stats)})))
+
+(defn family-variants-by-eid
+  "Every unit row sharing the family-name + faction of the given unit.
+  Single-variant families come back with one row; the draft unit panel
+  uses the count to decide whether to render the mark / lore selectors."
+  [conn unit-eid]
+  (let [db          (dl/db conn)
+        seed        (dl/pull db
+                             '[:unit/family-name
+                               {:unit/faction [:db/id]}]
+                             (dl/lookup-ref :unit/eid unit-eid))
+        family-name (:unit/family-name seed)
+        faction-id  (some-> seed :unit/faction :db/id)]
+    (when (and family-name faction-id)
+      (let [variants  (dl/q '[:find [(pull ?u pattern) ...]
+                              :in $ pattern ?family-name ?faction-id
+                              :where
+                              [?u :unit/family-name ?family-name]
+                              [?u :unit/faction ?faction-id]]
+                            db family-variant-pattern family-name faction-id)
+            lore-keys (->> variants (keep :unit/lore) set)
+            lore-rows (when (seq lore-keys)
+                        (dl/q '[:find ?key ?name
+                                :in $ [?key ...]
+                                :where
+                                [?l :lore/key ?key]
+                                [?l :lore/name ?name]]
+                              db (vec lore-keys)))
+            key->name (into {} lore-rows)]
+        (->> variants
+             (mapv #(->family-variant % key->name))
+             (sort-by (juxt :name (fn [v] (or (:mark v) ""))
+                            (fn [v] (or (:lore v) ""))))
+             vec)))))

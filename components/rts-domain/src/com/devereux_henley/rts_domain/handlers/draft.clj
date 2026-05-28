@@ -109,7 +109,7 @@
 
   Mounts are no longer embedded in unit_statistics — they live in the
   `mount` / `unit_mount` tables and are fetched via
-  `db/get-mounts-for-unit`."
+  `db/mounts-for-unit`."
   [stats-doc]
   (let [decoded (m/decode db/unit-statistics-raw-schema
                           stats-doc
@@ -360,27 +360,27 @@
 (defn get-spells-by-keys
   "Returns a map of spell-key → spell entity for the given spell keys."
   [dependencies spell-keys]
-  (db/get-spells-by-keys (:connection dependencies) spell-keys))
+  (db/spells-by-keys (:datalog-connection dependencies) spell-keys))
 
 (defn get-abilities-by-keys
   "Returns a map of ability-key → ability entity for the given ability keys."
   [dependencies ability-keys]
-  (db/get-abilities-by-keys (:connection dependencies) ability-keys))
+  (db/abilities-by-keys (:datalog-connection dependencies) ability-keys))
 
 (defn get-items-for-unit
   "Returns all active items linked to the given unit EID."
   [dependencies unit-eid]
-  (db/get-items-for-unit (:connection dependencies) unit-eid))
+  (db/items-for-unit (:datalog-connection dependencies) unit-eid))
 
 (defn get-mounts-for-unit
   "Returns all active mounts linked to the given unit EID."
   [dependencies unit-eid]
-  (db/get-mounts-for-unit (:connection dependencies) unit-eid))
+  (db/mounts-for-unit (:datalog-connection dependencies) unit-eid))
 
 (defn get-spells-for-lore
   "Returns the canonical spell list for the given lore key."
   [dependencies lore-key]
-  (db/get-spells-for-lore (:connection dependencies) lore-key))
+  (db/spells-for-lore (:datalog-connection dependencies) lore-key))
 
 ;; ─── Mount overrides ──────────────────────────────────────────────────────────
 
@@ -398,7 +398,7 @@
   keys that don't exist. Returned maps match draft-ability shape."
   [conn ability-keys]
   (when (seq ability-keys)
-    (let [by-key (db/get-abilities-by-keys conn ability-keys)]
+    (let [by-key (db/abilities-by-keys conn ability-keys)]
       (into []
             (keep (fn [k]
                     (when-let [{:keys [name eid description cost]} (get by-key k)]
@@ -437,7 +437,7 @@
   Skips unknown keys; preserves the order of `spell-keys`."
   [conn spell-keys]
   (when (seq spell-keys)
-    (let [by-key (db/get-spells-by-keys conn spell-keys)]
+    (let [by-key (db/spells-by-keys conn spell-keys)]
       (into []
             (keep (fn [k]
                     (when-let [{:keys [eid name mana-cost cost]} (get by-key k)]
@@ -460,7 +460,7 @@
            :name      name
            :mana-cost (or mana-cost 0)
            :cost      (or cost 0)})
-        (db/get-spells-for-lore conn lore-key)))
+        (db/spells-for-lore conn lore-key)))
 
 ;; ─── Cost calculation ─────────────────────────────────────────────────────────
 
@@ -490,27 +490,27 @@
   [unit-hydrated selections conn]
   (let [base-cost     (or (:cost unit-hydrated) 0)
         level         (or (:level selections) 0)
-        level-costs   (db/get-unit-level-costs conn)
+        level-costs   (db/unit-level-costs conn)
         adjusted-base (apply-level-cost base-cost (get level-costs level))
         mount-key     (:mount selections)
         mount-cost    (when mount-key
                         (:cost (first (filter #(= mount-key (:key %))
-                                              (db/get-mounts-for-unit conn (:eid unit-hydrated))))))
+                                              (db/mounts-for-unit conn (:eid unit-hydrated))))))
         ability-keys  (not-empty (:abilities selections []))
         ability-cost  (when ability-keys
-                        (->> (db/get-abilities-by-keys conn ability-keys)
+                        (->> (db/abilities-by-keys conn ability-keys)
                              vals
                              (map #(or (:cost %) 0))
                              (reduce + 0)))
         spell-keys    (not-empty (:spells selections []))
         spell-cost    (when spell-keys
-                        (->> (db/get-spells-by-keys conn spell-keys)
+                        (->> (db/spells-by-keys conn spell-keys)
                              vals
                              (map #(or (:cost %) 0))
                              (reduce + 0)))
         item-keys     (not-empty (set (:items selections [])))
         item-cost     (when item-keys
-                        (->> (db/get-items-for-unit conn (:eid unit-hydrated))
+                        (->> (db/items-for-unit conn (:eid unit-hydrated))
                              (filter #(item-keys (:key %)))
                              (map #(or (:cost %) 0))
                              (reduce + 0)))]
@@ -521,7 +521,7 @@
 (defn- faction-unit-index
   "Returns a map of unit-eid → hydrated-unit for all units in the draft's faction."
   [conn faction-eid]
-  (into {} (map (juxt :eid identity) (hydrate-units-with-stats (db/get-units-for-faction conn faction-eid)))))
+  (into {} (map (juxt :eid identity) (hydrate-units-with-stats (db/units-for-faction conn faction-eid)))))
 
 (defn- hydrate-section
   "Resolves state entries to their hydrated units, attaching :total-cost,
@@ -652,7 +652,7 @@
   ([dependencies draft-eid unit-eid selections]
    (let [unit (build-draft-unit-resource dependencies draft-eid unit-eid)]
      (if selections
-       (apply-selections-to-unit (:connection dependencies) unit selections)
+       (apply-selections-to-unit (:datalog-connection dependencies) unit selections)
        unit))))
 
 (defn- build-draft-unit-resource
@@ -672,20 +672,20 @@
   the source of truth — used for unique characters with bespoke
   spell pools (e.g. Malagor) and non-spellcasters."
   [dependencies draft-eid unit-eid]
-  (let [conn                                                                 (:connection dependencies)
+  (let [conn                                                                 (:datalog-connection dependencies)
         draft                                                                (db/draft-by-eid (:datalog-connection dependencies) draft-eid)
-        game-mode                                                            (db/get-game-mode-by-eid conn (:game-mode-eid draft))
-        unit                                                                 (db/get-unit-by-eid conn unit-eid)
+        game-mode                                                            (db/game-mode-by-eid conn (:game-mode-eid draft))
+        unit                                                                 (db/unit-by-eid conn unit-eid)
         {:keys [stats health barrier abilities draftable-spells attributes]} (parse-unit-statistics
                                                                               (decode-unit-statistics-json (:unit-statistics unit)))
         unit-statistics                                                      (mapv add-stat-percentage stats)
         mounts                                                               (mapv #(hydrate-mount-overrides conn %)
-                                                                                   (db/get-mounts-for-unit conn unit-eid))
+                                                                                   (db/mounts-for-unit conn unit-eid))
         mount-only-keys                                                      (into #{}
                                                                                    (mapcat (fn [m] (map :key (:granted-abilities m))))
                                                                                    mounts)
         base-ability-keys                                                    (remove mount-only-keys abilities)
-        ability-by-key                                                       (db/get-abilities-by-keys conn base-ability-keys)
+        ability-by-key                                                       (db/abilities-by-keys conn base-ability-keys)
         all-abilities                                                        (into []
                                                                                    (keep (fn [k]
                                                                                            (when-let [{:keys [name eid description cost]} (get ability-by-key k)]
@@ -698,8 +698,8 @@
                                                                                (or (hydrate-spell-keys conn draftable-spells) []))
         passive-spells                                                       (filterv #(= 0 (:cost %)) all-spells)
         draftable-spells-v                                                   (filterv #(pos? (:cost %)) all-spells)
-        items                                                                (db/get-items-for-unit conn unit-eid)
-        family-variants                                                      (vec (db/get-family-variants-by-eid conn unit-eid))
+        items                                                                (db/items-for-unit conn unit-eid)
+        family-variants                                                      (vec (db/family-variants-by-eid conn unit-eid))
         marks-row                                                            (family-marks family-variants (:eid unit) (:mark unit) (:lore unit))
         lores-row                                                            (family-lores family-variants (:mark unit))]
     (assoc unit
@@ -819,7 +819,7 @@
                                               (:draft-eid entry-resource)
                                               (:unit-eid entry-resource))]
     (assoc-in entry-resource [:_embedded :unit]
-              (apply-selections-to-unit (:connection dependencies) unit selections))))
+              (apply-selections-to-unit (:datalog-connection dependencies) unit selections))))
 
 (defn add-unit-to-draft
   "Validates and adds a unit to the specified section of a draft.
@@ -833,9 +833,9 @@
         ;; "No mount" radio is selected; normalise to nil so downstream
         ;; lookups and persistence see the absent-mount shape.
           selections  (update selections :mount not-empty)
-          conn        (:connection dependencies)
+          conn        (:datalog-connection dependencies)
           draft       (db/draft-by-eid (:datalog-connection dependencies) draft-eid)
-          game-mode   (db/get-game-mode-by-eid conn (:game-mode-eid draft))
+          game-mode   (db/game-mode-by-eid conn (:game-mode-eid draft))
           state       (get-draft-state dependencies draft-eid)
           section-k   (keyword section)
           unit-by-eid (faction-unit-index conn (:faction-eid draft))
@@ -895,9 +895,9 @@
   [dependencies draft-eid entry-eid section]
   (if-let [lock (lock-info dependencies draft-eid)]
     (locked-error lock)
-    (let [conn          (:connection dependencies)
+    (let [conn          (:datalog-connection dependencies)
           draft         (db/draft-by-eid (:datalog-connection dependencies) draft-eid)
-          game-mode     (db/get-game-mode-by-eid conn (:game-mode-eid draft))
+          game-mode     (db/game-mode-by-eid conn (:game-mode-eid draft))
           state         (get-draft-state dependencies draft-eid)
           section-k     (keyword section)
           old-list      (get state section-k [])
@@ -957,9 +957,9 @@
   (if-let [lock (lock-info dependencies draft-eid)]
     (locked-error lock)
     (let [selections-0  (update selections :mount not-empty)
-          conn          (:connection dependencies)
+          conn          (:datalog-connection dependencies)
           draft         (db/draft-by-eid (:datalog-connection dependencies) draft-eid)
-          game-mode     (db/get-game-mode-by-eid conn (:game-mode-eid draft))
+          game-mode     (db/game-mode-by-eid conn (:game-mode-eid draft))
           state         (get-draft-state dependencies draft-eid)
           section-k     (keyword section)
           section-list  (get state section-k [])

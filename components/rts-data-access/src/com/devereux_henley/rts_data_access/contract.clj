@@ -39,56 +39,16 @@
 (def get-draft-lock-info query.game/get-draft-lock-info)
 (def draft-lock-info-schema query.game/draft-lock-info-schema)
 
-(def get-game-mode-by-eid query.game/get-game-mode-by-eid)
-
 (def get-game-modes-for-game query.game/get-game-modes-for-game)
 
-(def get-game-by-eid query.game/get-game-by-eid)
-
-(def get-games query.game/get-games)
-
-(def get-faction-by-eid query.game/get-faction-by-eid)
-
-(def get-factions-for-game query.game/get-factions-for-game)
-(def get-factions query.game/get-factions)
-
-(def get-socials-for-game query.game/get-socials-for-game)
-(def get-socials query.game/get-socials)
-
-(def get-game-social-link-by-eid query.game/get-game-social-link-by-eid)
-
-(def get-unit-type-by-eid query.game/get-unit-type-by-eid)
-
-(def get-unit-types-for-game query.game/get-unit-types-for-game)
-
-(def get-unit-category-by-eid query.game/get-unit-category-by-eid)
-
-(def get-unit-categories-for-game query.game/get-unit-categories-for-game)
-
-(def get-unit-by-eid query.game/get-unit-by-eid)
-
-(def get-units-for-game query.game/get-units-for-game)
-
-(def get-units-for-faction query.game/get-units-for-faction)
-(def get-units query.game/get-units)
-
-(def get-family-variants-by-eid query.game/get-family-variants-by-eid)
-
-(def get-spells-by-keys query.game/get-spells-by-keys)
-(def get-abilities-by-keys query.game/get-abilities-by-keys)
-
 (def item-entity schema/item-entity)
-(def get-items-for-unit query.game/get-items-for-unit)
 
 (def mount-entity schema/mount-entity)
 (def get-mounts-for-unit query.game/get-mounts-for-unit)
-(def get-mount-by-key query.game/get-mount-by-key)
 
 (def lore-entity schema/lore-entity)
-(def get-spells-for-lore query.game/get-spells-for-lore)
 
 (def unit-level-cost-entity schema/unit-level-cost-entity)
-(def get-unit-level-costs query.game/get-unit-level-costs)
 
 (def unit-statistics-raw-schema schema/unit-statistics-raw-schema)
 (def unit-statistics-transformer schema/unit-statistics-transformer)
@@ -111,6 +71,9 @@
 (def spells-by-keys       query.datalog.game/spells-by-keys)
 (def spells-for-lore      query.datalog.game/spells-for-lore)
 (def abilities-by-keys    query.datalog.game/abilities-by-keys)
+(def game-mode-by-eid     query.datalog.game/game-mode-by-eid)
+(def unit-level-costs     query.datalog.game/unit-level-costs)
+(def family-variants-by-eid query.datalog.game/family-variants-by-eid)
 
 ;;; ─── Draft Datalog queries + mutations ────────────────────────────────────
 
