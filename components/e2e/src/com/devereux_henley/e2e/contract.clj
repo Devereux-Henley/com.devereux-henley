@@ -46,3 +46,28 @@
         (.disconnect ^HttpURLConnection conn)
         (< code 500)))
     (catch Exception _ false)))
+
+;;; ─── Datalog per-run isolation ─────────────────────────────────────────────
+;;; Datalevin stores state in an LMDB directory. Stale state across runs
+;;; corrupts assertions, so the orchestration (CI script or REPL runner)
+;;; allocates a fresh dir per test run, exports it as `DATALEVIN_DB_DIR`
+;;; before starting the dev server, and deletes it on teardown.
+
+(defn make-datalevin-test-dir!
+  "Create and return a unique Datalevin directory for this test run, suitable
+   for export as `DATALEVIN_DB_DIR` before launching the dev server. Default
+   parent is `java.io.tmpdir`; pass `parent` to override."
+  ([] (make-datalevin-test-dir! (System/getProperty "java.io.tmpdir")))
+  ([parent]
+   (let [dir (io/file parent (str "datalevin-e2e-" (random-uuid)))]
+     (.mkdirs dir)
+     (.getAbsolutePath dir))))
+
+(defn cleanup-datalevin-test-dir!
+  "Recursively delete a Datalevin test directory. Tolerates a missing path so
+   the teardown step stays idempotent."
+  [path]
+  (let [root (io/file path)]
+    (when (.exists root)
+      (doseq [child (reverse (file-seq root))]
+        (.delete ^java.io.File child)))))
