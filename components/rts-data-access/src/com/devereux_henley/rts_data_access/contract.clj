@@ -1,5 +1,6 @@
 (ns com.devereux-henley.rts-data-access.contract
   (:require
+   [com.devereux-henley.rts-data-access.query.datalog.draft :as query.datalog.draft]
    [com.devereux-henley.rts-data-access.query.datalog.game :as query.datalog.game]
    [com.devereux-henley.rts-data-access.query.game :as query.game]
    [com.devereux-henley.rts-data-access.query.league :as query.league]
@@ -125,6 +126,20 @@
 (def spells-by-keys       query.datalog.game/spells-by-keys)
 (def spells-for-lore      query.datalog.game/spells-for-lore)
 (def abilities-by-keys    query.datalog.game/abilities-by-keys)
+
+;;; ─── Draft Datalog queries + mutations ────────────────────────────────────
+
+(def draft-by-eid                    query.datalog.draft/draft-by-eid)
+(def drafts-for-player               query.datalog.draft/drafts-for-player)
+(def drafts-for-player-by-game       query.datalog.draft/drafts-for-player-by-game)
+(def draft-state-by-eid              query.datalog.draft/draft-state-by-eid)
+(def draft-entry-by-eid              query.datalog.draft/draft-entry-by-eid)
+(def draft-entry-section-and-ordinal query.datalog.draft/draft-entry-section-and-ordinal)
+(def create-draft!                   query.datalog.draft/create-draft!)
+(def update-draft-name!              query.datalog.draft/update-draft-name!)
+(def add-entry!                      query.datalog.draft/add-entry!)
+(def remove-entry!                   query.datalog.draft/remove-entry!)
+(def update-entry!                   query.datalog.draft/update-entry!)
 
 ;;; ─── Tournament DB entities ────────────────────────────────────────────────
 

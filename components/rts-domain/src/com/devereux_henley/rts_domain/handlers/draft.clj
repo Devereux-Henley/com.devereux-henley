@@ -5,9 +5,7 @@
    [com.devereux-henley.rts-domain.rules.draft :as rules.draft]
    [jsonista.core :as jsonista]
    [malli.core :as m]
-   [malli.transform :as mt])
-  (:import
-   [java.time Instant]))
+   [malli.transform :as mt]))
 
 ;; ─── Unit statistics parsing ──────────────────────────────────────────────────
 
@@ -282,28 +280,26 @@
    Returns nil when no row matches so callers can distinguish missing from
    present."
   [dependencies eid]
-  (when-let [draft (db/get-draft-by-eid (:connection dependencies) eid)]
+  (when-let [draft (db/draft-by-eid (:datalog-connection dependencies) eid)]
     (-> draft
         with-display-name
         (assoc :type :game/draft))))
 
 (defn create-draft
-  "Creates a new draft, stamping :created-at and :updated-at, and attaches :type :game/draft."
+  "Creates a new draft and attaches :type :game/draft."
   [dependencies create-specification]
-  (let [created-at (Instant/now)
-        updated-at created-at]
-    (-> (db/create-draft (:connection dependencies)
-                         (-> create-specification
-                             (assoc :created-at created-at)
-                             (assoc :updated-at updated-at)))
-        with-display-name
-        (assoc :type :game/draft))))
+  (-> (db/create-draft! (:datalog-connection dependencies) create-specification)
+      with-display-name
+      (assoc :type :game/draft)))
 
 (defn lock-info
   "Returns the locking-match info `{:match-eid :tournament-eid :tournament-name}`
   when the draft is associated with at least one tournament match, or `nil`
   when it's still editable. Locking is one-way and derived at request time —
-  the link is `match.player_{one,two}_draft_id` referencing `draft.id`."
+  the link is `match.player_{one,two}_draft_id` referencing `draft.id`.
+
+  Still reads from SQLite while the tournament domain remains there;
+  migrates with rts-5b6."
   [dependencies draft-eid]
   (db/get-draft-lock-info (:connection dependencies) draft-eid))
 
@@ -329,7 +325,7 @@
   (if-let [lock (lock-info dependencies eid)]
     (locked-error lock)
     (let [normalised (when name (not-empty (str/trim name)))]
-      (-> (db/update-draft (:connection dependencies) eid {:name normalised})
+      (-> (db/update-draft-name! (:datalog-connection dependencies) eid normalised)
           with-display-name
           (assoc :type :game/draft)))))
 
@@ -337,72 +333,22 @@
   "Returns all drafts for a player, each tagged with :type :game/draft."
   [dependencies player-sub]
   (mapv (fn [draft] (-> draft with-display-name (assoc :type :game/draft)))
-        (db/get-drafts-for-player (:connection dependencies) player-sub)))
+        (db/drafts-for-player (:datalog-connection dependencies) player-sub)))
 
 (defn get-drafts-for-player-by-game
   "Returns all drafts for a player scoped to a specific game, each tagged with :type :game/draft."
   [dependencies player-sub game-eid]
   (mapv (fn [draft] (-> draft with-display-name (assoc :type :game/draft)))
-        (db/get-drafts-for-player-by-game (:connection dependencies) player-sub game-eid)))
-
-(def ^:private state-entry-schema
-  (m/schema
-   [:map
-    [:entry-eid  {:optional true} [:maybe :uuid]]
-    [:unit-eid :uuid]
-    [:mount      {:optional true} [:maybe :string]]
-    [:lore       {:optional true} [:maybe :string]]
-    [:level      {:optional true, :default 0} [:int {:min 0 :max 9}]]
-    [:abilities  {:optional true, :default []} [:sequential :string]]
-    [:spells     {:optional true, :default []} [:sequential :string]]
-    [:items      {:optional true, :default []} [:sequential :string]]
-    [:total-cost {:optional true} [:maybe :int]]
-    ;; Parser-emitted engine-resolved cost for the unit as played. Stored
-    ;; only on auto-created entries (the post-match replay flow); the
-    ;; manual builder leaves it unset. Used purely as an audit signal —
-    ;; a divergence between :engine-cost and our recomputed :total-cost
-    ;; flags either a seed-data gap or an app computation bug.
-    [:engine-cost {:optional true} [:maybe :int]]]))
-
-(def ^:private state-entry-transformer
-  (mt/transformer mt/string-transformer
-                  (mt/default-value-transformer {::mt/add-optional-keys true})))
-
-(defn- parse-state-entry
-  "Decodes a raw JSON-decoded state entry into a typed map via Malli.
-   Converts :unit-eid / :entry-eid strings to UUIDs and defaults
-   :abilities/:spells/:items to []. Backfills :entry-eid with a fresh UUID
-   when absent so legacy state rows self-heal on first read."
-  [entry]
-  (let [decoded (m/decode state-entry-schema entry state-entry-transformer)]
-    (cond-> decoded
-      (nil? (:entry-eid decoded)) (assoc :entry-eid (random-uuid)))))
+        (db/drafts-for-player-by-game (:datalog-connection dependencies) player-sub game-eid)))
 
 (defn get-draft-state
-  "Returns {:main [entry …] :reinforcements [entry …]} where each entry is
-   {:unit-eid uuid :mount str-or-nil :spells [str] :items [str] :total-cost int-or-nil}.
-   Returns empty collections when no state exists."
+  "Returns `{:main [entry …] :reinforcements [entry …]}` where each entry
+  carries `:entry-eid :unit-eid :section :ordinal` plus any optional
+  selection attrs (mount, lore, level, abilities, spells, items,
+  total-cost, engine-cost). Returns empty collections when no entries
+  exist."
   [dependencies draft-eid]
-  (if-let [row (db/get-draft-state-by-draft (:connection dependencies) draft-eid)]
-    (let [parsed (jsonista/read-value (:state row) (jsonista/object-mapper {:decode-key-fn keyword}))]
-      {:main           (mapv parse-state-entry (get parsed :main []))
-       :reinforcements (mapv parse-state-entry (get parsed :reinforcements []))})
-    {:main [] :reinforcements []}))
-
-(defn- serialise-entry
-  "Encodes a typed state entry to a JSON-serialisable map via Malli.
-   Converts :unit-eid UUID to string."
-  [e]
-  (m/encode state-entry-schema e state-entry-transformer))
-
-(defn set-draft-state
-  "Persists {:main [entry …] :reinforcements [entry …]} as an atomic JSON blob.
-   Each entry: {:unit-eid uuid :mount str-or-nil :abilities [str] :spells [str] :items [str] :total-cost int-or-nil}."
-  [dependencies draft-eid state]
-  (db/upsert-draft-state (:connection dependencies) draft-eid
-                         (jsonista/write-value-as-string
-                          {:main           (mapv serialise-entry (:main state))
-                           :reinforcements (mapv serialise-entry (:reinforcements state))})))
+  (db/draft-state-by-eid (:datalog-connection dependencies) draft-eid))
 
 (defn get-spells-by-keys
   "Returns a map of spell-key → spell entity for the given spell keys."
@@ -720,7 +666,7 @@
   spell pools (e.g. Malagor) and non-spellcasters."
   [dependencies draft-eid unit-eid]
   (let [conn                                                                 (:connection dependencies)
-        draft                                                                (db/get-draft-by-eid conn draft-eid)
+        draft                                                                (db/draft-by-eid (:datalog-connection dependencies) draft-eid)
         game-mode                                                            (db/get-game-mode-by-eid conn (:game-mode-eid draft))
         unit                                                                 (db/get-unit-by-eid conn unit-eid)
         {:keys [stats health barrier abilities draftable-spells attributes]} (parse-unit-statistics
@@ -881,7 +827,7 @@
         ;; lookups and persistence see the absent-mount shape.
           selections  (update selections :mount not-empty)
           conn        (:connection dependencies)
-          draft       (db/get-draft-by-eid conn draft-eid)
+          draft       (db/draft-by-eid (:datalog-connection dependencies) draft-eid)
           game-mode   (db/get-game-mode-by-eid conn (:game-mode-eid draft))
           state       (get-draft-state dependencies draft-eid)
           section-k   (keyword section)
@@ -909,18 +855,19 @@
                             section-cost section-max total-cost)]
           (if violation
             violation
-            (let [new-entry-eid (random-uuid)
-                  new-state     (update state section-k (fnil conj [])
-                                        {:entry-eid  new-entry-eid
-                                         :unit-eid   unit-eid
-                                         :mount      (:mount selections)
-                                         :level      (or (:level selections) 0)
-                                         :abilities  (or (:abilities selections) [])
-                                         :spells     (or (:spells selections) [])
-                                         :items      (or (:items selections) [])
-                                         :total-cost total-cost})]
-              (set-draft-state dependencies draft-eid new-state)
-              (let [section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)]
+            (let [new-entry-eid (random-uuid)]
+              (db/add-entry! (:datalog-connection dependencies) draft-eid
+                             {:entry-eid  new-entry-eid
+                              :unit-eid   unit-eid
+                              :section    section-k
+                              :level      (or (:level selections) 0)
+                              :mount      (:mount selections)
+                              :abilities  (or (:abilities selections) [])
+                              :spells     (or (:spells selections) [])
+                              :items      (or (:items selections) [])
+                              :total-cost total-cost})
+              (let [new-state   (get-draft-state dependencies draft-eid)
+                    section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)]
                 {:type     :draft/add-success
                  :section  (section-ref section-ctx)
                  :new-unit (slot-unit unit new-entry-eid total-cost
@@ -942,7 +889,7 @@
   (if-let [lock (lock-info dependencies draft-eid)]
     (locked-error lock)
     (let [conn          (:connection dependencies)
-          draft         (db/get-draft-by-eid conn draft-eid)
+          draft         (db/draft-by-eid (:datalog-connection dependencies) draft-eid)
           game-mode     (db/get-game-mode-by-eid conn (:game-mode-eid draft))
           state         (get-draft-state dependencies draft-eid)
           section-k     (keyword section)
@@ -951,16 +898,14 @@
           removed-entry (when index (nth old-list index))
           unit-by-eid   (faction-unit-index conn (:faction-eid draft))
           removed-unit  (when removed-entry (get unit-by-eid (:unit-eid removed-entry)))
-          new-state     (assoc state section-k
-                               (if (some? index)
-                                 (into [] (concat (subvec old-list 0 index) (subvec old-list (inc index))))
-                                 old-list))]
-      (set-draft-state dependencies draft-eid new-state)
-      (let [section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)]
-        {:type              :draft/remove-success
-         :removed-entry-eid entry-eid
-         :removed-is-lord   (boolean (:is-lord removed-unit))
-         :budget            (section-budget section-ctx)}))))
+          _             (when index
+                          (db/remove-entry! (:datalog-connection dependencies) draft-eid entry-eid))
+          new-state     (get-draft-state dependencies draft-eid)
+          section-ctx   (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)]
+      {:type              :draft/remove-success
+       :removed-entry-eid entry-eid
+       :removed-is-lord   (boolean (:is-lord removed-unit))
+       :budget            (section-budget section-ctx)})))
 
 (defn get-draft-entry
   "Returns the state entry matching entry-eid in the given section, or nil."
@@ -1006,7 +951,7 @@
     (locked-error lock)
     (let [selections-0  (update selections :mount not-empty)
           conn          (:connection dependencies)
-          draft         (db/get-draft-by-eid conn draft-eid)
+          draft         (db/draft-by-eid (:datalog-connection dependencies) draft-eid)
           game-mode     (db/get-game-mode-by-eid conn (:game-mode-eid draft))
           state         (get-draft-state dependencies draft-eid)
           section-k     (keyword section)
@@ -1066,18 +1011,17 @@
                              section-cost section-max new-total)]
           (if violation
             (assoc violation :type :draft/update-error)
-            (let [new-entry {:entry-eid  entry-eid
-                             :unit-eid   effective-eid
-                             :mount      (:mount selections)
-                             :level      (or (:level selections) 0)
-                             :abilities  (or (:abilities selections) [])
-                             :spells     (or (:spells selections) [])
-                             :items      (or (:items selections) [])
-                             :total-cost new-total}
-                  new-state (assoc state section-k
-                                   (assoc (vec section-list) index new-entry))]
-              (set-draft-state dependencies draft-eid new-state)
-              (let [section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)]
+            (do
+              (db/update-entry! (:datalog-connection dependencies) draft-eid entry-eid
+                                (cond-> {:level      (or (:level selections) 0)
+                                         :mount      (:mount selections)
+                                         :abilities  (or (:abilities selections) [])
+                                         :spells     (or (:spells selections) [])
+                                         :items      (or (:items selections) [])
+                                         :total-cost new-total}
+                                  family-swap? (assoc :unit-eid effective-eid)))
+              (let [new-state   (get-draft-state dependencies draft-eid)
+                    section-ctx (hydrated-section-context conn unit-by-eid new-state section draft-eid game-mode)]
                 {:type              :draft/update-success
                  :entry-eid         entry-eid
                  :total-cost        new-total
