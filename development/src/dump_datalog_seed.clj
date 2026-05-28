@@ -318,7 +318,7 @@
          (assoc :unit-mount/stats-override (:stats-override r))
          (and (:granted-ability-keys r) (not (str/blank? (:granted-ability-keys r))))
          (assoc :unit-mount/granted-ability-keys
-                (str/split (:granted-ability-keys r) #",")))))
+                (jsonista/read-value (:granted-ability-keys r) object-mapper)))))
    (query conn
           "SELECT u.eid AS unit_eid, m.eid AS mount_eid,
                   um.cost, um.stats_override, um.granted_ability_keys
@@ -406,17 +406,23 @@
   migration + every SQL seed file, then writes one EDN file per entity.
 
   `opts`:
-    :patch-released-at — `java.util.Date` for `:patch/released-at`
-                         (default: now).
+    :patch-released-at — `java.util.Date` for `:patch/released-at`. When
+                         not supplied, an existing `patches.edn` is read
+                         and its timestamp preserved so that re-dumps
+                         don't clobber the ordering invariant; if no
+                         prior dump exists, defaults to now.
     :out-dir           — override the output directory (default:
                          `components/rts-data/resources/rts-data/seed/datalog/`)."
   ([patch-version] (dump! patch-version {}))
-  ([patch-version {:keys [patch-released-at out-dir]
-                   :or   {patch-released-at (Date.)}}]
-   (let [db-spec   (temp-sqlite-spec!)
-         out-root  (or (some-> out-dir io/file) (io/file seed-root-dir))
-         dest      (io/file out-root patch-version)
-         patch-eid (derived-uuid "patch" patch-version)]
+  ([patch-version {:keys [patch-released-at out-dir]}]
+   (let [db-spec      (temp-sqlite-spec!)
+         out-root     (or (some-> out-dir io/file) (io/file seed-root-dir))
+         dest         (io/file out-root patch-version)
+         patches-file (io/file dest "patches.edn")
+         existing-ts  (when (.exists patches-file)
+                        (-> patches-file slurp read-string first :patch/released-at))
+         effective-ts (or patch-released-at existing-ts (Date.))
+         patch-eid    (derived-uuid "patch" patch-version)]
      (println (format "Dumping patch %s → %s" patch-version (.getPath dest)))
      (println "  Bootstrapping SQLite from SQL seed…")
      (migratus/migrate {:store         :database
@@ -425,10 +431,10 @@
      (rts-data/seed-db db-spec)
      (with-open [conn (jdbc/get-connection db-spec)]
        (println "\nWriting EDN seed files:")
-       (spit-edn! (io/file dest "patches.edn")
+       (spit-edn! patches-file
                   [{:patch/eid         patch-eid
                     :patch/version     patch-version
-                    :patch/released-at patch-released-at}])
+                    :patch/released-at effective-ts}])
        (spit-edn! (io/file dest "games.edn")                  (dump-games conn))
        (spit-edn! (io/file dest "social-media-platforms.edn") (dump-social-media-platforms conn))
        (spit-edn! (io/file dest "unit-level-cost.edn")        (dump-unit-level-cost conn))
@@ -446,8 +452,8 @@
        (spit-edn! (io/file dest "subfactions.edn")            (dump-subfactions conn))
        (spit-edn! (io/file dest "spell-lores.edn")            (dump-spell-lores conn))
 
-       ;; Units + decomposed statistics (one :unit-statistics per unit,
-       ;; per the cardinality-many :unit/unit-statistics ref).
+       ;; Units + decomposed statistics (one :unit-statistics per unit
+       ;; per patch, linked from the many side via :unit-statistics/unit).
        (let [unit-rows (dump-unit-rows conn)
              stats     (mapv (fn [r]
                                {:unit-statistics-eid

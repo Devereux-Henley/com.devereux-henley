@@ -8,9 +8,12 @@
   fields, so storing as a document keeps the schema schema-evolution-
   proof: a new patch that introduces a stat lands without a schema change.
 
-  Templates parse the document the same way the SQLite era did
-  (`parse-unit-statistics` in `rts-domain.handlers.draft`), but read the
-  blob via `(get :unit-statistics/data)` rather than from a string column.
+  The blob is read via `(get unit :unit-statistics/data)` and comes back
+  as an already-decoded Clojure map (not a JSON string). The SQLite-era
+  `parse-unit-statistics` in `rts-domain.handlers.draft` still takes a
+  JSON string, so a Datalevin caller must either re-encode the doc with
+  `jsonista/write-value-as-string` first or refactor that helper to
+  accept a pre-decoded map.
 
   `:unit-statistics/cost` is denormalized out of the document as a
   first-class `:db.type/long` because the draft / standings queries
@@ -24,7 +27,7 @@
   {:unit-statistics/eid   {:db/valueType :db.type/uuid
                            :db/unique    :db.unique/identity}
    ;; Owning ref lives on the many side. Reverse-ref pull
-   ;; (`{:unit/_unit-statistics [...]}`) gets every snapshot for a unit;
+   ;; (`{:unit-statistics/_unit [...]}`) gets every snapshot for a unit;
    ;; `[?s :unit-statistics/unit ?u]` is the query form.
    :unit-statistics/unit  {:db/valueType :db.type/ref}
    :unit-statistics/patch {:db/valueType :db.type/ref}
