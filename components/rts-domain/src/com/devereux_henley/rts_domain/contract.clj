@@ -55,8 +55,6 @@
 (def get-factions                               handlers.game/get-factions)
 (def get-faction-by-eid                         handlers.game/get-faction-by-eid)
 (def get-socials-for-game                       handlers.game/get-socials-for-game)
-(def get-socials                                handlers.game/get-socials)
-(def get-game-social-link-by-eid                handlers.game/get-game-social-link-by-eid)
 (def get-units-for-game                         handlers.game/get-units-for-game)
 (def get-unit-by-eid                            handlers.game/get-unit-by-eid)
 (def get-units-for-faction                      handlers.game/get-units-for-faction)

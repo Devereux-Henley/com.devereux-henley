@@ -266,7 +266,7 @@
             eid->mount-rows (into {}
                                   (map (fn [eid] [eid (db/get-mounts-for-unit conn eid)]))
                                   mount-needing)
-            state-blob      (alliance->state-blob alliance key->row eid->mount-rows conn)
+            state-blob      (alliance->state-blob alliance key->row eid->mount-rows datalog-conn)
             draft-eid       (random-uuid)
             draft-name      (format "%s R%d G%d"
                                     (:name tournament)

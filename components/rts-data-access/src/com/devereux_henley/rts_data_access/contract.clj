@@ -12,6 +12,7 @@
    [com.devereux-henley.rts-data-access.schema :as schema]
    [com.devereux-henley.rts-data-access.schema.datalog :as schema.datalog]
    [com.devereux-henley.rts-data-access.schema.draft :as schema.draft]
+   [com.devereux-henley.rts-data-access.schema.game :as schema.game]
    [com.devereux-henley.schema.contract :as schema.contract]))
 
 ;;; ─── Datalog schema-as-code ────────────────────────────────────────────────
@@ -39,56 +40,16 @@
 (def get-draft-lock-info query.game/get-draft-lock-info)
 (def draft-lock-info-schema query.game/draft-lock-info-schema)
 
-(def get-game-mode-by-eid query.game/get-game-mode-by-eid)
-
 (def get-game-modes-for-game query.game/get-game-modes-for-game)
 
-(def get-game-by-eid query.game/get-game-by-eid)
-
-(def get-games query.game/get-games)
-
-(def get-faction-by-eid query.game/get-faction-by-eid)
-
-(def get-factions-for-game query.game/get-factions-for-game)
-(def get-factions query.game/get-factions)
-
-(def get-socials-for-game query.game/get-socials-for-game)
-(def get-socials query.game/get-socials)
-
-(def get-game-social-link-by-eid query.game/get-game-social-link-by-eid)
-
-(def get-unit-type-by-eid query.game/get-unit-type-by-eid)
-
-(def get-unit-types-for-game query.game/get-unit-types-for-game)
-
-(def get-unit-category-by-eid query.game/get-unit-category-by-eid)
-
-(def get-unit-categories-for-game query.game/get-unit-categories-for-game)
-
-(def get-unit-by-eid query.game/get-unit-by-eid)
-
-(def get-units-for-game query.game/get-units-for-game)
-
-(def get-units-for-faction query.game/get-units-for-faction)
-(def get-units query.game/get-units)
-
-(def get-family-variants-by-eid query.game/get-family-variants-by-eid)
-
-(def get-spells-by-keys query.game/get-spells-by-keys)
-(def get-abilities-by-keys query.game/get-abilities-by-keys)
-
 (def item-entity schema/item-entity)
-(def get-items-for-unit query.game/get-items-for-unit)
 
 (def mount-entity schema/mount-entity)
 (def get-mounts-for-unit query.game/get-mounts-for-unit)
-(def get-mount-by-key query.game/get-mount-by-key)
 
 (def lore-entity schema/lore-entity)
-(def get-spells-for-lore query.game/get-spells-for-lore)
 
 (def unit-level-cost-entity schema/unit-level-cost-entity)
-(def get-unit-level-costs query.game/get-unit-level-costs)
 
 (def unit-statistics-raw-schema schema/unit-statistics-raw-schema)
 (def unit-statistics-transformer schema/unit-statistics-transformer)
@@ -111,6 +72,85 @@
 (def spells-by-keys       query.datalog.game/spells-by-keys)
 (def spells-for-lore      query.datalog.game/spells-for-lore)
 (def abilities-by-keys    query.datalog.game/abilities-by-keys)
+(def game-mode-by-eid     query.datalog.game/game-mode-by-eid)
+(def unit-level-costs     query.datalog.game/unit-level-costs)
+(def family-variants-by-eid query.datalog.game/family-variants-by-eid)
+
+(schema.contract/=>* games query.datalog.game/games
+                     [:=> [:cat schema.game/conn-schema]
+                      [:sequential schema.game/game-schema]])
+
+(schema.contract/=>* game-by-eid query.datalog.game/game-by-eid
+                     [:=> [:cat schema.game/conn-schema :uuid]
+                      [:maybe schema.game/game-schema]])
+
+(schema.contract/=>* factions query.datalog.game/factions
+                     [:=> [:cat schema.game/conn-schema]
+                      [:sequential schema.game/faction-schema]])
+
+(schema.contract/=>* factions-for-game query.datalog.game/factions-for-game
+                     [:=> [:cat schema.game/conn-schema :uuid]
+                      [:sequential schema.game/faction-schema]])
+
+(schema.contract/=>* faction-by-eid query.datalog.game/faction-by-eid
+                     [:=> [:cat schema.game/conn-schema :uuid]
+                      [:maybe schema.game/faction-schema]])
+
+(schema.contract/=>* units query.datalog.game/units
+                     [:=> [:cat schema.game/conn-schema]
+                      [:sequential schema.game/unit-summary-schema]])
+
+(schema.contract/=>* units-for-game query.datalog.game/units-for-game
+                     [:=> [:cat schema.game/conn-schema :uuid]
+                      [:sequential schema.game/unit-summary-schema]])
+
+(schema.contract/=>* units-for-faction query.datalog.game/units-for-faction
+                     [:=> [:cat schema.game/conn-schema :uuid]
+                      [:sequential schema.game/unit-summary-schema]])
+
+(schema.contract/=>* unit-by-eid query.datalog.game/unit-by-eid
+                     [:=> [:cat schema.game/conn-schema :uuid]
+                      [:maybe schema.game/unit-detail-schema]])
+
+(schema.contract/=>* game-mode-by-eid query.datalog.game/game-mode-by-eid
+                     [:=> [:cat schema.game/conn-schema :uuid]
+                      [:maybe schema.game/game-mode-schema]])
+
+(schema.contract/=>* game-modes-for-game query.datalog.game/game-modes-for-game
+                     [:=> [:cat schema.game/conn-schema :uuid]
+                      [:sequential schema.game/game-mode-schema]])
+
+(schema.contract/=>* socials-for-game query.datalog.game/socials-for-game
+                     [:=> [:cat schema.game/conn-schema :uuid]
+                      [:sequential schema.game/social-link-schema]])
+
+(schema.contract/=>* mounts-for-unit query.datalog.game/mounts-for-unit
+                     [:=> [:cat schema.game/conn-schema :uuid]
+                      [:sequential schema.game/mount-row-schema]])
+
+(schema.contract/=>* items-for-unit query.datalog.game/items-for-unit
+                     [:=> [:cat schema.game/conn-schema :uuid]
+                      [:sequential schema.game/item-row-schema]])
+
+(schema.contract/=>* spells-by-keys query.datalog.game/spells-by-keys
+                     [:=> [:cat schema.game/conn-schema [:sequential :string]]
+                      [:maybe [:map-of :string schema.game/spell-row-schema]]])
+
+(schema.contract/=>* spells-for-lore query.datalog.game/spells-for-lore
+                     [:=> [:cat schema.game/conn-schema :string]
+                      [:sequential schema.game/spell-row-schema]])
+
+(schema.contract/=>* abilities-by-keys query.datalog.game/abilities-by-keys
+                     [:=> [:cat schema.game/conn-schema [:sequential :string]]
+                      [:maybe [:map-of :string schema.game/ability-row-schema]]])
+
+(schema.contract/=>* unit-level-costs query.datalog.game/unit-level-costs
+                     [:=> [:cat schema.game/conn-schema]
+                      [:map-of :int schema.game/unit-level-cost-schema]])
+
+(schema.contract/=>* family-variants-by-eid query.datalog.game/family-variants-by-eid
+                     [:=> [:cat schema.game/conn-schema :uuid]
+                      [:maybe [:sequential schema.game/family-variant-schema]]])
 
 ;;; ─── Draft Datalog queries + mutations ────────────────────────────────────
 

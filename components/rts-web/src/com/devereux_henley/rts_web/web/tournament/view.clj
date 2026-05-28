@@ -910,7 +910,7 @@
    fragment context."
   [dependencies match parsed source-name viewer-sub]
   (let [key->row     (resolve-units dependencies [parsed])
-        level-costs  (db/get-unit-level-costs (:connection dependencies))
+        level-costs  (db/unit-level-costs (:datalog-connection dependencies))
         enriched     (enrich-parsed key->row level-costs parsed)
         faction->row (resolve-faction-keys dependencies [parsed])
         existing     (domain/get-games-for-match dependencies (:eid match))

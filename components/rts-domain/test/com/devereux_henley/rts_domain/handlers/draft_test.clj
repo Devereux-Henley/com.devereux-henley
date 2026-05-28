@@ -398,19 +398,19 @@
              (swap! state update-vals
                     (fn [xs] (mapv (fn [e] (if (= entry-eid (:entry-eid e)) (merge e attrs) e)) xs)))
              nil)]
-       (with-redefs [data-access.contract/draft-by-eid               (fn [_ _] test-draft)
-                     data-access.contract/get-game-mode-by-eid       (fn [_ _] test-game-mode)
-                     data-access.contract/draft-state-by-eid         (fn [_ _] @state)
-                     data-access.contract/add-entry!                 add-entry-stub
-                     data-access.contract/remove-entry!              remove-entry-stub
-                     data-access.contract/update-entry!              update-entry-stub
-                     data-access.contract/get-units-for-faction      (fn [_ _] faction-units)
-                     data-access.contract/get-spells-by-keys         (fn [_ _] {})
-                     data-access.contract/get-abilities-by-keys      (fn [_ _] abilities)
-                     data-access.contract/get-items-for-unit         (fn [_ _] items)
-                     data-access.contract/get-mounts-for-unit        (fn [_ _] mounts)
-                     data-access.contract/get-unit-level-costs       (fn [_] level-costs)
-                     data-access.contract/get-family-variants-by-eid (fn [_ _] [])]
+       (with-redefs [data-access.contract/draft-by-eid           (fn [_ _] test-draft)
+                     data-access.contract/game-mode-by-eid       (fn [_ _] test-game-mode)
+                     data-access.contract/draft-state-by-eid     (fn [_ _] @state)
+                     data-access.contract/add-entry!             add-entry-stub
+                     data-access.contract/remove-entry!          remove-entry-stub
+                     data-access.contract/update-entry!          update-entry-stub
+                     data-access.contract/units-for-faction      (fn [_ _] faction-units)
+                     data-access.contract/spells-by-keys         (fn [_ _] {})
+                     data-access.contract/abilities-by-keys      (fn [_ _] abilities)
+                     data-access.contract/items-for-unit         (fn [_ _] items)
+                     data-access.contract/mounts-for-unit        (fn [_ _] mounts)
+                     data-access.contract/unit-level-costs       (fn [_] level-costs)
+                     data-access.contract/family-variants-by-eid (fn [_ _] [])]
          (f))))))
 
 (deftest add-unit-to-draft-returns-error-when-unit-not-in-faction
@@ -468,7 +468,7 @@
 (deftest add-unit-to-draft-succeeds-when-reinforcements-disabled
   ((stub-add-unit [infantry-unit] nil)
    (fn []
-     (with-redefs [data-access.contract/get-game-mode-by-eid
+     (with-redefs [data-access.contract/game-mode-by-eid
                    (fn [_ _] (assoc test-game-mode :reinforcements-enabled 0))]
        (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main" {})]
          (is (= :draft/add-success (:type result))))))))
@@ -496,13 +496,13 @@
 
 (deftest remove-unit-from-draft-returns-success
   (let [existing-state (state-map {:main [[test-unit-eid test-entry-eid]] :reinforcements []})]
-    (with-redefs [data-access.contract/draft-by-eid          (fn [_ _] test-draft)
-                  data-access.contract/get-game-mode-by-eid  (fn [_ _] test-game-mode)
-                  data-access.contract/draft-state-by-eid    (fn [_ _] existing-state)
-                  data-access.contract/add-entry!            (fn [_ _ _] nil)
-                  data-access.contract/remove-entry!         (fn [_ _ _] nil)
-                  data-access.contract/update-entry!         (fn [_ _ _ _] nil)
-                  data-access.contract/get-units-for-faction (fn [_ _] [infantry-unit])]
+    (with-redefs [data-access.contract/draft-by-eid       (fn [_ _] test-draft)
+                  data-access.contract/game-mode-by-eid   (fn [_ _] test-game-mode)
+                  data-access.contract/draft-state-by-eid (fn [_ _] existing-state)
+                  data-access.contract/add-entry!         (fn [_ _ _] nil)
+                  data-access.contract/remove-entry!      (fn [_ _ _] nil)
+                  data-access.contract/update-entry!      (fn [_ _ _ _] nil)
+                  data-access.contract/units-for-faction  (fn [_ _] [infantry-unit])]
       (let [result (handlers.draft/remove-unit-from-draft test-deps test-draft-eid test-entry-eid "main")]
         (is (= :draft/remove-success (:type result)))
         (is (= test-entry-eid (:removed-entry-eid result)))
@@ -511,14 +511,14 @@
 
 (deftest remove-unit-from-draft-section-cost-is-zero-after-removal
   (let [state (atom (state-map {:main [[test-unit-eid test-entry-eid]] :reinforcements []}))]
-    (with-redefs [data-access.contract/draft-by-eid          (fn [_ _] test-draft)
-                  data-access.contract/get-game-mode-by-eid  (fn [_ _] test-game-mode)
-                  data-access.contract/draft-state-by-eid    (fn [_ _] @state)
-                  data-access.contract/remove-entry!         (fn [_ _ eid]
-                                                               (swap! state update-vals
-                                                                      (fn [xs] (vec (remove #(= eid (:entry-eid %)) xs))))
-                                                               nil)
-                  data-access.contract/get-units-for-faction (fn [_ _] [infantry-unit])]
+    (with-redefs [data-access.contract/draft-by-eid       (fn [_ _] test-draft)
+                  data-access.contract/game-mode-by-eid   (fn [_ _] test-game-mode)
+                  data-access.contract/draft-state-by-eid (fn [_ _] @state)
+                  data-access.contract/remove-entry!      (fn [_ _ eid]
+                                                            (swap! state update-vals
+                                                                   (fn [xs] (vec (remove #(= eid (:entry-eid %)) xs))))
+                                                            nil)
+                  data-access.contract/units-for-faction  (fn [_ _] [infantry-unit])]
       (let [result (handlers.draft/remove-unit-from-draft test-deps test-draft-eid test-entry-eid "main")]
         (is (= 0 (:section-cost (:budget result))))))))
 
@@ -530,23 +530,23 @@
         mounts    [{:id   1          :eid      (UUID/randomUUID) :key  mount-key
                     :name "Warhorse" :icon-key mount-key         :cost 50}]
         captured  (atom nil)]
-    (with-redefs [data-access.contract/draft-by-eid               (fn [_ _] test-draft)
-                  data-access.contract/get-game-mode-by-eid       (fn [_ _] test-game-mode)
-                  data-access.contract/draft-state-by-eid         (fn [_ _] @state)
-                  data-access.contract/update-entry!              (fn [_ _ eid attrs]
-                                                                    (reset! captured {:entry-eid eid :attrs attrs})
-                                                                    (swap! state update-vals
-                                                                           (fn [xs]
-                                                                             (mapv (fn [e] (if (= eid (:entry-eid e)) (merge e attrs) e)) xs)))
-                                                                    nil)
-                  data-access.contract/get-units-for-faction      (fn [_ _] [infantry-unit])
-                  data-access.contract/get-unit-by-eid            (fn [_ _] infantry-unit)
-                  data-access.contract/get-spells-by-keys         (fn [_ _] {})
-                  data-access.contract/get-abilities-by-keys      (fn [_ _] {})
-                  data-access.contract/get-items-for-unit         (fn [_ _] [])
-                  data-access.contract/get-mounts-for-unit        (fn [_ _] mounts)
-                  data-access.contract/get-unit-level-costs       (fn [_] test-level-costs)
-                  data-access.contract/get-family-variants-by-eid (fn [_ _] [])]
+    (with-redefs [data-access.contract/draft-by-eid           (fn [_ _] test-draft)
+                  data-access.contract/game-mode-by-eid       (fn [_ _] test-game-mode)
+                  data-access.contract/draft-state-by-eid     (fn [_ _] @state)
+                  data-access.contract/update-entry!          (fn [_ _ eid attrs]
+                                                                (reset! captured {:entry-eid eid :attrs attrs})
+                                                                (swap! state update-vals
+                                                                       (fn [xs]
+                                                                         (mapv (fn [e] (if (= eid (:entry-eid e)) (merge e attrs) e)) xs)))
+                                                                nil)
+                  data-access.contract/units-for-faction      (fn [_ _] [infantry-unit])
+                  data-access.contract/unit-by-eid            (fn [_ _] infantry-unit)
+                  data-access.contract/spells-by-keys         (fn [_ _] {})
+                  data-access.contract/abilities-by-keys      (fn [_ _] {})
+                  data-access.contract/items-for-unit         (fn [_ _] [])
+                  data-access.contract/mounts-for-unit        (fn [_ _] mounts)
+                  data-access.contract/unit-level-costs       (fn [_] test-level-costs)
+                  data-access.contract/family-variants-by-eid (fn [_ _] [])]
       (let [result (handlers.draft/update-unit-in-draft test-deps test-draft-eid test-entry-eid "main"
                                                         {:mount mount-key})]
         (is (= :draft/update-success (:type result)))
@@ -561,30 +561,30 @@
         mount-key      "mount_expensive"
         mounts         [{:id   1        :eid      (UUID/randomUUID) :key  mount-key
                          :name "Dragon" :icon-key mount-key         :cost 10000}]]
-    (with-redefs [data-access.contract/draft-by-eid               (fn [_ _] test-draft)
-                  data-access.contract/get-game-mode-by-eid       (fn [_ _] test-game-mode)
-                  data-access.contract/draft-state-by-eid         (fn [_ _] existing-state)
-                  data-access.contract/add-entry!                 (fn [_ _ _] nil)
-                  data-access.contract/remove-entry!              (fn [_ _ _] nil)
-                  data-access.contract/update-entry!              (fn [_ _ _ _] nil)
-                  data-access.contract/get-units-for-faction      (fn [_ _] [infantry-unit])
-                  data-access.contract/get-unit-by-eid            (fn [_ _] infantry-unit)
-                  data-access.contract/get-spells-by-keys         (fn [_ _] {})
-                  data-access.contract/get-abilities-by-keys      (fn [_ _] {})
-                  data-access.contract/get-items-for-unit         (fn [_ _] [])
-                  data-access.contract/get-mounts-for-unit        (fn [_ _] mounts)
-                  data-access.contract/get-unit-level-costs       (fn [_] test-level-costs)
-                  data-access.contract/get-family-variants-by-eid (fn [_ _] [])]
+    (with-redefs [data-access.contract/draft-by-eid           (fn [_ _] test-draft)
+                  data-access.contract/game-mode-by-eid       (fn [_ _] test-game-mode)
+                  data-access.contract/draft-state-by-eid     (fn [_ _] existing-state)
+                  data-access.contract/add-entry!             (fn [_ _ _] nil)
+                  data-access.contract/remove-entry!          (fn [_ _ _] nil)
+                  data-access.contract/update-entry!          (fn [_ _ _ _] nil)
+                  data-access.contract/units-for-faction      (fn [_ _] [infantry-unit])
+                  data-access.contract/unit-by-eid            (fn [_ _] infantry-unit)
+                  data-access.contract/spells-by-keys         (fn [_ _] {})
+                  data-access.contract/abilities-by-keys      (fn [_ _] {})
+                  data-access.contract/items-for-unit         (fn [_ _] [])
+                  data-access.contract/mounts-for-unit        (fn [_ _] mounts)
+                  data-access.contract/unit-level-costs       (fn [_] test-level-costs)
+                  data-access.contract/family-variants-by-eid (fn [_ _] [])]
       (let [result (handlers.draft/update-unit-in-draft test-deps test-draft-eid test-entry-eid "main"
                                                         {:mount mount-key})]
         (is (= :draft/update-error (:type result)))
         (is (string? (:message result)))))))
 
 (deftest update-unit-in-draft-returns-error-when-entry-missing
-  (with-redefs [data-access.contract/draft-by-eid          (fn [_ _] test-draft)
-                data-access.contract/get-game-mode-by-eid  (fn [_ _] test-game-mode)
-                data-access.contract/draft-state-by-eid    (fn [_ _] nil)
-                data-access.contract/get-units-for-faction (fn [_ _] [infantry-unit])]
+  (with-redefs [data-access.contract/draft-by-eid       (fn [_ _] test-draft)
+                data-access.contract/game-mode-by-eid   (fn [_ _] test-game-mode)
+                data-access.contract/draft-state-by-eid (fn [_ _] nil)
+                data-access.contract/units-for-faction  (fn [_ _] [infantry-unit])]
     (let [result (handlers.draft/update-unit-in-draft test-deps test-draft-eid test-entry-eid "main" {})]
       (is (= :draft/update-error (:type result))))))
 
@@ -593,81 +593,81 @@
   ;; fire the per-unit cap (the reduced army has only 3 copies when validating).
   (let [eeids          (mapv #(UUID/fromString (str "e0000000-0000-0000-0000-00000000000" %)) [1 2 3 4])
         existing-state (state-map {:main (mapv #(vector test-unit-eid %) eeids) :reinforcements []})]
-    (with-redefs [data-access.contract/draft-by-eid               (fn [_ _] test-draft)
-                  data-access.contract/get-game-mode-by-eid       (fn [_ _] test-game-mode)
-                  data-access.contract/draft-state-by-eid         (fn [_ _] existing-state)
-                  data-access.contract/add-entry!                 (fn [_ _ _] nil)
-                  data-access.contract/remove-entry!              (fn [_ _ _] nil)
-                  data-access.contract/update-entry!              (fn [_ _ _ _] nil)
-                  data-access.contract/get-units-for-faction      (fn [_ _] [infantry-unit])
-                  data-access.contract/get-unit-by-eid            (fn [_ _] infantry-unit)
-                  data-access.contract/get-spells-by-keys         (fn [_ _] {})
-                  data-access.contract/get-abilities-by-keys      (fn [_ _] {})
-                  data-access.contract/get-items-for-unit         (fn [_ _] [])
-                  data-access.contract/get-mounts-for-unit        (fn [_ _] [])
-                  data-access.contract/get-unit-level-costs       (fn [_] test-level-costs)
-                  data-access.contract/get-family-variants-by-eid (fn [_ _] [])]
+    (with-redefs [data-access.contract/draft-by-eid           (fn [_ _] test-draft)
+                  data-access.contract/game-mode-by-eid       (fn [_ _] test-game-mode)
+                  data-access.contract/draft-state-by-eid     (fn [_ _] existing-state)
+                  data-access.contract/add-entry!             (fn [_ _ _] nil)
+                  data-access.contract/remove-entry!          (fn [_ _ _] nil)
+                  data-access.contract/update-entry!          (fn [_ _ _ _] nil)
+                  data-access.contract/units-for-faction      (fn [_ _] [infantry-unit])
+                  data-access.contract/unit-by-eid            (fn [_ _] infantry-unit)
+                  data-access.contract/spells-by-keys         (fn [_ _] {})
+                  data-access.contract/abilities-by-keys      (fn [_ _] {})
+                  data-access.contract/items-for-unit         (fn [_ _] [])
+                  data-access.contract/mounts-for-unit        (fn [_ _] [])
+                  data-access.contract/unit-level-costs       (fn [_] test-level-costs)
+                  data-access.contract/family-variants-by-eid (fn [_ _] [])]
       (let [result (handlers.draft/update-unit-in-draft test-deps test-draft-eid (first eeids) "main" {})]
         (is (= :draft/update-success (:type result)))))))
 
 (deftest remove-unit-from-draft-is-no-op-when-entry-not-in-section
-  (with-redefs [data-access.contract/draft-by-eid          (fn [_ _] test-draft)
-                data-access.contract/get-game-mode-by-eid  (fn [_ _] test-game-mode)
-                data-access.contract/draft-state-by-eid    (fn [_ _] nil)
-                data-access.contract/add-entry!            (fn [_ _ _] nil)
-                data-access.contract/remove-entry!         (fn [_ _ _] nil)
-                data-access.contract/update-entry!         (fn [_ _ _ _] nil)
-                data-access.contract/get-units-for-faction (fn [_ _] [infantry-unit])]
+  (with-redefs [data-access.contract/draft-by-eid       (fn [_ _] test-draft)
+                data-access.contract/game-mode-by-eid   (fn [_ _] test-game-mode)
+                data-access.contract/draft-state-by-eid (fn [_ _] nil)
+                data-access.contract/add-entry!         (fn [_ _ _] nil)
+                data-access.contract/remove-entry!      (fn [_ _ _] nil)
+                data-access.contract/update-entry!      (fn [_ _ _ _] nil)
+                data-access.contract/units-for-faction  (fn [_ _] [infantry-unit])]
     (let [result (handlers.draft/remove-unit-from-draft test-deps test-draft-eid test-entry-eid "main")]
       (is (= :draft/remove-success (:type result))))))
 
 ;; --- get-draft-unit-details ---
 
 (deftest get-draft-unit-details-returns-draft-unit-type
-  (with-redefs [data-access.contract/draft-by-eid               (fn [_ _] test-draft)
-                data-access.contract/get-game-mode-by-eid       (fn [_ _] test-game-mode)
-                data-access.contract/get-unit-by-eid            (fn [_ _] infantry-unit)
-                data-access.contract/get-abilities-by-keys      (fn [_ _] {})
-                data-access.contract/get-spells-by-keys         (fn [_ _] {})
-                data-access.contract/get-items-for-unit         (fn [_ _] [])
-                data-access.contract/get-mounts-for-unit        (fn [_ _] [])
-                data-access.contract/get-family-variants-by-eid (fn [_ _] [])]
+  (with-redefs [data-access.contract/draft-by-eid           (fn [_ _] test-draft)
+                data-access.contract/game-mode-by-eid       (fn [_ _] test-game-mode)
+                data-access.contract/unit-by-eid            (fn [_ _] infantry-unit)
+                data-access.contract/abilities-by-keys      (fn [_ _] {})
+                data-access.contract/spells-by-keys         (fn [_ _] {})
+                data-access.contract/items-for-unit         (fn [_ _] [])
+                data-access.contract/mounts-for-unit        (fn [_ _] [])
+                data-access.contract/family-variants-by-eid (fn [_ _] [])]
     (let [result (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)]
       (is (= :draft/unit (:type result))))))
 
 (deftest get-draft-unit-details-attaches-draft-eid
-  (with-redefs [data-access.contract/draft-by-eid               (fn [_ _] test-draft)
-                data-access.contract/get-game-mode-by-eid       (fn [_ _] test-game-mode)
-                data-access.contract/get-unit-by-eid            (fn [_ _] infantry-unit)
-                data-access.contract/get-abilities-by-keys      (fn [_ _] {})
-                data-access.contract/get-spells-by-keys         (fn [_ _] {})
-                data-access.contract/get-items-for-unit         (fn [_ _] [])
-                data-access.contract/get-mounts-for-unit        (fn [_ _] [])
-                data-access.contract/get-family-variants-by-eid (fn [_ _] [])]
+  (with-redefs [data-access.contract/draft-by-eid           (fn [_ _] test-draft)
+                data-access.contract/game-mode-by-eid       (fn [_ _] test-game-mode)
+                data-access.contract/unit-by-eid            (fn [_ _] infantry-unit)
+                data-access.contract/abilities-by-keys      (fn [_ _] {})
+                data-access.contract/spells-by-keys         (fn [_ _] {})
+                data-access.contract/items-for-unit         (fn [_ _] [])
+                data-access.contract/mounts-for-unit        (fn [_ _] [])
+                data-access.contract/family-variants-by-eid (fn [_ _] [])]
     (let [result (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)]
       (is (= test-draft-eid (:draft-eid result))))))
 
 (deftest get-draft-unit-details-sets-can-add-to-reinforcements-from-game-mode
-  (with-redefs [data-access.contract/draft-by-eid               (fn [_ _] test-draft)
-                data-access.contract/get-game-mode-by-eid       (fn [_ _] test-game-mode)
-                data-access.contract/get-unit-by-eid            (fn [_ _] infantry-unit)
-                data-access.contract/get-abilities-by-keys      (fn [_ _] {})
-                data-access.contract/get-spells-by-keys         (fn [_ _] {})
-                data-access.contract/get-items-for-unit         (fn [_ _] [])
-                data-access.contract/get-mounts-for-unit        (fn [_ _] [])
-                data-access.contract/get-family-variants-by-eid (fn [_ _] [])]
+  (with-redefs [data-access.contract/draft-by-eid           (fn [_ _] test-draft)
+                data-access.contract/game-mode-by-eid       (fn [_ _] test-game-mode)
+                data-access.contract/unit-by-eid            (fn [_ _] infantry-unit)
+                data-access.contract/abilities-by-keys      (fn [_ _] {})
+                data-access.contract/spells-by-keys         (fn [_ _] {})
+                data-access.contract/items-for-unit         (fn [_ _] [])
+                data-access.contract/mounts-for-unit        (fn [_ _] [])
+                data-access.contract/family-variants-by-eid (fn [_ _] [])]
     (is (true? (get-in (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)
                        [:validation :can-add-to-reinforcements?])))))
 
 (deftest get-draft-unit-details-disables-reinforcements-when-game-mode-zero
-  (with-redefs [data-access.contract/draft-by-eid               (fn [_ _] test-draft)
-                data-access.contract/get-game-mode-by-eid       (fn [_ _] (assoc test-game-mode :reinforcements-enabled 0))
-                data-access.contract/get-unit-by-eid            (fn [_ _] infantry-unit)
-                data-access.contract/get-abilities-by-keys      (fn [_ _] {})
-                data-access.contract/get-spells-by-keys         (fn [_ _] {})
-                data-access.contract/get-items-for-unit         (fn [_ _] [])
-                data-access.contract/get-mounts-for-unit        (fn [_ _] [])
-                data-access.contract/get-family-variants-by-eid (fn [_ _] [])]
+  (with-redefs [data-access.contract/draft-by-eid           (fn [_ _] test-draft)
+                data-access.contract/game-mode-by-eid       (fn [_ _] (assoc test-game-mode :reinforcements-enabled 0))
+                data-access.contract/unit-by-eid            (fn [_ _] infantry-unit)
+                data-access.contract/abilities-by-keys      (fn [_ _] {})
+                data-access.contract/spells-by-keys         (fn [_ _] {})
+                data-access.contract/items-for-unit         (fn [_ _] [])
+                data-access.contract/mounts-for-unit        (fn [_ _] [])
+                data-access.contract/family-variants-by-eid (fn [_ _] [])]
     (is (false? (get-in (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)
                         [:validation :can-add-to-reinforcements?])))))
 
@@ -720,20 +720,20 @@
       (is (= with without)))))
 
 (deftest hydrate-mount-overrides-parses-stats-override-into-draft-unit-stats
-  (with-redefs [data-access.contract/get-abilities-by-keys (fn [_ _] {})]
+  (with-redefs [data-access.contract/abilities-by-keys (fn [_ _] {})]
     (let [hydrated (handlers.draft/hydrate-mount-overrides nil mount-with-overrides)]
       (is (= 6828 (:health-override hydrated)))
       (is (seq (:stats-override hydrated)))
       (is (every? (fn [s] (and (contains? s :stat) (contains? s :percentage))) (:stats-override hydrated))))))
 
 (deftest hydrate-mount-overrides-exposes-attributes-override
-  (with-redefs [data-access.contract/get-abilities-by-keys (fn [_ _] {})]
+  (with-redefs [data-access.contract/abilities-by-keys (fn [_ _] {})]
     (let [hydrated (handlers.draft/hydrate-mount-overrides nil mount-with-overrides)]
       (is (seq (:attributes-override hydrated)))
       (is (= #{"flying" "large"} (set (map :key (:attributes-override hydrated))))))))
 
 (deftest hydrate-mount-overrides-resolves-granted-ability-keys-to-records
-  (with-redefs [data-access.contract/get-abilities-by-keys
+  (with-redefs [data-access.contract/abilities-by-keys
                 (fn [_ _]
                   {"ability_fiery_roar" {:eid         (UUID/fromString "aaaa0000-0000-0000-0000-000000000001")
                                          :name        "Fiery Roar"
@@ -752,15 +752,15 @@
     (is (= [] (:granted-abilities hydrated)))))
 
 (deftest embed-unit-for-entry-overlays-mount-health-when-mount-selected
-  (with-redefs [data-access.contract/draft-by-eid               (fn [_ _] test-draft)
-                data-access.contract/get-game-mode-by-eid       (fn [_ _] test-game-mode)
-                data-access.contract/get-unit-by-eid            (fn [_ _] lord-with-mount-stats)
-                data-access.contract/get-abilities-by-keys      (fn [_ _] {})
-                data-access.contract/get-spells-by-keys         (fn [_ _] {})
-                data-access.contract/get-items-for-unit         (fn [_ _] [])
-                data-access.contract/get-mounts-for-unit        (fn [_ _] [mount-with-overrides])
-                data-access.contract/get-unit-level-costs       (fn [_] test-level-costs)
-                data-access.contract/get-family-variants-by-eid (fn [_ _] [])]
+  (with-redefs [data-access.contract/draft-by-eid           (fn [_ _] test-draft)
+                data-access.contract/game-mode-by-eid       (fn [_ _] test-game-mode)
+                data-access.contract/unit-by-eid            (fn [_ _] lord-with-mount-stats)
+                data-access.contract/abilities-by-keys      (fn [_ _] {})
+                data-access.contract/spells-by-keys         (fn [_ _] {})
+                data-access.contract/items-for-unit         (fn [_ _] [])
+                data-access.contract/mounts-for-unit        (fn [_ _] [mount-with-overrides])
+                data-access.contract/unit-level-costs       (fn [_] test-level-costs)
+                data-access.contract/family-variants-by-eid (fn [_ _] [])]
     (let [entry-resource {:eid       (:entry-eid test-entry)
                           :draft-eid test-draft-eid
                           :unit-eid  test-lord-eid
@@ -791,19 +791,19 @@
                :cost                 800
                :stats-override       nil
                :granted-ability-keys "[\"bloodroar\"]"}]
-    (with-redefs [data-access.contract/draft-by-eid               (fn [_ _] test-draft)
-                  data-access.contract/get-game-mode-by-eid       (fn [_ _] test-game-mode)
-                  data-access.contract/get-unit-by-eid            (fn [_ _] unit)
-                  data-access.contract/get-abilities-by-keys      (fn [_ ks]
-                                                                    (into {}
-                                                                          (map (fn [k] [k {:eid  (UUID/randomUUID)
-                                                                                           :name k
-                                                                                           :cost (if (= k "bloodroar") 150 0)}]))
-                                                                          ks))
-                  data-access.contract/get-spells-by-keys         (fn [_ _] {})
-                  data-access.contract/get-items-for-unit         (fn [_ _] [])
-                  data-access.contract/get-mounts-for-unit        (fn [_ _] [mount])
-                  data-access.contract/get-family-variants-by-eid (fn [_ _] [])]
+    (with-redefs [data-access.contract/draft-by-eid           (fn [_ _] test-draft)
+                  data-access.contract/game-mode-by-eid       (fn [_ _] test-game-mode)
+                  data-access.contract/unit-by-eid            (fn [_ _] unit)
+                  data-access.contract/abilities-by-keys      (fn [_ ks]
+                                                                (into {}
+                                                                      (map (fn [k] [k {:eid  (UUID/randomUUID)
+                                                                                       :name k
+                                                                                       :cost (if (= k "bloodroar") 150 0)}]))
+                                                                      ks))
+                  data-access.contract/spells-by-keys         (fn [_ _] {})
+                  data-access.contract/items-for-unit         (fn [_ _] [])
+                  data-access.contract/mounts-for-unit        (fn [_ _] [mount])
+                  data-access.contract/family-variants-by-eid (fn [_ _] [])]
       (let [result             (handlers.draft/get-draft-unit-details test-deps test-draft-eid test-unit-eid)
             draftable-keys     (set (map :key (:draftable-abilities result)))
             passive-keys       (set (map :key (:passive-abilities result)))
@@ -815,15 +815,15 @@
                (into draftable-keys passive-keys)))))))
 
 (deftest embed-unit-for-entry-leaves-base-stats-when-no-mount-selected
-  (with-redefs [data-access.contract/draft-by-eid               (fn [_ _] test-draft)
-                data-access.contract/get-game-mode-by-eid       (fn [_ _] test-game-mode)
-                data-access.contract/get-unit-by-eid            (fn [_ _] lord-with-mount-stats)
-                data-access.contract/get-abilities-by-keys      (fn [_ _] {})
-                data-access.contract/get-spells-by-keys         (fn [_ _] {})
-                data-access.contract/get-items-for-unit         (fn [_ _] [])
-                data-access.contract/get-mounts-for-unit        (fn [_ _] [mount-with-overrides])
-                data-access.contract/get-unit-level-costs       (fn [_] test-level-costs)
-                data-access.contract/get-family-variants-by-eid (fn [_ _] [])]
+  (with-redefs [data-access.contract/draft-by-eid           (fn [_ _] test-draft)
+                data-access.contract/game-mode-by-eid       (fn [_ _] test-game-mode)
+                data-access.contract/unit-by-eid            (fn [_ _] lord-with-mount-stats)
+                data-access.contract/abilities-by-keys      (fn [_ _] {})
+                data-access.contract/spells-by-keys         (fn [_ _] {})
+                data-access.contract/items-for-unit         (fn [_ _] [])
+                data-access.contract/mounts-for-unit        (fn [_ _] [mount-with-overrides])
+                data-access.contract/unit-level-costs       (fn [_] test-level-costs)
+                data-access.contract/family-variants-by-eid (fn [_ _] [])]
     (let [entry-resource {:eid       (:entry-eid test-entry)
                           :draft-eid test-draft-eid
                           :unit-eid  test-lord-eid
