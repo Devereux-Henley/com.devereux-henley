@@ -1,0 +1,10 @@
+[#:social-media-platform{:eid
+                         #uuid "946d4828-2fa1-409b-8c7b-1f84108fcea9",
+                         :name "Twitch",
+                         :description "Streaming Platform.mpeg",
+                         :platform-url "twitch.tv"}
+ #:social-media-platform{:eid
+                         #uuid "41780b82-9fcf-44a4-aa1c-6a57cc835585",
+                         :name "YouTube",
+                         :description "Video Website.wav",
+                         :platform-url "youtube.com"}]

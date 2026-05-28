@@ -1,0 +1,1665 @@
+[#:unit-item{:eid #uuid "e9b5b9db-cae2-3587-b795-e730f9a75af3",
+             :unit
+             [:unit/eid #uuid "00010002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000253"]}
+ #:unit-item{:eid #uuid "afb844d2-383d-3907-8fc4-3cfbaaf624ca",
+             :unit
+             [:unit/eid #uuid "00010002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000276"]}
+ #:unit-item{:eid #uuid "732e3955-5b4f-3d57-8b2e-c3a50851622c",
+             :unit
+             [:unit/eid #uuid "00010002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000042c"]}
+ #:unit-item{:eid #uuid "fc4239fb-4884-3530-a0f1-b731650eaf3c",
+             :unit
+             [:unit/eid #uuid "00010002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000044a"]}
+ #:unit-item{:eid #uuid "3cd48286-226a-3646-931b-83f7208077ba",
+             :unit
+             [:unit/eid #uuid "00010002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000464"]}
+ #:unit-item{:eid #uuid "cbe98944-bb7a-3b70-95fe-68d527293956",
+             :unit
+             [:unit/eid #uuid "00010004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000261"]}
+ #:unit-item{:eid #uuid "7d259b70-9abf-34c1-a2c7-2320ae9e3936",
+             :unit
+             [:unit/eid #uuid "00010004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000274"]}
+ #:unit-item{:eid #uuid "0ff9545f-bcf4-3b99-aed5-0f46994a2ad2",
+             :unit
+             [:unit/eid #uuid "00010005-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000474"]}
+ #:unit-item{:eid #uuid "32620500-a884-3df3-8428-5dabd7e0f5b4",
+             :unit
+             [:unit/eid #uuid "00010005-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000047e"]}
+ #:unit-item{:eid #uuid "5c1ccaca-3c49-3a2e-a8e2-97ceb1af0bf7",
+             :unit
+             [:unit/eid #uuid "00010008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000a2"]}
+ #:unit-item{:eid #uuid "683511d6-b72a-3958-b882-7bee8561657d",
+             :unit
+             [:unit/eid #uuid "00010008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000a5"]}
+ #:unit-item{:eid #uuid "96d6539d-c7f2-3b07-8f1e-a3662e5f5b25",
+             :unit
+             [:unit/eid #uuid "00010008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000a8"]}
+ #:unit-item{:eid #uuid "27da212e-fade-37d3-ad32-a21b8f1c3c10",
+             :unit
+             [:unit/eid #uuid "00010008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000418"]}
+ #:unit-item{:eid #uuid "95583f80-ea55-3a4c-b34f-21d8599e1c3c",
+             :unit
+             [:unit/eid #uuid "00010009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000252"]}
+ #:unit-item{:eid #uuid "a35c5e41-95dc-3d81-8d10-1b1101a5eaf4",
+             :unit
+             [:unit/eid #uuid "00010009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000257"]}
+ #:unit-item{:eid #uuid "ed35678b-54df-35a8-a00b-9f280364a7a3",
+             :unit
+             [:unit/eid #uuid "00010009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000262"]}
+ #:unit-item{:eid #uuid "fb3baaaa-757a-3959-8595-2667dd6bb8b0",
+             :unit
+             [:unit/eid #uuid "00010009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000026b"]}
+ #:unit-item{:eid #uuid "8f7a8a62-4e7d-3a9f-91d5-ffef03877e4b",
+             :unit
+             [:unit/eid #uuid "0001000a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003db"]}
+ #:unit-item{:eid #uuid "4dbdf76b-18e9-3b49-b97e-bac0f4bfc2dd",
+             :unit
+             [:unit/eid #uuid "0001000a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003de"]}
+ #:unit-item{:eid #uuid "ab56021d-4a40-31ad-90ac-32dc8debbac2",
+             :unit
+             [:unit/eid #uuid "0001000b-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "6c0a2b26-b137-3558-959d-00763158419a",
+             :unit
+             [:unit/eid #uuid "0001000b-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000251"]}
+ #:unit-item{:eid #uuid "1edaae90-f937-354c-9b99-755003a2ddc0",
+             :unit
+             [:unit/eid #uuid "0001000d-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000275"]}
+ #:unit-item{:eid #uuid "76059477-bd38-38dd-ba40-9d04dd2adb5d",
+             :unit
+             [:unit/eid #uuid "0001000e-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000025d"]}
+ #:unit-item{:eid #uuid "7977d2fe-923d-3a78-99ac-4d2ef4ffec97",
+             :unit
+             [:unit/eid #uuid "00010010-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000252"]}
+ #:unit-item{:eid #uuid "0de14f3c-d5c0-33c2-812c-893c4c8d4810",
+             :unit
+             [:unit/eid #uuid "00010010-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000257"]}
+ #:unit-item{:eid #uuid "e68e2dab-6b35-3c2e-94ec-478ad2ee42ad",
+             :unit
+             [:unit/eid #uuid "00010010-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000262"]}
+ #:unit-item{:eid #uuid "73832d7c-8fd9-3b2a-a848-686c6bb8f0e3",
+             :unit
+             [:unit/eid #uuid "00010010-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000026b"]}
+ #:unit-item{:eid #uuid "1c3efa27-99e4-359c-aaee-8fd21d18bbf6",
+             :unit
+             [:unit/eid #uuid "00010011-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001e6"]}
+ #:unit-item{:eid #uuid "55e1dd51-40e9-33d6-9905-6864a53eb606",
+             :unit
+             [:unit/eid #uuid "00010013-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001e7"]}
+ #:unit-item{:eid #uuid "4792efea-99c3-32d6-801a-d5fcdfa78a8c",
+             :unit
+             [:unit/eid #uuid "00010014-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000024f"]}
+ #:unit-item{:eid #uuid "99b67e20-078c-3d14-9ce0-691ab11b0f2f",
+             :unit
+             [:unit/eid #uuid "00010016-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000270"]}
+ #:unit-item{:eid #uuid "c05e5e43-a3cd-38f0-bb2f-09a2fd96561e",
+             :unit
+             [:unit/eid #uuid "00010019-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000254"]}
+ #:unit-item{:eid #uuid "008ebacd-8e4c-300f-8d68-d881666878cf",
+             :unit
+             [:unit/eid #uuid "0001001b-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000258"]}
+ #:unit-item{:eid #uuid "6d7baca8-cf33-3abb-bd4f-9be826a59792",
+             :unit
+             [:unit/eid #uuid "0001001b-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000025e"]}
+ #:unit-item{:eid #uuid "c0fafe8f-3b27-37d3-b818-5d09ba4d7afc",
+             :unit
+             [:unit/eid #uuid "0001001b-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000026e"]}
+ #:unit-item{:eid #uuid "f2759e37-4e24-3c9e-8654-72a261c5ea8b",
+             :unit
+             [:unit/eid #uuid "0001001c-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001fc"]}
+ #:unit-item{:eid #uuid "b39457ce-a952-358a-93e0-842368912d06",
+             :unit
+             [:unit/eid #uuid "0001001c-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000224"]}
+ #:unit-item{:eid #uuid "74680d79-dd0d-34b4-87b8-11c5fb5194d5",
+             :unit
+             [:unit/eid #uuid "00020003-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "27814a43-a871-3d90-8ce5-ddd9f6bf5c57",
+             :unit
+             [:unit/eid #uuid "00020007-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003ca"]}
+ #:unit-item{:eid #uuid "1495451a-96af-3ddf-b897-c8057e4bd0be",
+             :unit
+             [:unit/eid #uuid "00020007-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003d6"]}
+ #:unit-item{:eid #uuid "fac2bd2b-85f8-3ba9-bd11-a1b63e24a1c7",
+             :unit
+             [:unit/eid #uuid "00020008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "a4ab9db6-0f88-38f3-ab7e-31f41c40923b",
+             :unit
+             [:unit/eid #uuid "00020008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003cd"]}
+ #:unit-item{:eid #uuid "9e12a900-2371-3733-a35d-8a0584d06c1f",
+             :unit
+             [:unit/eid #uuid "00020009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000048d"]}
+ #:unit-item{:eid #uuid "3e12adfd-120a-3f2c-861d-1147ddcea407",
+             :unit
+             [:unit/eid #uuid "0002000a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000137"]}
+ #:unit-item{:eid #uuid "150022da-e2c4-378b-9064-23080c474141",
+             :unit
+             [:unit/eid #uuid "0002000b-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "334ffabc-5c2f-3a2f-94db-a628ff3dd9e6",
+             :unit
+             [:unit/eid #uuid "00030001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000091"]}
+ #:unit-item{:eid #uuid "c9b1fcec-fe0b-3f47-a938-cfa3de2b9728",
+             :unit
+             [:unit/eid #uuid "00030001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000400"]}
+ #:unit-item{:eid #uuid "d94d4935-12e5-32e5-85a5-738432cf5c6a",
+             :unit
+             [:unit/eid #uuid "00030002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000092"]}
+ #:unit-item{:eid #uuid "6e4bd236-d2cf-3883-8a77-324b70141d0a",
+             :unit
+             [:unit/eid #uuid "00030002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003f3"]}
+ #:unit-item{:eid #uuid "718e09af-e38f-3143-9235-e420ea23cbb6",
+             :unit
+             [:unit/eid #uuid "00030003-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000008d"]}
+ #:unit-item{:eid #uuid "0ab2b267-ac12-30bc-a922-813b4eb59465",
+             :unit
+             [:unit/eid #uuid "00030003-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000445"]}
+ #:unit-item{:eid #uuid "1e378bc8-d639-356d-a277-fb009b60dcae",
+             :unit
+             [:unit/eid #uuid "00030003-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000459"]}
+ #:unit-item{:eid #uuid "e5b73c05-90c4-3f6b-b99a-62b537e6ce52",
+             :unit
+             [:unit/eid #uuid "00030003-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000049b"]}
+ #:unit-item{:eid #uuid "26e6f074-21e2-3e38-becd-8d69f42bcaba",
+             :unit
+             [:unit/eid #uuid "00030005-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "2fb5447c-9531-3262-b3bd-4eac2de3381c",
+             :unit
+             [:unit/eid #uuid "00030008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000b9"]}
+ #:unit-item{:eid #uuid "89a04fb1-4b09-3669-9250-1226db32527d",
+             :unit
+             [:unit/eid #uuid "00030008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000c2"]}
+ #:unit-item{:eid #uuid "fe27a831-50ba-3aab-b6fa-63d77ae0b9ec",
+             :unit
+             [:unit/eid #uuid "00030009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "1862caed-e443-3f33-88a7-e1d90b80365f",
+             :unit
+             [:unit/eid #uuid "0003000c-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001e6"]}
+ #:unit-item{:eid #uuid "3859fd9c-6285-3ec4-9484-058ce5c5715d",
+             :unit
+             [:unit/eid #uuid "0003000d-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001e7"]}
+ #:unit-item{:eid #uuid "a36c2dda-af57-3a03-af22-a969dc588148",
+             :unit
+             [:unit/eid #uuid "00040001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000021e"]}
+ #:unit-item{:eid #uuid "9cc11122-0f50-3274-8fa0-8df377cef6f5",
+             :unit
+             [:unit/eid #uuid "00040001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000220"]}
+ #:unit-item{:eid #uuid "0682cef3-790b-3e85-9610-3ac5eca050a4",
+             :unit
+             [:unit/eid #uuid "00040002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001fe"]}
+ #:unit-item{:eid #uuid "92e49362-c69b-3410-b64b-be6bd95cb0be",
+             :unit
+             [:unit/eid #uuid "00040002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000219"]}
+ #:unit-item{:eid #uuid "494d2e4a-4b46-3da7-866f-5725538e34f4",
+             :unit
+             [:unit/eid #uuid "00040002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000228"]}
+ #:unit-item{:eid #uuid "9c937d59-1248-3508-a759-afde462e4f90",
+             :unit
+             [:unit/eid #uuid "00040008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000204"]}
+ #:unit-item{:eid #uuid "10a03884-b197-33bd-8a9c-184066f83ade",
+             :unit
+             [:unit/eid #uuid "00040008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000210"]}
+ #:unit-item{:eid #uuid "7d0b6f61-9988-3072-9abc-276ac1aa7e62",
+             :unit
+             [:unit/eid #uuid "00040008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000222"]}
+ #:unit-item{:eid #uuid "5501489d-d91b-35c9-9adc-06b7101baf75",
+             :unit
+             [:unit/eid #uuid "0004000e-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000020f"]}
+ #:unit-item{:eid #uuid "01569868-a3f7-36e0-b11f-5aca0b0f5233",
+             :unit
+             [:unit/eid #uuid "0004000e-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000221"]}
+ #:unit-item{:eid #uuid "9cacbffb-86f8-36c3-9f2e-bba12746828d",
+             :unit
+             [:unit/eid #uuid "00050002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000385"]}
+ #:unit-item{:eid #uuid "03f1196f-62ee-3624-9040-788204b97746",
+             :unit
+             [:unit/eid #uuid "0005001f-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003ba"]}
+ #:unit-item{:eid #uuid "59e582b7-389a-34e7-a959-94cfddb638ef",
+             :unit
+             [:unit/eid #uuid "00050022-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022e"]}
+ #:unit-item{:eid #uuid "aa6174a1-b3d7-33c7-8cbe-938266a1dd2c",
+             :unit
+             [:unit/eid #uuid "00060001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000039"]}
+ #:unit-item{:eid #uuid "b82684ee-d3c3-37e2-b442-e0c9f30dabdb",
+             :unit
+             [:unit/eid #uuid "00060001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000003e"]}
+ #:unit-item{:eid #uuid "29840e56-66ac-3e89-836b-d080f53a377a",
+             :unit
+             [:unit/eid #uuid "00060005-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000008a"]}
+ #:unit-item{:eid #uuid "1dc595c7-bf7e-3122-a5a5-6ee2ba1ad8fd",
+             :unit
+             [:unit/eid #uuid "00060005-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000161"]}
+ #:unit-item{:eid #uuid "2554b95c-b57f-3d37-b38e-aafed3a34741",
+             :unit
+             [:unit/eid #uuid "00060006-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000013b"]}
+ #:unit-item{:eid #uuid "5e559731-3184-38ee-8b2f-6c70b7a2272c",
+             :unit
+             [:unit/eid #uuid "00060006-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000156"]}
+ #:unit-item{:eid #uuid "f907e910-7a78-3a62-bfb2-73296666a491",
+             :unit
+             [:unit/eid #uuid "00060006-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000195"]}
+ #:unit-item{:eid #uuid "2a4b63d8-7e3a-3837-a0a6-975b37e85951",
+             :unit
+             [:unit/eid #uuid "00060006-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001c8"]}
+ #:unit-item{:eid #uuid "b85ffc8b-e037-3c23-a5c5-464bd84d910c",
+             :unit
+             [:unit/eid #uuid "00060007-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000c3"]}
+ #:unit-item{:eid #uuid "8a1653cf-8f25-35d8-9ed0-76897fc3a85c",
+             :unit
+             [:unit/eid #uuid "00060008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000014e"]}
+ #:unit-item{:eid #uuid "844caf7c-3165-3cdd-b12a-4445efd13d71",
+             :unit
+             [:unit/eid #uuid "00060008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000019e"]}
+ #:unit-item{:eid #uuid "8e7135dc-294b-31a9-91ff-1ecb92fd1861",
+             :unit
+             [:unit/eid #uuid "00060008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001cd"]}
+ #:unit-item{:eid #uuid "da8e71c3-d717-3afa-8a29-983ced2c6e17",
+             :unit
+             [:unit/eid #uuid "00060009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001e8"]}
+ #:unit-item{:eid #uuid "49747f8d-18ab-3e10-ae6a-f5f4f8aa9252",
+             :unit
+             [:unit/eid #uuid "00060009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001e9"]}
+ #:unit-item{:eid #uuid "f9136a89-a071-3a26-8843-d06e9741ec36",
+             :unit
+             [:unit/eid #uuid "0006000a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "87c53e42-d356-3752-b80b-542f4a0ca978",
+             :unit
+             [:unit/eid #uuid "00060012-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "179b1fd4-a599-375d-baa3-c8bbb472e42e",
+             :unit
+             [:unit/eid #uuid "00070001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003e9"]}
+ #:unit-item{:eid #uuid "c4f904df-a46e-3300-bf48-5764bd4b0b9d",
+             :unit
+             [:unit/eid #uuid "00070001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003f1"]}
+ #:unit-item{:eid #uuid "c3f811aa-5560-3c47-8c79-878cf2c42d6a",
+             :unit
+             [:unit/eid #uuid "00070003-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000049e"]}
+ #:unit-item{:eid #uuid "43f941d2-4603-3c3e-aaf5-e172cc1a8d70",
+             :unit
+             [:unit/eid #uuid "00070003-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000049f"]}
+ #:unit-item{:eid #uuid "0bf9b57d-0282-3bf2-927e-ab7a9978377f",
+             :unit
+             [:unit/eid #uuid "00070003-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000004a4"]}
+ #:unit-item{:eid #uuid "a60f2619-81ce-316e-9130-0fd6048d8eec",
+             :unit
+             [:unit/eid #uuid "00070003-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000004a5"]}
+ #:unit-item{:eid #uuid "98aeb63b-01e1-3e84-a30e-cbc980219520",
+             :unit
+             [:unit/eid #uuid "00070005-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000259"]}
+ #:unit-item{:eid #uuid "13d97057-4b6e-353c-a068-bcd98cedf7e5",
+             :unit
+             [:unit/eid #uuid "00070005-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000026d"]}
+ #:unit-item{:eid #uuid "4225b3e3-ebad-3eae-9f67-b497e264365f",
+             :unit
+             [:unit/eid #uuid "00070005-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000026f"]}
+ #:unit-item{:eid #uuid "4b942650-0786-3dcb-bd1f-3ba48b66a60f",
+             :unit
+             [:unit/eid #uuid "00070007-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000011f"]}
+ #:unit-item{:eid #uuid "55d1781c-667b-3387-a6d3-4c99d68ea510",
+             :unit
+             [:unit/eid #uuid "00070007-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000136"]}
+ #:unit-item{:eid #uuid "6e1bea9f-d85d-3d2b-acd0-bc71daa8022a",
+             :unit
+             [:unit/eid #uuid "00070008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000444"]}
+ #:unit-item{:eid #uuid "7a991f5c-6f94-351c-ad29-f0e31166f0f9",
+             :unit
+             [:unit/eid #uuid "00070008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000045c"]}
+ #:unit-item{:eid #uuid "95291246-0e5a-3933-ace0-77163e817d82",
+             :unit
+             [:unit/eid #uuid "00070008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000472"]}
+ #:unit-item{:eid #uuid "7c57eeec-a17c-3978-bf03-5216976f2804",
+             :unit
+             [:unit/eid #uuid "00070008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000496"]}
+ #:unit-item{:eid #uuid "7e9c0159-02c9-3e57-9ce9-19d010c26f85",
+             :unit
+             [:unit/eid #uuid "00070009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000446"]}
+ #:unit-item{:eid #uuid "165eb084-4de9-3172-bf11-ef43c4ca7840",
+             :unit
+             [:unit/eid #uuid "00070009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000466"]}
+ #:unit-item{:eid #uuid "796f2e93-fb3b-3a00-94f8-759ce33add81",
+             :unit
+             [:unit/eid #uuid "00070009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000476"]}
+ #:unit-item{:eid #uuid "83c59aab-3fea-31f1-b5f1-e65f3ffee883",
+             :unit
+             [:unit/eid #uuid "0007000c-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001e6"]}
+ #:unit-item{:eid #uuid "9d8635f6-316a-38d8-aa16-aebe81412fa6",
+             :unit
+             [:unit/eid #uuid "0007000d-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000269"]}
+ #:unit-item{:eid #uuid "9096fbae-ab27-3141-bdac-a712bf32648a",
+             :unit
+             [:unit/eid #uuid "0007000e-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001e7"]}
+ #:unit-item{:eid #uuid "cd75e5a0-1d17-38dc-899e-df22acc4120d",
+             :unit
+             [:unit/eid #uuid "00070012-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000026d"]}
+ #:unit-item{:eid #uuid "1ce14d93-ceaa-3a4c-aff5-923b59f24eba",
+             :unit
+             [:unit/eid #uuid "00080005-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000234"]}
+ #:unit-item{:eid #uuid "89ff91c0-d666-3653-8340-136c4a56c2bb",
+             :unit
+             [:unit/eid #uuid "00080005-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000023d"]}
+ #:unit-item{:eid #uuid "e8ad01b6-1c55-3ced-95bf-87d8b946df4a",
+             :unit
+             [:unit/eid #uuid "00080007-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000232"]}
+ #:unit-item{:eid #uuid "711410c7-58d3-369a-b241-9e32ac22e344",
+             :unit
+             [:unit/eid #uuid "00080007-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000023b"]}
+ #:unit-item{:eid #uuid "e3d17360-fd28-3b0a-bed6-e3335718db0c",
+             :unit
+             [:unit/eid #uuid "0008000a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001e6"]}
+ #:unit-item{:eid #uuid "c687dbfc-5308-372d-88c1-db9b78705dfc",
+             :unit
+             [:unit/eid #uuid "0008000c-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001e7"]}
+ #:unit-item{:eid #uuid "ec35f69d-6c93-36f8-a952-5386cef7a79d",
+             :unit
+             [:unit/eid #uuid "0008000d-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000024e"]}
+ #:unit-item{:eid #uuid "b0bd084d-99e7-36f6-9e13-ffa1a8bc697f",
+             :unit
+             [:unit/eid #uuid "00090001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000435"]}
+ #:unit-item{:eid #uuid "775040c4-f132-3e01-ad80-e3fc6d95a8a1",
+             :unit
+             [:unit/eid #uuid "00090001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000045b"]}
+ #:unit-item{:eid #uuid "8973f9fe-eec7-3a6d-9824-e20f24f202bc",
+             :unit
+             [:unit/eid #uuid "00090001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000048a"]}
+ #:unit-item{:eid #uuid "6cdb3a20-5ce7-3791-8771-83ff5d28af2c",
+             :unit
+             [:unit/eid #uuid "00090002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000458"]}
+ #:unit-item{:eid #uuid "66452747-6023-3b40-af0f-8a6352a578a1",
+             :unit
+             [:unit/eid #uuid "00090003-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000280"]}
+ #:unit-item{:eid #uuid "56aea878-7847-39b1-ba01-8a884b6e9ed3",
+             :unit
+             [:unit/eid #uuid "00090004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000436"]}
+ #:unit-item{:eid #uuid "01f1e779-9f2a-35b9-b254-106d6750a23e",
+             :unit
+             [:unit/eid #uuid "00090004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000480"]}
+ #:unit-item{:eid #uuid "1b86eaf0-72dd-3929-a8a5-c6b194921261",
+             :unit
+             [:unit/eid #uuid "00090007-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000458"]}
+ #:unit-item{:eid #uuid "e4d9cdd8-9023-3da9-be1e-7accfe9a2f98",
+             :unit
+             [:unit/eid #uuid "00090008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003f0"]}
+ #:unit-item{:eid #uuid "30bfa2d3-20b2-3059-8525-49147a790843",
+             :unit
+             [:unit/eid #uuid "00090009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003e8"]}
+ #:unit-item{:eid #uuid "a28b6dc4-68a8-3ccf-be0f-bec792e1c8fa",
+             :unit
+             [:unit/eid #uuid "00090009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003ea"]}
+ #:unit-item{:eid #uuid "4b76155d-2dda-355f-823f-443bac3e4263",
+             :unit
+             [:unit/eid #uuid "00090009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003ef"]}
+ #:unit-item{:eid #uuid "f52d04d5-bd54-3e17-840c-1ce5031e5805",
+             :unit
+             [:unit/eid #uuid "00090009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000458"]}
+ #:unit-item{:eid #uuid "6e5a30df-9332-3774-bc81-9428b70e2f8f",
+             :unit
+             [:unit/eid #uuid "0009000e-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000458"]}
+ #:unit-item{:eid #uuid "dd7f5a78-bfbe-364f-999c-0a5b96b9cd29",
+             :unit
+             [:unit/eid #uuid "0009000f-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000458"]}
+ #:unit-item{:eid #uuid "92e711df-f029-3f6c-b896-c05efdde6e2e",
+             :unit
+             [:unit/eid #uuid "00090031-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000027a"]}
+ #:unit-item{:eid #uuid "9b35ff94-5823-3e2a-ad67-2171d5f3f6b0",
+             :unit
+             [:unit/eid #uuid "00090031-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000027e"]}
+ #:unit-item{:eid #uuid "f81fbdbb-3287-36b5-8bb1-56eaa5bb8598",
+             :unit
+             [:unit/eid #uuid "0009003c-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000ca"]}
+ #:unit-item{:eid #uuid "c7f7c180-31b8-312c-9db9-02c10837b2f5",
+             :unit
+             [:unit/eid #uuid "0009003c-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000ce"]}
+ #:unit-item{:eid #uuid "85b8f072-029b-3440-8585-292a51fcb08b",
+             :unit
+             [:unit/eid #uuid "000a0001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000034"]}
+ #:unit-item{:eid #uuid "68fcf95b-0e12-3312-aaa3-1f258883ca8b",
+             :unit
+             [:unit/eid #uuid "000a0001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000037"]}
+ #:unit-item{:eid #uuid "a0976f72-13df-3389-8da3-6606cfb7e82a",
+             :unit
+             [:unit/eid #uuid "000a0001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000003c"]}
+ #:unit-item{:eid #uuid "efdc835b-4bea-3f82-b55d-8ab46b435f74",
+             :unit
+             [:unit/eid #uuid "000a0003-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000038"]}
+ #:unit-item{:eid #uuid "ece4aca4-07c5-3ff0-8725-6a788f5f27a7",
+             :unit
+             [:unit/eid #uuid "000a0003-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000003d"]}
+ #:unit-item{:eid #uuid "b61e49c3-532c-3df2-b1cd-8d2349c41216",
+             :unit
+             [:unit/eid #uuid "000a0003-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000003f"]}
+ #:unit-item{:eid #uuid "b2b53ce7-0cb0-32fa-a215-30f06f6fae6a",
+             :unit
+             [:unit/eid #uuid "000a0004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "536f9be0-5280-3b58-bb65-a0cd5a8a6e5c",
+             :unit
+             [:unit/eid #uuid "000a000d-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000c9"]}
+ #:unit-item{:eid #uuid "9af34f88-41f7-39bc-b748-484384df88c7",
+             :unit
+             [:unit/eid #uuid "000a000d-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000cd"]}
+ #:unit-item{:eid #uuid "252c0a40-1b49-363b-9e6c-8a2124f726ec",
+             :unit
+             [:unit/eid #uuid "000a000d-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000cf"]}
+ #:unit-item{:eid #uuid "f160623f-19b3-334a-8cea-f47a3bbc1a1e",
+             :unit
+             [:unit/eid #uuid "000a000e-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000c7"]}
+ #:unit-item{:eid #uuid "2d38fd53-9256-324d-a82a-6cfe683a30f8",
+             :unit
+             [:unit/eid #uuid "000a000e-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000d1"]}
+ #:unit-item{:eid #uuid "614447b9-aa08-38f8-807f-b3be08f021ee",
+             :unit
+             [:unit/eid #uuid "000a0011-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002bd"]}
+ #:unit-item{:eid #uuid "d34cc203-3466-39c4-b6e1-3f9d94dbccdb",
+             :unit
+             [:unit/eid #uuid "000a0011-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002dc"]}
+ #:unit-item{:eid #uuid "b7b0118d-3d50-31cd-9805-2933c78c9e7e",
+             :unit
+             [:unit/eid #uuid "000a0012-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002d7"]}
+ #:unit-item{:eid #uuid "29508fb8-bad8-38f8-ba33-3c86dbce4d2c",
+             :unit
+             [:unit/eid #uuid "000a0013-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000142"]}
+ #:unit-item{:eid #uuid "c53405b4-4d62-3e53-935b-fda3676e98c1",
+             :unit
+             [:unit/eid #uuid "000a0013-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000016f"]}
+ #:unit-item{:eid #uuid "5bc38572-af1b-30be-a01d-09aa524a1d35",
+             :unit
+             [:unit/eid #uuid "000a0013-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000192"]}
+ #:unit-item{:eid #uuid "49307318-dd16-34c0-a984-a3514b4f8cd7",
+             :unit
+             [:unit/eid #uuid "000a0013-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001d9"]}
+ #:unit-item{:eid #uuid "08418429-f13c-3c9c-a07e-cb6fb40cf5e9",
+             :unit
+             [:unit/eid #uuid "000a0014-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000015c"]}
+ #:unit-item{:eid #uuid "22e4544f-f7d8-3b63-9510-b6a498228c99",
+             :unit
+             [:unit/eid #uuid "000a0014-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000186"]}
+ #:unit-item{:eid #uuid "e7c7a900-9668-36a7-b3f4-de29b424d073",
+             :unit
+             [:unit/eid #uuid "000a0014-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001d8"]}
+ #:unit-item{:eid #uuid "c066ed5e-c6a3-3b5b-95df-3d06efb83239",
+             :unit
+             [:unit/eid #uuid "000a0015-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002e6"]}
+ #:unit-item{:eid #uuid "131bd27d-c873-37c6-8a43-1368c236f97e",
+             :unit
+             [:unit/eid #uuid "000a0019-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "976ef043-2070-345d-aa06-4d88463962c2",
+             :unit
+             [:unit/eid #uuid "000a0022-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002b7"]}
+ #:unit-item{:eid #uuid "9c18d9b8-c239-3d85-a1e1-c28b45633b2b",
+             :unit
+             [:unit/eid #uuid "000a0022-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002b9"]}
+ #:unit-item{:eid #uuid "d1bd3008-39cf-3b99-9779-dd885055c431",
+             :unit
+             [:unit/eid #uuid "000b0001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000027d"]}
+ #:unit-item{:eid #uuid "4c7b37dc-0d18-3c8d-8f89-a4c272b52378",
+             :unit
+             [:unit/eid #uuid "000b0007-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003a6"]}
+ #:unit-item{:eid #uuid "8edb78db-e46d-370e-b5c2-96b0a846520f",
+             :unit
+             [:unit/eid #uuid "000b0008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000281"]}
+ #:unit-item{:eid #uuid "7c41bd0c-6567-3b95-a3cf-7346091153e7",
+             :unit
+             [:unit/eid #uuid "000b0009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001ed"]}
+ #:unit-item{:eid #uuid "746b3c62-89e1-3a0d-a5cb-978d2bb1ffe5",
+             :unit
+             [:unit/eid #uuid "000b0009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001ef"]}
+ #:unit-item{:eid #uuid "77099cf5-43cb-37c7-88d3-1cf42b6d9f6c",
+             :unit
+             [:unit/eid #uuid "000b0009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001fa"]}
+ #:unit-item{:eid #uuid "ef1bb3e4-8d2b-3366-94fc-707cce2aa0fe",
+             :unit
+             [:unit/eid #uuid "000b000d-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003ba"]}
+ #:unit-item{:eid #uuid "b7eed7b9-6116-310d-83bb-5c0ca085e7ec",
+             :unit
+             [:unit/eid #uuid "000b000e-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000027b"]}
+ #:unit-item{:eid #uuid "110f21b9-f4a8-37ff-ba26-a8195d895eb5",
+             :unit
+             [:unit/eid #uuid "000b000f-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000027c"]}
+ #:unit-item{:eid #uuid "f25c2b0d-f49b-3569-968e-0f36997bb4f2",
+             :unit
+             [:unit/eid #uuid "000c0002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000306"]}
+ #:unit-item{:eid #uuid "d295b4f3-982b-3247-94d5-69670dcd707c",
+             :unit
+             [:unit/eid #uuid "000c0002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000039f"]}
+ #:unit-item{:eid #uuid "d8c49043-14da-3ab0-b8d0-18728ae55c87",
+             :unit
+             [:unit/eid #uuid "000c0007-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003ab"]}
+ #:unit-item{:eid #uuid "3fc68192-fe5d-3ce3-8d9d-0f830cb7719c",
+             :unit
+             [:unit/eid #uuid "000c0008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000322"]}
+ #:unit-item{:eid #uuid "68e52183-123e-36b3-95d7-e7ea681dd387",
+             :unit
+             [:unit/eid #uuid "000c0008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000390"]}
+ #:unit-item{:eid #uuid "d2613703-ba1e-30bd-bf6d-ff3b5a454221",
+             :unit
+             [:unit/eid #uuid "000c0009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001e6"]}
+ #:unit-item{:eid #uuid "77b6f327-1231-309a-9d80-ac846d43c34a",
+             :unit
+             [:unit/eid #uuid "000c000c-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001e7"]}
+ #:unit-item{:eid #uuid "0a519dd3-fa20-37c0-b57c-f07e402a241e",
+             :unit
+             [:unit/eid #uuid "000c000e-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000023c"]}
+ #:unit-item{:eid #uuid "dcecd2e0-7032-3a5c-9cee-a6f70c96742c",
+             :unit
+             [:unit/eid #uuid "000c000e-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000023f"]}
+ #:unit-item{:eid #uuid "ee9c163a-0576-3150-8f7a-f733f5f225a4",
+             :unit
+             [:unit/eid #uuid "000c000e-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000024c"]}
+ #:unit-item{:eid #uuid "39f43d83-d203-3ef7-a995-e1c714f3aa7b",
+             :unit
+             [:unit/eid #uuid "000c000f-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001fc"]}
+ #:unit-item{:eid #uuid "7ed8f9e2-4fa6-3897-83f3-97b0c6d303b5",
+             :unit
+             [:unit/eid #uuid "000c000f-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000224"]}
+ #:unit-item{:eid #uuid "62ad71df-04df-3e97-97ab-8f7c3f4be9eb",
+             :unit
+             [:unit/eid #uuid "000c0023-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "dd73e245-a09b-3980-96cd-016c8f67fae2",
+             :unit
+             [:unit/eid #uuid "000c0025-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "6350c9e2-942b-382b-9eaf-114609b7bcfc",
+             :unit
+             [:unit/eid #uuid "000c002a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022c"]}
+ #:unit-item{:eid #uuid "fe0e97a6-f018-3024-b6c9-4beb84e1c349",
+             :unit
+             [:unit/eid #uuid "000c002a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "3284613a-7e08-32ce-a594-3fb2b84cd718",
+             :unit
+             [:unit/eid #uuid "000c002a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000238"]}
+ #:unit-item{:eid #uuid "6eab8c8e-8820-36ee-b3ce-67262e29ea73",
+             :unit
+             [:unit/eid #uuid "000d0001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000a3"]}
+ #:unit-item{:eid #uuid "3da08071-348e-380d-b592-5003f66f3ecb",
+             :unit
+             [:unit/eid #uuid "000d0001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000a9"]}
+ #:unit-item{:eid #uuid "0f7dec27-8f68-3172-930d-67e0398aae08",
+             :unit
+             [:unit/eid #uuid "000d0002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000185"]}
+ #:unit-item{:eid #uuid "41f74656-5269-38e9-a0a8-cf537dff25ea",
+             :unit
+             [:unit/eid #uuid "000d0002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001d2"]}
+ #:unit-item{:eid #uuid "60e32d85-b0a9-3b07-a57d-024cd2b6f268",
+             :unit
+             [:unit/eid #uuid "000d0004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000a4"]}
+ #:unit-item{:eid #uuid "289e2903-5b16-3954-92dd-e950d94a1112",
+             :unit
+             [:unit/eid #uuid "000d0004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000b7"]}
+ #:unit-item{:eid #uuid "23229629-87b3-3d65-8b1d-b656c756a8a1",
+             :unit
+             [:unit/eid #uuid "000d0005-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000138"]}
+ #:unit-item{:eid #uuid "cbfb99af-e070-33d4-a667-0732233630b3",
+             :unit
+             [:unit/eid #uuid "000d0008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000096"]}
+ #:unit-item{:eid #uuid "dfb84d48-f062-3e01-98e5-4777d87b6fdb",
+             :unit
+             [:unit/eid #uuid "000d0008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000009a"]}
+ #:unit-item{:eid #uuid "90396542-b643-3b77-8884-2c0ff6fa55d6",
+             :unit
+             [:unit/eid #uuid "000d0008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "4b48c327-616b-3021-80dd-df4de826ad10",
+             :unit
+             [:unit/eid #uuid "000d000b-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "18429c64-f2a0-36c8-900f-daaea0a035da",
+             :unit
+             [:unit/eid #uuid "000d0035-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000008b"]}
+ #:unit-item{:eid #uuid "b1deda49-1179-32c1-b6a2-3e029104d1e5",
+             :unit
+             [:unit/eid #uuid "000d0035-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000008e"]}
+ #:unit-item{:eid #uuid "169c1ab3-e37e-3fcd-9d9d-d9c4682b2a6b",
+             :unit
+             [:unit/eid #uuid "000d0035-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000093"]}
+ #:unit-item{:eid #uuid "fccfb2a2-b71b-3232-a635-54a649aff62a",
+             :unit
+             [:unit/eid #uuid "000d0035-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000098"]}
+ #:unit-item{:eid #uuid "fede4735-0da2-3c4e-8679-49e6dd5ab425",
+             :unit
+             [:unit/eid #uuid "000d0035-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000009b"]}
+ #:unit-item{:eid #uuid "2a846932-21a0-3afa-b028-49fec8b354c3",
+             :unit
+             [:unit/eid #uuid "000d0036-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001c3"]}
+ #:unit-item{:eid #uuid "e4e5d5c8-2efc-3f74-a706-669c7724bd3c",
+             :unit
+             [:unit/eid #uuid "000d003c-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "b730e7f1-3745-36c4-a63f-9dbb6d27e4b5",
+             :unit
+             [:unit/eid #uuid "000e0007-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002ba"]}
+ #:unit-item{:eid #uuid "1e16e4e7-cd75-31a8-a094-32a2d219070c",
+             :unit
+             [:unit/eid #uuid "000e0007-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002e7"]}
+ #:unit-item{:eid #uuid "9b75505d-770a-3999-a505-def927998191",
+             :unit
+             [:unit/eid #uuid "000e0008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000040b"]}
+ #:unit-item{:eid #uuid "5a4d735d-4508-3740-9f8e-d1476c143dd2",
+             :unit
+             [:unit/eid #uuid "000e0009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000416"]}
+ #:unit-item{:eid #uuid "f46b140a-ae6e-3954-91a4-a0903040acad",
+             :unit
+             [:unit/eid #uuid "000e000a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002de"]}
+ #:unit-item{:eid #uuid "e97b729f-da31-3ee2-bf03-80c273dc0047",
+             :unit
+             [:unit/eid #uuid "000e000b-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002d9"]}
+ #:unit-item{:eid #uuid "0ae349c2-585b-303a-bd42-06219011ca6b",
+             :unit
+             [:unit/eid #uuid "000e000d-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002d9"]}
+ #:unit-item{:eid #uuid "fefac89f-079e-31a2-9af8-1000596ff6ec",
+             :unit
+             [:unit/eid #uuid "000e000e-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000027b"]}
+ #:unit-item{:eid #uuid "12dd6c7f-11ea-35ed-8e87-5eeee6043a98",
+             :unit
+             [:unit/eid #uuid "000f0007-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001f1"]}
+ #:unit-item{:eid #uuid "7e29cd2c-0b7c-308f-b59f-07efe21736eb",
+             :unit
+             [:unit/eid #uuid "000f000b-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000272"]}
+ #:unit-item{:eid #uuid "a7917d20-1bd7-3754-9125-1cd0bc977d37",
+             :unit
+             [:unit/eid #uuid "000f0030-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000255"]}
+ #:unit-item{:eid #uuid "cc75de1c-cf08-3ab1-a209-5f985710e0a4",
+             :unit
+             [:unit/eid #uuid "000f0030-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000026a"]}
+ #:unit-item{:eid #uuid "9ed7ffda-5c46-367f-be38-26e0b67c6297",
+             :unit
+             [:unit/eid #uuid "000f0039-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000264"]}
+ #:unit-item{:eid #uuid "a1dd0540-7c4a-32c9-995a-b859b80826b6",
+             :unit
+             [:unit/eid #uuid "000f0039-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000271"]}
+ #:unit-item{:eid #uuid "a9ff8071-cc3a-3225-81cd-ac687e2f0043",
+             :unit
+             [:unit/eid #uuid "000f003a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000397"]}
+ #:unit-item{:eid #uuid "3af7ae1d-0090-3608-a9de-775004092c80",
+             :unit
+             [:unit/eid #uuid "00100001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000279"]}
+ #:unit-item{:eid #uuid "d5d7b4e8-7032-3e24-8495-52df36fefc9c",
+             :unit
+             [:unit/eid #uuid "00100002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000373"]}
+ #:unit-item{:eid #uuid "9fc51d04-b30c-3826-9a8d-96dea2b9d857",
+             :unit
+             [:unit/eid #uuid "00100002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000039d"]}
+ #:unit-item{:eid #uuid "3d0bf1e8-64ba-3c5a-9dbc-055d227b4075",
+             :unit
+             [:unit/eid #uuid "00100004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000343"]}
+ #:unit-item{:eid #uuid "998f7574-cc57-31e4-aef1-b04b09b1916e",
+             :unit
+             [:unit/eid #uuid "00100005-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "d89b32a2-78ba-33f2-9e22-52d9bcb8f7e9",
+             :unit
+             [:unit/eid #uuid "0010000a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000027f"]}
+ #:unit-item{:eid #uuid "36fc3945-e267-3ab9-8ddc-9fc38940ff78",
+             :unit
+             [:unit/eid #uuid "0010000c-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "9746a84b-2fbc-3ba3-b746-b1cd89beec29",
+             :unit
+             [:unit/eid #uuid "00110001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000b8"]}
+ #:unit-item{:eid #uuid "13b36d8d-f801-3850-8009-3a3557f1886d",
+             :unit
+             [:unit/eid #uuid "00110001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000c4"]}
+ #:unit-item{:eid #uuid "6a6d4a74-43e6-3912-8324-25778bd4580a",
+             :unit
+             [:unit/eid #uuid "00110004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000008c"]}
+ #:unit-item{:eid #uuid "4a6a1c0a-07dc-3644-83fb-c2a5b3451141",
+             :unit
+             [:unit/eid #uuid "00110004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000008f"]}
+ #:unit-item{:eid #uuid "acb83aa4-e5fa-36ca-870f-63594b92c771",
+             :unit
+             [:unit/eid #uuid "00110004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000090"]}
+ #:unit-item{:eid #uuid "b262f78b-d937-3bcc-8ecb-2dbb567316b6",
+             :unit
+             [:unit/eid #uuid "00110004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000095"]}
+ #:unit-item{:eid #uuid "5e0bb2bb-5245-3796-bf7e-ca3a9943724f",
+             :unit
+             [:unit/eid #uuid "00110004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000097"]}
+ #:unit-item{:eid #uuid "6eb93ee3-e02d-315f-9838-a9d1c0a0c800",
+             :unit
+             [:unit/eid #uuid "00110004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000099"]}
+ #:unit-item{:eid #uuid "bafaf13b-8086-3a22-8505-03472234f409",
+             :unit
+             [:unit/eid #uuid "00110004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000009c"]}
+ #:unit-item{:eid #uuid "ef295733-7c2b-30a5-aa63-63d60f1713b5",
+             :unit
+             [:unit/eid #uuid "00110004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000009d"]}
+ #:unit-item{:eid #uuid "e792cc5b-2d4b-3e4b-9500-a1c85febd364",
+             :unit
+             [:unit/eid #uuid "00110004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000009e"]}
+ #:unit-item{:eid #uuid "e0a2bfee-b236-3d83-b99e-3b7441f5a954",
+             :unit
+             [:unit/eid #uuid "00110004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000a0"]}
+ #:unit-item{:eid #uuid "ce4a8600-7be0-3705-84d2-85f52d8943aa",
+             :unit
+             [:unit/eid #uuid "00110005-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000149"]}
+ #:unit-item{:eid #uuid "6ead726f-6333-3119-b008-c7e0529923f1",
+             :unit
+             [:unit/eid #uuid "00110005-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001d4"]}
+ #:unit-item{:eid #uuid "9a5b1889-aead-38b6-a5b6-a1dc17e2c838",
+             :unit
+             [:unit/eid #uuid "00110007-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000170"]}
+ #:unit-item{:eid #uuid "95b1a673-a7d9-3a02-8f0c-9e2114428c15",
+             :unit
+             [:unit/eid #uuid "00110007-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001c9"]}
+ #:unit-item{:eid #uuid "24fad10b-c2d7-3597-b78a-1ef38ec548e1",
+             :unit
+             [:unit/eid #uuid "00110008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000f8"]}
+ #:unit-item{:eid #uuid "6659eb3c-cc05-3a51-b229-aff83d056f45",
+             :unit
+             [:unit/eid #uuid "00110008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000010a"]}
+ #:unit-item{:eid #uuid "06ab5a59-a6c2-3881-974f-49fdf89f0bd4",
+             :unit
+             [:unit/eid #uuid "00110009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000015"]}
+ #:unit-item{:eid #uuid "6f430f14-45f8-3cd1-8a48-c15bcbbf0f19",
+             :unit
+             [:unit/eid #uuid "0011000a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000008c"]}
+ #:unit-item{:eid #uuid "56444546-904e-309a-85f2-4ba5a35b9c54",
+             :unit
+             [:unit/eid #uuid "0011000a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000090"]}
+ #:unit-item{:eid #uuid "cbf12fe3-8e04-337f-a898-b9e3d843f5ae",
+             :unit
+             [:unit/eid #uuid "0011000a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000095"]}
+ #:unit-item{:eid #uuid "905fa52e-2bea-306f-b50f-11f422904b85",
+             :unit
+             [:unit/eid #uuid "0011000a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000097"]}
+ #:unit-item{:eid #uuid "54e09b46-f11e-3a31-a22b-2c33d21bc1eb",
+             :unit
+             [:unit/eid #uuid "0011000a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000099"]}
+ #:unit-item{:eid #uuid "359709bd-eb97-3f07-a281-605bbcfcce89",
+             :unit
+             [:unit/eid #uuid "0011000a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000009c"]}
+ #:unit-item{:eid #uuid "90665a21-b3e6-3c71-aff4-d37d39d8dbab",
+             :unit
+             [:unit/eid #uuid "0011000a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000009d"]}
+ #:unit-item{:eid #uuid "cabc33fd-c547-3413-a703-36bb5f0209b3",
+             :unit
+             [:unit/eid #uuid "0011000a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000a0"]}
+ #:unit-item{:eid #uuid "674baf9c-038f-31ae-b615-8d97bc9d5ffe",
+             :unit
+             [:unit/eid #uuid "00120001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001f7"]}
+ #:unit-item{:eid #uuid "30c41866-7519-3f13-8186-176c1cff22a3",
+             :unit
+             [:unit/eid #uuid "00120006-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002d1"]}
+ #:unit-item{:eid #uuid "bb951216-2e96-3a5c-9b76-3de3e024387b",
+             :unit
+             [:unit/eid #uuid "0012000b-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003b4"]}
+ #:unit-item{:eid #uuid "fc13df6b-a65b-37e2-a927-af8ea2179011",
+             :unit
+             [:unit/eid #uuid "0012000c-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000434"]}
+ #:unit-item{:eid #uuid "4b134887-8f6b-397f-9922-a1637152604d",
+             :unit
+             [:unit/eid #uuid "0012000c-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000048b"]}
+ #:unit-item{:eid #uuid "5ab6b894-b643-31d5-8468-ac294bb2a991",
+             :unit
+             [:unit/eid #uuid "0012000d-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002db"]}
+ #:unit-item{:eid #uuid "bc9f058d-7878-3659-99f2-3dbabe06530e",
+             :unit
+             [:unit/eid #uuid "00120015-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002be"]}
+ #:unit-item{:eid #uuid "147d2f15-653d-3e67-acc9-d5cc8786d1ef",
+             :unit
+             [:unit/eid #uuid "00120015-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002ca"]}
+ #:unit-item{:eid #uuid "3fe09099-7607-3f84-a76a-70cfeb7a4250",
+             :unit
+             [:unit/eid #uuid "00120015-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002e4"]}
+ #:unit-item{:eid #uuid "fe2536c7-91b6-3f14-8e79-52363f61533e",
+             :unit
+             [:unit/eid #uuid "00130001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000004"]}
+ #:unit-item{:eid #uuid "0d91383d-7f3c-3157-a88a-9a5da8118822",
+             :unit
+             [:unit/eid #uuid "00130001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000002c"]}
+ #:unit-item{:eid #uuid "72badd17-11c5-38b8-ad89-0e2c8cfa03e2",
+             :unit
+             [:unit/eid #uuid "00130002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000005"]}
+ #:unit-item{:eid #uuid "86ca8225-6548-3ede-8477-e308488f3442",
+             :unit
+             [:unit/eid #uuid "00130003-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000002d"]}
+ #:unit-item{:eid #uuid "c4fba67b-b19e-32ad-af8e-c6fcba515b97",
+             :unit
+             [:unit/eid #uuid "00130004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000018"]}
+ #:unit-item{:eid #uuid "30346d81-bece-3d15-8ce1-63899011414d",
+             :unit
+             [:unit/eid #uuid "00130004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000002b"]}
+ #:unit-item{:eid #uuid "7351176f-f785-3cfe-9a77-a1eaff6a88ab",
+             :unit
+             [:unit/eid #uuid "00140009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000300"]}
+ #:unit-item{:eid #uuid "aab45e8e-da23-39d8-9908-750abedec32a",
+             :unit
+             [:unit/eid #uuid "0014000b-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000230"]}
+ #:unit-item{:eid #uuid "3822cd4d-8584-39d0-8c80-6580c8716ab5",
+             :unit
+             [:unit/eid #uuid "0014000c-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001eb"]}
+ #:unit-item{:eid #uuid "1b3071c0-0651-34cd-94de-d26a550e7b91",
+             :unit
+             [:unit/eid #uuid "0014000d-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000023a"]}
+ #:unit-item{:eid #uuid "6817354a-1d6a-3dbb-b047-82e9f92e8c76",
+             :unit
+             [:unit/eid #uuid "0014000d-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000024b"]}
+ #:unit-item{:eid #uuid "45dae830-0261-332c-8d49-bcb218bbbe2a",
+             :unit
+             [:unit/eid #uuid "00140014-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022e"]}
+ #:unit-item{:eid #uuid "6049b651-7bad-34b7-ae8f-e09c7343e404",
+             :unit
+             [:unit/eid #uuid "00150001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000087"]}
+ #:unit-item{:eid #uuid "bc92d7a4-9ac7-381b-8ba0-195c2cf01d92",
+             :unit
+             [:unit/eid #uuid "00150002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000007f"]}
+ #:unit-item{:eid #uuid "7eb56bc3-0d19-3ed9-b294-f69b7ad4e1c3",
+             :unit
+             [:unit/eid #uuid "00150003-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000007a"]}
+ #:unit-item{:eid #uuid "e25ddaa2-a858-3a51-8cc1-856992f6eab4",
+             :unit
+             [:unit/eid #uuid "00150004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000082"]}
+ #:unit-item{:eid #uuid "21443f2d-3216-3cf0-bde3-67a6382e6d3b",
+             :unit
+             [:unit/eid #uuid "00160002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000042a"]}
+ #:unit-item{:eid #uuid "6e7d07b8-44c3-397a-ac04-555023c5d044",
+             :unit
+             [:unit/eid #uuid "00160002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000449"]}
+ #:unit-item{:eid #uuid "3d66fe10-fc00-3a2c-98c5-e0fbf4cd355f",
+             :unit
+             [:unit/eid #uuid "00160002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000047b"]}
+ #:unit-item{:eid #uuid "07af8a0d-a3bf-3813-920f-ee76946726bc",
+             :unit
+             [:unit/eid #uuid "00160003-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003da"]}
+ #:unit-item{:eid #uuid "bddbe46d-dd61-3c8e-b2ac-2ea6183b42c9",
+             :unit
+             [:unit/eid #uuid "00160004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000004a6"]}
+ #:unit-item{:eid #uuid "1caff427-316c-3db1-9913-2fdc25faa40d",
+             :unit
+             [:unit/eid #uuid "00160006-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000433"]}
+ #:unit-item{:eid #uuid "e3f5be94-aa6a-314d-889a-a9b8dca6de72",
+             :unit
+             [:unit/eid #uuid "00160006-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000495"]}
+ #:unit-item{:eid #uuid "e6d70221-aa20-3805-9825-5958714d0d06",
+             :unit
+             [:unit/eid #uuid "0016000d-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003dc"]}
+ #:unit-item{:eid #uuid "f8acd9ad-1c63-3f87-8de7-634f895e91fa",
+             :unit
+             [:unit/eid #uuid "0016000d-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003dd"]}
+ #:unit-item{:eid #uuid "b62d51fd-e05c-3398-8e2c-e86f2ae2c845",
+             :unit
+             [:unit/eid #uuid "00170001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000443"]}
+ #:unit-item{:eid #uuid "331dc31c-a056-3767-9a58-2284e6e82756",
+             :unit
+             [:unit/eid #uuid "00170001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000045a"]}
+ #:unit-item{:eid #uuid "bab93ef6-d101-389d-a11b-40c7e20c11f4",
+             :unit
+             [:unit/eid #uuid "00170001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000473"]}
+ #:unit-item{:eid #uuid "3820dc56-f7f2-3bd0-84e9-fcf588dcf3c5",
+             :unit
+             [:unit/eid #uuid "00170001-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000049a"]}
+ #:unit-item{:eid #uuid "ff26e15c-04b2-3b39-9828-f7a92795af1b",
+             :unit
+             [:unit/eid #uuid "00170002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001f7"]}
+ #:unit-item{:eid #uuid "805f64d5-1cb3-3841-b86e-a12e0819741c",
+             :unit
+             [:unit/eid #uuid "00170003-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000385"]}
+ #:unit-item{:eid #uuid "194cf1c3-e0cd-3456-aa4d-e9d484e16bdb",
+             :unit
+             [:unit/eid #uuid "00170018-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001f1"]}
+ #:unit-item{:eid #uuid "e6f52702-6184-34c6-af52-99ac47d723d1",
+             :unit
+             [:unit/eid #uuid "00170019-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000048c"]}
+ #:unit-item{:eid #uuid "e4dddaf6-d883-3341-b0a1-3a173ecde47e",
+             :unit
+             [:unit/eid #uuid "0017001a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-000000000434"]}
+ #:unit-item{:eid #uuid "6e151a6e-88a9-335f-b938-cfd2d5e391f1",
+             :unit
+             [:unit/eid #uuid "0017001a-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000048b"]}
+ #:unit-item{:eid #uuid "2b96fe76-75c5-30be-80c3-7c43542e47a6",
+             :unit
+             [:unit/eid #uuid "0017001c-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001ed"]}
+ #:unit-item{:eid #uuid "b1c5ee21-cd89-3668-b05c-5449a259ec6d",
+             :unit
+             [:unit/eid #uuid "0017001c-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001ef"]}
+ #:unit-item{:eid #uuid "43bb65c6-fc0d-314f-ae1c-43b10c67ac4b",
+             :unit
+             [:unit/eid #uuid "0017001c-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001fa"]}
+ #:unit-item{:eid #uuid "e21cf39b-f1e2-3363-ac9a-047f3be2bd06",
+             :unit
+             [:unit/eid #uuid "0017001d-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000001eb"]}
+ #:unit-item{:eid #uuid "a072fb81-1d64-3646-8425-df96eecf494f",
+             :unit
+             [:unit/eid #uuid "0017001e-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000023a"]}
+ #:unit-item{:eid #uuid "bee15a67-a6ed-3217-a700-afe72dca035e",
+             :unit
+             [:unit/eid #uuid "0017001e-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000024b"]}
+ #:unit-item{:eid #uuid "e0b1e0ae-4ade-3301-8e85-fcf3171145aa",
+             :unit
+             [:unit/eid #uuid "0017002f-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003b8"]}
+ #:unit-item{:eid #uuid "fbb9b751-853a-363c-8e51-c769bfcae0a3",
+             :unit
+             [:unit/eid #uuid "0017002f-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003b9"]}
+ #:unit-item{:eid #uuid "0a12c1a4-d604-35cc-871e-79f97de27438",
+             :unit
+             [:unit/eid #uuid "00170030-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000027b"]}
+ #:unit-item{:eid #uuid "7665bb21-2929-3fbc-99f8-176348936b4f",
+             :unit
+             [:unit/eid #uuid "00170031-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002be"]}
+ #:unit-item{:eid #uuid "2fc9fea3-7544-3ce6-82f8-50fded4bf1dd",
+             :unit
+             [:unit/eid #uuid "00170031-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002ca"]}
+ #:unit-item{:eid #uuid "b34a8fd7-ea8e-390e-be2b-bd56ccb80ab7",
+             :unit
+             [:unit/eid #uuid "00170031-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002e4"]}
+ #:unit-item{:eid #uuid "297bc647-3754-3f9a-aeba-ff8c09d08f3a",
+             :unit
+             [:unit/eid #uuid "00180002-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000f3"]}
+ #:unit-item{:eid #uuid "d98f58b6-98e8-3e58-a1c9-8da086a4d055",
+             :unit
+             [:unit/eid #uuid "00180003-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "92e575b9-20b0-3f4f-81f2-ea40511cbb09",
+             :unit
+             [:unit/eid #uuid "00180003-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003e4"]}
+ #:unit-item{:eid #uuid "2a157ac6-efeb-32fa-aea1-cddaa2c01282",
+             :unit
+             [:unit/eid #uuid "00180004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003e0"]}
+ #:unit-item{:eid #uuid "121deb49-9140-34a3-ba49-451545a8889a",
+             :unit
+             [:unit/eid #uuid "00180004-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003e6"]}
+ #:unit-item{:eid #uuid "4b50fe93-db42-3b5a-8e80-ce607d335133",
+             :unit
+             [:unit/eid #uuid "00180005-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "95dc8ecc-ae64-3c3d-95dc-2a1e9821e909",
+             :unit
+             [:unit/eid #uuid "00180008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003e1"]}
+ #:unit-item{:eid #uuid "11df13b8-31bd-3ad9-bc40-e9738868ca35",
+             :unit
+             [:unit/eid #uuid "00180008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003e2"]}
+ #:unit-item{:eid #uuid "546e59ed-7105-3ba6-b896-e1e353b1824c",
+             :unit
+             [:unit/eid #uuid "00180008-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003e5"]}
+ #:unit-item{:eid #uuid "4ec072a4-e5dc-33e3-a578-cd727b6ec09b",
+             :unit
+             [:unit/eid #uuid "00180009-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "8faa1ab7-2fd8-3871-bb82-063f7a0eb7af",
+             :unit
+             [:unit/eid #uuid "0018000e-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000d2"]}
+ #:unit-item{:eid #uuid "9083a506-4942-3ba8-8a26-ce99b9524506",
+             :unit
+             [:unit/eid #uuid "0018000e-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000e0"]}
+ #:unit-item{:eid #uuid "ea7e743e-09c8-3642-b9c8-b9b7961f1fb4",
+             :unit
+             [:unit/eid #uuid "0018000e-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000e5"]}
+ #:unit-item{:eid #uuid "206ea841-91b3-3a0c-8e15-e7c69519b396",
+             :unit
+             [:unit/eid #uuid "0018000e-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000000f9"]}
+ #:unit-item{:eid #uuid "01ccddce-46db-3cb2-9a6c-fb11a6e6b553",
+             :unit
+             [:unit/eid #uuid "0018000e-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000010b"]}
+ #:unit-item{:eid #uuid "3b7447e4-362b-3c60-9843-e5422ce5ca20",
+             :unit
+             [:unit/eid #uuid "00180011-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003e6"]}
+ #:unit-item{:eid #uuid "d4c703d2-9760-3f3a-bb93-5b9ff8467c02",
+             :unit
+             [:unit/eid #uuid "00180012-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "54f60b0f-be86-3195-a5fe-fcb415b5c4b8",
+             :unit
+             [:unit/eid #uuid "00180015-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-00000000022d"]}
+ #:unit-item{:eid #uuid "0ce74480-a9cf-3697-8264-8dda764fdfed",
+             :unit
+             [:unit/eid #uuid "00180018-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003e0"]}
+ #:unit-item{:eid #uuid "937bdbfe-8439-3c81-a3be-706d23c7de62",
+             :unit
+             [:unit/eid #uuid "00180018-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003e6"]}
+ #:unit-item{:eid #uuid "475ab2d4-3f1b-3543-b685-8afe3c0b5618",
+             :unit
+             [:unit/eid #uuid "00180037-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000003e6"]}
+ #:unit-item{:eid #uuid "505cd017-8e8c-3fd6-a18e-2e9dd81adb73",
+             :unit
+             [:unit/eid #uuid "000e000c-0000-4000-8000-000000000000"],
+             :item
+             [:item/eid #uuid "e1000000-0000-0000-0000-0000000002d9"]}]

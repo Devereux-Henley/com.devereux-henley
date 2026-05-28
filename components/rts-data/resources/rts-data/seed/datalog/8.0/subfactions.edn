@@ -1,0 +1,3777 @@
+[#:subfaction{:eid #uuid "9f7d0c51-71a6-5a6e-b80f-dad453a46939",
+              :key "wh2_dlc11_emp_empire_dil",
+              :name "Exotic Goods Hauler",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "67febea2-f9dd-5a44-9e70-893f749037d8",
+              :key "wh2_dlc11_emp_empire_qb5",
+              :name "The Empire",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "3432ec4e-3385-5467-85d2-eea7f62a12a7",
+              :key "wh2_dlc13_emp_golden_order",
+              :name "The Golden Order",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "5e5584ab-3163-5d8b-9900-e495ee75119c",
+              :key "wh2_dlc13_emp_the_huntmarshals_expedition",
+              :name "The Huntsmarshal's Expedition",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "b03fea51-0c4f-5be3-b81b-843053766945",
+              :key "wh2_dlc16_emp_colonist_invasion",
+              :name "Treasure-Hunters",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "e363de2f-5a16-5fdc-bb15-74ec957ec376",
+              :key "wh2_dlc16_emp_empire_invasion",
+              :name "Imperial Reprisal Force",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "89c3bdca-8df3-53c2-8ab3-2f6e8cd14726",
+              :key "wh2_dlc16_emp_empire_qb8",
+              :name "Imperial Convoy",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "24e13568-c28a-583f-8a70-24c51af18165",
+              :key "wh2_main_emp_new_world_colonies",
+              :name "New World Colonies",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "e2e1bad1-64a8-5cfc-879f-bae04de5420f",
+              :key "wh2_main_emp_new_world_colonies_mp",
+              :name "New World Colonies",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "8c7173c8-9a92-5d18-9d7b-f5520f30d623",
+              :key "wh2_main_emp_pirates_of_sartosa",
+              :name "Pirates of Sartosa",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "12c1749d-9317-5ff0-8e89-9e8fc84fdc45",
+              :key "wh2_main_emp_pirates_of_sartosa_mp",
+              :name "Pirates of Sartosa",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "3bd6997c-8047-5939-944b-5dc66281ea1d",
+              :key "wh2_main_emp_sudenburg",
+              :name "Sudenburg",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "829dbd03-2eb0-5767-bf3b-4da632c071d2",
+              :key "wh3_dlc27_emp_empire_dm",
+              :name
+              "{{tr:factions_screen_name_wh_main_emp_empire_rebels}}",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "f7a18982-831f-55e6-b987-079d04c42ef3",
+              :key "wh3_main_emp_cult_of_sigmar",
+              :name "Cult of Sigmar",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "a4d3c509-2383-5d55-9a50-4c46ef23eca2",
+              :key "wh_main_emp_averland",
+              :name "Averland",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "2ccaa66c-ef5c-5dde-8106-b4b6f5220d03",
+              :key "wh_main_emp_empire",
+              :name "Reikland",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "780532a2-370d-5472-8032-7bcacc3ba38f",
+              :key "wh_main_emp_empire_qb1",
+              :name "The Empire",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "b7028d33-650e-5b48-97c2-0e3ebb1de8bd",
+              :key "wh_main_emp_empire_qb2",
+              :name "The Empire",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "ca558083-94ce-5698-b497-fce3dbafd513",
+              :key "wh_main_emp_empire_qb3",
+              :name "The Empire",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "3499d820-b7ef-5924-afa4-cdd3fd334caa",
+              :key "wh_main_emp_empire_qb4",
+              :name "The Empire",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "ae859168-d1b8-5074-ba60-5dfb4191255b",
+              :key "wh_main_emp_empire_qb5",
+              :name "The Empire",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "1868d78f-8079-5a47-9ddf-8d537c721841",
+              :key "wh_main_emp_empire_qb_intro",
+              :name "The Empire",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "ebd86352-d95c-5482-8d78-fb8fb0a4ad37",
+              :key "wh_main_emp_empire_rebels",
+              :name "Empire Rebels",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "1f8267a0-b2a5-5878-a808-00110f2a6706",
+              :key "wh_main_emp_empire_rebels_qb1",
+              :name "Empire Secessionists",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "9d0ee609-db92-55b3-8af3-b9eff44b5dd5",
+              :key "wh_main_emp_empire_separatists",
+              :name "Empire Secessionists",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "533a7db7-acf8-57e9-9b39-5233a9593d1d",
+              :key "wh_main_emp_hochland",
+              :name "Hochland",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "6a241668-8551-5fda-aaa3-c44dc5add18a",
+              :key "wh_main_emp_marienburg",
+              :name "Marienburg",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "0aee023e-d11c-56aa-a67e-c032427d1c07",
+              :key "wh_main_emp_marienburg_rebels",
+              :name "Marienburg Rebels",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "acf9059f-656c-56bf-952f-9932da1f4daf",
+              :key "wh_main_emp_middenland",
+              :name "Middenland",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "ed5cc8ff-c6da-55cb-9133-09c4e8c93e75",
+              :key "wh_main_emp_nordland",
+              :name "Nordland",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "008f921d-0c97-52ff-b525-0256128f0c32",
+              :key "wh_main_emp_ostermark",
+              :name "Ostermark",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "d0ee5fcb-a5d4-57a8-9465-717ce695727e",
+              :key "wh_main_emp_ostland",
+              :name "Ostland",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "8cf5385d-bfdf-5cd0-86f1-9048b3566ea8",
+              :key "wh_main_emp_stirland",
+              :name "Stirland",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "3099fa0e-5c7e-5af1-8dc4-cbe8f8bff557",
+              :key "wh_main_emp_talabecland",
+              :name "Talabecland",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "979a22f2-a39d-5d12-999b-62002b09c72e",
+              :key "wh_main_emp_wissenland",
+              :name "Wissenland & Nuln",
+              :faction
+              [:faction/eid
+               #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb"]}
+ #:subfaction{:eid #uuid "1413cd1d-c540-536f-b9e8-3443f7166b4b",
+              :key "wh2_dlc13_bst_beastmen_invasion",
+              :name "Beastmen",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "96afb70d-fcb7-5d43-b136-791b819b7cb2",
+              :key "wh2_dlc17_bst_beastmen_qb4",
+              :name "Bloodied-Axe Tribe",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "4d1e0758-15a6-5cdb-8808-433bf8af1f09",
+              :key "wh2_dlc17_bst_beastmen_qb5",
+              :name "Manblight Tribe",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3a3787d5-7fbd-589d-9a41-aef729c058e7",
+              :key "wh2_dlc17_bst_beastmen_qb6",
+              :name "Stone-Horn Tribe",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "00e954ce-08d0-540b-9304-e0ee4cfddfc8",
+              :key "wh2_dlc17_bst_beastmen_qb7",
+              :name "Warherd of the Shadowgave",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f7f27c91-20bd-53f8-9437-b0fde38f64f2",
+              :key "wh2_dlc17_bst_malagor",
+              :name "Harbinger of Disaster",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "6b335733-5ec5-58b2-987b-86dc82db9a5f",
+              :key "wh2_dlc17_bst_taurox",
+              :name "Slaughterhorn Tribe",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a1124d8b-3344-5282-a79f-069dcda020c5",
+              :key "wh2_main_bst_blooded_axe",
+              :name "Blooded-Axe Tribe",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "fd2aafa6-49a0-58bb-a375-197864c9035e",
+              :key "wh2_main_bst_blooded_axe_brayherd",
+              :name "Blooded-Axe Tribe Brayherd",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "db8069b4-7421-55c6-b3c5-1e26712888fe",
+              :key "wh2_main_bst_manblight",
+              :name "Manblight Tribe",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7b5e67f5-e437-58a9-b6a6-253d76ab53fd",
+              :key "wh2_main_bst_manblight_brayherd",
+              :name "Manblight Tribe Brayherd",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "0287b9ae-4c00-5e11-854e-9dfd65631dfa",
+              :key "wh2_main_bst_ripper_horn",
+              :name "Ripper-Horn Tribe",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "bae1dd94-0fee-57f0-8341-3cc7cc7dcf8e",
+              :key "wh2_main_bst_ripper_horn_brayherd",
+              :name "Ripper-Horn Tribe Brayherd",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "35e2ffe1-6b27-5e2e-8f2e-61da42e814d9",
+              :key "wh2_main_bst_shadowgor",
+              :name "Shadowgor Warherd",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "245d873f-44b3-5843-aef6-637096f34a24",
+              :key "wh2_main_bst_shadowgor_brayherd",
+              :name "Shadowgor Brayherd",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5f07ff78-1077-52b7-9122-5709287fd943",
+              :key "wh2_main_bst_skrinderkin",
+              :name "Skrinderkin Warherd",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5cdb7e4c-cdb2-5988-b8c9-cfc16db0ac54",
+              :key "wh2_main_bst_skrinderkin_brayherd",
+              :name "Skrinderkin Brayherd",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "bd5a8602-c188-5622-90db-7087115ef34d",
+              :key "wh2_main_bst_stone_horn",
+              :name "Stone-Horn Tribe",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "79eca351-be44-5433-ba4d-159cd3fba317",
+              :key "wh2_main_bst_stone_horn_brayherd",
+              :name "Stone-Horn Tribe Brayherd",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8efbd3c3-f549-5236-a788-dbf28869a5d1",
+              :key "wh3_dlc27_bst_beastmen_dm",
+              :name
+              "{{tr:factions_screen_name_wh_dlc03_bst_beastmen_rebels}}",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "41baf46c-9945-5380-a84a-0f32cf446c81",
+              :key "wh_dlc03_bst_beastmen",
+              :name "Warherd of the One-Eye",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "34af3a69-6ec0-5957-9ec2-74020d97a02c",
+              :key "wh_dlc03_bst_beastmen_ally",
+              :name "Beastmen",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b2d10770-b3e2-5992-9001-90e560cfc3e3",
+              :key "wh_dlc03_bst_beastmen_brayherd",
+              :name "Beastmen Brayherd",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8bb7fa89-5f67-5a15-9d9b-6f6ef402be45",
+              :key "wh_dlc03_bst_beastmen_chaos",
+              :name "Warherd of Chaos",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5e3ffbb7-f9f1-50c0-bd26-eba581f9561c",
+              :key "wh_dlc03_bst_beastmen_chaos_brayherd",
+              :name "Brayherd of Chaos",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "cfa61606-50d8-51bb-869c-8e5dd9d1d493",
+              :key "wh_dlc03_bst_beastmen_qb1",
+              :name "Beastmen",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "73d1cdc1-69ee-5f0c-aa63-e7609a206a23",
+              :key "wh_dlc03_bst_beastmen_qb2",
+              :name "Beastmen",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "800b5362-cbf3-5c8b-92a2-a87083cdb8ae",
+              :key "wh_dlc03_bst_beastmen_qb3",
+              :name "Beastmen",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "974a4598-625d-5b48-b1c8-4a093759e532",
+              :key "wh_dlc03_bst_beastmen_rebels",
+              :name "Beastmen Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5c9c0d3a-841c-52b6-8789-be1f818a19ed",
+              :key "wh_dlc03_bst_beastmen_rebels_brayherd",
+              :name "Beastmen Rebels Brayherd",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b5a4ca53-d18f-5f26-a652-9e130b65bb0d",
+              :key "wh_dlc03_bst_jagged_horn",
+              :name "Jagged-Horn Tribe",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "12d58984-f700-5033-bd90-3ffc723307ed",
+              :key "wh_dlc03_bst_jagged_horn_brayherd",
+              :name "Jagged-Horn Tribe Brayherd",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "4a5db002-1820-591b-9f12-1cc6895a5e95",
+              :key "wh_dlc03_bst_redhorn",
+              :name "Redhorn Tribe",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d51686fe-7dfa-54eb-a330-a0022012a464",
+              :key "wh_dlc03_bst_redhorn_brayherd",
+              :name "Redhorn Tribe Brayherd",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a6f244d4-147b-5381-bdea-57648a2d8e4f",
+              :key "wh_dlc05_bst_morghur_herd",
+              :name "Warherd of the Shadowgave",
+              :faction
+              [:faction/eid
+               #uuid "f0000002-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "12dbe324-1f91-577e-9be4-0b0b3ab2b341",
+              :key "wh2_dlc11_brt_bretonnia_dil",
+              :name "Bretonnian Merchants",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "9846cf6a-7b02-5c50-a7d3-6f19410e03d8",
+              :key "wh2_dlc14_brt_chevaliers_de_lyonesse",
+              :name "Chevaliers de Lyonesse",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "cf135740-31c4-5719-85ef-d8d9dbcda85b",
+              :key "wh2_main_brt_knights_of_origo",
+              :name "Knights of Origo",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "08454b28-f4c1-54ad-9489-1252735bd790",
+              :key "wh2_main_brt_knights_of_the_flame",
+              :name "Knights of the Flame",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "35928bf2-2c2d-5667-a304-29fff5d5a9d1",
+              :key "wh2_main_brt_thegans_crusaders",
+              :name "Thegan's Errantry",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "716f48ed-c504-5f81-b684-8815afc84c73",
+              :key "wh3_dlc20_brt_march_of_couronne",
+              :name "Marches of Couronne",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7a40a348-24ab-5c03-aac3-806a537a06e4",
+              :key "wh3_dlc27_brt_bretonnia_dm",
+              :name
+              "{{tr:factions_screen_name_wh_main_brt_bretonnia_rebels}}",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "86b188c0-bd4e-50dd-baf3-880421dd802e",
+              :key "wh3_main_brt_aquitaine",
+              :name "Aquitaine",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8dda23ad-928e-5964-85a1-c1b3b8ac29bc",
+              :key "wh_dlc05_brt_brionne",
+              :name "Brionne",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7b9cab72-81f2-5185-aec3-aeeeb281e4b1",
+              :key "wh_dlc05_brt_gisoroux",
+              :name "Giseroux",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c51e3c21-b30c-5f03-a1d6-02a0cc8e9551",
+              :key "wh_dlc05_brt_montfort",
+              :name "Montfort",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8d312c52-0715-504b-801b-1f136cf287b7",
+              :key "wh_dlc05_brt_quenelles",
+              :name "Quenelles",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7ec113c8-0c45-5c4f-b62e-92801a10cb9f",
+              :key "wh_main_brt_artois",
+              :name "Artois",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ab4414b2-e29c-5bf1-8434-9182870ea38e",
+              :key "wh_main_brt_bastonne",
+              :name "Bastonne",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f0a47437-4479-5344-a2a5-b09bc2180692",
+              :key "wh_main_brt_bordeleaux",
+              :name "Bordeleaux Errant",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "98f3565b-a328-5b6e-8680-7e6e4f09e15b",
+              :key "wh_main_brt_bretonnia",
+              :name "Couronne",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d450fe05-fe9f-588b-ba1e-c7e9fe9b72d6",
+              :key "wh_main_brt_bretonnia_qb1",
+              :name "Bretonnia",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "0fc22895-cb2c-5352-8e4d-1caacefbd7b3",
+              :key "wh_main_brt_bretonnia_qb2",
+              :name "Bretonnia",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3d92c44f-19e2-533e-aac4-26984451b208",
+              :key "wh_main_brt_bretonnia_qb3",
+              :name "Bretonnia",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a2094edd-a262-5e8c-93de-6cba6eb8a5c5",
+              :key "wh_main_brt_bretonnia_qb4",
+              :name "Bretonnia",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e15d762e-002f-5144-b4b2-ff883c666cef",
+              :key "wh_main_brt_bretonnia_rebels",
+              :name "Bretonnian Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "924dda14-6bce-5290-bcfb-08e3c1ad644f",
+              :key "wh_main_brt_carcassonne",
+              :name "Carcassonne",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e14ce396-f0c4-5f67-8266-6a6c4b3cf457",
+              :key "wh_main_brt_lyonesse",
+              :name "Lyonesse",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ea244338-073e-5842-aed0-688db419fef9",
+              :key "wh_main_brt_parravon",
+              :name "Parravon",
+              :faction
+              [:faction/eid
+               #uuid "f0000003-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "0f56461c-8530-532a-a9b6-acf6d6167e1c",
+              :key "wh3_dlc23_chd_astragoth",
+              :name "Disciples of Hashut",
+              :faction
+              [:faction/eid
+               #uuid "f0000004-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "96868096-58e4-50fe-a532-e4f4ec25f9a0",
+              :key "wh3_dlc23_chd_chaos_dwarfs",
+              :name "Chaos Dwarfs",
+              :faction
+              [:faction/eid
+               #uuid "f0000004-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "504553bb-1f71-5fec-96ba-d8fade0542f6",
+              :key "wh3_dlc23_chd_chaos_dwarfs_qb1",
+              :name "Chaos Dwarfs",
+              :faction
+              [:faction/eid
+               #uuid "f0000004-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "621a4f19-2269-5b76-9526-75574ffe7b2f",
+              :key "wh3_dlc23_chd_chaos_dwarfs_qb2",
+              :name "Chaos Dwarfs",
+              :faction
+              [:faction/eid
+               #uuid "f0000004-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8d3387a1-e9d8-5b6e-9eaf-784d2a5c76be",
+              :key "wh3_dlc23_chd_chaos_dwarfs_qb3",
+              :name "Chaos Dwarfs",
+              :faction
+              [:faction/eid
+               #uuid "f0000004-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8e36d07e-6b29-5e8d-a947-f9254eb3baf0",
+              :key "wh3_dlc23_chd_chaos_dwarfs_rebels",
+              :name "Chaos Dwarf Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f0000004-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "47fd1086-0507-5d3f-a662-7655db46cb81",
+              :key "wh3_dlc23_chd_conclave",
+              :name "Servants of the Conclave",
+              :faction
+              [:faction/eid
+               #uuid "f0000004-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "0668aa6a-9453-5a19-8c63-b5a2f1ea502a",
+              :key "wh3_dlc23_chd_legion_of_azgorh",
+              :name "The Legion of Azgorh",
+              :faction
+              [:faction/eid
+               #uuid "f0000004-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "875af2f0-c54d-5f6d-86d5-f98b14f36bcb",
+              :key "wh3_dlc23_chd_minor_faction",
+              :name "Overlords of Zharrduk",
+              :faction
+              [:faction/eid
+               #uuid "f0000004-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7630284f-bd05-552a-9288-1c29e205e069",
+              :key "wh3_dlc23_chd_zhatan",
+              :name "The Warhost of Zharr",
+              :faction
+              [:faction/eid
+               #uuid "f0000004-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "dee458aa-144c-502d-a2cd-d3eff1d34e7d",
+              :key "wh3_dlc25_chd_chaos_dwarfs_invasion",
+              :name "Chaos Dwarfs",
+              :faction
+              [:faction/eid
+               #uuid "f0000004-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "bc95f605-641e-59bb-abfd-76c641c7d78e",
+              :key "wh3_main_dae_daemon_prince",
+              :name "Legion of Chaos",
+              :faction
+              [:faction/eid
+               #uuid "f0000005-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "127f71cb-f90e-5da4-9839-fc91535056cc",
+              :key "wh3_main_dae_daemons_qb1",
+              :name "Shadow Legion",
+              :faction
+              [:faction/eid
+               #uuid "f0000005-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "461178bb-5764-50ce-8f0d-4269c9dd223c",
+              :key "wh2_dlc10_def_blood_voyage",
+              :name "Blood Voyage",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d7787829-d634-595b-9177-2afe1093a7e4",
+              :key "wh2_dlc11_def_dark_elves_dil",
+              :name "Dark Elf Slavers",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "39693c8a-45ab-51ff-89db-f16f8cdd2260",
+              :key "wh2_dlc11_def_the_blessed_dread",
+              :name "The Blessed Dread",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "257dcf1e-a36f-5710-8fb4-215a04548030",
+              :key "wh2_dlc11_def_the_blessed_dread_separatists",
+              :name "The Blessed Dread Separatists",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "9c8a018f-72c3-5302-95e5-1ed534ac9625",
+              :key "wh2_main_def_bleak_holds",
+              :name "Bleak Holds",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8aaf6dd9-2c60-5326-bfa0-97b0d3c9b004",
+              :key "wh2_main_def_blood_hall_coven",
+              :name "Blood Hall Coven",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "9309a532-1afc-5ea5-aa60-3f3912ff7729",
+              :key "wh2_main_def_clar_karond",
+              :name "Clar Karond",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "24646695-0850-5691-b326-48aa80a44691",
+              :key "wh2_main_def_cult_of_excess",
+              :name "Cult of Excess",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e69a83dd-3bb0-5cc1-8132-d115844a26d8",
+              :key "wh2_main_def_cult_of_pleasure",
+              :name "Cult of Pleasure",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "22066b2e-bc0d-5ab9-ad0f-e3088bfe6c13",
+              :key "wh2_main_def_cult_of_pleasure_separatists",
+              :name "Cult of Pleasure Separatists",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3233e75c-388a-5033-b84d-8b6621a0482b",
+              :key "wh2_main_def_dark_elves",
+              :name "Naggarond",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c6427e4c-8218-59c6-b17b-2f8334bee0a3",
+              :key "wh2_main_def_dark_elves_qb1",
+              :name "Dark Elves",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7eaed46f-c727-5d19-9766-ddaad9a6b2d0",
+              :key "wh2_main_def_dark_elves_qb2",
+              :name "Dark Elves",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c0714533-826e-5cec-afb1-8ffab03efb3d",
+              :key "wh2_main_def_dark_elves_qb3",
+              :name "Dark Elves",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "be9f1cf6-28d6-5605-add4-5f298bc888df",
+              :key "wh2_main_def_dark_elves_qb4",
+              :name "Dark Elves",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "12a80845-5480-5917-8378-4a8615ee8ae8",
+              :key "wh2_main_def_dark_elves_rebels",
+              :name "Dark Elf Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "87fdb1d9-2278-576f-96fb-158ea28a8871",
+              :key "wh2_main_def_deadwood_sentinels",
+              :name "Deadwood Sentinels",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a6bf14bf-9a4d-563f-bfca-0292cfe8d274",
+              :key "wh2_main_def_drackla_coven",
+              :name "Drackla Coven",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5b88c7d7-0a6e-54c3-8ace-68e70afe4f5c",
+              :key "wh2_main_def_ghrond",
+              :name "Ghrond",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5a104212-3138-5bd7-b9bf-33a131ce3fc3",
+              :key "wh2_main_def_hag_graef",
+              :name "Hag Graef",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "6928f707-8ade-5064-b2bd-f369668976db",
+              :key "wh2_main_def_hag_graef_separatists",
+              :name "Hag Graef Separatists",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ac4a7628-1692-50cd-b061-0923a419eca5",
+              :key "wh2_main_def_har_ganeth",
+              :name "Har Ganeth",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "278ffc00-1778-51c6-aaad-61c483509d69",
+              :key "wh2_main_def_har_ganeth_separatists",
+              :name "Har Ganeth Separatists",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "982f6d40-55a4-5e01-9c50-067ec4dbe548",
+              :key "wh2_main_def_karond_kar",
+              :name "Karond Kar",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "04fa549b-de28-571d-985b-8ce9000e2d19",
+              :key "wh2_main_def_naggarond",
+              :name "Naggarond",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "30ee3c84-f1d2-5c65-878c-a4e1dd801854",
+              :key "wh2_main_def_naggarond_separatists",
+              :name "Naggarond Separatists",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "4bd419cd-3783-5fe4-a0c7-15f98ea2cee9",
+              :key "wh2_main_def_scourge_of_khaine",
+              :name "Scourge of Khaine",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a8c564aa-a871-5963-b4a5-9f22dd984e76",
+              :key "wh2_main_def_ssildra_tor",
+              :name "Ss'ildra Tor",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "6c444ac8-cc60-5395-8a3c-cdf88ffc431b",
+              :key "wh2_main_def_the_forgebound",
+              :name "The Forgebound",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "6e0ae50a-8879-53f9-a889-73634c1419f7",
+              :key "wh2_main_rogue_def_chs_vashnaar",
+              :name "Vashnaar's Conquest",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "dec171dd-d60b-5598-868c-6b0b9dfbbf04",
+              :key "wh2_main_rogue_def_mengils_manflayers",
+              :name "Mengil's Manflayers",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f537bf0b-383d-56dc-aa5a-d85d49fbfbd5",
+              :key "wh2_twa03_def_rakarth",
+              :name "The Thousand Maws",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "dd31f755-6954-5084-805b-02787d0f1960",
+              :key "wh2_twa03_def_rakarth_separatists",
+              :name "The Thousand Maws Separatists",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8c39d000-f6ce-512d-a018-4f3dbaf22181",
+              :key "wh3_dlc26_def_dark_elves_invasion",
+              :name "Dark Elves",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c4662394-9088-59be-8bcc-e713b8f78b2c",
+              :key "wh3_dlc27_def_dark_elves_dm",
+              :name
+              "{{tr:factions_screen_name_wh2_main_def_dark_elves_rebels}}",
+              :faction
+              [:faction/eid
+               #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "23499f12-1600-506d-a3bf-0cf5c3b2b8f2",
+              :key "wh2_dlc15_dwf_clan_helhein",
+              :name "Clan Helhein",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "fd6b0a88-0f52-54b5-a26d-24deae375845",
+              :key "wh2_dlc17_dwf_thorek_ironbrow",
+              :name "Ironbrow's Expedition",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "0d6f31ee-3aa2-586f-b1db-9d99c37e2ecc",
+              :key "wh2_main_dwf_greybeards_prospectors",
+              :name "Greybeard's Prospectors",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "04df54e6-707c-51a5-b9aa-20efb0fedc41",
+              :key "wh2_main_dwf_karak_zorn",
+              :name "Karak Zorn",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "80ae5798-fb77-59ac-95d8-bee4fc980988",
+              :key "wh2_main_dwf_spine_of_sotek_dwarfs",
+              :name "Spine of Sotek Dwarfs",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8a285e6a-0242-5eaf-9e29-08cfee93ae2d",
+              :key "wh3_dlc25_dwf_malakai",
+              :name "Masters of Innovation",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "33cfc31c-76c1-5e5b-9b38-feb5e05cf7a6",
+              :key "wh3_dlc26_dwf_dwarfs_invasion",
+              :name "Dwarfs",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "1e91efd0-0000-5f27-b547-afcf7946a819",
+              :key "wh3_main_dwf_karak_azorn",
+              :name "Karak Azorn",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c907cc75-907e-5a97-9a15-5ac76ab21b24",
+              :key "wh3_main_dwf_the_ancestral_throng",
+              :name "The Ancestral Throng",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "9a13c726-a941-5afe-985b-9f92fa82cc9c",
+              :key "wh_main_dwf_barak_varr",
+              :name "Barak Varr",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "2cc6720b-5749-55c7-b003-ef06f9941b91",
+              :key "wh_main_dwf_dwarf_rebels",
+              :name "Dwarf Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "73d9b834-0ec5-5fe0-88a6-3b278183fe3a",
+              :key "wh_main_dwf_dwarfs",
+              :name "Karaz-a-Karak",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e9a9a2a8-33bb-521e-83ad-a110c8f50795",
+              :key "wh_main_dwf_dwarfs_qb1",
+              :name "Dwarfs",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "14f9188a-2762-59e1-a946-c00d51c88c78",
+              :key "wh_main_dwf_dwarfs_qb2",
+              :name "Dwarfs",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d6f28cf4-3162-5f5b-8d6d-f899afda3695",
+              :key "wh_main_dwf_dwarfs_qb3",
+              :name "Dwarfs",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ba0180a7-14c0-51e8-b016-4a8458436289",
+              :key "wh_main_dwf_dwarfs_qb4",
+              :name "Dwarfs",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "821e2569-e1e2-5cc3-8977-f28d7f5075b0",
+              :key "wh_main_dwf_dwarfs_seperatists_qb1",
+              :name "Dwarfs",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ed084640-969b-53d3-96d1-65485ecc3f57",
+              :key "wh_main_dwf_dwarfs_seperatists_qb2",
+              :name "Dwarfs",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5988f670-8659-5b8c-8a1f-97095971dadf",
+              :key "wh_main_dwf_dwarfs_seperatists_qb3",
+              :name "Dwarfs",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3e0fb5e2-220f-57ce-95b3-04b27fcef7eb",
+              :key "wh_main_dwf_dwarfs_seperatists_qb4",
+              :name "Dwarfs",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7de1bb6f-b805-5487-b658-0c31807d7b44",
+              :key "wh_main_dwf_karak_azul",
+              :name "Karak Azul",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "35c1f5a9-3dd1-565a-92e5-6bf7d5c24ab8",
+              :key "wh_main_dwf_karak_hirn",
+              :name "Karak Hirn",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "6b14c725-b541-5190-9435-827bc8b37f92",
+              :key "wh_main_dwf_karak_izor",
+              :name "Clan Angrund",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5a2e6d1f-856d-5e91-ade6-2c3634e402af",
+              :key "wh_main_dwf_karak_kadrin",
+              :name "Karak Kadrin",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "1a924d5b-3294-5779-a1ea-fab10d9e98fe",
+              :key "wh_main_dwf_karak_norn",
+              :name "Karak Norn",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "adb76ab4-b30b-595b-b4f2-e84247035260",
+              :key "wh_main_dwf_karak_ziflin",
+              :name "Karak Ziflin",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c7b52576-2c0f-52d5-a68e-240032b6180d",
+              :key "wh_main_dwf_kraka_drak",
+              :name "Kraka Drak",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "baafdda1-2973-50d8-a4f7-6a8b6b8a98d5",
+              :key "wh_main_dwf_zhufbar",
+              :name "Zhufbar",
+              :faction
+              [:faction/eid
+               #uuid "f0000007-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ee0da452-20ba-5a95-b769-8b48414fbcab",
+              :key "wh3_dlc24_cth_the_celestial_court",
+              :name "The Jade Court",
+              :faction
+              [:faction/eid
+               #uuid "f0000008-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ac4a48b8-0ab4-59a8-a937-8f1a3aa7fa8e",
+              :key "wh3_dlc27_cth_cathay_dm",
+              :name
+              "{{tr:factions_screen_name_wh3_main_cth_cathay_rebels}}",
+              :faction
+              [:faction/eid
+               #uuid "f0000008-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3c9ecbf3-ffed-5340-afdd-402752c4eb6f",
+              :key "wh3_main_cth_burning_wind_nomads",
+              :name "Burning Wind Nomads",
+              :faction
+              [:faction/eid
+               #uuid "f0000008-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8243422a-b625-5758-8e81-b3784783d5e8",
+              :key "wh3_main_cth_cathay_mp",
+              :name "The Northern Provinces",
+              :faction
+              [:faction/eid
+               #uuid "f0000008-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "992b92ea-551a-5cb6-bad3-df31a5ded93c",
+              :key "wh3_main_cth_cathay_qb1",
+              :name "Cathay",
+              :faction
+              [:faction/eid
+               #uuid "f0000008-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "dcaa7aff-0f56-5f9a-936f-bcfb80da1150",
+              :key "wh3_main_cth_cathay_qb2",
+              :name "Cathay",
+              :faction
+              [:faction/eid
+               #uuid "f0000008-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b9379258-9e5d-5fc4-82f2-a49d198378ae",
+              :key "wh3_main_cth_cathay_qb3",
+              :name "Cathay",
+              :faction
+              [:faction/eid
+               #uuid "f0000008-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5e3822d3-2da9-530b-adf4-7c0686280875",
+              :key "wh3_main_cth_cathay_rebels",
+              :name "Cathay Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f0000008-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f8d3a269-1b37-5a13-a331-c238774f836f",
+              :key "wh3_main_cth_celestial_loyalists",
+              :name "Celestial Loyalists",
+              :faction
+              [:faction/eid
+               #uuid "f0000008-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "fbb9d6f0-fb35-50d8-9967-e0c01e9f2180",
+              :key "wh3_main_cth_dissenter_lords_of_jinshen",
+              :name "Dissenter Lords of Jinshen",
+              :faction
+              [:faction/eid
+               #uuid "f0000008-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "22a4af87-86d0-58bd-a37a-c725782276f9",
+              :key "wh3_main_cth_eastern_river_lords",
+              :name "Eastern River Lords",
+              :faction
+              [:faction/eid
+               #uuid "f0000008-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f54c0f31-9d52-5fc0-bc4c-223f8ff03460",
+              :key "wh3_main_cth_imperial_wardens",
+              :name "Imperial Wardens",
+              :faction
+              [:faction/eid
+               #uuid "f0000008-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "73159ba0-8496-59dd-8459-567b47d55127",
+              :key "wh3_main_cth_rebel_lords_of_nan_yang",
+              :name "Rebel Lords of Nan-Yang",
+              :faction
+              [:faction/eid
+               #uuid "f0000008-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "39f473af-19e6-5b6f-95f4-71883bca3e49",
+              :key "wh3_main_cth_the_jade_custodians",
+              :name "The Jade Custodians",
+              :faction
+              [:faction/eid
+               #uuid "f0000008-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "2c00d97b-dd1d-5f81-b714-289d379e167d",
+              :key "wh3_main_cth_the_northern_provinces",
+              :name "The Northern Provinces",
+              :faction
+              [:faction/eid
+               #uuid "f0000008-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "093fe6fc-1b59-5b3d-8932-8266fa47ed99",
+              :key "wh3_main_cth_the_western_provinces",
+              :name "The Western Provinces",
+              :faction
+              [:faction/eid
+               #uuid "f0000008-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "92c7921a-c38b-5f71-a223-d449d778043c",
+              :key "wh2_dlc12_grn_leaf_cutterz_tribe",
+              :name "Leaf-Cutterz Tribe",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "6ae4667a-e4d6-59d5-a8d3-c2899d4cd19a",
+              :key "wh2_dlc12_grn_leaf_cutterz_tribe_waaagh",
+              :name "Leaf-Cutterz Tribe Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f8a0c302-be37-5c4b-b1e6-8f8a42ac124a",
+              :key "wh2_dlc13_grn_greenskins_invasion",
+              :name "Greenskins",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5582ba0d-9714-55c5-a6dd-d20419dfd932",
+              :key "wh2_dlc14_grn_red_cloud",
+              :name "Red Cloud",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "555f9348-bcea-5fe1-873b-286742c6a07d",
+              :key "wh2_dlc14_grn_red_cloud_waaagh",
+              :name "Red Cloud Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "21c786f6-e5dd-5e3d-9238-1b074d1d85a7",
+              :key "wh2_dlc15_grn_bonerattlaz",
+              :name "Bonerattlaz",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "dbcce285-2059-505f-837e-c747f1908877",
+              :key "wh2_dlc15_grn_broken_axe",
+              :name "Broken Axe",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "10937761-f35d-5946-87cb-fbec70a521dd",
+              :key "wh2_dlc15_grn_broken_axe_waaagh",
+              :name "Broken Axe Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "aa65b738-d4c4-5e55-9322-7cb2f415b182",
+              :key "wh2_dlc15_grn_skull_crag",
+              :name "Skull Crag",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "25b86bfb-35c0-51ab-abc1-f8c2524e73d3",
+              :key "wh2_dlc16_grn_creeping_death",
+              :name "Creeping Death",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "4261821f-81d1-56cb-9de7-8facf6e5d53d",
+              :key "wh2_dlc16_grn_naggaroth_orcs",
+              :name "Broken Chainz",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "6a80151a-7f64-5470-90ba-ab4cc9ed1744",
+              :key "wh2_dlc16_grn_savage_invasion",
+              :name "Savage Orc Invasion",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "4772a94d-a5e9-5be8-81db-34d21fe206d5",
+              :key "wh2_main_grn_arachnos",
+              :name "Arachnos",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f8e97a49-9988-5a4d-8fea-fd14afdbb4fc",
+              :key "wh2_main_grn_arachnos_waaagh",
+              :name "Arachnos Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "fb976196-4332-5258-aa67-937f26081484",
+              :key "wh2_main_grn_blue_vipers",
+              :name "Blue Vipers",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "16a9adca-1d07-5d8f-af03-af2cc3ba9e87",
+              :key "wh2_main_grn_blue_vipers_mp",
+              :name "Blue Vipers",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7ccb556a-b34e-5d47-a140-79f55723c20f",
+              :key "wh2_main_grn_blue_vipers_waaagh",
+              :name "Blue Vipers Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "666cc16c-cb95-5a90-b378-3ad18913bc16",
+              :key "wh3_dlc24_grn_chaos_dwarfs_labourer_rebels",
+              :name "Labourer Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "67973d17-15f7-5233-980a-e9fd5183c243",
+              :key "wh3_dlc26_grn_cluster_eye_tribe",
+              :name "Cluster-Eye Tribe",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b9597970-3b7a-5743-8dd1-8731aa0e00c2",
+              :key "wh3_dlc26_grn_gorbad_ironclaw",
+              :name "Ironclaw Orcs",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c290e8dc-9ec4-5a4d-a096-3457fcd1cd5d",
+              :key "wh3_main_grn_da_cage_breakaz",
+              :name "Da Cage Breakaz",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d899d631-ef2b-5df4-a9bf-baca1db222cc",
+              :key "wh3_main_grn_dark_land_orcs",
+              :name "Dark Land Orcs",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c41cb871-27a1-5188-b818-fe34ca297995",
+              :key "wh3_main_grn_dark_land_orcs_waaagh",
+              :name "Dark Land Orcs Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "cc8f87c2-c01d-59c4-9682-c2a4e4594639",
+              :key "wh3_main_grn_dimned_sun",
+              :name "Dimmed Sunz",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e0ac88d1-73cb-5c2f-b899-1ef55c71b939",
+              :key "wh3_main_grn_dimned_sun_mp",
+              :name "Dimmed Sunz",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3c188a7c-7465-5676-926c-fe63d1319027",
+              :key "wh3_main_grn_dimned_sun_waaagh",
+              :name "Dimmed Sunz Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "bceddd97-09a4-53c7-8e12-763edbc19dff",
+              :key "wh3_main_grn_drippin_fangs",
+              :name "Drippin Fangs",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e0a9e82d-b38b-55ae-bf4a-c054bbfb90a6",
+              :key "wh3_main_grn_drippin_fangs_waaagh",
+              :name "Drippin Fangs Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "55920858-b5f4-5ff9-8fb2-49ce07edaab5",
+              :key "wh3_main_grn_moon_howlerz",
+              :name "Moon Howlerz",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "bb44859c-e4af-5399-89ae-956d67a5bf60",
+              :key "wh3_main_grn_moon_howlerz_waaagh",
+              :name "Moon Howlerz Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c742ba7d-74fe-5802-993c-b5e804ffa641",
+              :key "wh3_main_grn_slaves_of_zharr",
+              :name "Slaves of Zharr",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "947a19b0-124f-5446-9898-48785c702dec",
+              :key "wh3_main_grn_tusked_sunz",
+              :name "Tusked Sunz",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "922af718-6f1c-5efd-9975-2b319f94048f",
+              :key "wh3_main_grn_tusked_sunz_waaagh",
+              :name "Tusked Sunz Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e3932035-416e-58bb-887d-e517ea216f78",
+              :key "wh_dlc03_grn_black_pit",
+              :name "The Black Pit Tribe",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c85b0bf9-cbe1-5c2b-b279-b51c6c2c3612",
+              :key "wh_dlc03_grn_black_pit_waaagh",
+              :name "The Black Pit Tribe Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "9d988a67-ed98-5a28-8a8f-2a82df9ab2ef",
+              :key "wh_main_grn_black_venom",
+              :name "Black Venom",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "04d5da7d-abc1-5143-a1d2-15b326b559f7",
+              :key "wh_main_grn_black_venom_waaagh",
+              :name "Black Venom Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8dfabdbf-62bb-5819-94e9-f8bc9aad1626",
+              :key "wh_main_grn_bloody_spearz",
+              :name "Bloody Spearz",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3112c7f9-31ae-57b1-86a8-a51331a26c02",
+              :key "wh_main_grn_bloody_spearz_waaagh",
+              :name "Bloody Spearz Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "cb63b0a8-1403-590a-a693-f6e409605287",
+              :key "wh_main_grn_broken_nose",
+              :name "Broken Nose",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "fd3f9883-9c6a-5170-9ce8-14b9e976333a",
+              :key "wh_main_grn_broken_nose_waaagh",
+              :name "Broken Nose Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "9ead732f-420b-5ebc-a8dd-181c8a134f5a",
+              :key "wh_main_grn_crooked_moon",
+              :name "Crooked Moon",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b08b6329-51e5-5477-b59a-6f3df2df647e",
+              :key "wh_main_grn_crooked_moon_waaagh",
+              :name "Crooked Moon Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8fdb42e9-9d23-5604-850e-ae792c8eba0a",
+              :key "wh_main_grn_greenskins",
+              :name "Grimgor's 'Ardboyz",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "1b6896c8-dd09-5f47-8d2a-e0e04726d35a",
+              :key "wh_main_grn_greenskins_qb1",
+              :name "Greenskins",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "15effad9-802c-5701-847c-8e39c1a009a7",
+              :key "wh_main_grn_greenskins_qb2",
+              :name "Greenskins",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "68dd1a12-03d1-557b-b228-faaac32d49d3",
+              :key "wh_main_grn_greenskins_qb3",
+              :name "Greenskins",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "73f90c6d-b7db-5d69-9baa-a960d3bebe55",
+              :key "wh_main_grn_greenskins_qb4",
+              :name "Greenskins",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "637c4f6b-adbb-5a4f-b1c3-125f71767a2e",
+              :key "wh_main_grn_greenskins_rebels",
+              :name "{{tr:grn_greenskin_rebels_screen_name}}",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8499f3d8-1e98-523c-9c16-9989a4bb7b5f",
+              :key "wh_main_grn_greenskins_rebels_waaagh",
+              :name "{{tr:grn_greenskin_rebels_screen_name}} Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ae4fce33-a7b8-5787-86a2-a73660a1d1e7",
+              :key "wh_main_grn_greenskins_waaagh",
+              :name "Greenskin Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "350e50f8-69c9-5b3c-b6d5-2ffb097f0636",
+              :key "wh_main_grn_necksnappers",
+              :name "Crooked Moon Mutinous Gits",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "9fc337f5-1964-5cc1-90ae-d53b2f86ef56",
+              :key "wh_main_grn_necksnappers_waaagh",
+              :name "Crooked Moon Mutinous Gits Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "fc52392a-ac7e-5a58-9c25-c9365227e076",
+              :key "wh_main_grn_orcs_of_the_bloody_hand",
+              :name "The Bloody Handz",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "728fcc73-f1bb-5a6b-a16c-6f236f5df974",
+              :key "wh_main_grn_orcs_of_the_bloody_hand_waaagh",
+              :name "The Bloody Handz Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d5249157-d744-5c97-9044-cfb93481b44e",
+              :key "wh_main_grn_red_eye",
+              :name "Red Eye",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ff49491f-4c83-5c79-88a8-ad72aa36aec1",
+              :key "wh_main_grn_red_eye_waaagh",
+              :name "Red Eye Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "86cafc53-c9bc-5f04-9e74-5aa741a88640",
+              :key "wh_main_grn_red_fangs",
+              :name "Red Fangs",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "956a00c2-8280-52ff-aacd-445129021b98",
+              :key "wh_main_grn_red_fangs_waaagh",
+              :name "Red Fangs Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b8a7fe7c-6ea0-53ef-b764-ea4f20130982",
+              :key "wh_main_grn_scabby_eye",
+              :name "Scabby Eye",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "58cd83b7-fe43-51f7-9858-0f594edb01c5",
+              :key "wh_main_grn_scabby_eye_waaagh",
+              :name "Scabby Eye Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "9f0bca64-3c83-50fb-a50a-56881f8cfb3b",
+              :key "wh_main_grn_skull-takerz",
+              :name "Skull-takerz",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "09e08171-9409-589f-b018-2c9d37976d8e",
+              :key "wh_main_grn_skull-takerz_mp",
+              :name "Skull-takerz",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "169f4604-884c-5731-8ed2-018418c5fcd7",
+              :key "wh_main_grn_skull-takerz_waaagh",
+              :name "Skull-takerz Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "bb2190da-d112-570a-9735-cea70ffed23f",
+              :key "wh_main_grn_skullsmasherz",
+              :name "Skullsmasherz",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "be40755d-128d-546d-97e1-8161353f46c5",
+              :key "wh_main_grn_skullsmasherz_waaagh",
+              :name "Skullsmasherz Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "15428818-fcbc-5cdd-9490-a0de72be1d15",
+              :key "wh_main_grn_teef_snatchaz",
+              :name "Teef Snatchaz",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b9f414c5-d568-5d4c-bc26-ec9b822d5545",
+              :key "wh_main_grn_teef_snatchaz_waaagh",
+              :name "Teef Snatchaz Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7cb7f886-f009-573e-a5f3-b628f612df58",
+              :key "wh_main_grn_top_knotz",
+              :name "Top Knotz",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "95bd05cf-8ce8-5ad2-a908-e3c9d9c12749",
+              :key "wh_main_grn_top_knotz_mp",
+              :name "Top Knotz",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "6cee9430-8ab2-5375-9886-bfe4cc585c28",
+              :key "wh_main_grn_top_knotz_waaagh",
+              :name "Top Knotz Waaagh!",
+              :faction
+              [:faction/eid
+               #uuid "f0000009-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b14867d4-764b-5acb-9cca-cff268a77667",
+              :key "wh2_dlc15_hef_dragon_encounters",
+              :name "Dragon Encounter",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7ab2ca06-3ba8-5129-ae57-db494aa7f64f",
+              :key "wh2_dlc15_hef_imrik",
+              :name "Knights of Caledor",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "86304d68-1c5b-5cf5-b7ab-a16c1d877eb7",
+              :key "wh2_main_hef_avelorn",
+              :name "Avelorn",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8e7bf031-2cfa-5e90-b312-bedd3cd47480",
+              :key "wh2_main_hef_caledor",
+              :name "Caledor",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c0ac6d50-3f4f-553a-85c8-f702fd2856a3",
+              :key "wh2_main_hef_chrace",
+              :name "Chrace",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "aabd1b38-6b3a-5534-8753-4f2aed047b1b",
+              :key "wh2_main_hef_citadel_of_dusk",
+              :name "Citadel of Dusk",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "21d680c1-fcf4-55a7-a992-21e5bd4be213",
+              :key "wh2_main_hef_cothique",
+              :name "Cothique",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3b19963a-f3a7-5ae2-a7a0-22ff4ed8e267",
+              :key "wh2_main_hef_eataine",
+              :name "Eataine",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7a856702-ab03-595b-94fa-b515e7611eba",
+              :key "wh2_main_hef_eataine_mp",
+              :name "Eataine",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "38b30bd6-24c6-5153-9f3f-62a5a4a49f2d",
+              :key "wh2_main_hef_ellyrion",
+              :name "Ellyrion",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "2f887c0a-3ccb-5a5f-a66f-3a22f7d62d86",
+              :key "wh2_main_hef_fortress_of_dawn",
+              :name "Fortress of Dawn",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "21e72d8b-cffc-5428-a352-a4d1270176db",
+              :key "wh2_main_hef_high_elves",
+              :name "Lothern",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e8f2aeac-08b3-5ab7-9d8f-a253c61d68ac",
+              :key "wh2_main_hef_high_elves_qb1",
+              :name "High Elves",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f09a4a48-00ed-5808-b080-bed5870c7074",
+              :key "wh2_main_hef_high_elves_qb2",
+              :name "High Elves",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5a8aef31-4020-541b-bb44-798f056a9bfe",
+              :key "wh2_main_hef_high_elves_qb3",
+              :name "High Elves",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7bd01e48-096b-5dbb-91a0-0e658a7b4443",
+              :key "wh2_main_hef_high_elves_qb4",
+              :name "High Elves",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3f624a76-5e0d-5124-9682-272fee6c5b01",
+              :key "wh2_main_hef_high_elves_qb5",
+              :name "High Elves",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e79a56a5-115d-5de5-955e-743a252e5589",
+              :key "wh2_main_hef_high_elves_qb6",
+              :name "High Elves",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "355627ce-ac5d-5f67-b36f-0a545a5fe8b7",
+              :key "wh2_main_hef_high_elves_qb7",
+              :name "High Elves",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "54a11d1c-ecb1-54de-ab05-bf9b21d7d6b6",
+              :key "wh2_main_hef_high_elves_qb8",
+              :name "High Elves",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "4246d23e-2759-5bde-b6d2-3ffcadc450d4",
+              :key "wh2_main_hef_high_elves_rebels",
+              :name "High Elf Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "fd603d79-d595-5f12-a04d-09280060f290",
+              :key "wh2_main_hef_nagarythe",
+              :name "Nagarythe",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "49dff5ee-a40f-5648-95af-fa933e232301",
+              :key "wh2_main_hef_order_of_loremasters",
+              :name "Order of Loremasters",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c77672d1-421e-5c36-a71b-cbbd89dc5db0",
+              :key "wh2_main_hef_saphery",
+              :name "Saphery",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "112b0304-851b-5c92-acd5-ed505365b915",
+              :key "wh2_main_hef_tiranoc",
+              :name "Tiranoc",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "99eff65d-9660-5e50-b3ed-883adf315ccf",
+              :key "wh2_main_hef_tor_elasor",
+              :name "Tor Elasor",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "746ad9dc-e80f-56ee-9470-74658d21c9d2",
+              :key "wh2_main_hef_yvresse",
+              :name "Yvresse",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a5ef3298-1983-5788-b968-8979cb64d174",
+              :key "wh2_main_rogue_hef_tor_elithis",
+              :name "Tor Elithis Refugees",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "381ed1d9-e1cc-5c2c-8034-20712da72b67",
+              :key "wh3_dlc26_hef_high_elves_invasion",
+              :name "High Elves",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "34849dee-4c8f-5acb-8665-26b5b48ca7d2",
+              :key "wh3_dlc27_hef_aislinn",
+              :name "High Elf Sea Patrol",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e1c8d08a-77cf-5364-8adf-65adef69ff7f",
+              :key "wh3_dlc27_hef_aislinn_confederation_owner",
+              :name "United Maritime Patrol",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "19c6c340-0008-5148-ac6b-bc4a7cc58295",
+              :key "wh3_dlc27_hef_high_elves_dm",
+              :name
+              "{{tr:factions_screen_name_wh2_main_hef_high_elves_rebels}}",
+              :faction
+              [:faction/eid
+               #uuid "f000000a-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3c58b1b7-4f71-5760-a5fb-a424801dd23e",
+              :key "wh3_dlc20_kho_blood_keepers",
+              :name "Blood Keepers",
+              :faction
+              [:faction/eid
+               #uuid "f000000b-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "83104e6b-c5e3-5f99-a548-b28b5517d6fd",
+              :key "wh3_dlc25_kho_khorne_invasion",
+              :name
+              "{{tr:factions_screen_name_wh3_main_kho_khorne_qb1}}",
+              :faction
+              [:faction/eid
+               #uuid "f000000b-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "fe4f87e8-4106-5436-bb6a-dc680d2df6ea",
+              :key "wh3_dlc26_kho_arbaal",
+              :name "Challengers of Khorne",
+              :faction
+              [:faction/eid
+               #uuid "f000000b-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "913214b1-b80b-5b5a-9664-9e6b5ce5862c",
+              :key "wh3_dlc26_kho_skulltaker",
+              :name "Blooded Wanderers",
+              :faction
+              [:faction/eid
+               #uuid "f000000b-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "559f81a2-cf79-586a-9d59-0c5b08926b7a",
+              :key "wh3_main_kho_bloody_sword",
+              :name "Bloody Sword",
+              :faction
+              [:faction/eid
+               #uuid "f000000b-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b0e4efb1-8b5d-526c-b294-8032b53af743",
+              :key "wh3_main_kho_brazen_throne",
+              :name "Brazen Throne",
+              :faction
+              [:faction/eid
+               #uuid "f000000b-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f60d1c7f-f91a-59dd-a473-cd963d605e06",
+              :key "wh3_main_kho_crimson_skull",
+              :name "Crimson Skull",
+              :faction
+              [:faction/eid
+               #uuid "f000000b-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "87943d5c-f282-5602-a8f1-3710944038c2",
+              :key "wh3_main_kho_exiles_of_khorne",
+              :name "Exiles of Khorne",
+              :faction
+              [:faction/eid
+               #uuid "f000000b-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ad717376-3c75-5054-8b2c-5016c2871a22",
+              :key "wh3_main_kho_karneths_sons",
+              :name "Kharneth's Sons",
+              :faction
+              [:faction/eid
+               #uuid "f000000b-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ef58aef5-7378-5918-a0a9-e47d0f2a1622",
+              :key "wh3_main_kho_khorne",
+              :name "Exiles of Khorne",
+              :faction
+              [:faction/eid
+               #uuid "f000000b-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e53920ee-bf05-5789-80e3-1a232eefb467",
+              :key "wh3_main_kho_khorne_qb1",
+              :name "Khorne",
+              :faction
+              [:faction/eid
+               #uuid "f000000b-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "6298daa9-6e9c-5cab-b905-ccfeb1ee65fc",
+              :key "wh3_main_kho_khorne_qb2",
+              :name "Khorne",
+              :faction
+              [:faction/eid
+               #uuid "f000000b-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "2fbf6bc2-e07a-5590-b417-acf0d92847af",
+              :key "wh3_main_kho_khorne_rebels",
+              :name "Khorne Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f000000b-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "87dff068-3ad2-5186-8514-fafcd094e157",
+              :key "wh3_dlc24_ksl_daughters_of_the_forest",
+              :name "Daughters of the Forest",
+              :faction
+              [:faction/eid
+               #uuid "f000000c-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "62e0060a-46f2-5c91-8fe9-a7c382eb5473",
+              :key "wh3_dlc27_ksl_kislev_dm",
+              :name
+              "{{tr:factions_screen_name_wh3_main_ksl_kislev_rebels}}",
+              :faction
+              [:faction/eid
+               #uuid "f000000c-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "43d454a3-f018-5716-a73e-74572c0cc694",
+              :key "wh3_main_ksl_brotherhood_of_the_bear",
+              :name "Brotherhood of the Bear",
+              :faction
+              [:faction/eid
+               #uuid "f000000c-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "93dc2d19-c322-51fd-a2c9-27dd1444848d",
+              :key "wh3_main_ksl_druzhina_enclave",
+              :name "Druzhina Enclave",
+              :faction
+              [:faction/eid
+               #uuid "f000000c-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "6ede8e26-c1bb-5e68-97ea-8dbdddb5fd5f",
+              :key "wh3_main_ksl_kislev",
+              :name "The Ice Court",
+              :faction
+              [:faction/eid
+               #uuid "f000000c-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "1285a90e-3caf-5aba-9bca-2d09527b2de6",
+              :key "wh3_main_ksl_kislev_qb1",
+              :name "Kislev",
+              :faction
+              [:faction/eid
+               #uuid "f000000c-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b38fc62d-6384-5600-91aa-666a1459843b",
+              :key "wh3_main_ksl_kislev_qb2",
+              :name "Kislev",
+              :faction
+              [:faction/eid
+               #uuid "f000000c-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "28b30d5d-a2cb-5b2f-97b9-60af48daa4ac",
+              :key "wh3_main_ksl_kislev_rebels",
+              :name "Kislev Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f000000c-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "81b75ea5-cfe3-5dbe-923d-b40e54cc0526",
+              :key "wh3_main_ksl_ropsmenn_clan",
+              :name "Ropsmenn Clan",
+              :faction
+              [:faction/eid
+               #uuid "f000000c-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "dbc97e25-9f0c-59f7-b0fe-dd58ddf731e9",
+              :key "wh3_main_ksl_the_great_orthodoxy",
+              :name "The Great Orthodoxy",
+              :faction
+              [:faction/eid
+               #uuid "f000000c-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "062cb8de-290c-553f-9a0c-a2744b7aec81",
+              :key "wh3_main_ksl_the_ice_court",
+              :name "The Ice Court",
+              :faction
+              [:faction/eid
+               #uuid "f000000c-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "01b38309-a866-5988-ae45-ff090e37ba68",
+              :key "wh3_main_ksl_ungol_kindred",
+              :name "Ungol Kindred",
+              :faction
+              [:faction/eid
+               #uuid "f000000c-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "359d52da-12d5-5551-ac33-1fe7b1479cdb",
+              :key "wh3_main_ksl_ursun_revivalists",
+              :name "Ursun Revivalists",
+              :faction
+              [:faction/eid
+               #uuid "f000000c-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "cc782c4d-5c09-556e-99c6-93cb9db39e99",
+              :key "wh3_prologue_ksl_petrenkos_raiders",
+              :name "Skollden's Raiders",
+              :faction
+              [:faction/eid
+               #uuid "f000000c-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "2b58246f-050b-57a1-ab6d-d513a8f87e87",
+              :key "wh2_dlc12_lzd_cult_of_sotek",
+              :name "Cult of Sotek",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f11e948b-ab4b-5a5b-b679-d4681ca886ce",
+              :key "wh2_dlc13_lzd_avengers",
+              :name "Children of the Old Ones",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3cceacc8-7259-50a9-9515-0b3a1140f57a",
+              :key "wh2_dlc13_lzd_defenders_of_the_great_plan",
+              :name "Defenders of the Great Plan",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ec60b8f4-f02a-5cca-818f-9aba1861a9ef",
+              :key "wh2_dlc13_lzd_spirits_of_the_jungle",
+              :name "Spirit of the Jungle",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f4dacf2c-4e0e-5a46-b07c-93d5eb031752",
+              :key "wh2_dlc14_lzd_itz_itza_tribe",
+              :name "Itz-Itza Tribe",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a66e2e1b-45d9-5008-9533-b5906e7099d4",
+              :key "wh2_dlc16_lzd_wardens_of_the_living_pools",
+              :name "Wardens of the Living Pools",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "47642b57-79f5-5272-9dd7-cd947498b257",
+              :key "wh2_dlc17_lzd_oxyotl",
+              :name "Ghosts of Pahuax",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "40ea5750-252e-5277-b74c-7ac4c330c67a",
+              :key "wh2_main_lzd_hexoatl",
+              :name "Hexoatl",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b7d8b82c-e169-5371-acfe-273d58f9ca06",
+              :key "wh2_main_lzd_itza",
+              :name "Itza",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8383777a-b06c-5df6-b7d4-328026219b39",
+              :key "wh2_main_lzd_last_defenders",
+              :name "Last Defenders",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e6a49439-3ed5-5c22-9375-c3c0058063f0",
+              :key "wh2_main_lzd_lizardmen",
+              :name "Hexoatl",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "960a7af6-eff0-52d3-81ef-c3ba966ca438",
+              :key "wh2_main_lzd_lizardmen_qb1",
+              :name "Lizardmen",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "1f063274-74d2-54ee-a9af-367e9416793c",
+              :key "wh2_main_lzd_lizardmen_qb2",
+              :name "Lizardmen",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "01862066-c92e-5371-a419-af38ca5c73b6",
+              :key "wh2_main_lzd_lizardmen_qb3",
+              :name "Lizardmen",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "faee6ff9-c668-5eef-b0cb-8f11cd11e35c",
+              :key "wh2_main_lzd_lizardmen_qb4",
+              :name "Lizardmen",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "65c12e12-bd60-5012-abb4-e26e4960eeff",
+              :key "wh2_main_lzd_lizardmen_rebels",
+              :name "Lizardmen Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5ae3b03b-95cb-5a48-b6c4-2c7285a2e65a",
+              :key "wh2_main_lzd_sentinels_of_xeti",
+              :name "Sentinels of Xeti",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "71f5f7e2-e5e9-5514-a128-82c4fc715720",
+              :key "wh2_main_lzd_southern_sentinels",
+              :name "Southern Sentinels",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d0f85064-f0f0-571c-a026-ac0fb50eb791",
+              :key "wh2_main_lzd_teotiqua",
+              :name "Teotiqua",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "6a96421b-0179-577a-87ec-543086d22909",
+              :key "wh2_main_lzd_tlaqua",
+              :name "Tlaqua",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "41a349de-9558-5ff7-911b-f6364a0d75e9",
+              :key "wh2_main_lzd_tlaxtlan",
+              :name "Tlaxtlan",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "37aba738-c42d-568c-bacb-dfa080b0c57e",
+              :key "wh2_main_lzd_xlanhuapec",
+              :name "Xlanhuapec",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "31a7db93-646d-5b9d-bf9e-bfd5751f8a4f",
+              :key "wh2_main_lzd_zlatan",
+              :name "Zlatlan",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c573a0fb-8921-5c40-bd33-3899c40360ee",
+              :key "wh3_dlc24_lzd_lizardmen_invasion",
+              :name "Lizardmen Raiders",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f7b48560-abc9-5722-b5c8-cb4dd92b8cc0",
+              :key "wh3_main_lzd_tepoks_spawn",
+              :name "Tepok's Spawn",
+              :faction
+              [:faction/eid
+               #uuid "f000000d-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e91c1cc7-ec24-5fed-ba6e-419617d83a89",
+              :key "wh2_dlc11_nor_norsca_dil",
+              :name "Norscan Raiders",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7539c64b-b741-5c52-812c-5de86cf94e65",
+              :key "wh2_dlc11_nor_norsca_qb4",
+              :name "Skjold Raiders",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8400578b-2544-5998-8fa5-8c1167ad09b5",
+              :key "wh2_dlc13_nor_norsca_invasion",
+              :name "Norsca",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "4e07a962-ceee-5ce3-9848-d879a528af6c",
+              :key "wh2_dlc17_nor_deadwood_ravagers",
+              :name "Khrag",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3085919e-c115-5789-8ab2-0f043c9c7f24",
+              :key "wh2_main_nor_aghol",
+              :name "Aghol",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "dfcb818c-828e-5293-8c2a-2fcc5865e091",
+              :key "wh2_main_nor_hung_incursion_def",
+              :name "Warband of the Hound",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "52182df4-04a7-5711-a9d3-e24dafa99663",
+              :key "wh2_main_nor_hung_incursion_hef",
+              :name "Warband of the Eagle",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "1155acdb-9e80-5a80-b196-90f3ac49f5f4",
+              :key "wh2_main_nor_hung_incursion_lzd",
+              :name "Warband of the Serpent",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "0ba8f7dd-baff-5e48-9bd5-f4d61fba1baa",
+              :key "wh2_main_nor_hung_incursion_skv",
+              :name "Warband of the Crow",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "eea98d65-8827-5d93-a606-683140aeae72",
+              :key "wh2_main_nor_mung",
+              :name "Mung",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "1bf7d79a-8636-5721-a0c7-82b1de0ec2c7",
+              :key "wh2_main_nor_skeggi",
+              :name "Skeggi",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e1a96a5c-40c0-5e7a-a606-c9ecc70f6168",
+              :key "wh3_dlc20_nor_dolgan",
+              :name "Dolgan",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "47102c9f-7311-50a4-a265-51488568f2a4",
+              :key "wh3_dlc20_nor_kuj",
+              :name "Kuj",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c430f1e6-2640-590d-855b-875d303d42b8",
+              :key "wh3_dlc20_nor_kul",
+              :name "Kul",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c501a906-60c4-5479-bd67-f27acdcbc5c5",
+              :key "wh3_dlc20_nor_tong",
+              :name "Tong",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "bd12ac73-9066-5ad5-9780-eee194a69712",
+              :key "wh3_dlc20_nor_yusak",
+              :name "Yusak",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3c6c2f7e-54fc-5027-9c3a-2175f4efcd9d",
+              :key "wh3_dlc21_nor_wyrmkins",
+              :name "Wyrmkins",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e3eeaa6e-7a82-5185-b956-9ebf68dd1595",
+              :key "wh3_dlc27_nor_avags",
+              :name "Avag",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ba71337f-a3ed-5db7-aa98-37d2d6a0148a",
+              :key "wh3_dlc27_nor_monstrous_arcanum_sayl",
+              :name "Monstrous Arcanum",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c8ab948f-e358-5706-90f4-ac78cfa505ff",
+              :key "wh3_dlc27_nor_monstrous_arcanum_throgg",
+              :name
+              "{{tr:factions_screen_name_wh3_dlc27_nor_monstrous_arcanum_sayl}}",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d1468dcd-e8b7-50b5-9574-77b98a6904b0",
+              :key "wh3_dlc27_nor_monstrous_arcanum_wulfrik",
+              :name
+              "{{tr:factions_screen_name_wh3_dlc27_nor_monstrous_arcanum_sayl}}",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "50aa43e4-640c-5f7f-a6a7-aafe3062317b",
+              :key "wh3_dlc27_nor_norsca_dm",
+              :name
+              "{{tr:factions_screen_name_wh_main_nor_norsca_rebels}}",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b81fbe4c-c6e7-5a05-9c72-f0e5adef2b52",
+              :key "wh3_dlc27_nor_sayl",
+              :name "Dolgan",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "57e585b2-c3cd-544b-9f8b-b4ddb6d813e0",
+              :key "wh_dlc08_nor_goromadny_tribe",
+              :name "Goromadny Tribe",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5ffe74b3-32b5-59c5-801a-bffc998ebb36",
+              :key "wh_dlc08_nor_helspire_tribe",
+              :name "Helspire Tribe",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "75364f7d-0f57-5a0b-924e-2edf1ab94272",
+              :key "wh_dlc08_nor_naglfarlings",
+              :name "Naglfarlings",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "2497ec91-7c34-54aa-af74-41d46552aa0b",
+              :key "wh_dlc08_nor_norsca",
+              :name "World Walkers",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "61356760-709b-55c5-b0bf-b1ff7da11d25",
+              :key "wh_dlc08_nor_vanaheimlings",
+              :name "Vanaheimlings",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "245462f5-daad-59ad-b691-64d1d9a91126",
+              :key "wh_dlc08_nor_wintertooth",
+              :name "Wintertooth",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "cbb4c871-43e2-5086-9943-e8934bc6dba6",
+              :key "wh_main_nor_aesling",
+              :name "Aesling",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b9b18b17-b488-5bf2-81c6-c08cb642b0e3",
+              :key "wh_main_nor_baersonling",
+              :name "Baersonling",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "cf12383f-b7d4-55ec-90ea-462d2796e33a",
+              :key "wh_main_nor_bjornling",
+              :name "Bjornling",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "1b5bb4fd-8691-514f-8051-a1e11de33403",
+              :key "wh_main_nor_graeling",
+              :name "Graeling",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b737a976-967a-5274-a24e-c1580bfdd757",
+              :key "wh_main_nor_norsca_qb1",
+              :name "Norsca",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "08b945fc-61f0-5a2a-a5d7-9497c87bfe7a",
+              :key "wh_main_nor_norsca_qb2",
+              :name "Norsca",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "277b7522-cba2-5665-b055-81044143eac6",
+              :key "wh_main_nor_norsca_qb3",
+              :name "Norsca",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a0ef88dc-2f99-57e6-b633-da25470b30b8",
+              :key "wh_main_nor_norsca_rebels",
+              :name "Norsca Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d6ede38a-f314-5af5-8418-229100856722",
+              :key "wh_main_nor_norsca_separatists",
+              :name "Rival Norse Tribe",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8beb4809-7c33-528c-81d5-f60087caf2b2",
+              :key "wh_main_nor_norsca_separatists_sorcerer_lord",
+              :name "Rival Norse Tribe",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "4b716357-d612-52df-99bc-1bad7648adab",
+              :key "wh_main_nor_sarl",
+              :name "Sarl",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7488ac8b-c308-5f57-b3d7-6dd022409bb1",
+              :key "wh_main_nor_skaeling",
+              :name "Skaeling",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a22cc09a-6bb3-50e2-8d08-a23f6eb795af",
+              :key "wh_main_nor_varg",
+              :name "Varg",
+              :faction
+              [:faction/eid
+               #uuid "f000000e-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "986e792c-a882-5ddc-b0c3-c16dd28658cf",
+              :key "wh3_dlc20_nur_pallid_nurslings",
+              :name "Pallid Nurslings",
+              :faction
+              [:faction/eid
+               #uuid "f000000f-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "19660565-f469-5583-8940-fb60b0da3ac5",
+              :key "wh3_dlc25_nur_epidemius",
+              :name "Tallymen of Pestilence",
+              :faction
+              [:faction/eid
+               #uuid "f000000f-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a856c7f6-ba93-5d29-9e83-21d2102159f3",
+              :key "wh3_dlc25_nur_nurgle_invasion",
+              :name
+              "{{tr:factions_screen_name_wh3_main_nur_nurgle_qb1}}",
+              :faction
+              [:faction/eid
+               #uuid "f000000f-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "acce3c33-a68a-5a15-997f-71f97c84a355",
+              :key "wh3_dlc25_nur_tamurkhan",
+              :name "The Maggot Host",
+              :faction
+              [:faction/eid
+               #uuid "f000000f-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "54454ff1-cbc7-52ed-90c6-f374a311f498",
+              :key "wh3_main_nur_bubonic_swarm",
+              :name "Bubonic Swarm",
+              :faction
+              [:faction/eid
+               #uuid "f000000f-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "870bf5f2-0107-5161-88dd-c9e19a0e0e6b",
+              :key "wh3_main_nur_maggoth_kin",
+              :name "Maggoth Kin",
+              :faction
+              [:faction/eid
+               #uuid "f000000f-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f22a3cc7-8e1d-5475-b39b-ef088d74fba2",
+              :key "wh3_main_nur_nurgle",
+              :name "Poxmakers of Nurgle",
+              :faction
+              [:faction/eid
+               #uuid "f000000f-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "0ac66f0d-6b52-59f3-89de-1603e6783386",
+              :key "wh3_main_nur_nurgle_qb1",
+              :name "Nurgle",
+              :faction
+              [:faction/eid
+               #uuid "f000000f-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b052937f-8e33-5a6f-ba1a-778b774b5d2c",
+              :key "wh3_main_nur_nurgle_qb2",
+              :name
+              "{{tr:factions_screen_name_wh3_main_nur_nurgle_qb1}}",
+              :faction
+              [:faction/eid
+               #uuid "f000000f-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3c2702e7-a8f8-56cc-bd59-cf32a4b72df6",
+              :key "wh3_main_nur_nurgle_rebels",
+              :name "Nurgle Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f000000f-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f5791180-422c-57a2-83b2-05f978430595",
+              :key "wh3_main_nur_poxmakers_of_nurgle",
+              :name "Poxmakers of Nurgle",
+              :faction
+              [:faction/eid
+               #uuid "f000000f-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "00503e75-d857-524f-9dac-187ed550229a",
+              :key "wh3_main_nur_septic_claw",
+              :name "Septic Claw",
+              :faction
+              [:faction/eid
+               #uuid "f000000f-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e11ee7d3-27cb-51da-abf7-3a150e4da606",
+              :key "wh3_dlc26_ogr_golgfag",
+              :name "The Maneaters",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "0928e0cc-0fba-5eee-9cab-4f304c348359",
+              :key "wh3_main_ogr_blood_guzzlers",
+              :name "Blood Guzzlers",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "dfaceade-a902-59b0-82ea-d905061b8bc2",
+              :key "wh3_main_ogr_bloodmaw",
+              :name "Bloodmaw",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "97fd1e49-7d63-56c0-b5bb-810dbb10c485",
+              :key "wh3_main_ogr_crossed_clubs",
+              :name "Crossed Clubs",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "af601da9-6ec1-519b-a367-bc945036d5dc",
+              :key "wh3_main_ogr_disciples_of_the_maw",
+              :name "Disciples of the Maw",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "bba8d4e6-f05f-5b73-96a7-b24a4974442b",
+              :key "wh3_main_ogr_eyebiter",
+              :name "Eyebiter",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "6394d541-c2e0-5661-8278-032b276c495f",
+              :key "wh3_main_ogr_feastmaster",
+              :name "Feastmaster",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "38d25b4b-17ae-5690-8a6f-f2a760359183",
+              :key "wh3_main_ogr_fleshgreeders",
+              :name "Fleshgreeders",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "de11fd20-6117-5aa5-8cd4-3b45994e2129",
+              :key "wh3_main_ogr_fulg",
+              :name "Fulg",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "31fe9f49-c64e-51e6-9132-3e947edbdb64",
+              :key "wh3_main_ogr_goldtooth",
+              :name "Goldtooth",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f62a14a7-85b8-5508-9d4f-0bc45f6e654b",
+              :key "wh3_main_ogr_lazarghs",
+              :name "Lazarghs",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d3a296ad-2b77-52e8-9545-ff1d16b6ea38",
+              :key "wh3_main_ogr_loose_tooth",
+              :name "Loose Tooth",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a83e307d-58c1-5d55-863d-72e4b76c66ef",
+              :key "wh3_main_ogr_mountaineaters",
+              :name "Mountaineaters",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a1e8b867-e878-5df1-b794-863527539394",
+              :key "wh3_main_ogr_ogre_kingdoms",
+              :name "Goldtooth",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8362b0f2-e707-52ad-b87f-a22b0fa40eff",
+              :key "wh3_main_ogr_ogre_kingdoms_invasion",
+              :name "Ogre Kingdoms",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3c3e8b9f-7c75-59ac-9e11-e509f9126565",
+              :key "wh3_main_ogr_ogre_kingdoms_qb1",
+              :name "Ogre Kingdoms",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "16a62496-797a-57bc-bb10-3017f09eeea0",
+              :key "wh3_main_ogr_ogre_rebels",
+              :name "Ogre Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5746e3f8-e236-5bc2-81fe-d703285fed10",
+              :key "wh3_main_ogr_rock_skulls",
+              :name "Rock Skulls",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7d71a313-aa5a-504b-a24b-3d0ad2c54cf3",
+              :key "wh3_main_ogr_sabreskin",
+              :name "Sabreskin",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "05247c78-248e-5fdd-90dc-8ebc203666c1",
+              :key "wh3_main_ogr_sons_of_the_mountain",
+              :name "Sons of the Mountain",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "0351258c-0118-5d41-9a9d-455db910bd55",
+              :key "wh3_main_ogr_thunderguts",
+              :name "Thunderguts",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a87c8c57-beda-5199-8b9f-a7029482a869",
+              :key "wh3_main_ogr_treehammers",
+              :name "Treehammers",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e51f33cb-dc63-550e-ac02-a7ba5dbdd5b4",
+              :key "wh2_dlc09_skv_clan_rictus",
+              :name "Clan Rictus",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f0310030-a4ea-502c-98ae-7f75f108ec97",
+              :key "wh2_dlc09_skv_clan_rictus_separatists",
+              :name "Clan Rictus Separatists",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d77f6228-11ba-5490-9a90-d91feb114ff0",
+              :key "wh2_dlc12_skv_clan_fester",
+              :name "Clan Fester",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "4bf488e7-4aaf-52c5-91f4-953bc7bfdcc8",
+              :key "wh2_dlc12_skv_clan_mange",
+              :name "Clan Mange",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "41f4f4c8-e51a-5417-b6bf-4e69aec5aec2",
+              :key "wh2_dlc13_skv_skaven_invasion",
+              :name "Skaven",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "97ec1f11-a910-56cf-9aa5-10a5c43ed512",
+              :key "wh2_dlc14_skv_rictus_clan_nest",
+              :name "Rictus Clan-Nest",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3838ba71-a74b-50a6-be80-89a6bad7b01b",
+              :key "wh2_dlc15_skv_clan_ferrik",
+              :name "Clan Ferrik",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "73c909c2-3bb5-5156-a31d-aa2e31b593d6",
+              :key "wh2_dlc15_skv_clan_kreepus",
+              :name "Clan Kreepus",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "605d1671-a8b5-590d-be62-ba3c5094cc1d",
+              :key "wh2_dlc15_skv_clan_volkn",
+              :name "Clan Volkn",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "69aa407e-761b-5abf-be56-8dcbc6cb0bfe",
+              :key "wh2_dlc16_skv_clan_gritus",
+              :name "Clan Gritus",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b0664e39-86b6-5dd9-beed-86dba4cd05cd",
+              :key "wh2_main_skv_clan_eshin",
+              :name "Clan Eshin",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "9c8747c6-19b6-5024-b1db-e11cff30c0a6",
+              :key "wh2_main_skv_clan_eshin_separatists",
+              :name "Clan Eshin Separatists",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d431557c-4529-5492-accb-d1a82e997fc9",
+              :key "wh2_main_skv_clan_gnaw",
+              :name "Clan Gnaw",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7ef23773-e36a-55d1-abab-047dadbeaf52",
+              :key "wh2_main_skv_clan_mordkin",
+              :name "Clan Mordkin",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "0a8218ea-2d53-5290-9983-98ccde077f9b",
+              :key "wh2_main_skv_clan_mors",
+              :name "Clan Mors",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "efc33b55-85a6-54cb-9851-339dd9379256",
+              :key "wh2_main_skv_clan_mors_separatists",
+              :name "Clan Mors Separatists",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7e0f881d-a52b-5ff6-9d68-de7ea8f9772c",
+              :key "wh2_main_skv_clan_moulder",
+              :name "Clan Moulder",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "9fe6f9c7-5126-514f-8441-6984f7222260",
+              :key "wh2_main_skv_clan_moulder_separatists",
+              :name "Clan Moulder Separatists",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a499e954-9fa7-5afb-b8fb-5bfe3894ee55",
+              :key "wh2_main_skv_clan_pestilens",
+              :name "Clan Pestilens",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "84294a88-74a8-5b17-a976-aba09deee1f0",
+              :key "wh2_main_skv_clan_pestilens_separatists",
+              :name "Clan Pestilens Separatists",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8909625e-5103-5549-9a29-4c30459e12e1",
+              :key "wh2_main_skv_clan_septik",
+              :name "Clan Septik",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "1e4886c2-636d-5a8a-a489-a20403f611b7",
+              :key "wh2_main_skv_clan_skryre",
+              :name "Clan Skryre",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "de37a42b-5be5-5074-baea-3348230b606b",
+              :key "wh2_main_skv_clan_skryre_separatists",
+              :name "Clan Skryre Separatists",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "bea442da-4162-576d-a1e0-5b6941814649",
+              :key "wh2_main_skv_clan_spittel",
+              :name "Clan Spittel",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5e37cccd-509a-5017-a342-37ddfdce1247",
+              :key "wh2_main_skv_grey_seer_clan",
+              :name "Grey Seer Clan",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ab11fbc5-4f6a-5e19-a284-1b283f50a9c0",
+              :key "wh2_main_skv_skaven",
+              :name "Clan Mors",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d923cb38-6a4c-5ba6-a813-950c6e43eddd",
+              :key "wh2_main_skv_skaven_qb1",
+              :name "Skaven",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a608678b-c2c3-5963-a79f-a7013684f24e",
+              :key "wh2_main_skv_skaven_qb2",
+              :name "Skaven",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "2c6947fc-329e-5137-88fa-ecec659844b8",
+              :key "wh2_main_skv_skaven_qb3",
+              :name "Skaven",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e7679994-8461-5eef-ac13-70d5feaf40dc",
+              :key "wh2_main_skv_skaven_qb4",
+              :name "Skaven",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "cc83c318-069c-5050-a742-28350850b7ff",
+              :key "wh2_main_skv_skaven_rebels",
+              :name "Skaven Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "0fb6536b-8913-5afe-84dd-4fd8b5e42cbb",
+              :key "wh2_main_skv_unknown_clan_def",
+              :name "Unknown Skaven Clan",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "165ece44-5b73-5a7c-8a9c-1722e21ef066",
+              :key "wh2_main_skv_unknown_clan_hef",
+              :name "Unknown Skaven Clan",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ccb10183-11e0-5377-a6a4-b1f48561ce43",
+              :key "wh2_main_skv_unknown_clan_lzd",
+              :name "Unknown Skaven Clan",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "050a9ab9-c2ef-5d65-8885-9648fc86ca9b",
+              :key "wh2_main_skv_unknown_clan_skv",
+              :name "Unknown Skaven Clan",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a1cb16c1-35ca-5c5e-80d8-ba6eec12669c",
+              :key "wh3_main_skv_clan_carrion",
+              :name "Clan Carrion",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e6af6f8d-1d2c-5bd3-b5f5-2d0cca6d04c5",
+              :key "wh3_main_skv_clan_gritus",
+              :name "Clan Gritus",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7de76d28-731f-5495-814a-1170f4370c4b",
+              :key "wh3_main_skv_clan_krizzor",
+              :name "Clan Krizzor",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d0ef82d1-aef9-5f33-835d-25811bfd58a6",
+              :key "wh3_main_skv_clan_morbidus",
+              :name "Clan Morbidus",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "1f1c54ed-f561-59d3-9203-f2a5e2d05352",
+              :key "wh3_main_skv_clan_skrat",
+              :name "Clan Skrat",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "513be355-1e0a-5cba-aca6-e4d544a7f51b",
+              :key "wh3_main_skv_clan_treecherik",
+              :name "Clan Treecherik",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8efa5824-3b6b-5d72-af95-979bc1f728bf",
+              :key "wh3_main_skv_clan_verms",
+              :name "Clan Verms",
+              :faction
+              [:faction/eid
+               #uuid "f0000011-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e5d75e20-9e13-56ea-8cd9-9c5408c12f25",
+              :key "wh3_dlc20_sla_keepers_of_bliss",
+              :name "Keepers of Bliss",
+              :faction
+              [:faction/eid
+               #uuid "f0000012-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "441c3786-c116-5b2a-8a6f-32eac3add0f1",
+              :key "wh3_dlc25_sla_slaanesh_invasion",
+              :name
+              "{{tr:factions_screen_name_wh3_main_sla_slaanesh_qb1}}",
+              :faction
+              [:faction/eid
+               #uuid "f0000012-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b8d0f117-e889-57d0-9a63-9fe497eb74fe",
+              :key "wh3_dlc27_sla_masque_of_slaanesh",
+              :name "The Accursed Troupe",
+              :faction
+              [:faction/eid
+               #uuid "f0000012-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "6da5ae95-00ab-5f34-8904-f7f505617823",
+              :key "wh3_dlc27_sla_the_tormentors",
+              :name "The Tormentors",
+              :faction
+              [:faction/eid
+               #uuid "f0000012-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8003239e-c9e7-5c91-be0a-763ec3c2b964",
+              :key "wh3_main_sla_exquisite_pain",
+              :name "Exquisite Pain",
+              :faction
+              [:faction/eid
+               #uuid "f0000012-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "0f769cb9-0431-5aec-a34c-367521fad159",
+              :key "wh3_main_sla_rapturous_excess",
+              :name "Rapturous Excess",
+              :faction
+              [:faction/eid
+               #uuid "f0000012-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "2ce4ccec-6d05-52dc-b874-7240709e1d4a",
+              :key "wh3_main_sla_seducers_of_slaanesh",
+              :name "Seducers of Slaanesh",
+              :faction
+              [:faction/eid
+               #uuid "f0000012-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ae2dcc68-53db-5aae-991f-ac845df67f6d",
+              :key "wh3_main_sla_slaanesh",
+              :name "Seducers of Slaanesh",
+              :faction
+              [:faction/eid
+               #uuid "f0000012-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5970d6f1-1b4e-55df-bd1f-cf148f479609",
+              :key "wh3_main_sla_slaanesh_qb1",
+              :name "Slaanesh",
+              :faction
+              [:faction/eid
+               #uuid "f0000012-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "cc7ad5d4-50d8-5279-98d6-fcd4bcdddb07",
+              :key "wh3_main_sla_slaanesh_qb2",
+              :name "Slaanesh",
+              :faction
+              [:faction/eid
+               #uuid "f0000012-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "51ca89cb-8a16-5488-a750-3f1e71f87a43",
+              :key "wh3_main_sla_slaanesh_qb3",
+              :name "Slaanesh",
+              :faction
+              [:faction/eid
+               #uuid "f0000012-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a374cf74-d951-57fa-ad5e-5237da6a2653",
+              :key "wh3_main_sla_slaanesh_qb4",
+              :name "Slaanesh",
+              :faction
+              [:faction/eid
+               #uuid "f0000012-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "62774d7a-cde6-58d8-96b5-23aac5e835a4",
+              :key "wh3_main_sla_slaanesh_qb5",
+              :name "Slaanesh",
+              :faction
+              [:faction/eid
+               #uuid "f0000012-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a57e13bf-805f-5820-a44f-427b4d502d44",
+              :key "wh3_main_sla_slaanesh_rebels",
+              :name "Slaanesh Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f0000012-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e8b18299-5080-525b-b916-c7127c767b43",
+              :key "wh3_main_sla_subtle_torture",
+              :name "Subtle Torture",
+              :faction
+              [:faction/eid
+               #uuid "f0000012-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d8788416-ec1f-55e9-a3c9-2be100dd4598",
+              :key "wh2_dlc09_tmb_dune_kingdoms",
+              :name "Dune Kingdoms",
+              :faction
+              [:faction/eid
+               #uuid "f0000013-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "2b44539d-b5b2-5a37-8903-234c9b83a71f",
+              :key "wh2_dlc09_tmb_exiles_of_nehek",
+              :name "Exiles of Nehek",
+              :faction
+              [:faction/eid
+               #uuid "f0000013-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8283a252-3a71-50d6-a624-ab0e89a26496",
+              :key "wh2_dlc09_tmb_followers_of_nagash",
+              :name "Followers of Nagash",
+              :faction
+              [:faction/eid
+               #uuid "f0000013-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3d19a3b4-fd13-571e-bf2a-13f1c4536249",
+              :key "wh2_dlc09_tmb_khemri",
+              :name "Khemri",
+              :faction
+              [:faction/eid
+               #uuid "f0000013-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f7a8c028-30c2-526e-96e8-7d4326480df7",
+              :key "wh2_dlc09_tmb_lybaras",
+              :name "Court of Lybaras",
+              :faction
+              [:faction/eid
+               #uuid "f0000013-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f315608b-383f-5b0f-93e6-f24b13b95c7f",
+              :key "wh2_dlc09_tmb_numas",
+              :name "Numas",
+              :faction
+              [:faction/eid
+               #uuid "f0000013-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "042a46e9-4c4b-5e33-a7a4-38010a436d4a",
+              :key "wh2_dlc09_tmb_rakaph_dynasty",
+              :name "Rakaph Dynasty",
+              :faction
+              [:faction/eid
+               #uuid "f0000013-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "51d53cf5-450f-5b86-9ef5-8383ff4679dd",
+              :key "wh2_dlc09_tmb_the_sentinels",
+              :name "The Sentinels",
+              :faction
+              [:faction/eid
+               #uuid "f0000013-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7fefa033-0c54-5b62-85c5-e96302e92b28",
+              :key "wh2_dlc09_tmb_tomb_kings",
+              :name "Khemri",
+              :faction
+              [:faction/eid
+               #uuid "f0000013-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "56d7b2b9-f1a3-5eab-94ab-b4bad6998c64",
+              :key "wh2_dlc09_tmb_tomb_kings_rebels",
+              :name "Tomb Kings Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f0000013-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7f3b9cfe-e241-5a09-980c-47c21c97aa79",
+              :key "wh2_dlc09_tmb_tombking_qb1",
+              :name "Tomb Kings",
+              :faction
+              [:faction/eid
+               #uuid "f0000013-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d983a7d7-9a09-570d-b4d4-81a000529b5b",
+              :key "wh2_dlc09_tmb_tombking_qb2",
+              :name "Tomb Kings",
+              :faction
+              [:faction/eid
+               #uuid "f0000013-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c7701cb1-a7ea-53c9-b577-5e537111e82b",
+              :key "wh2_dlc09_tmb_tombking_qb3",
+              :name "Tomb Kings",
+              :faction
+              [:faction/eid
+               #uuid "f0000013-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "333f5009-70e6-5a3c-bb20-363cd8e27db9",
+              :key "wh2_dlc09_tmb_tombking_qb4",
+              :name "Tomb Kings",
+              :faction
+              [:faction/eid
+               #uuid "f0000013-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "2c5def41-276e-5d4b-bfd9-f7b45620d9b0",
+              :key "wh2_dlc09_tmb_tombking_qb_exiles_of_nehek",
+              :name "Exiles of Nehek",
+              :faction
+              [:faction/eid
+               #uuid "f0000013-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "2cf7d430-f2d8-55ca-9f08-2285e49f76fd",
+              :key "wh2_dlc09_tmb_tombking_qb_followers_of_nagash",
+              :name "Followers of Nagash",
+              :faction
+              [:faction/eid
+               #uuid "f0000013-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "57794c05-780a-56ae-97d2-e08bf5ad4055",
+              :key "wh2_dlc09_tmb_tombking_qb_khemri",
+              :name "Khemri",
+              :faction
+              [:faction/eid
+               #uuid "f0000013-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3cfabeaf-11b0-5c64-88b7-c75db90577b5",
+              :key "wh2_dlc09_tmb_tombking_qb_lybaras",
+              :name "Court of Lybaras",
+              :faction
+              [:faction/eid
+               #uuid "f0000013-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "da7c658f-fb09-5f73-9419-d4c6eba46eaf",
+              :key "wh3_main_tmb_deserters_of_khatep",
+              :name "Deserters of Khatep",
+              :faction
+              [:faction/eid
+               #uuid "f0000013-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "872bbb45-beb1-5468-ba86-0c2dad09274e",
+              :key "wh3_dlc20_tze_apostles_of_change",
+              :name "Apostles of Change",
+              :faction
+              [:faction/eid
+               #uuid "f0000014-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f39dbb89-5f37-5127-b66d-c5feabf52240",
+              :key "wh3_dlc20_tze_the_sightless",
+              :name "The Sightless",
+              :faction
+              [:faction/eid
+               #uuid "f0000014-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ac9cd10c-a065-52c1-bb65-c49cccd1856c",
+              :key "wh3_dlc24_tze_the_deceivers",
+              :name "The Deceivers",
+              :faction
+              [:faction/eid
+               #uuid "f0000014-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "25abeb4b-af8d-5937-a3c8-c29ca16f5c9c",
+              :key "wh3_main_tze_all_seeing_eye",
+              :name "All-Seeing Eye",
+              :faction
+              [:faction/eid
+               #uuid "f0000014-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "10b3c453-4f76-5039-b48d-98cc0eda0ebc",
+              :key "wh3_main_tze_broken_wheel",
+              :name "Broken Wheel",
+              :faction
+              [:faction/eid
+               #uuid "f0000014-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "2a227817-7f40-561d-b7a6-27493857bd8a",
+              :key "wh3_main_tze_flaming_scribes",
+              :name "Flaming Scribes",
+              :faction
+              [:faction/eid
+               #uuid "f0000014-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7f4ebaaa-0fac-5a07-844e-41a690c834c5",
+              :key "wh3_main_tze_oracles_of_tzeentch",
+              :name "Oracles of Tzeentch",
+              :faction
+              [:faction/eid
+               #uuid "f0000014-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "6315c48e-a7eb-5c67-ace8-2d3cd41846fd",
+              :key "wh3_main_tze_sarthoraels_watchers",
+              :name "Sarthorael's Watchers",
+              :faction
+              [:faction/eid
+               #uuid "f0000014-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3ed3cba5-569f-5409-8557-84b53fb61e25",
+              :key "wh3_main_tze_tzeentch",
+              :name "Oracles of Tzeentch",
+              :faction
+              [:faction/eid
+               #uuid "f0000014-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "6db411f5-b1ee-5a72-ae88-3d19960f8d98",
+              :key "wh3_main_tze_tzeentch_invasion",
+              :name "Tzeentchian Cult",
+              :faction
+              [:faction/eid
+               #uuid "f0000014-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "4b3b2f78-f81b-5b32-bfbb-9b7f9415dde5",
+              :key "wh3_main_tze_tzeentch_qb1",
+              :name "Tzeentch",
+              :faction
+              [:faction/eid
+               #uuid "f0000014-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "15c0bb5a-41ba-55a1-ada1-aba8e43fd2b4",
+              :key "wh3_main_tze_tzeentch_qb2",
+              :name "Tzeentch",
+              :faction
+              [:faction/eid
+               #uuid "f0000014-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "0a60ac6d-edc8-5957-aa27-0a3d216ec0ad",
+              :key "wh3_main_tze_tzeentch_rebels",
+              :name "Tzeentch Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f0000014-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "457b7005-7c8b-5547-acb2-745e203ed579",
+              :key "wh2_dlc11_cst_harpoon_the_sunken_land_corsairs",
+              :name "The Sunken Land Corsairs",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "3bc33089-5789-51ad-895c-d97fc3333c4c",
+              :key "wh2_dlc11_cst_noctilus",
+              :name "The Dreadfleet",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5ec15a3f-0045-5245-9827-6e647049fde7",
+              :key "wh2_dlc11_cst_noctilus_separatists",
+              :name "The Dreadfleet Separatists",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "6c788e68-8e60-59e4-a216-8bac14ee8f2d",
+              :key "wh2_dlc11_cst_pirates_of_sartosa",
+              :name "Pirates of Sartosa",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e3cecd65-acc0-5aed-94d0-0dd0c50bf6ca",
+              :key "wh2_dlc11_cst_pirates_of_sartosa_separatists",
+              :name "Pirates of Sartosa Separatists",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "4e80b9b1-db13-56a2-be17-e7cd6fa40363",
+              :key "wh2_dlc11_cst_rogue_bleak_coast_buccaneers",
+              :name "Bleak Coast Buccaneers",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "05eaa716-dfdb-5ffc-b350-300ee559650e",
+              :key "wh2_dlc11_cst_rogue_boyz_of_the_forbidden_coast",
+              :name "The Boyz of the Forbidden Coast",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c9153462-675a-568b-96b6-aa5053ca6e14",
+              :key "wh2_dlc11_cst_rogue_freebooters_of_port_royale",
+              :name "Freebooters of Port Royale",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b9c8ac43-2f79-5fb8-8416-4951645accdc",
+              :key "wh2_dlc11_cst_rogue_grey_point_scuttlers",
+              :name "Grey Point Scuttlers",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "84da73e6-f006-56d5-84b2-84575927c11f",
+              :key "wh2_dlc11_cst_rogue_terrors_of_the_dark_straights",
+              :name "The Terrors of the Dark Straits",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f3282730-8c7c-521d-a504-3f46c19b9aa2",
+              :key "wh2_dlc11_cst_rogue_the_churning_gulf_raiders",
+              :name "The Churning Gulf Raiders",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "9e14fb2b-29cd-50eb-abde-546de8191ff7",
+              :key "wh2_dlc11_cst_rogue_tyrants_of_the_black_ocean",
+              :name "The Tyrants of the Black Ocean",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "0e98505a-e947-5339-a8ac-84b3ac22bdd4",
+              :key "wh2_dlc11_cst_shanty_dragon_spine_privateers",
+              :name "Dragon Spine Privateers",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "fced3498-db5f-52c6-8e26-b6894d967aaa",
+              :key "wh2_dlc11_cst_shanty_middle_sea_brigands",
+              :name "Middle Sea Brigands",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "bb789b80-6248-50b0-9c93-52fbb8171de0",
+              :key "wh2_dlc11_cst_shanty_shark_straight_seadogs",
+              :name "Shark Strait Seadogs",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "53213b3c-4ded-528f-ba90-d1e5fc1273cb",
+              :key "wh2_dlc11_cst_the_drowned",
+              :name "The Drowned",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8911e841-519c-55b7-af5d-72cf8a9ef59f",
+              :key "wh2_dlc11_cst_the_drowned_separatists",
+              :name "The Drowned Separatists",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "880a0f3d-96cb-5432-88f2-3650fbca2240",
+              :key "wh2_dlc11_cst_vampire_coast",
+              :name "The Awakened",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "263e596d-b671-5c33-9c03-696f72e70b51",
+              :key "wh2_dlc11_cst_vampire_coast_encounters",
+              :name "Rogue Pirates",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d27a5f81-e05c-5353-8443-8bdc4856a70e",
+              :key "wh2_dlc11_cst_vampire_coast_qb1",
+              :name "Vampire Coast",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "547b0e0f-38ab-5d52-a59f-36069c620bfe",
+              :key "wh2_dlc11_cst_vampire_coast_qb2",
+              :name "Vampire Coast",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "30a57b3b-cfda-56dc-871d-0aa68788a800",
+              :key "wh2_dlc11_cst_vampire_coast_qb3",
+              :name "Vampire Coast",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b1d2efbf-2239-5c12-b6c3-bc53551929de",
+              :key "wh2_dlc11_cst_vampire_coast_qb4",
+              :name "Vampire Coast",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "22fe80f1-2c36-5e7a-a558-704dc2707c88",
+              :key "wh2_dlc11_cst_vampire_coast_rebellion_rebels",
+              :name "Vampire Coast Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f17857b8-2960-5e44-af2f-0fb61ec51b84",
+              :key "wh2_dlc11_cst_vampire_coast_rebels",
+              :name "Vampire Coast Mutineers",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d58cffa2-f82c-575a-99e9-a246bac095d5",
+              :key "wh2_dlc11_cst_vampire_coast_separatists",
+              :name "Vampire Coast Separatists",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f7717938-e1d4-5b3b-9e25-594ad5e9e6e6",
+              :key "wh3_dlc21_cst_dead_flag_fleet",
+              :name "Dead Flag Fleet",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ee706bc3-f8ea-598f-8184-6b2795a55649",
+              :key "wh3_dlc24_cst_vampire_coast_bloated_rebels",
+              :name "Bloated Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a82c3f09-8a9c-5bbd-a04c-905245ff40c4",
+              :key "wh3_dlc26_cst_vampire_coast_qb1",
+              :name
+              "{{tr:factions_screen_name_wh2_dlc11_cst_vampire_coast_encounters}}",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "02b25a8e-5335-5db9-8ba1-38ec5d49a8c5",
+              :key "wh3_dlc26_cst_vampire_coast_qb2",
+              :name
+              "{{tr:factions_screen_name_wh2_dlc11_cst_vampire_coast_encounters}}",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "26a2efb3-9751-586c-a4dc-af7971d773fd",
+              :key "wh3_main_cst_dread_rock_privateers",
+              :name "Dread Rock Privateers",
+              :faction
+              [:faction/eid
+               #uuid "f0000015-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "28852cae-f702-5fbb-8e57-75cb8ee1c91c",
+              :key "wh2_dlc11_vmp_the_barrow_legion",
+              :name "The Barrow Legion",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "baa8b3ce-ec65-5306-a6b1-72e4acd71ae7",
+              :key "wh2_dlc16_vmp_lahmian_sisterhood",
+              :name "Lahmian Sisterhood",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "4be55232-7693-51c9-b25d-b3731e66551f",
+              :key "wh2_main_rogue_vmp_heirs_of_mourkain",
+              :name "Heirs of Mourkain",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "55b8ccfb-f46c-5491-aac3-6425ec29e5a6",
+              :key "wh2_main_vmp_necrarch_brotherhood",
+              :name "Necrarch Brotherhood",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "9e81fcaf-2f8c-5ea9-9acf-65c622a5eb9b",
+              :key "wh2_main_vmp_strygos_empire",
+              :name "Strygos Empire",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b0942ad5-a26e-58ec-aaf6-1d758b35d1e5",
+              :key "wh2_main_vmp_the_silver_host",
+              :name "The Silver Host",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e7678e1b-e937-53e2-8ea4-22b0d2ca6ad3",
+              :key "wh3_dlc21_vmp_jiangshi_rebels",
+              :name "Jiangshi Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "21d84212-b8a3-577f-b808-20e7af461546",
+              :key "wh3_dlc25_vmp_the_court_of_night",
+              :name "The Court of Night",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "78687ff9-4513-50a6-b6ee-6ff0b0912387",
+              :key "wh3_dlc25_vmp_vampire_counts_invasion",
+              :name
+              "{{tr:factions_screen_name_wh_main_vmp_vampire_counts_qb1}}",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8109e6a1-e9e8-58dc-8ce4-5c18c98b3554",
+              :key "wh3_dlc26_vmp_templehof_qb",
+              :name
+              "{{tr:factions_screen_name_wh_main_vmp_rival_sylvanian_vamps}}",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "35283cb3-448a-5f33-95f5-1cc5b48780c2",
+              :key "wh3_main_ie_vmp_sires_of_mourkain",
+              :name "Sires of Mourkain",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "2704d21f-0007-5fc2-a7bd-2976757089f3",
+              :key "wh3_main_vmp_caravan_of_blue_roses",
+              :name "Caravan of Blue Roses",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "da4e5a22-93db-5254-82e7-f0a4f2064ec5",
+              :key "wh3_main_vmp_lahmian_sisterhood",
+              :name "Lahmian Sisterhood",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "58c80431-c196-5624-ae87-a92e668f1893",
+              :key "wh3_main_vmp_nagashizzar",
+              :name "Nagashizzar",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "0aeb72e2-ed07-5036-88d7-6398690b61b5",
+              :key "wh_main_vmp_mousillon",
+              :name "Mousillon",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5e22e8d1-040d-59e6-a3ac-909675b9e1f7",
+              :key "wh_main_vmp_rival_sylvanian_vamps",
+              :name "Templehof",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ccd9b71d-cb24-5130-ab79-8f8e0d7986f1",
+              :key "wh_main_vmp_schwartzhafen",
+              :name "Sylvania",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "da1202ae-91c5-5cef-aff9-39913e850498",
+              :key "wh_main_vmp_vampire_counts",
+              :name "The Drakenhof Conclave",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "99f9b1a1-752c-5934-b468-99abde396340",
+              :key "wh_main_vmp_vampire_counts_qb1",
+              :name "Vampire Counts",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "8c505709-4730-5d7f-9d8d-671c41df4d2a",
+              :key "wh_main_vmp_vampire_counts_qb2",
+              :name "Vampire Counts",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5c4b20d0-df45-573b-ab0f-12bbeb3e7201",
+              :key "wh_main_vmp_vampire_counts_qb3",
+              :name "Vampire Counts",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5d3316f3-eb5d-5e54-a821-08e9d480b1c6",
+              :key "wh_main_vmp_vampire_counts_qb4",
+              :name "Vampire Counts",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e598fed8-38b5-56cf-9a2c-59172bd2b72f",
+              :key "wh_main_vmp_vampire_rebels",
+              :name "Vampire Counts Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "37fd664a-bb45-57e2-a938-cf66a41eeee2",
+              :key "wh_main_vmp_waldenhof",
+              :name "Waldenhof",
+              :faction
+              [:faction/eid
+               #uuid "f0000016-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5943731f-1192-5c0f-b408-2d3ff6a51e9c",
+              :key "wh2_dlc16_chs_acolytes_of_the_keeper",
+              :name "Acolytes of the Keeper",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f5dbf6fe-7d9b-56c6-afe8-c2e032a8af6c",
+              :key "wh2_main_chs_chaos_incursion_def",
+              :name "Servants to Chaos",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "676000cb-1930-5bbe-a6f3-c22fc36fdf09",
+              :key "wh2_main_chs_chaos_incursion_hef",
+              :name "Puppets of Chaos",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "92a8e497-cc4a-5a68-8546-9ceb328da228",
+              :key "wh2_main_chs_chaos_incursion_lzd",
+              :name "Vessels of Chaos",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "36042530-72b5-5ce6-9871-eff4aa4b7350",
+              :key "wh2_main_chs_chaos_incursion_skv",
+              :name "Followers of Chaos",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d172f6ee-3c14-515b-9409-ae7333026b84",
+              :key "wh3_dlc20_chs_azazel",
+              :name "The Ecstatic Legions",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e12539c6-845f-581e-b8a9-ddd5480a4311",
+              :key "wh3_dlc20_chs_chaos_qb4",
+              :name "Chaos",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "fb9ae835-a6af-5cd5-a7f6-92f8a4bb13ac",
+              :key "wh3_dlc20_chs_festus",
+              :name "The Fecundites",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d990cb7b-e659-5c88-b95e-9d4755e8c4f9",
+              :key "wh3_dlc20_chs_kholek",
+              :name "Heralds of the Tempest",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ed1bfad9-01c5-598b-8557-3fb2957435b7",
+              :key "wh3_dlc20_chs_sigvald",
+              :name "The Decadent Host",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "793349e0-2aed-5818-94ac-65108a556855",
+              :key "wh3_dlc20_chs_valkia",
+              :name "Legion of the Gorequeen",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7890befb-74a5-5204-b0db-22214272cd81",
+              :key "wh3_dlc20_chs_vilitch",
+              :name "Puppets of Misrule",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "912bb06d-28c4-5640-bd00-da5227581541",
+              :key "wh3_dlc27_chs_chaos_dm",
+              :name
+              "{{tr:factions_screen_name_wh_main_chs_chaos_rebels}}",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "1296ac37-d4f1-5493-b7d2-7b80199fa13a",
+              :key "wh3_main_chs_dreaded_wo",
+              :name "Dreaded Wo",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "814d2156-0a3a-5fdb-acae-badeb2b216e3",
+              :key "wh3_main_chs_gharhar",
+              :name "Gharhar",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b539e293-340e-5b79-9f62-b5bc5961e5ea",
+              :key "wh3_main_chs_khazag",
+              :name "Khazag",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d5b4cc7b-4140-5952-9f43-2499d628b6df",
+              :key "wh3_main_chs_kvellig",
+              :name "Kvellig",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5c23e205-0cc5-5630-b339-a3b073195db4",
+              :key "wh3_main_chs_shadow_legion",
+              :name "Shadow Legion",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "2ff60775-1195-5047-a502-d8b33f9689f9",
+              :key "wh3_main_chs_tong",
+              :name "Tong",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "5a3e164f-867c-5f05-a5ff-2130ed3f0e2e",
+              :key "wh_dlc08_chs_chaos_challenger_khorne",
+              :name "Challenger of the Hound",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b7a43051-391e-5152-8b96-b50c1d8e4a4d",
+              :key "wh_dlc08_chs_chaos_challenger_khorne_qb",
+              :name "Challenger of the Hound",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "bf79e7f4-fe03-5453-8d0d-4d9ad8719fb4",
+              :key "wh_dlc08_chs_chaos_challenger_nurgle",
+              :name "Challenger of the Crow",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "e6c29364-5ad7-5204-aa79-712047e27f93",
+              :key "wh_dlc08_chs_chaos_challenger_nurgle_qb",
+              :name "Challenger of the Crow",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "4d3437ac-e2ce-5a72-a4a9-e0ea7ea03be9",
+              :key "wh_dlc08_chs_chaos_challenger_slaanesh",
+              :name "Challenger of the Serpent",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "150b814d-cbbc-5c67-89d1-91cee66ffd7e",
+              :key "wh_dlc08_chs_chaos_challenger_slaanesh_qb",
+              :name "Challenger of the Serpent",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "50f91f02-63c7-596e-8622-15f5fb8ae9dd",
+              :key "wh_dlc08_chs_chaos_challenger_tzeentch",
+              :name "Challenger of the Eagle",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a8bb25eb-9415-5e64-922b-aa53eb6042f4",
+              :key "wh_dlc08_chs_chaos_challenger_tzeentch_qb",
+              :name "Challenger of the Eagle",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "f2fb0a34-a992-58de-b69a-5ce3a22b5a93",
+              :key "wh_main_chs_chaos",
+              :name "Warhost of the Apocalypse",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "080268fe-5b68-5786-a5bf-9a36483f083e",
+              :key "wh_main_chs_chaos_qb1",
+              :name "Chaos",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "9810c664-65c6-5c1e-84b5-cb84ea07ab9d",
+              :key "wh_main_chs_chaos_qb2",
+              :name "Chaos",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d8ddb670-5c61-5028-88c8-90acaf4eb2f3",
+              :key "wh_main_chs_chaos_qb3",
+              :name "Chaos",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "63e2a049-e82e-5d18-a37a-0498ed813f52",
+              :key "wh_main_chs_chaos_rebels",
+              :name "Chaos Rebel Uprising",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "370ed6ef-2888-5ba8-92e4-a9b2008539ad",
+              :key "wh_main_chs_chaos_separatists",
+              :name "Chaos Gathering",
+              :faction
+              [:faction/eid
+               #uuid "f0000017-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "02ad511c-0441-59a1-9ac1-98e9b3823d48",
+              :key "wh2_dlc13_wef_laurelorn_forest",
+              :name "Laurelorn Forest",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d8c5baf0-150e-5c6f-a9a0-06273858a068",
+              :key "wh2_dlc16_wef_drycha",
+              :name "Wargrove of Woe",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "002c8159-2de9-5b08-bb5a-33fb50138517",
+              :key "wh2_dlc16_wef_sisters_of_twilight",
+              :name "Heralds of Ariel",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ccf30f84-93ad-5729-a2f8-8a2fb5b21f49",
+              :key "wh2_dlc16_wef_waystone_faction_1",
+              :name "Greenbeard's Wargrove",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "061c4bef-3d2e-595d-b5b6-3f0b7fe0e27c",
+              :key "wh2_dlc16_wef_waystone_faction_2",
+              :name "Avengers of Allisara",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "9bf318e3-50bc-5bb8-9251-f9198b4f6261",
+              :key "wh2_dlc16_wef_waystone_faction_3",
+              :name "Masque of Loec",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ed09f0cf-83dd-542d-9632-6ab17e8a6999",
+              :key "wh2_dlc16_wef_wood_elves_qb4",
+              :name "Cythral",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "9b29d50e-d5f5-5732-8d6b-4c15b69d77ea",
+              :key "wh2_dlc16_wef_wood_elves_qb5",
+              :name "Anmyr",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "56bd05f9-86fb-5cdd-b8a1-d6b400d0d9c8",
+              :key "wh2_dlc16_wef_wood_elves_qb6",
+              :name "Modryn",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "2f35e219-ebb1-5008-a380-69c105c7170d",
+              :key "wh2_dlc16_wef_wood_elves_qb7",
+              :name "Cythral",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a82cdb6b-6ea3-5483-966f-5bd6f13e7fe4",
+              :key "wh2_main_rogue_wef_hunters_of_kurnous",
+              :name "Hunters of Kurnous",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d9ed181e-625b-5dc1-b573-8462f50f73de",
+              :key "wh2_main_wef_bowmen_of_oreon",
+              :name "Bowmen of Oreon",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "412b36ed-38b7-5369-af46-db9bde877e7c",
+              :key "wh3_dlc21_wef_spirits_of_shanlin",
+              :name "Spirits of Shanlin",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "4e08fb45-776b-568e-9a20-0fbcd6b73467",
+              :key "wh3_dlc25_wef_wood_elves_invasion",
+              :name
+              "{{tr:factions_screen_name_wh_dlc05_wef_wood_elves_qb1}}",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "2625be39-24da-5fa1-b65f-3791edf1a86b",
+              :key "wh3_dlc27_wef_wood_elves_dm",
+              :name
+              "{{tr:factions_screen_name_wh_dlc05_wef_wood_elves_rebels}}",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "da5617be-3c07-58d9-a71b-9f6a7f606856",
+              :key "wh3_main_wef_laurelorn",
+              :name "Laurelorn",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "67074f23-ac13-54c5-b815-dfdfbc79b492",
+              :key "wh_dlc05_wef_anmyr",
+              :name "Anmyr",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "0abbeb0b-5d69-5d3f-81fe-be9cdfd7d84a",
+              :key "wh_dlc05_wef_argwylon",
+              :name "Argwylon",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "62c0d615-1515-5b97-8518-63a15730796e",
+              :key "wh_dlc05_wef_arranoc",
+              :name "Arranoc",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c2b4f967-1f83-5fe4-81ba-50872bd543ab",
+              :key "wh_dlc05_wef_atylwyth",
+              :name "Atylwyth",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "b0a8240d-71ba-5e3a-b4a0-53695671d8dd",
+              :key "wh_dlc05_wef_cavaroc",
+              :name "Cavaroc",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "4f9ea9f0-7cf7-5509-a843-0ba1acb4bd24",
+              :key "wh_dlc05_wef_cythral",
+              :name "Cythral",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "462493e3-3a86-577e-abe3-430e4933e79e",
+              :key "wh_dlc05_wef_fyr_darric",
+              :name "Fyr Darric",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "ac4727e6-916a-593f-8848-f2e726beb4c4",
+              :key "wh_dlc05_wef_modryn",
+              :name "Modryn",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "1f13f6a5-4609-5d80-aa01-5ca895d881e7",
+              :key "wh_dlc05_wef_tirsyth",
+              :name "Tirsyth",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "389bd97c-7437-518d-a9ae-b560104865a4",
+              :key "wh_dlc05_wef_torgovann",
+              :name "Torgovann",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "eeea8db3-3bcc-5862-a05f-59bb40379a91",
+              :key "wh_dlc05_wef_wood_elves",
+              :name "Talsyn",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "d8bfd793-751f-5462-b993-6aa7c66d25d2",
+              :key "wh_dlc05_wef_wood_elves_qb1",
+              :name "Wood Elves",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "a8fbd7fd-4cbc-5d56-8a7d-62844e0f33cc",
+              :key "wh_dlc05_wef_wood_elves_qb2",
+              :name "Wood Elves",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c43f1410-a669-5d80-b3e1-abaa53862558",
+              :key "wh_dlc05_wef_wood_elves_qb3",
+              :name "Torgovann",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "691bb67d-6ff9-526d-ace5-7998f8f029f1",
+              :key "wh_dlc05_wef_wood_elves_rebels",
+              :name "Wood Elf Rebels",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "0da34d05-ac20-5205-ab11-ce93f59e9fe6",
+              :key "wh_dlc05_wef_wydrioth",
+              :name "Wydrioth",
+              :faction
+              [:faction/eid
+               #uuid "f0000018-0000-4000-8000-000000000000"]}]

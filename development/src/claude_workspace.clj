@@ -2,6 +2,7 @@
   "Claude Code dev helpers. Loaded via the :dev alias alongside workspace.clj."
   (:require
    [clojure.java.io :as io]
+   [com.devereux-henley.datalog.contract :as datalog]
    [com.devereux-henley.rts-api.configuration :as configuration]
    [com.devereux-henley.rts-api.datalog :as rts-datalog]
    [com.devereux-henley.rts-api.db :as rts-db]
@@ -9,6 +10,7 @@
    [com.devereux-henley.rts-data.contract :as rts-data]
    [integrant.core]
    [integrant.repl :refer [go halt reset]]
+   [integrant.repl.state :as ig-state]
    [migratus.core :as migratus]
    [selmer.parser]))
 
@@ -72,11 +74,29 @@
   (delete-recursively! (io/file rts-datalog/dir))
   (go))
 
+(def default-patch-version
+  "Patch the dev workspace seeds against by default. Bump when a new
+   patch's EDN seed has been published under
+   `components/rts-data/resources/rts-data/seed/datalog/<version>/`."
+  "8.0")
+
 (defn seed-datalog!
-  "Seed the Datalevin store with the canonical dev dataset. No-op while the
-   schema is empty; per-domain epics extend this as they migrate off SQLite."
-  []
-  nil)
+  "Transact every EDN seed file for `patch-version` into the running
+   Datalevin store (requires the system to be up — call `(go!)` first).
+   Idempotent: every entity carries `:db.unique/identity`, so re-runs
+   upsert in place. Throws if no seed files exist for the requested
+   version so a typo doesn't silently transact nothing."
+  ([] (seed-datalog! default-patch-version))
+  ([patch-version]
+   (let [conn (get ig-state/system :com.devereux-henley.rts-api.datalog/connection)]
+     (when-not conn
+       (throw (ex-info "seed-datalog! requires the system to be running — call (go!) first" {})))
+     (rts-data/ensure-datalog-patch patch-version)
+     (println (format "Seeding Datalevin from patch %s" patch-version))
+     (doseq [[file-name tx-data] (rts-data/load-datalog-seed patch-version)]
+       (datalog/transact! conn tx-data)
+       (println (format "  %-30s %d entities" file-name (count tx-data))))
+     (println "Done."))))
 
 ;; -- Impersonation helpers ---------------------------------------------------
 
@@ -107,6 +127,7 @@
   ;; Datalog
   (reset-datalog!)
   (seed-datalog!)
+  (seed-datalog! "8.0")
 
   ;; Impersonation (development profile only)
   (keys dev-users)

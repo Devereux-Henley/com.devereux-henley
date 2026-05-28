@@ -1,0 +1,393 @@
+[#:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000001",
+             :key "always_flying",
+             :name "Always Flying",
+             :description
+             "This unit is always flying and cannot land.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000002",
+             :key "armoured_vehicle",
+             :name "Armoured Vehicle",
+             :description
+             "This unit has variable Missile Block Chance depending on which side of the unit is hit by a projectile. The missile block chance multiplier of each direction is: 1.0x at the front 0.5x at the sides 0.1x at the rear",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000003",
+             :key "bound_fire_daemon",
+             :name "Bound Fire Daemon",
+             :description
+             "Bound Fire Daemons cannot be routed, but they take damage when their Leadership is broken. Bound Fire Daemons also have: Physical Resistance Fire Resistance Fear and Terror Immunity Bound Fire Daemons are also Unbreakable whilst most of their hit points are remaining.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000004",
+             :key "can_block_missiles_360",
+             :name "Can Block Missiles 360",
+             :description
+             "This unit can block projectiles regardless of its facing.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000005",
+             :key "cant_run",
+             :name "Cant Run",
+             :description
+             "This unit cannot run and will only move at walking pace.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000006",
+             :key "causes_fear",
+             :name "Causes Fear",
+             :description
+             "This unit frightens all enemy units, reducing their leadership when nearby. It is also immune to fear. Fear penalties do not stack.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000007",
+             :key "causes_terror",
+             :name "Causes Terror",
+             :description
+             "This unit can cause terror, making its melee target rout for a short time. Units that cause terror are immune to terror and fear themselves.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000008",
+             :key "charge_defense",
+             :name "Charge Defense",
+             :description
+             "When bracing, this unit negates the charge bonus of any attacker.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000009",
+             :key "charge_defense_vs_large",
+             :name "Charge Defense Vs Large",
+             :description
+             "When bracing, this unit negates the charge bonus of any large attacker.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-00000000000a",
+             :key "charge_reflection",
+             :name "Charge Reflection",
+             :description
+             "When bracing, this unit causes additional damage when attacking charging enemies.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-00000000000b",
+             :key "construct",
+             :name "Construct",
+             :description
+             "Constructs cannot be routed, but take damage when their Leadership is broken. Constructs also have: Fear and Terror Immunity Constructs may also have their hit points restored and stats boosted by special characters such as the Tomb Kings Necrotect.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-00000000000c",
+             :key "contempt",
+             :name "Contempt",
+             :description
+             "Witnessing other friendly units rout will only affect this unit's leadership if they also have the Contempt attribute.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-00000000000d",
+             :key "daemonic",
+             :name "Daemonic",
+             :description
+             "Daemonic units cannot be routed, but take damage when their Leadership is low. Daemonic units also have: Physical Resistance Fear and Terror Immunity",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-00000000000e",
+             :key "devastating_flanker",
+             :name "Devastating Flanker",
+             :description
+             "Entities with this attribute double their charge bonus when attacking the rear or flank of an entity.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-00000000000f",
+             :key "elemental",
+             :name "Elemental",
+             :description
+             "Elementals cannot be routed, but take damage when their Leadership is broken. Elementals also have: Physical Resistance Fear and Terror Immunity",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000010",
+             :key "encourages",
+             :name "Encourages",
+             :description
+             "This unit provides a leadership bonus to nearby allies. Units within range of both the Lord's aura and an encouraging unit will receive the larger of the two bonuses.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000011",
+             :key "expendable",
+             :name "Expendable",
+             :description
+             "Witnessing friendly expendable units rout does not reduce other units' leadership, unless they are themselves expendable.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000012",
+             :key "fatigue_immune",
+             :name "Fatigue Immune",
+             :description
+             "Even when performing the most fatiguing actions, this unit never loses vigour.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000013",
+             :key "flanking_immune",
+             :name "Flanking Immune",
+             :description "This unit takes no penalties when flanked.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000014",
+             :key "flying",
+             :name "Flying",
+             :description "This unit can fly.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000015",
+             :key "formed_attack",
+             :name "Formed Attack",
+             :description
+             "The unit will try to stay in formation when in melee. Melee defence will be slightly increased.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000016",
+             :key "glorious_charge",
+             :name "Glorious Charge",
+             :description
+             "When charging into an enemy unit: Charge Bonus duration is doubled. Enemy units take a Leadership penalty as if they have been attacked in the flank.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000017",
+             :key "gorger",
+             :name "Gorger",
+             :description
+             "This unit counts as a Gorger for ability targeting",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000018",
+             :key "guerrilla_deploy",
+             :name "Guerrilla Deploy",
+             :description
+             "This unit can deploy outside the deployment zone.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000019",
+             :key "gunship",
+             :name "Gunship",
+             :description
+             "This unit relies entirely on missile attacks to deal damage and has no melee capabilities. Gunship-type units also: Attack ground targets from directly above Attack flying targets from range Have certain riders with infinite Ammunition",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-00000000001a",
+             :key "hellforged",
+             :name "Hellforged",
+             :description
+             "This unit can be restored in battle by the Daemonsmith's Reforge ability.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-00000000001b",
+             :key "hide_forest",
+             :name "Hide Forest",
+             :description
+             "This unit can hide in forests until enemy units get too close.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-00000000001c",
+             :key "ignore_imbue_contact_effects_enemy",
+             :name "Ignore Imbue Contact Effects Enemy",
+             :description
+             "Entities with this attribute ignore the effects of enemy contact effects such as Poison",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-00000000001d",
+             :key "ignore_trees",
+             :name "Ignore Trees",
+             :description "This unit can pass through trees.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-00000000001e",
+             :key "immune_to_psychology",
+             :name "Immune To Psychology",
+             :description
+             "The unit is immune to psychological attacks (Fear & Terror).",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-00000000001f",
+             :key "knight",
+             :name "Knight",
+             :description
+             "Witnessing friendly units with the Peasant Attribute rout will not affect this unit's leadership.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000020",
+             :key "kroxigor",
+             :name "Kroxigor",
+             :description
+             "A unit with the Kroxigor will gain the following bonuses if a unit with the Skink Attribute is nearby: Increased Weapon Strength",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000021",
+             :key "mark_khorne",
+             :name "Mark Khorne",
+             :description
+             "A unit with the Mark of Khorne has: Frenzy Passive Ability Increased Spell Resistance Increased Armour Reduced Melee Defence",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000022",
+             :key "mark_nurgle",
+             :name "Mark Nurgle",
+             :description
+             "A unit with the Mark of Nurgle has: Poison Contact Effect Increased Hit Points Increased Melee Defence Reduced Melee Attack",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000023",
+             :key "mark_slaanesh",
+             :name "Mark Slaanesh",
+             :description
+             "A unit with the Mark of Slaanesh has: Immune to Psychology Attribute Strider Attribute Increased Physical Resistance Increased Speed",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000024",
+             :key "mark_tzeentch",
+             :name "Mark Tzeentch",
+             :description
+             "A unit with the Mark of Tzeentch has: Barrier Magical Attacks",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000025",
+             :key "moulder_monster",
+             :name "Moulder Monster",
+             :description
+             "This is a unit created by Clan Moulder. Packmasters and Throt the Unclean can push it to its full combat potential and restore it in battle.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000026",
+             :key "mounted_fire_move",
+             :name "Mounted Fire Move",
+             :description "This unit can fire while on the move.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000027",
+             :key "ogre_charge",
+             :name "Ogre Charge",
+             :description
+             "When attacking braced charge defenders, this unit only loses half of its charge bonus.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000028",
+             :key "peasant",
+             :name "Peasant",
+             :description
+             "A unit with the Peasant Attribute will gain increased leadership if a unit with the Knight Attribute is nearby.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000029",
+             :key "rampage",
+             :name "Rampage",
+             :description
+             "A Rampaging unit is uncontrollable and will attack the nearest enemy unit. When there are no enemy units nearby, a Rampaging unit will move around randomly instead.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-00000000002a",
+             :key "randomises_spells_on_cast",
+             :name "Randomises Spells On Cast",
+             :description
+             "When this unit casts a spell, all of their spells will be randomly replaced by another spell.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-00000000002b",
+             :key "skink",
+             :name "Skink",
+             :description
+             "A unit with the Skink Attribute will gain the following bonuses if a unit with the Kroxigor Attribute is nearby: Causes Fear",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-00000000002c",
+             :key "slayer",
+             :name "Slayer",
+             :description
+             "This unit is a Slayer. Slayers can never have their Weapon Strength reduced during a battle.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-00000000002d",
+             :key "snipe",
+             :name "Snipe",
+             :description "This unit remains hidden while firing.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-00000000002e",
+             :key "spell_mastery",
+             :name "Spell Mastery",
+             :description
+             "When two or more units in the same army share this attribute, intensity increases the power of spells cast.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-00000000002f",
+             :key "squig",
+             :name "Squig",
+             :description
+             "This unit counts as a Squig for ability targeting",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000030",
+             :key "stalk",
+             :name "Stalk",
+             :description "This unit can move hidden in any terrain.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000031",
+             :key "strider",
+             :name "Strider",
+             :description
+             "Speed and combat penalties caused by terrain are ignored by this unit.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000032",
+             :key "unbreakable",
+             :name "Unbreakable",
+             :description
+             "This unit does not suffer any form of leadership loss and will never rout.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000033",
+             :key "undead",
+             :name "Undead",
+             :description
+             "Undead units cannot be routed, but take damage when their {{tr:morale}} is broken. Undead units also have: Fear and Terror Immunity Undead units may also have their hit points restored by special characters such as the Vampire Counts Necromancer.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000034",
+             :key "underground",
+             :name "Underground",
+             :description
+             "The Dread Maw is underground. It cannot be attacked but neither can it attack in turn.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000035",
+             :key "unspottable",
+             :name "Unspottable",
+             :description
+             "If this unit can hide at its current location it will not be spotted until the enemy is very close.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000036",
+             :key "unyielding_assault",
+             :name "Unyielding Assault",
+             :description
+             "This unit can never have its Melee Attack reduced during battle.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000037",
+             :key "wallbreaker",
+             :name "Wallbreaker",
+             :description
+             "Allows the unit to attack and destroy walls in melee. This attribute also adds a +50% damage multiplier against buildings.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000038",
+             :key "yang",
+             :name "Yang",
+             :description
+             "This unit counts as a Yang unit for the purpose of Battle Harmony proximity",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:attribute{:eid #uuid "c1000000-0000-0000-0000-000000000039",
+             :key "yin",
+             :name "Yin",
+             :description
+             "This unit counts as a Yin unit for the purpose of Battle Harmony proximity.",
+             :game
+             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}]
