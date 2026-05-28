@@ -3,7 +3,8 @@
   (:require
    [clojure.set :as set]
    [com.devereux-henley.datalog.contract :as dl]
-   [com.devereux-henley.schema.contract :as schema.contract])
+   [com.devereux-henley.schema.contract :as schema.contract]
+   [malli.core :as m])
   (:import
    [java.util Date]))
 
@@ -48,6 +49,71 @@
    [:map
     [:main           [:sequential draft-entry-schema]]
     [:reinforcements [:sequential draft-entry-schema]]]))
+
+(def draft-result-schema
+  "Flat draft row returned by `draft-by-eid` + the listing queries."
+  (schema.contract/to-schema
+   [:map
+    [:eid            :uuid]
+    [:name           [:maybe :string]]
+    [:player-sub     :string]
+    [:version       :int]
+    [:game-mode-eid [:maybe :uuid]]
+    [:faction-eid   [:maybe :uuid]]
+    [:faction-name  [:maybe :string]]
+    [:game-eid      [:maybe :uuid]]
+    [:created-at    [:maybe inst?]]
+    [:updated-at    [:maybe inst?]]
+    [:created-by-sub {:optional true} :string]]))
+
+(def ^:private create-spec-schema
+  (schema.contract/to-schema
+   [:map
+    [:eid            :uuid]
+    [:player-sub     :string]
+    [:game-mode-eid  :uuid]
+    [:faction-eid    :uuid]
+    [:name           {:optional true} [:maybe :string]]
+    [:created-by-sub {:optional true} [:maybe :string]]]))
+
+(def ^:private entry-add-spec-schema
+  (schema.contract/to-schema
+   [:map
+    [:entry-eid   :uuid]
+    [:unit-eid    :uuid]
+    [:section     [:enum :main :reinforcements]]
+    [:level       {:optional true} :int]
+    [:mount       {:optional true} [:maybe :string]]
+    [:lore        {:optional true} [:maybe :string]]
+    [:abilities   {:optional true} [:sequential :string]]
+    [:spells      {:optional true} [:sequential :string]]
+    [:items       {:optional true} [:sequential :string]]
+    [:total-cost  {:optional true} [:maybe :int]]
+    [:engine-cost {:optional true} [:maybe :int]]]))
+
+(def ^:private entry-update-attrs-schema
+  (schema.contract/to-schema
+   [:map
+    [:unit-eid    {:optional true} :uuid]
+    [:section     {:optional true} [:enum :main :reinforcements]]
+    [:level       {:optional true} :int]
+    [:mount       {:optional true} [:maybe :string]]
+    [:lore        {:optional true} [:maybe :string]]
+    [:abilities   {:optional true} [:sequential :string]]
+    [:spells      {:optional true} [:sequential :string]]
+    [:items       {:optional true} [:sequential :string]]
+    [:total-cost  {:optional true} [:maybe :int]]
+    [:engine-cost {:optional true} [:maybe :int]]]))
+
+(def ^:private conn-schema
+  "Opaque Datalevin connection — pre-validating it costs more than the
+  fns it'd be wrapping and would couple this ns to datalevin internals."
+  :any)
+
+(def ^:private tx-report-schema
+  "Datalevin transact!'s return is the full tx report; queries pass it
+  through unchanged."
+  :any)
 
 ;;; ─── Result builders ──────────────────────────────────────────────────────
 
@@ -105,15 +171,15 @@
 ;;; ─── Reads ────────────────────────────────────────────────────────────────
 
 (defn draft-by-eid
-  "Single draft, flat shape matching the SQLite `draft-entity` row.
-  Returns nil when the draft doesn't exist so callers can distinguish
-  missing from present."
+  "Fetch a draft by eid. Returns nil when not found."
   [conn eid]
   (->draft (dl/pull (dl/db conn) draft-pattern (dl/lookup-ref :draft/eid eid))))
 
+(m/=> draft-by-eid
+      [:=> [:cat conn-schema :uuid] [:maybe draft-result-schema]])
+
 (defn drafts-for-player
-  "All drafts a player owns, sorted by `(updated-at desc, eid)` to mirror
-  the SQLite-era ORDER BY."
+  "All drafts a player owns, sorted updated-at desc (eid tiebreak)."
   [conn player-sub]
   (let [db (dl/db conn)]
     (->> (dl/q '[:find [(pull ?d pattern) ...]
@@ -124,9 +190,12 @@
          (sort-by (juxt (comp - (fnil #(.getTime ^Date %) (Date. 0)) :updated-at) :eid))
          vec)))
 
+(m/=> drafts-for-player
+      [:=> [:cat conn-schema :string] [:sequential draft-result-schema]])
+
 (defn drafts-for-player-by-game
-  "Drafts a player owns scoped to a specific game (matched through the
-  game-mode's parent game ref). Sorted updated-at desc."
+  "Drafts a player owns, scoped through the game-mode's parent game ref.
+  Sorted updated-at desc."
   [conn player-sub game-eid]
   (let [db (dl/db conn)]
     (->> (dl/q '[:find [(pull ?d pattern) ...]
@@ -141,11 +210,11 @@
          (sort-by (juxt (comp - (fnil #(.getTime ^Date %) (Date. 0)) :updated-at) :eid))
          vec)))
 
+(m/=> drafts-for-player-by-game
+      [:=> [:cat conn-schema :string :uuid] [:sequential draft-result-schema]])
+
 (defn draft-state-by-eid
-  "Returns `{:main [entry …] :reinforcements [entry …]}` for the draft —
-  the JSON-state shape the existing handlers and rules engine consume.
-  Each entry has `:entry-eid :unit-eid :section :ordinal` plus any
-  optional selection attrs that are set."
+  "Sectioned army state for a draft."
   [conn draft-eid]
   (let [pulled (dl/pull (dl/db conn)
                         '[{:draft/entries [:draft-entry/eid :draft-entry/section
@@ -158,15 +227,20 @@
                         (dl/lookup-ref :draft/eid draft-eid))]
     (entries->state (mapv ->entry (:draft/entries pulled)))))
 
+(m/=> draft-state-by-eid
+      [:=> [:cat conn-schema :uuid] draft-state-schema])
+
 (defn draft-entry-by-eid
-  "Single entry in flat-state shape, or nil when no entry has that eid."
+  "Fetch a single entry by eid, or nil when not found."
   [conn entry-eid]
   (->entry (dl/pull (dl/db conn) entry-pattern (dl/lookup-ref :draft-entry/eid entry-eid))))
 
+(m/=> draft-entry-by-eid
+      [:=> [:cat conn-schema :uuid] [:maybe draft-entry-schema]])
+
 (defn draft-entry-section-and-ordinal
-  "Look up `{:section :ordinal}` for an entry. Used by validation to know
-  which section an entry being updated lives in without re-reading the
-  full state."
+  "Where an entry sits — its section + ordinal. Avoids re-reading the
+  full draft state when validation only needs the placement."
   [conn entry-eid]
   (let [m (dl/pull (dl/db conn) [:draft-entry/section :draft-entry/ordinal]
                    (dl/lookup-ref :draft-entry/eid entry-eid))]
@@ -174,16 +248,19 @@
       {:section (:draft-entry/section m)
        :ordinal (:draft-entry/ordinal m)})))
 
+(m/=> draft-entry-section-and-ordinal
+      [:=> [:cat conn-schema :uuid]
+       [:maybe [:map
+                [:section [:enum :main :reinforcements]]
+                [:ordinal :int]]]])
+
 ;;; ─── Tx-builders + transact entry points ──────────────────────────────────
 
 (defn- now-date [] (Date.))
 
 (defn create-draft!
-  "Transact a new draft. `spec` carries `:eid :name :player-sub
-  :game-mode-eid :faction-eid :created-by-sub` (everything else
-  derived). `:created-by-sub` defaults to `:player-sub` when the
-  caller doesn't differentiate. Returns the freshly-created flat
-  draft map."
+  "Transact a new draft. `:created-by-sub` defaults to `:player-sub`
+  when the caller doesn't differentiate."
   [conn {:keys [eid name player-sub game-mode-eid faction-eid created-by-sub]}]
   (let [created-at (now-date)]
     (dl/transact!
@@ -199,10 +276,13 @@
         name (assoc :draft/name name))])
     (draft-by-eid conn eid)))
 
+(m/=> create-draft!
+      [:=> [:cat conn-schema create-spec-schema] draft-result-schema])
+
 (defn update-draft-name!
-  "Update the draft's mutable `:name` field (and bump version + updated-at).
-  Returns the refreshed flat draft. Passing `nil` for `:name` retracts
-  the current value so the faction+date default renders again."
+  "Update a draft's mutable name, bumping version + updated-at. Passing
+  `nil` retracts the stored name so the faction+date default renders
+  again."
   [conn draft-eid name]
   (let [db            (dl/db conn)
         current       (dl/pull db [:draft/version :draft/name]
@@ -217,6 +297,9 @@
                         name (assoc :draft/name name))]
     (dl/transact! conn (cons upsert retract-ops))
     (draft-by-eid conn draft-eid)))
+
+(m/=> update-draft-name!
+      [:=> [:cat conn-schema :uuid [:maybe :string]] draft-result-schema])
 
 (defn- next-ordinal
   "Compute the next ordinal for a section, defaulting to 0 when empty."
@@ -252,9 +335,8 @@
     (some? engine-cost) (assoc :draft-entry/engine-cost (long engine-cost))))
 
 (defn add-entry!
-  "Append an entry to a draft's section. Computes the next ordinal so
-  the JSON-array-style ordering is preserved, then transacts the entry
-  inline under `:draft/entries`."
+  "Append an entry to a draft's section. The next ordinal is computed
+  from the current state so insertion-order survives."
   [conn draft-eid {:keys [section] :as entry-spec}]
   (let [ordinal (next-ordinal conn draft-eid section)
         entry   (entry-tx (assoc entry-spec :ordinal ordinal))]
@@ -268,10 +350,12 @@
                                             (dl/lookup-ref :draft/eid draft-eid)))
                                   1))}])))
 
+(m/=> add-entry!
+      [:=> [:cat conn-schema :uuid entry-add-spec-schema] tx-report-schema])
+
 (defn remove-entry!
-  "Retract an entry by eid. `retractEntity` removes all datoms for the
-  entry, which also drops it from the parent's `:draft/entries`
-  cardinality-many ref."
+  "Retract an entry by eid. The cardinality-many link from the parent's
+  `:draft/entries` drops out as a side effect of `:db/retractEntity`."
   [conn draft-eid entry-eid]
   (dl/transact!
    conn
@@ -282,6 +366,9 @@
                                  (dl/pull (dl/db conn) [:draft/version]
                                           (dl/lookup-ref :draft/eid draft-eid)))
                                 1))}]))
+
+(m/=> remove-entry!
+      [:=> [:cat conn-schema :uuid :uuid] tx-report-schema])
 
 (defn- cardinality-many-diff-ops
   "Compute the minimal retract/add tx-data to transition a
@@ -298,10 +385,10 @@
             (map (fn [v] [:db/add ref attr v])     to-add))))
 
 (defn update-entry!
-  "Replace an entry's selections with `new-attrs`. Cardinality-many attrs
+  "Replace an entry's selections. Cardinality-many attrs
   (abilities/spells/items) are reconciled with a symmetric-difference
-  pass; cardinality-one upserts auto-replace. The entry's section and
-  ordinal can be re-pinned to move the entry between sections."
+  pass; cardinality-one upserts auto-replace; `:section`/`:ordinal`
+  can be re-pinned to move the entry between sections."
   [conn draft-eid entry-eid new-attrs]
   (let [db          (dl/db conn)
         current     (dl/pull db
@@ -338,3 +425,6 @@
                                            (dl/pull db [:draft/version]
                                                     (dl/lookup-ref :draft/eid draft-eid)))
                                           1))}]))))
+
+(m/=> update-entry!
+      [:=> [:cat conn-schema :uuid :uuid entry-update-attrs-schema] tx-report-schema])

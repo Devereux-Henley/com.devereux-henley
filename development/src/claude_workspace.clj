@@ -11,8 +11,16 @@
    [integrant.core]
    [integrant.repl :refer [go halt reset]]
    [integrant.repl.state :as ig-state]
+   [malli.dev :as malli.dev]
    [migratus.core :as migratus]
    [selmer.parser]))
+
+;; Turn on malli function-schema instrumentation in the dev REPL so any
+;; `m/=>`-declared fn validates its inputs/outputs as you exercise it.
+;; `malli.dev/start!` re-instruments after each var change, which keeps
+;; `(restart!)`-driven reloads honest. Production paths never reach this
+;; namespace, so prod stays uninstrumented.
+(malli.dev/start!)
 
 ;; Disable Selmer template caching at namespace load so REPL-driven dev picks
 ;; up template edits without needing a manual cache clear. Production code

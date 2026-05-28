@@ -2,9 +2,20 @@
   (:require
    [clojure.test :refer [deftest is use-fixtures]]
    [com.devereux-henley.rts-data-access.contract :as data-access.contract]
-   [com.devereux-henley.rts-domain.handlers.draft :as handlers.draft])
+   [com.devereux-henley.rts-domain.handlers.draft :as handlers.draft]
+   [malli.instrument :as mi])
   (:import
    [java.util Date UUID]))
+
+;; Turn on malli instrumentation for the test run so any `m/=>`-declared
+;; query/mutation fn that does get called for real (not stubbed) checks
+;; its inputs/outputs. Stubs `with-redefs`-installed via the contract
+;; alias bypass instrumentation, so this only catches drift on the live
+;; pull/q calls that aren't stubbed out — partial coverage, but free.
+(use-fixtures :once
+  (fn [t]
+    (mi/instrument!)
+    (try (t) (finally (mi/unstrument!)))))
 
 ;; Every mutation handler now starts with a lock check that calls
 ;; `data-access.contract/get-draft-lock-info`. Default each test to the
