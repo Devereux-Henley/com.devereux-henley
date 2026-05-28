@@ -2,8 +2,8 @@
   "Datalevin schema-as-code for the entire database. Applied idempotently when
   the Datalevin connection is opened (see `bases/rts-api/.../datalog.clj`).
 
-  Each domain epic merges its own attribute map into [[schema]] as it migrates
-  off SQLite. Conventions:
+  Each domain merges its own attribute map (defined in a sibling namespace
+  under `schema.datalog.*`) into [[schema]] here. Conventions:
 
   - Every domain has a `:<domain>/eid` attribute, `:db.type/uuid` and
     `:db.unique/identity`. Routes, templates, and `match-by-name!` keep working
@@ -12,9 +12,11 @@
     `:db/cardinality :db.cardinality/many` when the parent owns a collection.
   - Datalevin is additive at runtime: opening a conn with a superset schema
     only adds the new attributes. Use `datalog.contract/update-schema` at the
-    REPL to apply a change without restarting the JVM.")
+    REPL to apply a change without restarting the JVM."
+  (:require
+   [com.devereux-henley.rts-data-access.schema.datalog.game :as schema.datalog.game]))
 
 (def schema
-  "The full Datalevin schema map. Per-domain attribute maps merge in here as
-  each domain migrates off SQLite. Empty until the game-domain pilot lands."
-  {})
+  "The full Datalevin schema map, assembled from per-domain attribute maps."
+  (merge
+   schema.datalog.game/schema))
