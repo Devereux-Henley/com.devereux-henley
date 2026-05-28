@@ -14,6 +14,7 @@ COPY components/content-negotiation/deps.edn         components/content-negotiat
 COPY components/e2e/deps.edn                         components/e2e/deps.edn
 COPY components/http/deps.edn                        components/http/deps.edn
 COPY components/jdbc/deps.edn                        components/jdbc/deps.edn
+COPY components/datalog/deps.edn                     components/datalog/deps.edn
 COPY components/resourcekit/deps.edn                 components/resourcekit/deps.edn
 COPY components/rts-data/deps.edn                    components/rts-data/deps.edn
 COPY components/rts-data-access/deps.edn             components/rts-data-access/deps.edn
@@ -44,9 +45,13 @@ COPY --from=builder --chown=app:app /app/projects/api/target/rts-api.jar /app/rt
 USER app
 
 ENV RTS_API_PORT=3001 \
-    RTS_DB_CONNECTION_URI=jdbc:sqlite:/data/database.db
+    RTS_DB_CONNECTION_URI=jdbc:sqlite:/data/database.db \
+    DATALEVIN_DB_DIR=/data/datalevin
 
 EXPOSE 3001
 VOLUME ["/data"]
 
-ENTRYPOINT ["java", "-jar", "/app/rts-api.jar"]
+ENTRYPOINT ["java", \
+            "--add-opens=java.base/java.nio=ALL-UNNAMED", \
+            "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED", \
+            "-jar", "/app/rts-api.jar"]
