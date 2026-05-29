@@ -659,7 +659,7 @@
         all-keys (into keys (mapcat key-prefix-candidates) keys)]
     (if (empty? all-keys)
       {}
-      (->> (db/get-units-by-keys (:connection dependencies) all-keys)
+      (->> (db/units-by-keys (:datalog-connection dependencies) all-keys)
            (into {} (map (juxt :key identity)))))))
 
 (defn- collect-faction-keys
@@ -680,7 +680,7 @@
   (let [keys (apply set/union (map collect-faction-keys parsed-vec))]
     (if (empty? keys)
       {}
-      (let [rows       (db/get-subfactions-by-keys (:connection dependencies) keys)
+      (let [rows       (db/subfactions-by-keys (:datalog-connection dependencies) keys)
             resolved   (into {} (map (juxt :key identity)) rows)
             unresolved (set/difference keys (set (map :key rows)))]
         (when (seq unresolved)
@@ -921,7 +921,7 @@
         ;; replay's victory-condition. Each section's max is the relevant budget
         ;; (main → :draft-value, reinforcements → :reinforcement-value).
         tournament   (domain/get-tournament-by-eid dependencies (:tournament-eid match))
-        game-modes   (db/get-game-modes-for-game (:connection dependencies) (:game-eid tournament))
+        game-modes   (db/game-modes-for-game (:datalog-connection dependencies) (:game-eid tournament))
         game-mode    (domain/pick-game-mode game-modes (:victory-condition enriched))
         section-max  (fn [section-key]
                        (case section-key

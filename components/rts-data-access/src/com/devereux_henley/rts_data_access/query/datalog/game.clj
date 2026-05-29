@@ -422,6 +422,103 @@
                    (dl/db conn) unit-level-cost-pattern)
              (map ->unit-level-cost))))
 
+(def ^:private unit-resolution-pattern
+  "Shape returned by `units-by-keys` — mirrors the SQL-era
+  `unit-resolution-row-schema` so the replay handler + tournament view
+  consume the same flat row shape."
+  [:unit/eid :unit/key :unit/name :unit/family-name :unit/mark
+   {:unit/unit-type [:unit-type/name]}
+   {:unit/unit-category [:unit-category/name]}
+   {:unit/faction [:db/id :faction/eid :faction/name]}
+   {:unit-statistics/_unit [:unit-statistics/cost
+                            {:unit-statistics/patch [:patch/released-at]}]}])
+
+(defn- ->unit-resolution-row
+  [m]
+  (when m
+    (let [stats   (latest-stats (:unit-statistics/_unit m))
+          faction (:unit/faction m)]
+      {:eid                (:unit/eid m)
+       :key                (:unit/key m)
+       :name               (:unit/name m)
+       :family-name        (:unit/family-name m)
+       :mark               (some-> (:unit/mark m) name)
+       :cost               (:unit-statistics/cost stats)
+       :unit-category-name (some-> m :unit/unit-category :unit-category/name)
+       :unit-type-name     (some-> m :unit/unit-type :unit-type/name)
+       :faction-eid        (:faction/eid faction)
+       :faction-name       (:faction/name faction)
+       ::faction-id        (:db/id faction)})))
+
+(defn units-by-keys
+  "Resolve a seq of engine `land_units` keys to unit rows for the replay
+  parse pipeline. Returns a vector of rows whose `:key` is in the input
+  set; missing keys are simply omitted (callers should fall back
+  gracefully). Each row carries `:family-variant-count` — the number of
+  units sharing the same family-name within the faction — so the review
+  UI can decide whether to render the mark/lore selectors."
+  [conn unit-keys]
+  (let [keys-vec (vec (distinct (filter some? unit-keys)))]
+    (if (empty? keys-vec)
+      []
+      (let [db          (dl/db conn)
+            pulled      (dl/q '[:find [(pull ?u pattern) ...]
+                                :in $ pattern [?key ...]
+                                :where [?u :unit/key ?key]]
+                              db unit-resolution-pattern keys-vec)
+            base-rows   (mapv ->unit-resolution-row pulled)
+            family-pairs (->> base-rows
+                              (keep (fn [r] (when (and (:family-name r) (::faction-id r))
+                                              [(:family-name r) (::faction-id r)])))
+                              distinct
+                              vec)
+            counts      (when (seq family-pairs)
+                          (dl/q '[:find ?fn ?fid (count ?u)
+                                  :in $ [[?fn ?fid] ...]
+                                  :where
+                                  [?u :unit/family-name ?fn]
+                                  [?u :unit/faction ?fid]]
+                                db family-pairs))
+            count-map   (into {} (map (fn [[fn fid c]] [[fn fid] c])) counts)]
+        (mapv (fn [r]
+                (-> r
+                    (assoc :family-variant-count
+                           (get count-map [(:family-name r) (::faction-id r)] 1))
+                    (dissoc ::faction-id)))
+              base-rows)))))
+
+(def ^:private subfaction-resolution-pattern
+  [:subfaction/eid :subfaction/key :subfaction/name
+   {:subfaction/faction [:faction/eid :faction/name :faction/key]}])
+
+(defn- ->subfaction-resolution-row
+  [m]
+  (when m
+    (let [faction (:subfaction/faction m)]
+      {:eid          (:subfaction/eid m)
+       :key          (:subfaction/key m)
+       :name         (:subfaction/name m)
+       :faction-eid  (:faction/eid faction)
+       :faction-name (:faction/name faction)
+       :faction-key  (:faction/key faction)})))
+
+(defn subfactions-by-keys
+  "Resolve a seq of engine `factions_tables` keys (the parser's
+  `faction_key` field) to subfaction rows joined with their parent
+  race (faction). Returns a vector whose `:key` is in the input set;
+  missing keys are simply omitted so callers can fall back to the raw
+  key."
+  [conn subfaction-keys]
+  (let [keys-vec (vec (distinct (filter some? subfaction-keys)))]
+    (if (empty? keys-vec)
+      []
+      (let [db (dl/db conn)]
+        (->> (dl/q '[:find [(pull ?s pattern) ...]
+                     :in $ pattern [?key ...]
+                     :where [?s :subfaction/key ?key]]
+                   db subfaction-resolution-pattern keys-vec)
+             (mapv ->subfaction-resolution-row))))))
+
 (defn family-variants-by-eid
   "Every unit sharing the family-name + faction of the given unit.
   Single-variant families return one row; the draft unit panel uses

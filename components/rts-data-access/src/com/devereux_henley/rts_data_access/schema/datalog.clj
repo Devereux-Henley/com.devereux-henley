@@ -43,6 +43,7 @@
    [com.devereux-henley.rts-data-access.schema.datalog.lore :as schema.datalog.lore]
    [com.devereux-henley.rts-data-access.schema.datalog.mount :as schema.datalog.mount]
    [com.devereux-henley.rts-data-access.schema.datalog.patch :as schema.datalog.patch]
+   [com.devereux-henley.rts-data-access.schema.datalog.replay :as schema.datalog.replay]
    [com.devereux-henley.rts-data-access.schema.datalog.season :as schema.datalog.season]
    [com.devereux-henley.rts-data-access.schema.datalog.social-media-platform :as schema.datalog.social-media-platform]
    [com.devereux-henley.rts-data-access.schema.datalog.spell :as schema.datalog.spell]
@@ -72,6 +73,7 @@
    schema.datalog.lore/schema
    schema.datalog.mount/schema
    schema.datalog.patch/schema
+   schema.datalog.replay/schema
    schema.datalog.season/schema
    schema.datalog.social-media-platform/schema
    schema.datalog.spell/schema
