@@ -1,7 +1,8 @@
 (ns com.devereux-henley.rts-data-access.query.datalog.game
   "Datalevin reads for the game domain."
   (:require
-   [com.devereux-henley.datalog.contract :as dl]))
+   [com.devereux-henley.datalog.contract :as dl]
+   [com.devereux-henley.rts-data-access.schema.datalog.unit-statistics :as schema.us]))
 
 ;;; ─── Pull patterns ─────────────────────────────────────────────────────────
 
@@ -29,8 +30,10 @@
    {:unit/faction [:faction/eid]}
    {:unit/unit-type [:unit-type/eid :unit-type/name]}
    {:unit/unit-category [:unit-category/eid :unit-category/name]}
-   {:unit-statistics/_unit [:unit-statistics/cost :unit-statistics/data
-                            {:unit-statistics/patch [:patch/released-at]}]}])
+   {:unit-statistics/_unit
+    (into [{:unit-statistics/patch [:patch/released-at]}]
+          (map second)
+          schema.us/fields)}])
 
 (def ^:private game-mode-pattern
   [:game-mode/eid :game-mode/name :game-mode/description :game-mode/draft-value
@@ -97,6 +100,25 @@
      :description (:faction/description m)
      :game-eid    (some-> m :faction/game :game/eid)}))
 
+(defn- stats->doc
+  "Rebuild the engine-shaped, string-keyed statistics map from the
+   decomposed `:unit-statistics/*` attributes so `parse-unit-statistics`
+   downstream works unchanged. Cardinality-many lists come back as sets
+   (sorted for stable rendering); `:spell-keys` rebuild the
+   `[{\"key\" k} …]` shape. Absent attributes (empty lists weren't stored)
+   are simply omitted."
+  [stats]
+  (when stats
+    (reduce (fn [acc [doc-key attr kind]]
+              (if-some [v (get stats attr)]
+                (assoc acc doc-key
+                       (case kind
+                         :spell-keys (mapv (fn [k] {"key" k}) (sort v))
+                         :strings    (vec (sort v))
+                         v))
+                acc))
+            {} schema.us/fields)))
+
 (defn- ->unit-row
   [m {:keys [include-data?]}]
   (when m
@@ -121,7 +143,7 @@
                :unit-category-eid  uc-eid
                :unit-category-name uc-name
                :cost               (:unit-statistics/cost stats)}
-        include-data? (assoc :unit-statistics (:unit-statistics/data stats))))))
+        include-data? (assoc :unit-statistics (stats->doc stats))))))
 
 (defn- ->unit-summary [m] (->unit-row m {:include-data? false}))
 (defn- ->unit-detail  [m] (->unit-row m {:include-data? true}))
