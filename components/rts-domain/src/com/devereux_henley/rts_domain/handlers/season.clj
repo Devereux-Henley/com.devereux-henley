@@ -1,12 +1,17 @@
 (ns com.devereux-henley.rts-domain.handlers.season
   (:require
+   [clojure.string :as str]
    [com.devereux-henley.rts-data-access.contract :as db]
    [com.devereux-henley.rts-domain.time :as time]))
+
+(defn- blank->nil
+  [s]
+  (when-not (str/blank? s) s))
 
 (defn- display-name
   "Derives the display name for a season — explicit :name override or 'Season N'."
   [season]
-  (or (:name season) (str "Season " (:ordinal season))))
+  (or (blank->nil (:name season)) (str "Season " (:ordinal season))))
 
 (defn- tag-season
   [season]
@@ -63,5 +68,5 @@
                                                      :ordinal    next-ordinal
                                                      :start-at   start-instant
                                                      :end-at     end-instant}
-                                              name (assoc :name name)))]
+                                              (blank->nil name) (assoc :name (blank->nil name))))]
             (tag-season season)))))))

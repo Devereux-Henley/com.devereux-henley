@@ -5,6 +5,7 @@
   (:require
    [com.devereux-henley.datalog.contract :as dl])
   (:import
+   [java.time Instant]
    [java.util Date]))
 
 ;;; ─── Pull patterns ─────────────────────────────────────────────────────────
@@ -16,6 +17,16 @@
    {:league/game [:game/eid :game/name]}])
 
 ;;; ─── Result builders ──────────────────────────────────────────────────────
+
+(defn- ->instant
+  "Datalevin stores `:db.type/instant` as `java.util.Date`; the resource
+  schemas (and the rest of the domain) expect `java.time.Instant`.
+  Convert at the read boundary so callers never see Date."
+  ^Instant [x]
+  (cond
+    (nil? x)               nil
+    (instance? Instant x)  x
+    (instance? Date x)     (.toInstant ^Date x)))
 
 (defn- ->league
   "Flatten a league pull result into the SQLite-era handler-facing
@@ -30,8 +41,8 @@
      :description    (:league/description m)
      :created-by-sub (:league/created-by-sub m)
      :version        (:league/version m)
-     :created-at     (:league/created-at m)
-     :updated-at     (:league/updated-at m)}))
+     :created-at     (->instant (:league/created-at m))
+     :updated-at     (->instant (:league/updated-at m))}))
 
 ;;; ─── Reads ────────────────────────────────────────────────────────────────
 

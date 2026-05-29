@@ -5,6 +5,7 @@
   (:require
    [com.devereux-henley.datalog.contract :as dl])
   (:import
+   [java.time Instant]
    [java.util Date]))
 
 ;;; ─── Pull patterns ─────────────────────────────────────────────────────────
@@ -17,6 +18,16 @@
 
 ;;; ─── Result builders ──────────────────────────────────────────────────────
 
+(defn- ->instant
+  "Datalevin stores `:db.type/instant` as `java.util.Date`; the resource
+  schemas (and the rest of the domain) expect `java.time.Instant`.
+  Convert at the read boundary so callers never see Date."
+  ^Instant [x]
+  (cond
+    (nil? x)               nil
+    (instance? Instant x)  x
+    (instance? Date x)     (.toInstant ^Date x)))
+
 (defn- ->season
   "Flatten a season pull result. `:name` is preserved when present so
   the handler's `display-name` fallback (`\"Season N\"`) can kick in
@@ -26,11 +37,11 @@
     (cond-> {:eid        (:season/eid m)
              :league-eid (some-> m :season/league :league/eid)
              :ordinal    (:season/ordinal m)
-             :start-at   (:season/start-at m)
-             :end-at     (:season/end-at m)
+             :start-at   (->instant (:season/start-at m))
+             :end-at     (->instant (:season/end-at m))
              :version    (:season/version m)
-             :created-at (:season/created-at m)
-             :updated-at (:season/updated-at m)}
+             :created-at (->instant (:season/created-at m))
+             :updated-at (->instant (:season/updated-at m))}
       (:season/name m) (assoc :name (:season/name m)))))
 
 (defn- epoch-ms ^long [x]

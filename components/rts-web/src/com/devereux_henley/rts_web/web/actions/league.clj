@@ -21,7 +21,7 @@
                    :description    description
                    :created-by-sub (get-in session [:identity :id])
                    :version        (or version 1)})]
-      (if (= :game/league (:type result))
+      (if (= :league/league (:type result))
         (common/redirect-response
          (str "/view/game/" game-eid "/league/" eid "/index.html"))
         (common/error-fragment 422 (:message result))))))
