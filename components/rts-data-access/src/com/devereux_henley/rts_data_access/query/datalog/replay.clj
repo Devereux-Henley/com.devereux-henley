@@ -38,12 +38,6 @@
   [conn eid]
   (->replay (dl/pull (dl/db conn) replay-pattern (dl/lookup-ref :replay/eid eid))))
 
-(defn- ->date
-  ^Date [x]
-  (cond
-    (instance? Date x)    x
-    (instance? Instant x) (Date/from ^Instant x)))
-
 (defn create-replay!
   "Transact a new replay row. Audit columns (`:created-at`,
   `:updated-at`) are stamped here so the handler stays thin. The
