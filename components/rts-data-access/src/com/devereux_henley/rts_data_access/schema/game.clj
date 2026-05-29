@@ -144,7 +144,3 @@
     [:lore [:maybe :string]]
     [:lore-name [:maybe :string]]
     [:cost [:maybe :int]]]))
-
-(def conn-schema
-  "Opaque Datalevin connection — see schema.draft/conn-schema."
-  :any)

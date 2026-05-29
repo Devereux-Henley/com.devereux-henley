@@ -348,7 +348,7 @@
 
 (deftest create-tournament-resolves-league-from-season-eid
   (let [captured (atom nil)]
-    (with-redefs [data-access.contract/get-season-by-eid
+    (with-redefs [data-access.contract/season-by-eid
                   (fn [_ _] {:eid test-season-eid :league-eid test-league-eid})
                   data-access.contract/create-tournament
                   (fn [_ spec]
@@ -372,7 +372,7 @@
           "league-eid should be derived server-side from the season"))))
 
 (deftest create-tournament-rejects-mismatched-league-and-season
-  (with-redefs [data-access.contract/get-season-by-eid
+  (with-redefs [data-access.contract/season-by-eid
                 (fn [_ _] {:eid test-season-eid :league-eid test-league-eid})]
     (let [result (handlers.tournament/create-tournament
                   test-deps

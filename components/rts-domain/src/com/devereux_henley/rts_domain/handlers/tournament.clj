@@ -62,7 +62,7 @@
   [dependencies create-specification]
   (let [conn       (:connection dependencies)
         season     (when-let [seid (:season-eid create-specification)]
-                     (db/get-season-by-eid conn seid))
+                     (db/season-by-eid (:datalog-connection dependencies) seid))
         derived-le (cond
                      season                            (:league-eid season)
                      (:league-eid create-specification) (:league-eid create-specification)

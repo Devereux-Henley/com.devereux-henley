@@ -39,9 +39,11 @@
    [com.devereux-henley.rts-data-access.schema.datalog.game-mode :as schema.datalog.game-mode]
    [com.devereux-henley.rts-data-access.schema.datalog.game-social-link :as schema.datalog.game-social-link]
    [com.devereux-henley.rts-data-access.schema.datalog.item :as schema.datalog.item]
+   [com.devereux-henley.rts-data-access.schema.datalog.league :as schema.datalog.league]
    [com.devereux-henley.rts-data-access.schema.datalog.lore :as schema.datalog.lore]
    [com.devereux-henley.rts-data-access.schema.datalog.mount :as schema.datalog.mount]
    [com.devereux-henley.rts-data-access.schema.datalog.patch :as schema.datalog.patch]
+   [com.devereux-henley.rts-data-access.schema.datalog.season :as schema.datalog.season]
    [com.devereux-henley.rts-data-access.schema.datalog.social-media-platform :as schema.datalog.social-media-platform]
    [com.devereux-henley.rts-data-access.schema.datalog.spell :as schema.datalog.spell]
    [com.devereux-henley.rts-data-access.schema.datalog.spell-lore :as schema.datalog.spell-lore]
@@ -66,9 +68,11 @@
    schema.datalog.game-mode/schema
    schema.datalog.game-social-link/schema
    schema.datalog.item/schema
+   schema.datalog.league/schema
    schema.datalog.lore/schema
    schema.datalog.mount/schema
    schema.datalog.patch/schema
+   schema.datalog.season/schema
    schema.datalog.social-media-platform/schema
    schema.datalog.spell/schema
    schema.datalog.spell-lore/schema
