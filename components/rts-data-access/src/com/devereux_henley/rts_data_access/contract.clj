@@ -125,6 +125,7 @@
 (def delete-entry!                   query.datalog.tournament/delete-entry!)
 (def match-by-eid                    query.datalog.tournament/match-by-eid)
 (def matches-for-tournament          query.datalog.tournament/matches-for-tournament)
+(def matches-with-games-for-tournament query.datalog.tournament/matches-with-games-for-tournament)
 (def matches                         query.datalog.tournament/matches)
 (def matches-for-round               query.datalog.tournament/matches-for-round)
 (def create-match!                   query.datalog.tournament/create-match!)

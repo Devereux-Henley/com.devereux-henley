@@ -6,6 +6,7 @@
   onto a response (status + body shape, template render) belongs in the
   caller."
   (:require
+   [com.devereux-henley.rts-data-access.contract :as db]
    [com.devereux-henley.rts-domain.contract :as domain]))
 
 (defn get-tournament-by-eid
@@ -43,16 +44,12 @@
   [dependencies tournament-eid phase-index]
   (let [state           (domain/get-tournament-state dependencies tournament-eid)
         phases          (:phases state)
-        raw-matches     (domain/get-matches-for-tournament dependencies tournament-eid)
+        raw-matches     (db/matches-with-games-for-tournament
+                         (:datalog-connection dependencies) tournament-eid)
         qualifier-count (or (:qualifier-count state) (count (:standings state)))
         grouped         (domain/group-matches-by-phase raw-matches phases qualifier-count)
         phase-group-raw (first (filter #(= phase-index (:phase %)) grouped))
-        real-matches    (filter :eid raw-matches)
-        lineups         (into {}
-                              (map (fn [m]
-                                     [(:eid m)
-                                      (domain/get-games-for-match dependencies (:eid m))]))
-                              real-matches)]
+        lineups         (into {} (map (juxt :eid :games)) (filter :eid raw-matches))]
     (when phase-group-raw
       {:tournament-state state
        :phase-group      (attach-lineups-to-matches phase-group-raw lineups)

@@ -44,13 +44,12 @@
                                                (map (juxt :eid identity)
                                                     (domain/get-seasons-for-league dependencies leid)))
                                              referenced-leagues))
+          ;; tournaments already carry :status from the entity; only the
+          ;; entry count needs a per-tournament read.
           enriched-tournaments (mapv (fn [t]
-                                       (let [state   (domain/get-tournament-state dependencies (:eid t))
-                                             entries (domain/get-entries dependencies (:eid t))]
-                                         (->> (assoc t
-                                                     :status      (:status state)
-                                                     :entry-count (count entries))
-                                              (enrich-tournament-with-league eid->league eid->season))))
+                                       (->> (assoc t :entry-count
+                                                   (count (domain/get-entries dependencies (:eid t))))
+                                            (enrich-tournament-with-league eid->league eid->season)))
                                      tournaments)
           enriched-leagues     (mapv (fn [l]
                                        (let [current-season (domain/get-current-season-for-league dependencies (:eid l))
@@ -147,10 +146,10 @@
 
 (defn- with-game-counts
   "Adds :p1-games-won and :p2-games-won to a match by counting :winner-sub
-   in the match's games. Bracket cells display these instead of W/L."
-  [dependencies match]
-  (let [games (domain/get-games-for-match dependencies (:eid match))
-        wins  (frequencies (keep :winner-sub games))]
+   in the match's inline `:games` (fetched via one nested pull, no N+1).
+   Bracket cells display these instead of W/L."
+  [match]
+  (let [wins (frequencies (keep :winner-sub (:games match)))]
     (assoc match
            :p1-games-won (get wins (:player-one-sub match) 0)
            :p2-games-won (get wins (:player-two-sub match) 0))))
@@ -359,8 +358,9 @@
              (let [tournament-eid       (:eid data)
                    state                (domain/get-tournament-state dependencies tournament-eid)
                    entries              (domain/get-entries dependencies tournament-eid)
-                   raw-matches          (mapv (partial with-game-counts dependencies)
-                                              (domain/get-matches-for-tournament dependencies tournament-eid))
+                   raw-matches          (mapv with-game-counts
+                                              (db/matches-with-games-for-tournament
+                                               (:datalog-connection dependencies) tournament-eid))
                    phases               (:phases state)
                    qualifier-count      (or (:qualifier-count state) (count (:standings state)))
                    user-sub             (get-in request [:ory-session :identity :id])

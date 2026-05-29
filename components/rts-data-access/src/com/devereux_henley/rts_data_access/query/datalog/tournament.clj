@@ -231,6 +231,49 @@
          (sort-by (juxt :phase-index :round-index :eid))
          vec)))
 
+(def ^:private nested-game-pattern
+  [:match-game/eid :match-game/game-index :match-game/winner-sub
+   :match-game/uploader-local-alliance-index :match-game/created-at
+   {:match-game/replay [:replay/eid]}
+   {:match-game/player-one-draft [:draft/eid]}
+   {:match-game/player-two-draft [:draft/eid]}])
+
+(def ^:private match+games-pattern
+  (conj match-pattern {:match/games nested-game-pattern}))
+
+(defn- ->nested-game
+  [match-eid g]
+  {:eid                           (:match-game/eid g)
+   :match-eid                     match-eid
+   :game-index                    (:match-game/game-index g)
+   :winner-sub                    (:match-game/winner-sub g)
+   :uploader-local-alliance-index (:match-game/uploader-local-alliance-index g)
+   :replay-eid                    (some-> g :match-game/replay :replay/eid)
+   :player-one-draft-eid          (some-> g :match-game/player-one-draft :draft/eid)
+   :player-two-draft-eid          (some-> g :match-game/player-two-draft :draft/eid)})
+
+(defn matches-with-games-for-tournament
+  "All matches in a tournament, each carrying its games inline as `:games`
+   (full game maps, sorted by game-index). One query — no per-match N+1.
+   Ordered by (phase-index, round-index)."
+  [conn eid]
+  (let [db (dl/db conn)]
+    (->> (dl/q '[:find [(pull ?m pattern) ...]
+                 :in $ pattern ?tour-eid
+                 :where
+                 [?m :match/tournament ?t]
+                 [?t :tournament/eid ?tour-eid]]
+               db match+games-pattern eid)
+         (mapv (fn [m]
+                 (let [match (->match m)]
+                   (assoc match
+                          :games (->> (:match/games m)
+                                      (mapv #(->nested-game (:eid match) %))
+                                      (sort-by :game-index)
+                                      vec)))))
+         (sort-by (juxt :phase-index :round-index :eid))
+         vec)))
+
 (defn matches
   "Every match in the system."
   [conn]
