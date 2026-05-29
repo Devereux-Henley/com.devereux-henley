@@ -1,9 +1,5 @@
 (ns com.devereux-henley.rts-data-access.query.game
-  "SQLite game-domain queries that still serve cross-domain reads
-  (tournament-side draft-lock). The unit/faction/mount/game-mode reads
-  moved to Datalevin in rts-nnv; only `get-draft-lock-info` remains
-  because the tournament/match/match_game tables are still SQLite
-  until rts-5b6."
+  "SQLite game-domain queries — only `get-draft-lock-info` remains."
   (:require
    [com.devereux-henley.jdbc.contract :as jdbc.contract]
    [com.devereux-henley.rts-data-access.resource :as resource]
