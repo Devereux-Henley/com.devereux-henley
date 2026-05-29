@@ -91,11 +91,16 @@
   (jsonista/object-mapper {:decode-key-fn name}))
 
 (defn decode-unit-statistics-json
-  "Decode a SQLite-era unit-statistics JSON string into the string-keyed
-  map shape `parse-unit-statistics` expects. Datalevin callers skip this
-  step — the `:unit-statistics/data` idoc already comes back decoded."
-  [s]
-  (jsonista/read-value s stats-object-mapper))
+  "Decode a unit-statistics blob into the string-keyed map shape
+  `parse-unit-statistics` expects. Accepts either a JSON string (the
+  shape `:unit-mount/stats-override` is still stored as in Datalevin)
+  or a pre-decoded Clojure map (the shape `:unit-statistics/data` idoc
+  reads back as). Returns nil for nil input."
+  [s-or-map]
+  (cond
+    (nil? s-or-map)    nil
+    (map? s-or-map)    s-or-map
+    (string? s-or-map) (jsonista/read-value s-or-map stats-object-mapper)))
 
 (defn parse-unit-statistics
   "Parses a decoded unit-statistics document (string-keyed map) into a
@@ -385,13 +390,17 @@
 ;; ─── Mount overrides ──────────────────────────────────────────────────────────
 
 (defn- parse-granted-ability-keys
-  "Parses the raw granted_ability_keys TEXT column (a JSON array or null)
-  into a vector of key strings. Returns nil when the column is empty;
-  invalid JSON propagates as an exception since that would mean the seed
-  pipeline wrote garbage."
+  "Parses granted-ability-keys into a vector of key strings. Accepts a
+  JSON array string (SQLite era) or a pre-decoded collection (Datalevin
+  cardinality-many string set/vector). Returns nil when the input is
+  empty; invalid JSON propagates as an exception since that would mean
+  the seed pipeline wrote garbage."
   [raw]
   (when (and raw (seq raw))
-    (vec (jsonista/read-value raw))))
+    (cond
+      (string? raw)     (vec (jsonista/read-value raw))
+      (sequential? raw) (vec raw)
+      (set? raw)        (vec raw))))
 
 (defn- hydrate-granted-abilities
   "Resolves a seq of ability keys against the ability table, dropping any
@@ -719,7 +728,7 @@
            :has-passives        (boolean (or (seq passive-abilities) (seq passive-spells)))
            :family-marks        marks-row
            :family-lores        lores-row
-           :validation          {:can-add-to-reinforcements? (= 1 (:reinforcements-enabled game-mode))})))
+           :validation          {:can-add-to-reinforcements? (boolean (:reinforcements-enabled game-mode))})))
 
 (defn- mark-selected
   "Returns options with :selected true/false set from whether each :key is in selected-keys."

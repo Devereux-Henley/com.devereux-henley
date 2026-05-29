@@ -153,14 +153,14 @@
       (is (= :game/game-mode (:type result))))))
 
 (deftest get-game-mode-by-eid-preserves-fields
-  (with-redefs [data-access.contract/game-mode-by-eid (fn [_ _] {:eid test-game-mode-eid :name "Land Battle" :draft-value 1 :player-count 2 :reinforcement-value 0 :reinforcements-enabled 1})]
+  (with-redefs [data-access.contract/game-mode-by-eid (fn [_ _] {:eid test-game-mode-eid :name "Land Battle" :draft-value 1 :player-count 2 :reinforcement-value 0 :reinforcements-enabled true})]
     (let [result (handlers.game/get-game-mode-by-eid test-deps test-game-mode-eid)]
       (is (= test-game-mode-eid (:eid result)))
       (is (= "Land Battle" (:name result)))
       (is (= 1 (:draft-value result)))
       (is (= 2 (:player-count result)))
       (is (= 0 (:reinforcement-value result)))
-      (is (= 1 (:reinforcements-enabled result))))))
+      (is (true? (:reinforcements-enabled result))))))
 
 (deftest get-game-mode-by-eid-returns-nil-when-not-found
   (with-redefs [data-access.contract/game-mode-by-eid (fn [_ _] nil)]
