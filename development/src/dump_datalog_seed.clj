@@ -18,6 +18,7 @@
    [clojure.java.io :as io]
    [clojure.pprint :as pp]
    [clojure.string :as str]
+   [com.devereux-henley.rts-data-access.schema.datalog.unit-statistics :as schema.us]
    [com.devereux-henley.rts-data.contract :as rts-data]
    [jsonista.core :as jsonista]
    [migratus.core :as migratus]
@@ -374,21 +375,31 @@
     (:mark r)        (assoc :unit/mark (keyword (:mark r)))
     (:lore r)        (assoc :unit/lore (:lore r))))
 
+(defn decoded->stat-attrs
+  "Decompose an engine-shaped, string-keyed statistics map into the
+   `:unit-statistics/*` attributes defined by `schema.us/fields`. Empty
+   lists are omitted (cardinality-many stores nothing); `:spell-keys`
+   pull the `\"key\"` out of each `{\"key\" k}` map."
+  [decoded]
+  (reduce (fn [attrs [doc-key attr kind]]
+            (let [v (get decoded doc-key)]
+              (case kind
+                :long       (if (some? v) (assoc attrs attr (long v)) attrs)
+                :boolean    (if (some? v) (assoc attrs attr (boolean v)) attrs)
+                :strings    (if (seq v) (assoc attrs attr (vec v)) attrs)
+                :spell-keys (let [ks (mapv #(get % "key") v)]
+                              (if (seq ks) (assoc attrs attr ks) attrs)))))
+          {} schema.us/fields))
+
 (defn- ->unit-statistics-tx
-  "Build a `:unit-statistics` tx map. The full engine document goes into
-   `:unit-statistics/data` as an idoc — we don't query into most stat
-   fields, so keeping it opaque sidesteps schema evolution for every
-   patch's new numeric stats. `:cost` is denormalized as a queryable
-   scalar; it stays in the document too so the doc remains the
-   engine-shaped source of truth."
+  "Build a `:unit-statistics` tx map with one typed attribute per stat
+   field (see `schema.us/fields`)."
   [{:keys [unit-eid unit-statistics-eid patch-eid stats-json]}]
   (let [decoded (jsonista/read-value stats-json object-mapper)]
-    (cond-> {:unit-statistics/eid   unit-statistics-eid
-             :unit-statistics/unit  [:unit/eid unit-eid]
-             :unit-statistics/patch [:patch/eid patch-eid]
-             :unit-statistics/data  decoded}
-      (get decoded "cost")
-      (assoc :unit-statistics/cost (long (get decoded "cost"))))))
+    (merge {:unit-statistics/eid   unit-statistics-eid
+            :unit-statistics/unit  [:unit/eid unit-eid]
+            :unit-statistics/patch [:patch/eid patch-eid]}
+           (decoded->stat-attrs decoded))))
 
 ;;; ─── Orchestrator ─────────────────────────────────────────────────────────
 

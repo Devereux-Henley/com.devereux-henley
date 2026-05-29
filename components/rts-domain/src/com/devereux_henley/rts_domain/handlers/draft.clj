@@ -91,11 +91,10 @@
   (jsonista/object-mapper {:decode-key-fn name}))
 
 (defn decode-unit-statistics-json
-  "Decode a unit-statistics blob into the string-keyed map shape
+  "Decode a unit-statistics value into the string-keyed map shape
   `parse-unit-statistics` expects. Accepts either a JSON string (the
-  shape `:unit-mount/stats-override` is still stored as in Datalevin)
-  or a pre-decoded Clojure map (the shape `:unit-statistics/data` idoc
-  reads back as). Returns nil for nil input."
+  shape `:unit-mount/stats-override` is stored as) or an already-decoded
+  Clojure map. Returns nil for nil input."
   [s-or-map]
   (cond
     (nil? s-or-map)    nil

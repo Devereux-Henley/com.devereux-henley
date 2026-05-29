@@ -2,35 +2,67 @@
   "Datalevin attributes for the `:unit-statistics` entity — a per-patch
   snapshot of a unit's combat statistics.
 
-  The actual statline (health, abilities, every numeric stat, equipment,
-  etc.) lives in `:unit-statistics/data`, a Datalevin idoc holding the
-  engine-shaped JSON document as-is. We don't query into individual stat
-  fields, so storing as a document keeps the schema schema-evolution-
-  proof: a new patch that introduces a stat lands without a schema change.
+  The statline is decomposed into one typed attribute per stat. `fields`
+  is the single source of truth mapping each engine document key to its
+  attribute and kind; the schema, the seed dumper, and the read-time
+  reconstruction (`query.datalog.game`) all derive from it.
 
-  The blob is read via `(get unit :unit-statistics/data)` and comes back
-  as an already-decoded Clojure map (not a JSON string). The SQLite-era
-  `parse-unit-statistics` in `rts-domain.handlers.draft` still takes a
-  JSON string, so a Datalevin caller must either re-encode the doc with
-  `jsonista/write-value-as-string` first or refactor that helper to
-  accept a pre-decoded map.
+  Kinds:
+  - `:long`       a scalar integer stat (e.g. `:unit-statistics/armor`)
+  - `:boolean`    a flag (`:unit-statistics/is-large`)
+  - `:strings`    a cardinality-many string list (e.g. abilities, attributes)
+  - `:spell-keys` the draftable-spell keys, stored cardinality-many; the
+                  engine document carries them as `[{\"key\" k} …]`
 
-  `:unit-statistics/cost` is denormalized out of the document as a
-  first-class `:db.type/long` because the draft / standings queries
-  filter and aggregate on it (\"units cheaper than X\", \"sum of unit
-  costs for a draft\"). Other fields stay inside the doc; idoc's path
-  matching (`datalevin/idoc-match`, `idoc-get`) is available if a future
-  query needs them, and a new scalar attribute can always be promoted
-  alongside `:cost` without touching the document itself.")
+  `:unit-statistics/cost` is one of these attributes and stays queryable as
+  a `:db.type/long` for draft/standings filters and aggregates.")
+
+(def fields
+  "[engine-doc-key attribute kind] for every stored stat field."
+  [["ammunition"           :unit-statistics/ammunition           :long]
+   ["armor"                :unit-statistics/armor                :long]
+   ["barrier"              :unit-statistics/barrier              :long]
+   ["bonus_vs_infantry"    :unit-statistics/bonus-vs-infantry    :long]
+   ["bonus_vs_large"       :unit-statistics/bonus-vs-large       :long]
+   ["charge_bonus"         :unit-statistics/charge-bonus         :long]
+   ["cost"                 :unit-statistics/cost                 :long]
+   ["health"               :unit-statistics/health               :long]
+   ["leadership"           :unit-statistics/leadership           :long]
+   ["melee_attack"         :unit-statistics/melee-attack         :long]
+   ["melee_defence"        :unit-statistics/melee-defence        :long]
+   ["missile_ap_damage"    :unit-statistics/missile-ap-damage    :long]
+   ["missile_base_damage"  :unit-statistics/missile-base-damage  :long]
+   ["missile_damage"       :unit-statistics/missile-damage       :long]
+   ["range"                :unit-statistics/range                :long]
+   ["speed"                :unit-statistics/speed                :long]
+   ["unit_size"            :unit-statistics/unit-size            :long]
+   ["weapon_ap_damage"     :unit-statistics/weapon-ap-damage     :long]
+   ["weapon_damage"        :unit-statistics/weapon-damage        :long]
+   ["weapon_strength"      :unit-statistics/weapon-strength      :long]
+   ["is_large"             :unit-statistics/is-large             :boolean]
+   ["abilities"            :unit-statistics/abilities            :strings]
+   ["attributes"           :unit-statistics/attributes           :strings]
+   ["melee_attack_types"   :unit-statistics/melee-attack-types   :strings]
+   ["melee_modifiers"      :unit-statistics/melee-modifiers      :strings]
+   ["missile_modifiers"    :unit-statistics/missile-modifiers    :strings]
+   ["missile_damage_types" :unit-statistics/missile-damage-types :strings]
+   ["draftable-spells"     :unit-statistics/draftable-spells     :spell-keys]])
+
+(defn- field-attr-schema
+  [kind]
+  (case kind
+    :long    {:db/valueType :db.type/long}
+    :boolean {:db/valueType :db.type/boolean}
+    (:strings :spell-keys) {:db/valueType   :db.type/string
+                            :db/cardinality :db.cardinality/many}))
 
 (def schema
-  {:unit-statistics/eid   {:db/valueType :db.type/uuid
-                           :db/unique    :db.unique/identity}
-   ;; Owning ref lives on the many side. Reverse-ref pull
-   ;; (`{:unit-statistics/_unit [...]}`) gets every snapshot for a unit;
-   ;; `[?s :unit-statistics/unit ?u]` is the query form.
-   :unit-statistics/unit  {:db/valueType :db.type/ref}
-   :unit-statistics/patch {:db/valueType :db.type/ref}
-   :unit-statistics/cost  {:db/valueType :db.type/long}
-   :unit-statistics/data  {:db/valueType  :db.type/idoc
-                           :db/idocFormat :json}})
+  (into {:unit-statistics/eid   {:db/valueType :db.type/uuid
+                                 :db/unique    :db.unique/identity}
+         ;; Owning ref lives on the many side. Reverse-ref pull
+         ;; (`{:unit-statistics/_unit [...]}`) gets every snapshot for a
+         ;; unit; `[?s :unit-statistics/unit ?u]` is the query form.
+         :unit-statistics/unit  {:db/valueType :db.type/ref}
+         :unit-statistics/patch {:db/valueType :db.type/ref}}
+        (map (fn [[_ attr kind]] [attr (field-attr-schema kind)]))
+        fields))
