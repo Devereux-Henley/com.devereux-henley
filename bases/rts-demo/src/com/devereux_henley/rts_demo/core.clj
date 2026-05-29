@@ -1,38 +1,26 @@
 (ns com.devereux-henley.rts-demo.core
-  "Bootstraps a fresh SQLite database with three demo tournaments — one
+  "Bootstraps a fresh Datalevin store with three demo tournaments — one
   single-elimination, one double-elimination, one Swiss — each populated
   with eight entrants and advanced to the last-match state so the new
-  tournament viewer always has a non-trivial bracket to render.
+  tournament viewer always has a non-trivial bracket to render, plus one
+  left in open registration.
 
   Run from the REPL via `(setup!)` or as a one-shot CLI via
   `clojure -M:dev:claude -m com.devereux-henley.rts-demo.core`."
   (:require
    [clojure.java.io :as io]
+   [com.devereux-henley.datalog.contract :as datalog]
    [com.devereux-henley.rts-data-access.contract :as data-access]
    [com.devereux-henley.rts-data.contract :as rts-data]
-   [com.devereux-henley.rts-domain.contract :as domain]
-   [migratus.core :as migratus]
-   [next.jdbc :as jdbc])
+   [com.devereux-henley.rts-domain.contract :as domain])
   (:import
-   [java.time Instant LocalDateTime ZoneId])
+   [java.time LocalDateTime ZoneId])
   (:gen-class))
 
-(def ^:private default-connection-uri "jdbc:sqlite:db/database.db")
+(def ^:private datalog-dir
+  (or (System/getenv "DATALEVIN_DB_DIR") "db/datalevin/"))
 
-(def ^:private connection-uri
-  (or (System/getenv "RTS_DB_CONNECTION_URI") default-connection-uri))
-
-(def ^:private db-spec
-  {:connection-uri connection-uri})
-
-(def ^:private jdbc-spec
-  {:dbtype "sqlite"
-   :dbname (subs connection-uri (count "jdbc:sqlite:"))})
-
-(def ^:private migratus-config
-  {:store         :database
-   :migration-dir rts-data/migration-dir
-   :db            db-spec})
+(def ^:private seed-patch-version "8.0")
 
 (def ^:private warhammer-iii-eid
   #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1")
@@ -43,41 +31,42 @@
   (mapv #(str "dev-player-" %)
         ["one" "two" "three" "four" "five" "six" "seven" "eight"]))
 
-(defn- delete-database-file!
+(defn- wipe-datalog-dir!
   []
-  (when (= "sqlite" (:dbtype jdbc-spec))
-    (let [file (io/file (:dbname jdbc-spec))]
-      (when (.exists file)
-        (.delete file)))))
+  (let [dir (io/file datalog-dir)]
+    (when (.exists dir)
+      (doseq [child (reverse (file-seq dir))]
+        (.delete ^java.io.File child)))))
+
+(defn- seed-datalog!
+  "Transact every EDN seed file for the demo patch into the store. Demo
+   tournaments only need the `:game` entity to exist for the
+   `:tournament/game` ref, but seeding the full game catalogue keeps the
+   demo store consistent with a real dev environment."
+  [conn]
+  (rts-data/ensure-datalog-patch seed-patch-version)
+  (doseq [[_ tx-data] (rts-data/load-datalog-seed seed-patch-version)]
+    (datalog/transact! conn tx-data)))
 
 (defn- create-tournament!
-  [connection {:keys [eid name description]}]
-  (let [now       (Instant/now)
-        opens-at  (LocalDateTime/now)
+  "Create a demo tournament in registration status with a 14-day window."
+  [deps {:keys [eid name description]}]
+  (let [opens-at  (LocalDateTime/now)
         closes-at (.plusDays opens-at 14)
-        zone      (ZoneId/of "UTC")]
-    (data-access/create-tournament
-     connection
-     {:eid            eid
-      :game-eid       warhammer-iii-eid
-      :name           name
-      :description    description
-      :created-by-sub organizer-sub
-      :version        1
-      :created-at     now
-      :updated-at     now})
-    (domain/set-tournament-state
-     {:connection connection}
-     eid
-     {:status          "registration"
-      :registration    {:opens-at     (str (.toInstant (.atZone opens-at zone)))
-                        :closes-at    (str (.toInstant (.atZone closes-at zone)))
-                        :timezone     (str zone)
-                        :closed-early false}
-      :phases          []
-      :current-phase   nil
-      :standings       []
-      :qualifier-count nil})
+        zone      (ZoneId/of "UTC")
+        result    (domain/create-tournament
+                   deps
+                   {:eid                    eid
+                    :game-eid               warhammer-iii-eid
+                    :name                   name
+                    :description            description
+                    :created-by-sub         organizer-sub
+                    :version                1
+                    :timezone               zone
+                    :registration-opens-at  opens-at
+                    :registration-closes-at closes-at})]
+    (when (= :tournament/create-error (:type result))
+      (throw (ex-info "Creating tournament failed" {:result result})))
     eid))
 
 (defn- enter-player!
@@ -227,11 +216,10 @@
     :initial-entrants 3}])
 
 (defn- build-tournament!
-  [connection {:keys [eid name description phase-spec roster preferred-winner]}]
-  (let [deps           {:connection connection}
-        phase-type     (-> phase-spec :phases first :phase-type)
+  [deps {:keys [eid name description phase-spec roster preferred-winner]}]
+  (let [phase-type     (-> phase-spec :phases first :phase-type)
         roster         (or roster player-subs)
-        tournament-eid (create-tournament! connection {:eid eid :name name :description description})]
+        tournament-eid (create-tournament! deps {:eid eid :name name :description description})]
     (enter-players! deps tournament-eid roster)
     (configure-phases! deps tournament-eid phase-spec)
     (start! deps tournament-eid)
@@ -244,9 +232,8 @@
 (defn- build-registration-tournament!
   "Creates a tournament left in `registration` status with a partial
    roster so the viewer's registration UI has a live demo target."
-  [connection {:keys [eid name description initial-entrants]}]
-  (let [deps           {:connection connection}
-        tournament-eid (create-tournament! connection {:eid eid :name name :description description})
+  [deps {:keys [eid name description initial-entrants]}]
+  (let [tournament-eid (create-tournament! deps {:eid eid :name name :description description})
         roster         (take initial-entrants player-subs)]
     (enter-players! deps tournament-eid roster)
     {:name             name
@@ -256,18 +243,20 @@
      :registered-count (count roster)}))
 
 (defn setup!
-  "Wipes the SQLite database, reapplies migrations, seeds baseline data,
-  and creates demo tournaments: three advanced to their last-match
-  state (single-elim, double-elim, Swiss), plus one left in open
-  registration. Returns a vector of summary maps describing each
-  tournament."
+  "Wipes the Datalevin store, reseeds the game catalogue, and creates demo
+  tournaments: three advanced to their last-match state (single-elim,
+  double-elim, Swiss), plus one left in open registration. Returns a
+  vector of summary maps describing each tournament."
   []
-  (delete-database-file!)
-  (migratus/migrate migratus-config)
-  (rts-data/seed-db db-spec)
-  (with-open [connection (jdbc/get-connection jdbc-spec)]
-    (into (mapv #(build-tournament! connection %) tournament-specs)
-          (mapv #(build-registration-tournament! connection %) registration-tournament-specs))))
+  (wipe-datalog-dir!)
+  (let [conn (datalog/get-conn datalog-dir data-access/datalog-schema)
+        deps {:datalog-connection conn}]
+    (try
+      (seed-datalog! conn)
+      (into (mapv #(build-tournament! deps %) tournament-specs)
+            (mapv #(build-registration-tournament! deps %) registration-tournament-specs))
+      (finally
+        (datalog/close conn)))))
 
 (defn -main [& _args]
   (let [tournaments (setup!)]

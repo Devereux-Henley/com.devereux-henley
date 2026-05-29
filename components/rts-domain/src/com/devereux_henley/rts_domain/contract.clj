@@ -101,7 +101,6 @@
 (def get-tournaments                              handlers.tournament/get-tournaments)
 (def create-tournament                            handlers.tournament/create-tournament)
 (def get-tournament-state                         handlers.tournament/get-tournament-state)
-(def set-tournament-state                         handlers.tournament/set-tournament-state)
 (def create-entry                                 handlers.tournament/create-entry)
 (def delete-entry                                 handlers.tournament/delete-entry)
 (def get-entries                                   handlers.tournament/get-entries)

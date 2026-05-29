@@ -959,7 +959,7 @@
    `viewer-sub` is one of its participants. Returns `[:ok match]` or
    `[:error fragment]` so the calling handler stays branch-flat."
   [dependencies match-eid tournament-eid viewer-sub]
-  (let [match (db/get-match-by-eid (:connection dependencies) match-eid)]
+  (let [match (db/match-by-eid (:datalog-connection dependencies) match-eid)]
     (cond
       (nil? match)
       [:error (error-fragment "Match not found.")]
@@ -1068,7 +1068,7 @@
           (case (:type result)
             :match-record/game-recorded
             (let [tournament  (domain/get-tournament-by-eid dependencies tournament-eid)
-                  fresh-match (-> (db/get-match-by-eid (:connection dependencies) match-eid)
+                  fresh-match (-> (db/match-by-eid (:datalog-connection dependencies) match-eid)
                                   (assoc :game-eid (:game-eid tournament)))]
               {:status  200
                :headers {"Content-Type"            "text/html; charset=utf-8"

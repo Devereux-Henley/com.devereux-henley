@@ -2,12 +2,10 @@
   (:require
    [com.devereux-henley.rts-data-access.contract :as db]
    [com.devereux-henley.rts-domain.rules.tournament :as rules]
-   [com.devereux-henley.rts-domain.time :as time]
-   [jsonista.core :as jsonista])
+   [com.devereux-henley.rts-domain.time :as time])
   (:import
-   [java.time Instant]))
-
-(def ^:private json-mapper (jsonista/object-mapper {:decode-key-fn keyword}))
+   [java.time Instant]
+   [java.util Date]))
 
 (defn- tag-tournament
   [tournament]
@@ -20,51 +18,70 @@
 (defn get-tournament-by-eid
   "Fetches a tournament by eid and attaches :type :tournament/tournament."
   [dependencies eid]
-  (tag-tournament (db/get-tournament-by-eid (:connection dependencies) eid)))
+  (tag-tournament (db/tournament-by-eid (:datalog-connection dependencies) eid)))
 
 (defn get-tournaments-for-game
   "Returns all tournaments for a game, each tagged with :type :tournament/tournament."
   [dependencies game-eid]
   (mapv tag-tournament
-        (db/get-tournaments-for-game (:connection dependencies) game-eid)))
+        (db/tournaments-for-game (:datalog-connection dependencies) game-eid)))
 
 (defn get-tournaments
   "Returns every tournament in the system, each tagged with :type :tournament/tournament."
   [dependencies]
   (mapv tag-tournament
-        (db/get-tournaments (:connection dependencies))))
+        (db/tournaments (:datalog-connection dependencies))))
+
+(defn- derive-standings
+  "Computes standings from the entry set folded with completed match
+   results (`rules/recalculate-standings`). Empty during registration."
+  [dependencies tournament-eid status]
+  (if (= "registration" status)
+    []
+    (let [conn      (:datalog-connection dependencies)
+          base      (mapv (fn [e] {:player-sub (:player-sub e)
+                                   :wins       0               :losses 0 :draws 0 :points 0})
+                          (db/entries-for-tournament conn tournament-eid))
+          completed (filterv #(= "complete" (:status %))
+                             (db/matches-for-tournament conn tournament-eid))]
+      (rules/recalculate-standings base completed))))
 
 (defn get-tournament-state
-  "Returns the parsed tournament state map, or a default initial state when none exists."
+  "Builds the tournament state map the rules engine and templates consume
+   from its entities (status, registration window, phases, current phase,
+   derived standings, qualifier count). Returns a default initial state
+   when the tournament is absent."
   [dependencies tournament-eid]
-  (if-let [row (db/get-tournament-state (:connection dependencies) tournament-eid)]
-    (jsonista/read-value (:state row) json-mapper)
-    {:status          "registration"
-     :registration    {:opens-at nil :closes-at nil :closed-early false}
-     :phases          []
-     :current-phase   nil
-     :standings       []
-     :qualifier-count nil}))
-
-(defn set-tournament-state
-  "Persists the tournament state as a JSON blob."
-  [dependencies tournament-eid state]
-  (db/upsert-tournament-state
-   (:connection dependencies)
-   tournament-eid
-   (jsonista/write-value-as-string state)))
+  (let [tournament (db/tournament-by-eid (:datalog-connection dependencies) tournament-eid)]
+    (if-not tournament
+      {:status          "registration"
+       :registration    {:opens-at nil :closes-at nil :closed-early false}
+       :phases          []
+       :current-phase   nil
+       :standings       []
+       :qualifier-count nil}
+      (let [status (:status tournament)]
+        {:status          status
+         :registration    {:opens-at     (:registration-opens-at tournament)
+                           :closes-at    (:registration-closes-at tournament)
+                           :timezone     (:timezone tournament)
+                           :closed-early (:registration-closed-early tournament)}
+         :phases          (db/phases-for-tournament (:datalog-connection dependencies) tournament-eid)
+         :current-phase   (:current-phase-index tournament)
+         :standings       (derive-standings dependencies tournament-eid status)
+         :qualifier-count (:qualifier-count tournament)}))))
 
 (defn create-tournament
-  "Creates a new tournament with an initial state blob. When :season-eid is
+  "Creates a new tournament in registration status. When :season-eid is
    supplied, derives :league-eid from the season server-side and rejects
    any caller-supplied :league-eid that disagrees. Both keys are optional —
    tournaments may stand alone."
   [dependencies create-specification]
-  (let [conn       (:connection dependencies)
+  (let [conn       (:datalog-connection dependencies)
         season     (when-let [seid (:season-eid create-specification)]
-                     (db/season-by-eid (:datalog-connection dependencies) seid))
+                     (db/season-by-eid conn seid))
         derived-le (cond
-                     season                            (:league-eid season)
+                     season                             (:league-eid season)
                      (:league-eid create-specification) (:league-eid create-specification)
                      :else                              nil)]
     (cond
@@ -77,31 +94,30 @@
       {:type :tournament/create-error :message "Provided league does not match the season's league."}
 
       :else
-      (let [created-at    (Instant/now)
-            updated-at    created-at
-            tz            (:timezone create-specification)
-            opens-at      (time/to-utc-instant (:registration-opens-at create-specification) tz)
-            closes-at     (time/to-utc-instant (:registration-closes-at create-specification) tz)
-            spec          (-> create-specification
-                              (dissoc :registration-opens-at :registration-closes-at :timezone)
-                              (assoc :created-at created-at)
-                              (assoc :updated-at updated-at)
-                              (cond-> derived-le (assoc :league-eid derived-le))
-                              (cond-> (not derived-le) (dissoc :league-eid)))
-            tournament    (db/create-tournament conn spec)
-            initial-state {:status          "registration"
-                           :registration    {:opens-at     (str opens-at)
-                                             :closes-at    (str closes-at)
-                                             :timezone     (str tz)
-                                             :closed-early false}
-                           :phases          []
-                           :current-phase   nil
-                           :standings       []
-                           :qualifier-count nil}]
-        (set-tournament-state dependencies (:eid tournament) initial-state)
+      (let [created-at (Instant/now)
+            tz         (:timezone create-specification)
+            opens-at   (time/to-utc-instant (:registration-opens-at create-specification) tz)
+            closes-at  (time/to-utc-instant (:registration-closes-at create-specification) tz)
+            spec       (-> create-specification
+                           (assoc :created-at created-at
+                                  :updated-at created-at
+                                  :registration-opens-at opens-at
+                                  :registration-closes-at closes-at)
+                           (cond-> derived-le (assoc :league-eid derived-le))
+                           (cond-> (not derived-le) (dissoc :league-eid)))
+            tournament (db/create-tournament! conn spec)]
         (tag-tournament tournament)))))
 
 ;; ─── Registration ────────────────────────────────────────────────────────────
+
+(defn- ->instant
+  "Coerce a stored registration timestamp (`java.util.Date`) — or a passed
+   `Instant`/nil — to an `Instant` for window comparisons."
+  ^Instant [x]
+  (cond
+    (nil? x)              nil
+    (instance? Instant x) x
+    (instance? Date x)    (.toInstant ^Date x)))
 
 (defn is-registration-open?
   "Returns true if the tournament state allows new registrations.
@@ -109,8 +125,8 @@
   [state now]
   (and (= "registration" (:status state))
        (not (get-in state [:registration :closed-early]))
-       (let [opens-at  (some-> (get-in state [:registration :opens-at]) Instant/parse)
-             closes-at (some-> (get-in state [:registration :closes-at]) Instant/parse)]
+       (let [opens-at  (->instant (get-in state [:registration :opens-at]))
+             closes-at (->instant (get-in state [:registration :closes-at]))]
          (and (or (nil? opens-at)  (not (.isBefore now opens-at)))
               (or (nil? closes-at) (.isBefore now closes-at))))))
 
@@ -121,13 +137,9 @@
         now   (Instant/now)]
     (if-not (is-registration-open? state now)
       {:type :tournament/entry-error :message "Registration is not open."}
-      (try
-        (let [entry (db/create-entry (:connection dependencies) tournament-eid player-sub)]
-          (assoc entry :type :tournament/entry))
-        (catch org.sqlite.SQLiteException e
-          (if (.contains (.getMessage e) "UNIQUE constraint failed")
-            {:type :tournament/entry-error :message "Already entered in this tournament."}
-            (throw e)))))))
+      (if-let [entry (db/create-entry! (:datalog-connection dependencies) tournament-eid player-sub)]
+        (assoc entry :type :tournament/entry)
+        {:type :tournament/entry-error :message "Already entered in this tournament."}))))
 
 (defn delete-entry
   "Removes a player's entry from a tournament. Returns a success or error map."
@@ -136,14 +148,14 @@
     (if-not (= "registration" (:status state))
       {:type :tournament/entry-error :message "Cannot withdraw outside of registration period."}
       (do
-        (db/delete-entry (:connection dependencies) tournament-eid player-sub)
+        (db/delete-entry! (:datalog-connection dependencies) tournament-eid player-sub)
         {:type :tournament/entry-deleted :message "Entry removed from tournament."}))))
 
 (defn get-entries
   "Returns all active entries for a tournament."
   [dependencies tournament-eid]
   (mapv (fn [e] (assoc e :type :tournament/entry))
-        (db/get-entries-for-tournament (:connection dependencies) tournament-eid)))
+        (db/entries-for-tournament (:datalog-connection dependencies) tournament-eid)))
 
 (defn available-transitions
   "Returns the set of valid target statuses for a tournament."
@@ -170,20 +182,21 @@
       :else nil)))
 
 (defn start-tournament
-  "Transitions a tournament from registration to active. Populates the
-   standings list from current entries via `rules/close-registration`.
-   Only the organizer can start. Returns `:tournament/started` on
-   success, `:tournament/start-error` on failure."
+  "Transitions a tournament from registration to active, pointing
+   `current-phase-index` at the first phase when one is configured. Only
+   the organizer can start. Returns `:tournament/started` on success,
+   `:tournament/start-error` on failure."
   [dependencies tournament-eid user-sub]
   (or (organizer-error dependencies tournament-eid user-sub :tournament/start-error)
       (let [state (get-tournament-state dependencies tournament-eid)]
         (if (not= "registration" (:status state))
           {:type    :tournament/start-error
            :message (str "Cannot start: tournament is '" (:status state) "', not 'registration'.")}
-          (let [entries   (get-entries dependencies tournament-eid)
-                new-state (rules/close-registration state entries)]
-            (set-tournament-state dependencies tournament-eid new-state)
-            {:type :tournament/started :state new-state})))))
+          (do
+            (db/update-tournament! (:datalog-connection dependencies) tournament-eid
+                                   {:status              "active"
+                                    :current-phase-index (when (seq (:phases state)) 0)})
+            {:type :tournament/started :state (get-tournament-state dependencies tournament-eid)})))))
 
 (defn complete-tournament
   "Transitions a tournament from active to complete. Only the organizer
@@ -195,9 +208,9 @@
         (if (not= "active" (:status state))
           {:type    :tournament/complete-error
            :message (str "Cannot complete: tournament is '" (:status state) "', not 'active'.")}
-          (let [new-state (assoc state :status "complete")]
-            (set-tournament-state dependencies tournament-eid new-state)
-            {:type :tournament/completed :state new-state})))))
+          (do
+            (db/update-tournament! (:datalog-connection dependencies) tournament-eid {:status "complete"})
+            {:type :tournament/completed :state (get-tournament-state dependencies tournament-eid)})))))
 
 (defn cancel-tournament
   "Cancels a tournament that hasn't already finished. Only the organizer
@@ -209,9 +222,9 @@
         (if (contains? #{"complete" "cancelled"} (:status state))
           {:type    :tournament/cancel-error
            :message (str "Cannot cancel: tournament is already '" (:status state) "'.")}
-          (let [new-state (assoc state :status "cancelled")]
-            (set-tournament-state dependencies tournament-eid new-state)
-            {:type :tournament/cancelled :state new-state})))))
+          (do
+            (db/update-tournament! (:datalog-connection dependencies) tournament-eid {:status "cancelled"})
+            {:type :tournament/cancelled :state (get-tournament-state dependencies tournament-eid)})))))
 
 (defn close-registration-early
   "Sets the closed-early flag on a tournament still in registration,
@@ -224,9 +237,10 @@
       (let [state (get-tournament-state dependencies tournament-eid)]
         (if (not= "registration" (:status state))
           {:type :tournament/registration-close-error :message "Tournament is not in registration status."}
-          (let [new-state (assoc-in state [:registration :closed-early] true)]
-            (set-tournament-state dependencies tournament-eid new-state)
-            {:type :tournament/registration-closed :state new-state})))))
+          (do
+            (db/update-tournament! (:datalog-connection dependencies) tournament-eid
+                                   {:registration-closed-early true})
+            {:type :tournament/registration-closed :state (get-tournament-state dependencies tournament-eid)})))))
 
 ;; ─── Matches ─────────────────────────────────────────────────────────────────
 
@@ -236,29 +250,29 @@
   (let [state (get-tournament-state dependencies tournament-eid)]
     (if (not= "active" (:status state))
       {:type :tournament/match-error :message "Tournament must be active to create matches."}
-      (tag-match (db/create-match (:connection dependencies) tournament-eid match-spec)))))
+      (tag-match (db/create-match! (:datalog-connection dependencies) tournament-eid match-spec)))))
 
 (defn get-match-by-eid
   "Fetches a match by eid."
   [dependencies match-eid]
-  (tag-match (db/get-match-by-eid (:connection dependencies) match-eid)))
+  (tag-match (db/match-by-eid (:datalog-connection dependencies) match-eid)))
 
 (defn get-matches
   "Returns every match in the system, each tagged with :type :tournament/match."
   [dependencies]
-  (mapv tag-match (db/get-matches (:connection dependencies))))
+  (mapv tag-match (db/matches (:datalog-connection dependencies))))
 
 (defn get-matches-for-tournament
   "Returns all matches for a tournament."
   [dependencies tournament-eid]
   (mapv tag-match
-        (db/get-matches-for-tournament (:connection dependencies) tournament-eid)))
+        (db/matches-for-tournament (:datalog-connection dependencies) tournament-eid)))
 
 (defn get-matches-for-round
   "Returns matches for a specific phase and round."
   [dependencies tournament-eid phase-index round-index]
   (mapv tag-match
-        (db/get-matches-for-round (:connection dependencies) tournament-eid phase-index round-index)))
+        (db/matches-for-round (:datalog-connection dependencies) tournament-eid phase-index round-index)))
 
 (defn- double-elim-complete?
   "Returns true when a double-elimination phase has a completed grand-final
@@ -272,15 +286,14 @@
          all-matches)))
 
 (defn- recalculate-and-check-completion
-  "Recalculates standings after a match completes. If phases are configured
-   and all matches in all phases are done with no more rounds remaining,
-   auto-completes the tournament. Without phase configuration, no
-   auto-completion occurs."
+  "Recomputes the (derived) standings after a match completes and, when
+   phases are configured and every match across all phases is done with no
+   more rounds remaining, auto-completes the tournament. Standings are
+   derived from entities, so the only write here is the completion flip."
   [dependencies tournament-eid]
   (let [state         (get-tournament-state dependencies tournament-eid)
         all-matches   (get-matches-for-tournament dependencies tournament-eid)
-        completed     (filter #(= "complete" (:status %)) all-matches)
-        new-standings (rules/recalculate-standings (:standings state) completed)
+        new-standings (:standings state)
         has-phases    (seq (:phases state))
         complete?     (when has-phases
                         (let [all-done    (every? #(= "complete" (:status %)) all-matches)
@@ -295,17 +308,16 @@
                             (let [phase-matches (filter #(= phase-index (:phase-index %)) all-matches)
                                   max-round     (if (empty? phase-matches) -1 (apply max (map :round-index phase-matches)))
                                   rounds-left   (get-in phase [:rounds (inc max-round)])]
-                              (and all-done (nil? rounds-left))))))
-        new-state     (cond-> (assoc state :standings new-standings)
-                        complete? (assoc :status "complete"))]
-    (set-tournament-state dependencies tournament-eid new-state)
+                              (and all-done (nil? rounds-left))))))]
+    (when complete?
+      (db/update-tournament! (:datalog-connection dependencies) tournament-eid {:status "complete"}))
     {:standings           new-standings
      :tournament-complete (boolean complete?)}))
 
 (defn update-match-result
-  "Records a match result and recalculates standings in the state blob."
+  "Records a match result and recalculates standings from entities."
   [dependencies match-eid winner-sub]
-  (let [match (db/get-match-by-eid (:connection dependencies) match-eid)]
+  (let [match (db/match-by-eid (:datalog-connection dependencies) match-eid)]
     (cond
       (nil? match)
       {:type :tournament/match-error :message "Match not found."}
@@ -315,7 +327,7 @@
 
       :else
       (do
-        (db/update-match-result (:connection dependencies) match-eid winner-sub)
+        (db/update-match-result! (:datalog-connection dependencies) match-eid winner-sub)
         (let [{:keys [standings tournament-complete]}
               (recalculate-and-check-completion dependencies (:tournament-eid match))]
           (cond-> {:type      :tournament/match-result-recorded
@@ -329,7 +341,7 @@
   "Records a game within a match. If the match win threshold is reached,
    the match auto-completes and standings are recalculated."
   [dependencies match-eid winner-sub]
-  (let [match (db/get-match-by-eid (:connection dependencies) match-eid)]
+  (let [match (db/match-by-eid (:datalog-connection dependencies) match-eid)]
     (cond
       (nil? match)
       {:type :tournament/match-error :message "Match not found."}
@@ -338,15 +350,16 @@
       {:type :tournament/match-error :message "Match is already complete."}
 
       :else
-      (let [existing-games (db/get-games-for-match (:connection dependencies) match-eid)
+      (let [conn           (:datalog-connection dependencies)
+            existing-games (db/games-for-match conn match-eid)
             game-index     (count existing-games)
-            _              (db/create-game (:connection dependencies) match-eid game-index winner-sub)
+            _              (db/create-game! conn match-eid game-index winner-sub)
             all-games      (conj (vec existing-games) {:winner-sub winner-sub})
             match-winner   (rules/check-match-complete all-games (:format match))]
         (if match-winner
           ;; Match complete — update match, recalculate standings, check tournament completion
           (do
-            (db/update-match-result (:connection dependencies) match-eid match-winner)
+            (db/update-match-result! conn match-eid match-winner)
             (let [{:keys [standings tournament-complete]}
                   (recalculate-and-check-completion dependencies (:tournament-eid match))]
               (cond-> {:type       :tournament/match-completed
@@ -364,7 +377,7 @@
 (defn get-games-for-match
   "Returns all games for a match."
   [dependencies match-eid]
-  (db/get-games-for-match (:connection dependencies) match-eid))
+  (db/games-for-match (:datalog-connection dependencies) match-eid))
 
 ;; ─── Phase management ────────────────────────────────────────────────────────
 
@@ -383,12 +396,11 @@
       (let [state (get-tournament-state dependencies tournament-eid)]
         (if (not= "registration" (:status state))
           {:type :tournament/phase-error :message "Phases can only be configured during registration."}
-          (let [new-state (-> state
-                              (assoc :phases (:phases phase-config))
-                              (assoc :qualifier-count (:qualifier-count phase-config)))]
-            (set-tournament-state dependencies tournament-eid new-state)
+          (let [conn (:datalog-connection dependencies)]
+            (db/set-phases! conn tournament-eid (:phases phase-config))
+            (db/update-tournament! conn tournament-eid {:qualifier-count (:qualifier-count phase-config)})
             {:type  :tournament/phase-configured
-             :state new-state}))))))
+             :state (get-tournament-state dependencies tournament-eid)}))))))
 
 (defn- generate-pairings
   "Dispatches pairing generation based on phase type. Used by non-double-elim
@@ -406,8 +418,8 @@
    Bye matches (nil player-two-sub) are auto-completed with player-one as winner."
   [dependencies tournament-eid phase-index round-index bracket-type format pairings]
   (mapv (fn [pairing]
-          (let [match (db/create-match
-                       (:connection dependencies)
+          (let [match (db/create-match!
+                       (:datalog-connection dependencies)
                        tournament-eid
                        (assoc pairing
                               :phase-index phase-index
@@ -415,7 +427,7 @@
                               :bracket-type bracket-type
                               :format format))]
             (if (nil? (:player-two-sub pairing))
-              (do (db/update-match-result (:connection dependencies) (:eid match) (:player-one-sub pairing))
+              (do (db/update-match-result! (:datalog-connection dependencies) (:eid match) (:player-one-sub pairing))
                   (assoc match :status "complete" :winner-sub (:player-one-sub pairing)))
               match)))
         pairings))
@@ -488,7 +500,8 @@
       {:type :tournament/phase-error :message "Only the tournament organizer can generate rounds."}
 
       :else
-      (let [state           (get-tournament-state dependencies tournament-eid)
+      (let [conn            (:datalog-connection dependencies)
+            state           (get-tournament-state dependencies tournament-eid)
             phase-index     (:current-phase state)
             phase           (get-in state [:phases phase-index])
             all-matches     (get-matches-for-tournament dependencies tournament-eid)
@@ -511,11 +524,10 @@
                     next-phase       (get-in state [:phases next-phase-index])]
                 (if (nil? next-phase)
                   {:type :tournament/phase-error :message "All phases complete. No more rounds to generate."}
-                  (let [format    (round-format next-phase 0)
-                        pairings  (generate-pairings (:phase-type next-phase) (:standings state) all-matches qualified)
-                        matches   (create-round-matches dependencies tournament-eid next-phase-index 0 "winners" format pairings)
-                        new-state (assoc state :current-phase next-phase-index)]
-                    (set-tournament-state dependencies tournament-eid new-state)
+                  (let [format   (round-format next-phase 0)
+                        pairings (generate-pairings (:phase-type next-phase) (:standings state) all-matches qualified)
+                        matches  (create-round-matches dependencies tournament-eid next-phase-index 0 "winners" format pairings)]
+                    (db/update-tournament! conn tournament-eid {:current-phase-index next-phase-index})
                     {:type           :tournament/round-generated
                      :round          0
                      :phase          next-phase-index
@@ -542,11 +554,10 @@
                     next-phase       (get-in state [:phases next-phase-index])]
                 (if (nil? next-phase)
                   {:type :tournament/phase-error :message "All phases complete. No more rounds to generate."}
-                  (let [format    (round-format next-phase 0)
-                        pairings  (generate-pairings (:phase-type next-phase) (:standings state) all-matches qualified)
-                        matches   (create-round-matches dependencies tournament-eid next-phase-index 0 "winners" format pairings)
-                        new-state (assoc state :current-phase next-phase-index)]
-                    (set-tournament-state dependencies tournament-eid new-state)
+                  (let [format   (round-format next-phase 0)
+                        pairings (generate-pairings (:phase-type next-phase) (:standings state) all-matches qualified)
+                        matches  (create-round-matches dependencies tournament-eid next-phase-index 0 "winners" format pairings)]
+                    (db/update-tournament! conn tournament-eid {:current-phase-index next-phase-index})
                     {:type           :tournament/round-generated
                      :round          0
                      :phase          next-phase-index
@@ -555,21 +566,17 @@
 
               ;; Generate next round in current phase
               :else
-              (let [format    (or (:format round-config) 1)
-                    pairings  (if (and (= "single-elimination" (:phase-type phase))
-                                       (pos? next-round))
-                                ;; Subsequent SE rounds advance the bracket
-                                ;; from the previous round's winners; only
-                                ;; round 0 seeds from standings.
-                                (rules/advance-winners-bracket-round
-                                 (filter #(= (dec next-round) (:round-index %))
-                                         phase-matches))
-                                (generate-pairings (:phase-type phase) (:standings state) all-matches qualified))
-                    matches   (create-round-matches dependencies tournament-eid phase-index next-round "winners" format pairings)
-                    new-state (update-in state [:phases phase-index :rounds next-round]
-                                         assoc :match-eids (mapv :eid matches)
-                                         :status "active")]
-                (set-tournament-state dependencies tournament-eid new-state)
+              (let [format   (or (:format round-config) 1)
+                    pairings (if (and (= "single-elimination" (:phase-type phase))
+                                      (pos? next-round))
+                               ;; Subsequent SE rounds advance the bracket
+                               ;; from the previous round's winners; only
+                               ;; round 0 seeds from standings.
+                               (rules/advance-winners-bracket-round
+                                (filter #(= (dec next-round) (:round-index %))
+                                        phase-matches))
+                               (generate-pairings (:phase-type phase) (:standings state) all-matches qualified))
+                    matches  (create-round-matches dependencies tournament-eid phase-index next-round "winners" format pairings)]
                 {:type    :tournament/round-generated
                  :round   next-round
                  :phase   phase-index

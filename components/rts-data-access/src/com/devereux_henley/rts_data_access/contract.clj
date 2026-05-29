@@ -7,6 +7,7 @@
    [com.devereux-henley.rts-data-access.query.datalog.replay :as query.datalog.replay]
    [com.devereux-henley.rts-data-access.query.datalog.season :as query.datalog.season]
    [com.devereux-henley.rts-data-access.query.datalog.social-media :as query.datalog.social-media]
+   [com.devereux-henley.rts-data-access.query.datalog.tournament :as query.datalog.tournament]
    [com.devereux-henley.rts-data-access.query.game :as query.game]
    [com.devereux-henley.rts-data-access.query.stats :as query.stats]
    [com.devereux-henley.rts-data-access.query.tournament :as query.tournament]
@@ -40,12 +41,10 @@
 
 (def unit-entity schema/unit-entity)
 
-;;; ─── Game DB queries (SQLite — tournament-side, draft-lock only) ──────────
+;;; ─── Draft-lock query ──────────────────────────────────────────────────────
 ;;
-;; The draft-lock-info read still hits the SQLite tournament/match/match_game
-;; tables — those move to Datalevin under rts-5b6. Until then, the lookup
-;; effectively reports "never locked" (FK columns are NULL post-rts-9ri /
-;; post-rts-vhi) but the query at least returns a stable empty result.
+;; Reports whether a draft is locked by a recorded game. Currently returns
+;; a stable empty (never-locked) result.
 
 (def get-draft-lock-info query.game/get-draft-lock-info)
 (def draft-lock-info-schema query.game/draft-lock-info-schema)
@@ -139,6 +138,28 @@
 (def update-match-result query.tournament/update-match-result)
 (def create-game query.tournament/create-game)
 (def get-games-for-match query.tournament/get-games-for-match)
+
+;;; ─── Tournament Datalog queries + mutations ────────────────────────────────
+
+(def tournament-by-eid               query.datalog.tournament/tournament-by-eid)
+(def tournaments-for-game            query.datalog.tournament/tournaments-for-game)
+(def tournaments                     query.datalog.tournament/tournaments)
+(def phases-for-tournament           query.datalog.tournament/phases-for-tournament)
+(def create-tournament!              query.datalog.tournament/create-tournament!)
+(def update-tournament!              query.datalog.tournament/update-tournament!)
+(def set-phases!                     query.datalog.tournament/set-phases!)
+(def entries-for-tournament          query.datalog.tournament/entries-for-tournament)
+(def entry-by-tournament-and-player  query.datalog.tournament/entry-by-tournament-and-player)
+(def create-entry!                   query.datalog.tournament/create-entry!)
+(def delete-entry!                   query.datalog.tournament/delete-entry!)
+(def match-by-eid                    query.datalog.tournament/match-by-eid)
+(def matches-for-tournament          query.datalog.tournament/matches-for-tournament)
+(def matches                         query.datalog.tournament/matches)
+(def matches-for-round               query.datalog.tournament/matches-for-round)
+(def create-match!                   query.datalog.tournament/create-match!)
+(def update-match-result!            query.datalog.tournament/update-match-result!)
+(def create-game!                    query.datalog.tournament/create-game!)
+(def games-for-match                 query.datalog.tournament/games-for-match)
 
 ;;; ─── Stats DB entities ─────────────────────────────────────────────────────
 
