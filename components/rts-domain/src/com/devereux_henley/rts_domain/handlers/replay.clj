@@ -324,7 +324,7 @@
   (if-let [shape-error (schema.contract/explain->message
                         (m/explain schema/record-game-submission-spec submission))]
     (short-circuit-error shape-error)
-    (let [match (db/get-match-by-eid (:connection dependencies) match-eid)]
+    (let [match (db/match-by-eid (:datalog-connection dependencies) match-eid)]
       (cond
         (nil? match)
         (short-circuit-error "Match not found.")
@@ -336,12 +336,12 @@
         (short-circuit-error "Declared winner must match one of the match's players.")
 
         :else
-        (let [conn           (:connection dependencies)
-              existing-games (db/get-games-for-match conn match-eid)
+        (let [conn           (:datalog-connection dependencies)
+              existing-games (db/games-for-match conn match-eid)
               game-index     (count existing-games)]
           (if (>= game-index (:format match))
             (short-circuit-error (format "Match already has its maximum %d games." (:format match)))
-            (let [tournament (db/get-tournament-by-eid conn (:tournament-eid match))
+            (let [tournament (db/tournament-by-eid conn (:tournament-eid match))
                   game-modes (db/game-modes-for-game (:datalog-connection dependencies)
                                                      (:game-eid tournament))
                   now        (Instant/now)
@@ -360,7 +360,7 @@
                     :game-modes      game-modes
                     :uploaded-by-sub uploaded-by-sub
                     :now             now})
-                  stored     (db/create-game
+                  stored     (db/create-game!
                               conn match-eid game-index winner-sub
                               {:replay-eid                    (:eid replay)
                                :uploader-local-alliance-index (:uploader-local-alliance-index replay)

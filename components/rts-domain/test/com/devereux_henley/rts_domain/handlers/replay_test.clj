@@ -21,17 +21,17 @@
 ;; recalculate-and-check-completion is a no-op for these tests.
 (use-fixtures :each
   (fn [t]
-    (with-redefs [data-access.contract/get-tournament-by-eid      (fn [_ _] {:name "Practice" :game-eid (UUID/randomUUID)})
-                  data-access.contract/game-modes-for-game        (fn [_ _] [{:eid (UUID/randomUUID) :name "Land Battle"}])
-                  data-access.contract/subfactions-by-keys        (fn [_ _] [])
-                  data-access.contract/units-by-keys              (fn [_ _] [])
-                  data-access.contract/mounts-for-unit            (fn [_ _] [])
-                  data-access.contract/unit-level-costs           (fn [_] {})
-                  data-access.contract/create-draft!              (fn [_ spec] (assoc spec :version 1))
-                  data-access.contract/add-entries!               (fn [_ _ _] nil)
-                  data-access.contract/get-tournament-state       (fn [_ _] nil)
-                  data-access.contract/upsert-tournament-state    (fn [_ _ _] nil)
-                  data-access.contract/get-matches-for-tournament (fn [_ _] [])]
+    (with-redefs [data-access.contract/tournament-by-eid      (fn [_ _] {:name "Practice" :game-eid (UUID/randomUUID) :status "active"})
+                  data-access.contract/game-modes-for-game    (fn [_ _] [{:eid (UUID/randomUUID) :name "Land Battle"}])
+                  data-access.contract/subfactions-by-keys    (fn [_ _] [])
+                  data-access.contract/units-by-keys          (fn [_ _] [])
+                  data-access.contract/mounts-for-unit        (fn [_ _] [])
+                  data-access.contract/unit-level-costs       (fn [_] {})
+                  data-access.contract/create-draft!          (fn [_ spec] (assoc spec :version 1))
+                  data-access.contract/add-entries!           (fn [_ _ _] nil)
+                  data-access.contract/phases-for-tournament  (fn [_ _] [])
+                  data-access.contract/entries-for-tournament (fn [_ _] [])
+                  data-access.contract/matches-for-tournament (fn [_ _] [])]
       (t))))
 
 (def ^:private match-eid (UUID/fromString "00000000-0000-4000-8000-000000000001"))
@@ -110,27 +110,27 @@
    :uploaded-by-sub "sigmar_42"})
 
 (deftest record-game-rejects-missing-match
-  (with-redefs [data-access.contract/get-match-by-eid (fn [_ _] nil)]
+  (with-redefs [data-access.contract/match-by-eid (fn [_ _] nil)]
     (let [r (handlers.replay/record-game-from-parsed deps match-eid (valid-submission "sigmar_42"))]
       (is (= :match-record/error (:type r)))
       (is (= "Match not found." (:message r))))))
 
 (deftest record-game-rejects-already-complete
-  (with-redefs [data-access.contract/get-match-by-eid (fn [_ _] (assoc bo1-match :status "complete"))]
+  (with-redefs [data-access.contract/match-by-eid (fn [_ _] (assoc bo1-match :status "complete"))]
     (let [r (handlers.replay/record-game-from-parsed deps match-eid (valid-submission "sigmar_42"))]
       (is (= :match-record/error (:type r)))
       (is (= "Match is already complete." (:message r))))))
 
 (deftest record-game-rejects-unknown-winner-sub
-  (with-redefs [data-access.contract/get-match-by-eid    (fn [_ _] bo1-match)
-                data-access.contract/get-games-for-match (fn [_ _] [])]
+  (with-redefs [data-access.contract/match-by-eid    (fn [_ _] bo1-match)
+                data-access.contract/games-for-match (fn [_ _] [])]
     (let [r (handlers.replay/record-game-from-parsed deps match-eid (valid-submission "stranger"))]
       (is (= :match-record/error (:type r)))
       (is (re-find #"one of the match's players" (:message r))))))
 
 (deftest record-game-rejects-when-series-full
-  (with-redefs [data-access.contract/get-match-by-eid    (fn [_ _] bo1-match)
-                data-access.contract/get-games-for-match (fn [_ _] [{:winner-sub "sigmar_42"}])]
+  (with-redefs [data-access.contract/match-by-eid    (fn [_ _] bo1-match)
+                data-access.contract/games-for-match (fn [_ _] [{:winner-sub "sigmar_42"}])]
     (let [r (handlers.replay/record-game-from-parsed deps match-eid (valid-submission "sigmar_42"))]
       (is (= :match-record/error (:type r)))
       (is (re-find #"maximum" (:message r))))))
@@ -164,35 +164,35 @@
                                                                                                :key           mounted-key
                                                                                                :level         0
                                                                                                :spells        []}]}]}]}]
-    (with-redefs [data-access.contract/get-match-by-eid      (fn [_ _] bo1-match)
-                  data-access.contract/get-games-for-match   (fn [_ _] [])
-                  data-access.contract/create-replay!        (fn [_ spec] (assoc spec :id 1))
-                  data-access.contract/create-game           (fn [_ _ gi w _] {:game-index gi :winner-sub w})
-                  data-access.contract/update-match-result   (fn [_ _ _] nil)
-                  data-access.contract/get-tournament-by-eid (fn [_ _] {:name "Mount Cup" :game-eid (UUID/randomUUID)})
-                  data-access.contract/game-modes-for-game   (fn [_ _] [{:eid (UUID/randomUUID) :name "Land Battle"}])
-                  data-access.contract/subfactions-by-keys   (fn [_ _] [{:key "wh3_dlc23_chd_legion_of_azgorh" :faction-eid faction-eid}])
-                  data-access.contract/units-by-keys         (fn [_ _] [{:eid unit-eid :key base-key :cost 900}])
-                  data-access.contract/mounts-for-unit       (fn [_ eid]
-                                                               (when (= eid unit-eid)
-                                                                 [{:key "mount_great_taurus" :name "Great Taurus" :cost 300}
-                                                                  {:key "mount_lammasu" :name "Lammasu" :cost 200}]))
+    (with-redefs [data-access.contract/match-by-eid         (fn [_ _] bo1-match)
+                  data-access.contract/games-for-match      (fn [_ _] [])
+                  data-access.contract/create-replay!       (fn [_ spec] (assoc spec :id 1))
+                  data-access.contract/create-game!         (fn [_ _ gi w _] {:game-index gi :winner-sub w})
+                  data-access.contract/update-match-result! (fn [_ _ _] nil)
+                  data-access.contract/tournament-by-eid    (fn [_ _] {:name "Mount Cup" :game-eid (UUID/randomUUID)})
+                  data-access.contract/game-modes-for-game  (fn [_ _] [{:eid (UUID/randomUUID) :name "Land Battle"}])
+                  data-access.contract/subfactions-by-keys  (fn [_ _] [{:key "wh3_dlc23_chd_legion_of_azgorh" :faction-eid faction-eid}])
+                  data-access.contract/units-by-keys        (fn [_ _] [{:eid unit-eid :key base-key :cost 900}])
+                  data-access.contract/mounts-for-unit      (fn [_ eid]
+                                                              (when (= eid unit-eid)
+                                                                [{:key "mount_great_taurus" :name "Great Taurus" :cost 300}
+                                                                 {:key "mount_lammasu" :name "Lammasu" :cost 200}]))
                   ;; compute-unit-total-cost (transitively reached from
                   ;; replay via parsed-unit->entry) hits the datalog
                   ;; mounts + level-cost reads, so mirror the SQLite
                   ;; stubs above on the datalog names.
-                  data-access.contract/mounts-for-unit       (fn [_ eid]
-                                                               (when (= eid unit-eid)
-                                                                 [{:key "mount_great_taurus" :name "Great Taurus" :cost 300}
-                                                                  {:key "mount_lammasu" :name "Lammasu" :cost 200}]))
-                  data-access.contract/unit-level-costs      (fn [_] {0 {:level   0 :fixed-cost 0   :cost-multiplier 1.0
-                                                                         :fatigue 0 :melee-cp   0.0 :missile-cp      0.0}})
-                  data-access.contract/abilities-by-keys     (fn [_ _] {})
-                  data-access.contract/spells-by-keys        (fn [_ _] {})
-                  data-access.contract/items-for-unit        (fn [_ _] [])
-                  data-access.contract/create-draft!         (fn [_ spec] (assoc spec :version 1))
-                  data-access.contract/add-entries!          (fn [_ draft-eid entries]
-                                                               (swap! stored-states into (map #(assoc % :draft-eid draft-eid) entries)))]
+                  data-access.contract/mounts-for-unit      (fn [_ eid]
+                                                              (when (= eid unit-eid)
+                                                                [{:key "mount_great_taurus" :name "Great Taurus" :cost 300}
+                                                                 {:key "mount_lammasu" :name "Lammasu" :cost 200}]))
+                  data-access.contract/unit-level-costs     (fn [_] {0 {:level   0 :fixed-cost 0   :cost-multiplier 1.0
+                                                                        :fatigue 0 :melee-cp   0.0 :missile-cp      0.0}})
+                  data-access.contract/abilities-by-keys    (fn [_ _] {})
+                  data-access.contract/spells-by-keys       (fn [_ _] {})
+                  data-access.contract/items-for-unit       (fn [_ _] [])
+                  data-access.contract/create-draft!        (fn [_ spec] (assoc spec :version 1))
+                  data-access.contract/add-entries!         (fn [_ draft-eid entries]
+                                                              (swap! stored-states into (map #(assoc % :draft-eid draft-eid) entries)))]
       (handlers.replay/record-game-from-parsed
        deps match-eid
        {:parsed          parsed-with-mount
@@ -222,35 +222,35 @@
         match-completed (atom nil)
         emp-faction-eid (UUID/randomUUID)
         chd-faction-eid (UUID/randomUUID)]
-    (with-redefs [data-access.contract/get-match-by-eid      (fn [_ _] bo1-match)
-                  data-access.contract/get-games-for-match   (fn [_ _] [])
-                  data-access.contract/create-replay!        (fn [_ spec]
-                                                               (swap! stored-replays conj spec)
-                                                               spec)
-                  data-access.contract/create-game           (fn [_ _meid game-index winner-sub opts]
-                                                               (let [g (merge {:game-index game-index
-                                                                               :winner-sub winner-sub
-                                                                               :replay-eid (:replay-eid opts)}
-                                                                              (select-keys opts
-                                                                                           [:player-one-draft-eid
-                                                                                            :player-two-draft-eid]))]
-                                                                 (swap! stored-games conj g)
-                                                                 g))
-                  data-access.contract/update-match-result   (fn [_ _ winner] (reset! match-completed winner))
-                  data-access.contract/get-tournament-by-eid (fn [_ _] {:name "Spring Open" :game-eid (UUID/randomUUID)})
-                  data-access.contract/game-modes-for-game   (fn [_ _] [{:eid (UUID/randomUUID) :name "Land Battle"}])
-                  data-access.contract/subfactions-by-keys   (fn [_ keys]
-                                                               (let [k (first keys)]
-                                                                 (cond
-                                                                   (= k "wh_main_emp_empire")
-                                                                   [{:key k :faction-eid emp-faction-eid}]
-                                                                   (= k "wh3_dlc23_chd_legion_of_azgorh")
-                                                                   [{:key k :faction-eid chd-faction-eid}]
-                                                                   :else [])))
-                  data-access.contract/create-draft!         (fn [_ spec]
-                                                               (swap! stored-drafts conj spec)
-                                                               (assoc spec :version 1))
-                  data-access.contract/add-entries!          (fn [_ _ _] nil)]
+    (with-redefs [data-access.contract/match-by-eid         (fn [_ _] bo1-match)
+                  data-access.contract/games-for-match      (fn [_ _] [])
+                  data-access.contract/create-replay!       (fn [_ spec]
+                                                              (swap! stored-replays conj spec)
+                                                              spec)
+                  data-access.contract/create-game!         (fn [_ _meid game-index winner-sub opts]
+                                                              (let [g (merge {:game-index game-index
+                                                                              :winner-sub winner-sub
+                                                                              :replay-eid (:replay-eid opts)}
+                                                                             (select-keys opts
+                                                                                          [:player-one-draft-eid
+                                                                                           :player-two-draft-eid]))]
+                                                                (swap! stored-games conj g)
+                                                                g))
+                  data-access.contract/update-match-result! (fn [_ _ winner] (reset! match-completed winner))
+                  data-access.contract/tournament-by-eid    (fn [_ _] {:name "Spring Open" :game-eid (UUID/randomUUID)})
+                  data-access.contract/game-modes-for-game  (fn [_ _] [{:eid (UUID/randomUUID) :name "Land Battle"}])
+                  data-access.contract/subfactions-by-keys  (fn [_ keys]
+                                                              (let [k (first keys)]
+                                                                (cond
+                                                                  (= k "wh_main_emp_empire")
+                                                                  [{:key k :faction-eid emp-faction-eid}]
+                                                                  (= k "wh3_dlc23_chd_legion_of_azgorh")
+                                                                  [{:key k :faction-eid chd-faction-eid}]
+                                                                  :else [])))
+                  data-access.contract/create-draft!        (fn [_ spec]
+                                                              (swap! stored-drafts conj spec)
+                                                              (assoc spec :version 1))
+                  data-access.contract/add-entries!         (fn [_ _ _] nil)]
       (let [result (handlers.replay/record-game-from-parsed
                     deps match-eid (valid-submission "sigmar_42"))]
         (testing "one replay row persisted"
