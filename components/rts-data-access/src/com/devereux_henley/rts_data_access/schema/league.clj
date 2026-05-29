@@ -1,8 +1,5 @@
 (ns com.devereux-henley.rts-data-access.schema.league
-  "Malli schemas for the league-domain Datalevin query/mutation return
-  shapes. Mirrors the legacy `:league` entity shape the SQLite query
-  layer surfaced, minus `:id` and `:deleted-at` which Datalevin has no
-  use for."
+  "Malli return-shape schemas for the league-domain Datalevin queries."
   (:require
    [com.devereux-henley.schema.contract :as schema.contract]))
 
@@ -26,11 +23,3 @@
     [:name           :string]
     [:description    :string]
     [:created-by-sub :string]]))
-
-(def conn-schema
-  "Opaque Datalevin connection — see [[schema.draft/conn-schema]]."
-  :any)
-
-(def tx-report-schema
-  "Datalevin transact!'s return value, passed through as-is."
-  :any)

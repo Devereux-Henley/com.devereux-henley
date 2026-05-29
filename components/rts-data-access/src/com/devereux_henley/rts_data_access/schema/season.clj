@@ -1,8 +1,5 @@
 (ns com.devereux-henley.rts-data-access.schema.season
-  "Malli schemas for the season-domain Datalevin query/mutation return
-  shapes. Mirrors the legacy `:season` entity shape the SQLite query
-  layer surfaced, minus `:id` and `:deleted-at`. `:name` stays
-  optional — the handler falls back to `\"Season N\"` when absent."
+  "Malli return-shape schemas for the season-domain Datalevin queries."
   (:require
    [com.devereux-henley.schema.contract :as schema.contract]))
 
@@ -33,11 +30,3 @@
   (schema.contract/to-schema
    [:map
     [:max-ordinal [:int {:min 0}]]]))
-
-(def conn-schema
-  "Opaque Datalevin connection — see [[schema.draft/conn-schema]]."
-  :any)
-
-(def tx-report-schema
-  "Datalevin transact!'s return value, passed through as-is."
-  :any)

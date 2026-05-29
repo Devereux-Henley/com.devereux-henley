@@ -1,5 +1,6 @@
 (ns com.devereux-henley.rts-data-access.contract
   (:require
+   [com.devereux-henley.datalog.contract :as dl]
    [com.devereux-henley.rts-data-access.query.datalog.draft :as query.datalog.draft]
    [com.devereux-henley.rts-data-access.query.datalog.game :as query.datalog.game]
    [com.devereux-henley.rts-data-access.query.datalog.league :as query.datalog.league]
@@ -78,82 +79,6 @@
 (def unit-level-costs     query.datalog.game/unit-level-costs)
 (def family-variants-by-eid query.datalog.game/family-variants-by-eid)
 
-(schema.contract/=>* games query.datalog.game/games
-                     [:=> [:cat schema.game/conn-schema]
-                      [:sequential schema.game/game-schema]])
-
-(schema.contract/=>* game-by-eid query.datalog.game/game-by-eid
-                     [:=> [:cat schema.game/conn-schema :uuid]
-                      [:maybe schema.game/game-schema]])
-
-(schema.contract/=>* factions query.datalog.game/factions
-                     [:=> [:cat schema.game/conn-schema]
-                      [:sequential schema.game/faction-schema]])
-
-(schema.contract/=>* factions-for-game query.datalog.game/factions-for-game
-                     [:=> [:cat schema.game/conn-schema :uuid]
-                      [:sequential schema.game/faction-schema]])
-
-(schema.contract/=>* faction-by-eid query.datalog.game/faction-by-eid
-                     [:=> [:cat schema.game/conn-schema :uuid]
-                      [:maybe schema.game/faction-schema]])
-
-(schema.contract/=>* units query.datalog.game/units
-                     [:=> [:cat schema.game/conn-schema]
-                      [:sequential schema.game/unit-summary-schema]])
-
-(schema.contract/=>* units-for-game query.datalog.game/units-for-game
-                     [:=> [:cat schema.game/conn-schema :uuid]
-                      [:sequential schema.game/unit-summary-schema]])
-
-(schema.contract/=>* units-for-faction query.datalog.game/units-for-faction
-                     [:=> [:cat schema.game/conn-schema :uuid]
-                      [:sequential schema.game/unit-summary-schema]])
-
-(schema.contract/=>* unit-by-eid query.datalog.game/unit-by-eid
-                     [:=> [:cat schema.game/conn-schema :uuid]
-                      [:maybe schema.game/unit-detail-schema]])
-
-(schema.contract/=>* game-mode-by-eid query.datalog.game/game-mode-by-eid
-                     [:=> [:cat schema.game/conn-schema :uuid]
-                      [:maybe schema.game/game-mode-schema]])
-
-(schema.contract/=>* game-modes-for-game query.datalog.game/game-modes-for-game
-                     [:=> [:cat schema.game/conn-schema :uuid]
-                      [:sequential schema.game/game-mode-schema]])
-
-(schema.contract/=>* socials-for-game query.datalog.game/socials-for-game
-                     [:=> [:cat schema.game/conn-schema :uuid]
-                      [:sequential schema.game/social-link-schema]])
-
-(schema.contract/=>* mounts-for-unit query.datalog.game/mounts-for-unit
-                     [:=> [:cat schema.game/conn-schema :uuid]
-                      [:sequential schema.game/mount-row-schema]])
-
-(schema.contract/=>* items-for-unit query.datalog.game/items-for-unit
-                     [:=> [:cat schema.game/conn-schema :uuid]
-                      [:sequential schema.game/item-row-schema]])
-
-(schema.contract/=>* spells-by-keys query.datalog.game/spells-by-keys
-                     [:=> [:cat schema.game/conn-schema [:sequential :string]]
-                      [:maybe [:map-of :string schema.game/spell-row-schema]]])
-
-(schema.contract/=>* spells-for-lore query.datalog.game/spells-for-lore
-                     [:=> [:cat schema.game/conn-schema :string]
-                      [:sequential schema.game/spell-row-schema]])
-
-(schema.contract/=>* abilities-by-keys query.datalog.game/abilities-by-keys
-                     [:=> [:cat schema.game/conn-schema [:sequential :string]]
-                      [:maybe [:map-of :string schema.game/ability-row-schema]]])
-
-(schema.contract/=>* unit-level-costs query.datalog.game/unit-level-costs
-                     [:=> [:cat schema.game/conn-schema]
-                      [:map-of :int schema.game/unit-level-cost-schema]])
-
-(schema.contract/=>* family-variants-by-eid query.datalog.game/family-variants-by-eid
-                     [:=> [:cat schema.game/conn-schema :uuid]
-                      [:maybe [:sequential schema.game/family-variant-schema]]])
-
 ;;; ─── Draft Datalog queries + mutations ────────────────────────────────────
 
 (def draft-entry-schema              schema.draft/draft-entry-schema)
@@ -171,56 +96,6 @@
 (def add-entries!                    query.datalog.draft/add-entries!)
 (def remove-entry!                   query.datalog.draft/remove-entry!)
 (def update-entry!                   query.datalog.draft/update-entry!)
-
-(schema.contract/=>* draft-by-eid query.datalog.draft/draft-by-eid
-                     [:=> [:cat schema.draft/conn-schema :uuid]
-                      [:maybe schema.draft/draft-result-schema]])
-
-(schema.contract/=>* drafts-for-player query.datalog.draft/drafts-for-player
-                     [:=> [:cat schema.draft/conn-schema :string]
-                      [:sequential schema.draft/draft-result-schema]])
-
-(schema.contract/=>* drafts-for-player-by-game query.datalog.draft/drafts-for-player-by-game
-                     [:=> [:cat schema.draft/conn-schema :string :uuid]
-                      [:sequential schema.draft/draft-result-schema]])
-
-(schema.contract/=>* draft-state-by-eid query.datalog.draft/draft-state-by-eid
-                     [:=> [:cat schema.draft/conn-schema :uuid] schema.draft/draft-state-schema])
-
-(schema.contract/=>* draft-entry-by-eid query.datalog.draft/draft-entry-by-eid
-                     [:=> [:cat schema.draft/conn-schema :uuid]
-                      [:maybe schema.draft/draft-entry-schema]])
-
-(schema.contract/=>* draft-entry-section-and-ordinal query.datalog.draft/draft-entry-section-and-ordinal
-                     [:=> [:cat schema.draft/conn-schema :uuid]
-                      [:maybe [:map
-                               [:section [:enum :main :reinforcements]]
-                               [:ordinal :int]]]])
-
-(schema.contract/=>* create-draft! query.datalog.draft/create-draft!
-                     [:=> [:cat schema.draft/conn-schema schema.draft/create-spec-schema]
-                      schema.draft/draft-result-schema])
-
-(schema.contract/=>* update-draft-name! query.datalog.draft/update-draft-name!
-                     [:=> [:cat schema.draft/conn-schema :uuid [:maybe :string]]
-                      schema.draft/draft-result-schema])
-
-(schema.contract/=>* add-entry! query.datalog.draft/add-entry!
-                     [:=> [:cat schema.draft/conn-schema :uuid schema.draft/entry-add-spec-schema]
-                      schema.draft/tx-report-schema])
-
-(schema.contract/=>* add-entries! query.datalog.draft/add-entries!
-                     [:=> [:cat schema.draft/conn-schema :uuid
-                           [:sequential schema.draft/entry-batch-spec-schema]]
-                      schema.draft/tx-report-schema])
-
-(schema.contract/=>* remove-entry! query.datalog.draft/remove-entry!
-                     [:=> [:cat schema.draft/conn-schema :uuid :uuid]
-                      schema.draft/tx-report-schema])
-
-(schema.contract/=>* update-entry! query.datalog.draft/update-entry!
-                     [:=> [:cat schema.draft/conn-schema :uuid :uuid schema.draft/entry-update-attrs-schema]
-                      schema.draft/tx-report-schema])
 
 ;;; ─── Tournament DB entities ────────────────────────────────────────────────
 
@@ -270,22 +145,6 @@
 (def leagues-for-game    query.datalog.league/leagues-for-game)
 (def create-league!      query.datalog.league/create-league!)
 
-(schema.contract/=>* league-by-eid query.datalog.league/league-by-eid
-                     [:=> [:cat schema.league/conn-schema :uuid]
-                      [:maybe schema.league/league-result-schema]])
-
-(schema.contract/=>* leagues query.datalog.league/leagues
-                     [:=> [:cat schema.league/conn-schema]
-                      [:sequential schema.league/league-result-schema]])
-
-(schema.contract/=>* leagues-for-game query.datalog.league/leagues-for-game
-                     [:=> [:cat schema.league/conn-schema :uuid]
-                      [:sequential schema.league/league-result-schema]])
-
-(schema.contract/=>* create-league! query.datalog.league/create-league!
-                     [:=> [:cat schema.league/conn-schema schema.league/create-spec-schema]
-                      schema.league/league-result-schema])
-
 ;;; ─── Season Datalog queries + mutations ───────────────────────────────────
 
 (def season-by-eid              query.datalog.season/season-by-eid)
@@ -294,30 +153,6 @@
 (def current-season-for-league  query.datalog.season/current-season-for-league)
 (def max-ordinal-for-league     query.datalog.season/max-ordinal-for-league)
 (def create-season!             query.datalog.season/create-season!)
-
-(schema.contract/=>* season-by-eid query.datalog.season/season-by-eid
-                     [:=> [:cat schema.season/conn-schema :uuid]
-                      [:maybe schema.season/season-result-schema]])
-
-(schema.contract/=>* seasons query.datalog.season/seasons
-                     [:=> [:cat schema.season/conn-schema]
-                      [:sequential schema.season/season-result-schema]])
-
-(schema.contract/=>* seasons-for-league query.datalog.season/seasons-for-league
-                     [:=> [:cat schema.season/conn-schema :uuid]
-                      [:sequential schema.season/season-result-schema]])
-
-(schema.contract/=>* current-season-for-league query.datalog.season/current-season-for-league
-                     [:=> [:cat schema.season/conn-schema :uuid]
-                      [:maybe schema.season/season-result-schema]])
-
-(schema.contract/=>* max-ordinal-for-league query.datalog.season/max-ordinal-for-league
-                     [:=> [:cat schema.season/conn-schema :uuid]
-                      schema.season/max-ordinal-schema])
-
-(schema.contract/=>* create-season! query.datalog.season/create-season!
-                     [:=> [:cat schema.season/conn-schema schema.season/create-spec-schema]
-                      schema.season/season-result-schema])
 
 ;;; ─── Stats DB queries ──────────────────────────────────────────────────────
 
@@ -342,3 +177,182 @@
 (def create-replay           query.replay/create-replay)
 (def get-units-by-keys       query.replay/get-units-by-keys)
 (def get-subfactions-by-keys query.replay/get-subfactions-by-keys)
+
+;;; ─── Function schemas ─────────────────────────────────────────────────────
+;;;
+;;; All `=>*` declarations live here so adding/auditing contracts is one
+;;; scroll, not a hunt through the re-exports above.
+
+;; Game datalog
+
+(schema.contract/=>* games query.datalog.game/games
+                     [:=> [:cat dl/conn-schema]
+                      [:sequential schema.game/game-schema]])
+
+(schema.contract/=>* game-by-eid query.datalog.game/game-by-eid
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:maybe schema.game/game-schema]])
+
+(schema.contract/=>* factions query.datalog.game/factions
+                     [:=> [:cat dl/conn-schema]
+                      [:sequential schema.game/faction-schema]])
+
+(schema.contract/=>* factions-for-game query.datalog.game/factions-for-game
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:sequential schema.game/faction-schema]])
+
+(schema.contract/=>* faction-by-eid query.datalog.game/faction-by-eid
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:maybe schema.game/faction-schema]])
+
+(schema.contract/=>* units query.datalog.game/units
+                     [:=> [:cat dl/conn-schema]
+                      [:sequential schema.game/unit-summary-schema]])
+
+(schema.contract/=>* units-for-game query.datalog.game/units-for-game
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:sequential schema.game/unit-summary-schema]])
+
+(schema.contract/=>* units-for-faction query.datalog.game/units-for-faction
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:sequential schema.game/unit-summary-schema]])
+
+(schema.contract/=>* unit-by-eid query.datalog.game/unit-by-eid
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:maybe schema.game/unit-detail-schema]])
+
+(schema.contract/=>* game-mode-by-eid query.datalog.game/game-mode-by-eid
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:maybe schema.game/game-mode-schema]])
+
+(schema.contract/=>* game-modes-for-game query.datalog.game/game-modes-for-game
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:sequential schema.game/game-mode-schema]])
+
+(schema.contract/=>* socials-for-game query.datalog.game/socials-for-game
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:sequential schema.game/social-link-schema]])
+
+(schema.contract/=>* mounts-for-unit query.datalog.game/mounts-for-unit
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:sequential schema.game/mount-row-schema]])
+
+(schema.contract/=>* items-for-unit query.datalog.game/items-for-unit
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:sequential schema.game/item-row-schema]])
+
+(schema.contract/=>* spells-by-keys query.datalog.game/spells-by-keys
+                     [:=> [:cat dl/conn-schema [:sequential :string]]
+                      [:maybe [:map-of :string schema.game/spell-row-schema]]])
+
+(schema.contract/=>* spells-for-lore query.datalog.game/spells-for-lore
+                     [:=> [:cat dl/conn-schema :string]
+                      [:sequential schema.game/spell-row-schema]])
+
+(schema.contract/=>* abilities-by-keys query.datalog.game/abilities-by-keys
+                     [:=> [:cat dl/conn-schema [:sequential :string]]
+                      [:maybe [:map-of :string schema.game/ability-row-schema]]])
+
+(schema.contract/=>* unit-level-costs query.datalog.game/unit-level-costs
+                     [:=> [:cat dl/conn-schema]
+                      [:map-of :int schema.game/unit-level-cost-schema]])
+
+(schema.contract/=>* family-variants-by-eid query.datalog.game/family-variants-by-eid
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:maybe [:sequential schema.game/family-variant-schema]]])
+
+;; Draft datalog
+
+(schema.contract/=>* draft-by-eid query.datalog.draft/draft-by-eid
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:maybe schema.draft/draft-result-schema]])
+
+(schema.contract/=>* drafts-for-player query.datalog.draft/drafts-for-player
+                     [:=> [:cat dl/conn-schema :string]
+                      [:sequential schema.draft/draft-result-schema]])
+
+(schema.contract/=>* drafts-for-player-by-game query.datalog.draft/drafts-for-player-by-game
+                     [:=> [:cat dl/conn-schema :string :uuid]
+                      [:sequential schema.draft/draft-result-schema]])
+
+(schema.contract/=>* draft-state-by-eid query.datalog.draft/draft-state-by-eid
+                     [:=> [:cat dl/conn-schema :uuid] schema.draft/draft-state-schema])
+
+(schema.contract/=>* draft-entry-by-eid query.datalog.draft/draft-entry-by-eid
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:maybe schema.draft/draft-entry-schema]])
+
+(schema.contract/=>* draft-entry-section-and-ordinal query.datalog.draft/draft-entry-section-and-ordinal
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:maybe [:map
+                               [:section [:enum :main :reinforcements]]
+                               [:ordinal :int]]]])
+
+(schema.contract/=>* create-draft! query.datalog.draft/create-draft!
+                     [:=> [:cat dl/conn-schema schema.draft/create-spec-schema]
+                      schema.draft/draft-result-schema])
+
+(schema.contract/=>* update-draft-name! query.datalog.draft/update-draft-name!
+                     [:=> [:cat dl/conn-schema :uuid [:maybe :string]]
+                      schema.draft/draft-result-schema])
+
+(schema.contract/=>* add-entry! query.datalog.draft/add-entry!
+                     [:=> [:cat dl/conn-schema :uuid schema.draft/entry-add-spec-schema]
+                      dl/tx-report-schema])
+
+(schema.contract/=>* add-entries! query.datalog.draft/add-entries!
+                     [:=> [:cat dl/conn-schema :uuid
+                           [:sequential schema.draft/entry-batch-spec-schema]]
+                      dl/tx-report-schema])
+
+(schema.contract/=>* remove-entry! query.datalog.draft/remove-entry!
+                     [:=> [:cat dl/conn-schema :uuid :uuid]
+                      dl/tx-report-schema])
+
+(schema.contract/=>* update-entry! query.datalog.draft/update-entry!
+                     [:=> [:cat dl/conn-schema :uuid :uuid schema.draft/entry-update-attrs-schema]
+                      dl/tx-report-schema])
+
+;; League datalog
+
+(schema.contract/=>* league-by-eid query.datalog.league/league-by-eid
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:maybe schema.league/league-result-schema]])
+
+(schema.contract/=>* leagues query.datalog.league/leagues
+                     [:=> [:cat dl/conn-schema]
+                      [:sequential schema.league/league-result-schema]])
+
+(schema.contract/=>* leagues-for-game query.datalog.league/leagues-for-game
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:sequential schema.league/league-result-schema]])
+
+(schema.contract/=>* create-league! query.datalog.league/create-league!
+                     [:=> [:cat dl/conn-schema schema.league/create-spec-schema]
+                      schema.league/league-result-schema])
+
+;; Season datalog
+
+(schema.contract/=>* season-by-eid query.datalog.season/season-by-eid
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:maybe schema.season/season-result-schema]])
+
+(schema.contract/=>* seasons query.datalog.season/seasons
+                     [:=> [:cat dl/conn-schema]
+                      [:sequential schema.season/season-result-schema]])
+
+(schema.contract/=>* seasons-for-league query.datalog.season/seasons-for-league
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:sequential schema.season/season-result-schema]])
+
+(schema.contract/=>* current-season-for-league query.datalog.season/current-season-for-league
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:maybe schema.season/season-result-schema]])
+
+(schema.contract/=>* max-ordinal-for-league query.datalog.season/max-ordinal-for-league
+                     [:=> [:cat dl/conn-schema :uuid]
+                      schema.season/max-ordinal-schema])
+
+(schema.contract/=>* create-season! query.datalog.season/create-season!
+                     [:=> [:cat dl/conn-schema schema.season/create-spec-schema]
+                      schema.season/season-result-schema])

@@ -64,6 +64,16 @@
   [attr value]
   [attr value])
 
+(def conn-schema
+  "Opaque Datalevin connection — pre-validating it would couple callers to
+   datalevin internals for no gain. Re-export from per-domain `=>*` declarations
+   so every datalog fn's contract reads the same."
+  :any)
+
+(def tx-report-schema
+  "Datalevin transact!'s return value, passed through as-is."
+  :any)
+
 (defn entity
   "Return the `Entity` map for `eid-or-lookup-ref` from `db-or-conn`. Use for
    ad-hoc navigation; prefer `pull` when the shape is known and bounded."

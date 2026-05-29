@@ -98,12 +98,3 @@
     [:items       {:optional true} [:sequential :string]]
     [:total-cost  {:optional true} [:maybe :int]]
     [:engine-cost {:optional true} [:maybe :int]]]))
-
-(def conn-schema
-  "Opaque Datalevin connection — pre-validating it would couple this ns
-  to datalevin internals for no gain."
-  :any)
-
-(def tx-report-schema
-  "Datalevin transact!'s return value, passed through as-is."
-  :any)
