@@ -461,25 +461,25 @@
   (let [keys-vec (vec (distinct (filter some? unit-keys)))]
     (if (empty? keys-vec)
       []
-      (let [db          (dl/db conn)
-            pulled      (dl/q '[:find [(pull ?u pattern) ...]
-                                :in $ pattern [?key ...]
-                                :where [?u :unit/key ?key]]
-                              db unit-resolution-pattern keys-vec)
-            base-rows   (mapv ->unit-resolution-row pulled)
+      (let [db           (dl/db conn)
+            pulled       (dl/q '[:find [(pull ?u pattern) ...]
+                                 :in $ pattern [?key ...]
+                                 :where [?u :unit/key ?key]]
+                               db unit-resolution-pattern keys-vec)
+            base-rows    (mapv ->unit-resolution-row pulled)
             family-pairs (->> base-rows
                               (keep (fn [r] (when (and (:family-name r) (::faction-id r))
                                               [(:family-name r) (::faction-id r)])))
                               distinct
                               vec)
-            counts      (when (seq family-pairs)
-                          (dl/q '[:find ?fn ?fid (count ?u)
-                                  :in $ [[?fn ?fid] ...]
-                                  :where
-                                  [?u :unit/family-name ?fn]
-                                  [?u :unit/faction ?fid]]
-                                db family-pairs))
-            count-map   (into {} (map (fn [[fn fid c]] [[fn fid] c])) counts)]
+            counts       (when (seq family-pairs)
+                           (dl/q '[:find ?fn ?fid (count ?u)
+                                   :in $ [[?fn ?fid] ...]
+                                   :where
+                                   [?u :unit/family-name ?fn]
+                                   [?u :unit/faction ?fid]]
+                                 db family-pairs))
+            count-map    (into {} (map (fn [[fn fid c]] [[fn fid] c])) counts)]
         (mapv (fn [r]
                 (-> r
                     (assoc :family-variant-count

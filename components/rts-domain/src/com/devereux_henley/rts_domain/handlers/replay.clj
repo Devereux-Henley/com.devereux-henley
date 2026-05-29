@@ -343,7 +343,7 @@
             (short-circuit-error (format "Match already has its maximum %d games." (:format match)))
             (let [tournament (db/get-tournament-by-eid conn (:tournament-eid match))
                   game-modes (db/game-modes-for-game (:datalog-connection dependencies)
-                                                    (:game-eid tournament))
+                                                     (:game-eid tournament))
                   now        (Instant/now)
                   replay     (persist-replay dependencies
                                              {:parsed          parsed
