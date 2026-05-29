@@ -117,19 +117,6 @@
     [:updated-at :instant]
     [:deleted-at [:maybe :instant]]]))
 
-(def platform-entity
-  (schema.contract/to-schema
-   [:map
-    [:id :int]
-    [:eid :uuid]
-    [:name {:min 1} :string]
-    [:description {:min 1} :string]
-    [:platform-url {:min 1} :string]
-    [:version :int]
-    [:created-at :instant]
-    [:updated-at :instant]
-    [:deleted-at [:maybe :instant]]]))
-
 (def ability-entity
   (schema.contract/to-schema
    [:map
