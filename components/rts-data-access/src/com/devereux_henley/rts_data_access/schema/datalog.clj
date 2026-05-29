@@ -41,6 +41,8 @@
    [com.devereux-henley.rts-data-access.schema.datalog.item :as schema.datalog.item]
    [com.devereux-henley.rts-data-access.schema.datalog.league :as schema.datalog.league]
    [com.devereux-henley.rts-data-access.schema.datalog.lore :as schema.datalog.lore]
+   [com.devereux-henley.rts-data-access.schema.datalog.match :as schema.datalog.match]
+   [com.devereux-henley.rts-data-access.schema.datalog.match-game :as schema.datalog.match-game]
    [com.devereux-henley.rts-data-access.schema.datalog.mount :as schema.datalog.mount]
    [com.devereux-henley.rts-data-access.schema.datalog.patch :as schema.datalog.patch]
    [com.devereux-henley.rts-data-access.schema.datalog.replay :as schema.datalog.replay]
@@ -49,6 +51,10 @@
    [com.devereux-henley.rts-data-access.schema.datalog.spell :as schema.datalog.spell]
    [com.devereux-henley.rts-data-access.schema.datalog.spell-lore :as schema.datalog.spell-lore]
    [com.devereux-henley.rts-data-access.schema.datalog.subfaction :as schema.datalog.subfaction]
+   [com.devereux-henley.rts-data-access.schema.datalog.tournament :as schema.datalog.tournament]
+   [com.devereux-henley.rts-data-access.schema.datalog.tournament-entry :as schema.datalog.tournament-entry]
+   [com.devereux-henley.rts-data-access.schema.datalog.tournament-phase :as schema.datalog.tournament-phase]
+   [com.devereux-henley.rts-data-access.schema.datalog.tournament-round :as schema.datalog.tournament-round]
    [com.devereux-henley.rts-data-access.schema.datalog.unit :as schema.datalog.unit]
    [com.devereux-henley.rts-data-access.schema.datalog.unit-category :as schema.datalog.unit-category]
    [com.devereux-henley.rts-data-access.schema.datalog.unit-item :as schema.datalog.unit-item]
@@ -71,6 +77,8 @@
    schema.datalog.item/schema
    schema.datalog.league/schema
    schema.datalog.lore/schema
+   schema.datalog.match/schema
+   schema.datalog.match-game/schema
    schema.datalog.mount/schema
    schema.datalog.patch/schema
    schema.datalog.replay/schema
@@ -79,6 +87,10 @@
    schema.datalog.spell/schema
    schema.datalog.spell-lore/schema
    schema.datalog.subfaction/schema
+   schema.datalog.tournament/schema
+   schema.datalog.tournament-entry/schema
+   schema.datalog.tournament-phase/schema
+   schema.datalog.tournament-round/schema
    schema.datalog.unit/schema
    schema.datalog.unit-category/schema
    schema.datalog.unit-item/schema
