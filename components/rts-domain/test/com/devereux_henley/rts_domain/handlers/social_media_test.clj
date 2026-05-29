@@ -6,20 +6,24 @@
   (:import
    [java.util UUID]))
 
-(def ^:private test-deps {:connection nil})
+(def ^:private test-deps {:datalog-connection nil})
 
 ;; --- get-platform-by-eid ---
 
 (deftest get-platform-by-eid-assigns-type
   (let [eid (UUID/randomUUID)]
-    (with-redefs [data-access.contract/get-platform-by-eid (fn [_ _] {:eid eid :name "Discord"})]
+    (with-redefs [data-access.contract/platform-by-eid (fn [_ _] {:eid eid :name "Discord"})]
       (let [result (handlers.social-media/get-platform-by-eid test-deps eid)]
         (is (= :social-media/platform (:type result)))))))
 
 (deftest get-platform-by-eid-preserves-fields
   (let [eid (UUID/randomUUID)]
-    (with-redefs [data-access.contract/get-platform-by-eid (fn [_ _] {:eid eid :name "Discord" :platform-url "https://discord.com"})]
+    (with-redefs [data-access.contract/platform-by-eid (fn [_ _] {:eid eid :name "Discord" :platform-url "https://discord.com"})]
       (let [result (handlers.social-media/get-platform-by-eid test-deps eid)]
         (is (= eid (:eid result)))
         (is (= "Discord" (:name result)))
         (is (= "https://discord.com" (:platform-url result)))))))
+
+(deftest get-platform-by-eid-returns-nil-when-missing
+  (with-redefs [data-access.contract/platform-by-eid (fn [_ _] nil)]
+    (is (nil? (handlers.social-media/get-platform-by-eid test-deps (UUID/randomUUID))))))

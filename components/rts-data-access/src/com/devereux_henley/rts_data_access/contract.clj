@@ -5,9 +5,9 @@
    [com.devereux-henley.rts-data-access.query.datalog.game :as query.datalog.game]
    [com.devereux-henley.rts-data-access.query.datalog.league :as query.datalog.league]
    [com.devereux-henley.rts-data-access.query.datalog.season :as query.datalog.season]
+   [com.devereux-henley.rts-data-access.query.datalog.social-media :as query.datalog.social-media]
    [com.devereux-henley.rts-data-access.query.game :as query.game]
    [com.devereux-henley.rts-data-access.query.replay :as query.replay]
-   [com.devereux-henley.rts-data-access.query.social-media :as query.social-media]
    [com.devereux-henley.rts-data-access.query.stats :as query.stats]
    [com.devereux-henley.rts-data-access.query.tournament :as query.tournament]
    [com.devereux-henley.rts-data-access.schema :as schema]
@@ -16,6 +16,7 @@
    [com.devereux-henley.rts-data-access.schema.game :as schema.game]
    [com.devereux-henley.rts-data-access.schema.league :as schema.league]
    [com.devereux-henley.rts-data-access.schema.season :as schema.season]
+   [com.devereux-henley.rts-data-access.schema.social-media :as schema.social-media]
    [com.devereux-henley.schema.contract :as schema.contract]))
 
 ;;; ─── Datalog schema-as-code ────────────────────────────────────────────────
@@ -160,13 +161,9 @@
 (def get-faction-standings-for-league query.stats/get-faction-standings-for-league)
 (def get-faction-standings-for-season query.stats/get-faction-standings-for-season)
 
-;;; ─── Social Media DB entities ──────────────────────────────────────────────
+;;; ─── Social Media Datalog queries ──────────────────────────────────────────
 
-(def platform-entity schema/platform-entity)
-
-;;; ─── Social Media DB queries ──────────────────────────────────────────────
-
-(def get-platform-by-eid query.social-media/get-platform-by-eid)
+(def platform-by-eid query.datalog.social-media/platform-by-eid)
 
 ;;; ─── Replay ────────────────────────────────────────────────────────────────
 
@@ -356,3 +353,9 @@
 (schema.contract/=>* create-season! query.datalog.season/create-season!
                      [:=> [:cat dl/conn-schema schema.season/create-spec-schema]
                       schema.season/season-result-schema])
+
+;; Social-media datalog
+
+(schema.contract/=>* platform-by-eid query.datalog.social-media/platform-by-eid
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:maybe schema.social-media/platform-result-schema]])
