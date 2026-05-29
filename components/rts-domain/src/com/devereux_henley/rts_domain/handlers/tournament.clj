@@ -33,10 +33,8 @@
         (db/tournaments (:datalog-connection dependencies))))
 
 (defn- derive-standings
-  "Standings are not stored — they are computed from the entry set folded
-   with completed match results (`rules/recalculate-standings`). Empty
-   during registration (no field of play yet), matching the SQLite-era
-   blob which only populated standings on `close-registration`."
+  "Computes standings from the entry set folded with completed match
+   results (`rules/recalculate-standings`). Empty during registration."
   [dependencies tournament-eid status]
   (if (= "registration" status)
     []
@@ -49,10 +47,10 @@
       (rules/recalculate-standings base completed))))
 
 (defn get-tournament-state
-  "Reconstructs the tournament state view-model from its entities — the
-   shape the rules engine and templates expect, formerly the
-   `tournament_state` JSON blob. Returns a default initial state when the
-   tournament is absent."
+  "Builds the tournament state map the rules engine and templates consume
+   from its entities (status, registration window, phases, current phase,
+   derived standings, qualifier count). Returns a default initial state
+   when the tournament is absent."
   [dependencies tournament-eid]
   (let [tournament (db/tournament-by-eid (:datalog-connection dependencies) tournament-eid)]
     (if-not tournament

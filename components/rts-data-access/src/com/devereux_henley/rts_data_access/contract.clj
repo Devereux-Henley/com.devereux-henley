@@ -41,12 +41,10 @@
 
 (def unit-entity schema/unit-entity)
 
-;;; ─── Game DB queries (SQLite — tournament-side, draft-lock only) ──────────
+;;; ─── Draft-lock query ──────────────────────────────────────────────────────
 ;;
-;; The draft-lock-info read still hits the SQLite tournament/match/match_game
-;; tables — those move to Datalevin under rts-5b6. Until then, the lookup
-;; effectively reports "never locked" (FK columns are NULL post-rts-9ri /
-;; post-rts-vhi) but the query at least returns a stable empty result.
+;; Reports whether a draft is locked by a recorded game. Currently returns
+;; a stable empty (never-locked) result.
 
 (def get-draft-lock-info query.game/get-draft-lock-info)
 (def draft-lock-info-schema query.game/draft-lock-info-schema)
@@ -142,10 +140,6 @@
 (def get-games-for-match query.tournament/get-games-for-match)
 
 ;;; ─── Tournament Datalog queries + mutations ────────────────────────────────
-;;
-;; The cutover target (rts-5b6): tournaments, phases/rounds, entries,
-;; matches, and games live in Datalevin. The SQLite re-exports above stay
-;; dormant until rts-1it deletes them with the SQL.
 
 (def tournament-by-eid               query.datalog.tournament/tournament-by-eid)
 (def tournaments-for-game            query.datalog.tournament/tournaments-for-game)

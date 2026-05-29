@@ -8,17 +8,14 @@
   (:import
    [java.util UUID]))
 
-;; The submit flow auto-creates one draft per side per game from the
-;; parsed replay. The handful of new data-access fns it pulls in are
-;; defaulted here to safe no-ops so the validation-focused tests don't
-;; need to know about them; the persistence-flow tests below override
-;; the relevant stubs to assert draft side-effects.
-;;
-;; When a match clinches, record-game-from-parsed delegates to
-;; handlers.tournament/update-match-result so standings recalculate —
-;; which pulls in the tournament-state + all-matches stubs below;
-;; defaulted to a minimal empty state with no phases so
-;; recalculate-and-check-completion is a no-op for these tests.
+;; The submit flow auto-creates one draft per side per game from the parsed
+;; replay; the data-access fns it pulls in are defaulted here to safe
+;; no-ops, and the persistence-flow tests below override the relevant stubs
+;; to assert draft side-effects. When a match clinches,
+;; record-game-from-parsed delegates to
+;; handlers.tournament/update-match-result, which reads the tournament's
+;; state + matches — defaulted to an empty no-phase state so completion
+;; checking is a no-op for these tests.
 (use-fixtures :each
   (fn [t]
     (with-redefs [data-access.contract/tournament-by-eid      (fn [_ _] {:name "Practice" :game-eid (UUID/randomUUID) :status "active"})
@@ -136,12 +133,11 @@
       (is (re-find #"maximum" (:message r))))))
 
 (deftest record-game-resolves-mount-from-parsed-key-suffix
-  ;; Regression: the mount-needing filter previously checked against the
-  ;; resolved-rows-map keys, but the mount-suffixed parser key
-  ;; (e.g. `..._sorcerer_prophet_fire_great_taurus`) never lives there —
-  ;; only its un-mounted prefix does. The filter must consult the
-  ;; engine-emitted keys directly so `get-mounts-for-unit` is hit for
-  ;; rows that have a mounted variant in the parsed game.
+  ;; The mount-needing filter consults the engine-emitted keys directly: a
+  ;; mount-suffixed parser key (e.g. `..._sorcerer_prophet_fire_great_taurus`)
+  ;; never appears in the resolved-rows map — only its un-mounted prefix
+  ;; does — so `mounts-for-unit` is hit for rows whose parsed key carries a
+  ;; mount variant.
   (let [stored-states     (atom [])
         unit-eid          (UUID/randomUUID)
         faction-eid       (UUID/randomUUID)
@@ -173,14 +169,6 @@
                   data-access.contract/game-modes-for-game  (fn [_ _] [{:eid (UUID/randomUUID) :name "Land Battle"}])
                   data-access.contract/subfactions-by-keys  (fn [_ _] [{:key "wh3_dlc23_chd_legion_of_azgorh" :faction-eid faction-eid}])
                   data-access.contract/units-by-keys        (fn [_ _] [{:eid unit-eid :key base-key :cost 900}])
-                  data-access.contract/mounts-for-unit      (fn [_ eid]
-                                                              (when (= eid unit-eid)
-                                                                [{:key "mount_great_taurus" :name "Great Taurus" :cost 300}
-                                                                 {:key "mount_lammasu" :name "Lammasu" :cost 200}]))
-                  ;; compute-unit-total-cost (transitively reached from
-                  ;; replay via parsed-unit->entry) hits the datalog
-                  ;; mounts + level-cost reads, so mirror the SQLite
-                  ;; stubs above on the datalog names.
                   data-access.contract/mounts-for-unit      (fn [_ eid]
                                                               (when (= eid unit-eid)
                                                                 [{:key "mount_great_taurus" :name "Great Taurus" :cost 300}

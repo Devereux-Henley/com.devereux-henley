@@ -9,12 +9,10 @@
 
 (def ^:private test-tournament-eid (UUID/fromString "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"))
 (def ^:private test-game-eid (UUID/fromString "eea787d7-1065-45eb-a3f6-e26f32c294a1"))
-;; The cutover routes every tournament read/write through the Datalevin
-;; connection; the SQLite `:connection` is no longer touched here.
+;; Tournament reads/writes go through the Datalevin connection.
 (def ^:private test-deps {:datalog-connection nil})
 
-;; A tournament *entity* as the datalog data-access layer returns it —
-;; status/registration/phase fields live on the row now, not in a JSON blob.
+;; A tournament entity as the datalog data-access layer returns it.
 (def ^:private test-tournament
   {:eid                       test-tournament-eid
    :name                      "Test Tournament"

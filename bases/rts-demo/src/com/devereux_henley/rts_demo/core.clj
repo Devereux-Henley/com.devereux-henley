@@ -49,9 +49,7 @@
     (datalog/transact! conn tx-data)))
 
 (defn- create-tournament!
-  "Create a demo tournament in registration status with a 14-day window.
-   `domain/create-tournament` now writes the full entity (status,
-   registration window, etc.) — there is no separate state blob to set."
+  "Create a demo tournament in registration status with a 14-day window."
   [deps {:keys [eid name description]}]
   (let [opens-at  (LocalDateTime/now)
         closes-at (.plusDays opens-at 14)

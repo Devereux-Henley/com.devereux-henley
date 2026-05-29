@@ -1,19 +1,13 @@
 (ns com.devereux-henley.rts-data-access.query.datalog.tournament
   "Datalevin reads and mutations for the tournament domain — tournaments,
-  their decomposed phases/rounds, entries, matches, and per-match games.
+  phases/rounds, entries, matches, and per-match games.
 
-  Reads return the same unqualified-key shapes the SQLite-era handlers and
-  the pure `rules.tournament` functions already consume: enum keywords are
-  flattened back to strings (`:match/status :complete` → `\"complete\"`),
-  ref sub-maps become flat `*-eid` fields, and instants come back as
-  canonical `java.util.Date` values. This keeps the cutover a swap of the
-  data-access layer rather than a rewrite of the rules.
-
-  The SQLite `tournament_state` JSON blob has no storage analogue here —
-  status, the registration window, `current-phase-index`, and
-  `qualifier-count` live on the tournament entity, phases/rounds are their
-  own entities, and standings are derived by the handler from entries +
-  completed matches (`rules.tournament/recalculate-standings`)."
+  Reads return flat unqualified-key maps: enum keywords flatten to strings
+  (`:match/status :complete` → `\"complete\"`), ref sub-maps become `*-eid`
+  fields, and instants are `java.util.Date`. Status, the registration
+  window, `current-phase-index`, and `qualifier-count` live on the
+  tournament entity; standings are derived (not read) by the handler from
+  entries + completed matches."
   (:require
    [com.devereux-henley.datalog.contract :as dl])
   (:import
@@ -281,9 +275,8 @@
 
 (defn create-tournament!
   "Transact a new tournament in `registration` status. `:league-eid` /
-  `:season-eid` on the spec become real refs (both live in Datalevin), so
-  the linkage the SQLite era couldn't keep is restored. Registration
-  window times are stamped as instants."
+  `:season-eid` on the spec become refs. Registration window times are
+  stamped as instants."
   [conn {:keys [eid name description game-eid league-eid season-eid created-by-sub
                 version created-at updated-at registration-opens-at
                 registration-closes-at timezone]}]
@@ -363,8 +356,7 @@
 
 (defn create-entry!
   "Register a player in a tournament. Returns the created entry, or nil
-  when the player already holds an entry (the caller maps that to a
-  domain error — one entry per player is the SQLite `UNIQUE` invariant)."
+  when the player already holds one (one entry per player)."
   [conn eid player-sub]
   (when-not (entry-by-tournament-and-player conn eid player-sub)
     (let [entry-eid (random-uuid)]
@@ -422,8 +414,8 @@
 (defn create-game!
   "Record a per-game result for a match, owned via `:match/games`. `opts`
   may carry `:replay-eid`, `:uploader-local-alliance-index`,
-  `:player-one-draft-eid`, `:player-two-draft-eid` — replay and drafts are
-  genuine refs into their (already-migrated) Datalevin entities."
+  `:player-one-draft-eid`, `:player-two-draft-eid`, which become refs to
+  the `:replay` and per-side `:draft` entities."
   ([conn match-eid game-index winner-sub]
    (create-game! conn match-eid game-index winner-sub {}))
   ([conn match-eid game-index winner-sub

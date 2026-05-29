@@ -370,10 +370,8 @@
                                    {:winner-sub winner-sub})
                   clincher   (rules.tournament/check-match-complete all-games (:format match))]
               (when clincher
-              ;; Route through the public domain function so standings get
-              ;; recalculated and tournament-complete check fires — going
-              ;; straight to db/update-match-result here would leave the
-              ;; state blob stale.
+              ;; Route through the domain function so standings recalculate
+              ;; and the tournament-complete check fires.
                 (handlers.tournament/update-match-result dependencies match-eid clincher))
               (cond-> {:type            :match-record/game-recorded
                        :match-eid       match-eid
