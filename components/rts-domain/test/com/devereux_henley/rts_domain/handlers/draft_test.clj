@@ -59,7 +59,7 @@
   {:eid                    test-game-mode-eid
    :draft-value            1000
    :reinforcement-value    500
-   :reinforcements-enabled 1})
+   :reinforcements-enabled true})
 
 (def ^:private infantry-unit
   {:eid                test-unit-eid
@@ -469,7 +469,7 @@
   ((stub-add-unit [infantry-unit] nil)
    (fn []
      (with-redefs [data-access.contract/game-mode-by-eid
-                   (fn [_ _] (assoc test-game-mode :reinforcements-enabled 0))]
+                   (fn [_ _] (assoc test-game-mode :reinforcements-enabled false))]
        (let [result (handlers.draft/add-unit-to-draft test-deps test-draft-eid test-unit-eid "main" {})]
          (is (= :draft/add-success (:type result))))))))
 
@@ -661,7 +661,7 @@
 
 (deftest get-draft-unit-details-disables-reinforcements-when-game-mode-zero
   (with-redefs [data-access.contract/draft-by-eid           (fn [_ _] test-draft)
-                data-access.contract/game-mode-by-eid       (fn [_ _] (assoc test-game-mode :reinforcements-enabled 0))
+                data-access.contract/game-mode-by-eid       (fn [_ _] (assoc test-game-mode :reinforcements-enabled false))
                 data-access.contract/unit-by-eid            (fn [_ _] infantry-unit)
                 data-access.contract/abilities-by-keys      (fn [_ _] {})
                 data-access.contract/spells-by-keys         (fn [_ _] {})

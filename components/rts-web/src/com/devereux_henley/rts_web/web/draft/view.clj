@@ -56,7 +56,7 @@
         lock         (domain/draft-lock-info dependencies (:eid draft))]
     {:faction                 faction
      :game-mode               game-mode
-     :reinforcements-enabled  (= 1 (:reinforcements-enabled game-mode))
+     :reinforcements-enabled  (boolean (:reinforcements-enabled game-mode))
      :units-by-category       units-by-cat
      :main-section            main-ctx
      :reinf-section           reinf-ctx
