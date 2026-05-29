@@ -50,12 +50,12 @@
                        :stderr     (:err result)})))))
 
 (defn- persist-replay
-  "Inserts a `replay` row from a parsed map. Returns the inserted entity
-  (with `:id` populated for FK use by match_game)."
+  "Transacts a `:replay/*` entity from a parsed map. Returns the
+  inserted replay's flat-key shape."
   [dependencies {:keys [parsed source-name uploaded-by-sub]}]
   (let [now (Instant/now)]
-    (db/create-replay
-     (:connection dependencies)
+    (db/create-replay!
+     (:datalog-connection dependencies)
      {:eid                           (random-uuid)
       :match-id-external             (or (:match-id parsed)
                                          source-name
@@ -64,11 +64,9 @@
                                          (str now))
       :victory-condition             (:victory-condition parsed)
       :parser-format                 (:format parsed)
-      :parsed-json                   (jsonista/write-value-as-string parsed)
+      :parsed-data                   parsed
       :uploader-local-alliance-index (:uploader-local-alliance-index parsed)
-      :uploaded-by-sub               uploaded-by-sub
-      :created-at                    now
-      :updated-at                    now})))
+      :uploaded-by-sub               uploaded-by-sub})))
 
 (defn- valid-winner?
   "A declared winner-sub must equal one of the match's player subs."
@@ -226,33 +224,32 @@
 (defn- resolve-units-for-game
   "Builds the `key → unit-row` map covering every unit key (and its
   successive prefix fallbacks) referenced by one parsed game."
-  [connection parsed]
+  [datalog-connection parsed]
   (let [keys     (collect-game-unit-keys parsed)
         all-keys (into keys (mapcat parsed-key-prefixes) keys)]
     (if (empty? all-keys)
       {}
-      (->> (db/get-units-by-keys connection all-keys)
+      (->> (db/units-by-keys datalog-connection all-keys)
            (into {} (map (juxt :key identity)))))))
 
 (defn- resolve-subfaction-for-alliance
   "Returns the subfaction row referenced by the alliance's parser
   `faction_key`, or nil. The parent race lives at `:faction-eid` on the
   returned row."
-  [connection alliance]
+  [datalog-connection alliance]
   (when-let [fk (:faction-key alliance)]
-    (first (db/get-subfactions-by-keys connection [fk]))))
+    (first (db/subfactions-by-keys datalog-connection [fk]))))
 
 (defn- build-and-persist-draft
   "Creates a draft matching that of the specified player in a game."
   [dependencies {:keys [parsed alliance player-sub round-num game-num
                         tournament game-modes uploaded-by-sub _now]}]
-  (let [conn          (:connection dependencies)
-        datalog-conn  (:datalog-connection dependencies)
-        subfaction    (resolve-subfaction-for-alliance conn alliance)
+  (let [datalog-conn  (:datalog-connection dependencies)
+        subfaction    (resolve-subfaction-for-alliance datalog-conn alliance)
         faction-eid   (:faction-eid subfaction)
         game-mode-eid (:eid (pick-game-mode game-modes (:victory-condition parsed)))]
     (when (and faction-eid game-mode-eid player-sub)
-      (let [key->row        (resolve-units-for-game conn parsed)
+      (let [key->row        (resolve-units-for-game datalog-conn parsed)
             ;; Mount detection must consult the engine-emitted keys (which carry
             ;; the `..._great_taurus` suffix), not the resolved-row keys — the
             ;; mounted variants aren't standalone unit rows, so only their
@@ -264,7 +261,7 @@
                                  (map :eid)
                                  distinct)
             eid->mount-rows (into {}
-                                  (map (fn [eid] [eid (db/get-mounts-for-unit conn eid)]))
+                                  (map (fn [eid] [eid (db/mounts-for-unit datalog-conn eid)]))
                                   mount-needing)
             state-blob      (alliance->state-blob alliance key->row eid->mount-rows datalog-conn)
             draft-eid       (random-uuid)
@@ -345,7 +342,8 @@
           (if (>= game-index (:format match))
             (short-circuit-error (format "Match already has its maximum %d games." (:format match)))
             (let [tournament (db/get-tournament-by-eid conn (:tournament-eid match))
-                  game-modes (db/get-game-modes-for-game conn (:game-eid tournament))
+                  game-modes (db/game-modes-for-game (:datalog-connection dependencies)
+                                                     (:game-eid tournament))
                   now        (Instant/now)
                   replay     (persist-replay dependencies
                                              {:parsed          parsed

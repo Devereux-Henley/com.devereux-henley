@@ -1,15 +1,11 @@
 (ns com.devereux-henley.rts-data-access.query.game
+  "SQLite game-domain queries — only `get-draft-lock-info` remains."
   (:require
    [com.devereux-henley.jdbc.contract :as jdbc.contract]
    [com.devereux-henley.rts-data-access.resource :as resource]
-   [com.devereux-henley.rts-data-access.schema :as schema]
    [com.devereux-henley.schema.contract :as schema.contract])
   (:import
    [java.sql Connection]))
-
-(def get-game-modes-for-game-query (resource/load-query-resource "game" "get-game-modes-for-game.sql"))
-
-(def get-mounts-for-unit-query (resource/load-query-resource "game" "get-mounts-for-unit.sql"))
 
 (def get-draft-lock-info-query (resource/load-query-resource "game" "get-draft-lock-info.sql"))
 
@@ -35,18 +31,3 @@
                    [:maybe draft-lock-info-schema]])}
   [connection eid]
   (jdbc.contract/query-for-entity connection [get-draft-lock-info-query eid] draft-lock-info-schema))
-
-(defn get-game-modes-for-game
-  {:malli/schema (schema.contract/to-schema
-                  [:=>
-                   [:cat [:instance Connection] :uuid]
-                   [:sequential schema/game-mode-entity]])}
-  [connection game-eid]
-  (jdbc.contract/query-for-entities connection [get-game-modes-for-game-query game-eid] schema/game-mode-entity))
-
-(defn get-mounts-for-unit
-  "Returns all active mounts linked to the given unit EID via the unit_mount
-  join table. The per-unit mount cost is projected from unit_mount.cost into
-  the mount map's :cost field."
-  [connection unit-eid]
-  (jdbc.contract/query-for-entities connection [get-mounts-for-unit-query unit-eid] schema/mount-entity))

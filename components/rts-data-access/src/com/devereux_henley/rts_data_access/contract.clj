@@ -4,10 +4,10 @@
    [com.devereux-henley.rts-data-access.query.datalog.draft :as query.datalog.draft]
    [com.devereux-henley.rts-data-access.query.datalog.game :as query.datalog.game]
    [com.devereux-henley.rts-data-access.query.datalog.league :as query.datalog.league]
+   [com.devereux-henley.rts-data-access.query.datalog.replay :as query.datalog.replay]
    [com.devereux-henley.rts-data-access.query.datalog.season :as query.datalog.season]
    [com.devereux-henley.rts-data-access.query.datalog.social-media :as query.datalog.social-media]
    [com.devereux-henley.rts-data-access.query.game :as query.game]
-   [com.devereux-henley.rts-data-access.query.replay :as query.replay]
    [com.devereux-henley.rts-data-access.query.stats :as query.stats]
    [com.devereux-henley.rts-data-access.query.tournament :as query.tournament]
    [com.devereux-henley.rts-data-access.schema :as schema]
@@ -15,6 +15,7 @@
    [com.devereux-henley.rts-data-access.schema.draft :as schema.draft]
    [com.devereux-henley.rts-data-access.schema.game :as schema.game]
    [com.devereux-henley.rts-data-access.schema.league :as schema.league]
+   [com.devereux-henley.rts-data-access.schema.replay :as schema.replay]
    [com.devereux-henley.rts-data-access.schema.season :as schema.season]
    [com.devereux-henley.rts-data-access.schema.social-media :as schema.social-media]
    [com.devereux-henley.schema.contract :as schema.contract]))
@@ -39,17 +40,19 @@
 
 (def unit-entity schema/unit-entity)
 
-;;; ─── Game DB queries ───────────────────────────────────────────────────────
+;;; ─── Game DB queries (SQLite — tournament-side, draft-lock only) ──────────
+;;
+;; The draft-lock-info read still hits the SQLite tournament/match/match_game
+;; tables — those move to Datalevin under rts-5b6. Until then, the lookup
+;; effectively reports "never locked" (FK columns are NULL post-rts-9ri /
+;; post-rts-vhi) but the query at least returns a stable empty result.
 
 (def get-draft-lock-info query.game/get-draft-lock-info)
 (def draft-lock-info-schema query.game/draft-lock-info-schema)
 
-(def get-game-modes-for-game query.game/get-game-modes-for-game)
-
 (def item-entity schema/item-entity)
 
 (def mount-entity schema/mount-entity)
-(def get-mounts-for-unit query.game/get-mounts-for-unit)
 
 (def lore-entity schema/lore-entity)
 
@@ -69,6 +72,8 @@
 (def units-for-game       query.datalog.game/units-for-game)
 (def units-for-faction    query.datalog.game/units-for-faction)
 (def unit-by-eid          query.datalog.game/unit-by-eid)
+(def units-by-keys        query.datalog.game/units-by-keys)
+(def subfactions-by-keys  query.datalog.game/subfactions-by-keys)
 (def game-modes-for-game  query.datalog.game/game-modes-for-game)
 (def socials-for-game     query.datalog.game/socials-for-game)
 (def mounts-for-unit      query.datalog.game/mounts-for-unit)
@@ -165,15 +170,10 @@
 
 (def platform-by-eid query.datalog.social-media/platform-by-eid)
 
-;;; ─── Replay ────────────────────────────────────────────────────────────────
+;;; ─── Replay Datalog queries + mutations ───────────────────────────────────
 
-(def replay-entity        schema/replay-entity)
-(def create-replay-params schema/create-replay-params)
-
-(def get-replay-by-eid       query.replay/get-replay-by-eid)
-(def create-replay           query.replay/create-replay)
-(def get-units-by-keys       query.replay/get-units-by-keys)
-(def get-subfactions-by-keys query.replay/get-subfactions-by-keys)
+(def replay-by-eid  query.datalog.replay/replay-by-eid)
+(def create-replay! query.datalog.replay/create-replay!)
 
 ;;; ─── Function schemas ─────────────────────────────────────────────────────
 ;;;
@@ -359,3 +359,13 @@
 (schema.contract/=>* platform-by-eid query.datalog.social-media/platform-by-eid
                      [:=> [:cat dl/conn-schema :uuid]
                       [:maybe schema.social-media/platform-result-schema]])
+
+;; Replay datalog
+
+(schema.contract/=>* replay-by-eid query.datalog.replay/replay-by-eid
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:maybe schema.replay/replay-result-schema]])
+
+(schema.contract/=>* create-replay! query.datalog.replay/create-replay!
+                     [:=> [:cat dl/conn-schema schema.replay/create-spec-schema]
+                      schema.replay/replay-result-schema])

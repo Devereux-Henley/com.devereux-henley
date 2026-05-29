@@ -1,3 +1,8 @@
+// Touches components/e2e so poly test re-runs the brick on PRs that only
+// modify upstream handlers/queries. The long-term fix is rts-9w4 (explicit
+// brick deps); until then, every domain-migration PR carries a small
+// e2e touch.
+
 const { test, expect } = require('@playwright/test');
 
 const BASE = process.env.RTS_API_BASE_URL || "http://127.0.0.1:3001";
