@@ -178,55 +178,9 @@
     [:melee-cp :double]
     [:missile-cp :double]]))
 
-(def tournament-entity
-  (schema.contract/to-schema
-   [:map
-    [:id :int]
-    [:eid :uuid]
-    [:name {:min 1} :string]
-    [:description {:min 1} :string]
-    [:game-eid :uuid]
-    [:league-eid {:optional true} [:maybe :uuid]]
-    [:season-eid {:optional true} [:maybe :uuid]]
-    [:created-by-sub :string]
-    [:version :int]
-    [:created-at :instant]
-    [:updated-at :instant]
-    [:deleted-at [:maybe :instant]]]))
-
-(def create-tournament-params
-  (schema.contract/to-schema
-   [:map
-    [:eid :uuid]
-    [:game-eid :uuid]
-    [:league-eid {:optional true} [:maybe :uuid]]
-    [:season-eid {:optional true} [:maybe :uuid]]
-    [:name {:min 1} :string]
-    [:description {:min 1} :string]
-    [:created-by-sub :string]
-    [:version :int]
-    [:created-at :instant]
-    [:updated-at :instant]]))
-
-(def tournament-state-entity
-  (schema.contract/to-schema
-   [:map
-    [:id :int]
-    [:state :string]
-    [:updated-at :instant]]))
-
-(def tournament-entry-entity
-  (schema.contract/to-schema
-   [:map
-    [:id :int]
-    [:eid :uuid]
-    [:tournament-eid :uuid]
-    [:player-sub :string]
-    [:created-at :instant]]))
-
 ;; ─── Tournament / match enums ───────────────────────────────────────────────
-;; These mirror CHECK-constrained values (or the closed sets the domain layer
-;; enforces) so Malli coercion rejects unexpected strings at the DB boundary.
+;; Closed value sets for tournament/match fields, shared with the domain
+;; resource schemas.
 
 (def tournament-status-enum [:enum "registration" "active" "complete" "cancelled"])
 
@@ -237,37 +191,6 @@
 (def match-format-enum [:enum 1 3 5])
 
 (def bracket-type-enum [:enum "winners" "losers" "grand-final"])
-
-(def match-entity
-  (schema.contract/to-schema
-   [:map
-    [:id :int]
-    [:eid :uuid]
-    [:tournament-eid :uuid]
-    [:phase-index :int]
-    [:round-index :int]
-    [:bracket-type bracket-type-enum]
-    [:player-one-sub :string]
-    [:player-two-sub [:maybe :string]]
-    [:winner-sub [:maybe :string]]
-    [:status match-status-enum]
-    [:format match-format-enum]
-    [:created-at :instant]
-    [:updated-at :instant]]))
-
-(def match-game-entity
-  (schema.contract/to-schema
-   [:map
-    [:id :int]
-    [:eid :uuid]
-    [:match-eid :uuid]
-    [:game-index :int]
-    [:winner-sub [:maybe :string]]
-    [:replay-eid {:optional true} [:maybe :uuid]]
-    [:uploader-local-alliance-index {:optional true} [:maybe :int]]
-    [:player-one-draft-eid {:optional true} [:maybe :uuid]]
-    [:player-two-draft-eid {:optional true} [:maybe :uuid]]
-    [:created-at :instant]]))
 
 ;; ─── Stats entities (SQLite) ─────────────────────────────────────────────────
 

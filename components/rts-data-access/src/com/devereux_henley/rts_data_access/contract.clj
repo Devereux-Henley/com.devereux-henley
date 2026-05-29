@@ -10,7 +10,6 @@
    [com.devereux-henley.rts-data-access.query.datalog.tournament :as query.datalog.tournament]
    [com.devereux-henley.rts-data-access.query.game :as query.game]
    [com.devereux-henley.rts-data-access.query.stats :as query.stats]
-   [com.devereux-henley.rts-data-access.query.tournament :as query.tournament]
    [com.devereux-henley.rts-data-access.schema :as schema]
    [com.devereux-henley.rts-data-access.schema.datalog :as schema.datalog]
    [com.devereux-henley.rts-data-access.schema.draft :as schema.draft]
@@ -102,14 +101,7 @@
 (def remove-entry!                   query.datalog.draft/remove-entry!)
 (def update-entry!                   query.datalog.draft/update-entry!)
 
-;;; ─── Tournament DB entities ────────────────────────────────────────────────
-
-(def tournament-entity schema/tournament-entity)
-(def create-tournament-params schema/create-tournament-params)
-(def tournament-state-entity schema/tournament-state-entity)
-(def tournament-entry-entity schema/tournament-entry-entity)
-(def match-entity schema/match-entity)
-(def match-game-entity schema/match-game-entity)
+;;; ─── Tournament / match enums ──────────────────────────────────────────────
 
 (def tournament-status-enum schema/tournament-status-enum)
 (def phase-type-enum schema/phase-type-enum)
@@ -117,27 +109,6 @@
 (def match-format-enum schema/match-format-enum)
 (def bracket-type-enum schema/bracket-type-enum)
 (def mark-enum schema/mark-enum)
-
-;;; ─── Tournament DB queries ────────────────────────────────────────────────
-
-(def get-tournament-by-eid query.tournament/get-tournament-by-eid)
-(def get-tournaments-for-game query.tournament/get-tournaments-for-game)
-(def get-tournaments query.tournament/get-tournaments)
-(def create-tournament query.tournament/create-tournament)
-(def get-tournament-state query.tournament/get-tournament-state)
-(def upsert-tournament-state query.tournament/upsert-tournament-state)
-(def create-entry query.tournament/create-entry)
-(def delete-entry query.tournament/delete-entry)
-(def get-entries-for-tournament query.tournament/get-entries-for-tournament)
-(def get-entry-by-tournament-and-player query.tournament/get-entry-by-tournament-and-player)
-(def create-match query.tournament/create-match)
-(def get-match-by-eid query.tournament/get-match-by-eid)
-(def get-matches-for-tournament query.tournament/get-matches-for-tournament)
-(def get-matches query.tournament/get-matches)
-(def get-matches-for-round query.tournament/get-matches-for-round)
-(def update-match-result query.tournament/update-match-result)
-(def create-game query.tournament/create-game)
-(def get-games-for-match query.tournament/get-games-for-match)
 
 ;;; ─── Tournament Datalog queries + mutations ────────────────────────────────
 
