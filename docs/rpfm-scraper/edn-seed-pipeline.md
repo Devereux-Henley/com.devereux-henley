@@ -114,7 +114,7 @@ generated) · **B**uild metadata.
 | subfactions | G | — | key, name, faction (FK from authoring) | UUID v5 (frozen ns + engine key) |
 | unit-items | G | — | unit, item links | `derived-uuid("unit-item", unit-eid, item-eid)` |
 | unit-mounts | G | — | unit, mount, cost, stats-override, granted-ability-keys | `derived-uuid("unit-mount", unit-eid, mount-eid)` |
-| unit-statistics | G | — | decomposed statline (`schema.us/fields`) | `derived-uuid("unit-statistics", patch-eid, unit-eid)` |
+| unit-statistics | H | unit, **abilities, draftable-spells** | the RPFM statline (`schema.us/fields` minus the two curated lists) | `derived-uuid("unit-statistics", patch-eid, unit-eid)` |
 
 `derived-uuid` = `UUID/nameUUIDFromBytes` over `"/"`-joined parts (the same helper
 the dump tool uses), so generated link/statistics eids are reproducible from the
@@ -129,6 +129,18 @@ curated identities with no stored state.
   `key` (engine `land_units` key), `mark`, `lore`, and `family-name` are derived
   by the scraper (name-index match, `unit_set` junctions, name-suffix parsing)
   with curated overrides in `overrides.edn`.
+- **unit-statistics** is hybrid: the numeric/string statline is RPFM-derived, but
+  `abilities` and `draftable-spells` are **curated** — RPFM has no notion of which
+  spells/abilities a unit may *draft*, and `stats/apply-preserved` carries them
+  across scrapes today. They live in `authoring/<v>/unit-statistics.edn` keyed by
+  `:unit-statistics/unit` (only units that have them); the scraper merges them
+  onto the freshly computed statline.
+
+  The scraper decomposes its engine-shaped statline into the
+  `:unit-statistics/*` attributes using the `schema.us/fields` spec, which is
+  owned by `rts-data-access`. To avoid the lean scraper depending on that
+  component (and Datalevin), the `[doc-key attr kind]` vector is **replicated**
+  in the scraper with a guard test asserting it equals `schema.us/fields`.
 
 ## eid stability
 

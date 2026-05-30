@@ -53,6 +53,21 @@
     (binding [*out* w] (pp/pprint data)))
   (println (format "  %-28s %d rows" (.getName file) (count data))))
 
+(def ^:private statistics-curated-keys
+  "The curated subset of a unit-statistics row: the owning unit ref plus the
+  draftable lists RPFM can't derive. The numeric statline is regenerated."
+  [:unit-statistics/unit :unit-statistics/abilities :unit-statistics/draftable-spells])
+
+(defn- curated-statistics
+  "Project unit-statistics rows to their curated subset, keeping only rows that
+  actually carry abilities or draftable-spells."
+  [rows]
+  (into []
+        (comp (filter #(or (:unit-statistics/abilities %)
+                           (:unit-statistics/draftable-spells %)))
+              (map #(select-ordered % statistics-curated-keys)))
+        rows))
+
 (defn split!
   "Write `seed/authoring/<version>/` from `seed/datalog/<version>/`."
   [version]
@@ -68,6 +83,10 @@
             :when          (.exists in)]
       (spit-edn! (io/file dest file-name)
                  (mapv #(select-ordered % ks) (read-edn in))))
+    (let [stats-in (io/file src "unit-statistics.edn")]
+      (when (.exists stats-in)
+        (spit-edn! (io/file dest "unit-statistics.edn")
+                   (curated-statistics (read-edn stats-in)))))
     (println "Done.")))
 
 (comment
