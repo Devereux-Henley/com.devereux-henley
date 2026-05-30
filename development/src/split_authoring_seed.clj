@@ -23,7 +23,7 @@
   "Fully-curated seed files, copied verbatim into the authoring tree."
   ["games.edn" "social-media-platforms.edn" "game-social-links.edn"
    "unit-types.edn" "unit-categories.edn" "factions.edn" "game-modes.edn"
-   "lores.edn" "attributes.edn" "spell-lores.edn"])
+   "lores.edn" "attributes.edn" "spell-lores.edn" "unit-level-cost.edn"])
 
 (def ^:private hybrid-keep
   "Hybrid seed files → the ordered identity + curated keys to retain. Every
@@ -31,7 +31,7 @@
   it and the merge re-attaches it by eid)."
   {"spells.edn"    [:spell/eid :spell/key :spell/name :spell/description
                     :spell/spell-type :spell/mana-cost :spell/game]
-   "abilities.edn" [:ability/eid :ability/key :ability/ability-type :ability/game]
+   "abilities.edn" [:ability/eid :ability/key :ability/ability-type :ability/description :ability/game]
    "units.edn"     [:unit/eid :unit/name :unit/description :unit/faction
                     :unit/unit-type :unit/unit-category :unit/is-unique :unit/game]})
 

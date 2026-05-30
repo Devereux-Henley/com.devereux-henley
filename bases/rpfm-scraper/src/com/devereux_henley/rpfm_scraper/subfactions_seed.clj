@@ -15,7 +15,7 @@
    [java.security MessageDigest]))
 
 (def ^:private seed-author "f0ce7395-a57f-41e9-ade0-fd13bafc058f")
-(def ^:private subfaction-uuid-namespace
+(def subfaction-uuid-namespace
   "Stable RFC 4122 namespace UUID for subfaction eid generation. Picked once
   and frozen so re-running the scraper produces identical eids for the same
   engine key."
@@ -35,7 +35,7 @@
           (map (fn [m] [(nth m 2) (Long/parseLong (nth m 1))]))
           (re-seq faction-row-re factions-content))))
 
-(defn- faction-slug-for-key
+(defn faction-slug-for-key
   "Maps an engine factions_tables key (e.g. `wh3_dlc23_chd_legion_of_azgorh`)
   to a race slug (e.g. `chaos-dwarfs`) by scanning for the
   `overrides/faction-key-map` infix prefixes inside the key. Returns nil
@@ -64,7 +64,7 @@
      {}
      faction-rows)))
 
-(defn- uuid-v5
+(defn uuid-v5
   "Deterministic name-based UUID (RFC 4122 v5, SHA-1) for the given namespace
   + name string. Used so subfaction eids are stable across scraper re-runs."
   [namespace-uuid-str ^String name]

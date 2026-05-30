@@ -106,9 +106,9 @@ generated) · **B**uild metadata.
 | attributes | C | eid, key, name, description, game | — | authoring |
 | spell-lores | C | eid, spell, lore, game | — | authoring |
 | spells | H | eid, key, name, description, spell-type, mana-cost, game | **cost** | authoring |
-| abilities | H | eid, key, ability-type, game | **name, description, cost** | authoring |
+| abilities | H | eid, key, ability-type, description, game | **name, cost** | authoring |
 | units | H | eid, name, faction, unit-type, unit-category, description, is-unique, game | **key, mark, lore, family-name** | authoring |
-| unit-level-cost | G | — | level + cost columns | — (natural key: level) |
+| unit-level-cost | C | all (level + cost columns) | — | authoring |
 | items | G | — | key, name, category, cost, icon-key, game | `format e1000000-…-%012x` (sorted index) |
 | mounts | G | — | key, name, icon-key, game | `format d2000000-…-%012x` (sorted index) |
 | subfactions | G | — | key, name, faction (FK from authoring) | UUID v5 (frozen ns + engine key) |
@@ -122,9 +122,11 @@ curated identities with no stored state.
 
 ### Hybrid notes
 
-- **spells / abilities**: the row identity (eid, key) is curated; the scraper
-  overwrites the RPFM-derived display fields. `is-unique` on units is curated
-  (today `stats/apply-preserved` carries it across the in-place rewrite).
+- **spells / abilities**: the row identity is curated; the scraper overwrites
+  only the RPFM-derived fields — spell `cost`, ability `name` + `cost`. Ability
+  `description` is curated (RPFM's tooltip loc keys don't match ability keys, so
+  it was preserved across scrapes), as is the full spell display. `is-unique` on
+  units is curated (today `stats/apply-preserved` carries it across the rewrite).
 - **units**: the curated skeleton is the per-faction unit list a human maintains.
   `key` (engine `land_units` key), `mark`, `lore`, and `family-name` are derived
   by the scraper (name-index match, `unit_set` junctions, name-suffix parsing)

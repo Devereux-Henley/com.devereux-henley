@@ -40,7 +40,7 @@
   Datalog seed (no scraper-derived fields)."
   ["games.edn" "social-media-platforms.edn" "game-social-links.edn"
    "unit-types.edn" "unit-categories.edn" "factions.edn" "game-modes.edn"
-   "lores.edn" "attributes.edn" "spell-lores.edn"])
+   "lores.edn" "attributes.edn" "spell-lores.edn" "unit-level-cost.edn"])
 
 ;;; ─── Read ──────────────────────────────────────────────────────────────────
 
