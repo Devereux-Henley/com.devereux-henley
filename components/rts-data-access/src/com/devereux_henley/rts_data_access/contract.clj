@@ -8,7 +8,6 @@
    [com.devereux-henley.rts-data-access.query.datalog.season :as query.datalog.season]
    [com.devereux-henley.rts-data-access.query.datalog.social-media :as query.datalog.social-media]
    [com.devereux-henley.rts-data-access.query.datalog.tournament :as query.datalog.tournament]
-   [com.devereux-henley.rts-data-access.query.game :as query.game]
    [com.devereux-henley.rts-data-access.query.stats :as query.stats]
    [com.devereux-henley.rts-data-access.schema :as schema]
    [com.devereux-henley.rts-data-access.schema.datalog :as schema.datalog]
@@ -45,8 +44,15 @@
 ;; Reports whether a draft is locked by a recorded game. Currently returns
 ;; a stable empty (never-locked) result.
 
-(def get-draft-lock-info query.game/get-draft-lock-info)
-(def draft-lock-info-schema query.game/draft-lock-info-schema)
+(def get-draft-lock-info query.datalog.draft/draft-lock-info)
+(def draft-lock-info-schema
+  "Shape returned by `get-draft-lock-info` — the earliest tournament match
+  referencing a draft, or nil when it's still editable."
+  (schema.contract/to-schema
+   [:map
+    [:match-eid       :uuid]
+    [:tournament-eid  :uuid]
+    [:tournament-name :string]]))
 
 (def item-entity schema/item-entity)
 
@@ -255,6 +261,10 @@
 (schema.contract/=>* draft-by-eid query.datalog.draft/draft-by-eid
                      [:=> [:cat dl/conn-schema :uuid]
                       [:maybe schema.draft/draft-result-schema]])
+
+(schema.contract/=>* get-draft-lock-info query.datalog.draft/draft-lock-info
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:maybe draft-lock-info-schema]])
 
 (schema.contract/=>* drafts-for-player query.datalog.draft/drafts-for-player
                      [:=> [:cat dl/conn-schema :string]

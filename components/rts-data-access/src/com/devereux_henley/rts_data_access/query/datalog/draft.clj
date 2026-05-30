@@ -137,6 +137,33 @@
       {:section (:draft-entry/section m)
        :ordinal (:draft-entry/ordinal m)})))
 
+(def ^:private lock-info-pattern
+  "From a match-game back to its owning match + tournament."
+  [:match-game/created-at
+   {:match/_games [:match/eid
+                   {:match/tournament [:tournament/eid :tournament/name]}]}])
+
+(defn draft-lock-info
+  "The earliest tournament match-game that references this draft (by eid), as
+  `{:match-eid :tournament-eid :tournament-name}`, or nil when the draft is
+  unreferenced (still editable). Locking is one-way, derived at request time:
+  any `:match-game/player-one-draft` / `:match-game/player-two-draft` ref makes
+  the draft read-only."
+  [conn draft-eid]
+  (let [results (dl/q '[:find [(pull ?mg pattern) ...]
+                        :in $ pattern ?draft-eid
+                        :where
+                        [?d :draft/eid ?draft-eid]
+                        (or [?mg :match-game/player-one-draft ?d]
+                            [?mg :match-game/player-two-draft ?d])]
+                      (dl/db conn) lock-info-pattern draft-eid)]
+    (when-let [mg (first (sort-by :match-game/created-at results))]
+      (let [match      (first (:match/_games mg))
+            tournament (:match/tournament match)]
+        {:match-eid       (:match/eid match)
+         :tournament-eid  (:tournament/eid tournament)
+         :tournament-name (:tournament/name tournament)}))))
+
 ;;; ─── Tx-builders + transact entry points ──────────────────────────────────
 
 (defn- now-date [] (Date.))
