@@ -39,6 +39,7 @@
     [:unit-type-name [:maybe :string]]
     [:unit-category-eid [:maybe :uuid]]
     [:unit-category-name [:maybe :string]]
+    [:unit-category-ordinal [:maybe :int]]
     [:cost [:maybe :int]]]))
 
 (def unit-detail-schema
@@ -59,6 +60,7 @@
     [:unit-type-name [:maybe :string]]
     [:unit-category-eid [:maybe :uuid]]
     [:unit-category-name [:maybe :string]]
+    [:unit-category-ordinal [:maybe :int]]
     [:cost [:maybe :int]]
     [:unit-statistics {:optional true} [:maybe :any]]]))
 

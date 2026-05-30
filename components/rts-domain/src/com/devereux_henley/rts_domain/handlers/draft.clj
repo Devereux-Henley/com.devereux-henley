@@ -361,6 +361,63 @@
   [dependencies draft-eid]
   (db/draft-state-by-eid (:datalog-connection dependencies) draft-eid))
 
+(defn- hydrate-section-entries
+  "Resolves a section's saved entries into roster cards: each entry's unit
+  enriched with its per-entry cost and the entry eid. The engine-cost audit
+  flag fires only when the parser reported a value that diverges from the
+  builder's `:total-cost`; manual-builder entries (no `:engine-cost`) skip
+  the check."
+  [entries unit-by-eid]
+  (vec (keep (fn [entry]
+               (when-let [unit (get unit-by-eid (:unit-eid entry))]
+                 (let [total     (or (:total-cost entry) (:cost unit))
+                       engine    (:engine-cost entry)
+                       mismatch? (and engine total (not= engine total))]
+                   (assoc unit
+                          :total-cost     total
+                          :entry-eid      (:entry-eid entry)
+                          :engine-cost    engine
+                          :cost-mismatch? mismatch?))))
+             entries)))
+
+(defn draft-view-model
+  "Builds the draft detail view-model: the draft entity under `:data`, its
+   faction and game-mode, the faction roster grouped by category, the
+   main/reinforcement section contexts, and the lock state. Returns a
+   `:missing/resource` marker when the draft doesn't exist."
+  [dependencies eid]
+  (if-let [draft (get-draft-by-eid dependencies eid)]
+    (let [conn         (:datalog-connection dependencies)
+          game-mode    (db/game-mode-by-eid conn (:game-mode-eid draft))
+          faction      (db/faction-by-eid conn (:faction-eid draft))
+          units        (hydrate-units-with-stats (db/units-for-faction conn (:faction-eid draft)))
+          unit-by-eid  (into {} (map (juxt :eid identity)) units)
+          units-by-cat (->> (group-units-by-family units)
+                            (sort-by :unit-category-ordinal)
+                            (partition-by :unit-category-ordinal)
+                            (mapv (fn [group]
+                                    {:category (:unit-category-name (first group))
+                                     :units    (vec (sort-by :cost group))})))
+          state        (get-draft-state dependencies (:eid draft))
+          main-ctx     (build-section-context "main" (hydrate-section-entries (:main state) unit-by-eid)
+                                              (:eid draft) game-mode)
+          reinf-ctx    (build-section-context "reinforcements" (hydrate-section-entries (:reinforcements state) unit-by-eid)
+                                              (:eid draft) game-mode)
+          lock         (lock-info dependencies (:eid draft))]
+      {:data                    draft
+       :faction                 faction
+       :game-mode               game-mode
+       :reinforcements-enabled  (boolean (:reinforcements-enabled game-mode))
+       :units-by-category       units-by-cat
+       :main-section            main-ctx
+       :reinf-section           reinf-ctx
+       :draft-eid               (:eid draft)
+       :locked?                 (some? lock)
+       :locking-match-eid       (:match-eid lock)
+       :locking-tournament-eid  (:tournament-eid lock)
+       :locking-tournament-name (:tournament-name lock)})
+    {:type :missing/resource :name "draft" :id eid}))
+
 (defn get-spells-by-keys
   "Returns a map of spell-key → spell entity for the given spell keys."
   [dependencies spell-keys]

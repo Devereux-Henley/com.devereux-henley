@@ -1,7 +1,6 @@
 (ns com.devereux-henley.rts-web.web.game.view
   (:require
    [clojure.java.io :as io]
-   [com.devereux-henley.rts-data-access.contract :as db]
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.render :as render]
    [com.devereux-henley.rts-web.web.view :as web.view]
@@ -19,39 +18,25 @@
                                  (assoc (web.view/base-context request)
                                         :data (:game (:game-context request))))}))
 
-(defn- units-by-category
-  "Group a faction's units by category. The query sorts by
-  `(unit-category-name, name)` so a sequential partition produces stable
-  groups without resorting."
-  [units]
-  (mapv (fn [group]
-          {:category (:unit-category-name (first group))
-           :units    (vec group)})
-        (partition-by :unit-category-name units)))
-
 (defmethod integrant.core/init-key ::faction-view
-  [_init-key {:keys [datalog-connection]}]
-  (partial web.view/standard-entity-view-handler
-           (fn [eid]
-             (if-let [faction (db/faction-by-eid datalog-connection eid)]
-               (assoc-in faction [:_embedded :units-by-category]
-                         (units-by-category
-                          (db/units-for-faction datalog-connection eid)))
-               {:type :missing/resource :name "faction" :id eid}))
-           "faction.html"
-           (fn [_data _request] {})))
+  [_init-key dependencies]
+  (fn [request]
+    (web.view/render-entity-view request "faction.html"
+                                 (domain/faction-view-model dependencies (-> request :parameters :path :eid)))))
+
+(defn- unit-card-path
+  "The web-served path to a unit's card image when the asset exists on the
+  classpath, else nil. Filesystem lookup is a view-only concern, so it stays
+  in the web layer rather than the domain view-model."
+  [unit-eid]
+  (when (io/resource (str "rts-web/asset/card/unit/" unit-eid ".png"))
+    (str "/card/unit/" unit-eid ".png")))
 
 (defmethod integrant.core/init-key ::unit-view
   [_init-key dependencies]
-  (partial web.view/standard-entity-view-handler
-           (fn [eid] (domain/unit-view-model dependencies eid))
-           "unit.html"
-           ;; The model carries the unit fields (rendered under `data`); lift
-           ;; the presentation lists to the top level the template reads, and
-           ;; add the optional unit-card asset path.
-           (fn [data _request]
-             (let [portrait-stem (:eid data)]
-               (assoc (select-keys data [:unit-statistics :abilities :draftable-spells :mounts :items])
-                      :unit-card (when (io/resource
-                                        (str "rts-web/asset/card/unit/" portrait-stem ".png"))
-                                   (str "/card/unit/" portrait-stem ".png")))))))
+  (fn [request]
+    (let [view-model (domain/unit-view-model dependencies (-> request :parameters :path :eid))]
+      (web.view/render-entity-view request "unit.html"
+                                   (cond-> view-model
+                                     (not= :missing/resource (:type view-model))
+                                     (assoc :unit-card (unit-card-path (:eid (:data view-model)))))))))

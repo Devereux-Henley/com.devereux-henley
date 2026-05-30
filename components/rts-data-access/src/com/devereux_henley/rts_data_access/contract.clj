@@ -70,7 +70,6 @@
 (def units-for-game       query.datalog.game/units-for-game)
 (def units-for-faction    query.datalog.game/units-for-faction)
 (def unit-by-eid          query.datalog.game/unit-by-eid)
-(def unit-detail          query.datalog.game/unit-detail)
 (def units-by-keys        query.datalog.game/units-by-keys)
 (def subfactions-by-keys  query.datalog.game/subfactions-by-keys)
 (def game-modes-for-game  query.datalog.game/game-modes-for-game)

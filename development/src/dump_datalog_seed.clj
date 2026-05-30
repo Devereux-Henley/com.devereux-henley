@@ -127,9 +127,10 @@
      {:unit-category/eid         (uuid (:eid r))
       :unit-category/name        (:name r)
       :unit-category/description (:description r)
+      :unit-category/ordinal     (:ordinal r)
       :unit-category/game        [:game/eid (uuid (:game-eid r))]})
    (query conn
-          "SELECT uc.eid, uc.name, uc.description, g.eid AS game_eid
+          "SELECT uc.eid, uc.name, uc.description, uc.ordinal, g.eid AS game_eid
              FROM unit_category uc JOIN game g ON uc.game_id = g.id
             WHERE uc.deleted_at IS NULL")))
 

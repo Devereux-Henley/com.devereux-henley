@@ -2,6 +2,7 @@
   (:require
    [clojure.string :as str]
    [com.devereux-henley.rts-data-access.contract :as db]
+   [com.devereux-henley.rts-domain.handlers.stats :as handlers.stats]
    [com.devereux-henley.rts-domain.time :as time]))
 
 (defn- blank->nil
@@ -39,6 +40,22 @@
   "Returns the most recent season whose end-at is still in the future, or nil."
   [dependencies league-eid]
   (tag-season (db/current-season-for-league (:datalog-connection dependencies) league-eid)))
+
+(defn season-view-model
+  "Builds the season detail view-model: the season entity under `:data`, its
+   parent league, scoped tournaments, and faction standings. Returns a
+   `:missing/resource` marker when the season doesn't exist."
+  [dependencies eid]
+  (if-let [season (get-season-by-eid dependencies eid)]
+    (let [conn        (:datalog-connection dependencies)
+          league      (db/league-by-eid conn (:league-eid season))
+          tournaments (filterv #(= eid (:season-eid %))
+                               (db/tournaments-for-game conn (:game-eid league)))]
+      {:data        season
+       :league      league
+       :tournaments tournaments
+       :standings   (handlers.stats/get-season-faction-standings dependencies eid)})
+    {:type :missing/resource :name "season" :id eid}))
 
 (defn create-season
   "Creates a season under a league. Auto-assigns ordinal as MAX(ordinal)+1.

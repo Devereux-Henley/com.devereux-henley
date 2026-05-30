@@ -919,3 +919,56 @@
     (is (= locking-info (handlers.draft/lock-info test-deps test-draft-eid))))
   (with-redefs [data-access.contract/get-draft-lock-info (fn [_ _] nil)]
     (is (nil? (handlers.draft/lock-info test-deps test-draft-eid)))))
+
+;; --- draft-view-model ---
+
+(deftest draft-view-model-shapes-data-faction-mode-and-sections
+  (with-redefs [data-access.contract/draft-by-eid       (fn [_ _] test-draft)
+                data-access.contract/game-mode-by-eid   (fn [_ _] test-game-mode)
+                data-access.contract/faction-by-eid     (fn [_ _] {:eid test-faction-eid :name "High Elves"})
+                data-access.contract/units-for-faction  (fn [_ _] [infantry-unit lord-unit])
+                data-access.contract/draft-state-by-eid (fn [_ _] (state-map {:main [] :reinforcements []}))]
+    (let [result (handlers.draft/draft-view-model test-deps test-draft-eid)]
+      (is (= test-draft-eid (get-in result [:data :eid])))
+      (is (= "High Elves" (get-in result [:faction :name])))
+      (is (true? (:reinforcements-enabled result)))
+      (is (vector? (:units-by-category result)))
+      (is (= "main" (get-in result [:main-section :section])))
+      (is (= "reinforcements" (get-in result [:reinf-section :section])))
+      (is (false? (:locked? result)) "lock defaults to nil via the :each fixture"))))
+
+(deftest draft-view-model-orders-categories-by-ordinal-without-duplicates
+  (let [u     (fn [nm ord cat]
+                {:eid                (UUID/randomUUID) :name                  nm  :family-name     nm   :cost 100
+                 :unit-category-name cat               :unit-category-ordinal ord :unit-statistics "{}"})
+        ;; interleaved input across three categories, two families each in Lord/Melee
+        units [(u "Spearmen" 3 "Melee Infantry")
+               (u "General"  1 "Lord")
+               (u "Hunters"  3 "Melee Infantry")
+               (u "Captain"  2 "Hero")
+               (u "Wizard"   1 "Lord")]]
+    (with-redefs [data-access.contract/draft-by-eid       (fn [_ _] test-draft)
+                  data-access.contract/game-mode-by-eid   (fn [_ _] test-game-mode)
+                  data-access.contract/faction-by-eid     (fn [_ _] {:eid test-faction-eid :name "Empire"})
+                  data-access.contract/units-for-faction  (fn [_ _] units)
+                  data-access.contract/draft-state-by-eid (fn [_ _] (state-map {:main [] :reinforcements []}))]
+      (let [cats (mapv :category (:units-by-category (handlers.draft/draft-view-model test-deps test-draft-eid)))]
+        (is (= ["Lord" "Hero" "Melee Infantry"] cats)
+            "each category appears once, in ascending ordinal order")))))
+
+(deftest draft-view-model-reports-lock-state
+  (with-redefs [data-access.contract/draft-by-eid        (fn [_ _] test-draft)
+                data-access.contract/game-mode-by-eid    (fn [_ _] test-game-mode)
+                data-access.contract/faction-by-eid      (fn [_ _] {:eid test-faction-eid :name "High Elves"})
+                data-access.contract/units-for-faction   (fn [_ _] [infantry-unit lord-unit])
+                data-access.contract/draft-state-by-eid  (fn [_ _] (state-map {:main [] :reinforcements []}))
+                data-access.contract/get-draft-lock-info (fn [_ _] {:match-eid       (UUID/randomUUID)
+                                                                    :tournament-eid  (UUID/randomUUID)
+                                                                    :tournament-name "Spring Open"})]
+    (let [result (handlers.draft/draft-view-model test-deps test-draft-eid)]
+      (is (true? (:locked? result)))
+      (is (= "Spring Open" (:locking-tournament-name result))))))
+
+(deftest draft-view-model-returns-missing-marker-when-absent
+  (with-redefs [data-access.contract/draft-by-eid (fn [_ _] nil)]
+    (is (= :missing/resource (:type (handlers.draft/draft-view-model test-deps test-draft-eid))))))
