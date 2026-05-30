@@ -19,16 +19,16 @@
   [dependencies game-eid]
   {:type     :stats/game-faction-standings
    :game-eid game-eid
-   :rows     (tag-rows (db/get-faction-standings-for-game (:connection dependencies) game-eid))})
+   :rows     (tag-rows (db/get-faction-standings-for-game (:datalog-connection dependencies) game-eid))})
 
 (defn get-league-faction-standings
   [dependencies league-eid]
   {:type       :stats/league-faction-standings
    :league-eid league-eid
-   :rows       (tag-rows (db/get-faction-standings-for-league (:connection dependencies) league-eid))})
+   :rows       (tag-rows (db/get-faction-standings-for-league (:datalog-connection dependencies) league-eid))})
 
 (defn get-season-faction-standings
   [dependencies season-eid]
   {:type       :stats/season-faction-standings
    :season-eid season-eid
-   :rows       (tag-rows (db/get-faction-standings-for-season (:connection dependencies) season-eid))})
+   :rows       (tag-rows (db/get-faction-standings-for-season (:datalog-connection dependencies) season-eid))})

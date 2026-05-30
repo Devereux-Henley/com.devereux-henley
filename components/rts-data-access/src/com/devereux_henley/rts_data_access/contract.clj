@@ -8,7 +8,7 @@
    [com.devereux-henley.rts-data-access.query.datalog.season :as query.datalog.season]
    [com.devereux-henley.rts-data-access.query.datalog.social-media :as query.datalog.social-media]
    [com.devereux-henley.rts-data-access.query.datalog.tournament :as query.datalog.tournament]
-   [com.devereux-henley.rts-data-access.query.stats :as query.stats]
+   [com.devereux-henley.rts-data-access.query.datalog.stats :as query.datalog.stats]
    [com.devereux-henley.rts-data-access.schema :as schema]
    [com.devereux-henley.rts-data-access.schema.datalog :as schema.datalog]
    [com.devereux-henley.rts-data-access.schema.draft :as schema.draft]
@@ -160,9 +160,9 @@
 
 ;;; ─── Stats DB queries ──────────────────────────────────────────────────────
 
-(def get-faction-standings-for-game query.stats/get-faction-standings-for-game)
-(def get-faction-standings-for-league query.stats/get-faction-standings-for-league)
-(def get-faction-standings-for-season query.stats/get-faction-standings-for-season)
+(def get-faction-standings-for-game query.datalog.stats/faction-standings-for-game)
+(def get-faction-standings-for-league query.datalog.stats/faction-standings-for-league)
+(def get-faction-standings-for-season query.datalog.stats/faction-standings-for-season)
 
 ;;; ─── Social Media Datalog queries ──────────────────────────────────────────
 
@@ -265,6 +265,18 @@
 (schema.contract/=>* get-draft-lock-info query.datalog.draft/draft-lock-info
                      [:=> [:cat dl/conn-schema :uuid]
                       [:maybe draft-lock-info-schema]])
+
+(schema.contract/=>* get-faction-standings-for-game query.datalog.stats/faction-standings-for-game
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:sequential faction-standings-row-entity]])
+
+(schema.contract/=>* get-faction-standings-for-league query.datalog.stats/faction-standings-for-league
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:sequential faction-standings-row-entity]])
+
+(schema.contract/=>* get-faction-standings-for-season query.datalog.stats/faction-standings-for-season
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:sequential faction-standings-row-entity]])
 
 (schema.contract/=>* drafts-for-player query.datalog.draft/drafts-for-player
                      [:=> [:cat dl/conn-schema :string]
