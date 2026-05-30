@@ -12,7 +12,17 @@
    [clojure.edn :as edn]
    [clojure.java.io :as io]
    [clojure.pprint :as pp]
-   [clojure.string :as str]))
+   [clojure.string :as str])
+  (:import
+   [java.nio.charset StandardCharsets]
+   [java.util UUID]))
+
+(defn derived-uuid
+  "Deterministic UUID (v3) over `\"/\"`-joined `parts`. The scraper's stable-eid
+  scheme for generated link/statistics rows; matches the retired dump tool."
+  [& parts]
+  (UUID/nameUUIDFromBytes
+   (.getBytes (str/join "/" (map str parts)) StandardCharsets/UTF_8)))
 
 (def ^:private seed-root
   "components/rts-data/resources/rts-data/seed")
