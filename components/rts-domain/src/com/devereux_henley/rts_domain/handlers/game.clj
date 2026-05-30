@@ -63,9 +63,7 @@
         (db/game-modes-for-game (:datalog-connection dependencies) game-eid)))
 
 (defn- units-by-category
-  "Group a faction's units by category. The units arrive sorted by
-  `(unit-category-ordinal, name)`, so a sequential partition produces stable
-  groups in canonical category order without resorting."
+  "Group a faction's units into one entry per category, in category order."
   [units]
   (mapv (fn [group]
           {:category (:unit-category-name (first group))
@@ -74,14 +72,13 @@
 
 (defn faction-view-model
   "Builds the faction detail view-model: the faction entity under `:data`,
-   with its units grouped by category and embedded under `:_embedded`.
-   Returns a `:missing/resource` marker when the faction doesn't exist so the
-   web layer renders a 404."
+   carrying its units grouped by category. Returns a `:missing/resource`
+   marker when the faction doesn't exist."
   [dependencies eid]
   (let [conn (:datalog-connection dependencies)]
     (if-let [faction (db/faction-by-eid conn eid)]
-      {:data (assoc-in faction [:_embedded :units-by-category]
-                       (units-by-category (db/units-for-faction conn eid)))}
+      {:data (assoc faction :units-by-category
+                    (units-by-category (db/units-for-faction conn eid)))}
       {:type :missing/resource :name "faction" :id eid})))
 
 (defn- ->ability-row
@@ -93,14 +90,10 @@
   {:eid (:eid s) :name (or (:name s) (:key s)) :mana-cost (:mana-cost s) :cost (:cost s)})
 
 (defn unit-view-model
-  "Builds the unit detail view-model: the unit entity under `:data`, plus the
+  "Builds the unit detail view-model: the unit entity under `:data`, plus its
    parsed statline and resolved abilities, draftable spells, mounts, and items
-   projected to their template shapes at the top level. Ability and spell keys
-   are read off the decoded statline; spells resolve by lore when the unit has
-   one, else by the doc's `draftable-spells` keys, and resolved entries keep
-   the unit's key order. An unresolved key surfaces as a bare `{:key k}` so the
-   row helpers can fall back on it. Returns a `:missing/resource` marker when
-   the unit doesn't exist so the web layer renders a 404."
+   at the top level. Returns a `:missing/resource` marker when the unit doesn't
+   exist."
   [dependencies eid]
   (let [conn (:datalog-connection dependencies)]
     (if-let [unit (db/unit-by-eid conn eid)]

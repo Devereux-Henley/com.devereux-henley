@@ -381,11 +381,10 @@
              entries)))
 
 (defn draft-view-model
-  "Builds the draft detail view-model from a cohesive fetch: the draft entity
-   under `:data`, its faction and game-mode, the faction roster grouped by
-   category (one card per family, sorted by cost), the main/reinforcement
-   section contexts, and the one-way lock state. Returns a `:missing/resource`
-   marker when the draft doesn't exist so the web layer renders a 404."
+  "Builds the draft detail view-model: the draft entity under `:data`, its
+   faction and game-mode, the faction roster grouped by category, the
+   main/reinforcement section contexts, and the lock state. Returns a
+   `:missing/resource` marker when the draft doesn't exist."
   [dependencies eid]
   (if-let [draft (get-draft-by-eid dependencies eid)]
     (let [conn         (:datalog-connection dependencies)

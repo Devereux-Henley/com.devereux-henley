@@ -30,11 +30,10 @@
       (assoc :type :league/league)))
 
 (defn league-view-model
-  "Builds the league detail view-model from a cohesive fetch: the league
-   entity under `:data`, its seasons, the tournaments scoped to it (each
-   annotated with its season's display-name), the faction standings, and
-   whether `viewer-sub` owns the league. Returns a `:missing/resource`
-   marker when the league doesn't exist so the web layer renders a 404."
+  "Builds the league detail view-model: the league entity under `:data`, its
+   seasons, scoped tournaments, faction standings, and whether `viewer-sub`
+   owns the league. Returns a `:missing/resource` marker when the league
+   doesn't exist."
   [dependencies eid viewer-sub]
   (if-let [league (db/league-by-eid (:datalog-connection dependencies) eid)]
     (let [conn        (:datalog-connection dependencies)

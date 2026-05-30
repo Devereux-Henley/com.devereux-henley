@@ -42,10 +42,9 @@
   (tag-season (db/current-season-for-league (:datalog-connection dependencies) league-eid)))
 
 (defn season-view-model
-  "Builds the season detail view-model from a cohesive fetch: the season
-   entity under `:data`, its parent league, the tournaments scoped to the
-   season, and the faction standings. Returns a `:missing/resource` marker
-   when the season doesn't exist so the web layer renders a 404."
+  "Builds the season detail view-model: the season entity under `:data`, its
+   parent league, scoped tournaments, and faction standings. Returns a
+   `:missing/resource` marker when the season doesn't exist."
   [dependencies eid]
   (if-let [season (get-season-by-eid dependencies eid)]
     (let [conn        (:datalog-connection dependencies)

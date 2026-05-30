@@ -831,13 +831,11 @@
         (sort-by #(- (or (:points %) 0)) standings)))
 
 (defn tournament-view-model
-  "Builds the tournament detail view-model from a cohesive fetch: the
-   tournament entity under `:data`, its derived state (standings ranked),
-   entries, the per-phase bracket grids, the pending-match schedule, phase
-   labels, parent league/season, and the viewer-dependent flags
-   (`:has-entry`, `:registration-open`, `:is-organizer`) derived from
-   `viewer-sub`. Returns a `:missing/resource` marker when the tournament
-   doesn't exist so the web layer renders a 404."
+  "Builds the tournament detail view-model: the tournament entity under
+   `:data`, its derived state, entries, per-phase bracket grids, pending-match
+   schedule, phase labels, parent league/season, and the viewer-dependent
+   flags (`:has-entry`, `:registration-open`, `:is-organizer`). Returns a
+   `:missing/resource` marker when the tournament doesn't exist."
   [dependencies eid viewer-sub]
   (if-let [tournament (get-tournament-by-eid dependencies eid)]
     (let [conn                 (:datalog-connection dependencies)

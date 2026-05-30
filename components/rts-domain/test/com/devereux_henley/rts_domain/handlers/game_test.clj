@@ -187,7 +187,7 @@
 
 ;; --- faction-view-model ---
 
-(deftest faction-view-model-nests-entity-under-data-and-embeds-units
+(deftest faction-view-model-nests-entity-under-data-with-grouped-units
   (with-redefs [data-access.contract/faction-by-eid
                 (fn [_ _] {:eid test-faction-eid :name "Empire" :description "d"})
                 data-access.contract/units-for-faction
@@ -195,7 +195,7 @@
                            {:unit-category-name "Lord" :name "Wizard"}
                            {:unit-category-name "Hero" :name "Captain"}])]
     (let [result (handlers.game/faction-view-model test-deps test-faction-eid)
-          cats   (get-in result [:data :_embedded :units-by-category])]
+          cats   (get-in result [:data :units-by-category])]
       (is (= "Empire" (get-in result [:data :name])))
       (is (= ["Lord" "Hero"] (mapv :category cats)))
       (is (= 2 (count (:units (first cats))))))))
