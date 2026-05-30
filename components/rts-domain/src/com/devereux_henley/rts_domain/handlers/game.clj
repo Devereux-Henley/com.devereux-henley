@@ -63,7 +63,7 @@
         (db/game-modes-for-game (:datalog-connection dependencies) game-eid)))
 
 (defn- units-by-category
-  "Group a faction's units by category. `db/faction-detail` sorts units by
+  "Group a faction's units by category. The units arrive sorted by
   `(unit-category-name, name)`, so a sequential partition produces stable
   groups without resorting."
   [units]
@@ -73,17 +73,16 @@
         (partition-by :unit-category-name units)))
 
 (defn faction-view-model
-  "Builds the faction detail view-model from a single `db/faction-detail`
-   fetch: the faction entity under `:data`, with its units grouped by
-   category and embedded under `:_embedded`. Returns a `:missing/resource`
-   marker when the faction doesn't exist so the web layer renders a 404."
+  "Builds the faction detail view-model: the faction entity under `:data`,
+   with its units grouped by category and embedded under `:_embedded`.
+   Returns a `:missing/resource` marker when the faction doesn't exist so the
+   web layer renders a 404."
   [dependencies eid]
-  (if-let [faction (db/faction-detail (:datalog-connection dependencies) eid)]
-    {:data (-> faction
-               (dissoc :units)
-               (assoc-in [:_embedded :units-by-category]
-                         (units-by-category (:units faction))))}
-    {:type :missing/resource :name "faction" :id eid}))
+  (let [conn (:datalog-connection dependencies)]
+    (if-let [faction (db/faction-by-eid conn eid)]
+      {:data (assoc-in faction [:_embedded :units-by-category]
+                       (units-by-category (db/units-for-faction conn eid)))}
+      {:type :missing/resource :name "faction" :id eid})))
 
 (defn- ->ability-row
   [a]
@@ -94,18 +93,32 @@
   {:eid (:eid s) :name (or (:name s) (:key s)) :mana-cost (:mana-cost s) :cost (:cost s)})
 
 (defn unit-view-model
-  "Builds the unit detail view-model from a single `db/unit-detail` fetch:
-   the unit entity under `:data`, plus the parsed statline and resolved
-   abilities, draftable spells, mounts, and items projected to their
-   template shapes at the top level. Returns a `:missing/resource` marker
-   when the unit doesn't exist so the web layer renders a 404."
+  "Builds the unit detail view-model: the unit entity under `:data`, plus the
+   parsed statline and resolved abilities, draftable spells, mounts, and items
+   projected to their template shapes at the top level. Ability and spell keys
+   are read off the decoded statline; spells resolve by lore when the unit has
+   one, else by the doc's `draftable-spells` keys, and resolved entries keep
+   the unit's key order. An unresolved key surfaces as a bare `{:key k}` so the
+   row helpers can fall back on it. Returns a `:missing/resource` marker when
+   the unit doesn't exist so the web layer renders a 404."
   [dependencies eid]
-  (if-let [unit (db/unit-detail (:datalog-connection dependencies) eid)]
-    (let [{:keys [stats]} (handlers.draft/parse-unit-statistics (:unit-statistics unit))]
-      {:data             (dissoc unit :abilities :draftable-spells :mounts :items :unit-statistics)
-       :unit-statistics  stats
-       :abilities        (not-empty (mapv ->ability-row (:abilities unit)))
-       :draftable-spells (not-empty (mapv ->spell-row (:draftable-spells unit)))
-       :mounts           (not-empty (:mounts unit))
-       :items            (not-empty (:items unit))})
-    {:type :missing/resource :name "unit" :id eid}))
+  (let [conn (:datalog-connection dependencies)]
+    (if-let [unit (db/unit-by-eid conn eid)]
+      (let [doc             (:unit-statistics unit)
+            ability-keys    (vec (get doc "abilities"))
+            spell-keys      (mapv #(get % "key") (get doc "draftable-spells"))
+            lore-key        (:lore unit)
+            key->ability    (db/abilities-by-keys conn ability-keys)
+            abilities       (mapv (fn [k] (or (get key->ability k) {:key k})) ability-keys)
+            spells          (if lore-key
+                              (db/spells-for-lore conn lore-key)
+                              (let [key->spell (db/spells-by-keys conn spell-keys)]
+                                (mapv (fn [k] (or (get key->spell k) {:key k})) spell-keys)))
+            {:keys [stats]} (handlers.draft/parse-unit-statistics doc)]
+        {:data             (dissoc unit :unit-statistics)
+         :unit-statistics  stats
+         :abilities        (not-empty (mapv ->ability-row abilities))
+         :draftable-spells (not-empty (mapv ->spell-row spells))
+         :mounts           (not-empty (db/mounts-for-unit conn eid))
+         :items            (not-empty (db/items-for-unit conn eid))})
+      {:type :missing/resource :name "unit" :id eid})))

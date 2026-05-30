@@ -433,46 +433,6 @@
                         (dl/db conn) ability-pattern (vec ability-keys))]
       (into {} (map (fn [m] [(:ability/key m) (->ability m)])) results))))
 
-(defn unit-detail
-  "Single cohesive fetch for the unit detail view: the unit (with its
-  decoded `:unit-statistics` doc) plus everything keyed off it — resolved
-  abilities, draftable spells, mounts, and items. Returns nil when the
-  unit doesn't exist.
-
-  Ability and spell keys are read straight off the stats doc. Spells
-  resolve by lore (`spells-for-lore`) when the unit has a `:lore`, else
-  by the doc's `draftable-spells` keys. Resolved abilities/spells are
-  ordered to match the unit's key order; an unresolved key surfaces as a
-  bare `{:key k}` so the caller can fall back on it. All shaping for the
-  template (stat parsing, name fallbacks, not-empty) stays with the
-  caller — this returns raw resolved data."
-  [conn eid]
-  (when-let [unit (unit-by-eid conn eid)]
-    (let [stats        (:unit-statistics unit)
-          ability-keys (vec (get stats "abilities"))
-          spell-keys   (mapv #(get % "key") (get stats "draftable-spells"))
-          lore-key     (:lore unit)
-          key->ability (abilities-by-keys conn ability-keys)
-          abilities    (mapv (fn [k] (or (get key->ability k) {:key k})) ability-keys)
-          spells       (if lore-key
-                         (spells-for-lore conn lore-key)
-                         (let [key->spell (spells-by-keys conn spell-keys)]
-                           (mapv (fn [k] (or (get key->spell k) {:key k})) spell-keys)))]
-      (assoc unit
-             :abilities abilities
-             :draftable-spells spells
-             :mounts (mounts-for-unit conn eid)
-             :items  (items-for-unit conn eid)))))
-
-(defn faction-detail
-  "Single cohesive fetch for the faction detail view: the faction plus its
-  units (summary rows, already sorted by category then name). Returns nil
-  when the faction doesn't exist. Grouping for the template stays with the
-  caller — this returns raw resolved data."
-  [conn eid]
-  (when-let [faction (faction-by-eid conn eid)]
-    (assoc faction :units (units-for-faction conn eid))))
-
 (defn unit-level-costs
   "All veteran-rank cost rows as a sorted `{level -> row}` map."
   [conn]

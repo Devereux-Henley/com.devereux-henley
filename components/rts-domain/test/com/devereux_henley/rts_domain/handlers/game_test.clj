@@ -188,34 +188,40 @@
 ;; --- faction-view-model ---
 
 (deftest faction-view-model-nests-entity-under-data-and-embeds-units
-  (with-redefs [data-access.contract/faction-detail
-                (fn [_ _] {:eid   test-faction-eid                               :name "Empire" :description "d"
-                           :units [{:unit-category-name "Lord" :name "General"}
-                                   {:unit-category-name "Lord" :name "Wizard"}
-                                   {:unit-category-name "Hero" :name "Captain"}]})]
+  (with-redefs [data-access.contract/faction-by-eid
+                (fn [_ _] {:eid test-faction-eid :name "Empire" :description "d"})
+                data-access.contract/units-for-faction
+                (fn [_ _] [{:unit-category-name "Lord" :name "General"}
+                           {:unit-category-name "Lord" :name "Wizard"}
+                           {:unit-category-name "Hero" :name "Captain"}])]
     (let [result (handlers.game/faction-view-model test-deps test-faction-eid)
           cats   (get-in result [:data :_embedded :units-by-category])]
       (is (= "Empire" (get-in result [:data :name])))
-      (is (nil? (get-in result [:data :units])) "raw :units list is consumed into the grouping")
       (is (= ["Lord" "Hero"] (mapv :category cats)))
       (is (= 2 (count (:units (first cats))))))))
 
 (deftest faction-view-model-returns-missing-marker-when-absent
-  (with-redefs [data-access.contract/faction-detail (fn [_ _] nil)]
+  (with-redefs [data-access.contract/faction-by-eid (fn [_ _] nil)]
     (is (= :missing/resource (:type (handlers.game/faction-view-model test-deps test-faction-eid))))))
 
 ;; --- unit-view-model ---
 
 (deftest unit-view-model-nests-entity-under-data-and-lifts-lists
-  (with-redefs [data-access.contract/unit-detail
-                (fn [_ _] {:eid              test-unit-eid                                                     :name  "Bray-Shaman" :description "d" :unit-statistics {}
-                           :abilities        [{:eid (UUID/randomUUID) :name "Shadow" :description "x"}]
-                           :draftable-spells [{:eid (UUID/randomUUID) :name "Fireball" :mana-cost 5 :cost 10}]
-                           :mounts           []                                                                :items []})
+  (with-redefs [data-access.contract/unit-by-eid
+                (fn [_ _] {:eid             test-unit-eid                             :name "Bray-Shaman" :description "d" :lore nil
+                           :unit-statistics {"abilities"        ["shadow"]
+                                             "draftable-spells" [{"key" "fireball"}]}})
+                data-access.contract/abilities-by-keys
+                (fn [_ _] {"shadow" {:eid (UUID/randomUUID) :key "shadow" :name "Shadow" :description "x"}})
+                data-access.contract/spells-by-keys
+                (fn [_ _] {"fireball" {:eid (UUID/randomUUID) :key "fireball" :name "Fireball" :mana-cost 5 :cost 10}})
+                data-access.contract/mounts-for-unit (fn [_ _] [])
+                data-access.contract/items-for-unit  (fn [_ _] [])
                 handlers.draft/parse-unit-statistics (fn [_] {:stats [{:label "Health" :value 100}]})]
     (let [result (handlers.game/unit-view-model test-deps test-unit-eid)]
       (is (= "Bray-Shaman" (get-in result [:data :name])))
       (is (nil? (get-in result [:data :abilities])) "resolved lists are lifted out of :data")
+      (is (nil? (get-in result [:data :unit-statistics])) "raw stats doc is consumed into the statline")
       (is (= 1 (count (:abilities result))))
       (is (= 1 (count (:draftable-spells result))))
       (is (= [{:label "Health" :value 100}] (:unit-statistics result)))
@@ -223,5 +229,5 @@
       (is (nil? (:items result))))))
 
 (deftest unit-view-model-returns-missing-marker-when-absent
-  (with-redefs [data-access.contract/unit-detail (fn [_ _] nil)]
+  (with-redefs [data-access.contract/unit-by-eid (fn [_ _] nil)]
     (is (= :missing/resource (:type (handlers.game/unit-view-model test-deps test-unit-eid))))))
