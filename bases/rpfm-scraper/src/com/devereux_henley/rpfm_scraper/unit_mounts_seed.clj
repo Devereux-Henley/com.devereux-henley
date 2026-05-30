@@ -32,7 +32,7 @@
                                 :escape-slash false
                                 :escape-js-separators false))))
 
-(defn- granted-keys
+(defn granted-keys
   "Returns the sorted vec of ability keys present on the mounted variant's
   land_unit but not on the base variant's land_unit, or nil when the
   mounted variant grants nothing new."

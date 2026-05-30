@@ -53,7 +53,7 @@
 (defn- sql-escape [s]
   (str/replace (or s "") "'" "''"))
 
-(defn- icon-stem-for-row [row type-icon-map]
+(defn icon-stem-for-row [row type-icon-map]
   (let [t   (or (get row "type") "")
         rel (get type-icon-map t)]
     (when rel
