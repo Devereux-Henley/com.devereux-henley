@@ -36,16 +36,16 @@ make build_docker
 make run_docker
 make ory_local            # create Ory Cloud tunnel for local auth
 
-# Refresh game data seed files from RPFM (after a patch)
-clojure -M:dev -m com.devereux-henley.rpfm-scraper.core --data-dir bases/rpfm-scraper/data
-
-# Publish a fresh Datalog seed snapshot for the new patch (one EDN file per entity
-# under components/rts-data/resources/rts-data/seed/datalog/<version>/).
-# Run after the rpfm-scraper above so the SQL seeds it dumps from are current.
-clojure -M:dev -e "(require 'dump-datalog-seed) (dump-datalog-seed/dump! \"8.0\")"
+# Refresh the Datalog seed from RPFM (after a patch). Reads the curated
+# authoring EDN + RPFM JSON and writes the merged seed directly under
+# components/rts-data/resources/rts-data/seed/datalog/<patch-version>/.
+clojure -M:dev -m com.devereux-henley.rpfm-scraper.core \
+  --data-dir bases/rpfm-scraper/data --patch-version 8.0
 ```
 
-See `docs/rpfm-scraper/game-data.md` for the full RPFM data refresh workflow.
+See `docs/rpfm-scraper/edn-seed-pipeline.md` for the seed pipeline (curated
+authoring EDN ⊕ RPFM → merged seed) and `docs/rpfm-scraper/game-data.md` for the
+full RPFM data refresh workflow.
 
 **REPL (primary dev workflow):** Jack-in from the repo root with `M-x cider-jack-in`. The `:dev` alias (configured in `.dir-locals.el`) puts all components and bases on the classpath.
 

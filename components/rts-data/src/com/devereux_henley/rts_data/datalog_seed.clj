@@ -1,9 +1,8 @@
 (ns com.devereux-henley.rts-data.datalog-seed
   "Read pre-built Datalog seed files from the classpath. Each patch lives
   under `rts-data/seed/datalog/<patch-version>/` as one EDN file per entity
-  type. The files are produced offline by the dev-only dump tool
-  (`development/src/dump_datalog_seed.clj`) and committed alongside the
-  SQL seeds.
+  type. The files are produced offline by the `rpfm-scraper` base (curated
+  authoring EDN ⊕ RPFM data) and committed.
 
   This namespace deliberately knows nothing about Datalevin — callers
   pass the returned tx-data to `datalog.contract/transact!` themselves.
@@ -58,7 +57,7 @@
 (defn load-file-tx
   "Read a single seed file for `patch-version`. Returns the EDN-decoded
   tx-data vector, or nil if the file is missing (some entity types may be
-  empty for a given patch — the dump tool skips empty files)."
+  empty for a given patch — the scraper skips empty files)."
   [patch-version file-name]
   (when-let [r (seed-resource patch-version file-name)]
     (read-edn-resource r)))

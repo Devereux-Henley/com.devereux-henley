@@ -93,6 +93,15 @@
   [unit]
   (second (:unit/faction unit)))
 
+(defn unit-name-eid-faction
+  "`[[unit-name eid-string faction-slug] …]` for asset matching + the coverage
+  report. Mirrors the SQL-era `assets/build-unit-name-eid-map` shape, sourced
+  from authoring units."
+  [version]
+  (let [eid->slug (faction-eid->key version)]
+    (mapv (fn [u] [(:unit/name u) (str (:unit/eid u)) (eid->slug (unit-faction-eid u))])
+          (read-authoring version "units.edn"))))
+
 (defn unit-name+faction->eid
   "`{[unit-name faction-key] → unit-eid}` from authoring units, joining each
   unit's faction eid back to its slug. Replaces the per-faction-file lookups
