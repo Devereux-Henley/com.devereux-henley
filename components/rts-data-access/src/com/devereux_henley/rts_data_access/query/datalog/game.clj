@@ -464,6 +464,15 @@
              :mounts (mounts-for-unit conn eid)
              :items  (items-for-unit conn eid)))))
 
+(defn faction-detail
+  "Single cohesive fetch for the faction detail view: the faction plus its
+  units (summary rows, already sorted by category then name). Returns nil
+  when the faction doesn't exist. Grouping for the template stays with the
+  caller — this returns raw resolved data."
+  [conn eid]
+  (when-let [faction (faction-by-eid conn eid)]
+    (assoc faction :units (units-for-faction conn eid))))
+
 (defn unit-level-costs
   "All veteran-rank cost rows as a sorted `{level -> row}` map."
   [conn]

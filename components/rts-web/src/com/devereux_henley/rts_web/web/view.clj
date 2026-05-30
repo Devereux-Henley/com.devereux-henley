@@ -51,17 +51,21 @@
   {:status 200
    :body   (render/render-view view-name (base-context request))})
 
-(defn standard-entity-view-handler
-  [pipeline-fn template-name extra-data-fn request]
-  (let [{{{:keys [eid]} :path} :parameters} request
-        data                                (pipeline-fn eid)]
-    (if (= :missing/resource (:type data))
-      {:status 404 :body data}
-      {:status 200
-       :body   (render/render-view template-name
-                                   (merge (base-context request)
-                                          {:data data}
-                                          (extra-data-fn data request)))})))
+(defn render-entity-view
+  "Render `template-name` with the domain view-model merged onto the base
+   context, or a 404 when the model is a `:missing/resource` marker.
+
+   The view-model is the complete template context produced by a domain
+   `<view>-view-model` function: the primary entity under `:data` plus any
+   lists, flags, and labels the template reads at the top level. Callers
+   merge genuinely view-only request-derived extras (filesystem asset paths)
+   onto the model before passing it in."
+  [request template-name view-model]
+  (if (= :missing/resource (:type view-model))
+    {:status 404 :body view-model}
+    {:status 200
+     :body   (render/render-view template-name
+                                 (merge (base-context request) view-model))}))
 
 (defmethod integrant.core/init-key ::game-context-middleware
   [_init-key {:keys [datalog-connection]}]

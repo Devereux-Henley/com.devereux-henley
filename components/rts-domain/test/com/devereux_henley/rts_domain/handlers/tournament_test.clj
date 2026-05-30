@@ -427,3 +427,42 @@
     (let [result (handlers.tournament/get-tournament-by-eid test-deps test-tournament-eid)]
       (is (= test-league-eid (:league-eid result)))
       (is (= test-season-eid (:season-eid result))))))
+
+;; --- tournament-view-model ---
+
+(deftest tournament-view-model-shapes-data-state-and-viewer-flags
+  (with-redefs [handlers.tournament/get-tournament-by-eid
+                (fn [_ _] {:eid test-tournament-eid :name "Spring Open" :description "d" :created-by-sub "owner"})
+                handlers.tournament/get-tournament-state
+                (fn [_ _] {:status       "active"                                                      :phases [] :current-phase 0 :qualifier-count 1
+                           :registration {:opens-at nil :closes-at nil}
+                           :standings    [{:faction-name "A" :points 5} {:faction-name "B" :points 3}]})
+                handlers.tournament/get-entries
+                (fn [_ _] [{:player-sub "owner"}])
+                handlers.tournament/get-matches-for-tournament
+                (fn [_ _] [])]
+    (let [result    (handlers.tournament/tournament-view-model test-deps test-tournament-eid "owner")
+          standings (:standings (:tournament-state result))]
+      (is (= "Spring Open" (get-in result [:data :name])))
+      (is (true? (:is-organizer result)))
+      (is (true? (:has-entry result)))
+      (is (= [] (:matches-by-phase result)))
+      (is (= [1 2] (mapv :rank standings)) "standings sorted by points desc and ranked")
+      (is (= [true false] (mapv :advanced? standings)) "qualifier cut at rank 1"))))
+
+(deftest tournament-view-model-viewer-flags-for-non-participant
+  (with-redefs [handlers.tournament/get-tournament-by-eid
+                (fn [_ _] {:eid test-tournament-eid :name "Spring Open" :created-by-sub "owner"})
+                handlers.tournament/get-tournament-state
+                (fn [_ _] {:status       "active"                       :phases    [] :current-phase 0 :qualifier-count nil
+                           :registration {:opens-at nil :closes-at nil} :standings []})
+                handlers.tournament/get-entries                (fn [_ _] [{:player-sub "owner"}])
+                handlers.tournament/get-matches-for-tournament (fn [_ _] [])]
+    (let [result (handlers.tournament/tournament-view-model test-deps test-tournament-eid "viewer")]
+      (is (false? (:is-organizer result)))
+      (is (false? (:has-entry result))))))
+
+(deftest tournament-view-model-returns-missing-marker-when-absent
+  (with-redefs [handlers.tournament/get-tournament-by-eid (fn [_ _] nil)]
+    (is (= :missing/resource
+           (:type (handlers.tournament/tournament-view-model test-deps test-tournament-eid "owner"))))))

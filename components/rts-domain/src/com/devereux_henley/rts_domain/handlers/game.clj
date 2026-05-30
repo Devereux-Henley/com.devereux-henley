@@ -62,6 +62,29 @@
   (mapv (fn [mode] (assoc mode :type :game/game-mode))
         (db/game-modes-for-game (:datalog-connection dependencies) game-eid)))
 
+(defn- units-by-category
+  "Group a faction's units by category. `db/faction-detail` sorts units by
+  `(unit-category-name, name)`, so a sequential partition produces stable
+  groups without resorting."
+  [units]
+  (mapv (fn [group]
+          {:category (:unit-category-name (first group))
+           :units    (vec group)})
+        (partition-by :unit-category-name units)))
+
+(defn faction-view-model
+  "Builds the faction detail view-model from a single `db/faction-detail`
+   fetch: the faction entity under `:data`, with its units grouped by
+   category and embedded under `:_embedded`. Returns a `:missing/resource`
+   marker when the faction doesn't exist so the web layer renders a 404."
+  [dependencies eid]
+  (if-let [faction (db/faction-detail (:datalog-connection dependencies) eid)]
+    {:data (-> faction
+               (dissoc :units)
+               (assoc-in [:_embedded :units-by-category]
+                         (units-by-category (:units faction))))}
+    {:type :missing/resource :name "faction" :id eid}))
+
 (defn- ->ability-row
   [a]
   {:eid (:eid a) :name (:name a) :description (:description a)})
@@ -72,18 +95,17 @@
 
 (defn unit-view-model
   "Builds the unit detail view-model from a single `db/unit-detail` fetch:
-   the unit fields, the parsed statline, and resolved abilities, draftable
-   spells, mounts, and items projected to their template shapes. Returns a
-   `:missing/resource` marker when the unit doesn't exist so the web layer
-   renders a 404."
+   the unit entity under `:data`, plus the parsed statline and resolved
+   abilities, draftable spells, mounts, and items projected to their
+   template shapes at the top level. Returns a `:missing/resource` marker
+   when the unit doesn't exist so the web layer renders a 404."
   [dependencies eid]
   (if-let [unit (db/unit-detail (:datalog-connection dependencies) eid)]
     (let [{:keys [stats]} (handlers.draft/parse-unit-statistics (:unit-statistics unit))]
-      (assoc unit
-             :type             :game/unit
-             :unit-statistics  stats
-             :abilities        (not-empty (mapv ->ability-row (:abilities unit)))
-             :draftable-spells (not-empty (mapv ->spell-row (:draftable-spells unit)))
-             :mounts           (not-empty (:mounts unit))
-             :items            (not-empty (:items unit))))
+      {:data             (dissoc unit :abilities :draftable-spells :mounts :items :unit-statistics)
+       :unit-statistics  stats
+       :abilities        (not-empty (mapv ->ability-row (:abilities unit)))
+       :draftable-spells (not-empty (mapv ->spell-row (:draftable-spells unit)))
+       :mounts           (not-empty (:mounts unit))
+       :items            (not-empty (:items unit))})
     {:type :missing/resource :name "unit" :id eid}))

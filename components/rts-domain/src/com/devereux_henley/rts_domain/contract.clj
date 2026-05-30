@@ -54,6 +54,7 @@
 (def get-factions-for-game                      handlers.game/get-factions-for-game)
 (def get-factions                               handlers.game/get-factions)
 (def get-faction-by-eid                         handlers.game/get-faction-by-eid)
+(def faction-view-model                         handlers.game/faction-view-model)
 (def get-socials-for-game                       handlers.game/get-socials-for-game)
 (def get-units-for-game                         handlers.game/get-units-for-game)
 (def get-unit-by-eid                            handlers.game/get-unit-by-eid)
@@ -66,6 +67,7 @@
 ;;; ─── Draft handler functions ────────────────────────────────────────────────
 
 (def get-draft-by-eid                           handlers.draft/get-draft-by-eid)
+(def draft-view-model                           handlers.draft/draft-view-model)
 (def get-drafts-for-player                      handlers.draft/get-drafts-for-player)
 (def get-drafts-for-player-by-game              handlers.draft/get-drafts-for-player-by-game)
 (def create-draft                               handlers.draft/create-draft)
@@ -98,6 +100,7 @@
 (def tournament-collection-resource               schema/tournament-collection-resource)
 
 (def get-tournament-by-eid                        handlers.tournament/get-tournament-by-eid)
+(def tournament-view-model                        handlers.tournament/tournament-view-model)
 (def get-tournaments-for-game                     handlers.tournament/get-tournaments-for-game)
 (def get-tournaments                              handlers.tournament/get-tournaments)
 (def create-tournament                            handlers.tournament/create-tournament)
@@ -171,12 +174,14 @@
 (def get-leagues-for-game                         handlers.league/get-leagues-for-game)
 (def get-leagues                                  handlers.league/get-leagues)
 (def create-league                                handlers.league/create-league)
+(def league-view-model                            handlers.league/league-view-model)
 
 (def get-season-by-eid                            handlers.season/get-season-by-eid)
 (def get-seasons-for-league                       handlers.season/get-seasons-for-league)
 (def get-seasons                                  handlers.season/get-seasons)
 (def get-current-season-for-league                handlers.season/get-current-season-for-league)
 (def create-season                                handlers.season/create-season)
+(def season-view-model                            handlers.season/season-view-model)
 
 (def get-game-faction-standings                   handlers.stats/get-game-faction-standings)
 (def get-league-faction-standings                 handlers.stats/get-league-faction-standings)

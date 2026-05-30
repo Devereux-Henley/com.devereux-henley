@@ -66,6 +66,7 @@
 (def factions             query.datalog.game/factions)
 (def factions-for-game    query.datalog.game/factions-for-game)
 (def faction-by-eid       query.datalog.game/faction-by-eid)
+(def faction-detail       query.datalog.game/faction-detail)
 (def units                query.datalog.game/units)
 (def units-for-game       query.datalog.game/units-for-game)
 (def units-for-faction    query.datalog.game/units-for-faction)

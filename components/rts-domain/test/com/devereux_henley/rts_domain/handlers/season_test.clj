@@ -101,3 +101,29 @@
       (testing "instants are stored as java.time.Instant (UTC)"
         (is (instance? Instant (:start-at @captured)))
         (is (instance? Instant (:end-at @captured)))))))
+
+;; ─── season-view-model ──────────────────────────────────────────────────────
+
+(def ^:private test-season-eid (UUID/fromString "44444444-4444-4444-4444-444444444444"))
+(def ^:private test-game-eid (UUID/fromString "22222222-2222-2222-2222-222222222222"))
+
+(deftest season-view-model-shapes-data-league-and-tournaments
+  (with-redefs [data-access.contract/season-by-eid
+                (fn [_ _] {:eid      test-season-eid :ordinal 2   :name nil :league-eid test-league-eid
+                           :start-at "s"             :end-at  "e"})
+                data-access.contract/league-by-eid
+                (fn [_ _] {:eid test-league-eid :name "Spring" :game-eid test-game-eid})
+                data-access.contract/tournaments-for-game
+                (fn [_ _] [{:eid (UUID/randomUUID) :season-eid test-season-eid :status "active" :name "In Season"}
+                           {:eid (UUID/randomUUID) :season-eid (UUID/randomUUID) :name "Other"}])
+                data-access.contract/get-faction-standings-for-season
+                (fn [_ _] [])]
+    (let [result (handlers.season/season-view-model test-deps test-season-eid)]
+      (is (= "Season 2" (get-in result [:data :display-name])))
+      (is (= "Spring" (get-in result [:league :name])))
+      (is (= 1 (count (:tournaments result))) "only tournaments scoped to this season are kept")
+      (is (contains? result :standings)))))
+
+(deftest season-view-model-returns-missing-marker-when-absent
+  (with-redefs [data-access.contract/season-by-eid (fn [_ _] nil)]
+    (is (= :missing/resource (:type (handlers.season/season-view-model test-deps test-season-eid))))))
