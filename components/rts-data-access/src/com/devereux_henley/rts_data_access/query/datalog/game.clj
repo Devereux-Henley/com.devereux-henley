@@ -19,7 +19,7 @@
    {:unit/game [:game/eid]}
    {:unit/faction [:faction/eid]}
    {:unit/unit-type [:unit-type/eid :unit-type/name]}
-   {:unit/unit-category [:unit-category/eid :unit-category/name]}
+   {:unit/unit-category [:unit-category/eid :unit-category/name :unit-category/ordinal]}
    {:unit-statistics/_unit [:unit-statistics/cost
                             {:unit-statistics/patch [:patch/released-at]}]}])
 
@@ -29,7 +29,7 @@
    {:unit/game [:game/eid]}
    {:unit/faction [:faction/eid]}
    {:unit/unit-type [:unit-type/eid :unit-type/name]}
-   {:unit/unit-category [:unit-category/eid :unit-category/name]}
+   {:unit/unit-category [:unit-category/eid :unit-category/name :unit-category/ordinal]}
    {:unit-statistics/_unit
     (into [{:unit-statistics/patch [:patch/released-at]}]
           (map second)
@@ -122,27 +122,29 @@
 (defn- ->unit-row
   [m {:keys [include-data?]}]
   (when m
-    (let [stats                         (latest-stats (:unit-statistics/_unit m))
+    (let [stats                               (latest-stats (:unit-statistics/_unit m))
           {ut-eid  :unit-type/eid
-           ut-name :unit-type/name}     (:unit/unit-type m)
-          {uc-eid  :unit-category/eid
-           uc-name :unit-category/name} (:unit/unit-category m)]
-      (cond-> {:type               :game/unit
-               :eid                (:unit/eid m)
-               :key                (:unit/key m)
-               :name               (:unit/name m)
-               :family-name        (:unit/family-name m)
-               :description        (:unit/description m)
-               :mark               (some-> (:unit/mark m) name)
-               :lore               (:unit/lore m)
-               :is-unique          (if (:unit/is-unique m) 1 0)
-               :game-eid           (some-> m :unit/game :game/eid)
-               :faction-eid        (some-> m :unit/faction :faction/eid)
-               :unit-type-eid      ut-eid
-               :unit-type-name     ut-name
-               :unit-category-eid  uc-eid
-               :unit-category-name uc-name
-               :cost               (:unit-statistics/cost stats)}
+           ut-name :unit-type/name}           (:unit/unit-type m)
+          {uc-eid     :unit-category/eid
+           uc-name    :unit-category/name
+           uc-ordinal :unit-category/ordinal} (:unit/unit-category m)]
+      (cond-> {:type                  :game/unit
+               :eid                   (:unit/eid m)
+               :key                   (:unit/key m)
+               :name                  (:unit/name m)
+               :family-name           (:unit/family-name m)
+               :description           (:unit/description m)
+               :mark                  (some-> (:unit/mark m) name)
+               :lore                  (:unit/lore m)
+               :is-unique             (if (:unit/is-unique m) 1 0)
+               :game-eid              (some-> m :unit/game :game/eid)
+               :faction-eid           (some-> m :unit/faction :faction/eid)
+               :unit-type-eid         ut-eid
+               :unit-type-name        ut-name
+               :unit-category-eid     uc-eid
+               :unit-category-name    uc-name
+               :unit-category-ordinal uc-ordinal
+               :cost                  (:unit-statistics/cost stats)}
         include-data? (assoc :unit-statistics (stats->doc stats))))))
 
 (defn- ->unit-summary [m] (->unit-row m {:include-data? false}))
@@ -290,7 +292,7 @@
   (->faction (dl/pull (dl/db conn) faction-pattern (dl/lookup-ref :faction/eid eid))))
 
 (defn units-for-faction
-  "Unit summaries for a faction, sorted by `(unit-category-name, name)`."
+  "Unit summaries for a faction, sorted by `(unit-category-ordinal, name)`."
   [conn faction-eid]
   (let [db (dl/db conn)]
     (->> (dl/q '[:find [(pull ?u pattern) ...]
@@ -300,7 +302,7 @@
                  [?u :unit/faction ?f]]
                db unit-summary-pattern faction-eid)
          (mapv ->unit-summary)
-         (sort-by (juxt :unit-category-name :name))
+         (sort-by (juxt :unit-category-ordinal :name))
          vec)))
 
 (defn units-for-game
@@ -314,7 +316,7 @@
                  [?u :unit/game ?g]]
                db unit-summary-pattern game-eid)
          (mapv ->unit-summary)
-         (sort-by (juxt :unit-category-name :name))
+         (sort-by (juxt :unit-category-ordinal :name))
          vec)))
 
 (defn units
@@ -326,7 +328,7 @@
                  :where [?u :unit/eid]]
                db unit-summary-pattern)
          (mapv ->unit-summary)
-         (sort-by (juxt :unit-category-name :name))
+         (sort-by (juxt :unit-category-ordinal :name))
          vec)))
 
 (defn unit-by-eid

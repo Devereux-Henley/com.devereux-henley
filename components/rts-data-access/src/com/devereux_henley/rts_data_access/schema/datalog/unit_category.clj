@@ -7,4 +7,5 @@
                                :db/unique    :db.unique/identity}
    :unit-category/name        {:db/valueType :db.type/string}
    :unit-category/description {:db/valueType :db.type/string}
+   :unit-category/ordinal     {:db/valueType :db.type/long}
    :unit-category/game        {:db/valueType :db.type/ref}})

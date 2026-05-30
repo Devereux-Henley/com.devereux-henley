@@ -2,6 +2,7 @@
                  :name "Lord",
                  :description
                  "Powerful leaders that command your army on the battlefield.",
+                 :ordinal 1,
                  :game
                  [:game/eid
                   #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
@@ -9,6 +10,7 @@
                  :name "Hero",
                  :description
                  "Elite characters with unique abilities that support your forces.",
+                 :ordinal 2,
                  :game
                  [:game/eid
                   #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
@@ -16,6 +18,7 @@
                  :name "Melee Infantry",
                  :description
                  "Ground troops that engage enemies in close combat.",
+                 :ordinal 3,
                  :game
                  [:game/eid
                   #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
@@ -23,6 +26,7 @@
                  :name "Missile Infantry",
                  :description
                  "Infantry units that attack enemies from range.",
+                 :ordinal 4,
                  :game
                  [:game/eid
                   #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
@@ -30,6 +34,7 @@
                  :name "Melee Cavalry",
                  :description
                  "Mounted warriors that charge and engage enemies in close combat.",
+                 :ordinal 5,
                  :game
                  [:game/eid
                   #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
@@ -37,6 +42,7 @@
                  :name "Missile Cavalry",
                  :description
                  "Mounted units that harass enemies with ranged attacks.",
+                 :ordinal 6,
                  :game
                  [:game/eid
                   #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
@@ -44,6 +50,7 @@
                  :name "Chariot",
                  :description
                  "Wheeled war vehicles that crash through enemy lines.",
+                 :ordinal 7,
                  :game
                  [:game/eid
                   #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
@@ -51,6 +58,7 @@
                  :name "War Machine",
                  :description
                  "Mechanical constructs and devices built for destruction.",
+                 :ordinal 8,
                  :game
                  [:game/eid
                   #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
@@ -58,6 +66,7 @@
                  :name "Artillery",
                  :description
                  "Long-range siege weapons that bombard enemy formations.",
+                 :ordinal 9,
                  :game
                  [:game/eid
                   #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
@@ -65,6 +74,7 @@
                  :name "War Beast",
                  :description
                  "Tamed creatures of war unleashed upon the enemy.",
+                 :ordinal 10,
                  :game
                  [:game/eid
                   #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
@@ -72,6 +82,7 @@
                  :name "Monstrous Infantry",
                  :description
                  "Large humanoid creatures that fight on foot and crush enemy ranks.",
+                 :ordinal 11,
                  :game
                  [:game/eid
                   #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
@@ -79,6 +90,7 @@
                  :name "Monster",
                  :description
                  "Enormous creatures that tower over the battlefield and inspire terror.",
+                 :ordinal 12,
                  :game
                  [:game/eid
                   #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
@@ -86,6 +98,7 @@
                  :name "Monstrous Cavalry",
                  :description
                  "Monstrous creatures ridden as cavalry that combine powerful charge with formidable bulk.",
+                 :ordinal 13,
                  :game
                  [:game/eid
                   #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}]

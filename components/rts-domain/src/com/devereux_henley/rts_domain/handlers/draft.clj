@@ -394,7 +394,8 @@
           units        (hydrate-units-with-stats (db/units-for-faction conn (:faction-eid draft)))
           unit-by-eid  (into {} (map (juxt :eid identity)) units)
           units-by-cat (->> (group-units-by-family units)
-                            (partition-by :unit-category-name)
+                            (sort-by :unit-category-ordinal)
+                            (partition-by :unit-category-ordinal)
                             (mapv (fn [group]
                                     {:category (:unit-category-name (first group))
                                      :units    (vec (sort-by :cost group))})))

@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS unit_category (
   eid TEXT NOT NULL,
   name TEXT NOT NULL,
   description TEXT NOT NULL,
+  ordinal INTEGER NOT NULL,
   game_id INTEGER NOT NULL,
   version INT NOT NULL,
   created_by_sub TEXT NOT NULL,

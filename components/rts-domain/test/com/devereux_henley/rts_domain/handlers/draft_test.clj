@@ -937,6 +937,25 @@
       (is (= "reinforcements" (get-in result [:reinf-section :section])))
       (is (false? (:locked? result)) "lock defaults to nil via the :each fixture"))))
 
+(deftest draft-view-model-orders-categories-by-ordinal-without-duplicates
+  (let [u     (fn [nm ord cat]
+                {:eid                (UUID/randomUUID) :name                  nm  :family-name     nm   :cost 100
+                 :unit-category-name cat               :unit-category-ordinal ord :unit-statistics "{}"})
+        ;; interleaved input across three categories, two families each in Lord/Melee
+        units [(u "Spearmen" 3 "Melee Infantry")
+               (u "General"  1 "Lord")
+               (u "Hunters"  3 "Melee Infantry")
+               (u "Captain"  2 "Hero")
+               (u "Wizard"   1 "Lord")]]
+    (with-redefs [data-access.contract/draft-by-eid       (fn [_ _] test-draft)
+                  data-access.contract/game-mode-by-eid   (fn [_ _] test-game-mode)
+                  data-access.contract/faction-by-eid     (fn [_ _] {:eid test-faction-eid :name "Empire"})
+                  data-access.contract/units-for-faction  (fn [_ _] units)
+                  data-access.contract/draft-state-by-eid (fn [_ _] (state-map {:main [] :reinforcements []}))]
+      (let [cats (mapv :category (:units-by-category (handlers.draft/draft-view-model test-deps test-draft-eid)))]
+        (is (= ["Lord" "Hero" "Melee Infantry"] cats)
+            "each category appears once, in ascending ordinal order")))))
+
 (deftest draft-view-model-reports-lock-state
   (with-redefs [data-access.contract/draft-by-eid        (fn [_ _] test-draft)
                 data-access.contract/game-mode-by-eid    (fn [_ _] test-game-mode)

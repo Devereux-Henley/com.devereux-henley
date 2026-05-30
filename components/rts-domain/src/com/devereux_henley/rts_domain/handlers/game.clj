@@ -64,8 +64,8 @@
 
 (defn- units-by-category
   "Group a faction's units by category. The units arrive sorted by
-  `(unit-category-name, name)`, so a sequential partition produces stable
-  groups without resorting."
+  `(unit-category-ordinal, name)`, so a sequential partition produces stable
+  groups in canonical category order without resorting."
   [units]
   (mapv (fn [group]
           {:category (:unit-category-name (first group))
