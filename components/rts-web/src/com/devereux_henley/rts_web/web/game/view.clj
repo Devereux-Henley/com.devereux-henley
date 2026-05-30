@@ -41,57 +41,17 @@
            "faction.html"
            (fn [_data _request] {})))
 
-(defn- resolve-spells
-  "Spell resolution for unit detail: lore-based wizards pull from the
-  `spell-lore` table; fixed-list casters resolve `draftable-spells` keys
-  against the spell table."
-  [conn lore-key draftable-spells]
-  (if lore-key
-    (mapv (fn [{:keys [eid key name mana-cost cost]}]
-            {:eid eid :key key :name name :mana-cost mana-cost :cost cost})
-          (db/spells-for-lore conn lore-key))
-    (let [key->spell (db/spells-by-keys conn draftable-spells)]
-      (mapv (fn [k]
-              (let [spell (get key->spell k)]
-                {:name      (or (:name spell) k)
-                 :eid       (:eid spell)
-                 :mana-cost (:mana-cost spell)
-                 :cost      (:cost spell)}))
-            draftable-spells))))
-
-(defn- resolve-abilities
-  "Resolve ability keys against the ability table, preserving the input
-  order so the rendered list matches the order the unit lists them."
-  [conn ability-keys]
-  (let [key->ability (db/abilities-by-keys conn ability-keys)]
-    (mapv (fn [k]
-            (let [a (get key->ability k)]
-              {:name        (:name a)
-               :eid         (:eid a)
-               :description (:description a)}))
-          ability-keys)))
-
 (defmethod integrant.core/init-key ::unit-view
-  [_init-key {:keys [datalog-connection]}]
+  [_init-key dependencies]
   (partial web.view/standard-entity-view-handler
-           (fn [eid]
-             (or (db/unit-by-eid datalog-connection eid)
-                 {:type :missing/resource :name "unit" :id eid}))
+           (fn [eid] (domain/unit-view-model dependencies eid))
            "unit.html"
+           ;; The model carries the unit fields (rendered under `data`); lift
+           ;; the presentation lists to the top level the template reads, and
+           ;; add the optional unit-card asset path.
            (fn [data _request]
-             (let [{:keys [stats abilities draftable-spells]} (domain/parse-unit-statistics (:unit-statistics data))
-                   lore-key                                   (:lore data)
-                   resolved-spells                            (resolve-spells datalog-connection lore-key draftable-spells)
-                   resolved-abilities                         (resolve-abilities datalog-connection abilities)
-                   mounts                                     (db/mounts-for-unit datalog-connection (:eid data))
-                   items                                      (db/items-for-unit datalog-connection (:eid data))
-                   portrait-stem                              (:eid data)]
-               {:unit-statistics  stats
-                :abilities        (not-empty resolved-abilities)
-                :draftable-spells (not-empty resolved-spells)
-                :mounts           (not-empty mounts)
-                :items            (not-empty items)
-                :lore             lore-key
-                :unit-card        (when (io/resource
-                                         (str "rts-web/asset/card/unit/" portrait-stem ".png"))
-                                    (str "/card/unit/" portrait-stem ".png"))}))))
+             (let [portrait-stem (:eid data)]
+               (assoc (select-keys data [:unit-statistics :abilities :draftable-spells :mounts :items])
+                      :unit-card (when (io/resource
+                                        (str "rts-web/asset/card/unit/" portrait-stem ".png"))
+                                   (str "/card/unit/" portrait-stem ".png")))))))

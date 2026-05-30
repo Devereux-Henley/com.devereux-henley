@@ -1,6 +1,7 @@
 (ns com.devereux-henley.rts-domain.handlers.game
   (:require
-   [com.devereux-henley.rts-data-access.contract :as db]))
+   [com.devereux-henley.rts-data-access.contract :as db]
+   [com.devereux-henley.rts-domain.handlers.draft :as handlers.draft]))
 
 (defn get-game-by-eid
   [dependencies eid]
@@ -60,3 +61,29 @@
   [dependencies game-eid]
   (mapv (fn [mode] (assoc mode :type :game/game-mode))
         (db/game-modes-for-game (:datalog-connection dependencies) game-eid)))
+
+(defn- ->ability-row
+  [a]
+  {:eid (:eid a) :name (:name a) :description (:description a)})
+
+(defn- ->spell-row
+  [s]
+  {:eid (:eid s) :name (or (:name s) (:key s)) :mana-cost (:mana-cost s) :cost (:cost s)})
+
+(defn unit-view-model
+  "Builds the unit detail view-model from a single `db/unit-detail` fetch:
+   the unit fields, the parsed statline, and resolved abilities, draftable
+   spells, mounts, and items projected to their template shapes. Returns a
+   `:missing/resource` marker when the unit doesn't exist so the web layer
+   renders a 404."
+  [dependencies eid]
+  (if-let [unit (db/unit-detail (:datalog-connection dependencies) eid)]
+    (let [{:keys [stats]} (handlers.draft/parse-unit-statistics (:unit-statistics unit))]
+      (assoc unit
+             :type             :game/unit
+             :unit-statistics  stats
+             :abilities        (not-empty (mapv ->ability-row (:abilities unit)))
+             :draftable-spells (not-empty (mapv ->spell-row (:draftable-spells unit)))
+             :mounts           (not-empty (:mounts unit))
+             :items            (not-empty (:items unit))))
+    {:type :missing/resource :name "unit" :id eid}))

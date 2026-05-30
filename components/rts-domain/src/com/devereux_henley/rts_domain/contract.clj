@@ -57,6 +57,7 @@
 (def get-socials-for-game                       handlers.game/get-socials-for-game)
 (def get-units-for-game                         handlers.game/get-units-for-game)
 (def get-unit-by-eid                            handlers.game/get-unit-by-eid)
+(def unit-view-model                            handlers.game/unit-view-model)
 (def get-units-for-faction                      handlers.game/get-units-for-faction)
 (def get-units                                  handlers.game/get-units)
 (def get-game-mode-by-eid                       handlers.game/get-game-mode-by-eid)
