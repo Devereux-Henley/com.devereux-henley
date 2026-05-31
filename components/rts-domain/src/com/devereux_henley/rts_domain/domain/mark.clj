@@ -2,9 +2,7 @@
   "Mark of Chaos dimension on units.  WoC + DoC unit rows carry the
   family display name; the mark variant is surfaced via a single
   dimension column.  The engine `land_units` key suffix is the
-  canonical, mechanical signal — `seed-unit-marks.sql` mirrors this
-  inference in SQL so the rpfm scraper can regenerate the seed file
-  without hand-curation per unit.")
+  canonical, mechanical signal for a unit's mark.")
 
 (def marks
   "Closed set of valid Mark of Chaos values."
