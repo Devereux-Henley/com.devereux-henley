@@ -309,13 +309,10 @@
 (defn lock-info
   "Returns the locking-match info `{:match-eid :tournament-eid :tournament-name}`
   when the draft is associated with at least one tournament match, or `nil`
-  when it's still editable. Locking is one-way and derived at request time —
-  the link is `match.player_{one,two}_draft_id` referencing `draft.id`.
-
-  Still reads from SQLite while the tournament domain remains there;
-  migrates with rts-5b6."
+  when it's still editable. Locking is one-way and derived at request time
+  from the match-games that reference the draft."
   [dependencies draft-eid]
-  (db/get-draft-lock-info (:connection dependencies) draft-eid))
+  (db/get-draft-lock-info (:datalog-connection dependencies) draft-eid))
 
 (defn- locked-error
   "Typed response used by every mutation handler when the target draft is

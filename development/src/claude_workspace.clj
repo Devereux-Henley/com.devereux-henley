@@ -5,14 +5,12 @@
    [com.devereux-henley.datalog.contract :as datalog]
    [com.devereux-henley.rts-api.configuration :as configuration]
    [com.devereux-henley.rts-api.datalog :as rts-datalog]
-   [com.devereux-henley.rts-api.db :as rts-db]
    [com.devereux-henley.rts-api.dev-auth :as dev-auth]
    [com.devereux-henley.rts-data.contract :as rts-data]
    [integrant.core]
    [integrant.repl :refer [go halt reset]]
    [integrant.repl.state :as ig-state]
    [malli.dev :as malli.dev]
-   [migratus.core :as migratus]
    [selmer.parser]))
 
 ;; Turn on malli function-schema instrumentation in the dev REPL so any
@@ -37,7 +35,7 @@
 ;; -- System helpers ----------------------------------------------------------
 
 (defn go!
-  "Start the system (runs migrations + starts Jetty on :3001)."
+  "Start the system (opens the Datalevin connection + starts Jetty on :3001)."
   []
   (go))
 
@@ -50,18 +48,6 @@
   "Halt then restart the system."
   []
   (reset))
-
-;; -- Migration helpers -------------------------------------------------------
-
-(def migratus-config
-  {:store         :database
-   :migration-dir rts-data/migration-dir
-   :db            rts-db/db-spec})
-
-(defn migrate! [] (migratus/migrate migratus-config))
-(defn rollback! [] (migratus/rollback migratus-config))
-(defn reset-db! [] (migratus/reset migratus-config))
-(defn seed-sqlite! [] (rts-data/seed-db rts-db/db-spec))
 
 ;; -- Datalog helpers ---------------------------------------------------------
 
@@ -125,12 +111,6 @@
   (go!)
   (halt!)
   (restart!)
-
-  ;; SQLite migrations
-  (migrate!)
-  (rollback!)
-  (reset-db!)
-  (seed-sqlite!)
 
   ;; Datalog
   (reset-datalog!)

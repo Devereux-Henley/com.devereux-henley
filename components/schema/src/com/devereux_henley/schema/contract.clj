@@ -8,8 +8,7 @@
    [malli.util]
    [reitit.core])
   (:import
-   [java.time Instant LocalDate LocalDateTime ZoneId]
-   [java.util UUID]))
+   [java.time Instant LocalDate LocalDateTime ZoneId]))
 
 (defmacro =>*
   "Declare a malli function schema and apply it to multiple vars at
@@ -278,21 +277,6 @@
    (str hostname (-> router
                      (reitit.core/match-by-name! route-name path-parameters)
                      (reitit.core/match->path query-parameters)))))
-
-(def sqlite-transformer
-  (malli.transform/transformer
-   {:name     :sqlite
-    :decoders {:uuid           (fn [uuid-string] (when-not (empty? uuid-string)
-                                                   (UUID/fromString uuid-string)))
-               :bool           (fn [bit] (if bit true false))
-               :local-date     (fn [date-string] (when-not (empty? date-string)
-                                                   (LocalDate/parse date-string)))
-               :instant        (fn [instant-string] (when-not (empty? instant-string)
-                                                      (Instant/parse instant-string)))
-               :local-datetime (fn [dt-string] (when-not (empty? dt-string)
-                                                 (LocalDateTime/parse dt-string)))
-               :timezone-id    (fn [tz-string] (when-not (empty? tz-string)
-                                                 (ZoneId/of tz-string)))}}))
 
 (defn- self-link-prefix
   "Returns the singular resource name from the schema's `:eid` field's

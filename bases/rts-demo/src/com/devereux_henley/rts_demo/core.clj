@@ -186,25 +186,33 @@
     :name        "Crown of Karak Eight Peaks"
     :description "Eight warlords contest the throne in a classic single-elimination bracket."
     :phase-spec  {:phases          [{:phase-type "single-elimination"
-                                     :rounds     [{:format 5} {:format 5} {:format 5}]}]
+                                     :rounds     [{:round-index 0 :format 5}
+                                                  {:round-index 1 :format 5}
+                                                  {:round-index 2 :format 5}]}]
                   :qualifier-count 8}}
    {:eid         #uuid "22222222-2222-4222-8222-222222222222"
     :name        "Siege of Naggaroth"
     :description "Double-elimination — losers get a second life, the winners' champion gets to wait in the grand final."
     :phase-spec  {:phases          [{:phase-type "double-elimination"
-                                     :rounds     [{:format 3} {:format 3} {:format 3}]}]
+                                     :rounds     [{:round-index 0 :format 3}
+                                                  {:round-index 1 :format 3}
+                                                  {:round-index 2 :format 3}]}]
                   :qualifier-count 8}}
    {:eid         #uuid "33333333-3333-4333-8333-333333333333"
     :name        "Empire Open"
     :description "Three-round Swiss. Every entrant plays every round; no one is eliminated until the final tally."
     :phase-spec  {:phases          [{:phase-type "swiss"
-                                     :rounds     [{:format 1} {:format 1} {:format 1}]}]
+                                     :rounds     [{:round-index 0 :format 1}
+                                                  {:round-index 1 :format 1}
+                                                  {:round-index 2 :format 1}]}]
                   :qualifier-count 4}}
    {:eid              #uuid "55555555-5555-4555-8555-555555555555"
     :name             "Trial of the Everchosen"
     :description      "Single-elimination Bo5 — dev-admin marches to the Grand Final for the player-console walkthrough."
     :phase-spec       {:phases          [{:phase-type "single-elimination"
-                                          :rounds     [{:format 5} {:format 5} {:format 5}]}]
+                                          :rounds     [{:round-index 0 :format 5}
+                                                       {:round-index 1 :format 5}
+                                                       {:round-index 2 :format 5}]}]
                        :qualifier-count 8}
     :roster           (into ["dev-admin"] (take 7 player-subs))
     :preferred-winner "dev-admin"}])
