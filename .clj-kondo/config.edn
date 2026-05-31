@@ -1,3 +1,2 @@
-{:hooks {:analyze-call {com.devereux-henley.rts-data-deploy.migrations-test/with-temp-db hooks.migrations-test/with-temp-db}}
- :config-in-ns {build {:linters {:redefined-var {:level :off}}}}
+{:config-in-ns {build {:linters {:redefined-var {:level :off}}}}
  :linters {:unresolved-symbol {:exclude [(odoyle.rules/ruleset)]}}}

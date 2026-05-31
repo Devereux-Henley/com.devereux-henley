@@ -7,14 +7,12 @@
                                mono/resourcekit {:local/root "components/resourcekit"}
                                mono/content-negotiation {:local/root "components/content-negotiation"}
                                mono/http {:local/root "components/http"}
-                               mono/jdbc {:local/root "components/jdbc"}
                                mono/datalog {:local/root "components/datalog"}
                                mono/rts-data {:local/root "components/rts-data"}
                                mono/rts-data-access {:local/root "components/rts-data-access"}
                                mono/rts-domain {:local/root "components/rts-domain"}
                                mono/rts-web {:local/root "components/rts-web"}
                                mono/rts-api {:local/root "bases/rts-api"}
-                               mono/rts-data-deploy {:local/root "bases/rts-data-deploy"}
                                mono/rpfm-scraper {:local/root "bases/rpfm-scraper"}
                                mono/rts-demo {:local/root "bases/rts-demo"}}}
 

@@ -1,6 +1,5 @@
 (require '[com.devereux-henley.datalog.contract :as datalog])
 (require '[com.devereux-henley.rts-api.configuration :as config])
-(require '[com.devereux-henley.rts-api.db :as db])
 (require '[com.devereux-henley.rts-data.contract :as rts-data])
 (require '[integrant.core :as ig])
 
@@ -10,7 +9,6 @@
   "8.0")
 
 (let [system (ig/init (ig/expand config/development-configuration))]
-  (rts-data/seed-db db/db-spec)
   (let [conn (get system :com.devereux-henley.rts-api.datalog/connection)]
     (rts-data/ensure-datalog-patch datalog-patch-version)
     (doseq [[_ tx-data] (rts-data/load-datalog-seed datalog-patch-version)]
