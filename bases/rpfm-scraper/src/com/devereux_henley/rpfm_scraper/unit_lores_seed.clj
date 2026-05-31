@@ -32,7 +32,7 @@
   ;; spellcaster, just with the weapon kept in the family name.
   #"^(.+?) \(([A-Za-z]+) - ([A-Za-z ]+)\)$")
 
-(defn- name+suffix
+(defn name+suffix
   "Splits 'Archmage (High)' → ['Archmage' 'High'].  Also splits
   'Vampire Fleet Admiral (Pistol - Death)' →
   ['Vampire Fleet Admiral (Pistol)' 'Death'] so the weapon stays in
@@ -92,18 +92,18 @@
    " (Slaanesh)"  "slaanesh"
    " (Tzeentch)"  "tzeentch"})
 
-(defn- strip-mark-suffix
+(defn strip-mark-suffix
   [name]
   (reduce (fn [n s] (str/replace n s "")) name (keys mark-name-patterns)))
 
-(defn- infer-mark
+(defn infer-mark
   "Returns the first mark whose suffix appears in `name`, or nil when
   the name carries no mark token.  Used as a fallback for variant rows
   that haven't been linked to an engine `key` yet."
   [name]
   (some (fn [[s m]] (when (str/includes? name s) m)) mark-name-patterns))
 
-(def ^:private extra-lore-pins
+(def extra-lore-pins
   "Hand-curated lore assignments for unit rows whose engine name
   doesn't carry a `(<Suffix>)` token.  Two flavors:
   * unmarked Daemon Prince variants in Daemons of Chaos and Warriors

@@ -112,7 +112,7 @@
 (def ^:private no-rows-sentinel
   "-- no mark assignments in this scrape (preserved on subsequent empty runs)\n")
 
-(def ^:private mark-strips
+(def mark-strips
   "Mark substrings stripped from a unit's engine `name` to derive its
   `family_name` (the roster-grouping key).  Both ` of <God>` (used on
   characters) and ` (<God>)` (used on rank-and-file like Chaos Knights
@@ -128,6 +128,13 @@
    " (Nurgle)"
    " (Slaanesh)"
    " (Tzeentch)"])
+
+(defn name->family-name
+  "Strip the first mark substring found in `nm` (matching the `family_name`
+  CASE the mark seed emits), or return `nm` unchanged when it carries none."
+  [nm]
+  (or (some (fn [s] (when (str/includes? nm s) (str/replace nm s ""))) mark-strips)
+      nm))
 
 (defn- format-mark-seed
   "Renders the engine-key→mark map as a single combined UPDATE.  Single
