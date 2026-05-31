@@ -14,7 +14,7 @@
   future DLCs therefore doesn't grow this map.
 
   When `nm/find-unit-key`'s name index lookup misses, it falls back to
-  this map.  The selected key is used both for `seed-unit-keys.sql` (so
+  this map.  The selected key is used both as the unit's engine key (so
   parsed replays can join back to the unit row) and as the
   `main_units_tables` lookup key for `extract-stats` — which then
   derives the `land_unit` key from the row.
@@ -791,8 +791,8 @@
    "Vampire Fleet Admiral (Polearms - Vampires)"                "cst_vampire_fleet_admiral_male_campaign_03_0"})
 
 (def faction-key-map
-  "Faction slug (matching seed-<slug>-units.sql) to the list of unit-key
-  infix prefixes that identify that faction in RPFM unit keys."
+  "Faction slug to the list of unit-key infix prefixes that identify that
+  faction in RPFM unit keys."
   {"empire"            ["emp"]
    "beastmen"          ["bst"]
    "bretonnia"         ["brt"]

@@ -257,7 +257,7 @@
   asset directory state.
 
   - `unit-name-eid-pairs`: `[[name eid faction] ...]` covering every unit
-    row in the per-faction seed files (output of `assets/build-unit-name-eid-map`).
+    row in the seed (output of `seed-edn/unit-name-eid-faction`).
   - `unit-key-pairs`: `[[eid unit-key] ...]` collected by the stats pass.
   - `asset-dir`: directory whose `<eid>.png` files are the post-match
     modal's source of unit portraits.

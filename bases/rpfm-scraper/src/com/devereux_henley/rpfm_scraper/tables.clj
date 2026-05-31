@@ -26,51 +26,6 @@
   [rows]
   (into {} (map (juxt #(get % "key") #(get % "entity"))) rows))
 
-(defn- canonical-lore-suffix
-  "Strip the 'Lore of ' prefix and any trailing ' Magic' from a lore's
-  display name so the remaining token matches the suffix used inside unit
-  names (e.g. 'Lore of High Magic' → 'High', 'Lore of Dark Magic' → 'Dark',
-  'Lore of Beasts' → 'Beasts')."
-  [display-name]
-  (-> display-name
-      (clojure.string/replace #"^Lore of the " "")
-      (clojure.string/replace #"^Lore of " "")
-      (clojure.string/replace #" Magic$" "")))
-
-(defn build-lore-name->id-map
-  "Parse seed-lores.sql (or a string) and return {suffix → lore-id} keyed
-  by canonicalised display names (see canonical-lore-suffix). When
-  multiple lore rows share a suffix (e.g. upgraded variants) the lowest
-  id wins."
-  [seed-lores-sql]
-  (let [tuple-re #"(?ms)^\s+\((\d+),\s*'[0-9a-f\-]+',\s*'([^']+)',\s*'([^']+)',"]
-    (reduce
-     (fn [m [_ id-str _lore-key display-name]]
-       (let [id (Long/parseLong id-str)
-             k  (canonical-lore-suffix display-name)]
-         (if (or (clojure.string/blank? k) (contains? m k))
-           m
-           (assoc m k id))))
-     {}
-     (re-seq tuple-re seed-lores-sql))))
-
-(defn build-lore-name->key-map
-  "Parse seed-lores.sql (or a string) and return {suffix → lore-key}
-  keyed by canonicalised display names.  When multiple rows share a
-  suffix the lowest id wins (matches build-lore-name->id-map's
-  precedence)."
-  [seed-lores-sql]
-  (let [tuple-re #"(?ms)^\s+\((\d+),\s*'[0-9a-f\-]+',\s*'([^']+)',\s*'([^']+)',"]
-    (->> (re-seq tuple-re seed-lores-sql)
-         (sort-by (fn [[_ id-str]] (Long/parseLong id-str)))
-         (reduce
-          (fn [m [_ _id-str lore-key display-name]]
-            (let [k (canonical-lore-suffix display-name)]
-              (if (or (clojure.string/blank? k) (contains? m k))
-                m
-                (assoc m k lore-key))))
-          {}))))
-
 (defn build-land-unit-ability-map
   "land_unit key → #{ability keys}, from
   land_units_to_unit_abilites_junctions_tables (note the CA typo in the
@@ -359,12 +314,6 @@
      loc)))
 
 (defn build-ability-name-key-map
-  "Inverts ability key→name to name→key for legacy-name migration."
+  "Inverts ability key→name to name→key."
   [ability-name-map]
   (reduce-kv (fn [m k v] (assoc m v k)) {} ability-name-map))
-
-(defn resolve-ability-names-to-keys
-  "Convert legacy display-name entries to canonical ability keys. Entries
-  that aren't display names pass through unchanged."
-  [abilities name->key]
-  (mapv #(get name->key % %) abilities))

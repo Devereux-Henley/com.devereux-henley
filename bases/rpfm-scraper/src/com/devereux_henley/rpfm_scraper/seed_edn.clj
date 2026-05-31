@@ -1,6 +1,5 @@
 (ns com.devereux-henley.rpfm-scraper.seed-edn
-  "Read curated authoring EDN and write the merged Datalog seed — the
-  scraper's replacement for reading back / writing SQL seed files.
+  "Read curated authoring EDN and write the merged Datalog seed.
 
   Authoring EDN (`seed/authoring/<version>/`) is the hand-maintained source
   of truth; the scraper reads identities + curated fields from it, attaches
@@ -19,7 +18,7 @@
 
 (defn derived-uuid
   "Deterministic UUID (v3) over `\"/\"`-joined `parts`. The scraper's stable-eid
-  scheme for generated link/statistics rows; matches the retired dump tool."
+  scheme for generated link/statistics rows."
   [& parts]
   (UUID/nameUUIDFromBytes
    (.getBytes (str/join "/" (map str parts)) StandardCharsets/UTF_8)))
@@ -60,7 +59,7 @@
 (defn faction-key->eid
   "`{faction-key → faction-eid}` from authoring factions. The faction key is
   the engine race slug (e.g. `empire`) subfactions resolve their parent
-  against. Replaces `subfactions-seed/build-slug->faction-id`."
+  against."
   [version]
   (into {}
         (keep (fn [f] (when-let [k (:faction/key f)] [k (:faction/eid f)])))
@@ -75,15 +74,13 @@
         (read-authoring version "factions.edn")))
 
 (defn ability-key->eid
-  "`{ability-key → ability-eid}` from authoring abilities. Replaces
-  `abilities-seed/build-ability-key-eid-map`."
+  "`{ability-key → ability-eid}` from authoring abilities."
   [version]
   (into {} (map (juxt :ability/key :ability/eid))
         (read-authoring version "abilities.edn")))
 
 (defn spell-key->eid
-  "`{spell-key → spell-eid}` from authoring spells. Replaces
-  `abilities-seed/build-spell-key-eid-map`."
+  "`{spell-key → spell-eid}` from authoring spells."
   [version]
   (into {} (map (juxt :spell/key :spell/eid))
         (read-authoring version "spells.edn")))
@@ -95,8 +92,7 @@
 
 (defn unit-name-eid-faction
   "`[[unit-name eid-string faction-slug] …]` for asset matching + the coverage
-  report. Mirrors the SQL-era `assets/build-unit-name-eid-map` shape, sourced
-  from authoring units."
+  report, sourced from authoring units."
   [version]
   (let [eid->slug (faction-eid->key version)]
     (mapv (fn [u] [(:unit/name u) (str (:unit/eid u)) (eid->slug (unit-faction-eid u))])
@@ -104,9 +100,7 @@
 
 (defn unit-name+faction->eid
   "`{[unit-name faction-key] → unit-eid}` from authoring units, joining each
-  unit's faction eid back to its slug. Replaces the per-faction-file lookups
-  `unit-items-seed/build-unit-seed-id-map` (name→id) and
-  `assets/build-unit-name-eid-map`, now keyed to eids."
+  unit's faction eid back to its slug."
   [version]
   (let [eid->key (faction-eid->key version)]
     (into {}
@@ -116,7 +110,7 @@
 (defn- lore-suffix
   "Strip the `Lore of `/`Lore of the ` prefix and trailing ` Magic` so the
   remaining token matches the suffix carried inside unit names (e.g.
-  `Lore of High Magic` → `High`). Mirrors `tables/canonical-lore-suffix`."
+  `Lore of High Magic` → `High`)."
   [display-name]
   (-> display-name
       (str/replace #"^Lore of the " "")
@@ -125,8 +119,7 @@
 
 (defn lore-suffix->key
   "`{canonical-suffix → lore-key}` from authoring lores. First occurrence wins
-  on a suffix collision (authoring-file order). Replaces
-  `tables/build-lore-name->key-map`."
+  on a suffix collision (authoring-file order)."
   [version]
   (reduce (fn [m l]
             (let [k (lore-suffix (:lore/name l))]
