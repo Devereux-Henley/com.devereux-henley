@@ -4,11 +4,9 @@
    jars still use `core-configuration` with real Ory wiring."
   (:require
    [com.devereux-henley.rts-api.datalog :as datalog]
-   [com.devereux-henley.rts-api.db :as db]
    [com.devereux-henley.rts-api.dev-auth :as dev-auth]
    [com.devereux-henley.rts-api.model-transform]
    [com.devereux-henley.rts-api.web :as web]
-   [com.devereux-henley.rts-data.contract :as rts-data]
    [com.devereux-henley.rts-web.contract :as rts-web]
    [integrant.core]))
 
@@ -22,7 +20,6 @@
 (def session-name (str "ory_session_" (or (System/getenv "AUTH_SLUG") "eloquentyalowwhtijq6my4")))
 (def replay-parser-bin (or (System/getenv "REPLAY_PARSER_BIN") "tw-replay-parser"))
 (def default-dependencies {:hostname           hostname
-                           :connection         (integrant.core/ref ::db/connection)
                            :datalog-connection (integrant.core/ref ::datalog/connection)
                            :replay-parser-bin  replay-parser-bin})
 
@@ -34,10 +31,7 @@
 ;;; ─── Per-namespace handler configuration ───────────────────────────────────
 
 (def infrastructure-configuration
-  {::rts-data/migrate                                      {:db-spec       db/db-spec
-                                                            :migration-dir rts-data/migration-dir}
-   ::db/connection                                         {:migrations (integrant.core/ref ::rts-data/migrate)}
-   ::datalog/connection                                    {}
+  {::datalog/connection                                    {}
    :com.devereux-henley.rts-api.model-transform/middleware {:hostname hostname}
    ::web/api-view-registry                                 {}
    ::web/component-view-registry                           {}
