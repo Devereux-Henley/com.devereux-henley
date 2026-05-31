@@ -8,9 +8,6 @@
   (:import
    (java.nio.file Files StandardCopyOption)))
 
-(def ^:private unit-seed-row-re
-  #"\(\s*\d+,\s*'([0-9a-f\-]+)',\s*'((?:[^']|'')*)',")
-
 (defn- log [& args]
   (binding [*out* *err*] (apply println args)))
 
@@ -56,25 +53,6 @@
   (when-not dry-run?
     (copy-file! src dest)
     (mogrify-trim! dest)))
-
-(defn build-unit-name-eid-map
-  "Walk every seed-<faction>-units.sql file and return a vector of
-  [display-name eid faction-slug] triples. A vector (not a map) so that units
-  sharing a display name across factions are all processed."
-  [seed-dir]
-  (let [files (->> (.list (io/file seed-dir))
-                   (filter #(and (str/starts-with? % "seed-")
-                                 (str/ends-with? % "-units.sql")))
-                   sort)]
-    (into []
-          (mapcat
-           (fn [filename]
-             (let [faction (subs filename (count "seed-")
-                                 (- (count filename) (count "-units.sql")))
-                   content (slurp (io/file seed-dir filename))]
-               (for [m (re-seq unit-seed-row-re content)]
-                 [(str/replace (nth m 2) "''" "'") (nth m 1) faction]))))
-          files)))
 
 (defn- filter-by-faction [candidates faction]
   (if-not faction

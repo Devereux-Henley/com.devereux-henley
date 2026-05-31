@@ -190,9 +190,8 @@
 
 (defn mark-from-key
   "Returns the mark a `unit`/`land_unit` engine key encodes, or nil.
-  Mirrors the inference in `seed-unit-marks.sql` and the runtime
-  `rts-domain.domain.mark/mark-from-key` helper \u2014 kept inline here so
-  the scraper has no dep on the runtime base."
+  Mirrors the runtime `rts-domain.domain.mark/mark-from-key` helper \u2014
+  kept inline here so the scraper has no dep on the runtime base."
   [k]
   (cond
     (nil? k) nil
