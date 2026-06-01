@@ -611,6 +611,15 @@
     (is (true? (:opened? s)))
     (is (false? (:window-open? s)))))
 
+(deftest check-in-state-future-open-not-yet-open
+  ;; A future opens-at (scheduled-open path) must report the window closed until
+  ;; now reaches the lower bound — the shared window-open? predicate enforces it.
+  (let [m (assoc checkin-match :check-in-opens-at (minutes-from-now 10)
+                 :check-in-closes-at (minutes-from-now 25))
+        s (handlers.tournament/check-in-state m (Instant/now))]
+    (is (true? (:opened? s)) "the window is configured")
+    (is (false? (:window-open? s)) "but not open until now reaches opens-at")))
+
 (deftest check-in-state-both-checked-signals-lobby
   (let [m (assoc checkin-match
                  :check-in-opens-at (minutes-from-now 0) :check-in-closes-at (minutes-from-now 10)
