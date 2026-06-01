@@ -7,7 +7,6 @@
    [com.devereux-henley.http.contract :as http]
    [com.devereux-henley.resourcekit.contract :as resourcekit]
    [com.devereux-henley.rts-data-access.contract :as data-access]
-   [com.devereux-henley.rts-data.contract :as rts-data]
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.contract :as web]
    [com.devereux-henley.schema.contract :as schema]))
@@ -26,7 +25,6 @@
    #'http/handle-fetch-response
    #'resourcekit/asset-root
    #'data-access/game-entity
-   #'rts-data/datalog-seed-files
    #'domain/draft-resource
    #'web/view-routes
    #'schema/milliseconds-in-a-second])
