@@ -121,16 +121,23 @@
     (instance? Instant x) x
     (instance? Date x)    (.toInstant ^Date x)))
 
+(defn- window-open?
+  "True when `now` falls inside the half-open interval `[opens-at, closes-at)`:
+   at or after the lower bound and strictly before the upper. A nil bound is
+   open-ended on that side. All arguments are `Instant`s."
+  [^Instant now ^Instant opens-at ^Instant closes-at]
+  (and (or (nil? opens-at)  (not (.isBefore now opens-at)))
+       (or (nil? closes-at) (.isBefore now closes-at))))
+
 (defn is-registration-open?
   "Returns true if the tournament state allows new registrations.
    Checks status, time window, and closed-early flag."
   [state now]
   (and (= "registration" (:status state))
        (not (get-in state [:registration :closed-early]))
-       (let [opens-at  (->instant (get-in state [:registration :opens-at]))
-             closes-at (->instant (get-in state [:registration :closes-at]))]
-         (and (or (nil? opens-at)  (not (.isBefore now opens-at)))
-              (or (nil? closes-at) (.isBefore now closes-at))))))
+       (window-open? now
+                     (->instant (get-in state [:registration :opens-at]))
+                     (->instant (get-in state [:registration :closes-at])))))
 
 (defn create-entry
   "Creates a tournament entry for a player. Returns the entry or an error map."
@@ -295,18 +302,17 @@
    `:window-open?` false. `:both-checked?` is the signal the series lobby
    reveals its code."
   [match now]
-  (let [opens-at       (:check-in-opens-at match)
-        closes-at      (:check-in-closes-at match)
-        p1-at          (:player-one-checked-at match)
-        p2-at          (:player-two-checked-at match)
-        opened?        (some? opens-at)
-        closes-at-inst (->instant closes-at)]
+  (let [opens-at  (:check-in-opens-at match)
+        closes-at (:check-in-closes-at match)
+        p1-at     (:player-one-checked-at match)
+        p2-at     (:player-two-checked-at match)
+        opened?   (some? opens-at)]
     {:opens-at              opens-at
      :closes-at             closes-at
      :opened?               opened?
      :window-open?          (boolean (and opened?
                                           (= "pending" (:status match))
-                                          (or (nil? closes-at-inst) (.isBefore now closes-at-inst))))
+                                          (window-open? now (->instant opens-at) (->instant closes-at))))
      :player-one-checked?   (some? p1-at)
      :player-two-checked?   (some? p2-at)
      :player-one-checked-at p1-at
