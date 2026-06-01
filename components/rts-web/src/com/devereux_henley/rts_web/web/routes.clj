@@ -123,6 +123,10 @@
       {:get {:produces   ["application/htmx+html"]
              :parameters {:path schema.contract/game-and-id-path-parameter}
              :handler    (integrant.core/ref ::web.tournament.view/tournament-view)}}]
+     ["/:eid/organizer.html"
+      {:get {:produces   ["application/htmx+html"]
+             :parameters {:path schema.contract/game-and-id-path-parameter}
+             :handler    (integrant.core/ref ::web.tournament.view/organizer-view)}}]
      ["/:eid/phase.html"
       {:get {:produces   ["application/htmx+html"]
              :parameters {:path schema.contract/game-and-id-path-parameter}

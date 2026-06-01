@@ -466,3 +466,62 @@
   (with-redefs [handlers.tournament/get-tournament-by-eid (fn [_ _] nil)]
     (is (= :missing/resource
            (:type (handlers.tournament/tournament-view-model test-deps test-tournament-eid "owner"))))))
+
+;; --- organizer-view-model ---
+
+(defn- organizer-redefs
+  "Stubs the reads `organizer-view-model` (and the `tournament-view-model` it
+   wraps) makes, for the given status and match list."
+  [status matches]
+  {#'handlers.tournament/get-tournament-by-eid      (fn [_ _] {:eid test-tournament-eid :name "Spring Open" :created-by-sub "owner"})
+   #'handlers.tournament/get-tournament-state       (fn [_ _] {:status       status                         :phases    [{:phase-type "swiss"}] :current-phase 0 :qualifier-count nil
+                                                               :registration {:opens-at nil :closes-at nil} :standings []})
+   #'handlers.tournament/get-entries                (fn [_ _] [{:player-sub "owner"}])
+   #'handlers.tournament/get-matches-for-tournament (fn [_ _] matches)
+   ;; tournament-view-model decorates each match with game counts via a real
+   ;; db read; stub it out so the fixture stays at the handler boundary.
+   #'handlers.tournament/get-games-for-match        (fn [_ _] [])})
+
+(deftest organizer-view-model-gates-advance-on-full-reporting
+  (with-redefs-fn
+    (organizer-redefs "active" [{:phase-index 0 :round-index 0 :status "complete"}
+                                {:phase-index 0 :round-index 1 :status "complete"}
+                                {:phase-index 0 :round-index 1 :status "complete"}
+                                {:phase-index 0 :round-index 1 :status "pending"}
+                                {:phase-index 0 :round-index 1 :status "pending"}])
+    #(let [result (handlers.tournament/organizer-view-model test-deps test-tournament-eid "owner")]
+       (is (true? (:active? result)))
+       (is (= 1 (:round-index result)) "tracks the latest round of the current phase")
+       (is (= 4 (:round-total result)))
+       (is (= 2 (:round-reported result)) "matches the bead's 2/4 example")
+       (is (false? (:round-complete? result)))
+       (is (false? (:can-advance-phase? result)) "advance is gated until the round fully reports")
+       (is (true? (:can-generate-round? result)) "generate is available while active"))))
+
+(deftest organizer-view-model-enables-advance-when-round-complete
+  (with-redefs-fn
+    (organizer-redefs "active" [{:phase-index 0 :round-index 0 :status "complete"}
+                                {:phase-index 0 :round-index 0 :status "complete"}])
+    #(let [result (handlers.tournament/organizer-view-model test-deps test-tournament-eid "owner")]
+       (is (true? (:round-complete? result)))
+       (is (true? (:can-advance-phase? result))))))
+
+(deftest organizer-view-model-disables-actions-when-not-active
+  (with-redefs-fn
+    (organizer-redefs "registration" [])
+    #(let [result (handlers.tournament/organizer-view-model test-deps test-tournament-eid "owner")]
+       (is (false? (:active? result)))
+       (is (false? (:can-advance-phase? result)))
+       (is (false? (:can-generate-round? result))))))
+
+(deftest organizer-view-model-preserves-organizer-flag
+  (with-redefs-fn
+    (organizer-redefs "active" [])
+    #(do
+       (is (true? (:is-organizer (handlers.tournament/organizer-view-model test-deps test-tournament-eid "owner"))))
+       (is (false? (:is-organizer (handlers.tournament/organizer-view-model test-deps test-tournament-eid "stranger")))))))
+
+(deftest organizer-view-model-returns-missing-marker-when-absent
+  (with-redefs [handlers.tournament/get-tournament-by-eid (fn [_ _] nil)]
+    (is (= :missing/resource
+           (:type (handlers.tournament/organizer-view-model test-deps test-tournament-eid "owner"))))))

@@ -113,6 +113,20 @@
                                                                (-> request :parameters :path :eid)
                                                                (-> request :ory-session :identity :id)))))
 
+(defmethod integrant.core/init-key ::organizer-view
+  [_init-key dependencies]
+  (fn [request]
+    (let [eid   (-> request :parameters :path :eid)
+          model (domain/organizer-view-model dependencies
+                                             eid
+                                             (-> request :ory-session :identity :id))]
+      ;; Non-organizers never see the console — respond as if the
+      ;; tournament were absent rather than leaking its existence.
+      (if (and (not= :missing/resource (:type model))
+               (not (:is-organizer model)))
+        {:status 404 :body {:type :missing/resource :name "tournament" :id eid}}
+        (web.view/render-entity-view request "organizer-index.html" model)))))
+
 ;; ─── Player console (check-in + series) ─────────────────────────────────────
 ;;
 ;; Static demo surface for the new player experience. Until check-in,

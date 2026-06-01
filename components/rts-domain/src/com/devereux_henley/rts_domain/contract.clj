@@ -101,6 +101,7 @@
 
 (def get-tournament-by-eid                        handlers.tournament/get-tournament-by-eid)
 (def tournament-view-model                        handlers.tournament/tournament-view-model)
+(def organizer-view-model                         handlers.tournament/organizer-view-model)
 (def get-tournaments-for-game                     handlers.tournament/get-tournaments-for-game)
 (def get-tournaments                              handlers.tournament/get-tournaments)
 (def create-tournament                            handlers.tournament/create-tournament)

@@ -868,3 +868,41 @@
        :registration-open   (is-registration-open? state (Instant/now))
        :is-organizer        (= viewer-sub (:created-by-sub tournament))})
     {:type :missing/resource :name "tournament" :id eid}))
+
+(defn- current-round-progress
+  "Summarizes how far the latest round of the active phase has reported:
+   the round index, how many matches it holds, how many have a recorded
+   result, and whether every match has reported. The round-complete? flag
+   is the gate the organizer console uses to enable phase advancement."
+  [matches current-phase]
+  (let [phase-matches (filter #(= current-phase (:phase-index %)) matches)]
+    (if (empty? phase-matches)
+      {:round-index nil :round-total 0 :round-reported 0 :round-complete? false}
+      (let [current-round (apply max (map :round-index phase-matches))
+            round-matches (filter #(= current-round (:round-index %)) phase-matches)
+            total         (count round-matches)
+            reported      (count (filter #(= "complete" (:status %)) round-matches))]
+        {:round-index     current-round
+         :round-total     total
+         :round-reported  reported
+         :round-complete? (= total reported)}))))
+
+(defn organizer-view-model
+  "Builds the organizer-console view-model: everything `tournament-view-model`
+   produces plus the current round's reporting progress and the
+   action-availability flags the Quick Actions shelf reads
+   (`:can-advance-phase?`, `:can-generate-round?`). Returns a
+   `:missing/resource` marker when the tournament doesn't exist."
+  [dependencies eid viewer-sub]
+  (let [model (tournament-view-model dependencies eid viewer-sub)]
+    (if (= :missing/resource (:type model))
+      model
+      (let [state    (:tournament-state model)
+            active?  (= "active" (:status state))
+            progress (current-round-progress (get-matches-for-tournament dependencies eid)
+                                             (:current-phase state))]
+        (merge model
+               progress
+               {:active?             active?
+                :can-advance-phase?  (and active? (:round-complete? progress))
+                :can-generate-round? active?})))))
