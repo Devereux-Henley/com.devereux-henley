@@ -568,3 +568,157 @@
   (with-redefs [handlers.tournament/get-tournament-by-eid (fn [_ _] nil)]
     (is (= :missing/resource
            (:type (handlers.tournament/organizer-view-model test-deps test-tournament-eid "owner"))))))
+
+;; ─── Series check-in ─────────────────────────────────────────────────────────
+;;
+;; check-in-state is a pure projection over the match's check-in timestamps;
+;; open-check-in / check-in-player read the match, validate the caller, then
+;; write a single timestamp field. Tests stub match-by-eid + the targeted
+;; mutation; organizer-gated open-check-in also stubs tournament-by-eid.
+
+(def ^:private checkin-match-eid (UUID/fromString "11111111-2222-3333-4444-555555555555"))
+
+(def ^:private checkin-match
+  {:eid            checkin-match-eid
+   :tournament-eid test-tournament-eid
+   :status         "pending"
+   :player-one-sub "sigmar_42"
+   :player-two-sub "chaos_undivided"
+   :format         5})
+
+(defn- minutes-from-now ^java.util.Date [mins]
+  (java.util.Date/from (.plus (Instant/now) (java.time.Duration/ofMinutes mins))))
+
+;; ── check-in-state ──
+
+(deftest check-in-state-unopened-window
+  (let [s (handlers.tournament/check-in-state checkin-match (Instant/now))]
+    (is (false? (:opened? s)))
+    (is (false? (:window-open? s)))
+    (is (false? (:both-checked? s)))))
+
+(deftest check-in-state-open-window
+  (let [m (assoc checkin-match :check-in-opens-at (minutes-from-now 0)
+                 :check-in-closes-at (minutes-from-now 10))
+        s (handlers.tournament/check-in-state m (Instant/now))]
+    (is (true? (:opened? s)))
+    (is (true? (:window-open? s)))))
+
+(deftest check-in-state-expired-window
+  (let [m (assoc checkin-match :check-in-opens-at (minutes-from-now -20)
+                 :check-in-closes-at (minutes-from-now -10))
+        s (handlers.tournament/check-in-state m (Instant/now))]
+    (is (true? (:opened? s)))
+    (is (false? (:window-open? s)))))
+
+(deftest check-in-state-both-checked-signals-lobby
+  (let [m (assoc checkin-match
+                 :check-in-opens-at (minutes-from-now 0) :check-in-closes-at (minutes-from-now 10)
+                 :player-one-checked-at (minutes-from-now 0) :player-two-checked-at (minutes-from-now 0))
+        s (handlers.tournament/check-in-state m (Instant/now))]
+    (is (true? (:player-one-checked? s)))
+    (is (true? (:player-two-checked? s)))
+    (is (true? (:both-checked? s)))))
+
+;; ── open-check-in ──
+
+(deftest open-check-in-opens-window-for-organizer
+  (with-redefs [data-access.contract/match-by-eid         (fn [_ _] checkin-match)
+                data-access.contract/tournament-by-eid    (fn [_ _] (assoc test-tournament :created-by-sub "dev-admin"))
+                data-access.contract/open-match-check-in! (fn [_ _ {:keys [opens-at closes-at]}]
+                                                            (assoc checkin-match
+                                                                   :check-in-opens-at (java.util.Date/from opens-at)
+                                                                   :check-in-closes-at (java.util.Date/from closes-at)))]
+    (let [result (handlers.tournament/open-check-in test-deps checkin-match-eid "dev-admin")]
+      (is (= :tournament/check-in-opened (:type result)))
+      (is (= :tournament/match (get-in result [:match :type])))
+      (is (true? (get-in result [:check-in :window-open?]))))))
+
+(deftest open-check-in-rejects-non-organizer
+  (with-redefs [data-access.contract/match-by-eid      (fn [_ _] checkin-match)
+                data-access.contract/tournament-by-eid (fn [_ _] (assoc test-tournament :created-by-sub "dev-admin"))]
+    (let [result (handlers.tournament/open-check-in test-deps checkin-match-eid "rando")]
+      (is (= :tournament/check-in-error (:type result)))
+      (is (re-find #"organizer" (:message result))))))
+
+(deftest open-check-in-rejects-completed-match
+  (with-redefs [data-access.contract/match-by-eid      (fn [_ _] (assoc checkin-match :status "complete"))
+                data-access.contract/tournament-by-eid (fn [_ _] (assoc test-tournament :created-by-sub "dev-admin"))]
+    (let [result (handlers.tournament/open-check-in test-deps checkin-match-eid "dev-admin")]
+      (is (= :tournament/check-in-error (:type result)))
+      (is (re-find #"completed" (:message result))))))
+
+(deftest open-check-in-not-found
+  (with-redefs [data-access.contract/match-by-eid (fn [_ _] nil)]
+    (let [result (handlers.tournament/open-check-in test-deps checkin-match-eid "dev-admin")]
+      (is (= :tournament/check-in-error (:type result)))
+      (is (re-find #"not found" (:message result))))))
+
+;; ── check-in-player ──
+
+(def ^:private open-checkin-match
+  (assoc checkin-match
+         :check-in-opens-at (minutes-from-now 0)
+         :check-in-closes-at (minutes-from-now 10)))
+
+(deftest check-in-player-records-participant
+  (with-redefs [data-access.contract/match-by-eid           (fn [_ _] open-checkin-match)
+                data-access.contract/record-match-check-in! (fn [_ _ side at]
+                                                              (assoc open-checkin-match
+                                                                     (case side
+                                                                       :player-one :player-one-checked-at
+                                                                       :player-two :player-two-checked-at)
+                                                                     (java.util.Date/from at)))]
+    (let [result (handlers.tournament/check-in-player test-deps checkin-match-eid "sigmar_42")]
+      (is (= :tournament/checked-in (:type result)))
+      (is (= :player-one (:side result)))
+      (is (true? (get-in result [:check-in :player-one-checked?]))))))
+
+(deftest check-in-player-second-side-maps-to-player-two
+  (with-redefs [data-access.contract/match-by-eid           (fn [_ _] open-checkin-match)
+                data-access.contract/record-match-check-in! (fn [_ _ _side at]
+                                                              (assoc open-checkin-match :player-two-checked-at (java.util.Date/from at)))]
+    (let [result (handlers.tournament/check-in-player test-deps checkin-match-eid "chaos_undivided")]
+      (is (= :player-two (:side result))))))
+
+(deftest check-in-player-rejects-non-participant
+  (with-redefs [data-access.contract/match-by-eid (fn [_ _] open-checkin-match)]
+    (let [result (handlers.tournament/check-in-player test-deps checkin-match-eid "rando")]
+      (is (= :tournament/check-in-error (:type result)))
+      (is (re-find #"participant" (:message result))))))
+
+(deftest check-in-player-rejects-when-window-closed
+  (with-redefs [data-access.contract/match-by-eid (fn [_ _] checkin-match)]
+    (let [result (handlers.tournament/check-in-player test-deps checkin-match-eid "sigmar_42")]
+      (is (= :tournament/check-in-error (:type result)))
+      (is (re-find #"window" (:message result))))))
+
+(deftest check-in-player-rejects-completed-match
+  (with-redefs [data-access.contract/match-by-eid (fn [_ _] (assoc open-checkin-match :status "complete"))]
+    (let [result (handlers.tournament/check-in-player test-deps checkin-match-eid "sigmar_42")]
+      (is (= :tournament/check-in-error (:type result))))))
+
+(deftest check-in-player-idempotent-when-already-checked
+  (with-redefs [data-access.contract/match-by-eid           (fn [_ _] (assoc open-checkin-match
+                                                                             :player-one-checked-at (minutes-from-now 0)))
+                data-access.contract/record-match-check-in! (fn [& _] (throw (ex-info "should not write on re-check" {})))]
+    (let [result (handlers.tournament/check-in-player test-deps checkin-match-eid "sigmar_42")]
+      (is (= :tournament/checked-in (:type result)))
+      (is (true? (get-in result [:check-in :player-one-checked?]))))))
+
+(deftest check-in-player-not-found
+  (with-redefs [data-access.contract/match-by-eid (fn [_ _] nil)]
+    (is (= :tournament/check-in-error
+           (:type (handlers.tournament/check-in-player test-deps checkin-match-eid "sigmar_42"))))))
+
+;; ── get-check-in-state ──
+
+(deftest get-check-in-state-returns-derived-state
+  (with-redefs [data-access.contract/match-by-eid (fn [_ _] open-checkin-match)]
+    (let [s (handlers.tournament/get-check-in-state test-deps checkin-match-eid)]
+      (is (true? (:window-open? s)))
+      (is (false? (:both-checked? s))))))
+
+(deftest get-check-in-state-nil-when-match-absent
+  (with-redefs [data-access.contract/match-by-eid (fn [_ _] nil)]
+    (is (nil? (handlers.tournament/get-check-in-state test-deps checkin-match-eid)))))

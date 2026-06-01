@@ -5,7 +5,7 @@
    [com.devereux-henley.rts-domain.rules.tournament :as rules]
    [com.devereux-henley.rts-domain.time :as time])
   (:import
-   [java.time Instant]
+   [java.time Duration Instant]
    [java.util Date]))
 
 (defn- tag-tournament
@@ -274,6 +274,105 @@
   [dependencies tournament-eid phase-index round-index]
   (mapv tag-match
         (db/matches-for-round (:datalog-connection dependencies) tournament-eid phase-index round-index)))
+
+;; ─── Series check-in ─────────────────────────────────────────────────────────
+;;
+;; A series is checked in once, covering every game of the Bo-N. The organizer
+;; opens a window; each participant confirms within it. Both sides confirmed is
+;; the signal the series lobby reveals (consumed downstream by the lobby flow).
+
+(def check-in-window-minutes
+  "Length of the series check-in window, in minutes, from the moment the
+   organizer opens it."
+  15)
+
+(defn check-in-state
+  "Derives the series check-in state for a match at `now` (an `Instant`):
+   the window bounds, whether the window is currently open, and each side's
+   checked-in flag/timestamp. `:both-checked?` is the signal the series lobby
+   reveals its code."
+  [match now]
+  (let [opens-at  (:check-in-opens-at match)
+        closes-at (:check-in-closes-at match)
+        p1-at     (:player-one-checked-at match)
+        p2-at     (:player-two-checked-at match)
+        opened?   (some? opens-at)
+        closes-in (->instant closes-at)]
+    {:opens-at              opens-at
+     :closes-at             closes-at
+     :opened?               opened?
+     :window-open?          (boolean (and opened?
+                                          (or (nil? closes-in) (.isBefore now closes-in))))
+     :player-one-checked?   (some? p1-at)
+     :player-two-checked?   (some? p2-at)
+     :player-one-checked-at p1-at
+     :player-two-checked-at p2-at
+     :both-checked?         (and (some? p1-at) (some? p2-at))}))
+
+(defn open-check-in
+  "Opens the series check-in window on a match. Only the tournament organizer
+   may open it and the match must still be pending. Stamps a window that closes
+   `check-in-window-minutes` after now; re-opening extends the window without
+   resetting prior check-ins. Returns `:tournament/check-in-opened` with the
+   updated match and derived state, or `:tournament/check-in-error`."
+  [dependencies match-eid user-sub]
+  (let [conn  (:datalog-connection dependencies)
+        match (db/match-by-eid conn match-eid)]
+    (if (nil? match)
+      {:type :tournament/check-in-error :message "Match not found."}
+      (or (organizer-error dependencies (:tournament-eid match) user-sub :tournament/check-in-error)
+          (if (= "complete" (:status match))
+            {:type :tournament/check-in-error :message "Cannot open check-in for a completed match."}
+            (let [opens-at  (Instant/now)
+                  closes-at (.plus opens-at (Duration/ofMinutes check-in-window-minutes))
+                  updated   (db/open-match-check-in! conn match-eid
+                                                     {:opens-at opens-at :closes-at closes-at})]
+              {:type     :tournament/check-in-opened
+               :match    (tag-match updated)
+               :check-in (check-in-state updated opens-at)}))))))
+
+(defn check-in-player
+  "Records a player's series check-in. The caller must be one of the match's
+   participants, the match must be pending, and the window open. Idempotent:
+   re-checking returns success without a second write. Returns
+   `:tournament/checked-in` with the updated match and derived state, or
+   `:tournament/check-in-error`."
+  [dependencies match-eid user-sub]
+  (let [conn  (:datalog-connection dependencies)
+        match (db/match-by-eid conn match-eid)]
+    (cond
+      (nil? match)
+      {:type :tournament/check-in-error :message "Match not found."}
+
+      (not (contains? #{(:player-one-sub match) (:player-two-sub match)} user-sub))
+      {:type :tournament/check-in-error :message "Only match participants can check in."}
+
+      (= "complete" (:status match))
+      {:type :tournament/check-in-error :message "This match is already complete."}
+
+      :else
+      (let [now   (Instant/now)
+            state (check-in-state match now)]
+        (if-not (:window-open? state)
+          {:type :tournament/check-in-error :message "The check-in window is not open."}
+          (let [side     (if (= user-sub (:player-one-sub match)) :player-one :player-two)
+                already? (case side
+                           :player-one (:player-one-checked? state)
+                           :player-two (:player-two-checked? state))
+                updated  (if already?
+                           match
+                           (db/record-match-check-in! conn match-eid side now))]
+            {:type     :tournament/checked-in
+             :side     side
+             :match    (tag-match updated)
+             :check-in (check-in-state updated now)}))))))
+
+(defn get-check-in-state
+  "Reads the derived series check-in state for a match — for the player console
+   view-models — or nil when the match is absent."
+  [dependencies match-eid]
+  (when-let [match (db/match-by-eid (:datalog-connection dependencies) match-eid)]
+    (check-in-state match (Instant/now))))
 
 (defn- double-elim-complete?
   "Returns true when a double-elimination phase has a completed grand-final

@@ -57,7 +57,10 @@
 (def ^:private match-pattern
   [:match/eid :match/phase-index :match/round-index :match/bracket-type
    :match/player-one-sub :match/player-two-sub :match/winner-sub
-   :match/status :match/format :match/created-at :match/updated-at
+   :match/status :match/format
+   :match/check-in-opens-at :match/check-in-closes-at
+   :match/player-one-checked-at :match/player-two-checked-at
+   :match/created-at :match/updated-at
    {:match/tournament [:tournament/eid]}])
 
 (def ^:private match-game-pattern
@@ -118,18 +121,22 @@
 (defn- ->match
   [m]
   (when m
-    {:eid            (:match/eid m)
-     :tournament-eid (some-> m :match/tournament :tournament/eid)
-     :phase-index    (:match/phase-index m)
-     :round-index    (:match/round-index m)
-     :bracket-type   (kw->str (:match/bracket-type m))
-     :player-one-sub (:match/player-one-sub m)
-     :player-two-sub (:match/player-two-sub m)
-     :winner-sub     (:match/winner-sub m)
-     :status         (kw->str (:match/status m))
-     :format         (:match/format m)
-     :created-at     (:match/created-at m)
-     :updated-at     (:match/updated-at m)}))
+    {:eid                   (:match/eid m)
+     :tournament-eid        (some-> m :match/tournament :tournament/eid)
+     :phase-index           (:match/phase-index m)
+     :round-index           (:match/round-index m)
+     :bracket-type          (kw->str (:match/bracket-type m))
+     :player-one-sub        (:match/player-one-sub m)
+     :player-two-sub        (:match/player-two-sub m)
+     :winner-sub            (:match/winner-sub m)
+     :status                (kw->str (:match/status m))
+     :format                (:match/format m)
+     :check-in-opens-at     (:match/check-in-opens-at m)
+     :check-in-closes-at    (:match/check-in-closes-at m)
+     :player-one-checked-at (:match/player-one-checked-at m)
+     :player-two-checked-at (:match/player-two-checked-at m)
+     :created-at            (:match/created-at m)
+     :updated-at            (:match/updated-at m)}))
 
 (defn- ->game
   [m]
@@ -408,6 +415,35 @@
      :match/status     :complete
      :match/updated-at (Date.)}])
   (match-by-eid conn match-eid))
+
+;;; ─── Check-in mutations ────────────────────────────────────────────────────
+
+(defn open-match-check-in!
+  "Open (or extend) the series check-in window on a match, stamping
+  `:check-in-opens-at` / `:check-in-closes-at`. Prior per-side check-ins are
+  preserved — re-opening extends the window rather than resetting confirmations."
+  [conn match-eid {:keys [opens-at closes-at]}]
+  (dl/transact!
+   conn
+   [{:match/eid                match-eid
+     :match/check-in-opens-at  (->date opens-at)
+     :match/check-in-closes-at (->date closes-at)
+     :match/updated-at         (Date.)}])
+  (match-by-eid conn match-eid))
+
+(defn record-match-check-in!
+  "Record a player's series check-in by stamping the timestamp for their
+  side. `side` is `:player-one` or `:player-two`."
+  [conn match-eid side checked-at]
+  (let [attr (case side
+               :player-one :match/player-one-checked-at
+               :player-two :match/player-two-checked-at)]
+    (dl/transact!
+     conn
+     [{:match/eid        match-eid
+       attr              (->date checked-at)
+       :match/updated-at (Date.)}])
+    (match-by-eid conn match-eid)))
 
 ;;; ─── Game mutations ────────────────────────────────────────────────────────
 

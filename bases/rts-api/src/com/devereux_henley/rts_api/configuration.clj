@@ -114,6 +114,8 @@
             :com.devereux-henley.rts-web.web.actions.tournament/create-match
             :com.devereux-henley.rts-web.web.actions.tournament/update-match-result
             :com.devereux-henley.rts-web.web.actions.tournament/record-game
+            :com.devereux-henley.rts-web.web.actions.tournament/check-in
+            :com.devereux-henley.rts-web.web.actions.tournament/open-check-in
             :com.devereux-henley.rts-web.web.actions.league/create-league
             :com.devereux-henley.rts-web.web.actions.season/create-season))
 
