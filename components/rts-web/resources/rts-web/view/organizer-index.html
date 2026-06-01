@@ -69,48 +69,65 @@
             </header>
             <div class="org-shelf" role="group" aria-labelledby="quick-actions-heading">
 
-                <!-- Advance Phase — gated on the current round fully reporting -->
-                <article class="org-action-card{% if not can-advance-phase? %} org-action-card--disabled{% endif %}"
-                         aria-labelledby="action-advance-heading">
+                <!-- Progress Tournament — one control over the generate-next-round
+                     state machine: generates the next round within a phase, or
+                     advances to the next phase on a phase's final round. Gated on
+                     the current round fully reporting. -->
+                <article class="org-action-card{% if not can-progress? %} org-action-card--disabled{% endif %}"
+                         aria-labelledby="action-progress-heading">
                     <div class="org-action-card-icon" aria-hidden="true">⏭</div>
-                    <h3 class="org-action-card-title" id="action-advance-heading">Advance Phase</h3>
+                    {% ifequal progress-state "phase" %}
+                    <h3 class="org-action-card-title" id="action-progress-heading">Advance Phase</h3>
                     <p class="org-action-card-text">
-                        Progress the phase state machine once every match in the current round reports.
+                        This is the final round of the current phase. Advancing seeds the
+                        first round of Phase {{next-phase-number}}.
                     </p>
+                    {% endifequal %}
+                    {% ifequal progress-state "round" %}
+                    <h3 class="org-action-card-title" id="action-progress-heading">Generate Next Round</h3>
+                    <p class="org-action-card-text">
+                        Seed the next round of matches from the current standings.
+                    </p>
+                    {% endifequal %}
+                    {% ifequal progress-state "done" %}
+                    <h3 class="org-action-card-title" id="action-progress-heading">Final Round Reached</h3>
+                    <p class="org-action-card-text">
+                        No further rounds or phases remain to generate. The tournament
+                        completes once the current round reports.
+                    </p>
+                    {% endifequal %}
+                    {% ifequal progress-state "inactive" %}
+                    <h3 class="org-action-card-title" id="action-progress-heading">Progress Tournament</h3>
+                    <p class="org-action-card-text">
+                        Generate rounds and advance phases once the tournament is active.
+                    </p>
+                    {% endifequal %}
                     <div class="org-action-card-meta">
                         {% if active? %}
-                            {% if round-total %}<span class="org-progress{% if round-complete? %} org-progress--ready{% endif %}">{{round-reported}}/{{round-total}} reported</span>
-                            {% else %}<span class="org-progress muted">No round in progress</span>{% endif %}
+                            {% if done? %}
+                            <span class="org-progress muted">No rounds remaining</span>
+                            {% else %}
+                                {% if round-total %}<span class="org-progress{% if round-complete? %} org-progress--ready{% endif %}">{{round-reported}}/{{round-total}} reported</span>
+                                {% else %}<span class="org-progress org-progress--ready">Ready</span>{% endif %}
+                            {% endif %}
                         {% else %}
                             <span class="org-progress muted">Tournament not active</span>
                         {% endif %}
                     </div>
+                    {% if done? %}
+                    <button type="button" class="btn btn-secondary btn-sm" disabled aria-disabled="true">
+                        No Rounds Remaining
+                    </button>
+                    {% else %}
                     <form hx-post="/actions/tournament/{{data.eid}}/round" hx-swap="none">
                         <button type="submit" class="btn btn-primary btn-sm"
-                                {% if not can-advance-phase? %}disabled aria-disabled="true"{% endif %}>
-                            Advance Phase
+                                {% if not can-progress? %}disabled aria-disabled="true"{% endif %}>
+                            {% ifequal progress-state "phase" %}Advance to Phase {{next-phase-number}}{% endifequal %}
+                            {% ifequal progress-state "round" %}Generate Round{% endifequal %}
+                            {% ifequal progress-state "inactive" %}Progress{% endifequal %}
                         </button>
                     </form>
-                </article>
-
-                <!-- Generate Next Round — seed the next round from the winners -->
-                <article class="org-action-card{% if not can-generate-round? %} org-action-card--disabled{% endif %}"
-                         aria-labelledby="action-generate-heading">
-                    <div class="org-action-card-icon" aria-hidden="true">⚄</div>
-                    <h3 class="org-action-card-title" id="action-generate-heading">Generate Next Round</h3>
-                    <p class="org-action-card-text">
-                        Seed the next round of matches from the current standings.
-                    </p>
-                    <div class="org-action-card-meta">
-                        {% if active? %}<span class="org-progress org-progress--ready">Ready</span>
-                        {% else %}<span class="org-progress muted">Tournament not active</span>{% endif %}
-                    </div>
-                    <form hx-post="/actions/tournament/{{data.eid}}/round" hx-swap="none">
-                        <button type="submit" class="btn btn-primary btn-sm"
-                                {% if not can-generate-round? %}disabled aria-disabled="true"{% endif %}>
-                            Generate Round
-                        </button>
-                    </form>
+                    {% endif %}
                 </article>
 
                 <!-- Feature a Match — pin to the viewer stream slot (rts-sr1) -->

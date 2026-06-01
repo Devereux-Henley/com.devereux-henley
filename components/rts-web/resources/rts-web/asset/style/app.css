@@ -1709,7 +1709,14 @@ h3.draft-category-header {
   gap: var(--space-1);
   border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
+  /* Tabs scroll horizontally on narrow viewports, but the strip is a
+     heading — never show scrollbar chrome (the active tab's -1px
+     overlap would otherwise trip a 1px scrollbar even when tabs fit). */
   overflow-x: auto;
+  scrollbar-width: none;
+}
+.tourney-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .tourney-tab {

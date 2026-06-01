@@ -887,11 +887,50 @@
          :round-reported  reported
          :round-complete? (= total reported)}))))
 
+(defn- tournament-progression
+  "Derives what the single 'progress tournament' shelf action does next,
+   given the state, the current round progress, and whether the tournament
+   is active. `generate-next-round` is one operation that seeds the next
+   round and auto-advances the phase when the phase's rounds run out, so the
+   shelf collapses to one control whose meaning depends on position:
+
+     :progress-state   \"round\"    — more rounds remain in the current phase
+                       \"phase\"    — last round of the phase, but more phases follow
+                       \"done\"     — final round of the final phase; nothing to generate
+                       \"inactive\" — tournament isn't active
+     :can-progress?    true when the action can run now: active, not done, and
+                       either no round exists yet (seed the first) or the
+                       current round has fully reported.
+     :next-phase-number 1-based number of the phase a `phase` advance moves into."
+  [state progress active?]
+  (let [current-phase (:current-phase state)
+        phases        (:phases state)
+        phase-config  (when current-phase (get phases current-phase))
+        total-rounds  (count (:rounds phase-config))
+        round-index   (:round-index progress)
+        more-rounds?  (if (nil? round-index)
+                        (pos? total-rounds)
+                        (< (inc round-index) total-rounds))
+        more-phases?  (boolean (when current-phase (get phases (inc current-phase))))
+        state-name    (cond
+                        (not active?) "inactive"
+                        more-rounds?  "round"
+                        more-phases?  "phase"
+                        :else         "done")
+        round-gated?  (and (pos? (:round-total progress))
+                           (not (:round-complete? progress)))]
+    {:progress-state    state-name
+     :done?             (= "done" state-name)
+     :more-phases?      more-phases?
+     :next-phase-number (when current-phase (+ current-phase 2))
+     :can-progress?     (and active?
+                             (not= "done" state-name)
+                             (not round-gated?))}))
+
 (defn organizer-view-model
   "Builds the organizer-console view-model: everything `tournament-view-model`
-   produces plus the current round's reporting progress and the
-   action-availability flags the Quick Actions shelf reads
-   (`:can-advance-phase?`, `:can-generate-round?`). Returns a
+   produces plus the current round's reporting progress and the single
+   `tournament-progression` summary the Quick Actions shelf reads. Returns a
    `:missing/resource` marker when the tournament doesn't exist."
   [dependencies eid viewer-sub]
   (let [model (tournament-view-model dependencies eid viewer-sub)]
@@ -903,6 +942,5 @@
                                              (:current-phase state))]
         (merge model
                progress
-               {:active?             active?
-                :can-advance-phase?  (and active? (:round-complete? progress))
-                :can-generate-round? active?})))))
+               {:active? active?}
+               (tournament-progression state progress active?))))))

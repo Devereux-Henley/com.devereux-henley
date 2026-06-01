@@ -48,10 +48,12 @@ async function enter(request, eid, user) {
 }
 
 async function configureSwissPhase(request, eid) {
+  // Two rounds so the first generated round leaves "more rounds remain"
+  // (progress-state "round"), exercising the gating rather than terminal state.
   const res = await request.put(`${BASE}/api/tournament-phase-configuration?tournament-eid=${eid}`, {
     headers: apiHeaders('dev-admin'),
     data: {
-      phases: [{ 'phase-type': 'swiss', rounds: [{ 'round-index': 0, format: 1 }] }],
+      phases: [{ 'phase-type': 'swiss', rounds: [{ 'round-index': 0, format: 1 }, { 'round-index': 1, format: 1 }] }],
     },
   });
   expect(res.status()).toBe(200);
@@ -102,9 +104,9 @@ test.describe('Organizer Console', () => {
     await expect(page.locator('.organizer-only-tag', { hasText: 'Organizer Only' })).toBeVisible();
     await expect(page.locator('.viewer-role-link', { hasText: 'Back to Viewer' })).toBeVisible();
 
-    // Four quick-action cards.
-    await expect(page.locator('.org-action-card-title', { hasText: 'Advance Phase' })).toBeVisible();
-    await expect(page.locator('.org-action-card-title', { hasText: 'Generate Next Round' })).toBeVisible();
+    // Quick-action cards: one collapsed progress control + two placeholders.
+    // A freshly-created tournament is in registration, so progress is inactive.
+    await expect(page.locator('.org-action-card-title', { hasText: 'Progress Tournament' })).toBeVisible();
     await expect(page.locator('.org-action-card-title', { hasText: 'Feature a Match' })).toBeVisible();
     await expect(page.locator('.org-action-card-title', { hasText: 'Open Check-in' })).toBeVisible();
 
@@ -126,7 +128,7 @@ test.describe('Organizer Console', () => {
     ).toBeVisible();
   });
 
-  test('advance phase is gated until the current round fully reports', async ({ page, request }) => {
+  test('progress control is gated until the current round fully reports', async ({ page, request }) => {
     const eid = await createTournament(request);
     await configureSwissPhase(request, eid);
     await enter(request, eid, 'dev-admin');
@@ -136,9 +138,11 @@ test.describe('Organizer Console', () => {
 
     await page.goto(`/view/game/${GAME_EID}/tournament/${eid}/organizer.html`);
 
-    // Round in progress (results unreported) → advance disabled, generate enabled.
-    await expect(page.locator('button', { hasText: 'Advance Phase' })).toBeDisabled();
-    await expect(page.locator('button', { hasText: 'Generate Round' })).toBeEnabled();
+    // Round 0 of a two-round phase is in progress with unreported matches, so
+    // the single progress control reads "Generate Round" but is disabled.
+    const btn = page.locator('.org-shelf button', { hasText: 'Generate Round' });
+    await expect(btn).toBeVisible();
+    await expect(btn).toBeDisabled();
   });
 
   test('non-organizers cannot reach the console', async ({ request }) => {
