@@ -246,6 +246,10 @@
      [:winner-sub [:maybe :string]]
      [:status data-access.contract/match-status-enum]
      [:format data-access.contract/match-format-enum]
+     [:check-in-opens-at {:optional true} [:maybe inst?]]
+     [:check-in-closes-at {:optional true} [:maybe inst?]]
+     [:player-one-checked-at {:optional true} [:maybe inst?]]
+     [:player-two-checked-at {:optional true} [:maybe inst?]]
      [:_links
       [:map
        [:self :url]

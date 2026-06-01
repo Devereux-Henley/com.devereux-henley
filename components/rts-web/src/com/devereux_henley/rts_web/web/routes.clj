@@ -355,6 +355,20 @@
                                  [:eid :uuid]])
                          :body domain/record-result-specification}
             :handler    (integrant.core/ref ::web.actions.tournament/record-game)}}]
+   ["/tournament/:tournament-eid/match/:eid/check-in"
+    {:post {:produces   ["application/htmx+html"]
+            :parameters {:path (schema.contract/to-schema
+                                [:map
+                                 [:tournament-eid :uuid]
+                                 [:eid :uuid]])}
+            :handler    (integrant.core/ref ::web.actions.tournament/check-in)}}]
+   ["/tournament/:tournament-eid/match/:eid/check-in/open"
+    {:post {:produces   ["application/htmx+html"]
+            :parameters {:path (schema.contract/to-schema
+                                [:map
+                                 [:tournament-eid :uuid]
+                                 [:eid :uuid]])}
+            :handler    (integrant.core/ref ::web.actions.tournament/open-check-in)}}]
    ["/tournament/:tournament-eid/match/:match-eid/replay/parse"
     {:post {:produces   ["application/htmx+html"]
             :parameters {:path      (schema.contract/to-schema

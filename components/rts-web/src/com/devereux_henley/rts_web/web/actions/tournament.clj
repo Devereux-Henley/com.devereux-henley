@@ -22,7 +22,9 @@
                       "tournament-round-created"
                       "tournament-match-created"
                       "tournament-match-result-recorded"
-                      "tournament-game-recorded"]})
+                      "tournament-game-recorded"
+                      "match-check-in-opened"
+                      "match-checked-in"]})
 
 (defmethod integrant.core/init-key ::create-tournament
   [_init-key dependencies]
@@ -164,3 +166,25 @@
       (if (= :tournament/match-error (:type result))
         {:status 422 :body result}
         (common/trigger-response "tournament-game-recorded" result)))))
+
+(defmethod integrant.core/init-key ::open-check-in
+  [_init-key dependencies]
+  (fn [{{{match-eid :eid} :path} :parameters
+        session                  :ory-session
+        :as                      _request}]
+    (let [user-sub (get-in session [:identity :id])
+          result   (domain/open-check-in dependencies match-eid user-sub)]
+      (if (= :tournament/check-in-opened (:type result))
+        (common/trigger-response "match-check-in-opened" result)
+        {:status 422 :body result}))))
+
+(defmethod integrant.core/init-key ::check-in
+  [_init-key dependencies]
+  (fn [{{{match-eid :eid} :path} :parameters
+        session                  :ory-session
+        :as                      _request}]
+    (let [user-sub (get-in session [:identity :id])
+          result   (domain/check-in-player dependencies match-eid user-sub)]
+      (if (= :tournament/checked-in (:type result))
+        (common/trigger-response "match-checked-in" result)
+        {:status 422 :body result}))))
