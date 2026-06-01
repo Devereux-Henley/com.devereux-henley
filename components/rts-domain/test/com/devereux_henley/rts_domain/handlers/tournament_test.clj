@@ -765,3 +765,17 @@
                 data-access.contract/record-match-check-in! (fn [& _] (throw (ex-info "must not write" {})))]
     (let [result (handlers.tournament/check-in-player test-deps checkin-match-eid "sigmar_42")]
       (is (= :tournament/checked-in (:type result)) "already-checked player still succeeds after the window closes"))))
+
+(deftest check-in-player-rejects-nil-user-sub
+  ;; A nil user-sub (session with no presence check) must not satisfy the
+  ;; participant gate — even on a bye where player-two-sub is itself nil.
+  (with-redefs [data-access.contract/match-by-eid (fn [_ _] (assoc open-checkin-match :player-two-sub nil))]
+    (let [result (handlers.tournament/check-in-player test-deps checkin-match-eid nil)]
+      (is (= :tournament/check-in-error (:type result)))
+      (is (re-find #"participant" (:message result))))))
+
+(deftest check-in-player-rejects-blank-user-sub
+  (with-redefs [data-access.contract/match-by-eid (fn [_ _] open-checkin-match)]
+    (let [result (handlers.tournament/check-in-player test-deps checkin-match-eid "   ")]
+      (is (= :tournament/check-in-error (:type result)))
+      (is (re-find #"participant" (:message result))))))
