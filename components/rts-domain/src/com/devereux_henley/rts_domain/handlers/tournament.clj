@@ -344,8 +344,12 @@
             (let [now       (Instant/now)
                   opens-at  (or (->instant (:check-in-opens-at match)) now)
                   closes-at (.plus now (Duration/ofMinutes check-in-window-minutes))
-                  updated   (db/open-match-check-in! conn match-eid
-                                                     {:opens-at opens-at :closes-at closes-at})]
+                  _         (db/open-match-check-in! conn match-eid
+                                                     {:opens-at opens-at :closes-at closes-at})
+                  updated   (assoc match
+                                   :check-in-opens-at  (Date/from opens-at)
+                                   :check-in-closes-at (Date/from closes-at)
+                                   :updated-at         (Date/from now))]
               {:type     :tournament/check-in-opened
                :match    (tag-match updated)
                :check-in (check-in-state updated now)}))))))
@@ -392,7 +396,13 @@
           {:type :tournament/check-in-error :message "The check-in window is not open."}
 
           :else
-          (let [updated (db/record-match-check-in! conn match-eid side now)]
+          (let [checked-key (case side
+                              :player-one :player-one-checked-at
+                              :player-two :player-two-checked-at)
+                _           (db/record-match-check-in! conn match-eid side now)
+                updated     (assoc match
+                                   checked-key (Date/from now)
+                                   :updated-at (Date/from now))]
             {:type     :tournament/checked-in
              :side     side
              :match    (tag-match updated)
