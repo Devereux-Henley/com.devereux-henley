@@ -1,5 +1,6 @@
 (ns com.devereux-henley.rts-domain.handlers.tournament
   (:require
+   [clojure.string :as str]
    [com.devereux-henley.rts-data-access.contract :as db]
    [com.devereux-henley.rts-domain.handlers.season :as handlers.season]
    [com.devereux-henley.rts-domain.rules.tournament :as rules]
@@ -357,7 +358,11 @@
       (nil? match)
       {:type :tournament/check-in-error :message "Match not found."}
 
-      (not (contains? #{(:player-one-sub match) (:player-two-sub match)} user-sub))
+      (str/blank? user-sub)
+      {:type :tournament/check-in-error :message "Only match participants can check in."}
+
+      (not (contains? (into #{} (remove nil?) [(:player-one-sub match) (:player-two-sub match)])
+                      user-sub))
       {:type :tournament/check-in-error :message "Only match participants can check in."}
 
       (= "complete" (:status match))
