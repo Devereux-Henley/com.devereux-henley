@@ -160,6 +160,7 @@
 (def series-current-game-num                      rules.tournament/series-current-game-num)
 (def series-win-counts                            rules.tournament/series-win-counts)
 (def series-clinches?                             rules.tournament/series-clinches?)
+(def lobby-code                                   rules.tournament/lobby-code)
 
 ;;; ─── League / Season / Stats schemas ───────────────────────────────────────
 

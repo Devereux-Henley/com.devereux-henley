@@ -2,7 +2,8 @@
   (:require
    [clojure.test :refer [deftest is]]
    [com.devereux-henley.rts-data-access.contract :as data-access.contract]
-   [com.devereux-henley.rts-domain.handlers.tournament :as handlers.tournament])
+   [com.devereux-henley.rts-domain.handlers.tournament :as handlers.tournament]
+   [com.devereux-henley.rts-domain.rules.tournament :as rules.tournament])
   (:import
    [java.time Instant LocalDateTime ZoneId]
    [java.util UUID]))
@@ -783,3 +784,59 @@
     (let [result (handlers.tournament/check-in-player test-deps checkin-match-eid "   ")]
       (is (= :tournament/check-in-error (:type result)))
       (is (re-find #"participant" (:message result))))))
+
+;; ── series lobby code ──
+
+(deftest check-in-player-issues-lobby-code-when-both-checked
+  ;; The second side checking in flips both-checked? — a lobby code is issued,
+  ;; persisted, and surfaced on the synthesized match + derived state.
+  (let [captured (atom nil)]
+    (with-redefs [data-access.contract/match-by-eid           (fn [_ _] (assoc open-checkin-match
+                                                                               :player-one-checked-at (minutes-from-now 0)))
+                  data-access.contract/record-match-check-in! (fn [_ _ _side _at] nil)
+                  data-access.contract/set-match-lobby-code!  (fn [_ _eid code] (reset! captured code) nil)]
+      (let [result   (handlers.tournament/check-in-player test-deps checkin-match-eid "chaos_undivided")
+            expected (rules.tournament/lobby-code checkin-match-eid)]
+        (is (= :tournament/checked-in (:type result)))
+        (is (= expected @captured) "the issued code is persisted")
+        (is (= expected (get-in result [:match :lobby-code])) "code on the synthesized match")
+        (is (= expected (get-in result [:check-in :lobby-code])) "code on the derived state")
+        (is (true? (get-in result [:check-in :both-checked?])))))))
+
+(deftest check-in-player-no-lobby-code-when-only-one-checked
+  ;; The first side checking in must not issue a code — both sides are required.
+  (with-redefs [data-access.contract/match-by-eid           (fn [_ _] open-checkin-match)
+                data-access.contract/record-match-check-in! (fn [_ _ _side _at] nil)
+                data-access.contract/set-match-lobby-code!  (fn [& _] (throw (ex-info "must not issue a code with one side checked" {})))]
+    (let [result (handlers.tournament/check-in-player test-deps checkin-match-eid "sigmar_42")]
+      (is (= :tournament/checked-in (:type result)))
+      (is (nil? (get-in result [:match :lobby-code])))
+      (is (nil? (get-in result [:check-in :lobby-code]))))))
+
+(deftest check-in-player-does-not-reissue-existing-lobby-code
+  ;; A re-check on a both-checked match that already carries a code reuses it —
+  ;; one code for the whole series, never regenerated.
+  (with-redefs [data-access.contract/match-by-eid           (fn [_ _] (assoc open-checkin-match
+                                                                             :player-one-checked-at (minutes-from-now 0)
+                                                                             :player-two-checked-at (minutes-from-now 0)
+                                                                             :lobby-code "KARAK-ABCD"))
+                data-access.contract/record-match-check-in! (fn [& _] (throw (ex-info "should not write on re-check" {})))
+                data-access.contract/set-match-lobby-code!  (fn [& _] (throw (ex-info "should not reissue an existing code" {})))]
+    (let [result (handlers.tournament/check-in-player test-deps checkin-match-eid "sigmar_42")]
+      (is (= :tournament/checked-in (:type result)))
+      (is (= "KARAK-ABCD" (get-in result [:check-in :lobby-code]))))))
+
+(deftest check-in-player-backfills-missing-lobby-code-on-recheck
+  ;; A both-checked match missing its code (e.g. checked in before the feature)
+  ;; gets one backfilled on the next idempotent re-check.
+  (let [captured (atom nil)]
+    (with-redefs [data-access.contract/match-by-eid           (fn [_ _] (assoc open-checkin-match
+                                                                               :player-one-checked-at (minutes-from-now 0)
+                                                                               :player-two-checked-at (minutes-from-now 0)))
+                  data-access.contract/record-match-check-in! (fn [& _] (throw (ex-info "should not write on re-check" {})))
+                  data-access.contract/set-match-lobby-code!  (fn [_ _eid code] (reset! captured code) nil)]
+      (let [result   (handlers.tournament/check-in-player test-deps checkin-match-eid "sigmar_42")
+            expected (rules.tournament/lobby-code checkin-match-eid)]
+        (is (= :tournament/checked-in (:type result)))
+        (is (= expected @captured) "the missing code is backfilled")
+        (is (= expected (get-in result [:check-in :lobby-code])))))))

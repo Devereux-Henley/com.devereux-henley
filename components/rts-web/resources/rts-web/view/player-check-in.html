@@ -61,6 +61,10 @@
             </div>
         </section>
 
+        {% if lobby %}
+        {% include "rts-web/components/tournament/series-lobby-panel.html" %}
+        {% endif %}
+
         <section class="panel" aria-labelledby="path-heading">
             <header class="panel-head">
                 <h2 class="panel-title" id="path-heading">Your Path to the Crown</h2>

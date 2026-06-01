@@ -156,6 +156,18 @@
    {:num          5   :map          "Skull Pass — Winter" :result nil      :winner nil
     :submitted-by nil :confirmed-by nil                   :size   "5.2 MB"}])
 
+(def ^:private demo-lobby
+  "Demo series-lobby setup revealed once both sides check in. The code is the
+   real `domain/lobby-code` derivation over a fixed demo match eid so the
+   panel mirrors what the live flow issues."
+  {:code           (domain/lobby-code #uuid "b1f2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d")
+   :host           "sigmar_42"
+   :format         "Best of 5"
+   :patch          "8.0"
+   :reinforcements "Disabled"
+   :caster         "grand_marshal_cast"
+   :launcher-url   "totalwar://lobby/join"})
+
 (def ^:private demo-path
   [{:stage "Group Stage A" :label "3-0" :state "done" :detail "Top seed Group A"}
    {:stage "QF 1" :label "vs chaos_undivided" :state "active" :detail "Bo5 · live"}
@@ -251,7 +263,8 @@
                                       :opponent             demo-player-opponent
                                       :path                 demo-path
                                       :check-in-window      "Window closes at 13:55 UTC · 7 min remaining · one check-in covers all five games"
-                                      :opponent-checked-in? true})))))
+                                      :opponent-checked-in? true
+                                      :lobby                demo-lobby})))))
 
 (defn- find-current-player-match
   "Returns the earliest pending match (lowest phase-index, then round-index)

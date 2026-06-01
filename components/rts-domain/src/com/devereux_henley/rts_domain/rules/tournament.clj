@@ -1,4 +1,6 @@
-(ns com.devereux-henley.rts-domain.rules.tournament)
+(ns com.devereux-henley.rts-domain.rules.tournament
+  (:require
+   [clojure.string :as str]))
 
 ;; Tournament status lifecycle:
 ;;   registration → active → complete
@@ -108,6 +110,27 @@
    threshold?"
   [current-wins format]
   (>= (inc current-wins) (match-win-threshold format)))
+
+;; ─── Series lobby code ───────────────────────────────────────────────────────
+
+(def ^:private lobby-code-words
+  "Thematic prefixes for series lobby codes — one is chosen deterministically
+   from the match eid."
+  ["KARAK" "ALTDORF" "NAGGAROND" "LUSTRIA" "KISLEV" "CATHAY" "NULN"
+   "MIDDENHEIM" "ULTHUAN" "SYLVANIA" "GROMRIL" "ZHUFBAR" "ATHEL" "EATAINE"
+   "AVELORN" "CARCASSONNE"])
+
+(defn lobby-code
+  "Derives the series lobby code for a match from its `eid` — a thematic word
+   joined to a four-character hex suffix (e.g. `KARAK-3F9A`). Pure and
+   deterministic: the same match always yields the same code, so it can be
+   reissued idempotently and stays constant across every game of the series."
+  [eid]
+  (let [hex    (str/replace (str eid) "-" "")
+        word   (nth lobby-code-words (mod (Long/parseLong (subs hex 0 8) 16)
+                                          (count lobby-code-words)))
+        suffix (str/upper-case (subs hex 8 12))]
+    (str word "-" suffix)))
 
 ;; ─── Swiss pairing ──────────────────────────────────────────────────────────
 

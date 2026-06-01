@@ -1,0 +1,59 @@
+{# Series lobby panel — revealed once both players have checked in. Shows the
+   single in-game lobby code for the whole best-of-N (code + copy), the lobby
+   setup the host applies (host / format / patch / reinforcements), the caster
+   holding the spectator slot, and a shortcut into the game launcher. Expects a
+   `lobby` map: {code host format patch reinforcements caster launcher-url}. #}
+<section class="panel lobby-panel" aria-labelledby="lobby-heading">
+    <header class="panel-head">
+        <h2 class="panel-title" id="lobby-heading">Series Lobby · {{match-label}}</h2>
+        <span class="panel-subtitle">One code for all {{total-games|default:five}} games — set it once, stay in the lobby</span>
+    </header>
+    <div class="panel-body">
+        <div class="lobby-code-block">
+            <div class="lobby-code-info">
+                <div class="eyebrow">Lobby code</div>
+                <code class="lobby-code" id="lobby-code">{{lobby.code}}</code>
+            </div>
+            <button type="button" class="btn btn-secondary lobby-copy"
+                    aria-label="Copy lobby code {{lobby.code}}"
+                    _="on click call navigator.clipboard.writeText('{{lobby.code}}')
+                       then set my textContent to 'Copied ✓'
+                       then wait 1.5s then set my textContent to 'Copy code'">
+                Copy code
+            </button>
+        </div>
+
+        <dl class="lobby-fields">
+            <div class="lobby-field">
+                <dt class="eyebrow">Host</dt>
+                <dd class="mono">{{lobby.host}}</dd>
+            </div>
+            <div class="lobby-field">
+                <dt class="eyebrow">Format</dt>
+                <dd class="mono">{{lobby.format}}</dd>
+            </div>
+            <div class="lobby-field">
+                <dt class="eyebrow">Patch</dt>
+                <dd class="mono">{{lobby.patch}}</dd>
+            </div>
+            <div class="lobby-field">
+                <dt class="eyebrow">Reinforcements</dt>
+                <dd class="mono">{{lobby.reinforcements}}</dd>
+            </div>
+        </dl>
+
+        <div class="lobby-caster">
+            <span class="eyebrow">Caster spectator</span>
+            {% if lobby.caster %}
+            <span class="mono">{{lobby.caster}}</span>
+            <span class="lobby-caster-note">— invite them to the lobby before game 1</span>
+            {% else %}
+            <span class="mono muted">No caster assigned</span>
+            {% endif %}
+        </div>
+
+        <a class="btn-primary-lg" href="{{lobby.launcher-url}}">
+            Open in launcher
+        </a>
+    </div>
+</section>
