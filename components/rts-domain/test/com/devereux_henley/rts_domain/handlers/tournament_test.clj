@@ -722,3 +722,46 @@
 (deftest get-check-in-state-nil-when-match-absent
   (with-redefs [data-access.contract/match-by-eid (fn [_ _] nil)]
     (is (nil? (handlers.tournament/get-check-in-state test-deps checkin-match-eid)))))
+
+;; ── check-in regression coverage (code-review fixes) ──
+
+(deftest check-in-state-completed-match-closes-window
+  ;; A match that completes within its window must not still report open.
+  (let [m (assoc checkin-match :status "complete"
+                 :check-in-opens-at (minutes-from-now 0) :check-in-closes-at (minutes-from-now 10)
+                 :player-one-checked-at (minutes-from-now 0) :player-two-checked-at (minutes-from-now 0))
+        s (handlers.tournament/check-in-state m (Instant/now))]
+    (is (false? (:window-open? s)) "completed match reports the window closed")))
+
+(deftest open-check-in-rejects-bye
+  (with-redefs [data-access.contract/match-by-eid      (fn [_ _] (assoc checkin-match :player-two-sub nil))
+                data-access.contract/tournament-by-eid (fn [_ _] (assoc test-tournament :created-by-sub "dev-admin"))]
+    (let [result (handlers.tournament/open-check-in test-deps checkin-match-eid "dev-admin")]
+      (is (= :tournament/check-in-error (:type result)))
+      (is (re-find #"bye" (:message result))))))
+
+(deftest open-check-in-preserves-original-open-time-on-reopen
+  (let [original (minutes-from-now -40)
+        captured (atom nil)]
+    (with-redefs [data-access.contract/match-by-eid         (fn [_ _] (assoc checkin-match
+                                                                             :check-in-opens-at original
+                                                                             :check-in-closes-at (minutes-from-now -25)))
+                  data-access.contract/tournament-by-eid    (fn [_ _] (assoc test-tournament :created-by-sub "dev-admin"))
+                  data-access.contract/open-match-check-in! (fn [_ _ window]
+                                                              (reset! captured window)
+                                                              (assoc checkin-match
+                                                                     :check-in-opens-at (java.util.Date/from (:opens-at window))
+                                                                     :check-in-closes-at (java.util.Date/from (:closes-at window))))]
+      (let [result (handlers.tournament/open-check-in test-deps checkin-match-eid "dev-admin")]
+        (is (= :tournament/check-in-opened (:type result)))
+        (is (= (.toInstant original) (:opens-at @captured)) "re-open keeps the original open time")
+        (is (.isAfter (:closes-at @captured) (Instant/now)) "re-open advances the close time")))))
+
+(deftest check-in-player-idempotent-after-window-closes
+  ;; A double-submit after the window lapses must not 422 a player already in.
+  (with-redefs [data-access.contract/match-by-eid           (fn [_ _] (assoc open-checkin-match
+                                                                             :check-in-closes-at (minutes-from-now -5)
+                                                                             :player-one-checked-at (minutes-from-now -8)))
+                data-access.contract/record-match-check-in! (fn [& _] (throw (ex-info "must not write" {})))]
+    (let [result (handlers.tournament/check-in-player test-deps checkin-match-eid "sigmar_42")]
+      (is (= :tournament/checked-in (:type result)) "already-checked player still succeeds after the window closes"))))
