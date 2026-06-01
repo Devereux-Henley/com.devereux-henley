@@ -632,15 +632,15 @@
 ;; ── open-check-in ──
 
 (deftest open-check-in-opens-window-for-organizer
+  ;; The mutation returns nil — the handler synthesizes the post-write match
+  ;; from the pre-write entity it already holds, not from a read-back.
   (with-redefs [data-access.contract/match-by-eid         (fn [_ _] checkin-match)
                 data-access.contract/tournament-by-eid    (fn [_ _] (assoc test-tournament :created-by-sub "dev-admin"))
-                data-access.contract/open-match-check-in! (fn [_ _ {:keys [opens-at closes-at]}]
-                                                            (assoc checkin-match
-                                                                   :check-in-opens-at (java.util.Date/from opens-at)
-                                                                   :check-in-closes-at (java.util.Date/from closes-at)))]
+                data-access.contract/open-match-check-in! (fn [_ _ _] nil)]
     (let [result (handlers.tournament/open-check-in test-deps checkin-match-eid "dev-admin")]
       (is (= :tournament/check-in-opened (:type result)))
       (is (= :tournament/match (get-in result [:match :type])))
+      (is (some? (get-in result [:match :check-in-opens-at])) "opens-at stamped on the synthesized match")
       (is (true? (get-in result [:check-in :window-open?]))))))
 
 (deftest open-check-in-rejects-non-organizer
@@ -671,24 +671,21 @@
          :check-in-closes-at (minutes-from-now 10)))
 
 (deftest check-in-player-records-participant
+  ;; The mutation returns nil — the handler stamps the checked-at locally.
   (with-redefs [data-access.contract/match-by-eid           (fn [_ _] open-checkin-match)
-                data-access.contract/record-match-check-in! (fn [_ _ side at]
-                                                              (assoc open-checkin-match
-                                                                     (case side
-                                                                       :player-one :player-one-checked-at
-                                                                       :player-two :player-two-checked-at)
-                                                                     (java.util.Date/from at)))]
+                data-access.contract/record-match-check-in! (fn [_ _ _side _at] nil)]
     (let [result (handlers.tournament/check-in-player test-deps checkin-match-eid "sigmar_42")]
       (is (= :tournament/checked-in (:type result)))
       (is (= :player-one (:side result)))
+      (is (some? (get-in result [:match :player-one-checked-at])) "checked-at stamped on the synthesized match")
       (is (true? (get-in result [:check-in :player-one-checked?]))))))
 
 (deftest check-in-player-second-side-maps-to-player-two
   (with-redefs [data-access.contract/match-by-eid           (fn [_ _] open-checkin-match)
-                data-access.contract/record-match-check-in! (fn [_ _ _side at]
-                                                              (assoc open-checkin-match :player-two-checked-at (java.util.Date/from at)))]
+                data-access.contract/record-match-check-in! (fn [_ _ _side _at] nil)]
     (let [result (handlers.tournament/check-in-player test-deps checkin-match-eid "chaos_undivided")]
-      (is (= :player-two (:side result))))))
+      (is (= :player-two (:side result)))
+      (is (true? (get-in result [:check-in :player-two-checked?]))))))
 
 (deftest check-in-player-rejects-non-participant
   (with-redefs [data-access.contract/match-by-eid (fn [_ _] open-checkin-match)]
@@ -758,9 +755,7 @@
                   data-access.contract/tournament-by-eid    (fn [_ _] (assoc test-tournament :created-by-sub "dev-admin"))
                   data-access.contract/open-match-check-in! (fn [_ _ window]
                                                               (reset! captured window)
-                                                              (assoc checkin-match
-                                                                     :check-in-opens-at (java.util.Date/from (:opens-at window))
-                                                                     :check-in-closes-at (java.util.Date/from (:closes-at window))))]
+                                                              nil)]
       (let [result (handlers.tournament/open-check-in test-deps checkin-match-eid "dev-admin")]
         (is (= :tournament/check-in-opened (:type result)))
         (is (= (.toInstant original) (:opens-at @captured)) "re-open keeps the original open time")

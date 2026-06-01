@@ -421,19 +421,22 @@
 (defn open-match-check-in!
   "Open (or extend) the series check-in window on a match, stamping
   `:check-in-opens-at` / `:check-in-closes-at`. Prior per-side check-ins are
-  preserved — re-opening extends the window rather than resetting confirmations."
+  preserved — re-opening extends the window rather than resetting confirmations.
+  Returns the transaction report; the caller synthesizes the post-write match
+  from the pre-write entity it already holds rather than re-reading."
   [conn match-eid {:keys [opens-at closes-at]}]
   (dl/transact!
    conn
    [{:match/eid                match-eid
      :match/check-in-opens-at  (->date opens-at)
      :match/check-in-closes-at (->date closes-at)
-     :match/updated-at         (Date.)}])
-  (match-by-eid conn match-eid))
+     :match/updated-at         (Date.)}]))
 
 (defn record-match-check-in!
   "Record a player's series check-in by stamping the timestamp for their
-  side. `side` is `:player-one` or `:player-two`."
+  side. `side` is `:player-one` or `:player-two`. Returns the transaction
+  report; the caller synthesizes the post-write match from the pre-write
+  entity it already holds rather than re-reading."
   [conn match-eid side checked-at]
   (let [attr (case side
                :player-one :match/player-one-checked-at
@@ -442,8 +445,7 @@
      conn
      [{:match/eid        match-eid
        attr              (->date checked-at)
-       :match/updated-at (Date.)}])
-    (match-by-eid conn match-eid)))
+       :match/updated-at (Date.)}])))
 
 ;;; ─── Game mutations ────────────────────────────────────────────────────────
 
