@@ -1,0 +1,411 @@
+{% extends "rts-web/template/entrypoint.html" %}
+
+{% block title %}Organizer · {{data.name}} | {{game.name}} | RTS-UI{% endblock %}
+
+{% block content %}
+<div id="organizer-stage" class="viewer-page organizer-page"
+     hx-get="/view/game/{{game-eid}}/tournament/{{data.eid}}/organizer.html"
+     hx-trigger="{{ triggers.tournament-stage }}"
+     hx-target="this"
+     hx-swap="outerHTML"
+     hx-select="#organizer-stage">
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- Header: breadcrumb · Organizer Only tag · Back to viewer         -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <header class="organizer-header" aria-labelledby="organizer-heading">
+        <div class="organizer-header-inner">
+            <div class="organizer-header-left">
+                <nav class="console-breadcrumb" aria-label="Breadcrumb">
+                    <a href="/view/game/{{game-eid}}/tournament/{{data.eid}}/index.html">← {{data.name}}</a>
+                    <span class="console-breadcrumb-sep">/</span>
+                    <span>Organizer Console</span>
+                </nav>
+                <div class="organizer-title-row">
+                    <h1 id="organizer-heading" class="organizer-title">{{data.name}}</h1>
+                    <span class="organizer-only-tag">Organizer Only</span>
+                </div>
+                <div class="organizer-status">
+                    {% ifequal tournament-state.status "active" %}
+                    <span class="viewer-hero-status-live">Live</span>
+                    {% endifequal %}
+                    {% ifequal tournament-state.status "registration" %}
+                    <span class="viewer-hero-status-live viewer-hero-status-live--reg">Registration</span>
+                    {% endifequal %}
+                    {% ifequal tournament-state.status "complete" %}
+                    <span class="viewer-hero-status-live viewer-hero-status-live--done">Complete</span>
+                    {% endifequal %}
+                    {% ifequal tournament-state.status "cancelled" %}
+                    <span class="viewer-hero-status-live viewer-hero-status-live--done">Cancelled</span>
+                    {% endifequal %}
+                    {% if current-phase-label %}
+                    <span class="viewer-hero-status-phase">
+                        Phase {{tournament-state.current-phase|add:1}} of {{phase-count}} ·
+                        <strong>{{current-phase-label}}</strong>
+                        {% if current-round-label %} · {{current-round-label}}{% endif %}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="organizer-header-right">
+                <a class="viewer-role-link"
+                   href="/view/game/{{game-eid}}/tournament/{{data.eid}}/index.html">
+                    <span class="viewer-role-link-icon" aria-hidden="true">←</span>
+                    Back to Viewer
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="viewer-body">
+
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <!-- Quick Actions shelf                                          -->
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <section class="org-shelf-section" aria-labelledby="quick-actions-heading">
+            <header class="section-header">
+                <h2 class="section-header-title" id="quick-actions-heading">Quick Actions</h2>
+                <span class="section-header-subtitle">Run the tournament from here</span>
+            </header>
+            <div class="org-shelf" role="group" aria-labelledby="quick-actions-heading">
+
+                <!-- Progress Tournament — one control over the generate-next-round
+                     state machine: generates the next round within a phase, or
+                     advances to the next phase on a phase's final round. Gated on
+                     the current round fully reporting. -->
+                <article class="org-action-card{% if not can-progress? %} org-action-card--disabled{% endif %}"
+                         aria-labelledby="action-progress-heading">
+                    <div class="org-action-card-icon" aria-hidden="true">⏭</div>
+                    {% ifequal progress-state "phase" %}
+                    <h3 class="org-action-card-title" id="action-progress-heading">Advance Phase</h3>
+                    <p class="org-action-card-text">
+                        This is the final round of the current phase. Advancing seeds the
+                        first round of Phase {{next-phase-number}}.
+                    </p>
+                    {% endifequal %}
+                    {% ifequal progress-state "round" %}
+                    <h3 class="org-action-card-title" id="action-progress-heading">Generate Next Round</h3>
+                    <p class="org-action-card-text">
+                        Seed the next round of matches from the current standings.
+                    </p>
+                    {% endifequal %}
+                    {% ifequal progress-state "done" %}
+                    <h3 class="org-action-card-title" id="action-progress-heading">Final Round Reached</h3>
+                    <p class="org-action-card-text">
+                        No further rounds or phases remain to generate. The tournament
+                        completes once the current round reports.
+                    </p>
+                    {% endifequal %}
+                    {% ifequal progress-state "inactive" %}
+                    <h3 class="org-action-card-title" id="action-progress-heading">Progress Tournament</h3>
+                    <p class="org-action-card-text">
+                        Generate rounds and advance phases once the tournament is active.
+                    </p>
+                    {% endifequal %}
+                    <div class="org-action-card-meta">
+                        {% if active? %}
+                            {% if done? %}
+                            <span class="org-progress muted">No rounds remaining</span>
+                            {% else %}
+                                {% if round-total %}<span class="org-progress{% if round-complete? %} org-progress--ready{% endif %}">{{round-reported}}/{{round-total}} reported</span>
+                                {% else %}<span class="org-progress org-progress--ready">Ready</span>{% endif %}
+                            {% endif %}
+                        {% else %}
+                            <span class="org-progress muted">Tournament not active</span>
+                        {% endif %}
+                    </div>
+                    {% if done? %}
+                    <button type="button" class="btn btn-secondary btn-sm" disabled aria-disabled="true">
+                        No Rounds Remaining
+                    </button>
+                    {% else %}
+                    <form hx-post="/actions/tournament/{{data.eid}}/round" hx-swap="none">
+                        <button type="submit" class="btn btn-primary btn-sm"
+                                {% if not can-progress? %}disabled aria-disabled="true"{% endif %}>
+                            {% ifequal progress-state "phase" %}Advance to Phase {{next-phase-number}}{% endifequal %}
+                            {% ifequal progress-state "round" %}Generate Round{% endifequal %}
+                            {% ifequal progress-state "inactive" %}Progress{% endifequal %}
+                        </button>
+                    </form>
+                    {% endif %}
+                </article>
+
+                <!-- Feature a Match — pin to the viewer stream slot (rts-sr1) -->
+                <article class="org-action-card org-action-card--disabled"
+                         aria-labelledby="action-feature-heading">
+                    <div class="org-action-card-icon" aria-hidden="true">★</div>
+                    <h3 class="org-action-card-title" id="action-feature-heading">Feature a Match</h3>
+                    <p class="org-action-card-text">
+                        Pin a match to the viewer's live-stream slot so spectators follow it.
+                    </p>
+                    <div class="org-action-card-meta">
+                        <span class="org-progress muted">Coming soon</span>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" disabled aria-disabled="true">
+                        Feature
+                    </button>
+                </article>
+
+                <!-- Open Check-in — prompt the next round's players (check-in child) -->
+                <article class="org-action-card org-action-card--disabled"
+                         aria-labelledby="action-checkin-heading">
+                    <div class="org-action-card-icon" aria-hidden="true">✓</div>
+                    <h3 class="org-action-card-title" id="action-checkin-heading">Open Check-in</h3>
+                    <p class="org-action-card-text">
+                        Send a check-in prompt to the players scheduled for the next round.
+                    </p>
+                    <div class="org-action-card-meta">
+                        <span class="org-progress muted">Coming soon</span>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" disabled aria-disabled="true">
+                        Open Check-in
+                    </button>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <!-- Management panel (tabbed)                                    -->
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <section class="org-panel" aria-labelledby="org-panel-heading">
+            <h2 id="org-panel-heading" class="sr-only">Tournament management</h2>
+
+            <div class="tourney-tabs" role="tablist" aria-label="Management sections">
+                <button type="button" role="tab" id="org-tab-phases"
+                        aria-selected="true" aria-controls="org-panel-phases"
+                        class="tourney-tab"
+                        _="on click
+                           add @hidden to <[role=tabpanel]/> in the closest .org-panel
+                           then remove @hidden from #org-panel-phases
+                           then set @aria-selected of <[role=tab]/> in my parentElement to 'false'
+                           then set my @aria-selected to 'true'">
+                    Phases &amp; Rounds
+                </button>
+                <button type="button" role="tab" id="org-tab-entrants"
+                        aria-selected="false" aria-controls="org-panel-entrants"
+                        class="tourney-tab"
+                        _="on click
+                           add @hidden to <[role=tabpanel]/> in the closest .org-panel
+                           then remove @hidden from #org-panel-entrants
+                           then set @aria-selected of <[role=tab]/> in my parentElement to 'false'
+                           then set my @aria-selected to 'true'">
+                    Entrants<span class="tourney-tab-sub">{{entries|length}}</span>
+                </button>
+                <button type="button" role="tab" id="org-tab-disputes"
+                        aria-selected="false" aria-controls="org-panel-disputes"
+                        class="tourney-tab"
+                        _="on click
+                           add @hidden to <[role=tabpanel]/> in the closest .org-panel
+                           then remove @hidden from #org-panel-disputes
+                           then set @aria-selected of <[role=tab]/> in my parentElement to 'false'
+                           then set my @aria-selected to 'true'">
+                    Disputes
+                </button>
+                <button type="button" role="tab" id="org-tab-settings"
+                        aria-selected="false" aria-controls="org-panel-settings"
+                        class="tourney-tab"
+                        _="on click
+                           add @hidden to <[role=tabpanel]/> in the closest .org-panel
+                           then remove @hidden from #org-panel-settings
+                           then set @aria-selected of <[role=tab]/> in my parentElement to 'false'
+                           then set my @aria-selected to 'true'">
+                    Settings
+                </button>
+            </div>
+
+            <!-- ─── Phases & Rounds ─── -->
+            <section id="org-panel-phases" role="tabpanel" aria-labelledby="org-tab-phases"
+                     class="tourney-tab-panel">
+                {% if tournament-state.phases|not-empty? %}
+                <ol class="org-phase-list">
+                    {% for phase in tournament-state.phases %}
+                    <li class="org-phase-row{% ifequal forloop.counter0 tournament-state.current-phase %} org-phase-row--current{% endifequal %}">
+                        <span class="org-phase-index">Phase {{forloop.counter}}</span>
+                        <span class="org-phase-type">{{phase.phase-type}}</span>
+                        {% ifequal forloop.counter0 tournament-state.current-phase %}
+                        <span class="org-phase-badge">Current</span>
+                        {% endifequal %}
+                    </li>
+                    {% endfor %}
+                </ol>
+                {% else %}
+                <p class="muted">No phases configured yet.</p>
+                {% endif %}
+
+                <header class="section-header">
+                    <h3 class="section-header-title">Pending Matches</h3>
+                    <span class="section-header-subtitle">Awaiting results</span>
+                </header>
+                {% if schedule|not-empty? %}
+                <div class="schedule-list">
+                    {% for s in schedule %}
+                    <div class="schedule-row{% if s.up-next? %} schedule-row--next{% else %} schedule-row--upcoming{% endif %}">
+                        <div class="schedule-time">
+                            <span class="schedule-time-label">{{s.phase-label}}</span>
+                            {{s.round-label}}
+                        </div>
+                        <div class="schedule-match">
+                            <div class="schedule-match-pair">
+                                {{s.player-one-sub}}
+                                <span class="schedule-match-pair-vs">vs</span>
+                                {% if s.player-two-sub %}{{s.player-two-sub}}{% else %}TBD{% endif %}
+                            </div>
+                            <div class="schedule-match-meta">Bo{{s.format}}</div>
+                        </div>
+                        <span class="schedule-state{% if s.up-next? %} schedule-state--next{% else %} schedule-state--upcoming{% endif %}">
+                            {% if s.up-next? %}Up Next{% else %}Scheduled{% endif %}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="muted">No pending matches.</p>
+                {% endif %}
+            </section>
+
+            <!-- ─── Entrants ─── -->
+            <section id="org-panel-entrants" role="tabpanel" aria-labelledby="org-tab-entrants"
+                     class="tourney-tab-panel" hidden>
+                {% if entries|not-empty? %}
+                <table class="standings-table">
+                    <caption class="sr-only">Registered entrants</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col" class="col-num">#</th>
+                            <th scope="col" class="col-player">Player</th>
+                            <th scope="col" class="col-status">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in entries %}
+                        <tr class="standings-row standings-row--entry">
+                            <td class="col-num"></td>
+                            <td class="col-player">
+                                <span class="standings-handle">
+                                    <span class="standings-handle-text">{{entry.player-sub}}</span>
+                                </span>
+                            </td>
+                            <td class="col-status">
+                                <span class="standings-status standings-status--alive">Entered</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="muted">No entrants yet.</p>
+                {% endif %}
+            </section>
+
+            <!-- ─── Disputes (rts-j11) ─── -->
+            <section id="org-panel-disputes" role="tabpanel" aria-labelledby="org-tab-disputes"
+                     class="tourney-tab-panel" hidden>
+                <div class="org-empty-state">
+                    <p class="org-empty-state-title">No disputes</p>
+                    <p class="muted">Reported-result disputes will appear here for resolution.</p>
+                </div>
+            </section>
+
+            <!-- ─── Settings ─── -->
+            <section id="org-panel-settings" role="tabpanel" aria-labelledby="org-tab-settings"
+                     class="tourney-tab-panel" hidden>
+                <dl class="org-settings-grid">
+                    <div class="org-settings-item">
+                        <dt>Status</dt>
+                        <dd>{{tournament-state.status}}</dd>
+                    </div>
+                    <div class="org-settings-item">
+                        <dt>Entrants</dt>
+                        <dd>{{entries|length}}</dd>
+                    </div>
+                    {% if tournament-state.qualifier-count %}
+                    <div class="org-settings-item">
+                        <dt>Qualifiers</dt>
+                        <dd>Top {{tournament-state.qualifier-count}} advance</dd>
+                    </div>
+                    {% endif %}
+                    {% if tournament-state.registration.closes-at %}
+                    <div class="org-settings-item">
+                        <dt>Registration closes</dt>
+                        <dd>{{tournament-state.registration.closes-at}}</dd>
+                    </div>
+                    {% endif %}
+                </dl>
+
+                {% ifequal tournament-state.status "registration" %}
+                <div class="org-settings-actions">
+                    <div class="viewer-action-card">
+                        <div class="viewer-action-card-text">Close registration early and lock the entrant list.</div>
+                        <form hx-post="/actions/tournament/{{data.eid}}/close-registration" hx-swap="none">
+                            <button type="submit" class="btn btn-secondary btn-sm">Close Registration</button>
+                        </form>
+                    </div>
+                    <div class="viewer-action-card">
+                        <div class="viewer-action-card-text">Start the tournament and generate the first round.</div>
+                        <form hx-post="/actions/tournament/{{data.eid}}/start" hx-swap="none">
+                            <button type="submit" class="btn btn-primary btn-sm">Start Tournament</button>
+                        </form>
+                    </div>
+                </div>
+                {% endifequal %}
+            </section>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <!-- Danger Zone                                                  -->
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        {% if active? %}
+        <section class="org-danger-zone" aria-labelledby="danger-heading">
+            <header class="section-header">
+                <h2 class="section-header-title" id="danger-heading">Danger Zone</h2>
+                <span class="section-header-subtitle">Irreversible actions</span>
+            </header>
+            <div class="org-danger-grid">
+                <div class="org-danger-card">
+                    <div class="org-danger-card-text">
+                        <strong>Complete tournament</strong>
+                        <span class="muted">Mark the tournament finished and freeze its standings.</span>
+                    </div>
+                    <form hx-post="/actions/tournament/{{data.eid}}/complete" hx-swap="none">
+                        <button type="submit" class="btn btn-secondary btn-sm">Complete</button>
+                    </form>
+                </div>
+                <div class="org-danger-card org-danger-card--destructive">
+                    <div class="org-danger-card-text">
+                        <strong>Cancel tournament</strong>
+                        <span class="muted">Cancel this tournament. Matches and standings are discarded.</span>
+                    </div>
+                    <form hx-post="/actions/tournament/{{data.eid}}/cancel" hx-swap="none"
+                          hx-confirm="Cancel this tournament? This cannot be undone.">
+                        <button type="submit" class="btn btn-danger btn-sm">Cancel Tournament</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        {% ifequal tournament-state.status "registration" %}
+        <section class="org-danger-zone" aria-labelledby="danger-reg-heading">
+            <header class="section-header">
+                <h2 class="section-header-title" id="danger-reg-heading">Danger Zone</h2>
+                <span class="section-header-subtitle">Irreversible actions</span>
+            </header>
+            <div class="org-danger-grid">
+                <div class="org-danger-card org-danger-card--destructive">
+                    <div class="org-danger-card-text">
+                        <strong>Cancel tournament</strong>
+                        <span class="muted">Cancel this tournament before it begins.</span>
+                    </div>
+                    <form hx-post="/actions/tournament/{{data.eid}}/cancel" hx-swap="none"
+                          hx-confirm="Cancel this tournament? This cannot be undone.">
+                        <button type="submit" class="btn btn-danger btn-sm">Cancel Tournament</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+        {% endifequal %}
+
+    </div>
+</div>
+{% endblock %}
