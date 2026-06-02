@@ -60,6 +60,7 @@
    :match/status :match/format
    :match/check-in-opens-at :match/check-in-closes-at
    :match/player-one-checked-at :match/player-two-checked-at
+   :match/lobby-code
    :match/created-at :match/updated-at
    {:match/tournament [:tournament/eid]}])
 
@@ -135,6 +136,7 @@
      :check-in-closes-at    (:match/check-in-closes-at m)
      :player-one-checked-at (:match/player-one-checked-at m)
      :player-two-checked-at (:match/player-two-checked-at m)
+     :lobby-code            (:match/lobby-code m)
      :created-at            (:match/created-at m)
      :updated-at            (:match/updated-at m)}))
 
@@ -446,6 +448,18 @@
      [{:match/eid        match-eid
        attr              (->date checked-at)
        :match/updated-at (Date.)}])))
+
+(defn set-match-lobby-code!
+  "Stamp the series lobby code on a match. Issued once both sides check in
+  and reused for every game of the series. Returns the transaction report;
+  the caller synthesizes the post-write match from the pre-write entity it
+  already holds rather than re-reading."
+  [conn match-eid lobby-code]
+  (dl/transact!
+   conn
+   [{:match/eid        match-eid
+     :match/lobby-code lobby-code
+     :match/updated-at (Date.)}]))
 
 ;;; ─── Game mutations ────────────────────────────────────────────────────────
 

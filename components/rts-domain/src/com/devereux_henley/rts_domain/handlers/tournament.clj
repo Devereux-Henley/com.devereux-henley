@@ -317,7 +317,23 @@
      :player-two-checked?   (some? p2-at)
      :player-one-checked-at p1-at
      :player-two-checked-at p2-at
-     :both-checked?         (and (some? p1-at) (some? p2-at))}))
+     :both-checked?         (and (some? p1-at) (some? p2-at))
+     :lobby-code            (:lobby-code match)}))
+
+(defn- ensure-lobby-code
+  "Issues and persists the series lobby code on `match` the first time both
+   sides are checked in, returning the match with `:lobby-code` set. A match
+   that is not yet both-checked, or already carries a code, is returned
+   unchanged — the code is issued once and reused for every game of the
+   series (see `rules/lobby-code`)."
+  [conn match]
+  (if (and (some? (:player-one-checked-at match))
+           (some? (:player-two-checked-at match))
+           (str/blank? (:lobby-code match)))
+    (let [code (rules/lobby-code (:eid match))]
+      (db/set-match-lobby-code! conn (:eid match) code)
+      (assoc match :lobby-code code))
+    match))
 
 (defn open-check-in
   "Opens the series check-in window on a match. Only the tournament organizer
@@ -388,9 +404,11 @@
         (cond
           ;; Idempotent re-check — succeed without a second write, regardless of
           ;; whether the window has since closed (a double-submit shouldn't 422).
+          ;; Backfills the lobby code should both sides be checked in without one.
           already?
-          {:type  :tournament/checked-in :side     side
-           :match (tag-match match)      :check-in state}
+          (let [match (ensure-lobby-code conn match)]
+            {:type  :tournament/checked-in :side     side
+             :match (tag-match match)      :check-in (check-in-state match now)})
 
           (not (:window-open? state))
           {:type :tournament/check-in-error :message "The check-in window is not open."}
@@ -400,9 +418,11 @@
                               :player-one :player-one-checked-at
                               :player-two :player-two-checked-at)
                 _           (db/record-match-check-in! conn match-eid side now)
-                updated     (assoc match
-                                   checked-key (Date/from now)
-                                   :updated-at (Date/from now))]
+                updated     (ensure-lobby-code
+                             conn
+                             (assoc match
+                                    checked-key (Date/from now)
+                                    :updated-at (Date/from now)))]
             {:type     :tournament/checked-in
              :side     side
              :match    (tag-match updated)

@@ -13,7 +13,10 @@
   `:match/check-in-closes-at` bound the window the organizer opens, and
   `:match/player-one-checked-at` / `:match/player-two-checked-at` record
   when each side confirmed. A side is checked in once its timestamp is
-  present; both present is the signal the series lobby reveals.")
+  present; both present is the signal the series lobby reveals.
+  `:match/lobby-code` is the single in-game lobby code issued when both
+  sides check in — one code for the whole best-of-N, not regenerated per
+  game.")
 
 (def schema
   {:match/eid                   {:db/valueType :db.type/uuid
@@ -31,6 +34,7 @@
    :match/check-in-closes-at    {:db/valueType :db.type/instant}
    :match/player-one-checked-at {:db/valueType :db.type/instant}
    :match/player-two-checked-at {:db/valueType :db.type/instant}
+   :match/lobby-code            {:db/valueType :db.type/string}
    :match/created-at            {:db/valueType :db.type/instant}
    :match/updated-at            {:db/valueType :db.type/instant}
    :match/games                 {:db/valueType   :db.type/ref

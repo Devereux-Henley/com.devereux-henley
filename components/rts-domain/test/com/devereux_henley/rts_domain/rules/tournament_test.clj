@@ -374,3 +374,21 @@
   (is (true? (rules/series-clinches? 2 5))  "2 wins + 1 = 3 → clinches Bo5")
   (is (false? (rules/series-clinches? 1 5)) "1 win + 1 = 2 → does not clinch Bo5")
   (is (true? (rules/series-clinches? 0 1))  "1 win clinches Bo1"))
+
+;; ─── lobby-code ─────────────────────────────────────────────────────────────
+
+(deftest lobby-code-is-deterministic
+  (let [eid (java.util.UUID/fromString "b1f2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d")]
+    (is (= (rules/lobby-code eid) (rules/lobby-code eid))
+        "the same match always yields the same code")))
+
+(deftest lobby-code-format
+  (let [code (rules/lobby-code
+              (java.util.UUID/fromString "b1f2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d"))]
+    (is (re-matches #"[A-Z]+-[0-9A-F]{4}" code)
+        "a thematic word joined to a four-character hex suffix")))
+
+(deftest lobby-code-distinguishes-matches
+  (let [a (rules/lobby-code (java.util.UUID/fromString "00000000-0000-0000-0000-000000000000"))
+        b (rules/lobby-code (java.util.UUID/fromString "ffffffff-ffff-ffff-ffff-ffffffffffff"))]
+    (is (not= a b) "different matches get different codes")))

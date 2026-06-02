@@ -250,6 +250,7 @@
      [:check-in-closes-at {:optional true} [:maybe inst?]]
      [:player-one-checked-at {:optional true} [:maybe inst?]]
      [:player-two-checked-at {:optional true} [:maybe inst?]]
+     [:lobby-code {:optional true} [:maybe :string]]
      [:_links
       [:map
        [:self :url]

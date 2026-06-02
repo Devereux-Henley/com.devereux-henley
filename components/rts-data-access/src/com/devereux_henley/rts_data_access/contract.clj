@@ -137,6 +137,7 @@
 (def update-match-result!            query.datalog.tournament/update-match-result!)
 (def open-match-check-in!            query.datalog.tournament/open-match-check-in!)
 (def record-match-check-in!          query.datalog.tournament/record-match-check-in!)
+(def set-match-lobby-code!           query.datalog.tournament/set-match-lobby-code!)
 (def create-game!                    query.datalog.tournament/create-game!)
 (def games-for-match                 query.datalog.tournament/games-for-match)
 

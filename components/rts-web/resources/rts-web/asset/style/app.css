@@ -3468,6 +3468,47 @@ table.standings-table tbody tr td.col-num::before {
 }
 .btn-primary-lg:focus-visible { outline: 2px solid var(--color-primary-700); outline-offset: 2px; }
 
+/* --- Series lobby panel -------------------------------------------------- */
+.lobby-panel { border-color: color-mix(in srgb, var(--color-primary-500) 40%, var(--color-border)); }
+.lobby-code-block {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-4) var(--space-5);
+  background: color-mix(in srgb, var(--color-primary-500) 10%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-primary-500) 45%, var(--color-border));
+}
+@media (max-width: 720px) { .lobby-code-block { grid-template-columns: 1fr; } }
+.lobby-code-block + .lobby-code-block { margin-top: var(--space-3); }
+.lobby-code {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--font-family-mono);
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--color-primary-700);
+}
+.lobby-copy { white-space: nowrap; }
+.lobby-fields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+  margin: var(--space-4) 0 0;
+}
+@media (max-width: 720px) { .lobby-fields { grid-template-columns: 1fr; } }
+.lobby-field {
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.lobby-field dd {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  color: var(--color-text-strong);
+}
+
 /* --- Series progress strip ---------------------------------------------- */
 .series-progress {
   background: var(--color-surface);
