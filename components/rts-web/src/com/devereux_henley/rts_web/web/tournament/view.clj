@@ -157,16 +157,17 @@
     :submitted-by nil :confirmed-by nil                   :size   "5.2 MB"}])
 
 (def ^:private demo-lobby
-  "Demo series-lobby setup revealed once both sides check in. The code is the
-   real `domain/lobby-code` derivation over a fixed demo match eid so the
-   panel mirrors what the live flow issues."
+  "Demo series-lobby setup revealed once both sides check in. `:code` is the
+   real `domain/lobby-code` derivation over a fixed demo match eid, so the panel
+   mirrors the lobby name the live flow issues; the remaining fields are the
+   host's lobby setup the players read off before game 1."
   {:code           (domain/lobby-code #uuid "b1f2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d")
+   :passcode       "QF1-4471"
    :host           "sigmar_42"
-   :format         "Best of 5"
-   :patch          "8.0"
-   :reinforcements "Disabled"
-   :caster         "grand_marshal_cast"
-   :launcher-url   "totalwar://lobby/join"})
+   :host-you?      true
+   :format         "Best of 5 · 4,000 pts"
+   :patch          "6.0.2"
+   :reinforcements "Disabled · stream delay 3 min"})
 
 (def ^:private demo-path
   [{:stage "Group Stage A" :label "3-0" :state "done" :detail "Top seed Group A"}

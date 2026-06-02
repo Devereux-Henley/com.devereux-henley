@@ -1,9 +1,9 @@
 // Series lobby panel (rts-xe7): the player check-in view reveals the single
-// series lobby code once both sides have checked in. The player console is a
-// demo surface until rts-pwd wires real view-models, so this exercises the
-// template + component rendering end to end (code, copy, host/format/patch/
-// reinforcements, caster, launcher). Touching components/e2e also keeps the
-// brick in the poly test set for this PR.
+// series lobby once both sides have checked in. The player console is a demo
+// surface until rts-pwd wires real view-models, so this exercises the template
+// + component rendering end to end (lobby name + passcode each with a copy
+// button, and the host/format/patch/reinforce setup grid). Touching
+// components/e2e also keeps the brick in the poly test set for this PR.
 
 const { test, expect } = require('@playwright/test');
 
@@ -49,7 +49,7 @@ test.describe('Series lobby panel', () => {
     ]);
   });
 
-  test('check-in view reveals the series lobby code and setup', async ({ page, request }) => {
+  test('check-in view reveals the series lobby and setup', async ({ page, request }) => {
     const eid = await createTournament(request);
     await page.goto(`/view/game/${GAME_EID}/tournament/${eid}/player/check-in.html`);
 
@@ -57,26 +57,25 @@ test.describe('Series lobby panel', () => {
     await expect(lobby).toBeVisible();
     await expect(lobby.locator('#lobby-heading')).toContainText('Series Lobby');
 
-    // One thematic code (WORD-XXXX) issued for the whole series.
-    await expect(lobby.locator('.lobby-code')).toHaveText(/^[A-Z]+-[0-9A-F]{4}$/);
+    // One thematic lobby name (WORD-XXXX) issued for the whole series, plus the
+    // passcode players join with — each copyable.
+    await expect(lobby.locator('#lobby-code')).toHaveText(/^[A-Z]+-[0-9A-F]{4}$/);
+    await expect(lobby.locator('#lobby-passcode')).not.toBeEmpty();
 
-    // Host / Format / Patch / Reinforcements setup the host applies.
+    // Host / Format / Patch / Reinforce setup the host applies.
     await expect(lobby.locator('.lobby-fields dt')).toHaveText(
-      ['Host', 'Format', 'Patch', 'Reinforcements'],
+      ['Host', 'Format', 'Patch', 'Reinforce'],
     );
-
-    // Caster spectator slot and the launcher shortcut.
-    await expect(lobby.locator('.lobby-caster')).toContainText('Caster spectator');
-    await expect(lobby.locator('a.btn-primary-lg', { hasText: 'Open in launcher' })).toBeVisible();
   });
 
-  test('copy button copies the lobby code and confirms', async ({ page, request, context }) => {
+  test('copy button copies the lobby name and confirms', async ({ page, request, context }) => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
     const eid = await createTournament(request);
     await page.goto(`/view/game/${GAME_EID}/tournament/${eid}/player/check-in.html`);
 
-    const code = await page.locator('.lobby-code').textContent();
-    const copy = page.locator('.lobby-copy');
+    const block = page.locator('.lobby-code-block').first();
+    const code = await block.locator('#lobby-code').textContent();
+    const copy = block.locator('.lobby-copy');
     await copy.click();
     await expect(copy).toContainText('Copied');
 

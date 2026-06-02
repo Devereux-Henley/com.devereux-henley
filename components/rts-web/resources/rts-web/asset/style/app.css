@@ -3480,6 +3480,7 @@ table.standings-table tbody tr td.col-num::before {
   border: 1px solid color-mix(in srgb, var(--color-primary-500) 45%, var(--color-border));
 }
 @media (max-width: 720px) { .lobby-code-block { grid-template-columns: 1fr; } }
+.lobby-code-block + .lobby-code-block { margin-top: var(--space-3); }
 .lobby-code {
   display: block;
   margin-top: 2px;
@@ -3492,11 +3493,11 @@ table.standings-table tbody tr td.col-num::before {
 .lobby-copy { white-space: nowrap; }
 .lobby-fields {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-3);
   margin: var(--space-4) 0 0;
 }
-@media (max-width: 720px) { .lobby-fields { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 720px) { .lobby-fields { grid-template-columns: 1fr; } }
 .lobby-field {
   padding: var(--space-3);
   border: 1px solid var(--color-border);
@@ -3507,17 +3508,6 @@ table.standings-table tbody tr td.col-num::before {
   font-size: 0.9rem;
   color: var(--color-text-strong);
 }
-.lobby-caster {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--space-2);
-  margin-top: var(--space-4);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--color-border);
-}
-.lobby-caster-note { font-size: 0.78rem; color: var(--color-text-muted); }
-.lobby-panel .btn-primary-lg { margin-top: var(--space-4); }
 
 /* --- Series progress strip ---------------------------------------------- */
 .series-progress {
