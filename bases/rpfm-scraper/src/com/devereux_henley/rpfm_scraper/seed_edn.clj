@@ -13,7 +13,9 @@
    [clojure.pprint :as pp]
    [clojure.string :as str])
   (:import
+   [java.io File]
    [java.nio.charset StandardCharsets]
+   [java.nio.file CopyOption Files StandardCopyOption]
    [java.util UUID]))
 
 (defn derived-uuid
@@ -145,17 +147,31 @@
 
 (defn write-edn!
   "Pretty-print `rows` to `file`, creating parent dirs. Skips writing when
-  `rows` is empty so the loader's absent-file handling stays intact. Returns
-  the row count written (0 when skipped)."
+  `rows` is empty so the loader's absent-file handling stays intact. Writes to
+  a sibling temp file and atomically renames it into place, so an interrupted
+  or failed write never leaves a truncated seed file behind. Pins the print
+  vars so a caller's `*print-length*`/`*print-level*` can't silently elide rows
+  into `...`. Returns the row count written (0 when skipped)."
   [file rows]
   (if (empty? rows)
     0
-    (do
-      (.mkdirs (.getParentFile file))
-      (with-open [w (io/writer file)]
-        (binding [*out* w]
-          (pp/pprint rows)))
-      (count rows))))
+    (let [parent (.getParentFile file)
+          _      (.mkdirs parent)
+          tmp    (File/createTempFile "seed-" ".edn.tmp" parent)]
+      (try
+        (with-open [w (io/writer tmp)]
+          (binding [*out*                  w
+                    *print-length*         nil
+                    *print-level*          nil
+                    *print-namespace-maps* false]
+            (pp/pprint rows)))
+        (Files/move (.toPath tmp) (.toPath file)
+                    (into-array CopyOption
+                                [StandardCopyOption/ATOMIC_MOVE
+                                 StandardCopyOption/REPLACE_EXISTING]))
+        (count rows)
+        (finally
+          (when (.exists tmp) (.delete tmp)))))))
 
 (defn write-seed-file!
   "Write `rows` to `<datalog>/<version>/<file-name>`."

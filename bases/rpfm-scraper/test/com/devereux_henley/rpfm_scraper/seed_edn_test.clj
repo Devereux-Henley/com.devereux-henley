@@ -42,6 +42,30 @@
       (is (not (.exists tmp)) "empty input writes no file")
       (finally (.delete tmp)))))
 
+(deftest write-edn!-pins-print-vars
+  (testing "a caller's *print-length*/*print-level* can't truncate the seed"
+    (let [tmp  (File/createTempFile "seed-edn-print" ".edn")
+          rows [{:xs (vec (range 50)) :nested {:a {:b {:c {:d 1}}}}}]]
+      (try
+        (binding [*print-length* 3 *print-level* 2]
+          (seed-edn/write-edn! tmp rows))
+        (is (not (.contains (slurp tmp) "...")) "no truncation ellipsis written")
+        (is (= rows (edn/read-string (slurp tmp))) "full rows round-trip")
+        (finally (.delete tmp))))))
+
+(deftest write-edn!-replaces-existing-and-leaves-no-temp
+  (testing "the atomic rename overwrites in place and leaves no .edn.tmp behind"
+    (let [dir  (doto (File/createTempFile "seed-edn-dir" "") (.delete) (.mkdirs))
+          file (io/file dir "out.edn")]
+      (try
+        (seed-edn/write-edn! file [{:a 1}])
+        (seed-edn/write-edn! file [{:b 2} {:b 3}])
+        (is (= [{:b 2} {:b 3}] (edn/read-string (slurp file))) "second write replaces the first")
+        (is (= ["out.edn"] (vec (.list dir))) "no temp siblings remain after write")
+        (finally
+          (doseq [f (.listFiles dir)] (.delete f))
+          (.delete dir))))))
+
 ;; --- lookups against committed authoring/8.0 ---
 
 (deftest faction-key->eid-maps-slugs-to-eids
