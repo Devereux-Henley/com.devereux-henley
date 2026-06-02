@@ -7,5 +7,5 @@
  :tag-patterns {:stable "stable-*"
                 :release "v[0-9]*"}
  :projects {"development"  {:alias "dev"}
-            "api"          {:alias "api" :necessary ["e2e"]}
+            "api"          {:alias "api" :necessary ["e2e" "rts-data"]}
             "rpfm-scraper" {:alias "rpfm-scraper"}}}

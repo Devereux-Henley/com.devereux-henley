@@ -4,6 +4,7 @@
         mono/http                    {:local/root "../../components/http"}
         mono/datalog                 {:local/root "../../components/datalog"}
         mono/resourcekit             {:local/root "../../components/resourcekit"}
+        mono/rts-data                {:local/root "../../components/rts-data"}
         mono/rts-data-access         {:local/root "../../components/rts-data-access"}
         mono/rts-domain              {:local/root "../../components/rts-domain"}
         mono/rts-web                 {:local/root "../../components/rts-web"}

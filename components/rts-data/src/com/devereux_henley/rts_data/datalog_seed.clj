@@ -89,16 +89,34 @@
       ;; callers that need this should pass the patch version explicitly.
       (sorted-set))))
 
-(defn ensure-patch-version
-  "Throw a friendly error if no seed files exist for the requested patch.
-  Use at REPL entry points so a typo doesn't silently transact nothing."
+(defn missing-seed-files
+  "The `seed-files` that have no resource under `patch-version`, in transact
+  order. Empty when the dump is complete. Probes resource presence only — no
+  EDN is parsed — so it is cheap to call before `load-all`."
   [patch-version]
-  (when (empty? (load-all patch-version))
-    (let [available (available-patches)]
-      (throw
-       (ex-info
-        (str "No Datalog seed files found for patch " (pr-str patch-version)
-             (when (seq available)
-               (str " (available: " (str/join ", " available) ")")))
-        {:patch-version patch-version
-         :available     available})))))
+  (into [] (remove #(seed-resource patch-version %)) seed-files))
+
+(defn ensure-patch-version
+  "Throw a friendly error unless every declared seed file exists for
+  `patch-version`. Probes resource presence only — no EDN is parsed — so a
+  reseed doesn't read the corpus twice, and a partial dump (some files written,
+  then a crash) is rejected instead of silently transacting an incomplete
+  graph. Use at REPL entry points so a typo or half-finished dump doesn't
+  silently transact nothing — or worse, part of the graph."
+  [patch-version]
+  (let [missing (missing-seed-files patch-version)]
+    (when (seq missing)
+      (let [none?     (= (count missing) (count seed-files))
+            available (available-patches)]
+        (throw
+         (ex-info
+          (if none?
+            (str "No Datalog seed files found for patch " (pr-str patch-version)
+                 (when (seq available)
+                   (str " (available: " (str/join ", " available) ")")))
+            (str "Incomplete Datalog seed for patch " (pr-str patch-version)
+                 " — missing " (count missing) " of " (count seed-files)
+                 " file(s): " (str/join ", " missing)))
+          {:patch-version patch-version
+           :missing       missing
+           :available     available}))))))
