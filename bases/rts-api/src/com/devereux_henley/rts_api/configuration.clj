@@ -110,6 +110,7 @@
             :com.devereux-henley.rts-web.web.actions.tournament/complete-tournament
             :com.devereux-henley.rts-web.web.actions.tournament/cancel-tournament
             :com.devereux-henley.rts-web.web.actions.tournament/close-registration
+            :com.devereux-henley.rts-web.web.actions.tournament/set-patch
             :com.devereux-henley.rts-web.web.actions.tournament/create-round
             :com.devereux-henley.rts-web.web.actions.tournament/create-match
             :com.devereux-henley.rts-web.web.actions.tournament/update-match-result

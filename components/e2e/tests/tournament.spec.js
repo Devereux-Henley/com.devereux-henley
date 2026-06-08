@@ -80,6 +80,15 @@ async function generateRound(request, eid) {
   });
 }
 
+async function setPatch(request, eid, patch) {
+  const res = await request.put(`${BASE}/actions/tournament/${eid}/patch`, {
+    headers: actionHeaders('dev-admin'),
+    data: { patch },
+  });
+  expect(res.status()).toBe(200);
+  return res;
+}
+
 test.describe('Tournament UI', () => {
   test.beforeEach(async ({ context }) => {
     await context.addCookies([
@@ -147,6 +156,33 @@ test.describe('Tournament Viewer page', () => {
     await page.goto(`/view/game/${GAME_EID}/tournament/${eid}/index.html`);
     await expect(page.locator('.viewer-hero-title', { hasText: 'E2E Test Tournament' })).toBeVisible();
     await expect(page.locator('.viewer-hero-status-live')).toBeVisible();
+  });
+
+  test('viewer hero meta strip shows Format and Hosted by, plus the Switch role links', async ({ page, request }) => {
+    const eid = await createTournament(request);
+    await page.goto(`/view/game/${GAME_EID}/tournament/${eid}/index.html`);
+
+    const meta = page.locator('.viewer-hero-meta');
+    await expect(meta.locator('.viewer-hero-meta-label', { hasText: 'Format' })).toBeVisible();
+    await expect(meta.locator('.viewer-hero-meta-label', { hasText: 'Hosted by' })).toBeVisible();
+    await expect(meta.locator('.viewer-hero-meta-value', { hasText: 'dev-admin' })).toBeVisible();
+
+    await expect(page.locator('.viewer-hero-roles-label', { hasText: 'Switch role' })).toBeVisible();
+    await expect(page.locator('.viewer-role-link', { hasText: 'Organizer Console' })).toBeVisible();
+  });
+
+  test('organizer sets the patch and it surfaces in the viewer hero', async ({ page, request }) => {
+    const eid = await createTournament(request);
+
+    // No patch set yet → the Patch meta item is absent.
+    await page.goto(`/view/game/${GAME_EID}/tournament/${eid}/index.html`);
+    await expect(page.locator('.viewer-hero-meta-label', { hasText: 'Patch' })).toHaveCount(0);
+
+    await setPatch(request, eid, '6.0.2');
+
+    await page.goto(`/view/game/${GAME_EID}/tournament/${eid}/index.html`);
+    const patchItem = page.locator('.viewer-hero-meta-item', { hasText: 'Patch' });
+    await expect(patchItem.locator('.viewer-hero-meta-value')).toHaveText('6.0.2');
   });
 
   test('after start + round generation, bracket section renders matches and schedule lists pending', async ({ page, request }) => {

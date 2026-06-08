@@ -4504,6 +4504,13 @@ table.standings-table tbody tr td.col-num::before {
   flex-direction: column;
   gap: var(--space-3);
 }
+.org-patch-row {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  margin-top: var(--space-2);
+}
+.org-patch-row .input { max-width: 12rem; }
 
 /* --- Danger Zone --------------------------------------------------------- */
 .org-danger-zone {

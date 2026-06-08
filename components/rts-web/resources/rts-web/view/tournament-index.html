@@ -43,6 +43,16 @@
                 {% endif %}
                 <div class="viewer-hero-meta">
                     <div class="viewer-hero-meta-item">
+                        <span class="viewer-hero-meta-label">Format</span>
+                        <span class="viewer-hero-meta-value">{{hero-format}}</span>
+                    </div>
+                    {% if data.patch %}
+                    <div class="viewer-hero-meta-item">
+                        <span class="viewer-hero-meta-label">Patch</span>
+                        <span class="viewer-hero-meta-value">{{data.patch}}</span>
+                    </div>
+                    {% endif %}
+                    <div class="viewer-hero-meta-item">
                         <span class="viewer-hero-meta-label">Hosted by</span>
                         <span class="viewer-hero-meta-value">{{data.created-by-sub}}</span>
                     </div>
@@ -60,7 +70,9 @@
 
             {% if any has-entry is-organizer %}
             <div class="viewer-hero-right">
-                <div class="viewer-role-links">
+                <div class="viewer-hero-roles">
+                    <span class="viewer-hero-roles-label">Switch role</span>
+                    <div class="viewer-role-links">
                     {% if has-entry %}
                     <a class="viewer-role-link"
                        href="/view/game/{{game-eid}}/tournament/{{data.eid}}/player/check-in.html">
@@ -75,6 +87,7 @@
                         Organizer Console
                     </a>
                     {% endif %}
+                    </div>
                 </div>
             </div>
             {% endif %}

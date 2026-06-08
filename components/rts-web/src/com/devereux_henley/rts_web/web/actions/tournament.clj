@@ -19,6 +19,7 @@
                       "tournament-entry-created"
                       "tournament-entry-deleted"
                       "tournament-registration-closed"
+                      "tournament-patch-set"
                       "tournament-round-created"
                       "tournament-match-created"
                       "tournament-match-result-recorded"
@@ -117,6 +118,18 @@
       (if (= :tournament/registration-closed (:type result))
         (common/trigger-response "tournament-registration-closed" result)
         {:status 422 :body result}))))
+
+(defmethod integrant.core/init-key ::set-patch
+  [_init-key dependencies]
+  (fn [{{{:keys [eid]}   :path
+         {:keys [patch]} :body} :parameters
+        session                 :ory-session
+        :as                     _request}]
+    (let [user-sub (get-in session [:identity :id])
+          result   (domain/set-tournament-patch dependencies eid user-sub patch)]
+      (if (= :tournament/patch-set (:type result))
+        (common/trigger-response "tournament-patch-set" result)
+        (common/error-fragment 422 (:message result))))))
 
 (defmethod integrant.core/init-key ::create-round
   [_init-key dependencies]
