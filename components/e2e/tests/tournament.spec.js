@@ -158,7 +158,7 @@ test.describe('Tournament Viewer page', () => {
     await expect(page.locator('.viewer-hero-status-live')).toBeVisible();
   });
 
-  test('viewer hero meta strip shows Format and Hosted by, plus the Switch role links', async ({ page, request }) => {
+  test('viewer hero meta strip shows Format and Hosted by, plus the console links', async ({ page, request }) => {
     const eid = await createTournament(request);
     await page.goto(`/view/game/${GAME_EID}/tournament/${eid}/index.html`);
 
@@ -167,7 +167,6 @@ test.describe('Tournament Viewer page', () => {
     await expect(meta.locator('.viewer-hero-meta-label', { hasText: 'Hosted by' })).toBeVisible();
     await expect(meta.locator('.viewer-hero-meta-value', { hasText: 'dev-admin' })).toBeVisible();
 
-    await expect(page.locator('.viewer-hero-roles-label', { hasText: 'Switch role' })).toBeVisible();
     await expect(page.locator('.viewer-role-link', { hasText: 'Organizer Console' })).toBeVisible();
   });
 

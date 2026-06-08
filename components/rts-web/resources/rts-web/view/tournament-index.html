@@ -70,9 +70,7 @@
 
             {% if any has-entry is-organizer %}
             <div class="viewer-hero-right">
-                <div class="viewer-hero-roles">
-                    <span class="viewer-hero-roles-label">Switch role</span>
-                    <div class="viewer-role-links">
+                <div class="viewer-role-links">
                     {% if has-entry %}
                     <a class="viewer-role-link"
                        href="/view/game/{{game-eid}}/tournament/{{data.eid}}/player/check-in.html">
@@ -87,7 +85,6 @@
                         Organizer Console
                     </a>
                     {% endif %}
-                    </div>
                 </div>
             </div>
             {% endif %}
