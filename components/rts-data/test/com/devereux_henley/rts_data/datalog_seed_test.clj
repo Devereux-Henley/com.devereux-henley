@@ -14,6 +14,11 @@
   (is (= datalog-seed/seed-files (datalog-seed/missing-seed-files "does-not-exist"))
       "an unknown patch has every file missing, in transact order"))
 
+(deftest available-patches-finds-committed-patch
+  (testing "the seed root on the classpath is enumerated regardless of protocol"
+    (is (contains? (datalog-seed/available-patches) "8.0")
+        "the committed 8.0 seed directory is advertised as available")))
+
 (deftest ensure-patch-version-passes-for-complete-patch
   (is (nil? (datalog-seed/ensure-patch-version "8.0"))
       "a complete seed does not throw"))
