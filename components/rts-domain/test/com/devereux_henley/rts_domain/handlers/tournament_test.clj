@@ -306,6 +306,23 @@
         (let [result (handlers.tournament/close-registration-early test-deps test-tournament-eid "dev-admin")]
           (is (= :tournament/registration-close-error (:type result))))))))
 
+;; ─── set-tournament-patch ────────────────────────────────────────────────────
+
+(deftest set-tournament-patch-persists-and-returns-tournament
+  (let [t (atom test-tournament)]
+    (with-redefs-fn (active-with t)
+      (fn []
+        (let [result (handlers.tournament/set-tournament-patch test-deps test-tournament-eid "dev-admin" "6.0.2")]
+          (is (= :tournament/patch-set (:type result)))
+          (is (= "6.0.2" (get-in result [:tournament :patch])))
+          (is (= "6.0.2" (:patch @t)) "the patch is written through to the store"))))))
+
+(deftest set-tournament-patch-rejects-non-organizer
+  (with-redefs [data-access.contract/tournament-by-eid (fn [_ _] test-tournament)]
+    (let [result (handlers.tournament/set-tournament-patch test-deps test-tournament-eid "not-the-organizer" "6.0.2")]
+      (is (= :tournament/patch-error (:type result)))
+      (is (re-find #"organizer" (:message result))))))
+
 ;; ─── create-match ────────────────────────────────────────────────────────────
 
 (def ^:private test-match
@@ -462,6 +479,32 @@
     (let [result (handlers.tournament/tournament-view-model test-deps test-tournament-eid "viewer")]
       (is (false? (:is-organizer result)))
       (is (false? (:has-entry result))))))
+
+(deftest tournament-view-model-derives-hero-format-from-entries-and-phases
+  (with-redefs [handlers.tournament/get-tournament-by-eid
+                (fn [_ _] {:eid test-tournament-eid :name "Spring Open" :created-by-sub "owner" :patch "6.0.2"})
+                handlers.tournament/get-tournament-state
+                (fn [_ _] {:status        "active"
+                           :phases        [{:phase-type "round-robin"} {:phase-type "single-elimination"}]
+                           :current-phase 0                                                                :qualifier-count nil
+                           :registration  {:opens-at nil :closes-at nil}                                   :standings       []})
+                handlers.tournament/get-entries
+                (fn [_ _] (mapv (fn [i] {:player-sub (str "p" i)}) (range 16)))
+                handlers.tournament/get-matches-for-tournament (fn [_ _] [])]
+    (let [result (handlers.tournament/tournament-view-model test-deps test-tournament-eid "viewer")]
+      (is (= "16 · RR → SE" (:hero-format result)) "entry count followed by the abbreviated phase pipeline")
+      (is (= "6.0.2" (get-in result [:data :patch])) "patch flows through to the hero"))))
+
+(deftest tournament-view-model-hero-format-without-phases-is-entry-count
+  (with-redefs [handlers.tournament/get-tournament-by-eid
+                (fn [_ _] {:eid test-tournament-eid :name "Spring Open" :created-by-sub "owner"})
+                handlers.tournament/get-tournament-state
+                (fn [_ _] {:status       "registration"                 :phases    [] :current-phase nil :qualifier-count nil
+                           :registration {:opens-at nil :closes-at nil} :standings []})
+                handlers.tournament/get-entries                (fn [_ _] [{:player-sub "p1"} {:player-sub "p2"} {:player-sub "p3"}])
+                handlers.tournament/get-matches-for-tournament (fn [_ _] [])]
+    (let [result (handlers.tournament/tournament-view-model test-deps test-tournament-eid "viewer")]
+      (is (= "3" (:hero-format result)) "no phases configured yet → just the entrant count"))))
 
 (deftest tournament-view-model-returns-missing-marker-when-absent
   (with-redefs [handlers.tournament/get-tournament-by-eid (fn [_ _] nil)]

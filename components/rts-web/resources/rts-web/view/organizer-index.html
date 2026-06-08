@@ -331,7 +331,30 @@
                         <dd>{{tournament-state.registration.closes-at}}</dd>
                     </div>
                     {% endif %}
+                    {% if data.patch %}
+                    <div class="org-settings-item">
+                        <dt>Patch</dt>
+                        <dd>{{data.patch}}</dd>
+                    </div>
+                    {% endif %}
                 </dl>
+
+                <div class="org-settings-actions">
+                    <div class="viewer-action-card">
+                        <form hx-put="/actions/tournament/{{data.eid}}/patch" hx-swap="none"
+                              hx-ext="json-enc" aria-labelledby="org-patch-label">
+                            <label id="org-patch-label" for="tournament-patch"
+                                   class="viewer-action-card-text">Game patch played on this tournament.</label>
+                            <div class="org-patch-row">
+                                <input id="tournament-patch" name="patch" type="text" class="input"
+                                       value="{{data.patch}}" placeholder="e.g. 6.0.2"
+                                       required aria-required="true"/>
+                                <button type="submit" class="btn btn-secondary btn-sm">Save Patch</button>
+                            </div>
+                            <div id="patch-error" class="entry-error" role="alert" aria-live="assertive" hidden></div>
+                        </form>
+                    </div>
+                </div>
 
                 {% ifequal tournament-state.status "registration" %}
                 <div class="org-settings-actions">

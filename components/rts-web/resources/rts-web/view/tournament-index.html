@@ -43,6 +43,16 @@
                 {% endif %}
                 <div class="viewer-hero-meta">
                     <div class="viewer-hero-meta-item">
+                        <span class="viewer-hero-meta-label">Format</span>
+                        <span class="viewer-hero-meta-value">{{hero-format}}</span>
+                    </div>
+                    {% if data.patch %}
+                    <div class="viewer-hero-meta-item">
+                        <span class="viewer-hero-meta-label">Patch</span>
+                        <span class="viewer-hero-meta-value">{{data.patch}}</span>
+                    </div>
+                    {% endif %}
+                    <div class="viewer-hero-meta-item">
                         <span class="viewer-hero-meta-label">Hosted by</span>
                         <span class="viewer-hero-meta-value">{{data.created-by-sub}}</span>
                     </div>

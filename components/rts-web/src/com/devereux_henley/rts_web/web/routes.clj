@@ -328,6 +328,11 @@
     {:post {:produces   ["application/htmx+html"]
             :parameters {:path schema.contract/id-path-parameter}
             :handler    (integrant.core/ref ::web.actions.tournament/close-registration)}}]
+   ["/tournament/:eid/patch"
+    {:put {:produces   ["application/htmx+html"]
+           :parameters {:path schema.contract/id-path-parameter
+                        :body domain/set-patch-specification}
+           :handler    (integrant.core/ref ::web.actions.tournament/set-patch)}}]
    ["/tournament/:eid/round"
     {:post {:produces   ["application/htmx+html"]
             :parameters {:path schema.contract/id-path-parameter}

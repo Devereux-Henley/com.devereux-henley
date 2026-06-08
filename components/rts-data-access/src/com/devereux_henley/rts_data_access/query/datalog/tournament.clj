@@ -35,6 +35,7 @@
 
 (def ^:private tournament-pattern
   [:tournament/eid :tournament/name :tournament/description
+   :tournament/patch
    :tournament/created-by-sub :tournament/version
    :tournament/created-at :tournament/updated-at
    :tournament/status :tournament/timezone
@@ -80,6 +81,7 @@
     (cond-> {:eid                       (:tournament/eid m)
              :name                      (:tournament/name m)
              :description               (:tournament/description m)
+             :patch                     (:tournament/patch m)
              :created-by-sub            (:tournament/created-by-sub m)
              :version                   (:tournament/version m)
              :created-at                (:tournament/created-at m)
@@ -311,9 +313,10 @@
 (defn update-tournament!
   "Patch mutable tournament fields, always touching `updated-at`. Accepts
   any of `:status` (string, stored as a keyword), `:current-phase-index`,
-  `:qualifier-count`, `:registration-closed-early`. Nil-valued keys are
-  skipped so partial updates only write what they mean to."
-  [conn eid {:keys [status current-phase-index qualifier-count registration-closed-early]}]
+  `:qualifier-count`, `:registration-closed-early`, `:patch` (the game-version
+  display string). Nil-valued keys are skipped so partial updates only write
+  what they mean to."
+  [conn eid {:keys [status current-phase-index qualifier-count registration-closed-early patch]}]
   (dl/transact!
    conn
    [(cond-> {:tournament/eid        eid
@@ -321,7 +324,8 @@
       status                            (assoc :tournament/status (keyword status))
       (some? current-phase-index)       (assoc :tournament/current-phase-index current-phase-index)
       (some? qualifier-count)           (assoc :tournament/qualifier-count qualifier-count)
-      (some? registration-closed-early) (assoc :tournament/registration-closed-early registration-closed-early))])
+      (some? registration-closed-early) (assoc :tournament/registration-closed-early registration-closed-early)
+      (some? patch)                     (assoc :tournament/patch patch))])
   (tournament-by-eid conn eid))
 
 (defn set-phases!

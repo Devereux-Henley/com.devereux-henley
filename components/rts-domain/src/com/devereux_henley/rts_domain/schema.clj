@@ -194,6 +194,7 @@
      [:type [:= :tournament/tournament]]
      [:name {:min 1} :string]
      [:description {:min 1} :string]
+     [:patch {:optional true} [:maybe :string]]
      [:game-eid {:model/link :game/by-eid} :uuid]
      [:league-eid {:optional true :model/link :league/by-eid} :uuid]
      [:season-eid {:optional true :model/link :season/by-eid} :uuid]
@@ -221,6 +222,11 @@
     [:timezone :timezone-id]
     [:registration-opens-at :local-datetime]
     [:registration-closes-at :local-datetime]]))
+
+(def set-patch-specification
+  (schema.contract/to-schema
+   [:map
+    [:patch {:min 1} :string]]))
 
 (def tournament-collection-resource
   (malli.util/merge

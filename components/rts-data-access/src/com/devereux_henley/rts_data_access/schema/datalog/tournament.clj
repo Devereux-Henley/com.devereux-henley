@@ -16,6 +16,7 @@
                                           :db/unique    :db.unique/identity}
    :tournament/name                      {:db/valueType :db.type/string}
    :tournament/description               {:db/valueType :db.type/string}
+   :tournament/patch                     {:db/valueType :db.type/string}
    :tournament/game                      {:db/valueType :db.type/ref}
    :tournament/league                    {:db/valueType :db.type/ref}
    :tournament/season                    {:db/valueType :db.type/ref}

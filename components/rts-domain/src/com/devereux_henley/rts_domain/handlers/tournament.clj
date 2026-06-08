@@ -251,6 +251,17 @@
                                    {:registration-closed-early true})
             {:type :tournament/registration-closed :state (get-tournament-state dependencies tournament-eid)})))))
 
+(defn set-tournament-patch
+  "Sets the game-version patch the tournament is played on (the hero's
+   `Patch` field). Only the organizer can set it. Returns
+   `:tournament/patch-set` on success, `:tournament/patch-error` on failure."
+  [dependencies tournament-eid user-sub patch]
+  (or (organizer-error dependencies tournament-eid user-sub :tournament/patch-error)
+      (do
+        (db/update-tournament! (:datalog-connection dependencies) tournament-eid {:patch patch})
+        {:type       :tournament/patch-set
+         :tournament (get-tournament-by-eid dependencies tournament-eid)})))
+
 ;; ─── Matches ─────────────────────────────────────────────────────────────────
 
 (defn create-match
@@ -751,6 +762,25 @@
    "swiss"              "Swiss"
    "round-robin"        "Round Robin"})
 
+(def ^:private phase-type-abbreviations
+  {"single-elimination" "SE"
+   "double-elimination" "DE"
+   "swiss"              "SW"
+   "round-robin"        "RR"})
+
+(defn- format-label
+  "The hero's Format line: entrant count followed by the phase pipeline as
+   abbreviations, e.g. `\"16 · RR → SE\"`. Returns the count alone when no
+   phases are configured."
+  [entry-count phases]
+  (let [pipeline (->> phases
+                      (map #(or (phase-type-abbreviations (:phase-type %))
+                                (:phase-type %)))
+                      (str/join " → "))]
+    (if (str/blank? pipeline)
+      (str entry-count)
+      (str entry-count " · " pipeline))))
+
 (defn- column-label
   "Bracket column heading. Branches by bracket type so DE's losers/grand-final
    rounds get appropriate labels instead of `Final` clashing with WB."
@@ -1018,6 +1048,7 @@
        :current-phase-label (or (phase-type-labels (:phase-type current-phase-config))
                                 (:phase-type current-phase-config))
        :current-round-label (current-round-label decorated-phases (:eid (first schedule)))
+       :hero-format         (format-label (count entries) phases)
        :phase-count         phase-count
        :single-phase?       (= 1 phase-count)
        :league              (when (:league-eid tournament)

@@ -97,6 +97,7 @@
 
 (def tournament-resource                          schema/tournament-resource)
 (def create-tournament-specification              schema/create-tournament-specification)
+(def set-patch-specification                      schema/set-patch-specification)
 (def tournament-collection-resource               schema/tournament-collection-resource)
 
 (def get-tournament-by-eid                        handlers.tournament/get-tournament-by-eid)
@@ -138,6 +139,7 @@
 (def complete-tournament                          handlers.tournament/complete-tournament)
 (def cancel-tournament                            handlers.tournament/cancel-tournament)
 (def close-registration-early                     handlers.tournament/close-registration-early)
+(def set-tournament-patch                         handlers.tournament/set-tournament-patch)
 (def create-match                                 handlers.tournament/create-match)
 (def get-match-by-eid                             handlers.tournament/get-match-by-eid)
 (def get-matches-for-tournament                   handlers.tournament/get-matches-for-tournament)
