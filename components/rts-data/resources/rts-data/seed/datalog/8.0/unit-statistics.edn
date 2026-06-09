@@ -14426,16 +14426,16 @@
                    :unit-size 1,
                    :melee-modifiers ["dazed"],
                    :weapon-ap-damage 275}
- #:unit-statistics{:missile-ap-damage 108,
-                   :range 275,
+ #:unit-statistics{:missile-ap-damage 45,
+                   :range 165,
                    :health 30040,
                    :charge-bonus 1,
                    :is-large false,
                    :weapon-strength 26,
                    :cost 800,
-                   :missile-damage 130,
+                   :missile-damage 67,
                    :bonus-vs-large 0,
-                   :speed 35,
+                   :speed 60,
                    :armor 30,
                    :unit
                    [:unit/eid
@@ -26030,7 +26030,7 @@
                    :melee-attack 65,
                    :missile-modifiers ["poison"],
                    :barrier 0,
-                   :leadership 70,
+                   :leadership 65,
                    :ammunition 25,
                    :unit-size 1,
                    :melee-modifiers ["poison"],
@@ -28671,7 +28671,8 @@
                    :eid #uuid "b441f45f-325f-3712-8d7f-ae3f1f7e4916",
                    :weapon-damage 30,
                    :melee-defence 28,
-                   :attributes ["flying" "guerrilla_deploy"],
+                   :attributes
+                   ["flying" "guerrilla_deploy" "wallbreaker"],
                    :patch
                    [:patch/eid
                     #uuid "cca5b4d4-5402-3d10-a0bb-0041bc02cf32"],
@@ -44115,7 +44116,7 @@
                    :melee-attack 65,
                    :missile-modifiers ["poison"],
                    :barrier 0,
-                   :leadership 70,
+                   :leadership 65,
                    :ammunition 25,
                    :unit-size 1,
                    :melee-modifiers ["poison"],
@@ -49612,4 +49613,250 @@
                    :leadership 60,
                    :ammunition 0,
                    :unit-size 1,
-                   :weapon-ap-damage 60}]
+                   :weapon-ap-damage 60}
+ #:unit-statistics{:abilities
+                   ["wh3_cp1_unit_passive_ferocious_ambush"],
+                   :health 5248,
+                   :charge-bonus 50,
+                   :is-large false,
+                   :weapon-strength 500,
+                   :cost 1200,
+                   :bonus-vs-large 0,
+                   :speed 52,
+                   :armor 60,
+                   :unit
+                   [:unit/eid
+                    #uuid "0008002f-0000-4000-8000-000000000000"],
+                   :eid #uuid "68159747-fab4-36ce-9d64-d439694837ba",
+                   :weapon-damage 180,
+                   :melee-defence 50,
+                   :attributes
+                   ["devastating_flanker"
+                    "encourages"
+                    "guerrilla_deploy"
+                    "stalk"
+                    "strider"
+                    "tiger_warrior"],
+                   :patch
+                   [:patch/eid
+                    #uuid "cca5b4d4-5402-3d10-a0bb-0041bc02cf32"],
+                   :bonus-vs-infantry 20,
+                   :melee-attack 65,
+                   :melee-attack-types ["magical" "flaming"],
+                   :barrier 0,
+                   :leadership 80,
+                   :ammunition 0,
+                   :unit-size 1,
+                   :weapon-ap-damage 320}
+ #:unit-statistics{:abilities
+                   ["wh3_cp1_unit_passive_ferocious_ambush"],
+                   :health 5076,
+                   :charge-bonus 45,
+                   :is-large false,
+                   :weapon-strength 450,
+                   :cost 1000,
+                   :bonus-vs-large 30,
+                   :speed 44,
+                   :armor 40,
+                   :unit
+                   [:unit/eid
+                    #uuid "00080030-0000-4000-8000-000000000000"],
+                   :eid #uuid "abbbfd7a-3cba-342e-b34d-03b5509d3617",
+                   :weapon-damage 170,
+                   :melee-defence 55,
+                   :attributes
+                   ["charge_defense_vs_large"
+                    "charge_reflection"
+                    "encourages"
+                    "hide_forest"
+                    "tiger_warrior"],
+                   :patch
+                   [:patch/eid
+                    #uuid "cca5b4d4-5402-3d10-a0bb-0041bc02cf32"],
+                   :bonus-vs-infantry 0,
+                   :melee-attack 50,
+                   :barrier 0,
+                   :leadership 75,
+                   :ammunition 0,
+                   :unit-size 1,
+                   :weapon-ap-damage 280}
+ #:unit-statistics{:abilities
+                   ["wh3_cp1_unit_passive_ferocious_ambush"],
+                   :health 4548,
+                   :charge-bonus 40,
+                   :is-large false,
+                   :weapon-strength 325,
+                   :cost 750,
+                   :bonus-vs-large 0,
+                   :speed 44,
+                   :armor 20,
+                   :unit
+                   [:unit/eid
+                    #uuid "00080031-0000-4000-8000-000000000000"],
+                   :eid #uuid "dd319f60-17fd-3959-b76f-43ade1304ff3",
+                   :weapon-damage 225,
+                   :melee-defence 40,
+                   :attributes
+                   ["encourages" "hide_forest" "tiger_warrior"],
+                   :patch
+                   [:patch/eid
+                    #uuid "cca5b4d4-5402-3d10-a0bb-0041bc02cf32"],
+                   :bonus-vs-infantry 0,
+                   :melee-attack 42,
+                   :melee-attack-types ["magical"],
+                   :barrier 0,
+                   :leadership 65,
+                   :ammunition 0,
+                   :unit-size 1,
+                   :weapon-ap-damage 100}
+ #:unit-statistics{:abilities
+                   ["wh3_cp1_unit_passive_ferocious_ambush"],
+                   :health 4548,
+                   :charge-bonus 40,
+                   :is-large false,
+                   :weapon-strength 325,
+                   :cost 750,
+                   :bonus-vs-large 0,
+                   :speed 44,
+                   :armor 20,
+                   :unit
+                   [:unit/eid
+                    #uuid "00080032-0000-4000-8000-000000000000"],
+                   :eid #uuid "15f5d6eb-14ad-39c1-89d1-ee8f204e48e6",
+                   :weapon-damage 225,
+                   :melee-defence 40,
+                   :attributes
+                   ["encourages" "hide_forest" "tiger_warrior"],
+                   :patch
+                   [:patch/eid
+                    #uuid "cca5b4d4-5402-3d10-a0bb-0041bc02cf32"],
+                   :bonus-vs-infantry 0,
+                   :melee-attack 42,
+                   :melee-attack-types ["magical"],
+                   :barrier 0,
+                   :leadership 65,
+                   :ammunition 0,
+                   :unit-size 1,
+                   :weapon-ap-damage 100}
+ #:unit-statistics{:abilities
+                   ["wh3_cp1_unit_passive_ferocious_ambush"],
+                   :health 4548,
+                   :charge-bonus 40,
+                   :is-large false,
+                   :weapon-strength 325,
+                   :cost 750,
+                   :bonus-vs-large 0,
+                   :speed 44,
+                   :armor 20,
+                   :unit
+                   [:unit/eid
+                    #uuid "00080033-0000-4000-8000-000000000000"],
+                   :eid #uuid "904ce7c2-8856-3df1-89bd-57a42ff9b281",
+                   :weapon-damage 225,
+                   :melee-defence 40,
+                   :attributes
+                   ["encourages" "hide_forest" "tiger_warrior"],
+                   :patch
+                   [:patch/eid
+                    #uuid "cca5b4d4-5402-3d10-a0bb-0041bc02cf32"],
+                   :bonus-vs-infantry 0,
+                   :melee-attack 42,
+                   :melee-attack-types ["magical"],
+                   :barrier 0,
+                   :leadership 65,
+                   :ammunition 0,
+                   :unit-size 1,
+                   :weapon-ap-damage 100}
+ #:unit-statistics{:abilities
+                   ["wh3_cp1_unit_passive_ferocious_ambush"],
+                   :health 8000,
+                   :charge-bonus 35,
+                   :is-large false,
+                   :weapon-strength 54,
+                   :cost 800,
+                   :bonus-vs-large 0,
+                   :speed 44,
+                   :armor 30,
+                   :unit
+                   [:unit/eid
+                    #uuid "00080034-0000-4000-8000-000000000000"],
+                   :eid #uuid "9114c967-bb92-32f1-a414-49a1290ab4ef",
+                   :weapon-damage 40,
+                   :melee-defence 34,
+                   :attributes ["hide_forest" "tiger_warrior"],
+                   :patch
+                   [:patch/eid
+                    #uuid "cca5b4d4-5402-3d10-a0bb-0041bc02cf32"],
+                   :bonus-vs-infantry 5,
+                   :melee-attack 42,
+                   :barrier 0,
+                   :leadership 70,
+                   :ammunition 0,
+                   :unit-size 80,
+                   :weapon-ap-damage 14}
+ #:unit-statistics{:missile-ap-damage 18,
+                   :abilities
+                   ["wh3_cp1_unit_passive_ferocious_ambush"],
+                   :range 70,
+                   :health 6000,
+                   :charge-bonus 35,
+                   :is-large false,
+                   :weapon-strength 40,
+                   :cost 950,
+                   :missile-damage 33,
+                   :bonus-vs-large 0,
+                   :speed 52,
+                   :armor 15,
+                   :unit
+                   [:unit/eid
+                    #uuid "00080035-0000-4000-8000-000000000000"],
+                   :eid #uuid "3bfc6918-bb75-391d-9f7f-8f4e59660ed9",
+                   :weapon-damage 15,
+                   :melee-defence 40,
+                   :attributes
+                   ["guerrilla_deploy"
+                    "mounted_fire_move"
+                    "stalk"
+                    "tiger_warrior"],
+                   :patch
+                   [:patch/eid
+                    #uuid "cca5b4d4-5402-3d10-a0bb-0041bc02cf32"],
+                   :bonus-vs-infantry 0,
+                   :missile-base-damage 15,
+                   :melee-attack 42,
+                   :barrier 0,
+                   :leadership 70,
+                   :ammunition 2,
+                   :unit-size 60,
+                   :weapon-ap-damage 25}
+ #:unit-statistics{:abilities
+                   ["wh3_cp1_unit_passive_ferocious_ambush"],
+                   :health 8800,
+                   :charge-bonus 35,
+                   :is-large false,
+                   :weapon-strength 50,
+                   :cost 1200,
+                   :bonus-vs-large 20,
+                   :speed 44,
+                   :armor 60,
+                   :unit
+                   [:unit/eid
+                    #uuid "00080036-0000-4000-8000-000000000000"],
+                   :eid #uuid "d70e6019-d3db-38a2-9aa4-2bcb4260d28c",
+                   :weapon-damage 12,
+                   :melee-defence 46,
+                   :attributes
+                   ["charge_defense_vs_large"
+                    "charge_reflection"
+                    "hide_forest"
+                    "tiger_warrior"],
+                   :patch
+                   [:patch/eid
+                    #uuid "cca5b4d4-5402-3d10-a0bb-0041bc02cf32"],
+                   :bonus-vs-infantry 0,
+                   :melee-attack 40,
+                   :barrier 0,
+                   :leadership 75,
+                   :ammunition 0,
+                   :unit-size 80,
+                   :weapon-ap-damage 38}]

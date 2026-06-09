@@ -1528,6 +1528,12 @@
               :faction
               [:faction/eid
                #uuid "f0000006-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "c56a8575-a67f-57f2-b807-f2d33143a9dd",
+              :key "wh3_cp1_cth_tiger_warriors",
+              :name "Claws of the White Tiger",
+              :faction
+              [:faction/eid
+               #uuid "f0000008-0000-4000-8000-000000000000"]}
  #:subfaction{:eid #uuid "716f48ed-c504-5f81-b684-8815afc84c73",
               :key "wh3_dlc20_brt_march_of_couronne",
               :name "Marches of Couronne",
@@ -2523,6 +2529,18 @@
                #uuid "f0000010-0000-4000-8000-000000000000"]}
  #:subfaction{:eid #uuid "3c3e8b9f-7c75-59ac-9e11-e509f9126565",
               :key "wh3_main_ogr_ogre_kingdoms_qb1",
+              :name "Ogre Kingdoms",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "16d7dc14-7a59-51af-bd18-e72c768a45fa",
+              :key "wh3_main_ogr_ogre_kingdoms_qb2",
+              :name "Ogre Kingdoms",
+              :faction
+              [:faction/eid
+               #uuid "f0000010-0000-4000-8000-000000000000"]}
+ #:subfaction{:eid #uuid "7c6ed1bc-b2bd-5991-8a18-be4f6e61414e",
+              :key "wh3_main_ogr_ogre_kingdoms_qb3",
               :name "Ogre Kingdoms",
               :faction
               [:faction/eid

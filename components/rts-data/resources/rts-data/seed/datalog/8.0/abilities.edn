@@ -8806,4 +8806,13 @@
            :ability-type "wh_type_area_of_ward_save_hex",
            :cost 100,
            :game
+           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:ability{:eid #uuid "d1000000-0000-0000-0000-0000000003d0",
+           :key "wh3_cp1_unit_passive_ferocious_ambush",
+           :name "Ferocious Ambush",
+           :description
+           "Certain Tiger Warrior martial philosophies cannot be practiced outside their kin, their innate feral instincts enabling - among other things - the impossible speeds of their renowned charges.",
+           :ability-type "wh_type_augment",
+           :cost 0,
+           :game
            [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}]

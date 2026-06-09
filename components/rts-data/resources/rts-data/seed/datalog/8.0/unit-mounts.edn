@@ -1909,7 +1909,7 @@
                #uuid "d2000000-0000-0000-0000-000000000057"],
               :cost 450,
               :stats-override
-              "{\"cost\":850,\"is_large\":false,\"unit_size\":5,\"health\":35040,\"barrier\":0,\"armor\":30,\"leadership\":70,\"speed\":35,\"melee_attack\":20,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":20,\"weapon_strength\":26,\"weapon_damage\":20,\"weapon_ap_damage\":6,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":1,\"ammunition\":50,\"missile_damage_types\":[],\"missile_modifiers\":[\"armour-break\"],\"range\":275,\"missile_damage\":130,\"missile_base_damage\":22,\"missile_ap_damage\":108,\"attributes\":[\"always_flying\",\"encourages\",\"mounted_fire_move\"]}",
+              "{\"cost\":850,\"is_large\":false,\"unit_size\":5,\"health\":35040,\"barrier\":0,\"armor\":30,\"leadership\":70,\"speed\":60,\"melee_attack\":20,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":20,\"weapon_strength\":26,\"weapon_damage\":20,\"weapon_ap_damage\":6,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":1,\"ammunition\":50,\"missile_damage_types\":[],\"missile_modifiers\":[\"armour-break\"],\"range\":165,\"missile_damage\":67,\"missile_base_damage\":22,\"missile_ap_damage\":45,\"attributes\":[\"always_flying\",\"encourages\",\"mounted_fire_move\"]}",
               :granted-ability-keys
               ["wh3_main_unit_passive_eye_of_the_dragon"]}
  #:unit-mount{:eid #uuid "854d7e4f-24a0-3059-b696-7ec97f62aa77",
@@ -1921,6 +1921,17 @@
               :cost 200,
               :stats-override
               "{\"cost\":600,\"is_large\":false,\"unit_size\":1,\"health\":5172,\"barrier\":0,\"armor\":80,\"leadership\":70,\"speed\":78,\"melee_attack\":45,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":45,\"weapon_strength\":375,\"weapon_damage\":250,\"weapon_ap_damage\":125,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":45,\"ammunition\":0,\"missile_damage_types\":[],\"missile_modifiers\":[],\"attributes\":[\"encourages\",\"hide_forest\"]}"}
+ #:unit-mount{:eid #uuid "95c1cd4c-0d78-3e5a-ae38-065cecb3c507",
+              :unit
+              [:unit/eid #uuid "00080008-0000-4000-8000-000000000000"],
+              :mount
+              [:mount/eid
+               #uuid "d2000000-0000-0000-0000-000000000057"],
+              :cost 550,
+              :stats-override
+              "{\"cost\":850,\"is_large\":false,\"unit_size\":5,\"health\":32540,\"barrier\":0,\"armor\":30,\"leadership\":60,\"speed\":60,\"melee_attack\":20,\"melee_attack_types\":[],\"melee_modifiers\":[],\"melee_defence\":20,\"weapon_strength\":26,\"weapon_damage\":20,\"weapon_ap_damage\":6,\"bonus_vs_infantry\":0,\"bonus_vs_large\":0,\"charge_bonus\":1,\"ammunition\":30,\"missile_damage_types\":[],\"missile_modifiers\":[\"armour-break\"],\"range\":165,\"missile_damage\":67,\"missile_base_damage\":22,\"missile_ap_damage\":45,\"attributes\":[\"always_flying\",\"encourages\",\"mounted_fire_move\",\"spell_mastery\"]}",
+              :granted-ability-keys
+              ["wh3_main_unit_passive_eye_of_the_dragon"]}
  #:unit-mount{:eid #uuid "f1470215-07aa-3d73-8821-f04da1bcc10a",
               :unit
               [:unit/eid #uuid "00080008-0000-4000-8000-000000000000"],
