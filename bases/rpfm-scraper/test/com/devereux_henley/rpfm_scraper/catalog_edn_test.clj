@@ -22,7 +22,7 @@
 
 (deftest build-abilities-merges-name-cost-and-keeps-description
   (let [rows (ce/build-abilities version {:ability-name-map {} :special-ability-map {}})]
-    (is (= 975 (count rows)))
+    (is (= 976 (count rows)))
     (is (every? #(nil? (:ability/name %)) rows) "name comes from RPFM (nil here)")
     (is (every? #(= 0 (:ability/cost %)) rows) "cost defaults to 0")
     (is (every? :ability/description rows) "curated description preserved from authoring")
@@ -38,7 +38,7 @@
   (if-not (.exists (io/file "bases/rpfm-scraper/data/factions_tables.json"))
     (is true "skipped: RPFM data dir (gitignored) not present")
     (let [rows (ce/build-subfactions version "bases/rpfm-scraper/data")]
-      (is (= 626 (count rows)))
+      (is (= 629 (count rows)))
       (is (every? #(uuid? (:subfaction/eid %)) rows) "stable UUID-v5 eids")
       (is (every? #(and (seq (:subfaction/key %)) (seq (:subfaction/name %))) rows))
       (is (every? #(= :faction/eid (first (:subfaction/faction %))) rows)

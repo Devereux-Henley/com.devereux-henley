@@ -76,13 +76,13 @@
     (is (= "empire" (e->k (k->e "empire"))) "faction-eid->key inverts faction-key->eid")))
 
 (deftest ability+spell-key->eid-cover-full-catalogue
-  (is (= 975 (count (seed-edn/ability-key->eid version))))
+  (is (= 976 (count (seed-edn/ability-key->eid version))))
   (is (= 395 (count (seed-edn/spell-key->eid version))))
   (is (every? uuid? (vals (seed-edn/ability-key->eid version)))))
 
 (deftest unit-name+faction->eid-keys-by-name-and-slug
   (let [m (seed-edn/unit-name+faction->eid version)]
-    (is (= 1582 (count m)) "one entry per authoring unit row")
+    (is (= 1590 (count m)) "one entry per authoring unit row")
     (is (every? (fn [[[nm slug] eid]] (and (string? nm) (or (nil? slug) (string? slug)) (uuid? eid)))
                 m))))
 
