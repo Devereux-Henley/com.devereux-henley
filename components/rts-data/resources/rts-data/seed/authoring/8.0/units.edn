@@ -20272,4 +20272,100 @@
         [:unit-category/eid
          #uuid "a1000000-0000-0000-0000-000000000002"],
         :is-unique true,
+        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:unit{:eid #uuid "0008002f-0000-4000-8000-000000000000",
+        :name "Bhashiva, the White Tiger",
+        :description
+        "Melee Specialist commanding the armies of Grand Cathay.",
+        :faction
+        [:faction/eid #uuid "f0000008-0000-4000-8000-000000000000"],
+        :unit-type
+        [:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000001"],
+        :unit-category
+        [:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000001"],
+        :is-unique true,
+        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:unit{:eid #uuid "00080030-0000-4000-8000-000000000000",
+        :name "Tiger Warrior Sawai",
+        :description
+        "Melee Specialist commanding the armies of Grand Cathay.",
+        :faction
+        [:faction/eid #uuid "f0000008-0000-4000-8000-000000000000"],
+        :unit-type
+        [:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000001"],
+        :unit-category
+        [:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000001"],
+        :is-unique false,
+        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:unit{:eid #uuid "00080031-0000-4000-8000-000000000000",
+        :name "Clawspeaker (Beasts)",
+        :description
+        "Melee Spellcaster channelling the magic of Grand Cathay's Tiger Court.",
+        :faction
+        [:faction/eid #uuid "f0000008-0000-4000-8000-000000000000"],
+        :unit-type
+        [:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000002"],
+        :unit-category
+        [:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000002"],
+        :is-unique false,
+        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:unit{:eid #uuid "00080032-0000-4000-8000-000000000000",
+        :name "Clawspeaker (Life)",
+        :description
+        "Melee Spellcaster channelling the magic of Grand Cathay's Tiger Court.",
+        :faction
+        [:faction/eid #uuid "f0000008-0000-4000-8000-000000000000"],
+        :unit-type
+        [:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000002"],
+        :unit-category
+        [:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000002"],
+        :is-unique false,
+        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:unit{:eid #uuid "00080033-0000-4000-8000-000000000000",
+        :name "Clawspeaker (Shadows)",
+        :description
+        "Melee Spellcaster channelling the magic of Grand Cathay's Tiger Court.",
+        :faction
+        [:faction/eid #uuid "f0000008-0000-4000-8000-000000000000"],
+        :unit-type
+        [:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000002"],
+        :unit-category
+        [:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000002"],
+        :is-unique false,
+        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:unit{:eid #uuid "00080034-0000-4000-8000-000000000000",
+        :name "Tiger Warriors",
+        :description
+        "Elite melee infantry fighting for Grand Cathay.",
+        :faction
+        [:faction/eid #uuid "f0000008-0000-4000-8000-000000000000"],
+        :unit-type
+        [:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000007"],
+        :unit-category
+        [:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000003"],
+        :is-unique false,
+        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:unit{:eid #uuid "00080035-0000-4000-8000-000000000000",
+        :name "Tiger Warrior Stalkers",
+        :description
+        "Missile Infantry of Grand Cathay engaging enemies from range.",
+        :faction
+        [:faction/eid #uuid "f0000008-0000-4000-8000-000000000000"],
+        :unit-type
+        [:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000009"],
+        :unit-category
+        [:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000004"],
+        :is-unique false,
+        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ #:unit{:eid #uuid "00080036-0000-4000-8000-000000000000",
+        :name "Iron Claw Tiger Warriors",
+        :description
+        "Elite melee infantry fighting for Grand Cathay.",
+        :faction
+        [:faction/eid #uuid "f0000008-0000-4000-8000-000000000000"],
+        :unit-type
+        [:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000007"],
+        :unit-category
+        [:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000003"],
+        :is-unique false,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}]

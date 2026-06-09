@@ -269,7 +269,8 @@
                   "orc_infantry" "peasant" "rampage" "randomises_spells_on_cast"
                   "revealed" "shoot_disabled" "silenced" "skink" "slayer"
                   "snipe" "spell_mastery" "spider" "squig" "squig_herd"
-                  "stalk" "strider" "troll" "unbreakable" "undead" "underground"
+                  "stalk" "strider" "tiger_warrior" "troll" "unbreakable"
+                  "undead" "underground"
                   "unspottable" "unyielding_assault" "wallbreaker" "yang" "yin"]]
            [(clojure.string/replace k "_" "-")
             (str "ui/battle ui/ability_icons/" k ".png")]))))

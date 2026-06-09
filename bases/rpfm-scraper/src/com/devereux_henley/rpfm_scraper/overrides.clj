@@ -414,6 +414,16 @@
    ;; so the resolver normalizer can't bridge the renaming —
    ;; pin explicitly.
    "Great Longma Riders"                                        "wh3_main_cth_cav_great_longma_riders_0"
+   ;; Tiger Court characters use the `wh3_cp1_` content prefix,
+   ;; which `game-prefix-re` doesn't strip, so `unit-key->portrait-base`
+   ;; never reduces them to `cth_<role>` and the portrait pass misses.
+   ;; Pin each to its `units/no_culture/` portrait stem; the three
+   ;; Clawspeaker lore variants take the three campaign portraits.
+   "Bhashiva, the White Tiger"                                  "cth_bhashiva_0"
+   "Tiger Warrior Sawai"                                        "cth_sawai_campaign_01_0"
+   "Clawspeaker (Beasts)"                                       "cth_clawspeaker_campaign_01_0"
+   "Clawspeaker (Life)"                                         "cth_clawspeaker_campaign_02_0"
+   "Clawspeaker (Shadows)"                                      "cth_clawspeaker_campaign_03_0"
    "Great Cannons"                                              "wh_main_emp_cannon"
    "Gwindalor"                                                  "wh2_dlc16_wef_ror_zoats"
    "Iron Daemon - Dreadquake Mortar"                            "wh3_dlc23_chd_veh_iron_daemon"
