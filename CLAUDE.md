@@ -26,10 +26,10 @@ clojure -M:poly info      # show components, bases, projects
 clojure -M:poly check     # validate component boundaries
 clojure -M:poly test      # run tests across affected units
 
-# Build JARs
-clojure -M:build -A api uber           # → target/rts-api.jar
-clojure -M:build -A deploy-data uber   # → migrations CLI JAR
-clojure -M:build -A rpfm-scraper uber  # → target/rpfm-scraper.jar
+# Build JARs (each project has its own :build alias; run from the project dir)
+(cd projects/api          && clojure -T:build uber)  # → target/rts-api.jar
+(cd projects/rpfm-scraper && clojure -T:build uber)  # → target/rpfm-scraper.jar
+(cd projects/rts-data     && clojure -T:build uber)  # → target/rts-data.jar (seed resources, no main)
 
 # Docker (from bases/rts-api/)
 make build_docker
@@ -85,7 +85,7 @@ This is a **Polylith monorepo** for an RTS tournament platform. Polylith enforce
 
 - **components/** — shared units of behaviour, each with a public `interface` namespace
 - **bases/** — runnable entry points that wire components together
-- **projects/** — deployable combinations (`api`, `deploy-data`) with their own `deps.edn` and `build.clj`
+- **projects/** — deployable combinations (`api`, `rpfm-scraper`, `rts-data`) with their own `deps.edn` and `build.clj`
 
 ### Component dependency order
 
