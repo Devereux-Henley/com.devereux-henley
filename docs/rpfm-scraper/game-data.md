@@ -22,7 +22,7 @@ Non-numeric fields (`abilities`, `draftable-spells`, `mounts`) are preserved fro
 | `seed-mounts.sql` | fully regenerated from `units_custom_battle_mounts_tables`: one row per distinct MP mount, keyed on icon stem (e.g. `mount_barded_warhorse`) |
 | `seed-unit-mounts.sql` | fully regenerated: unit → mount links with cost = `main_units_tables.multiplayer_cost` diff (mounted variant − base) |
 | `seed-unit-level-cost.sql` | fully regenerated from `unit_stats_land_experience_bonuses_tables`: one row per veteran rank (0-9) with `fixed_cost`, `cost_multiplier`, fatigue, and combat-potential deltas. Engine formula: `adjusted_cost = round(base_cost * cost_multiplier) + fixed_cost` |
-| `asset/icon/ability/*.png` | spell icons copied alongside ability icons when `--icons-dir` is given (spells are abilities in WH3; icons keyed by spell eid) |
+| `asset/icon/ability/*.png` | spell + item-ability icons copied alongside ability icons when `--icons-dir` is given (spells are abilities in WH3; icons keyed by spell / derived item-ability eid) |
 | `asset/icon/item/*.png` | item icons copied when `--item-icons-dir` is given (one file per distinct `ancillary_types_tables.ui_icon` stem) |
 | `asset/icon/mount/*.png` | mount icons copied when `--mount-icons-dir` is given (one file per distinct mount icon stem, matching `mount.icon_key`) |
 

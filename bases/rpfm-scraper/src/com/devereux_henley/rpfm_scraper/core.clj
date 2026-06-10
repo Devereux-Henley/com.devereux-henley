@@ -214,7 +214,11 @@
           (log "  [portraits] --portraits-dir not provided, skipping"))))
     (if icons-dir
       (do (log "Copying and trimming ability icons...")
-          (let [key-eid-map (key->eid-strings (seed-edn/ability-key->eid version))]
+          ;; Curated ability eids ⊕ the derived item-ability eids — both are
+          ;; unit_abilities keys, so one pass over the table covers them.
+          (let [key-eid-map (key->eid-strings
+                             (merge (seed-edn/ability-key->eid version)
+                                    (seed-edn/item-ability-key->eid version)))]
             (assets/copy-ability-icons icons-dir ability-icon-asset-dir
                                        (:unit-ability-map data) key-eid-map dry-run))
           (log "Copying and trimming spell icons...")
