@@ -56,6 +56,11 @@
   [version file-name]
   (read-edn-file (io/file (authoring-dir version) file-name)))
 
+(defn read-datalog
+  "Read `file-name` from the generated Datalog seed for `version`."
+  [version file-name]
+  (read-edn-file (io/file (datalog-dir version) file-name)))
+
 ;;; ─── Lookups (replace the regex SQL parsers) ───────────────────────────────
 
 (defn faction-key->eid
@@ -80,6 +85,13 @@
   [version]
   (into {} (map (juxt :ability/key :ability/eid))
         (read-authoring version "abilities.edn")))
+
+(defn item-ability-key->eid
+  "`{replay ability key → derived ability eid}` from the generated
+  item-abilities seed. Empty when the seed hasn't been emitted yet."
+  [version]
+  (into {} (map (juxt :ability/key :ability/eid))
+        (read-datalog version "item-abilities.edn")))
 
 (defn spell-key->eid
   "`{spell-key → spell-eid}` from authoring spells."

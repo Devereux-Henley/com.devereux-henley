@@ -99,6 +99,15 @@
     [:stats-override [:maybe :string]]
     [:granted-ability-keys [:maybe [:vector :string]]]]))
 
+(def ability-row-schema
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:key [:maybe :string]]
+    [:name [:maybe :string]]
+    [:description [:maybe :string]]
+    [:cost [:maybe :int]]]))
+
 (def item-row-schema
   (schema.contract/to-schema
    [:map
@@ -107,7 +116,8 @@
     [:name [:maybe :string]]
     [:category [:maybe :string]]
     [:cost [:maybe :int]]
-    [:icon-key [:maybe :string]]]))
+    [:icon-key [:maybe :string]]
+    [:abilities {:optional true} [:sequential ability-row-schema]]]))
 
 (def spell-row-schema
   (schema.contract/to-schema
@@ -116,15 +126,6 @@
     [:key [:maybe :string]]
     [:name [:maybe :string]]
     [:mana-cost [:maybe :int]]
-    [:cost [:maybe :int]]]))
-
-(def ability-row-schema
-  (schema.contract/to-schema
-   [:map
-    [:eid :uuid]
-    [:key [:maybe :string]]
-    [:name [:maybe :string]]
-    [:description [:maybe :string]]
     [:cost [:maybe :int]]]))
 
 (def unit-level-cost-schema

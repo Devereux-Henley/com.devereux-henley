@@ -375,6 +375,26 @@
         </section>
         {% endif %}
 
+        {% if unit.item-granted-abilities|not-empty? %}
+        <section class="draft-stats-section unit-panel" aria-labelledby="panel-item-abilities-heading">
+            <h4 class="unit-panel-heading" id="panel-item-abilities-heading">Item Abilities</h4>
+            <ul class="draft-passive-list" aria-label="Abilities granted by the selected items">
+                {% for ability in unit.item-granted-abilities %}
+                <li class="draft-passive-row">
+                    <div class="unit-ability-item">
+                        <img class="unit-ability-icon"
+                             src="/icon/ability/{{ability.eid}}.png"
+                             alt="{{ability.name}}"
+                             onerror="this.style.display='none'">
+                        <span class="unit-ability-tooltip" role="tooltip">{{ability.name}}</span>
+                    </div>
+                    <span class="draft-passive-name">{{ability.name}}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
         {% if unit.has-passives %}
         <section class="draft-stats-section unit-panel" aria-labelledby="panel-passive-abilities-heading">
             <h4 class="unit-panel-heading" id="panel-passive-abilities-heading">Passive Abilities</h4>

@@ -972,3 +972,63 @@
 (deftest draft-view-model-returns-missing-marker-when-absent
   (with-redefs [data-access.contract/draft-by-eid (fn [_ _] nil)]
     (is (= :missing/resource (:type (handlers.draft/draft-view-model test-deps test-draft-eid))))))
+
+;; --- item-granted abilities ---
+
+(def ^:private regrowth-ability
+  {:eid         (UUID/fromString "ab000000-0000-0000-0000-000000000001")
+   :key         "x_item_passive_regrowth"                                :name "Regrowth"
+   :description "Heals nearby allies."                                   :cost 0})
+
+(def ^:private shared-ability
+  {:eid         (UUID/fromString "ab000000-0000-0000-0000-000000000002")
+   :key         "x_item_passive_shared"                                  :name "Arcane Conduit"
+   :description nil                                                      :cost 0})
+
+(def ^:private items-with-abilities
+  [{:eid       (UUID/fromString "ea000000-0000-0000-0000-000000000001")
+    :key       "anc_chalice"                                            :name "Chalice" :category "arcane_item" :cost 50
+    :icon-key  "equipment_items_arcane"
+    :abilities [shared-ability regrowth-ability]}
+   {:eid       (UUID/fromString "ea000000-0000-0000-0000-000000000002")
+    :key       "anc_vial"                                               :name "Vial" :category "enchanted_item" :cost 30
+    :icon-key  "equipment_items_enchanted"
+    :abilities [shared-ability]}
+   {:eid      (UUID/fromString "ea000000-0000-0000-0000-000000000003")
+    :key      "anc_plain"                                              :name "Plain Banner" :category "talisman" :cost 10
+    :icon-key "equipment_items_talisman"}])
+
+(defn- selectable-unit
+  "A hydrated draft-unit resource minimal enough for apply-selections-to-unit."
+  []
+  {:eid                 test-unit-eid
+   :cost                100
+   :items               items-with-abilities
+   :mounts              []
+   :draftable-abilities []
+   :draftable-spells    []})
+
+(deftest apply-selections-surfaces-selected-item-abilities
+  (with-redefs [data-access.contract/unit-level-costs (fn [_] {})
+                data-access.contract/items-for-unit   (fn [_ _] items-with-abilities)]
+    (let [result (handlers.draft/apply-selections-to-unit
+                  nil (selectable-unit) {:items ["anc_chalice" "anc_vial"]})]
+      (is (= ["Arcane Conduit" "Regrowth"]
+             (mapv :name (:item-granted-abilities result)))
+          "abilities of selected items, deduped across items and name-sorted")
+      (is (= [true true false]
+             (mapv :selected (:items result)))))))
+
+(deftest apply-selections-item-abilities-empty-when-none-selected
+  (with-redefs [data-access.contract/unit-level-costs (fn [_] {})]
+    (let [result (handlers.draft/apply-selections-to-unit
+                  nil (selectable-unit) {:items []})]
+      (is (= [] (:item-granted-abilities result))))))
+
+(deftest apply-selections-item-abilities-ignores-ability-less-items
+  (with-redefs [data-access.contract/unit-level-costs (fn [_] {})
+                data-access.contract/items-for-unit   (fn [_ _] items-with-abilities)]
+    (let [result (handlers.draft/apply-selections-to-unit
+                  nil (selectable-unit) {:items ["anc_plain"]})]
+      (is (= [] (:item-granted-abilities result))
+          "a selected item granting nothing contributes nothing"))))
