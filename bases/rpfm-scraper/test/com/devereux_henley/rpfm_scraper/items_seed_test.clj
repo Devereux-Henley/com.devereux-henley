@@ -16,14 +16,14 @@
 (def ^:private ancillary-to-effects
   [{"ancillary" "anc_chalice" "effect" "x_generic_winds"}
    {"ancillary" "anc_chalice" "effect" "x_item_ability_enable_chalice"}
-   {"ancillary" "anc_vial"    "effect" "x_item_ability_enable_vial"}
-   {"ancillary" "anc_plain"   "effect" "x_generic_stat_melee"}])
+   {"ancillary" "anc_vial" "effect" "x_item_ability_enable_vial"}
+   {"ancillary" "anc_plain" "effect" "x_generic_stat_melee"}])
 
 (def ^:private effect-ability-junctions
-  [{"effect" "x_generic_winds"               "unit_ability" "x_item_passive_chalice"}
+  [{"effect" "x_generic_winds" "unit_ability" "x_item_passive_chalice"}
    {"effect" "x_item_ability_enable_chalice" "unit_ability" "x_item_passive_chalice"}
-   {"effect" "x_item_ability_enable_vial"    "unit_ability" "x_item_abilities_vial"}
-   {"effect" "x_generic_stat_melee"          "unit_ability" "x_main_stat_melee"}])
+   {"effect" "x_item_ability_enable_vial" "unit_ability" "x_item_abilities_vial"}
+   {"effect" "x_generic_stat_melee" "unit_ability" "x_main_stat_melee"}])
 
 (deftest build-item-replay-keys-map-resolves-passive-and-active-forms
   (let [m (items/build-item-replay-keys-map ancillary-to-effects effect-ability-junctions)]
