@@ -82,6 +82,7 @@
 (def socials-for-game     query.datalog.game/socials-for-game)
 (def mounts-for-unit      query.datalog.game/mounts-for-unit)
 (def items-for-unit       query.datalog.game/items-for-unit)
+(def items-by-ability-keys query.datalog.game/items-by-ability-keys)
 (def spells-by-keys       query.datalog.game/spells-by-keys)
 (def spells-for-lore      query.datalog.game/spells-for-lore)
 (def abilities-by-keys    query.datalog.game/abilities-by-keys)
@@ -238,6 +239,10 @@
 (schema.contract/=>* items-for-unit query.datalog.game/items-for-unit
                      [:=> [:cat dl/conn-schema :uuid]
                       [:sequential schema.game/item-row-schema]])
+
+(schema.contract/=>* items-by-ability-keys query.datalog.game/items-by-ability-keys
+                     [:=> [:cat dl/conn-schema [:sequential :string]]
+                      [:maybe [:map-of :string schema.game/item-row-schema]]])
 
 (schema.contract/=>* spells-by-keys query.datalog.game/spells-by-keys
                      [:=> [:cat dl/conn-schema [:sequential :string]]

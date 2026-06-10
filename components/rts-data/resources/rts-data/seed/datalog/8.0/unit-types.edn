@@ -1,138 +1,138 @@
-[#:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000001",
-             :name "Melee Specialist",
-             :description
-             "Elite melee fighters specializing in single combat.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000002",
-             :name "Melee Spellcaster",
-             :description
-             "Spellcasters that fight in close combat while wielding magic.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000003",
-             :name "Melee Support",
-             :description
-             "Melee units that buff or debuff rather than deal direct damage.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000004",
-             :name "Ranged Specialist",
-             :description
-             "Elite ranged fighters specializing in precision attacks from distance.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000005",
-             :name "Ranged Spellcaster",
-             :description
-             "Spellcasters that deal damage from range using magical abilities.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000006",
-             :name "Ranged Support",
-             :description
-             "Ranged units that provide buffs, debuffs, or utility from a safe distance.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000007",
-             :name "Melee Infantry",
-             :description
-             "Standard infantry trained for close-quarters combat.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000008",
-             :name "Missile Infantry",
-             :description
-             "Infantry equipped with ranged weapons to engage enemies from afar.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000009",
-             :name "Hybrid Infantry",
-             :description
-             "Infantry capable of both melee and ranged combat.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000010",
-             :name "Specialist Missile Infantry",
-             :description
-             "Infantry with advanced or unusual ranged weaponry.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000011",
-             :name "Melee Cavalry",
-             :description
-             "Mounted warriors that engage enemies in sustained close combat.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000012",
-             :name "Shock Cavalry",
-             :description
-             "Fast-moving cavalry that devastate enemies with powerful charge attacks.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000013",
-             :name "Monstrous Shock Cavalry",
-             :description
-             "Enormous creatures ridden into battle delivering devastating charges.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000014",
-             :name "Missile Cavalry",
-             :description
-             "Mounted units that harass and attack enemies with ranged weapons.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000015",
-             :name "Melee Chariot",
-             :description
-             "Wheeled war vehicles that crash through enemy lines in melee.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000016",
-             :name "Missile Chariot",
-             :description
-             "Chariots mounted with ranged weapons to attack while on the move.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000017",
-             :name "Artillery Chariot",
-             :description
-             "Chariots carrying heavy artillery pieces onto the battlefield.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000018",
-             :name "War Machine",
-             :description
-             "Mechanical constructs and devices engineered for battlefield destruction.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000019",
-             :name "Flying War Machine",
-             :description
-             "Airborne mechanical constructs that strike from above.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000020",
-             :name "Siege Artillery",
-             :description
-             "Heavy weapons designed to break fortifications and devastate massed troops.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000021",
-             :name "Field Gun",
-             :description
-             "Direct-fire artillery pieces deployed on the open battlefield.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000022",
-             :name "Rocket Battery",
-             :description
-             "Artillery that fires salvos of rockets with explosive or special payloads.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-type{:eid #uuid "b1000000-0000-0000-0000-000000000023",
-             :name "Monster",
-             :description
-             "Enormous creatures that tower over the battlefield and inspire terror.",
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}]
+[{:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000001",
+  :unit-type/name "Melee Specialist",
+  :unit-type/description
+  "Elite melee fighters specializing in single combat.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000002",
+  :unit-type/name "Melee Spellcaster",
+  :unit-type/description
+  "Spellcasters that fight in close combat while wielding magic.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000003",
+  :unit-type/name "Melee Support",
+  :unit-type/description
+  "Melee units that buff or debuff rather than deal direct damage.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000004",
+  :unit-type/name "Ranged Specialist",
+  :unit-type/description
+  "Elite ranged fighters specializing in precision attacks from distance.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000005",
+  :unit-type/name "Ranged Spellcaster",
+  :unit-type/description
+  "Spellcasters that deal damage from range using magical abilities.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000006",
+  :unit-type/name "Ranged Support",
+  :unit-type/description
+  "Ranged units that provide buffs, debuffs, or utility from a safe distance.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000007",
+  :unit-type/name "Melee Infantry",
+  :unit-type/description
+  "Standard infantry trained for close-quarters combat.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000008",
+  :unit-type/name "Missile Infantry",
+  :unit-type/description
+  "Infantry equipped with ranged weapons to engage enemies from afar.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000009",
+  :unit-type/name "Hybrid Infantry",
+  :unit-type/description
+  "Infantry capable of both melee and ranged combat.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000010",
+  :unit-type/name "Specialist Missile Infantry",
+  :unit-type/description
+  "Infantry with advanced or unusual ranged weaponry.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000011",
+  :unit-type/name "Melee Cavalry",
+  :unit-type/description
+  "Mounted warriors that engage enemies in sustained close combat.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000012",
+  :unit-type/name "Shock Cavalry",
+  :unit-type/description
+  "Fast-moving cavalry that devastate enemies with powerful charge attacks.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000013",
+  :unit-type/name "Monstrous Shock Cavalry",
+  :unit-type/description
+  "Enormous creatures ridden into battle delivering devastating charges.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000014",
+  :unit-type/name "Missile Cavalry",
+  :unit-type/description
+  "Mounted units that harass and attack enemies with ranged weapons.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000015",
+  :unit-type/name "Melee Chariot",
+  :unit-type/description
+  "Wheeled war vehicles that crash through enemy lines in melee.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000016",
+  :unit-type/name "Missile Chariot",
+  :unit-type/description
+  "Chariots mounted with ranged weapons to attack while on the move.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000017",
+  :unit-type/name "Artillery Chariot",
+  :unit-type/description
+  "Chariots carrying heavy artillery pieces onto the battlefield.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000018",
+  :unit-type/name "War Machine",
+  :unit-type/description
+  "Mechanical constructs and devices engineered for battlefield destruction.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000019",
+  :unit-type/name "Flying War Machine",
+  :unit-type/description
+  "Airborne mechanical constructs that strike from above.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000020",
+  :unit-type/name "Siege Artillery",
+  :unit-type/description
+  "Heavy weapons designed to break fortifications and devastate massed troops.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000021",
+  :unit-type/name "Field Gun",
+  :unit-type/description
+  "Direct-fire artillery pieces deployed on the open battlefield.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000022",
+  :unit-type/name "Rocket Battery",
+  :unit-type/description
+  "Artillery that fires salvos of rockets with explosive or special payloads.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-type/eid #uuid "b1000000-0000-0000-0000-000000000023",
+  :unit-type/name "Monster",
+  :unit-type/description
+  "Enormous creatures that tower over the battlefield and inspire terror.",
+  :unit-type/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}]

@@ -143,6 +143,11 @@
           custom-battle-mount-rows               (:rows (rpfm/parse-rpfm-table (p "units_custom_battle_mounts_tables.json")))
           _                                      (logf "  custom battle mounts (MP): %d" (count custom-battle-mount-rows))
 
+          item-replay-keys-map                   (items-seed/build-item-replay-keys-map
+                                                  (:rows (rpfm/parse-rpfm-table (p "ancillary_to_effects_tables.json")))
+                                                  (:rows (rpfm/parse-rpfm-table (p "effect_bonus_value_unit_ability_junctions_tables.json"))))
+          _                                      (logf "  item ability keys: %d items" (count item-replay-keys-map))
+
           land-xp-bonus-file                     (io/file (p "unit_stats_land_experience_bonuses_tables.json"))
           land-xp-bonus-rows                     (when (.exists land-xp-bonus-file)
                                                    (:rows (rpfm/parse-rpfm-table (.getPath land-xp-bonus-file))))
@@ -177,6 +182,7 @@
        :ancillary-name-map       ancillary-name-map
        :ancillary-type-icon-map  ancillary-type-icon-map
        :custom-battle-mount-rows custom-battle-mount-rows
+       :item-replay-keys-map     item-replay-keys-map
        :land-xp-bonus-rows       land-xp-bonus-rows
        :unit-ability-map         unit-ability-map
        :ability-name-map         ability-name-map

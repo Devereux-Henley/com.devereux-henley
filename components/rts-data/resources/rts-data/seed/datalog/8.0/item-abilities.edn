@@ -1,0 +1,2634 @@
+[{:ability/eid #uuid "c6b8b959-aa70-3b72-9fd6-83515be18bc0",
+  :ability/key "wh2_dlc09_item_abilities_amulet_of_phastah",
+  :ability/name "Amulet of Pha-Stah",
+  :ability/description
+  "This moon-shaped amulet projects a disruptive magical energy onto the enemy's defences.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "448bec47-a19d-36b9-97ce-c66b922b9e1a",
+  :ability/key "wh2_dlc09_item_abilities_cloak_of_the_dunes",
+  :ability/name "Cloak of the Dunes",
+  :ability/description
+  "The desert itself shall be your coat... and the foe's undoing.",
+  :ability/ability-type "wh_type_hiding",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9a001ee7-77ca-3893-8dea-1b090ea70628",
+  :ability/key "wh2_dlc09_item_abilities_elixir_of_might",
+  :ability/name "Elixir of Might",
+  :ability/description
+  "One sip of the elixir fills the body of its drinker with the strength of many powerful, elite warriors.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "66d2bbae-1dc9-3392-aef1-e1b05d897575",
+  :ability/key "wh2_dlc09_item_abilities_enkhils_kanopi",
+  :ability/name "Enkhil's Kanopi",
+  :ability/description
+  "The simple clay vessel may not look like much, but the High Priest's Undying essence within can thwart sorcery and strengthen incantations.",
+  :ability/ability-type "wh_type_area_of_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "efcde58e-d3ff-3502-a587-75a9109605c0",
+  :ability/key "wh2_dlc09_item_abilities_hieratic_jar",
+  :ability/name "Hieratic Jar",
+  :ability/description
+  "Sealed and bound with powerful glyphs, this jar contains the remains of a Liche Priest and all the magical energy at his command.",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4f16c1b2-99c3-34a9-8dd2-a7e175ebbaa3",
+  :ability/key
+  "wh2_dlc09_item_abilities_neferras_scrolls_of_mighty_incantations",
+  :ability/name "Neferra's Scrolls of Mighty Incantations",
+  :ability/description
+  "These eight magical scrolls, containing the sum total of Neferra's lifetime of learning, can whip up an unstoppable hurricane of power to crush the foe.",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "8ca880ce-0c17-3f61-8c48-c2ae6afd11cc",
+  :ability/key "wh2_dlc09_item_abilities_staff_of_nagash",
+  :ability/name "Staff of Nagash",
+  :ability/description
+  "This magical staff was plucked from the clutches of the Vampire Mandregan; it enables its bearer to channel the Winds of Magic to his whim.",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "838aafbe-0932-360f-b6ba-775336a37636",
+  :ability/key "wh2_dlc09_item_passive_crown_of_nehekhara",
+  :ability/name "The Crown of Nehekhara",
+  :ability/description
+  "In Undeath, Settra's crown transcends its original ceremonial purpose to imbue nearby warriors with the Imperishable's all-pervading, unalterable will.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5831558d-bc56-340d-98cb-7d4ac6a645b9",
+  :ability/key "wh2_dlc09_item_passive_lucky_skullhelm",
+  :ability/name "Lucky Skullhelm",
+  :ability/description
+  "This charmed helmet, fashioned from the skull of a slaughtered foe, protects Tretch from blows of all kinds, be they physical or magical.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "40c221fd-f0a9-389d-8cc7-392885ccc5ce",
+  :ability/key "wh2_dlc09_item_passive_scorpion_armour",
+  :ability/name "Scorpion Armour",
+  :ability/description
+  "These ornate armour plates are decorated with the likeness of the Scorpion God; his protective energies pervade the very metal used, offering additional protection to the wearer.",
+  :ability/ability-type "wh_type_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "de407176-5171-389b-9435-919b9938793a",
+  :ability/key "wh2_dlc09_item_passive_vambraces_of_the_sun",
+  :ability/name "Vambraces of the Sun",
+  :ability/description
+  "Infused with the sun's dazzling intensity, the power harnessed within gleams brilliantly, blinding the wearer's opponents.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "65f83e9f-d073-33bf-b9e9-b98606f9779c",
+  :ability/key "wh2_dlc10_item_abilities_fear_of_aramar",
+  :ability/name "Fear of Aramar",
+  :ability/description
+  "A scroll describing a dread spell that fills the foes' minds with images from their own worst nightmares!",
+  :ability/ability-type "wh_type_hex",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "115a7e45-1bc4-37aa-9f71-988e6ec02e4a",
+  :ability/key "wh2_dlc10_item_abilities_horn_of_the_ancestors",
+  :ability/name "Horn of the Ancestors",
+  :ability/description
+  "Blowing on this ancient horn will summon a legendary Ancestor back from Valaya's bosom to aid in the fight.",
+  :ability/ability-type "wh_type_summon_unit",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9903c900-e97d-3874-a70c-093afa673de8",
+  :ability/key "wh2_dlc10_item_abilities_sceptre_of_stone",
+  :ability/name "Sceptre of Stone",
+  :ability/description
+  "Bound within this mighty sceptre is the power to move the mountain peaks themselves.",
+  :ability/ability-type "wh_type_bombardment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2cdfaa90-9f02-394d-843b-2d23d19a188c",
+  :ability/key "wh2_dlc10_item_abilities_speed_of_lykos",
+  :ability/name "Speed of Lykos",
+  :ability/description
+  "The words upon this scroll, when read aloud, allow an ally to move at such a speed as to be unseen.",
+  :ability/ability-type "wh_type_hiding",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "bdfe3f74-807b-3206-8dbf-e16f4ebddde9",
+  :ability/key "wh2_dlc10_item_abilities_star_of_avelorn",
+  :ability/name "Star of Avelorn",
+  :ability/description
+  "A diadem of ithilmar with a radiant gem set within it, said to be a star plucked from the heavens.",
+  :ability/ability-type "wh_type_area_of_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ab8fb415-124d-3e7f-a5bd-8d1b604bbb4f",
+  :ability/key "wh2_dlc10_item_abilities_stave_of_avelorn",
+  :ability/name "Stave of Avelorn",
+  :ability/description
+  "The symbol of Alarielle's rule of Avelorn is an ancient heirloom passed from one Everqueen to the next.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "97ab457c-dbfe-3a20-8220-c9c8fd73b024",
+  :ability/key "wh2_dlc10_item_abilities_the_amber_trance",
+  :ability/name "The Amber Trance",
+  :ability/description
+  "Upon this scroll is written the 'Amber Trance'; as the foes slowly turn to amber their morale is sapped away!",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2ab5b3be-ad01-31f8-afa5-ec14b7e560b6",
+  :ability/key "wh2_dlc10_item_passive_amulet_of_dark_fire",
+  :ability/name "Amulet of Dark Fire",
+  :ability/description
+  "This amulet wreathes its wearer in a mystical flame that burns magic instead of flesh.",
+  :ability/ability-type "wh_type_area_of_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "73223a92-c1f4-3706-84c6-9a046249265f",
+  :ability/key "wh2_dlc10_item_passive_dragon_slayers_fang",
+  :ability/name "Dragon Slayer's Fang",
+  :ability/description
+  "An amulet made of a Dragon's fang is a reminder that no matter how vicious the beast, it *will* fall.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e047d8c3-f966-38b2-a45f-2461fbd4d910",
+  :ability/key "wh2_dlc10_item_passive_gate_keepers_belt",
+  :ability/name "Gatekeeper's Belt",
+  :ability/description
+  "A strong, thick belt; perfect for beard-tuckers and flask-holders everywhere.",
+  :ability/ability-type "wh_type_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a0ee6406-60dd-30e3-94de-6054e1e95098",
+  :ability/key "wh2_dlc10_item_passive_gate_keepers_helm",
+  :ability/name "Gatekeeper's Helm",
+  :ability/description
+  "The Gatekeepers are rightly seen as living bastions; those that wear this helm are talismans of sanctuary.",
+  :ability/ability-type "wh_type_area_of_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b3ab260c-d7e0-3902-a680-dab80be87451",
+  :ability/key "wh2_dlc10_item_passive_ironbeards_bracers",
+  :ability/name "Ironbeard's Bracers",
+  :ability/description
+  "Large iron bands wrapped around the Ironbeard's wrist to deflect enemy strikes.",
+  :ability/ability-type "wh_type_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "96ccc69d-36f4-3f85-9b00-0fe206544c52",
+  :ability/key "wh2_dlc10_item_passive_ironbeards_ring",
+  :ability/name "Ironbeard's Ring",
+  :ability/description
+  "Such a ring is wrought in runes of cooling, allowing its bearer a certain immunity from fire.",
+  :ability/ability-type "wh_type_area_of_ward_save_hex",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "670ab953-3e08-37f1-9f91-d2877f1a3891",
+  :ability/key "wh2_dlc10_item_passive_ironwardens_shield",
+  :ability/name "Ironwarden's Shield",
+  :ability/description
+  "A massive tower-shield usually taken into battle by Iron Wardens. Its bulk is worth the protection it provides.",
+  :ability/ability-type "wh_type_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f562bdfb-43b1-3f49-975f-f89358d232ce",
+  :ability/key "wh2_dlc10_item_passive_old_guards_tankard",
+  :ability/name "Old Guard's Tankard",
+  :ability/description
+  "This tankard is large and deep; when filled, only the eldest of Longbeards can sup from it.",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f694b3f1-3063-3f5e-af2e-9be619166b1e",
+  :ability/key "wh2_dlc10_item_passive_prospectors_spyglass",
+  :ability/name "Prospector's Spyglass",
+  :ability/description
+  "Dwarfs excel at crafting lenses, making their spy-glasses the envy of all umgi, except Elves, the gits.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5d97fb15-7d6d-3e9d-b517-cedc31dc5eac",
+  :ability/key "wh2_dlc10_item_passive_ring_of_grimnir",
+  :ability/name "Ring of Grimnir",
+  :ability/description
+  "A thick ring of oathgold, created using words of fury once spoken by Grimnir himself.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "250bac25-d64e-3929-bb51-aec277d40716",
+  :ability/key "wh2_dlc10_item_passive_shieldstone_of_isha",
+  :ability/name "Shieldstone of Isha",
+  :ability/description
+  "As old as Ulthuan itself, the Shieldstone pulses with warding and protective energies.",
+  :ability/ability-type "wh_type_area_of_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4242a76c-1844-36c1-92b3-778c311602d7",
+  :ability/key "wh2_dlc10_item_passive_starmetal_plate",
+  :ability/name "Starmetal Plate",
+  :ability/description
+  "Using a rarefied ore of Gromril, and the finest forging techniques, crafting such mail will make the wearer all but impervious.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c45d7fa5-2f06-3ccb-9a93-b2715d219f89",
+  :ability/key "wh2_dlc10_item_passive_stone_of_midnight",
+  :ability/name "Stone of Midnight",
+  :ability/description
+  "This jewel was originally gifted to Morathi by Aenarion, before it was stolen by Anar; it cloaks the wearer in shadow.",
+  :ability/ability-type "wh_type_area_of_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c27f9a80-50e6-320a-980e-d84fa8c64e4e",
+  :ability/key "wh2_dlc10_item_passive_the_shadow_crown",
+  :ability/name "The Shadow Crown",
+  :ability/description
+  "Symbol of the true ruler of Nagarythe, the Shadow Crown is a simple silver circlet set with a single diamond.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "760717eb-270b-33f4-af52-bb3e5df56585",
+  :ability/key "wh2_dlc11_item_abilities_captain_roths_moondial",
+  :ability/name "Captain Roth's Moondial",
+  :ability/description
+  "This particular moondial enables its owner to pull off seemingly-impossible feats of navigation and piloting.",
+  :ability/ability-type "wh_type_summon_unit",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "10805fc5-894f-3360-bcdd-17737f4f699b",
+  :ability/key "wh2_dlc11_item_abilities_moonshine",
+  :ability/name "Moonshine",
+  :ability/description
+  "What's wrong with a bit of extra courage before a fight? Nothing, except now the combatants are considerably more flammable than before.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9515a4a4-fbc1-3d0d-a1b1-538b352b20df",
+  :ability/key "wh2_dlc11_item_abilities_slann_gold",
+  :ability/name "Slann Gold",
+  :ability/description
+  "It is well known that Lustrian gold is enchanted with all manner of esoteric properties; Harkon thinks it will restore his fractured mind! ",
+  :ability/ability-type "wh_type_hex_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4038ea1a-9739-3fe8-8e67-435fc24c3745",
+  :ability/key "wh2_dlc11_item_passive_helm_of_the_kraken",
+  :ability/name "Helm of the Kraken",
+  :ability/description "Bow down before the true Lord of the Sea.",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5a358ba2-3125-33c1-8720-0fe8fd70e2f5",
+  :ability/key "wh2_dlc11_item_passive_the_bordeleaux_flabellum",
+  :ability/name "The Bordeleaux Flabellum",
+  :ability/description
+  "This enchanted fan keeps Cylostra cool when the heat is on, improving the recharge of her abilities and reducing their cooldown times.",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "aee9b96d-6ecc-3f2b-8d50-2a39c4a79adc",
+  :ability/key "wh2_dlc12_item_passive_braid_of_bordeleaux",
+  :ability/name "Braid of Bordeleaux",
+  :ability/description
+  "Said to be a braid cut from the hair of the Sea-God Manann, this sacred artefact has been held by Bordeleaux since the reign of the very first duke.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a05810eb-eff4-396f-8d74-dccd4e44cab6",
+  :ability/key "wh2_dlc12_item_passive_golden_death_mask",
+  :ability/name "Golden Death Mask",
+  :ability/description
+  "Lord Kroak’s death mask protects the mummified head of the venerable Relic Priest. The hypnotic effect of the mask hinders any and all foes trying to attack him.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ebfeca6a-54fd-36ad-b4f4-f469edea474c",
+  :ability/key "wh2_dlc12_item_passive_mask_of_heavens",
+  :ability/name "Mask of Heavens",
+  :ability/description
+  "Its wearer will become one with the mighty Terradons, who will then move in tandem as a single, mighty consciousness.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "bbd12fd2-cc0c-3209-b11a-56723f0e5da7",
+  :ability/key "wh2_dlc12_item_passive_plaque_of_sotek",
+  :ability/name "Plaque of Sotek",
+  :ability/description
+  "Upon this stone plaque is inscribed an extract of the Prophecy of Sotek that grants additional warding to Tehenhauin.",
+  :ability/ability-type "wh_type_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a2ef219a-55e1-369f-bcbc-20c59e9952db",
+  :ability/key "wh2_dlc13_item_abilities_shield_of_aeons",
+  :ability/name "Shield of Aeons",
+  :ability/description
+  "A dozen Kroxigor were needed to haul this matchless shield to the mainland and generations of Skink artisans laboured to carve it.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e04ec2ab-8bc5-3238-9ac4-979b92632997",
+  :ability/key "wh2_dlc13_item_passive_band_of_loyalty",
+  :ability/name "Band of Loyalty",
+  :ability/description
+  "He who wears this ring is respected by everyone around him, whether he deserves it or not…",
+  :ability/ability-type "wh_type_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7052c60b-9e7b-31de-9cfe-00ff5c3ce16d",
+  :ability/key "wh2_dlc13_item_passive_golden_tributes",
+  :ability/name "Golden Tributes",
+  :ability/description
+  "Thought of as a jungle-spirit made flesh, the Wanderer is treated with great deference and adorned with ceremonial tokens.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7e7a2369-14e6-3e4b-b091-38912bdd64e3",
+  :ability/key "wh2_dlc13_item_passive_obsinite_plate",
+  :ability/name "Obsinite Plate",
+  :ability/description
+  "The highest standard of protection... whilst also looking pretty good next to one's peers!",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "83721c60-5216-3e27-b1c0-d6d316dca7d7",
+  :ability/key "wh2_dlc13_item_passive_resilient_spirit",
+  :ability/name "Resilient Spirit",
+  :ability/description
+  "Hertwig uses the amulet to boost his lifeforce at the point of death, which pulls him back from the very brink of oblivion.",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "efdc0e97-4a95-3693-82ec-b0ae2c4c79cd",
+  :ability/key "wh2_dlc14_item_passive_idol_of_darkness",
+  :ability/name "Idol of Darkness",
+  :ability/description
+  "Time runs slower around the wearer, almost as if it acknowledges the idol's immense power.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "20825489-ec77-356f-bcc3-911550f12695",
+  :ability/key "wh2_dlc14_item_passive_the_cloak_of_shadows",
+  :ability/name "The Cloak of Shadows",
+  :ability/description
+  "Woven from stolen human hair and spider silk, the cloak both conceals and silences the wearer, making Snikch near invisible in darkness.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "fadbe541-594f-35ac-b7f0-a68489de3227",
+  :ability/key "wh2_dlc15_item_abilities_armour_of_caledor",
+  :ability/name "Armour of Caledor",
+  :ability/description
+  "Donned by the masters of the House of Caledor, this ensorcelled armour has endured over four thousand years of battles.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7e1a19e4-e97b-3ce2-909a-7e255ccc4e4f",
+  :ability/key "wh2_dlc15_item_abilities_azhags_ard_armour",
+  :ability/name "Azhag's 'Ard Armour",
+  :ability/description
+  "By the grace of Gork (or Mork), Azhag’s magical armour is so ‘ard, it can even protect those around him.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ce7c26f5-06dc-3ab6-91fa-d05078338b31",
+  :ability/key "wh2_dlc15_item_abilities_blacktoofs_conjuration",
+  :ability/name "Blacktoof's Conjuration",
+  :ability/description
+  "Fuelled by pure insanity and the arcane magic hoarded in Blacktoof’s lifetime, a stone totem akin to the Greenskin gods themselves is manifested.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "82cb7b41-af98-3f5d-bdfa-2fc4873dfa09",
+  :ability/key "wh2_dlc15_item_abilities_blood_forged_armour",
+  :ability/name "Blood-Forged Armour",
+  :ability/description
+  "The cooling of this armour in the blood of Dwarf Runesmiths has imbued it with great powers – some explosive in nature!",
+  :ability/ability-type "wh_type_explosion",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "102fa097-941e-302e-b336-493cb47440fe",
+  :ability/key "wh2_dlc15_item_abilities_helm_of_yvresse",
+  :ability/name "Helm of Yvresse",
+  :ability/description
+  "The ceremonial crown of he who protects Yvresse’s ancient metropolis is an inspirational symbol of dogged determination.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "d493d073-72f1-3158-8daf-845c06e8b8c0",
+  :ability/key "wh2_dlc15_item_abilities_lucky_banner",
+  :ability/name "Lucky Banner",
+  :ability/description
+  "Along with his serendipitous standard-bearer, Niblet, who once somehow survived being sat on by him, the Goblin King’s banner brings inexplicable luck. ",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "721a3762-b961-3626-bf35-c83b69bc7bce",
+  :ability/key "wh2_dlc15_item_abilities_vine_dragon_scale",
+  :ability/name "Vine Dragon Scale",
+  :ability/description
+  "Shed from the Forest Dragon Bruwor himself, this Draconic scale has sentient vines that reach out like tentacles to ensnare nearby enemies.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "d16baf52-2116-3f1c-a663-5d228a74c869",
+  :ability/key "wh2_dlc15_item_ability_vine_dragon_scale",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "807be167-cc8f-3327-8ea6-b72c0de0ae64",
+  :ability/key "wh2_dlc16_item_abilities_acorns_of_the_oak_of_ages",
+  :ability/name "Acorns of the Oak of Ages",
+  :ability/description
+  "Concentrated within a single acorn of the Mighty Oak is the potential for an instant and devastating release of explosive magical power.",
+  :ability/ability-type "wh_type_explosion",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "6a21b6ce-236b-3ad4-9d94-e9c636ba073f",
+  :ability/key "wh2_dlc16_item_abilities_berry_wine",
+  :ability/name "Berry Wine",
+  :ability/description
+  "The forest’s magical berries yield an intoxicating yet rejuvenating brew, potent enough in a single acorn cup to manifest its desired effects.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4f2edc41-4301-3124-947f-afb28220a136",
+  :ability/key "wh2_dlc16_item_abilities_dart_of_doom",
+  :ability/name "Dart of Doom",
+  :ability/description
+  "This thorn-tipped dart carved directly from the Tree of Woe is magically engraved to cripple weapons and deliver painful injury.",
+  :ability/ability-type "wh_type_magic_missile",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3965bc40-aadb-3474-a018-f0fa67ac4565",
+  :ability/key "wh2_dlc16_item_abilities_dreaming_cloak_i",
+  :ability/name "Dreaming Cloak I",
+  :ability/description
+  "Whoever dons this cloak does not just become one with the forest, but one with the hardened sentinels who guard Athel Caiellin’s fluctuating portals.",
+  :ability/ability-type "wh_type_summon_unit",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4bb80bec-b062-3e1d-b70d-24a4cb61f290",
+  :ability/key "wh2_dlc16_item_abilities_dreaming_cloak_ii",
+  :ability/name "Dreaming Cloak II",
+  :ability/description
+  "Whoever dons this cloak does not just become one with the forest, but one with the hardened sentinels who guard Athel Caiellin’s fluctuating portals.",
+  :ability/ability-type "wh_type_summon_unit",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "360496a8-cba7-3bd3-9bea-3c5a4ef1bba9",
+  :ability/key "wh2_dlc16_item_abilities_dreaming_cloak_iii",
+  :ability/name "Dreaming Cloak III",
+  :ability/description
+  "Whoever dons this cloak does not just become one with the forest, but one with the hardened sentinels who guard Athel Caiellin’s fluctuating portals.",
+  :ability/ability-type "wh_type_summon_unit",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f3a75d7d-53e2-36dd-9a3f-f03d54eef5d6",
+  :ability/key "wh2_dlc16_item_abilities_dreaming_ring_i",
+  :ability/name "Dreaming Ring I",
+  :ability/description
+  "A momentary trance induced on a subject using this magical trinket instantaneously mimics the healing effects of a dozen deep sleeps.",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a599f821-7d4b-3aa2-b76e-3dfad68fef4c",
+  :ability/key "wh2_dlc16_item_abilities_dreaming_ring_ii",
+  :ability/name "Dreaming Ring II",
+  :ability/description
+  "A momentary trance induced on a subject using this magical trinket instantaneously mimics the healing effects of a dozen deep sleeps.",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e308b370-1111-3c28-9010-3e15f9ed5d44",
+  :ability/key "wh2_dlc16_item_abilities_dreaming_ring_iii",
+  :ability/name "Dreaming Ring III",
+  :ability/description
+  "A momentary trance induced on a subject using this magical trinket instantaneously mimics the healing effects of a dozen deep sleeps.",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f63aa49e-2d55-33f8-b021-c47bab7fc202",
+  :ability/key "wh2_dlc16_item_abilities_eagle_quiver",
+  :ability/name "Eagle Quiver",
+  :ability/description
+  "At opportune moments, an arrow pulled from this enchanted quiver is willed by Talyn's spirit to fly truer towards cruel hearts.",
+  :ability/ability-type "wh_type_magic_missile",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "20c0c0cc-6ee4-3e30-8c4c-da71f83ec2ee",
+  :ability/key "wh2_dlc16_item_abilities_twilight_horn_i",
+  :ability/name "Twilight Horn I",
+  :ability/description
+  "No purer sound is there than a single note from this great horn, capable of emboldening the faint of heart and rousing the timid.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "bf09d594-2f80-3622-842a-ea1072843dc5",
+  :ability/key "wh2_dlc16_item_abilities_twilight_horn_ii",
+  :ability/name "Twilight Horn II",
+  :ability/description
+  "No purer sound is there than a single note from this great horn, capable of emboldening the faint of heart and rousing the timid.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b784c427-d7e2-339e-a57d-8b6b6c6f20ef",
+  :ability/key "wh2_dlc16_item_passive_dragon_mask_i",
+  :ability/name "Dragon Mask I",
+  :ability/description
+  "With the form of a Dragon’s ajar jaws, this mask offers scant protection but emanates an aura that silently softens foes – hearts, armour and all.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ccfd4b34-f402-37be-9fd0-3f639f37cfa1",
+  :ability/key "wh2_dlc16_item_passive_dragon_mask_ii",
+  :ability/name "Dragon Mask II",
+  :ability/description
+  "With the form of a Dragon’s ajar jaws, this mask offers scant protection but emanates an aura that silently softens foes – hearts, armour and all.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "efaa1c60-f4e8-3984-b1ca-02d69e846254",
+  :ability/key "wh2_dlc16_item_passive_dragon_mask_iii",
+  :ability/name "Dragon Mask III",
+  :ability/description
+  "With the form of a Dragon’s ajar jaws, this mask offers scant protection but emanates an aura that silently softens foes – hearts, armour and all.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "27c8b1dd-c091-3a17-8463-c59544c12e96",
+  :ability/key "wh2_dlc16_item_passive_fang_of_taalroth",
+  :ability/name "Fang of Taalroth",
+  :ability/description
+  "Many in the realms of men believe this powerful dampener of magic was once carried by their God of Nature, Taal himself.",
+  :ability/ability-type "wh_type_hex_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e9dde0f6-ded3-35ce-aa0c-8ea4d4ba5fc0",
+  :ability/key "wh2_dlc16_item_passive_twilight_helm",
+  :ability/name "Twilight Helm",
+  :ability/description
+  "The inspirational magic of this helm can make a good leader into a great one, and a great leader into a legend. ",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "95cea390-5994-300c-8b27-8087a53e2c5e",
+  :ability/key "wh2_dlc17_item_passive_thoreks_rune_armour",
+  :ability/name "Thorek's Rune Armour",
+  :ability/description
+  "Thorek’s self-crafted armour can turn a Giant’s club, allowing the Runelord to walk unscathed through the flames of the Wyrm Drakamol.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "6041d163-ee1c-309b-81cd-9a9f15472b5e",
+  :ability/key "wh2_main_item_abilities_amulet_of_itzl",
+  :ability/name "Amulet of Itzl",
+  :ability/description
+  "The amulet explodes into a million crystal shards if the wearer is struck, greatly improving their resistance to damage for a short time.",
+  :ability/ability-type "wh_type_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b372475a-0e6e-3ebb-ac96-79a7cdfaa23a",
+  :ability/key "wh2_main_item_abilities_armour_of_the_stars",
+  :ability/name "Armour of the Stars",
+  :ability/description
+  "The Armour of the Stars is a wonder, mage-forged plate decorated with gems over a deep-blue lacquer.",
+  :ability/ability-type "wh_type_hiding",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2457b39b-74ea-3e35-b324-4d6e451ef745",
+  :ability/key "wh2_main_item_abilities_aura_of_quetzl",
+  :ability/name "Aura of Quetzl",
+  :ability/description
+  "This string of beaded shells, feathers and bones is a charm that surrounds the warrior in a miasma of colour.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "04556ffd-fff2-3403-86a6-a6a72a557e52",
+  :ability/key "wh2_main_item_abilities_black_dragon_egg",
+  :ability/name "Black Dragon Egg",
+  :ability/description
+  "In Naggaroth, Black Dragon eggs are often consumed so that their devourers might take a portion of Dragon-strength.",
+  :ability/ability-type "wh_type_breath",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "79a5dac8-1df6-3b96-a734-aee38cd0dfad",
+  :ability/key "wh2_main_item_abilities_blade_of_bel_korhadris",
+  :ability/name "Blade of Bel-Korhadris",
+  :ability/description
+  "The sword of the beloved Scholar-King is a renowned wyrm-slayer.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "57c3c434-457c-370a-95ca-bd84c1e5eb52",
+  :ability/key "wh2_main_item_abilities_blood_statuette_of_spite",
+  :ability/name "Blood Statuette of Spite",
+  :ability/description
+  "This statuette is carved in a likeness of Xapati, and is frequently bathed in offerings of blood.",
+  :ability/ability-type "wh_type_direct_damage",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b500cd44-f569-3b9d-8ae0-b50d37a2a230",
+  :ability/key "wh2_main_item_abilities_book_of_hoeth",
+  :ability/name "Book of Hoeth",
+  :ability/description
+  "This tome has been studied throughout the ages, yet its covers remain as blue and pristine as the day it was bound.",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e465c231-32d9-32f7-b0fc-bab4a6920ece",
+  :ability/key "wh2_main_item_abilities_cube_of_darkness",
+  :ability/name "Cube of Darkness",
+  :ability/description
+  "This small black cube contains millions of tiny pin-pricks of light circling around a sphere of pure darkness.",
+  :ability/ability-type "wh_type_hex_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "753bccf0-a42c-3bc7-a3c2-5b050a5c1bfd",
+  :ability/key "wh2_main_item_abilities_dragonhorn",
+  :ability/name "Horn of Vaul",
+  :ability/description
+  "Crafted by the Elven God of Smiths himself, the Horn of Vaul bolsters all in earshot of its clarion call.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "82a9a7f7-f1df-3729-a99a-8b0750207766",
+  :ability/key "wh2_main_item_abilities_pearl_of_infinite_bleakness",
+  :ability/name "Pearl of Infinite Bleakness",
+  :ability/description
+  "This pearl of blackest jet soaks up dread, fear and self-doubt, leaving its wearer stronger within.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3d381e0d-84de-304e-9c41-8c141f445e67",
+  :ability/key "wh2_main_item_abilities_plaque_of_dominion",
+  :ability/name "Plaque of Dominion",
+  :ability/description
+  "Formed into the image of a grimacing face, this plaque causes the unwary to go mad just by looking upon it.  ",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ea432720-9286-3d0a-a190-f3b3b8af1ae3",
+  :ability/key "wh2_main_item_abilities_rival_hide_talisman",
+  :ability/name "Rival Hide Talisman",
+  :ability/description
+  "Wearing the stitched hides of enemies slain through treachery is believed to attract the favour of the Horned Rat.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4e6f9d3f-efb1-3e3f-919b-c35475365ae1",
+  :ability/key "wh2_main_item_abilities_rod_of_corruption",
+  :ability/name "Rod of Corruption",
+  :ability/description
+  "The flail of Skrolk is a rusted, pitted ball of miasma that spreads poxes as it is swung.",
+  :ability/ability-type "wh_type_area_of_direct_damage",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "74db5cbd-8da0-3709-8550-46a4755a29b4",
+  :ability/key "wh2_main_item_abilities_scrying_stone",
+  :ability/name "Scrying Stone",
+  :ability/description
+  "An orb made of the polished gallstones from the dreaded Blindwyrm is said to be able to glimpse the future.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ce2db0fe-b6a0-3909-9b2a-e042509c78df",
+  :ability/key "wh2_main_item_abilities_skalm",
+  :ability/name "Skalm",
+  :ability/description
+  "This foetid potion knits bones, seals flesh and stanches the flow of blood from mortal wounds.",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "1e94e97e-2f1b-3650-8a3c-242f0f2079a3",
+  :ability/key "wh2_main_item_abilities_skavenbrew",
+  :ability/name "Skavenbrew",
+  :ability/description
+  "This concoction is made of Warpstone and the blood of many creatures. Its effects are devastating.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "758a6d70-f4b9-388c-b825-f890af842a33",
+  :ability/key "wh2_main_item_abilities_starwood_staff",
+  :ability/name "Starwood Staff",
+  :ability/description
+  "This gnarled staff looks out of place among the refined possession of the Elves. However, looks are oft deceiving…",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "8288cf6f-2f43-33ae-9f75-b1998e67be13",
+  :ability/key "wh2_main_item_abilities_talisman_of_loec",
+  :ability/name "Talisman of Loec",
+  :ability/description
+  "Loec the Trickster‘s aid comes at a price. His talisman is strange - a bracelet of two interlocking halves.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ae8832e0-6e72-3595-ba76-22738ca3b7b6",
+  :ability/key "wh2_main_item_abilities_the_bane_shield",
+  :ability/name "The Bane Shield",
+  :ability/description
+  "A magnificent shield emblazoned with a coiled serpent, allowing its wielder to benefit from even greater protection.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "57369eec-d21f-339b-b30a-a3bb6bac3c88",
+  :ability/key "wh2_main_item_abilities_the_guiding_eye",
+  :ability/name "The Guiding Eye",
+  :ability/description
+  "Wrought in black iron with an oval ruby at its centre, the Guiding Eye grants mystical sight to its wearer.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "eb1dc8cb-8a68-3e0c-9016-11f5d4ebc0ab",
+  :ability/key "wh2_main_item_abilities_the_horn_of_kygor",
+  :ability/name "The Horn of Kygor",
+  :ability/description
+  "It is said that the legendary Kygor, the first owner of the horn, was a warrior who could stare down a Carnosaur!",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "aeed2db1-2896-3a9b-8211-0133fbc777b0",
+  :ability/key "wh2_main_item_abilities_the_liber_bubonicus",
+  :ability/name "The Liber Bubonicus",
+  :ability/description
+  "The vile cantrips written within the mouldering pages of the Liber Bubonicus are powerful indeed.",
+  :ability/ability-type "wh_type_direct_damage",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "fd0dd97b-384d-3d5d-973d-9f967fb87c8e",
+  :ability/key "wh2_main_item_abilities_the_tricksters_pendant",
+  :ability/name "The Trickster's Pendant",
+  :ability/description
+  "All those who seek the favour of Loec wear a simple-looking pendant of silver that actually conceals great power.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5a8e3119-0027-39f1-9e4a-cd19ba1c34ab",
+  :ability/key "wh2_main_item_abilities_the_vortex_shard",
+  :ability/name "The Vortex Shard",
+  :ability/description
+  "Hewn from the same rock that forms the Waystones, the Vortex Shard has the power to becalm the Winds of Magic.",
+  :ability/ability-type "wh_type_hex_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "841dcdad-32b3-3d8c-9eee-6ac7b6b32b8d",
+  :ability/key "wh2_main_item_abilities_warpstorm_scroll",
+  :ability/name "Warpstorm Scroll",
+  :ability/description
+  "As the words of this scroll are read aloud, the heavens darken and lightning splits the skies, making flying impossible.",
+  :ability/ability-type "wh_type_area_of_direct_damage",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "28fb3e59-5b43-3417-82bf-05691727a03f",
+  :ability/key "wh2_main_item_abilities_worlds_edge_armour",
+  :ability/name "World's Edge Armour",
+  :ability/description
+  "Many suits of Dwarfen Gromril have fallen into the clutches of the Skaven. Then they are remade to the ratmen’s liking.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "1aa01bd5-0231-33bf-b2d7-e74e20dcf96a",
+  :ability/key "wh2_main_item_passive_blessed_tome",
+  :ability/name "Blessed Tome",
+  :ability/description
+  "Tales of ancient valour, glory, and self-sacrifice are bound to inspire those of noble heart to greater deeds.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "da017509-1b46-37b7-b051-c01d656d1228",
+  :ability/key "wh2_main_item_passive_circlet_of_iron",
+  :ability/name "Circlet of Iron",
+  :ability/description
+  "The Circlet of Iron, said to be older than the Elven race, is a potent source of arcane power.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c7f072eb-e3c5-3146-88ca-6fb8ec5696cf",
+  :ability/key "wh2_main_item_passive_curse_charm_of_tepok",
+  :ability/name "Curse-Charm of Tepok",
+  :ability/description
+  "Crafted in the form of a grotesque face, this charm forces its visage into the minds of enemy sorcerers.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b152c764-c52d-3ea8-b72f-e11f5813290e",
+  :ability/key "wh2_main_item_passive_darkstar_cloak",
+  :ability/name "Darkstar Cloak",
+  :ability/description
+  "Woven into the fabric of this cloak is the essence of a star stolen from the night sky of Nagarythe.",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "6e0f506a-af2c-39df-9008-37f419f07634",
+  :ability/key "wh2_main_item_passive_diamond_guardian_phoenix",
+  :ability/name "Diamond Guardian Phoenix",
+  :ability/description
+  "This ornate diamond vessel houses a spark of the sacred flame from Asuryan's shrine; its bearer swells with unearthly resilience.",
+  :ability/ability-type "wh_type_area_of_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a16c3f94-d418-309d-8e95-e82be9598975",
+  :ability/key "wh2_main_item_passive_enchanted_spyglass",
+  :ability/name "Enchanted Spyglass",
+  :ability/description
+  "This magical lens amplifies damage from missiles in the area upon which its strange, ethereal gaze is settled.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "adae682c-c0e6-3951-8445-682553759e64",
+  :ability/key "wh2_main_item_passive_heart_of_averlorn",
+  :ability/name "Heart of Avelorn",
+  :ability/description
+  "Though seemingly fragile, this well-worn heirloom has seen a thousand battles and will see many more.",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "d4116c95-4f48-34e5-b389-ad633fb7e228",
+  :ability/key "wh2_main_item_passive_loremasters_cloak",
+  :ability/name "Loremaster's Cloak",
+  :ability/description
+  "Wrapped in a cloak of grey, the wearer becomes insubstantial and highly-protected against magical attacks.",
+  :ability/ability-type "wh_type_area_of_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e72cb9a7-a50f-3409-9b18-f446f2bf2b03",
+  :ability/key "wh2_main_item_passive_pipes_of_piebald",
+  :ability/name "Pipes of Piebald",
+  :ability/description
+  "Piebald’s strange helmet has pipes connected which allow a form of mind-control; the foe is mesmerised on approach.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "062662c8-24a2-364c-9fa4-b869e6a216ca",
+  :ability/key "wh2_main_item_passive_portents_of_verminous_doom",
+  :ability/name "Portents of Verminous Doom",
+  :ability/description
+  "Portents of doom most often take the form of back banners festooned with skulls, clan symbols and hated runes.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "963a3334-ed61-3389-bd60-450a92aa1a9b",
+  :ability/key "wh2_main_item_passive_ring_of_hotek",
+  :ability/name "Ring of Hotek",
+  :ability/description
+  "It was Hotek who forged the Witch King’s armour. His ring - a trinket of obsidian and black diamond - is just as powerful.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c98c26fb-3702-3cc2-bc56-3a33219b122e",
+  :ability/key "wh2_main_item_passive_ruby_guardian_phoenix",
+  :ability/name "Ruby Guardian Phoenix",
+  :ability/description
+  "This elaborate casket, encrusted with rubies, contains a spark from Asuryan's sacred flame; those nearby are granted magical resistance to fire.",
+  :ability/ability-type "wh_type_area_of_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "8b9f209b-59da-3ad0-9fa8-2f99c69d170c",
+  :ability/key "wh2_main_item_passive_sacred_incense",
+  :ability/name "Sacred Incense",
+  :ability/description
+  "This bundle of incense sticks is blessed by the wardens of Asuryan, wreathing the bearers in scented smoke when lit.",
+  :ability/ability-type "wh_type_area_of_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "67017c69-5724-3c03-b09a-2e7083a22424",
+  :ability/key "wh2_main_item_passive_sapphire_guardian_phoenix",
+  :ability/name "Sapphire Guardian Phoenix",
+  :ability/description
+  "This guardian phoenix, decorated with rare sapphires, holds a spark from Asuryan's sacred flame that affords its carriers magical protection from fire.",
+  :ability/ability-type "wh_type_area_of_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7c5bdb86-59f6-33ba-b34f-a30328050499",
+  :ability/key "wh2_main_item_passive_scroll_of_hoeth",
+  :ability/name "Scroll of Hoeth",
+  :ability/description
+  "Though seemingly fragile, this well-worn heirloom has seen a thousand battles and will see many more.",
+  :ability/ability-type "wh_type_hex_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2f6485d4-7e5d-35f5-8c4c-b9a95b51fcda",
+  :ability/key "wh2_main_item_passive_shadow_magnet_trinket",
+  :ability/name "Shadow Magnet Trinket",
+  :ability/description
+  "Warpstone-contaminated ore develops the strange property of absorbing light. Thusly, darkness forms around the trinket.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cb92358c-76f4-3b85-b799-5ab27804db0f",
+  :ability/key "wh2_main_item_passive_shield_of_distraction",
+  :ability/name "Shield of Distraction",
+  :ability/description
+  "Grimy and ill-kept, this shield bears tainted hides, grisly trophies, and runes that are painful to look upon.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "900fc52e-aa19-3d4d-9662-9ff0a0799366",
+  :ability/key "wh2_main_item_passive_shield_of_ghrond",
+  :ability/name "Shield of Ghrond",
+  :ability/description
+  "Shaped into the leering face of an Ice Daemon, this shield is imbued with the north wind, robbing attacks of their force.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "bf613f69-cc3b-36fc-ae71-1844a63b8cf8",
+  :ability/key "wh2_main_item_passive_supreme_spellshield",
+  :ability/name "Supreme Spellshield",
+  :ability/description
+  "This shield has a reflection so dark that it absorbs hostile magic and reflects it back at the foe.",
+  :ability/ability-type "wh_type_hex_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e74a5fda-4751-3e2f-81ae-7a2c32754365",
+  :ability/key "wh2_main_item_passive_the_book_of_the_phoenix",
+  :ability/name "The Book of the Phoenix",
+  :ability/description
+  "The burning pages bound together in the Book of the Phoenix will never burn their reader… unless his heart is dark.",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "86d402ca-9b5a-31e9-bf35-fc9913edb7a7",
+  :ability/key "wh2_main_item_passive_war_drum_of_xahutec",
+  :ability/name "War Drum of Xahutec",
+  :ability/description
+  "The drum echoes the beating heart of the jungle itself. As the Lizardmen march to war, the thundering booms quicken.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cdecabf1-816e-30f7-95bd-1e671622c5ef",
+  :ability/key "wh2_main_item_passive_warp_shard_armour",
+  :ability/name "Warp-Shard Armour",
+  :ability/description
+  "The Warpstone-infused armour plates of Queek Headtaker are as spiteful as their owner.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5b4d051a-5ad8-388d-9f53-315501b51626",
+  :ability/key "wh2_main_item_passive_warpstone_armour",
+  :ability/name "Warpstone Armour",
+  :ability/description
+  "Wrought within the great Warpforges beneath Skavenblight, this armour radiates an evil aura.",
+  :ability/ability-type "wh_type_area_of_direct_damage",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "882e8f03-c22b-3d92-b5c3-2cecf8bb2f58",
+  :ability/key "wh2_twa03_item_passive_beast_armour_of_karond_kar",
+  :ability/name "Beast Armour of Karond Kar",
+  :ability/description
+  "This jet-black armour has been worked into the most cruelly delicate forms by the hand of a master far superior to any mortal artificer.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e9903d3c-f1ef-3156-aa20-fdf575d639ae",
+  :ability/key "wh3_cp1_item_abilities_heavens_gate",
+  :ability/name "Heaven's Gate",
+  :ability/description
+  "The mysterious and potent Heaven’s Gate broach allows its wearer to vanish before their foes’ eyes, before reappearing to inflict a devastating blow.",
+  :ability/ability-type "wh_type_explosion",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "0d97822c-eea1-3d42-a02e-3ebe4005feda",
+  :ability/key "wh3_cp1_item_passive_arcane_trinket",
+  :ability/name
+  "{{tr:ancillaries_onscreen_name_wh3_cp1_anc_talisman_cth_arcane_trinket}}",
+  :ability/description
+  "{{tr:ancillaries_colour_text_wh3_cp1_anc_talisman_cth_arcane_trinket}}",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "15eb0dcc-c507-321e-a718-b3350785b60c",
+  :ability/key "wh3_dlc20_item_abilities_daemonshield",
+  :ability/name "Daemonshield",
+  :ability/description
+  "Ever since the Daemon Prince Locephax angered the Gorequeen, his horned head and hypnotic eyes have adorned her shield.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "32ab32b1-1421-3cf7-b77a-043dc8a8d5be",
+  :ability/key "wh3_dlc20_item_abilities_pestilent_potions",
+  :ability/name "Pestilent Potions",
+  :ability/description
+  "To one blessed by Grandfather Nurgle, these elixirs are restorative brews, but to others they are debilitating poisons.",
+  :ability/ability-type "wh_type_chain_hex",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "185206cd-a991-3589-8dd8-008449966860",
+  :ability/key "wh3_dlc20_item_abilities_rod_of_torment",
+  :ability/name "Rod of Torment",
+  :ability/description
+  "This staff, imbued with the darkest of Dark Magics, enhances the magical abilities of its bearer on and off the battlefield.",
+  :ability/ability-type "wh_type_bombardment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5a863252-4fbd-31a1-a3fc-213f27519df9",
+  :ability/key "wh3_dlc20_item_abilities_the_armour_of_morkar",
+  :ability/name "The Armour of Morkar",
+  :ability/description
+  "The armour of the Everchosen is as ancient and powerful as his legend.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "66b1d5e7-055f-3608-afa0-a362f2471421",
+  :ability/key "wh3_dlc20_item_passive_armour_of_damnation",
+  :ability/name "Armour of Damnation",
+  :ability/description
+  "Such armour is materialised from the dark energies of Chaos, guarding against the onslaught of Order.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "0fda2d3d-67ab-3412-9b4c-aae03118b07d",
+  :ability/key "wh3_dlc20_item_passive_blasphemous_amulet",
+  :ability/name "Blasphemous Amulet",
+  :ability/description
+  "Such a symbol insults Order and all its supporters, to the delight of Destruction and Ruin.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "373104e3-bde4-30b1-874b-be8a917dd9c4",
+  :ability/key "wh3_dlc20_item_passive_bronze_armour_of_zhrakk",
+  :ability/name "Bronze Armour of Zhrakk",
+  :ability/description
+  "Once the scourge of the Empire, Zhrakk's armour was found empty after his demise, but for the overpowering stench of brimstone.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "272c53ab-a022-30f6-9f84-d383dc575c12",
+  :ability/key "wh3_dlc20_item_passive_crown_of_everlasting_conquest",
+  :ability/name "Crown of Everlasting Conquest",
+  :ability/description
+  "Chaos is without end. Nothing can stop the eternal march of its forces, for its greatest warriors will always rise once more.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7af2ce16-f970-351e-8895-a99f0efbb953",
+  :ability/key "wh3_dlc20_item_passive_doom_totem",
+  :ability/name "Doom Totem",
+  :ability/description
+  "\"Doooooooooooom! Let there be no misunderstanding…\"",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cbc9a0b4-05fd-3c56-ad25-b130fb8c66dd",
+  :ability/key "wh3_dlc20_item_passive_the_beguiling_gem",
+  :ability/name "The Beguiling Gem",
+  :ability/description
+  "Some whisper that the gemstone is a crystalised tear of Slaanesh, able to slow all who behold it in awe.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a510c48a-141a-350f-9262-007fe739eb1b",
+  :ability/key "wh3_dlc20_item_passive_the_scarlet_armour",
+  :ability/name "The Scarlet Armour",
+  :ability/description
+  "This suit of armour runs red with thick strings of blood, sapping the strength of all Khorne’s enemies.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7b2246dc-9674-3188-a67d-daf203e3aa6d",
+  :ability/key "wh3_dlc20_item_passive_vessel_of_chaos",
+  :ability/name "Vessel of Chaos",
+  :ability/description
+  "This dark crucible is a powerful artefact that can harness and store a great reservoir of unstable magical energy.",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "37dca4d4-9cb9-3204-afc4-c0a17cebfdd9",
+  :ability/key "wh3_dlc23_item_abilities_ancestral_vengeance",
+  :ability/name "Ancestral Vengeance",
+  :ability/description
+  "The Brazier of Gazul once helped the dead find their way, but now the power of the Ancestors can be twisted to summon the most vengeful Scions of Fire.",
+  :ability/ability-type "wh_type_summon_unit",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "6226f68c-9355-37c0-950d-bab47e4d38c5",
+  :ability/key "wh3_dlc23_item_abilities_armour_of_gazrakh",
+  :ability/name "Armour of Gazrakh",
+  :ability/description
+  "The sheer quality of this fine armour makes it able to withstand blows of any power, regardless of who is making them.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3dc78afa-5d8e-34fb-851a-fb12e2f56aec",
+  :ability/key "wh3_dlc23_item_abilities_black_gem_of_gnar",
+  :ability/name "The Black Gem of Gnar",
+  :ability/description
+  "A double-edged sword, so to speak, for although this jewel protects its owner from attack, they cannot attack anyone while wearing it either.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7d18f818-26e3-37f1-a261-1ef3d8733ad8",
+  :ability/key "wh3_dlc23_item_abilities_daemon_flask_of_ashak",
+  :ability/name "Daemon Flask of Ashak",
+  :ability/description
+  "Contained within this infamous iron vessel is a raging daemonic entity of phenomenal power, ready to be unleashed.",
+  :ability/ability-type "wh_type_vortex",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2b846c07-a9db-37af-a674-27d9f1015906",
+  :ability/key "wh3_dlc23_item_abilities_darkened_mist",
+  :ability/name "Darkened Mist",
+  :ability/description
+  "Once used as a healing mist, its essence has since been corrupted by Chaos to take life instead of giving it!",
+  :ability/ability-type "wh_type_direct_damage",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9deb11cb-200a-39b8-b86a-61cfa4e308ff",
+  :ability/key "wh3_dlc23_item_abilities_dweomer_leach_orb",
+  :ability/name "Dweomer Leach Orb",
+  :ability/description
+  "This orb increases the Winds of Magic reserves available to the Sorcerer, enabling him to heal himself with power drawn from enemy magic-users.",
+  :ability/ability-type "wh_type_hex_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "14b9d3b8-a2af-374e-8e8a-be991c484646",
+  :ability/key "wh3_dlc23_item_abilities_hammer_of_smednir",
+  :ability/name "The Hammer of Smednir",
+  :ability/description
+  "This runic hammer wields the power to create or destroy. Handy, if you're strong enough to wield it.",
+  :ability/ability-type "wh_type_explosion",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e04efe8a-48a6-3f43-942d-553a845e2222",
+  :ability/key "wh3_dlc23_item_abilities_morgrims_eye",
+  :ability/name "Morgrim's Eye",
+  :ability/description
+  "Morgrim had an eye for ranged weapons. Through this lens, the bearer will gain his sight.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "52cb2fc8-7a03-3585-b705-98ea659da0e5",
+  :ability/key "wh3_dlc23_item_abilities_rune_of_thungni",
+  :ability/name "Rune of Thungni",
+  :ability/description
+  "This tablet provides the means to crack through any substance.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "bd5e0547-3f1d-32fa-aa1c-2924ffdd7563",
+  :ability/key "wh3_dlc23_item_abilities_slayer_for_chaos",
+  :ability/name "Slayer for Chaos",
+  :ability/description
+  "\"Ha! These 'trinkets' gave the Ancestor God Grimnir near immortality – I'm no lesser Dawi than him!\"",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e27d8d02-95f5-3775-b986-59ba1b2ca170",
+  :ability/key "wh3_dlc23_item_abilities_the_vial_of_hashut",
+  :ability/name "The Vial of Hashut",
+  :ability/description
+  "Within this ampoule is contained the \"Blood of Hashut\"; though highly unlikely to be true, it is nevertheless a powerful alchemical substance that ignites metal on contact.",
+  :ability/ability-type "wh_type_hex",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c5e3c56e-71b3-3ca8-9a00-18c84ef402eb",
+  :ability/key "wh3_dlc23_item_ability_black_gem_of_gnar",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "97676858-4c7b-3e2d-b840-521209ea1be4",
+  :ability/key "wh3_dlc23_item_ability_breath_of_hatred",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "57fbe3ef-0f11-3046-9ca4-46fd460cacda",
+  :ability/key "wh3_dlc23_item_ability_chalice_of_blood_and_darkness",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "02e39f73-3952-303f-969e-3317d8f994ae",
+  :ability/key "wh3_dlc23_item_ability_daemon_flask_of_ashak",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ce87971e-bb98-3231-a094-029da441ed2c",
+  :ability/key "wh3_dlc23_item_ability_dark_mace",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b7fa9960-fb83-3094-86cb-5e38c97ba03c",
+  :ability/key "wh3_dlc23_item_ability_dweomer_leach_orb",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e589335c-d579-363f-aad1-3a9d0ea6aaa9",
+  :ability/key "wh3_dlc23_item_ability_enable_breath_of_hatred",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cc6ae26d-9443-33c2-95c7-e9dc28c201c4",
+  :ability/key
+  "wh3_dlc23_item_ability_enable_chalice_of_blood_and_darkness",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "0ee010e1-cfa3-3498-99a9-321a7fad993e",
+  :ability/key "wh3_dlc23_item_ability_enable_daemon_flask_of_ashak",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "1333d586-789e-3a46-9a12-908962f3f22a",
+  :ability/key "wh3_dlc23_item_ability_enable_dark_mace",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "d5aeb9bc-26f5-342b-90ab-d11ef32ff971",
+  :ability/key "wh3_dlc23_item_ability_enable_dweomer_leach_orb",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a9726c72-ad3c-3f8f-b1fd-66fdc24bdac9",
+  :ability/key "wh3_dlc23_item_ability_enable_spell_hell_hammer",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "19f927f8-710c-3ae3-8600-77d76f2914c8",
+  :ability/key "wh3_dlc23_item_ability_enable_spell_wrought_sceptre",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cdfa6397-9942-3802-8f7c-3f23ad823192",
+  :ability/key "wh3_dlc23_item_ability_enable_the_vial_of_hashut",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b646b92b-dcda-3a06-a547-4beed04c74a4",
+  :ability/key "wh3_dlc23_item_ability_spell_hell_hammer",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "6ee306e1-2eef-3356-9999-dd55c2a99a15",
+  :ability/key "wh3_dlc23_item_ability_spell_wrought_sceptre",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "34c23ecb-0ac7-348d-af0a-26381f8635f8",
+  :ability/key "wh3_dlc23_item_ability_the_vial_of_hashut",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b29fa2c3-1121-3433-8f7e-b90b61141db5",
+  :ability/key "wh3_dlc23_item_passive_chalice_of_blood_and_darkness",
+  :ability/name "Chalice of Blood & Darkness",
+  :ability/description
+  "Filled with boiling blood and cinder ash, this gem-encrusted chalice contains a powerful curse which can be unleashed to destabilise the Winds of Magic across the battlefield.",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5a4ba010-681e-332c-9e2a-266d53c20a38",
+  :ability/key "wh3_dlc23_item_passive_chaos_runeshield",
+  :ability/name "Chaos Runeshield",
+  :ability/description
+  "The runic carvings on this enchanted shield appear to writhe and twist when observed closely, and hold the power to destroy any enemy magicks ranged against it.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f2118425-ae43-3b3c-973d-6a88af94f77d",
+  :ability/key "wh3_dlc23_item_passive_daemonspite_crucible",
+  :ability/name "Daemonspite Crucible",
+  :ability/description
+  "Forged from meteoric iron and blighted gold, quenched in innocent blood and bound with slain, hell-bound souls, the Crucible is said to have been the handiwork of the ancient Chaos Dwarf Sorcerer Azgorh himself.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5b21705a-9869-362b-ba64-2bd3c8f27e95",
+  :ability/key "wh3_dlc23_item_passive_embrace_of_skavor",
+  :ability/name "Embrace of Skavor",
+  :ability/description
+  "The Runic Bracers twist and absorb any wasted flesh surrounding the user; as life leaves one body, it finds a way to enter theirs…",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7913b08d-e66f-379e-bd7c-4b8934dadcf4",
+  :ability/key "wh3_dlc23_item_passive_enable_life_bane_blade",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "242f68f2-8ba8-3be3-9c61-5b4db5b6793e",
+  :ability/key "wh3_dlc23_item_passive_ever_burning_light",
+  :ability/name "Ever-Burning Light",
+  :ability/description
+  "The light has never been extinguished and never will, such is the power that keeps it alight. For those ranged against the light, it is blinding, and so hampers their attacks considerably.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9c2ead67-ea8e-3a72-ba7a-5c8d026277dc",
+  :ability/key "wh3_dlc23_item_passive_hellshard_amulet",
+  :ability/name "Hellshard Amulet",
+  :ability/description
+  "The icy hate of Drazhoath's malice is amplified a thousandfold within its black crystal depths, and unleashed on any who would dare spill his blood.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "8cd4a320-685b-3785-b47d-fda78a038d47",
+  :ability/key "wh3_dlc23_item_passive_stone_mantle",
+  :ability/name "Stone Mantle",
+  :ability/description
+  "Created from the flayed, greying flesh of apprentice Sorcerers who failed Astragoth, the Mantle both preserves Ironhand's chosen and reminds them of the price of failure.",
+  :ability/ability-type "wh_type_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7e7c8c62-a0ab-3f4f-b1fc-5ec201751be2",
+  :ability/key "wh3_dlc23_item_passive_talisman_of_obsidian",
+  :ability/name "Talisman of Obsidian",
+  :ability/description
+  "Weapons imbued with arcane strength will fall quiet when near to this blacker-than-black periapt.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e5efc1d2-9905-383c-9e81-6f4913057b0e",
+  :ability/key "wh3_dlc24_item_abilities_armour_of_the_dragons_gaze",
+  :ability/name "Armour of the Dragons Gaze",
+  :ability/description
+  "Through the many jade eyes adorning Yuan Bo’s armour, the Moon Empress can see all and exert her will upon her subjects.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c62b24c3-50a5-33c9-9176-c9cf31fcf71a",
+  :ability/key "wh3_dlc24_item_abilities_blessed_helm_of_the_oblast",
+  :ability/name "Blessed Helm of the Oblast",
+  :ability/description
+  "This treasured family heirloom has had many owners, and at some point was imbued with power of the Oblast to protect its bearer’s regiment from harm.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "dde340c5-9cf6-30de-9c84-5f58345d4ea5",
+  :ability/key "wh3_dlc24_item_abilities_book_of_secrets",
+  :ability/name "Book of Secrets",
+  :ability/description
+  "Fire, Death and Shadow; all parts of a balanced, nutritious breakfast. Mmmm…",
+  :ability/ability-type "wh_type_hex",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "19816148-01af-33f6-990f-99ff295604c7",
+  :ability/key "wh3_dlc24_item_abilities_mirror_of_knowledge",
+  :ability/name "Mirror of Knowledge",
+  :ability/description
+  "\"The mind is quicker than the eye. Your thoughts... are mine now.\"",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f9d36596-e032-34c1-aa5e-4f844caecef5",
+  :ability/key "wh3_dlc24_item_abilities_ritual_of_the_beast",
+  :ability/name "Ritual of the Beast",
+  :ability/description
+  "A door between realities manifests, calling forth beings from beyond to wreak havoc and death upon this plane.",
+  :ability/ability-type "wh_type_summon_unit",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3db9bc4c-0212-37c4-8f7d-a3b6e5ed7d48",
+  :ability/key "wh3_dlc24_item_abilities_the_golden_eye_of_tzeentch",
+  :ability/name "The Golden Eye of Tzeentch",
+  :ability/description
+  "This potent talisman consists of a filigree of witch-hair cradling the fossilised eye of a Lord of Change; its bearer develops a sixth-sense that warns him of threats from afar.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "897be139-c586-35f3-9dd7-a5958a448fb9",
+  :ability/key "wh3_dlc24_item_abilities_wind_bow",
+  :ability/name "Wind Bow",
+  :ability/description
+  "A single, enchanted shot is all that Saytang needs.",
+  :ability/ability-type "wh_type_magic_missiles",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ed245ff3-aae8-30f8-8f40-3921f44ed445",
+  :ability/key "wh3_dlc24_item_passive_divining_rod",
+  :ability/name "Divining Rod",
+  :ability/description
+  "This item can be used to seek out lost artefacts of the Old Ones or to investigate disturbances in the Geomantic Web.",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b0f6c650-9002-3cbf-8c34-ae08ea8b01e9",
+  :ability/key "wh3_dlc24_item_passive_sentient_stormcloud",
+  :ability/name "Sentient Stormcloud",
+  :ability/description
+  "\"Buzzapp! That's right – just like lightning! At my behest!\"",
+  :ability/ability-type "wh_type_bombardment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f9e4cc75-0017-3b31-b5e6-cf075cb103fd",
+  :ability/key "wh3_dlc24_item_passive_totem_of_ursus",
+  :ability/name "Totem of Ursus",
+  :ability/description
+  "Intrinsically unnatural, yet supernaturally powerful, this artefact exudes an aura that enfeebles the spirit of those who defy its invigorated bearer.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "eb715927-0a71-3495-9a0b-cca53dfb06ab",
+  :ability/key "wh3_dlc25_item_abilities_deaths_timekeeper",
+  :ability/name "Death's Timekeeper",
+  :ability/description
+  "A shroud of Shyish hangs over these sands of time, offering life with one hand while dealing death with the other.",
+  :ability/ability-type "wh_type_direct_damage",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4bcd8523-941c-3aef-b680-1b4841a0040a",
+  :ability/key "wh3_dlc25_item_abilities_necrotic_phylactry",
+  :ability/name "Necrotic Phylactery",
+  :ability/description
+  "Crafted by the Foetid Brewmaster, Ku'gath Plaguefather, this vellum pouch absorbs all known curses and poisons.",
+  :ability/ability-type "wh_type_chain_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "591597d0-8887-33fb-9a0b-f11d5959faf1",
+  :ability/key "wh3_dlc25_item_abilities_ominous_powder",
+  :ability/name "Ominous Powder",
+  :ability/description
+  "\"That jittery little man who sold me this strange green powder wasnt lying... it really is incredible!\"",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5b3c40ac-f351-37af-8e5f-e31d2be8e5c8",
+  :ability/key "wh3_dlc25_item_abilities_stormlance",
+  :ability/name "Stormlance",
+  :ability/description
+  "With a bladed tip crafted from meteoric iron and graven with the runes of the heavens, this lance strikes its target like a bolt of lightning, both burning and blasting them.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "233c229e-5458-3797-9816-fdfa95211ab7",
+  :ability/key "wh3_dlc25_item_abilities_the_gold_standard",
+  :ability/name "The Gold Standard",
+  :ability/description
+  "...by which all other warriors shall be measured, further warded for invulnerability.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f50673a5-bb99-3fde-9056-0e9a661c98f6",
+  :ability/key "wh3_dlc25_item_passive_armour_of_tarnus",
+  :ability/name "Armour of Tarnus",
+  :ability/description
+  "Friedrich von Tarnus was a seasoned warrior long before he became Magister Patriarch of the Bright Order. Even then, his magical talent was clear for all to see.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "d4ad59f5-4a23-3bcb-8e93-db5a50f59a9b",
+  :ability/key "wh3_dlc25_item_passive_baleflame_amulet",
+  :ability/name "Baleflame Amulet",
+  :ability/description
+  "A gift from Magisterix Elspeth von Draken, this charm bristles with unbridled power, promising doom to all who rise against its wielder.",
+  :ability/ability-type "wh_type_explosion",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "519c6d33-7c97-3516-958c-91ce77cf46b8",
+  :ability/key "wh3_dlc25_item_passive_cloak_of_anraheir",
+  :ability/name "Cloak of Anraheir",
+  :ability/description
+  "Anraheir made this cloak from the toughened hide of a Minotaur; it strikes fear into the heart of every beast that beholds it.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3154a552-2d69-30a5-99d7-f535980571a5",
+  :ability/key "wh3_dlc25_item_passive_the_eyes_of_grungni",
+  :ability/name "The Eyes of Grungni",
+  :ability/description
+  "When enemies think they are safe at range, wise Grungni ensures their confidence is misplaced.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "181eb431-2d2a-3cbd-a53b-bcde7a91d752",
+  :ability/key "wh3_dlc26_item_abilities_bugmans_xxxxxx",
+  :ability/name "Bugman's XXXXXX",
+  :ability/description
+  "The Ogres know, just as the Dwarfs do, there's literally nothing so refreshing – or indeed regenerative – as a gigantic tankard brimming with Bugman's finest brew.",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "94426019-e4e2-36aa-878d-05c268b19d7d",
+  :ability/key "wh3_dlc26_item_passive_brass_collar_of_khorne",
+  :ability/name "Brass Collar of Khorne",
+  :ability/description
+  "A brazen collar emerged from the corded muscle of Scyla’s neck during his final transformation to protect the Blood God’s favoured spawn from cowardly wizardry.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c252a636-7d84-305a-a2d7-290f2eca4ff9",
+  :ability/key "wh3_dlc27_item_abilities_bear_fang_talisman",
+  :ability/name "Bear Fang Talisman",
+  :ability/description
+  "This ancient, yellowed canine tooth is the sacred talisman of lordship among Beorg’s tribe, warding off blows that would otherwise harm its wearer.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2b8421c0-730b-3c80-98d4-0207225003d9",
+  :ability/key "wh3_dlc27_item_abilities_eagle_feather_torc",
+  :ability/name
+  "{{tr:ancillaries_onscreen_name_wh3_dlc27_anc_talisman_eagle_feather_torc}}",
+  :ability/description
+  "{{tr:ancillaries_colour_text_wh3_dlc27_anc_talisman_eagle_feather_torc}}",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "57ed2196-c024-365d-8eab-b712d5b6422a",
+  :ability/key "wh3_dlc27_item_abilities_elixir_of_damnation",
+  :ability/name "Elixir of Damnation",
+  :ability/description
+  "A force-feeding of Dechala’s hideous poison thrusts her victims into the grip of pain and ecstasy, without the will or wherewithal to oppose her.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "01110d83-401b-3876-9c3e-3a18c6f2522e",
+  :ability/key "wh3_dlc27_item_abilities_mask_of_the_merlord",
+  :ability/name "Mask of the Merlord",
+  :ability/description
+  "They say the quiet strength of the ocean is contained within this ancient relic of the deeps, along with a touch of its raging sentience…",
+  :ability/ability-type "wh_type_summon_unit",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9692aa68-8995-3f15-83fe-d6728ad7ef44",
+  :ability/key "wh3_dlc27_item_abilities_null_stone",
+  :ability/name "Null Stone",
+  :ability/description
+  "Those with the witch-sight see this as a dark void, an unsettling patch of nothingness in the world of magic.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7698fe5d-ba39-36e1-95ca-5f94ae18bf75",
+  :ability/key "wh3_dlc27_item_abilities_preyton_horns",
+  :ability/name
+  "{{tr:ancillaries_onscreen_name_wh3_dlc27_anc_enchanted_item_preyton_horns}}",
+  :ability/description
+  "{{tr:ancillaries_colour_text_wh3_dlc27_anc_enchanted_item_preyton_horns}}",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "410a8207-552a-36ef-823a-1b2090b59e75",
+  :ability/key "wh3_dlc27_item_abilities_schalkains_teeth",
+  :ability/name "Schalkain's Teeth",
+  :ability/description
+  "This corpse-skin bag contains the sigil-etched teeth of Sayl’s former master Schalkain and other defeated wizards and magical beasts, each a treacherous curse to hurl at his enemies.",
+  :ability/ability-type "wh_type_magic_missile",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "87350fef-066d-3ee8-af32-954fd75841be",
+  :ability/key "wh3_dlc27_item_abilities_spurting_bile_blood",
+  :ability/name "Spurting Bile-Blood",
+  :ability/description
+  "This horrid creature bleeds stinking, vitriolic bile that spurts out from the slightest wound in great gouts of hissing back fluid.",
+  :ability/ability-type "wh_type_vortex",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "dccbf304-61b8-3f6e-bc3e-a957e1707451",
+  :ability/key "wh3_dlc27_item_abilities_staff_of_the_masque",
+  :ability/name "Staff of Masks",
+  :ability/description
+  "A mesmeric whirling of flickering golden masks and flowing, strained limbs draws foes into the Masque’s unholy pageant, pushing them to bone-weary agony.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "fe78ad49-2fa7-324c-a99c-7c0274fbf118",
+  :ability/key "wh3_dlc27_item_passive_annulian_crystal",
+  :ability/name "Annulian Crystal",
+  :ability/description
+  "Dug from beneath the Annuli mountains, this crystal has been shaped by the magical vortex that swathes Ulthuan, drawing magical energy towards it.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "11dd72ac-a93c-3a2d-8faf-60eef5016505",
+  :ability/key "wh3_dlc27_item_passive_armour_of_the_old_gods",
+  :ability/name
+  "{{tr:ancillaries_onscreen_name_wh3_dlc27_anc_armour_armour_of_the_old_gods}}",
+  :ability/description
+  "{{tr:ancillaries_colour_text_wh3_dlc27_anc_armour_armour_of_the_old_gods}}",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e0effbc4-80c8-30da-9eb9-7cccd1f09420",
+  :ability/key "wh3_dlc27_item_passive_axe_of_the_pale_serpent",
+  :ability/name
+  "{{tr:ancillaries_onscreen_name_wh3_dlc27_anc_weapon_axe_of_the_pale_serpent}}",
+  :ability/description
+  "{{tr:ancillaries_colour_text_wh3_dlc27_anc_weapon_axe_of_the_pale_serpent}}",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2058f275-1a2a-3e8b-a9cc-c36dedd06842",
+  :ability/key "wh3_dlc27_item_passive_blade_of_the_old_gods",
+  :ability/name
+  "{{tr:ancillaries_onscreen_name_wh3_dlc27_anc_weapon_blade_of_the_old_gods}}",
+  :ability/description
+  "{{tr:ancillaries_colour_text_wh3_dlc27_anc_weapon_blade_of_the_old_gods}}",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3673a2f7-f5ff-31a3-8911-7860e499445b",
+  :ability/key "wh3_dlc27_item_passive_carrion_spine",
+  :ability/name
+  "{{tr:ancillaries_onscreen_name_wh3_dlc27_anc_enchanted_item_carrion_spine}}",
+  :ability/description
+  "{{tr:ancillaries_colour_text_wh3_dlc27_anc_enchanted_item_carrion_spine}}",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "140af6c3-cb4b-3154-9837-a36e392ad372",
+  :ability/key "wh3_dlc27_item_passive_charm_of_the_gods",
+  :ability/name
+  "{{tr:ancillaries_onscreen_name_wh3_dlc27_anc_talisman_charm_of_the_gods}}",
+  :ability/description
+  "{{tr:ancillaries_colour_text_wh3_dlc27_anc_talisman_charm_of_the_gods}}",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "084786d0-af71-35a5-b28e-e33557002a80",
+  :ability/key "wh3_dlc27_item_passive_golden_shield",
+  :ability/name "Golden Shield",
+  :ability/description
+  "A highly polished shield of blessed legend, inlaid with swirling patterns in many types of gold, its glory dazzling and confusing the foe.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "576ff82a-263f-30fa-b462-9841dc966dfb",
+  :ability/key "wh3_dlc27_item_passive_icon_of_the_old_gods",
+  :ability/name
+  "{{tr:ancillaries_onscreen_name_wh3_dlc27_anc_talisman_icon_of_the_old_gods}}",
+  :ability/description
+  "{{tr:ancillaries_colour_text_wh3_dlc27_anc_talisman_icon_of_the_old_gods}}",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c5141eca-de63-38ea-b2dc-07b37d05382a",
+  :ability/key "wh3_dlc27_item_passive_petrifying_gaze",
+  :ability/name "Petrifying Gaze",
+  :ability/description
+  "A single glance is enough to have any heart engulfed in abject terror, leaving mere mortals frozen in fear, unable to escape.",
+  :ability/ability-type "wh_type_hex",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "88b566e2-54d2-38da-af5a-160d57a77f8f",
+  :ability/key "wh3_dlc27_item_passive_skinhidden_plate",
+  :ability/name "Skinhidden Plates",
+  :ability/description
+  "The Fimir’s uniquely scaly skin allows the embedding of armoured plates to increase stature and resilience, though injury causes them to be swiftly shed!",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c3444f0a-6133-38ba-ad4c-bfcf67eab6e6",
+  :ability/key "wh3_dlc27_item_passive_stone_of_shyish",
+  :ability/name
+  "{{tr:ancillaries_onscreen_name_wh3_dlc27_anc_arcane_item_stone_of_shyish}}",
+  :ability/description
+  "{{tr:ancillaries_colour_text_wh3_dlc27_anc_arcane_item_stone_of_shyish}}",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b16ade47-e01c-3e25-b6e1-4ceb20227fc1",
+  :ability/key "wh3_dlc27_item_passive_strength_from_flesh",
+  :ability/name "Strength from Flesh",
+  :ability/description
+  "A frequent gorging on the enemy’s battle lines leads to this one’s flesh flushing red as its wounds reknit themselves.",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4e00b61a-b6ba-31df-88bc-eb45dfed7470",
+  :ability/key "wh3_dlc27_item_passive_temakadors_gauntlets",
+  :ability/name "Temakador's Gauntlets",
+  :ability/description
+  "Prince Temakador disliked harming fellow nobles in a duel, but hated even more to be harmed himself.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "50fdeb2f-5497-30e2-a5eb-706c4328cfd8",
+  :ability/key
+  "wh3_main_item_abilities_alchemists_elixir_of_iron_skin",
+  :ability/name "Alchemist's Elixir of Iron Skin",
+  :ability/description
+  "To be a Cathayan alchemist afore the disapproving masses takes a thick skin, but the reddish liquid within this phial goes far beyond that.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "46636015-995d-3ab3-8e8a-75f1015463d3",
+  :ability/key
+  "wh3_main_item_abilities_alchemists_elixir_of_puissance",
+  :ability/name "Alchemist's Elixir of Puissance",
+  :ability/description
+  "The fighting prowess of Cathay's greatest can be taken in draught form when a further burst of aggression is needed to tip the balance in the Celestial Emperor's favour.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "96b81fd2-e2c2-3193-b572-050bac5ba107",
+  :ability/key "wh3_main_item_abilities_alchemists_elixir_of_venom",
+  :ability/name "Alchemist's Elixir of Venom",
+  :ability/description
+  "This concoction enables the taker to not just wound their opponent, but set deadly poison in the lacerated flesh as well.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "052eb6f6-c471-36ae-8a35-f24b972fb180",
+  :ability/key "wh3_main_item_abilities_bangstick",
+  :ability/name "Bangstick",
+  :ability/description
+  "Famous for his loud voice and total contempt for all Gnoblars, Bannaga's invention causes a line of explosions to clear the foe from the bearer's path.",
+  :ability/ability-type "wh_type_breath",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4d8c65c8-9ce0-3031-a525-82dde4c76673",
+  :ability/key "wh3_main_item_abilities_bloodstone",
+  :ability/name "Bloodstone",
+  :ability/description
+  "A fragment of Khorne's blood-soaked realm, this dark, red-veined rock bulges and pulses with Daemon blood until Bloodletters burst forth to do his vicious bidding.",
+  :ability/ability-type "wh_type_summon_unit",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e0f880ae-7f4d-37ad-80c9-dd4149712543",
+  :ability/key "wh3_main_item_abilities_crackleblaze",
+  :ability/name "Crackleblaze",
+  :ability/description
+  "When thrown at the foe, the sputtering, unquenchable fluid within this porcelain ball sticks to their skin, quickly burning through it with a savage intensity.",
+  :ability/ability-type "wh_type_explosion",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "895a4cd6-165b-3c0b-819a-b11b8b7b0f22",
+  :ability/key "wh3_main_item_abilities_deaths_head",
+  :ability/name "Blight Boil",
+  :ability/description
+  "This filthy, pulsating blister rapidly grows before suddenly bursting, showering the enemy with its disgusting fluid and all the maladies contained within.",
+  :ability/ability-type "wh_type_explosion",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a8d4adbb-0707-3091-ae89-60ec06b75d41",
+  :ability/key "wh3_main_item_abilities_fistful_of_laurels",
+  :ability/name "Fistful of Laurels",
+  :ability/description
+  "Ogres don't believe in declaring their leadership qualities via trinkets, but that doesn't mean they're above robbing the dead if it inspires their forces to push even harder.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "00cdb1e2-ab83-3ca1-8253-415b5a12e44f",
+  :ability/key "wh3_main_item_abilities_gastuvas_egg",
+  :ability/name "Gastuva's Egg",
+  :ability/description
+  "{{tr:ancillaries_colour_text_wh3_main_anc_arcane_item_gastuvas_egg}}",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "0ad4eaf5-2c4d-3350-8420-93593e7e20f6",
+  :ability/key "wh3_main_item_abilities_gruts_sickle",
+  :ability/name "Grut's Sickle",
+  :ability/description
+  "Grut the Bloodthirsty's culinary malevolence seems to live on in his rusty sickle, which gives the Butcher greater command over the Winds, but at a cost to his own health.",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "49f4dcde-a15f-36f4-85a6-8f51bd0267b0",
+  :ability/key "wh3_main_item_abilities_hellheart",
+  :ability/name "Hellheart",
+  :ability/description
+  "By forcing this ichor-soaked, Ruin-imbued heart of a foul Chaos Spawn down, the Butcher may create a vortex of magical anarchy that beguiles magic-using adversaries.",
+  :ability/ability-type "wh_type_hex_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "dba98618-68d6-31a2-bee4-b111e33f9004",
+  :ability/key "wh3_main_item_abilities_kovsh_breath",
+  :ability/name "Kovsh Breath",
+  :ability/description
+  "A magical blast of frosty breath hinders and hampers the enemy's progress, leaving them little able to defend themselves from attack. ",
+  :ability/ability-type "wh_type_breath",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "81de3586-f09b-3260-aedd-6e25905d788c",
+  :ability/key "wh3_main_item_abilities_maw_shard",
+  :ability/name "Maw Shard",
+  :ability/description
+  "When activated, this strange, extra-worldly artefact from the broken lands around the Great Maw greatly increases the power of friendly Wizards' spells.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cbdc8a76-66a0-338e-8f43-d7c2276d9d9e",
+  :ability/key "wh3_main_item_abilities_potion_of_farsight",
+  :ability/name "Potion of Farsight",
+  :ability/description
+  "A friend to marksmen of all creeds, this piercing cyan liquid allows its imbiber to pick out weak spots and guide their shots true.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "0b119f34-339c-3095-a6c9-925d765a4d59",
+  :ability/key "wh3_main_item_abilities_prismatic_amplifier",
+  :ability/name "Prismatic Amplifier",
+  :ability/description
+  "This colourless crystal splits and intensifies light that falls upon it, twisting it into dazzling and unsettling hues that further empower the spellcaster in combat.",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "dbb76c6c-f16b-3de8-b0f7-0424c2e81435",
+  :ability/key "wh3_main_item_abilities_saint_annushkas_finger_bone",
+  :ability/name "Saint Annushka's Finger Bone",
+  :ability/description
+  "The beloved Saint Annushka met her end rescuing an infant from a frozen lake. This relic from her beatified remains heals and restores its user's body.",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "00128de5-e7b1-3c7a-b67e-e231e42f8b00",
+  :ability/key "wh3_main_item_abilities_scales_of_the_celestial_court",
+  :ability/name "Scales of the Celestial Court",
+  :ability/description
+  "Fashioned from scales of the Celestial Dragon himself, this armour is worn only by the greatest Cathayan heroes, that they may resist blows and traverse terrain without impediment.",
+  :ability/ability-type "wh_type_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5178aa6e-086d-3dbc-a457-c410a9219af8",
+  :ability/key "wh3_main_item_abilities_snowflake_pendant",
+  :ability/name "Snowflake Pendant",
+  :ability/description
+  "Apparently a simple pendant in the shape of a snowflake, it constantly changes its form, adopting a new and unique shape each time.",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cd6e051d-3c86-3d3e-8591-7a5524db81f0",
+  :ability/key "wh3_main_item_abilities_staff_of_wu_xing",
+  :ability/name "Staff of Wu Xing",
+  :ability/description
+  "Created by the Jade Dragon Yuan Bo, this enchanted staff has the power to manipulate the Elemental Winds themselves, causing them to blow stronger or weaker on command.",
+  :ability/ability-type "wh_type_area_of_augments_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a7859b50-00ee-31ad-af0e-1765083c4102",
+  :ability/key "wh3_main_item_abilities_steppe_hunters_horn",
+  :ability/name "Steppe Hunter's Horn",
+  :ability/description
+  "Taken from an unknown but clearly massive beast, this horn has been handed from father to eldest son through generations of Kislev's pre-eminent family of beast hunters.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "70ca1362-9656-3b35-be13-5cc3626c48d9",
+  :ability/key "wh3_main_item_abilities_the_bloody_shackle",
+  :ability/name "The Bloody Shackle",
+  :ability/description
+  "This implement of enslavement enables the bearer to heal themselves, once only, through the blood stained upon its iron.",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b6d16b53-c3d0-3b3d-a03b-2c88ef80dc48",
+  :ability/key "wh3_main_item_abilities_the_chromatic_tome",
+  :ability/name "The Chromatic Tome",
+  :ability/description
+  "Inked upon these pages are the fundamental secrets of the Winds of Chaos. Alas, the grimoire is a fickle and mischievous Daemon, little given to co-operation.",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b21b0657-abec-3416-9be4-b475546d2b0c",
+  :ability/key "wh3_main_item_abilities_the_portalglyph",
+  :ability/name "The Portalglyph",
+  :ability/description
+  "The mad mage M'kar's plans to lure Daemons to his service eventually went awry. Though the glyph has been seen many times since, its creator seems to have vanished…",
+  :ability/ability-type "wh_type_summon_unit",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ba4e6e2b-e251-3497-a509-4b98b470176c",
+  :ability/key "wh3_main_item_abilities_the_rock_of_inevitability",
+  :ability/name "The Rock of Inevitability",
+  :ability/description
+  "So long as a single stone remains, the ageless Inevitable City shall always rebuild itself.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b00d5818-3beb-397a-a258-5e22db04f295",
+  :ability/key "wh3_main_item_abilities_void_pendulum",
+  :ability/name "Void Pendulum",
+  :ability/description
+  "When the pendulum swings, the foe's spellcasters find themselves powerless and magically impotent.",
+  :ability/ability-type "wh_type_hex_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ddbcb411-2802-36cc-a4af-b1287a913a22",
+  :ability/key "wh3_main_item_abilities_zak_aloooog",
+  :ability/name "Wake Da Idol",
+  :ability/description
+  "Thrumming with the magic of Wazwhoompa, Shaman of the 'Eadhuntaz, the Idol of Zak-Aloooog unleashes the might of the Greenskin gods themselves.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "6636bf0b-cbc6-37d6-9f03-c8f8ce2c8c2a",
+  :ability/key "wh3_main_item_passive_armour_of_ursun",
+  :ability/name "Armour of Ursun",
+  :ability/description
+  "Instilled with the Great Bear's limitless strength, these iron plates enable Boris to continue the fight even when gravely injured.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "6bfb850a-260d-39b2-9d78-1f4cd71a09e3",
+  :ability/key "wh3_main_item_passive_balalaika_of_the_arari",
+  :ability/name "Balalaika of the Arari",
+  :ability/description
+  "The bearer's fingers move over its strings of their own accord, weaving a rousing tune to inspire Dazh's warrior consorts as they do their deadly work.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "eb1b51f9-a685-3f1a-87f7-fce8918a1b65",
+  :ability/key "wh3_main_item_passive_blood_of_the_motherland",
+  :ability/name "Blood of the Motherland",
+  :ability/description
+  "When even a single drop of Kislev's blood is spilled, its fighters morale and resolve is strengthened in the nation's defence.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c79863bf-8206-3efa-9d27-c451cfef0002",
+  :ability/key "wh3_main_item_passive_brahmir_statue",
+  :ability/name "Brahmir Statue",
+  :ability/description
+  "This effigy depicts one of the thousand gods worshipped in far-off Ind. For reasons unknown it holds a particular horror for worshippers of the Dark Gods.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cda12631-bb8a-3f95-998a-65f8d57e67f3",
+  :ability/key "wh3_main_item_passive_catalytic_kiln",
+  :ability/name "Catalytic Kiln",
+  :ability/description
+  "Those caught in the kiln's ambit find themselves not only seared and scorched, but any resistance to fire they may have is weakened considerably.",
+  :ability/ability-type "wh_type_area_of_direct_damage",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "dd4ea51e-ac0d-3b80-aa46-6432f4298b6a",
+  :ability/key "wh3_main_item_passive_cauldron_of_the_great_maw_ii",
+  :ability/name "Cauldron of the Great Maw",
+  :ability/description
+  "Skrag's cauldron has become a tool by which the former Slaughtermaster makes blessed offerings to his ravenous god.",
+  :ability/ability-type "wh_type_area_of_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4c2ea345-f9cd-30e8-92ff-81c1df2d9c79",
+  :ability/key "wh3_main_item_passive_celestial_silk_robe",
+  :ability/name "Celestial Silk Robe",
+  :ability/description
+  "Sight of the robe reminds those close to it that they fight for the forces of harmony and order.",
+  :ability/ability-type "wh_type_area_of_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "12132389-4cca-31ef-8d89-bce0e85d0284",
+  :ability/key "wh3_main_item_passive_cloak_of_po_mei",
+  :ability/name "Cloak of Po Mei",
+  :ability/description
+  "A relic of the great Astromancer Po Mei, this enchanted cloak grants its wearer exceptional magical strength and mastery over one of the Elemental Winds.",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3fd8e5f2-26ca-35e9-857d-73b6164eb1fc",
+  :ability/key "wh3_main_item_passive_crystal_cloak",
+  :ability/name "The Crystal Cloak",
+  :ability/description
+  "This magical cloak increases the Ice Queen's defensive capabilities at the very moment she casts her powerful spells of protection or death.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "d7785aef-b555-3f94-9470-dca2adabfea0",
+  :ability/key "wh3_main_item_passive_crystal_of_kunlan",
+  :ability/name "Crystal of Kunlan",
+  :ability/description
+  "These rare crystals from the peaks of Kunlan protect their bearer but can also unleash a deadly blast of sorcerous energy when struck in battle.",
+  :ability/ability-type "wh_type_explosion",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b5ba1c9f-0e50-3ba3-a15b-39d0658534f5",
+  :ability/key "wh3_main_item_passive_enthralling_musk",
+  :ability/name "Enthralling Musk",
+  :ability/description
+  "The strongest, most captivating scent distracts the foe from the bloody business at hand, slowing them and weakening their attack.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "50a04829-fac2-3af3-b9fe-5344cbaf7a39",
+  :ability/key "wh3_main_item_passive_ever_full_kovsh",
+  :ability/name "Ever-Full Kovsh",
+  :ability/description
+  "Who doesn't like a drink? No one you want to be fighting alongside, that's who!",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "02ade98b-1cbc-363c-9046-1f7d6c6436b1",
+  :ability/key "wh3_main_item_passive_fractured_clasp",
+  :ability/name "Fractured Clasp",
+  :ability/description
+  "The cohesion of the foe's attack is broken, greatly reducing its impact.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "6d79d982-83eb-3c5a-a78b-d7fbda93474c",
+  :ability/key "wh3_main_item_passive_gnoblar_thiefstone",
+  :ability/name "Gnoblar Thiefstone",
+  :ability/description
+  "Among a host of other uses, this handy bit of Gnoblar kit brings a much-needed element of surprise to the blunt-force trauma the Ogres traditionally provide.",
+  :ability/ability-type "wh_type_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a07a0050-509e-3b9f-9e05-b2b988a9ad54",
+  :ability/key "wh3_main_item_passive_greedy_fist",
+  :ability/name "Greedy Fist",
+  :ability/description
+  "With punch-spikes of iron and tusk embedded into the knuckles, this formidable enchanted weapon drags itself to a worthy Ogre who may then claim it for a time.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "77928e2d-fbeb-344c-81e8-a69a10e6b3d0",
+  :ability/key "wh3_main_item_passive_gut_maw",
+  :ability/name "Gut Maw",
+  :ability/description
+  "This polished brass gut-plate features a set of silver jaws that pass kills straight into the Great Maw, and their lifeforce to the bearer.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "fe0d7586-42a2-3463-90d4-5bb99de829d1",
+  :ability/key "wh3_main_item_passive_iron_ice_armour",
+  :ability/name "Iron Ice Armour",
+  :ability/description
+  "Fashioned from scales of super-dense ice hewn from a glacial core into a suit of black mail, from which emanates a numbing cold.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "db695d91-1afb-33dd-9233-7ca204abbac9",
+  :ability/key "wh3_main_item_passive_jade_amulet",
+  :ability/name "Jade Amulet",
+  :ability/description
+  "This enchanted amulet gives the Wizard more control over the Winds of Magic, increasing their reserves and improving their rate of recharge.",
+  :ability/ability-type "wh_type_area_of_augments_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cd3b1c85-ecc7-38b6-90d0-7de9fff50887",
+  :ability/key "wh3_main_item_passive_jade_lion",
+  :ability/name "Jade Lion",
+  :ability/description
+  "A living statue crafted from a block of jade, the lion is a conduit for sorcery and can improve the morale of any friendly troops in its vicinity.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "658c261c-9ccd-377e-8658-f5985d87760d",
+  :ability/key "wh3_main_item_passive_kite_of_the_uttermost_airs",
+  :ability/name "Kite of the Uttermost Airs",
+  :ability/description
+  "Made from a section of the actual hide of the Luan bird familiar of the founding Master of the Celestial Temple, this kite deals with airborne enemies most effectively.",
+  :ability/ability-type "wh_type_area_of_direct_damage",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "472da526-74a8-36aa-b90a-f54e1bc56a51",
+  :ability/key "wh3_main_item_passive_mirror_of_the_ice_queen",
+  :ability/name "Mirror of the Ice Queen",
+  :ability/description
+  "A hand mirror fashioned from flawless ice, with an intricate frame of frostwork, will reflect the foe's violence back on himself.",
+  :ability/ability-type "wh_type_area_of_direct_damage",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "91e08dfc-e549-36c7-8584-e0834620b637",
+  :ability/key "wh3_main_item_passive_overtyrants_crown",
+  :ability/name "Overtyrant's Crown",
+  :ability/description
+  "A basin-sized crown encrusted with gems and nailed directly into Greasus Goldtooth's lumpy skull, which enhances his intellect to near human levels.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "936f2e82-804a-3ff3-bb13-196347a1e39b",
+  :ability/key "wh3_main_item_passive_rock_eye",
+  :ability/name "Rock Eye",
+  :ability/description
+  "Having gouged out one of his eyes and cast it into the Great Maw, an Ogre may fit a pebble from the ground around the pit to give himself second sight.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9e559a90-1f8a-3238-9c72-9471296361bb",
+  :ability/key "wh3_main_item_passive_rod_of_command",
+  :ability/name "Rod of Command",
+  :ability/description
+  "A big stick is a useful implement, especially when it can command the obedience of the enemy as well as your own troops.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2d47a969-63e8-3062-8713-1562fc9f6e27",
+  :ability/key "wh3_main_item_passive_shield_of_sacrifice",
+  :ability/name "Shield of Sacrifice",
+  :ability/description
+  "The strong can heal the weak at their own expense and still fight to the bitter end.",
+  :ability/ability-type "wh_type_area_of_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "97bcd3f7-6f14-3afe-af0b-931dda95c5ae",
+  :ability/key "wh3_main_item_passive_shield_of_the_nan_gau",
+  :ability/name "Shield of the Nan Gau",
+  :ability/description
+  "This mighty shield, carved from a section of the Great Bastion, offers unequalled protection.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f1eda0a8-aa33-3681-bc91-6e45acecca14",
+  :ability/key "wh3_main_item_passive_skullmantle",
+  :ability/name "Skullmantle",
+  :ability/description
+  "Ropes, wood, hair, iron nails and hide are twisted into a hideous ritual mask infused with the fears of the Ogres' defeated foes.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f734b8cd-9504-32b6-9da5-8d5787315d75",
+  :ability/key "wh3_pro11_item_passive_bane_shield",
+  :ability/name "The Bane Shield",
+  :ability/description
+  "Discharging a magical blast every time it is struck, Harry’s Bane Shield rebounds his enemies blows back from whence they came. ",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3a5bf588-f370-33b3-ba10-252151026092",
+  :ability/key
+  "wh3_pro12_item_passive_brass_collar_of_bloody_vengeance",
+  :ability/name "Brass Collar of Bloody Vengeance",
+  :ability/description
+  "Thicker and heavier than those of his pack, Karanak’s Collar of Khorne is enchanted with spite and abjuration, immunising the hound against callow sorcery.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9862edb8-b74c-3bbc-bd4b-ae5b34b19406",
+  :ability/key "wh_dlc01_item_passive_helm_of_many_eyes",
+  :ability/name "Helm of Many Eyes",
+  :ability/description
+  "This helm is covered with eyeballs that stare into the world as it was, as it is, and as it shall be. Those that can sift through the images are... changed. ",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "def9aff8-fae2-3715-8976-d2633d514cd6",
+  :ability/key "wh_dlc01_item_passive_the_crown_of_domination",
+  :ability/name "The Crown of Domination",
+  :ability/description
+  "An ancient battle-helm dating back to the time of Morkar, it exudes an aura of raw malice to cow the servants of Chaos.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e2f71182-88c7-3212-93c8-b83468cfc646",
+  :ability/key "wh_dlc03_item_abilities_chalice_of_dark_rain",
+  :ability/name "Chalice of Dark Rain",
+  :ability/description
+  "Made from the skull of a geomancer - when filled with soil, the chalice can summon a deluge of blood-soaked mud.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4f260380-e42d-3646-904a-4b58095697df",
+  :ability/key "wh_dlc03_item_abilities_hagtree_fetish",
+  :ability/name "Hagtree Fetish",
+  :ability/description
+  "A crude effigy and shamanic heirloom from one of the hag trees that grow deep in the forest. ",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "03cbfb52-8a1c-3ce5-9f55-f7a736868e32",
+  :ability/key "wh_dlc03_item_abilities_horn_of_the_first_beast",
+  :ability/name "Horn of the First Beast",
+  :ability/description
+  "When this ancient, fossilised horn is sounded a cloud of disarray falls upon the enemy but emboldens the Gors.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f04a9277-0b07-39b8-b136-770f779c9cf6",
+  :ability/key "wh_dlc03_item_abilities_jagged_dagger",
+  :ability/name "Jagged Dagger",
+  :ability/description
+  "A potent sacrificial tool that radiates the wrath of a thousand different offerings to the Dark Gods. ",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5db69c4f-7610-3c47-862c-af31c7fd203d",
+  :ability/key "wh_dlc03_item_abilities_skull_of_rarkos",
+  :ability/name "Skull of Rarkos",
+  :ability/description
+  "The bleached skull of the long-dead Great Bray-Shaman, Rarkos, is mounted upon the bearer's staff. ",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cafa55f2-f8cb-3421-9833-a517fda9a3b6",
+  :ability/key "wh_dlc03_item_passive_blackened_plate",
+  :ability/name "Blackened Plate",
+  :ability/description
+  "This battered suit of ramshackle plate mail is covered with the soot from man's burned palaces and temples. ",
+  :ability/ability-type "wh_type_area_of_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "be99b192-d149-30a6-9982-06aa456bc9c2",
+  :ability/key "wh_dlc03_item_passive_icon_of_vilification",
+  :ability/name "Icons of Vilification",
+  :ability/description
+  "These cursed items are all manner of blasphemy, from skulls of dead priests to hallowed, torn branches of Loren. ",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9445e650-ee3b-36fb-9c89-8e1dd3e42763",
+  :ability/key "wh_dlc03_item_passive_shard_of_the_herdstone",
+  :ability/name "Shard of the Herdstone",
+  :ability/description
+  "A sliver of strangely glowing stone that when cast to the ground will generate a tremendous gust of magical wind. ",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "546685dd-bd1d-308b-9e0c-3bc000a87476",
+  :ability/key "wh_dlc03_item_passive_the_dark_mail",
+  :ability/name "The Dark Mail",
+  :ability/description
+  "This ancient suit of chainmail can counter the fanciful enchantments and magicks of enemy blades. ",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "07d75ef8-b8ba-3c91-bc3f-476cbaac37db",
+  :ability/key "wh_dlc03_item_passive_trollhide",
+  :ability/name "Trollhide",
+  :ability/description
+  "Trollhide confers some of the more gruesome abilities of its former occupant to the wearer! ",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3348f564-5c72-342f-a31a-e15ca64c3d37",
+  :ability/key "wh_dlc04_item_abilities_the_carstein_ring",
+  :ability/name "The Carstein Ring",
+  :ability/description
+  "An ancestral ring, set with a gem of deep, sanguine claret, that has granted the von Carsteins everlasting Undeath.",
+  :ability/ability-type "wh_type_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ae5cb1cf-cb99-3c17-b28e-48071891f2fe",
+  :ability/key "wh_dlc04_item_abilities_the_liber_noctus",
+  :ability/name "The Liber Noctus",
+  :ability/description
+  "This decrepit tome bristles with dark secrets and eldritch powers. Reading from it summons dark thoughts and grim deeds. ",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cda12700-b642-37e3-8e0f-e8ec5491f29c",
+  :ability/key "wh_dlc04_item_passive_jade_griffon",
+  :ability/name "Jade Griffon",
+  :ability/description
+  "This small idol shimmers with an eerie green light, bestowing unnatural regenerative powers upon the wearer.",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "44c2fd5d-091d-3d59-a4a9-a5d365e8f95e",
+  :ability/key "wh_dlc05_item_abilities_hail_of_doom_arrow",
+  :ability/name "Hail of Doom Arrow",
+  :ability/description
+  "These arrows shower their targets with dozens of razor-sharp shards; a percussive shot of death.",
+  :ability/ability-type "wh_type_magic_missiles",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4fc44cc5-d5fb-3931-ae4a-776aebd0a4f3",
+  :ability/key "wh_dlc05_item_abilities_horn_of_the_wild_hunt",
+  :ability/name "Horn of the Wild Hunt",
+  :ability/description
+  "When this ancient and revered relic is blown, all Elven forces are driven to the Hunt with a savage determination.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f07a7f2d-a487-39c4-bceb-1b7429cc6ae8",
+  :ability/key "wh_dlc05_item_passive_cloak_of_isha",
+  :ability/name "Cloak of Isha",
+  :ability/description
+  "This cloak, renewed annually by Ariel herself, is all Orion needs to protect himself.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2a238169-24c6-31f7-b6fc-b1e134c5c679",
+  :ability/key "wh_dlc06_item_passive_squiggly_beast",
+  :ability/name "Squiggly Beast",
+  :ability/description
+  "Once a Shaman, now a beast transformed by Wurrzag and retained as an example of Da Great Green Prophet's might.",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b6c940ea-140e-39d2-80a8-11fdab4826ce",
+  :ability/key "wh_dlc07_item_abilities_chalice_of_potions",
+  :ability/name "Chalice of Potions",
+  :ability/description
+  "Reaching to the highest heavens, the Wizard draws a wandering meteorite down upon the battlefield.",
+  :ability/ability-type "wh_type_bombardment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b829bfc3-bd6c-38c0-ba4b-131a0aa05dff",
+  :ability/key "wh_dlc07_item_abilities_wrath_of_manann",
+  :ability/name "Wrath of Manann",
+  :ability/description
+  "Those struck by the Sea God’s trident are swept away by a crushing tide of furious wrath.",
+  :ability/ability-type "wh_type_wind",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ecfb1606-51ea-33d8-9bc2-9ea0445dee74",
+  :ability/key "wh_dlc08_item_abilities_ancient_frost_wyrm_scale",
+  :ability/name "Ancient Chaos Frost Dragon Scale",
+  :ability/description
+  "The impossibly harsh climate in which the Chaos Frost Dragons live ensures their scales bolster armour's effectiveness whilst burning any foe who touches them with intense cold.",
+  :ability/ability-type "wh_type_vortex",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2adbe53f-683e-3358-9c1d-20efea6ed2de",
+  :ability/key "wh_dlc08_item_abilities_arachnarok_eggs",
+  :ability/name "Arachnarok Eggs",
+  :ability/description
+  "Each egg contains deadly spiderlings, to swarm over and bite the foe's body, injecting deadly venom into the wounds.",
+  :ability/ability-type "wh_type_summon_unit",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "201cad8c-5ce2-3529-8106-76b878839ff9",
+  :ability/key "wh_dlc08_item_abilities_great_horn_of_dragon_ogre",
+  :ability/name "Dragon Ogre's Great Horn",
+  :ability/description
+  "When blown, the Great Horn calls up a thunderstorm which forces the bearer's enemies back with high winds and lightning strikes.",
+  :ability/ability-type "wh_type_bombardment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c78647ce-62d1-3f11-903b-c86ceeab5ef8",
+  :ability/key "wh_dlc08_item_abilities_terrorgheist_skull",
+  :ability/name "Terrorgheist Skull",
+  :ability/description
+  "In death, a Terrorgheist may even be more deadly than when alive - its terrifying countenance improving the bearer's abilities by removing the need to rest between uses.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "12a1965c-50e1-30aa-a416-af7219ff5d44",
+  :ability/key "wh_dlc08_item_abilities_the_wintertooth_crown",
+  :ability/name "The Wintertooth Crown",
+  :ability/description
+  "Whether by the crown's own properties, or by the grace of the Dark Gods, all things bestial and savage obey the wearer.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ef1f8520-e0e1-32c2-bdb0-c72ba24ac0ae",
+  :ability/key "wh_dlc08_item_abilities_vial_of_troll_blood",
+  :ability/name "Vial of Troll Blood",
+  :ability/description
+  "Disgusting as it may be, a shot of Troll blood is just the thing to bolster the drinker's courage, causing an unstoppable bloodlust to rise within them.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "0010f093-72c6-3ec2-875c-7a062463afe8",
+  :ability/key "wh_main_item_abilities_black_periapt",
+  :ability/name "Black Periapt",
+  :ability/description
+  "The Black Periapt is a grandiose gem of sullen darkness whose power can only be realised in the hands of a spellcaster.  ",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "038f564f-34c5-3e33-a929-a8c581f6fb76",
+  :ability/key "wh_main_item_abilities_channelling_staff",
+  :ability/name "Channelling Staff",
+  :ability/description
+  "A staff of pure silver etched with all eight runes from the magic wheel. Such an item can only enhance a Wizard's ability to channel.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "683b11b4-bd06-3ab9-951a-a1ea59bf7a9e",
+  :ability/key "wh_main_item_abilities_cloak_of_mists_and_shadows",
+  :ability/name "Cloak of Mists & Shadows",
+  :ability/description
+  "Kemmler is surrounded by a dark cloak that swirls and twists with a life of its own.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "1c5eb895-94ac-32af-8639-f109026166ca",
+  :ability/key "wh_main_item_abilities_crown_of_command",
+  :ability/name "Crown of Command",
+  :ability/description
+  "The Crown of Command has been worn in countless battles. Its wearer is given great authority, instilling in his subjects an unbreakable courage.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "fd55f2e7-385c-32fa-b532-76ee0f960d7a",
+  :ability/key "wh_main_item_abilities_daemonic_strength",
+  :ability/name "Daemonic Strength",
+  :ability/description
+  "To have the strength of a raging Daemon is to slay in one swipe.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "0d2023a9-653b-3270-91c3-f2eee4a9f847",
+  :ability/key "wh_main_item_abilities_dark_fortune",
+  :ability/name "Dark Fortune",
+  :ability/description
+  "Asavar Kul, the Butcher of Praag, demanded his Champions sup boiled Daemon blood from the Chalice of Chaos, imbuing them with strength and vigour. ",
+  :ability/ability-type "wh_type_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "d5da5a98-5139-3a6b-8a99-55d185426bf9",
+  :ability/key "wh_main_item_abilities_earthing_rod",
+  :ability/name "Earthing Rod",
+  :ability/description
+  "When planted in the ground this obsidian rod becalms the arcane winds for the briefest moment, allowing the Wizard to cast one of his powerful enchantments unopposed. ",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c58d28c2-21aa-3ab2-b431-8014e690cdf1",
+  :ability/key "wh_main_item_abilities_fiery_ring_of_thori",
+  :ability/name "Fiery Ring of Thori",
+  :ability/description
+  "When the rune within the dark ruby of the ring is activated a roiling ball of magic flame is hurled toward a nearby foe.",
+  :ability/ability-type "wh_type_breath",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "34d6305f-da38-34bc-a40e-6102246e9382",
+  :ability/key "wh_main_item_abilities_forbidden_rod",
+  :ability/name "Forbidden Rod",
+  :ability/description
+  "This marble and golden-laced artefact can summon the Winds of Magic, but at a cost to the user.",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "1b648ba9-6ea7-3888-a50d-a4fe570b0567",
+  :ability/key "wh_main_item_abilities_opal_amulet",
+  :ability/name "Opal Amulet",
+  :ability/description
+  "The Opal Amulet can grant its wearer a life-saving second chance, but suffers a hairline fracture in its previously perfect surface as a result.   ",
+  :ability/ability-type "wh_type_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2664868e-6b51-3047-96ec-2fe0b6f171e1",
+  :ability/key "wh_main_item_abilities_pendant_of_slaanesh",
+  :ability/name "Pendant of Slaanesh",
+  :ability/description
+  "This pendant was crafted from the crystallised soul of the very first man to have been seduced by Slaanesh. ",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3985af3f-3bb5-3042-a967-b10f3c6a1941",
+  :ability/key "wh_main_item_abilities_potion_of_foolhardiness",
+  :ability/name "Potion of Foolhardiness",
+  :ability/description
+  "Those that drink this tincture may well be fools, but they are bold fools at that! ",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "28db6fed-0d43-3fae-ab51-d4b7ebb2e703",
+  :ability/key "wh_main_item_abilities_potion_of_healing",
+  :ability/name "Potion of Healing",
+  :ability/description
+  "This potion knits bones, seals flesh and staunches the flow of blood from mortal wounds.  ",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "0aaa2536-0b52-3a60-918a-26958964e065",
+  :ability/key "wh_main_item_abilities_potion_of_speed",
+  :ability/name "Potion of Speed",
+  :ability/description
+  "The blue liquid in this small bottle blesses the imbiber with a boost of preternatural speed.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "49f01c83-ca0b-3ff2-a3fc-bb7bbb1d6b70",
+  :ability/key "wh_main_item_abilities_potion_of_strength",
+  :ability/name "Potion of Strength",
+  :ability/description
+  "The sludgy black liquor in this stern glass flask is a Potion of Strength, allowing the drinker to cause devastating damage.",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e398a90a-ec61-333e-9e32-e20dab73c8c0",
+  :ability/key "wh_main_item_abilities_potion_of_toughness",
+  :ability/name "Potion of Toughness",
+  :ability/description
+  "Those that consume a Potion of Toughness find their skin hardening as swords and arrows glance off their body, even on parts not covered by armour! ",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c8fb7532-a36b-374f-9d11-62c018ca1aaf",
+  :ability/key "wh_main_item_abilities_power_stone",
+  :ability/name "Power Stone",
+  :ability/description
+  "When a magic-user rubs a power stone, the artefact glows for a split second before dulling forever. However, in that moment, the Winds of Magic blow a tempest! ",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "1e2bc55a-cd2f-35de-8072-bd84ec7d4776",
+  :ability/key "wh_main_item_abilities_regenerating_flesh",
+  :ability/name "Regenerating Flesh",
+  :ability/description
+  "Regenerating flesh is a gift from the gods, allowing the affected to heal their wounds. ",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "96c35fb6-7527-376c-8a2f-184d292c64b8",
+  :ability/key "wh_main_item_abilities_sceptre_of_stability",
+  :ability/name "Sceptre of Stability",
+  :ability/description
+  "The sceptre is an anti-magic totem, vanquishing spellcraft that gets too close to its wielder. ",
+  :ability/ability-type "wh_type_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3b89e53f-7607-3559-8ed3-5585318ce2ad",
+  :ability/key "wh_main_item_abilities_scroll_of_leeching",
+  :ability/name "Scroll of Leeching",
+  :ability/description
+  "This tattered and stained scroll should not be held in one's hand for long as it steals all manner of essence, including magical power.",
+  :ability/ability-type "wh_type_hex_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9a2afaee-f057-3939-92f4-9b3fb479cf73",
+  :ability/key "wh_main_item_abilities_scroll_of_power",
+  :ability/name "Scroll of Power",
+  :ability/description
+  "Scrawled upon the Power Scroll are runes to boost the power of a single spell. Use it wisely… ",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5621e9a3-efe9-3d32-bd42-bcdfc0d57620",
+  :ability/key "wh_main_item_abilities_scroll_of_shielding",
+  :ability/name "Scroll of Shielding",
+  :ability/description
+  "Upon the Scroll of Shielding is a crude drawing of a warrior's shield displaying an unknown crest of a kingdom long lost. ",
+  :ability/ability-type "wh_type_ward_save",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f55a2f3b-77e6-3c64-9245-6ce4f45f910b",
+  :ability/key "wh_main_item_abilities_silver_horn_of_vengeance",
+  :ability/name "Silver Horn of Vengeance",
+  :ability/description
+  "When winded, the Silver Horn sounds a clear note that brings hope to Dwarfs and foreboding doom to the enemy.  ",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "43e6c146-4d28-3538-ad64-803afbbf65db",
+  :ability/key "wh_main_item_abilities_skull_of_katam",
+  :ability/name "Skull of Katam",
+  :ability/description
+  "The skull of the late Daemonologist, Katam, continues to jibber in secrets that could drive the listener insane. It knows how to suck the Winds from the enemy.  ",
+  :ability/ability-type "wh_type_hex_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "fe7462a1-d9e9-3841-9107-018a444fc7ed",
+  :ability/key "wh_main_item_abilities_skull_wand_of_kaloth",
+  :ability/name "Skull Wand of Kaloth",
+  :ability/description
+  "Originally captured from the Necromancer Kaloth by the gobbo Shaman Kazgi, the Skull Wand talks in a forgotten dread language and any who hear its words are doomed. ",
+  :ability/ability-type "wh_type_augment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4ba1d610-8c9d-3037-ae96-9a89851021af",
+  :ability/key "wh_main_item_abilities_staff_of_volans",
+  :ability/name "Staff of Volans",
+  :ability/description
+  "Volans was the first  Supreme Patriarch, his staff is a symbol of office to any Wizard that now holds that mantle. It also allows the wielder to bend the Winds to his will. ",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "889fc772-fd39-3698-b03b-bf12ac043632",
+  :ability/key "wh_main_item_abilities_tricksters_shard",
+  :ability/name "Trickster's Shard",
+  :ability/description
+  "A shard of pure aqua, its surface ripples with a malevolent curse bestowed upon it by the Trickster. Any magic-users nearby will surely suffer.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "0383afdd-eb2b-3f9b-90e6-4b3ca2181659",
+  :ability/key "wh_main_item_abilities_van_horstmanns_speculum",
+  :ability/name "Van Horstmann's Speculum",
+  :ability/description
+  "Van Horstmann's small magical mirror has the ability to destroy the enemy if only they will look upon its cracked surface...",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "1e0f6113-1eb2-351a-bae1-fad294b5e25e",
+  :ability/key "wh_main_item_abilities_wand_of_jet",
+  :ability/name "Wand of Jet",
+  :ability/description
+  "The bearer of this black wand, flecked in glowing jade, can increase the Winds and more quickly power his spells.",
+  :ability/ability-type "wh_type_augment_of_the_winds",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "47dab8aa-4f5d-361b-beca-098915ab138e",
+  :ability/key "wh_main_item_passive_featherfoe_torc",
+  :ability/name "Featherfoe Torc",
+  :ability/description
+  "The feathers of many beasts dangle from this torc, its enchantments allowing the wearer to strike at flying creatures with savage fury.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ba0da9f5-97ce-3451-b1a3-3250fc8e0045",
+  :ability/key "wh_main_item_passive_pidgeon_plucker_pendant",
+  :ability/name "Pigeon Plucker Pendant",
+  :ability/description
+  "The wearer of this bizarre pendant is supernaturally protected against attacks from flying creatures.",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4619e3b7-c6b3-3bc9-bbfe-bde6d02631c5",
+  :ability/key "wh_main_item_passive_seed_of_rebirth",
+  :ability/name "Seed of Rebirth",
+  :ability/description
+  "Eating a seed from this small Troll-skin leather pouch will imbue the consumer with regenerative abilities. ",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "01f70f44-9e8f-3d34-a078-1c2aebc22e3b",
+  :ability/key "wh_main_item_passive_the_great_book_of_grudges",
+  :ability/name "The Great Book of Grudges",
+  :ability/description
+  "The Dammaz Kron recounts every deed of infamy perpetuated against the Dwarfs, scribed in the blood of kings and infused with vows of vengeance.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "13d226a6-39b3-3b56-8ce7-4c787219d212",
+  :ability/key "wh_main_item_passive_the_other_tricksters_shard",
+  :ability/name "The Other Trickster's Shard",
+  :ability/description
+  "A shard of blackest night said to be a prison for the partial essence of the Trickster himself. Any close to it may be undone by its troubling aura.",
+  :ability/ability-type "wh_type_area_of_ward_save_hex",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "463dfc19-8379-3bb5-9aba-14a5da140e47",
+  :ability/key "wh_main_item_passive_the_white_cloak_of_ulric",
+  :ability/name "The White Cloak of Ulric",
+  :ability/description
+  "Made from the pelt of a Middenland wolf and blessed by the High Priest of Ulric, a deadly hoarfrost surrounds the cloak, freezing the wearer's foes. ",
+  :ability/ability-type "wh_type_area_of_hexes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "8287e648-b0ec-364b-9338-355dba5d6bd1",
+  :ability/key "wh_pro01_item_passive_rune_helm_of_zhufbar",
+  :ability/name "Rune Helm of Zhufbar",
+  :ability/description
+  "Long thought lost to time and conflict, Grombrindal's awesome helm inspires already-courageous Dwarfen hearts to even greater acts of bravery.",
+  :ability/ability-type "wh_type_area_of_augments",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a5a30526-cb61-3b4c-9244-e4fee81ad6e0",
+  :ability/key "wh_pro02_item_abilities_blood_chalice_of_bathori",
+  :ability/name "Blood Chalice of Bathori",
+  :ability/description
+  "The life essence of many wretched, innocent smallfolk ensures that those who drink from this cursed cup thrive with newfound power.",
+  :ability/ability-type "wh_type_regeneration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}]

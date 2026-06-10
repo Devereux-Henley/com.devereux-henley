@@ -339,6 +339,17 @@
        (remove empty?)
        set))
 
+(defn- collect-item-keys
+  "Every equipped-item ability key (`_item_passive_…` / `_item_ability_…`)
+  the parser emitted across a parsed map's units."
+  [parsed]
+  (->> (:alliances parsed)
+       (mapcat :armies)
+       (mapcat :units)
+       (mapcat :items)
+       (remove empty?)
+       set))
+
 (defn- key-prefix-candidates
   "Successively shorter prefixes of `k` produced by stripping one trailing
   `_<token>` at a time, ordered longest-first.  Used so a parser-emitted
@@ -370,27 +381,32 @@
   `(apply-level-cost base-cost level-row)` for replays parsed by older
   binaries that don't emit `:cost`. Leaves the map unchanged when no row
   resolves so the client can fall back to the raw key."
-  [key->row level->cost-row {:keys [key] :as unit}]
+  [key->row level->cost-row item-key->item {:keys [key] :as unit}]
   (let [level       (or (:level unit) 0)
-        parsed-cost (:cost unit)]
-    (if-let [row (resolve-key key->row key)]
-      (assoc unit
-             :name                 (:name row)
-             :cost                 (:cost row)
-             :level                level
-             :adjusted-cost        (if (and parsed-cost (pos? parsed-cost))
-                                     parsed-cost
-                                     (domain/apply-level-cost (:cost row) (get level->cost-row level)))
-             :unit-category-name   (:unit-category-name row)
-             :unit-type-name       (:unit-type-name row)
-             :unit-eid             (:eid row)
-             :mark                 (:mark row)
-             :family-variant-count (:family-variant-count row))
-      (assoc unit :level level))))
+        parsed-cost (:cost unit)
+        ;; Equipped ancillaries surface in the replay as `_item_passive_…` /
+        ;; `_item_ability_…` keys; resolve each to its seeded item row and
+        ;; dedupe (an item that grants several abilities resolves once).
+        items       (vec (distinct (keep item-key->item (:items unit))))]
+    (-> (if-let [row (resolve-key key->row key)]
+          (assoc unit
+                 :name                 (:name row)
+                 :cost                 (:cost row)
+                 :level                level
+                 :adjusted-cost        (if (and parsed-cost (pos? parsed-cost))
+                                         parsed-cost
+                                         (domain/apply-level-cost (:cost row) (get level->cost-row level)))
+                 :unit-category-name   (:unit-category-name row)
+                 :unit-type-name       (:unit-type-name row)
+                 :unit-eid             (:eid row)
+                 :mark                 (:mark row)
+                 :family-variant-count (:family-variant-count row))
+          (assoc unit :level level))
+        (assoc :items items))))
 
 (defn- enrich-parsed
   "Threads `enrich-unit` through every unit in the parsed structure."
-  [key->row level->cost-row parsed]
+  [key->row level->cost-row item-key->item parsed]
   (update parsed :alliances
           (fn [alliances]
             (mapv (fn [alliance]
@@ -399,7 +415,7 @@
                               (mapv (fn [army]
                                       (update army :units
                                               (fn [units]
-                                                (mapv (partial enrich-unit key->row level->cost-row) units))))
+                                                (mapv (partial enrich-unit key->row level->cost-row item-key->item) units))))
                                     armies))))
                   alliances))))
 
@@ -414,6 +430,16 @@
       {}
       (->> (db/units-by-keys (:datalog-connection dependencies) all-keys)
            (into {} (map (juxt :key identity)))))))
+
+(defn- resolve-item-keys
+  "Builds an `ability-key → item` map for every equipped-item ability key
+  referenced by the parsed games, so a replay unit's ancillaries resolve to
+  seeded items at enrich time."
+  [dependencies parsed-vec]
+  (let [keys (apply set/union (map collect-item-keys parsed-vec))]
+    (if (empty? keys)
+      {}
+      (or (db/items-by-ability-keys (:datalog-connection dependencies) keys) {}))))
 
 (defn- collect-faction-keys
   "Walks a parsed map's alliances and returns the set of every non-blank
@@ -662,37 +688,38 @@
   "Shapes parsed + enriched replay data into the player-console review
    fragment context."
   [dependencies match parsed source-name viewer-sub]
-  (let [key->row     (resolve-units dependencies [parsed])
-        level-costs  (db/unit-level-costs (:datalog-connection dependencies))
-        enriched     (enrich-parsed key->row level-costs parsed)
-        faction->row (resolve-faction-keys dependencies [parsed])
-        existing     (domain/get-games-for-match dependencies (:eid match))
-        game-index   (count existing)
-        game-num     (inc game-index)
-        ctx          (build-game-context match viewer-sub game-index source-name enriched faction->row)
+  (let [key->row       (resolve-units dependencies [parsed])
+        level-costs    (db/unit-level-costs (:datalog-connection dependencies))
+        item-key->item (resolve-item-keys dependencies [parsed])
+        enriched       (enrich-parsed key->row level-costs item-key->item parsed)
+        faction->row   (resolve-faction-keys dependencies [parsed])
+        existing       (domain/get-games-for-match dependencies (:eid match))
+        game-index     (count existing)
+        game-num       (inc game-index)
+        ctx            (build-game-context match viewer-sub game-index source-name enriched faction->row)
         ;; Section caps come from the tournament's game-mode, matched against the
         ;; replay's victory-condition. Each section's max is the relevant budget
         ;; (main → :draft-value, reinforcements → :reinforcement-value).
-        tournament   (domain/get-tournament-by-eid dependencies (:tournament-eid match))
-        game-modes   (db/game-modes-for-game (:datalog-connection dependencies) (:game-eid tournament))
-        game-mode    (domain/pick-game-mode game-modes (:victory-condition enriched))
-        section-max  (fn [section-key]
-                       (case section-key
-                         "main"           (:draft-value game-mode)
-                         "reinforcements" (:reinforcement-value game-mode)
-                         (:draft-value game-mode)))
-        with-max     (fn [side]
-                       (update side :sections
-                               #(mapv (fn [s] (assoc s :section-max (section-max (:section s)))) %)))
-        me-key       (if (= viewer-sub (:player-one-sub match)) :p1 :p2)
-        opp-key      (if (= me-key :p1) :p2 :p1)
-        me-side      (with-max (get ctx me-key))
-        opp-side     (with-max (get ctx opp-key))
+        tournament     (domain/get-tournament-by-eid dependencies (:tournament-eid match))
+        game-modes     (db/game-modes-for-game (:datalog-connection dependencies) (:game-eid tournament))
+        game-mode      (domain/pick-game-mode game-modes (:victory-condition enriched))
+        section-max    (fn [section-key]
+                         (case section-key
+                           "main"           (:draft-value game-mode)
+                           "reinforcements" (:reinforcement-value game-mode)
+                           (:draft-value game-mode)))
+        with-max       (fn [side]
+                         (update side :sections
+                                 #(mapv (fn [s] (assoc s :section-max (section-max (:section s)))) %)))
+        me-key         (if (= viewer-sub (:player-one-sub match)) :p1 :p2)
+        opp-key        (if (= me-key :p1) :p2 :p1)
+        me-side        (with-max (get ctx me-key))
+        opp-side       (with-max (get ctx opp-key))
         ;; Convention from the design's declare step: only the winning player
         ;; uploads the replay (the losing side waits). So the uploader is the
         ;; winner. Either side can dispute later if the replay disagrees.
-        winner-sub   viewer-sub
-        i-won?       true]
+        winner-sub     viewer-sub
+        i-won?         true]
     {:match       match
      :game-num    game-num
      :total-games (:format match)

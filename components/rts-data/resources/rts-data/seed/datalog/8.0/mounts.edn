@@ -1,686 +1,573 @@
-[#:mount{:eid #uuid "d2000000-0000-0000-0000-000000000001",
-         :key "mount_ancient_stegadon",
-         :name "Ancient Stegadon",
-         :icon-key "mount_ancient_stegadon",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000002",
-         :key "mount_anvil_of_doom",
-         :name "Anvil of Doom",
-         :icon-key "mount_anvil_of_doom",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000003",
-         :key "mount_arachnarok_spider",
-         :name "Arachnarok Spider (Catchweb Spidershrine)",
-         :icon-key "mount_arachnarok_spider",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000004",
-         :key "mount_arcane_phoenix",
-         :name "Arcane Phoenix",
-         :icon-key "mount_arcane_phoenix",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000005",
-         :key "mount_bale_taurus",
-         :name "Bale Taurus",
-         :icon-key "mount_bale_taurus",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000006",
-         :key "mount_bale_taurus_cinderbreath",
-         :name "Cinderbreath",
-         :icon-key "mount_bale_taurus_cinderbreath",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000007",
-         :key "mount_barded_chaos_steed",
-         :name "Barded Chaos Steed",
-         :icon-key "mount_barded_chaos_steed",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000008",
-         :key "mount_barded_ithilmar_steed",
-         :name "Barded Ithilmar Steed",
-         :icon-key "mount_barded_ithilmar_steed",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000009",
-         :key "mount_barded_nightmare",
-         :name "Barded Nightmare",
-         :icon-key "mount_barded_nightmare",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000000a",
-         :key "mount_barded_skeletal_steed",
-         :name "Barded Skeletal Steed",
-         :icon-key "mount_barded_skeletal_steed",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000000b",
-         :key "mount_barded_warhorse",
-         :name "Barded Warhorse",
-         :icon-key "mount_barded_warhorse",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000000c",
-         :key "mount_beaquis",
-         :name "Beaquis",
-         :icon-key "mount_beaquis",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000000d",
-         :key "mount_black_dragon",
-         :name "Black Dragon",
-         :icon-key "mount_black_dragon",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000000e",
-         :key "mount_blood_throne",
-         :name
-         "{{tr:ancillaries_onscreen_name_wh3_main_anc_mount_kho_herald_of_khorne_blood_throne}}",
-         :icon-key "mount_blood_throne",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000000f",
-         :key "mount_brood_horror",
-         :name "Brood Horror",
-         :icon-key "mount_brood_horror",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000010",
-         :key "mount_bubebolos",
-         :name "Bubebolos",
-         :icon-key "mount_bubebolos",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000011",
-         :key "mount_burning_chariot",
-         :name "Burning Chariot",
-         :icon-key "mount_burning_chariot",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000012",
-         :key "mount_carmine_dragon",
-         :name "Carmine Dragon",
-         :icon-key "mount_carmine_dragon",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000013",
-         :key "mount_carnosaur",
-         :name "Carnosaur",
-         :icon-key "mount_carnosaur",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000014",
-         :key "mount_casket_of_souls",
-         :name "Casket of Souls",
-         :icon-key "mount_casket_of_souls",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000015",
-         :key "mount_cauldron_of_blood",
-         :name "Cauldron of Blood",
-         :icon-key "mount_cauldron_of_blood",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000016",
-         :key "mount_celestial_lion",
-         :name
-         "{{tr:units_custom_battle_mounts_mount_name_wh3_dlc24_cth_cha_celestial_general_yangwh3_dlc24_cth_cha_celestial_general_yang_celestial_lion}}",
-         :icon-key "mount_celestial_lion",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000017",
-         :key "mount_chaos_chariot",
-         :name "Chaos Chariot",
-         :icon-key "mount_chaos_chariot",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000018",
-         :key "mount_chaos_dragon",
-         :name "Chaos Dragon",
-         :icon-key "mount_chaos_dragon",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000019",
-         :key "mount_chaos_steed",
-         :name "Chaos Steed",
-         :icon-key "mount_chaos_steed",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000001a",
-         :key "mount_chariot_of_the_gods",
-         :name "Chariot of the Gods",
-         :icon-key "mount_chariot_of_the_gods",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000001b",
-         :key "mount_cold_one",
-         :name "Cold One",
-         :icon-key "mount_cold_one",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000001c",
-         :key "mount_cold_one_chariot",
-         :name "Cold One Chariot",
-         :icon-key "mount_cold_one_chariot",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000001d",
-         :key "mount_corpse_cart",
-         :name "Corpse Cart",
-         :icon-key "mount_corpse_cart",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000001e",
-         :key "mount_corpse_cart_with_balefire",
-         :name "Corpse Cart (Balefire)",
-         :icon-key "mount_corpse_cart_with_balefire",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000001f",
-         :key "mount_corpse_cart_with_lodestone",
-         :name "The Brothers Ghorst Corpse Cart",
-         :icon-key "mount_corpse_cart_with_lodestone",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000020",
-         :key "mount_daemonic_steed",
-         :name
-         "{{tr:ancillaries_onscreen_name_wh3_dlc27_anc_mount_chs_cha_exalted_hero_msla_daemonic_steed}}",
-         :icon-key "mount_daemonic_steed",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000021",
-         :key "mount_dark_pegasus",
-         :name "Dark Pegasus",
-         :icon-key "mount_dark_pegasus",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000022",
-         :key "mount_dark_steed",
-         :name "Dark Steed",
-         :icon-key "mount_dark_steed",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000023",
-         :key "mount_deathclaw",
-         :name "Deathclaw",
-         :icon-key "mount_deathclaw",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000024",
-         :key "mount_disc_of_tzeentch",
-         :name "Disc of Tzeentch",
-         :icon-key "mount_disc_of_tzeentch",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000025",
-         :key "mount_doom_flayer",
-         :name "Doom-Flayer",
-         :icon-key "mount_doom_flayer",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000026",
-         :key "mount_doom_wheel",
-         :name "Doomwheel",
-         :icon-key "mount_doom_wheel",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000027",
-         :key "mount_dorghar",
-         :name "Dorghar",
-         :icon-key "mount_dorghar",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000028",
-         :key "mount_exalted_seeker_chariot",
-         :name "Exalted Seeker Chariot",
-         :icon-key "mount_exalted_seeker_chariot",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000029",
-         :key "mount_flesh_hound",
-         :name "Flesh Hound of Khorne",
-         :icon-key "mount_flesh_hound",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000002a",
-         :key "mount_forest_dragon",
-         :name "Ceithin-Har",
-         :icon-key "mount_forest_dragon",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000002b",
-         :key "mount_frost_wyrm",
-         :name "Frost Wyrm",
-         :icon-key "mount_frost_wyrm",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000002c",
-         :key "mount_giant_spider",
-         :name "Giant Spider",
-         :icon-key "mount_giant_spider",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000002d",
-         :key "mount_giant_wolf",
-         :name "Giant Wolf",
-         :icon-key "mount_giant_wolf",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000002e",
-         :key "mount_gorebeast_chariot",
-         :name "Gorebeast Chariot",
-         :icon-key "mount_gorebeast_chariot",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000002f",
-         :key "mount_great_cave_squig",
-         :name
-         "{{tr:ancillaries_onscreen_name_wh_dlc06_anc_mount_grn_night_goblin_warboss_great_cave_squig}}",
-         :icon-key "mount_great_cave_squig",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000030",
-         :key "mount_great_eagle",
-         :name "Great Eagle",
-         :icon-key "mount_great_eagle",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000031",
-         :key "mount_great_moon_bird",
-         :name
-         "{{tr:units_custom_battle_mounts_mount_name_wh3_main_cth_cha_astromancer_0wh3_dlc24_cth_cha_astromancer_great_moon_bird}}",
-         :icon-key "mount_great_moon_bird",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000032",
-         :key "mount_great_stag",
-         :name "Great Stag",
-         :icon-key "mount_great_stag",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000033",
-         :key "mount_great_taurus",
-         :name "Great Taurus",
-         :icon-key "mount_great_taurus",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000034",
-         :key "mount_grymloq",
-         :name "Grymloq",
-         :icon-key "mount_grymloq",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000035",
-         :key "mount_hef_griffon",
-         :name "Stormwing",
-         :icon-key "mount_hef_griffon",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000036",
-         :key "mount_hellsteed",
-         :name "Hellsteed",
-         :icon-key "mount_hellsteed",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000037",
-         :key "mount_hippogryph",
-         :name "Hippogryph",
-         :icon-key "mount_hippogryph",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000038",
-         :key "mount_horned_one",
-         :name "Horned One",
-         :icon-key "mount_horned_one",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000039",
-         :key "mount_imperial_griffon",
-         :name "Imperial Griffon",
-         :icon-key "mount_imperial_griffon",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000003a",
-         :key "mount_imperial_pegasus",
-         :name "Imperial Pegasus",
-         :icon-key "mount_imperial_pegasus",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000003b",
-         :key "mount_ithilmar_chariot",
-         :name "Ithilmar Chariot",
-         :icon-key "mount_ithilmar_chariot",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000003c",
-         :key "mount_jade_longma",
-         :name "Jade Longma",
-         :icon-key "mount_jade_longma",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000003d",
-         :key "mount_juggernaut",
-         :name "Juggernaut",
-         :icon-key "mount_juggernaut",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000003e",
-         :key "mount_lammasu",
-         :name "Lammasu",
-         :icon-key "mount_lammasu",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000003f",
-         :key "mount_leviathon",
-         :name "Rotting Leviathan",
-         :icon-key "mount_leviathon",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000040",
-         :key "mount_mammoth",
-         :name
-         "{{tr:land_units_onscreen_name_wh_dlc08_nor_mon_war_mammoth_2}}",
-         :icon-key "mount_mammoth",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000041",
-         :key "mount_manticore",
-         :name "Manticore",
-         :icon-key "mount_manticore",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000042",
-         :key "mount_mechanical_steed",
-         :name "Mechanical Steed",
-         :icon-key "mount_mechanical_steed",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000043",
-         :key "mount_moon_dragon",
-         :name "Moon Dragon",
-         :icon-key "mount_moon_dragon",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000044",
-         :key "mount_necrofex",
-         :name "Necrofex Colossus",
-         :icon-key "mount_necrofex",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000045",
-         :key "mount_necroserpent",
-         :name "Necroserpent",
-         :icon-key "mount_necroserpent",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000046",
-         :key "mount_nightmare",
-         :name "Nightmare",
-         :icon-key "mount_nightmare",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000047",
-         :key "mount_nurgling_palanquin",
-         :name "Nurgling Palanquin",
-         :icon-key "mount_nurgling_palanquin",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000048",
-         :key "mount_plague_furnace",
-         :name "Plague Furnace",
-         :icon-key "mount_plague_furnace",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000049",
-         :key "mount_promethean",
-         :name "Rotting Promethean",
-         :icon-key "mount_promethean",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000004a",
-         :key "mount_rat_ogre",
-         :name "Bonebreaker",
-         :icon-key "mount_rat_ogre",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000004b",
-         :key "mount_razorgor_chariot",
-         :name "Razorgor Chariot",
-         :icon-key "mount_razorgor_chariot",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000004c",
-         :key "mount_ripperdactyl",
-         :name "Ripperdactyl",
-         :icon-key "mount_ripperdactyl",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000004d",
-         :key "mount_rot_beast",
-         :name "Rot Beast",
-         :icon-key "mount_rot_beast",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000004e",
-         :key "mount_rot_fly",
-         :name "Rot Fly",
-         :icon-key "mount_rot_fly",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000004f",
-         :key "mount_royal_pegasus",
-         :name "Royal Pegasus",
-         :icon-key "mount_royal_pegasus",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000050",
-         :key "mount_scourgerunner_chariot",
-         :name "Scourgerunner Chariot",
-         :icon-key "mount_scourgerunner_chariot",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000051",
-         :key "mount_screaming_bell",
-         :name "Screaming Bell",
-         :icon-key "mount_screaming_bell",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000052",
-         :key "mount_seeker_chariot",
-         :name "Seeker Chariot",
-         :icon-key "mount_seeker_chariot",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000053",
-         :key "mount_skeletal_steed_tmb",
-         :name "Skeletal Steed",
-         :icon-key "mount_skeletal_steed_tmb",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000054",
-         :key "mount_skeleton_chariot",
-         :name "Skeleton Chariot",
-         :icon-key "mount_skeleton_chariot",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000055",
-         :key "mount_skullmuncha",
-         :name "Skullmuncha",
-         :icon-key "mount_skullmuncha",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000056",
-         :key "mount_sky_cutter",
-         :name "Skycutter Chariot",
-         :icon-key "mount_sky_cutter",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000057",
-         :key "mount_sky_lantern",
-         :name "Sky Lantern",
-         :icon-key "mount_sky_lantern",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000058",
-         :key "mount_sled",
-         :name "Ice Court Sled",
-         :icon-key "mount_sled",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000059",
-         :key "mount_star_dragon",
-         :name "Minaithnir",
-         :icon-key "mount_star_dragon",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000005a",
-         :key "mount_steam_tank",
-         :name "Steam Tank",
-         :icon-key "mount_steam_tank",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000005b",
-         :key "mount_steed_of_slaanesh",
-         :name
-         "{{tr:ancillaries_onscreen_name_wh3_main_anc_mount_sla_alluress_shadow_steed_of_slaanesh}}",
-         :icon-key "mount_steed_of_slaanesh",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000005c",
-         :key "mount_stegadon",
-         :name "Stegadon",
-         :icon-key "mount_stegadon",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000005d",
-         :key "mount_stegadon_engine_gods",
-         :name "Ancient Stegadon (Engine of the Gods)",
-         :icon-key "mount_stegadon_engine_gods",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000005e",
-         :key "mount_stonehorn",
-         :name "Stonehorn",
-         :icon-key "mount_stonehorn",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000005f",
-         :key "mount_sun_dragon",
-         :name "Sun Dragon",
-         :icon-key "mount_sun_dragon",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000060",
-         :key "mount_terradon",
-         :name "Terradon",
-         :icon-key "mount_terradon",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000061",
-         :key "mount_terrorgheist",
-         :name "Death Shriek Terrorgheist",
-         :icon-key "mount_terrorgheist",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000062",
-         :key "mount_tuskgor_chariot",
-         :name "Tuskgor Chariot",
-         :icon-key "mount_tuskgor_chariot",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000063",
-         :key "mount_unicorn",
-         :name "Unicorn",
-         :icon-key "mount_unicorn",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000064",
-         :key "mount_urskin",
-         :name "Urskin",
-         :icon-key "mount_urskin",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000065",
-         :key "mount_war_altar_of_sigmar",
-         :name "War Altar of Sigmar",
-         :icon-key "mount_war_altar_of_sigmar",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000066",
-         :key "mount_war_bear",
-         :name "War Bear",
-         :icon-key "mount_war_bear",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000067",
-         :key "mount_war_boar",
-         :name "War Boar",
-         :icon-key "mount_war_boar",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000068",
-         :key "mount_war_boar_chariot",
-         :name "War Boar Chariot",
-         :icon-key "mount_war_boar_chariot",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000069",
-         :key "mount_warhorse",
-         :name "Elven Steed",
-         :icon-key "mount_warhorse",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000006a",
-         :key "mount_warshrine",
-         :name "Chaos Warshrine",
-         :icon-key "mount_warshrine",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000006b",
-         :key "mount_warsphinx",
-         :name "Khemrian Warsphinx",
-         :icon-key "mount_warsphinx",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000006c",
-         :key "mount_white_lion_chariot",
-         :name "White Lion Chariot",
-         :icon-key "mount_white_lion_chariot",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000006d",
-         :key "mount_wolf_chariot",
-         :name "Wolf Chariot",
-         :icon-key "mount_wolf_chariot",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000006e",
-         :key "mount_wu_xing_war_compass",
-         :name "Wu Xing War Compass",
-         :icon-key "mount_wu_xing_war_compass",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-00000000006f",
-         :key "mount_wyvern",
-         :name
-         "{{tr:ancillaries_onscreen_name_wh_main_anc_mount_grn_orc_warboss_wyvern}}",
-         :icon-key "mount_wyvern",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000070",
-         :key "mount_zombie_dragon",
-         :name "Zombie Dragon",
-         :icon-key "mount_zombie_dragon",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:mount{:eid #uuid "d2000000-0000-0000-0000-000000000071",
-         :key "placeholder",
-         :name "Placeholder",
-         :icon-key "placeholder",
-         :game
-         [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}]
+[{:mount/eid #uuid "d2000000-0000-0000-0000-000000000001",
+  :mount/key "mount_ancient_stegadon",
+  :mount/name "Ancient Stegadon",
+  :mount/icon-key "mount_ancient_stegadon",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000002",
+  :mount/key "mount_anvil_of_doom",
+  :mount/name "Anvil of Doom",
+  :mount/icon-key "mount_anvil_of_doom",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000003",
+  :mount/key "mount_arachnarok_spider",
+  :mount/name "Arachnarok Spider (Catchweb Spidershrine)",
+  :mount/icon-key "mount_arachnarok_spider",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000004",
+  :mount/key "mount_arcane_phoenix",
+  :mount/name "Arcane Phoenix",
+  :mount/icon-key "mount_arcane_phoenix",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000005",
+  :mount/key "mount_bale_taurus",
+  :mount/name "Bale Taurus",
+  :mount/icon-key "mount_bale_taurus",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000006",
+  :mount/key "mount_bale_taurus_cinderbreath",
+  :mount/name "Cinderbreath",
+  :mount/icon-key "mount_bale_taurus_cinderbreath",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000007",
+  :mount/key "mount_barded_chaos_steed",
+  :mount/name "Barded Chaos Steed",
+  :mount/icon-key "mount_barded_chaos_steed",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000008",
+  :mount/key "mount_barded_ithilmar_steed",
+  :mount/name "Barded Ithilmar Steed",
+  :mount/icon-key "mount_barded_ithilmar_steed",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000009",
+  :mount/key "mount_barded_nightmare",
+  :mount/name "Barded Nightmare",
+  :mount/icon-key "mount_barded_nightmare",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000000a",
+  :mount/key "mount_barded_skeletal_steed",
+  :mount/name "Barded Skeletal Steed",
+  :mount/icon-key "mount_barded_skeletal_steed",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000000b",
+  :mount/key "mount_barded_warhorse",
+  :mount/name "Barded Warhorse",
+  :mount/icon-key "mount_barded_warhorse",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000000c",
+  :mount/key "mount_beaquis",
+  :mount/name "Beaquis",
+  :mount/icon-key "mount_beaquis",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000000d",
+  :mount/key "mount_black_dragon",
+  :mount/name "Black Dragon",
+  :mount/icon-key "mount_black_dragon",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000000e",
+  :mount/key "mount_blood_throne",
+  :mount/name
+  "{{tr:ancillaries_onscreen_name_wh3_main_anc_mount_kho_herald_of_khorne_blood_throne}}",
+  :mount/icon-key "mount_blood_throne",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000000f",
+  :mount/key "mount_brood_horror",
+  :mount/name "Brood Horror",
+  :mount/icon-key "mount_brood_horror",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000010",
+  :mount/key "mount_bubebolos",
+  :mount/name "Bubebolos",
+  :mount/icon-key "mount_bubebolos",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000011",
+  :mount/key "mount_burning_chariot",
+  :mount/name "Burning Chariot",
+  :mount/icon-key "mount_burning_chariot",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000012",
+  :mount/key "mount_carmine_dragon",
+  :mount/name "Carmine Dragon",
+  :mount/icon-key "mount_carmine_dragon",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000013",
+  :mount/key "mount_carnosaur",
+  :mount/name "Carnosaur",
+  :mount/icon-key "mount_carnosaur",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000014",
+  :mount/key "mount_casket_of_souls",
+  :mount/name "Casket of Souls",
+  :mount/icon-key "mount_casket_of_souls",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000015",
+  :mount/key "mount_cauldron_of_blood",
+  :mount/name "Cauldron of Blood",
+  :mount/icon-key "mount_cauldron_of_blood",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000016",
+  :mount/key "mount_celestial_lion",
+  :mount/name
+  "{{tr:units_custom_battle_mounts_mount_name_wh3_dlc24_cth_cha_celestial_general_yangwh3_dlc24_cth_cha_celestial_general_yang_celestial_lion}}",
+  :mount/icon-key "mount_celestial_lion",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000017",
+  :mount/key "mount_chaos_chariot",
+  :mount/name "Chaos Chariot",
+  :mount/icon-key "mount_chaos_chariot",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000018",
+  :mount/key "mount_chaos_dragon",
+  :mount/name "Chaos Dragon",
+  :mount/icon-key "mount_chaos_dragon",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000019",
+  :mount/key "mount_chaos_steed",
+  :mount/name "Chaos Steed",
+  :mount/icon-key "mount_chaos_steed",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000001a",
+  :mount/key "mount_chariot_of_the_gods",
+  :mount/name "Chariot of the Gods",
+  :mount/icon-key "mount_chariot_of_the_gods",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000001b",
+  :mount/key "mount_cold_one",
+  :mount/name "Cold One",
+  :mount/icon-key "mount_cold_one",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000001c",
+  :mount/key "mount_cold_one_chariot",
+  :mount/name "Cold One Chariot",
+  :mount/icon-key "mount_cold_one_chariot",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000001d",
+  :mount/key "mount_corpse_cart",
+  :mount/name "Corpse Cart",
+  :mount/icon-key "mount_corpse_cart",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000001e",
+  :mount/key "mount_corpse_cart_with_balefire",
+  :mount/name "Corpse Cart (Balefire)",
+  :mount/icon-key "mount_corpse_cart_with_balefire",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000001f",
+  :mount/key "mount_corpse_cart_with_lodestone",
+  :mount/name "The Brothers Ghorst Corpse Cart",
+  :mount/icon-key "mount_corpse_cart_with_lodestone",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000020",
+  :mount/key "mount_daemonic_steed",
+  :mount/name
+  "{{tr:ancillaries_onscreen_name_wh3_dlc27_anc_mount_chs_cha_exalted_hero_msla_daemonic_steed}}",
+  :mount/icon-key "mount_daemonic_steed",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000021",
+  :mount/key "mount_dark_pegasus",
+  :mount/name "Dark Pegasus",
+  :mount/icon-key "mount_dark_pegasus",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000022",
+  :mount/key "mount_dark_steed",
+  :mount/name "Dark Steed",
+  :mount/icon-key "mount_dark_steed",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000023",
+  :mount/key "mount_deathclaw",
+  :mount/name "Deathclaw",
+  :mount/icon-key "mount_deathclaw",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000024",
+  :mount/key "mount_disc_of_tzeentch",
+  :mount/name "Disc of Tzeentch",
+  :mount/icon-key "mount_disc_of_tzeentch",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000025",
+  :mount/key "mount_doom_flayer",
+  :mount/name "Doom-Flayer",
+  :mount/icon-key "mount_doom_flayer",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000026",
+  :mount/key "mount_doom_wheel",
+  :mount/name "Doomwheel",
+  :mount/icon-key "mount_doom_wheel",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000027",
+  :mount/key "mount_dorghar",
+  :mount/name "Dorghar",
+  :mount/icon-key "mount_dorghar",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000028",
+  :mount/key "mount_exalted_seeker_chariot",
+  :mount/name "Exalted Seeker Chariot",
+  :mount/icon-key "mount_exalted_seeker_chariot",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000029",
+  :mount/key "mount_flesh_hound",
+  :mount/name "Flesh Hound of Khorne",
+  :mount/icon-key "mount_flesh_hound",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000002a",
+  :mount/key "mount_forest_dragon",
+  :mount/name "Ceithin-Har",
+  :mount/icon-key "mount_forest_dragon",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000002b",
+  :mount/key "mount_frost_wyrm",
+  :mount/name "Frost Wyrm",
+  :mount/icon-key "mount_frost_wyrm",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000002c",
+  :mount/key "mount_giant_spider",
+  :mount/name "Giant Spider",
+  :mount/icon-key "mount_giant_spider",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000002d",
+  :mount/key "mount_giant_wolf",
+  :mount/name "Giant Wolf",
+  :mount/icon-key "mount_giant_wolf",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000002e",
+  :mount/key "mount_gorebeast_chariot",
+  :mount/name "Gorebeast Chariot",
+  :mount/icon-key "mount_gorebeast_chariot",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000002f",
+  :mount/key "mount_great_cave_squig",
+  :mount/name
+  "{{tr:ancillaries_onscreen_name_wh_dlc06_anc_mount_grn_night_goblin_warboss_great_cave_squig}}",
+  :mount/icon-key "mount_great_cave_squig",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000030",
+  :mount/key "mount_great_eagle",
+  :mount/name "Great Eagle",
+  :mount/icon-key "mount_great_eagle",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000031",
+  :mount/key "mount_great_moon_bird",
+  :mount/name
+  "{{tr:units_custom_battle_mounts_mount_name_wh3_main_cth_cha_astromancer_0wh3_dlc24_cth_cha_astromancer_great_moon_bird}}",
+  :mount/icon-key "mount_great_moon_bird",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000032",
+  :mount/key "mount_great_stag",
+  :mount/name "Great Stag",
+  :mount/icon-key "mount_great_stag",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000033",
+  :mount/key "mount_great_taurus",
+  :mount/name "Great Taurus",
+  :mount/icon-key "mount_great_taurus",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000034",
+  :mount/key "mount_grymloq",
+  :mount/name "Grymloq",
+  :mount/icon-key "mount_grymloq",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000035",
+  :mount/key "mount_hef_griffon",
+  :mount/name "Stormwing",
+  :mount/icon-key "mount_hef_griffon",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000036",
+  :mount/key "mount_hellsteed",
+  :mount/name "Hellsteed",
+  :mount/icon-key "mount_hellsteed",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000037",
+  :mount/key "mount_hippogryph",
+  :mount/name "Hippogryph",
+  :mount/icon-key "mount_hippogryph",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000038",
+  :mount/key "mount_horned_one",
+  :mount/name "Horned One",
+  :mount/icon-key "mount_horned_one",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000039",
+  :mount/key "mount_imperial_griffon",
+  :mount/name "Imperial Griffon",
+  :mount/icon-key "mount_imperial_griffon",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000003a",
+  :mount/key "mount_imperial_pegasus",
+  :mount/name "Imperial Pegasus",
+  :mount/icon-key "mount_imperial_pegasus",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000003b",
+  :mount/key "mount_ithilmar_chariot",
+  :mount/name "Ithilmar Chariot",
+  :mount/icon-key "mount_ithilmar_chariot",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000003c",
+  :mount/key "mount_jade_longma",
+  :mount/name "Jade Longma",
+  :mount/icon-key "mount_jade_longma",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000003d",
+  :mount/key "mount_juggernaut",
+  :mount/name "Juggernaut",
+  :mount/icon-key "mount_juggernaut",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000003e",
+  :mount/key "mount_lammasu",
+  :mount/name "Lammasu",
+  :mount/icon-key "mount_lammasu",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000003f",
+  :mount/key "mount_leviathon",
+  :mount/name "Rotting Leviathan",
+  :mount/icon-key "mount_leviathon",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000040",
+  :mount/key "mount_mammoth",
+  :mount/name
+  "{{tr:land_units_onscreen_name_wh_dlc08_nor_mon_war_mammoth_2}}",
+  :mount/icon-key "mount_mammoth",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000041",
+  :mount/key "mount_manticore",
+  :mount/name "Manticore",
+  :mount/icon-key "mount_manticore",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000042",
+  :mount/key "mount_mechanical_steed",
+  :mount/name "Mechanical Steed",
+  :mount/icon-key "mount_mechanical_steed",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000043",
+  :mount/key "mount_moon_dragon",
+  :mount/name "Moon Dragon",
+  :mount/icon-key "mount_moon_dragon",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000044",
+  :mount/key "mount_necrofex",
+  :mount/name "Necrofex Colossus",
+  :mount/icon-key "mount_necrofex",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000045",
+  :mount/key "mount_necroserpent",
+  :mount/name "Necroserpent",
+  :mount/icon-key "mount_necroserpent",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000046",
+  :mount/key "mount_nightmare",
+  :mount/name "Nightmare",
+  :mount/icon-key "mount_nightmare",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000047",
+  :mount/key "mount_nurgling_palanquin",
+  :mount/name "Nurgling Palanquin",
+  :mount/icon-key "mount_nurgling_palanquin",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000048",
+  :mount/key "mount_plague_furnace",
+  :mount/name "Plague Furnace",
+  :mount/icon-key "mount_plague_furnace",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000049",
+  :mount/key "mount_promethean",
+  :mount/name "Rotting Promethean",
+  :mount/icon-key "mount_promethean",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000004a",
+  :mount/key "mount_rat_ogre",
+  :mount/name "Bonebreaker",
+  :mount/icon-key "mount_rat_ogre",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000004b",
+  :mount/key "mount_razorgor_chariot",
+  :mount/name "Razorgor Chariot",
+  :mount/icon-key "mount_razorgor_chariot",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000004c",
+  :mount/key "mount_ripperdactyl",
+  :mount/name "Ripperdactyl",
+  :mount/icon-key "mount_ripperdactyl",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000004d",
+  :mount/key "mount_rot_beast",
+  :mount/name "Rot Beast",
+  :mount/icon-key "mount_rot_beast",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000004e",
+  :mount/key "mount_rot_fly",
+  :mount/name "Rot Fly",
+  :mount/icon-key "mount_rot_fly",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000004f",
+  :mount/key "mount_royal_pegasus",
+  :mount/name "Royal Pegasus",
+  :mount/icon-key "mount_royal_pegasus",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000050",
+  :mount/key "mount_scourgerunner_chariot",
+  :mount/name "Scourgerunner Chariot",
+  :mount/icon-key "mount_scourgerunner_chariot",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000051",
+  :mount/key "mount_screaming_bell",
+  :mount/name "Screaming Bell",
+  :mount/icon-key "mount_screaming_bell",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000052",
+  :mount/key "mount_seeker_chariot",
+  :mount/name "Seeker Chariot",
+  :mount/icon-key "mount_seeker_chariot",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000053",
+  :mount/key "mount_skeletal_steed_tmb",
+  :mount/name "Skeletal Steed",
+  :mount/icon-key "mount_skeletal_steed_tmb",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000054",
+  :mount/key "mount_skeleton_chariot",
+  :mount/name "Skeleton Chariot",
+  :mount/icon-key "mount_skeleton_chariot",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000055",
+  :mount/key "mount_skullmuncha",
+  :mount/name "Skullmuncha",
+  :mount/icon-key "mount_skullmuncha",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000056",
+  :mount/key "mount_sky_cutter",
+  :mount/name "Skycutter Chariot",
+  :mount/icon-key "mount_sky_cutter",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000057",
+  :mount/key "mount_sky_lantern",
+  :mount/name "Sky Lantern",
+  :mount/icon-key "mount_sky_lantern",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000058",
+  :mount/key "mount_sled",
+  :mount/name "Ice Court Sled",
+  :mount/icon-key "mount_sled",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000059",
+  :mount/key "mount_star_dragon",
+  :mount/name "Minaithnir",
+  :mount/icon-key "mount_star_dragon",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000005a",
+  :mount/key "mount_steam_tank",
+  :mount/name "Steam Tank",
+  :mount/icon-key "mount_steam_tank",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000005b",
+  :mount/key "mount_steed_of_slaanesh",
+  :mount/name
+  "{{tr:ancillaries_onscreen_name_wh3_main_anc_mount_sla_alluress_shadow_steed_of_slaanesh}}",
+  :mount/icon-key "mount_steed_of_slaanesh",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000005c",
+  :mount/key "mount_stegadon",
+  :mount/name "Stegadon",
+  :mount/icon-key "mount_stegadon",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000005d",
+  :mount/key "mount_stegadon_engine_gods",
+  :mount/name "Ancient Stegadon (Engine of the Gods)",
+  :mount/icon-key "mount_stegadon_engine_gods",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000005e",
+  :mount/key "mount_stonehorn",
+  :mount/name "Stonehorn",
+  :mount/icon-key "mount_stonehorn",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000005f",
+  :mount/key "mount_sun_dragon",
+  :mount/name "Sun Dragon",
+  :mount/icon-key "mount_sun_dragon",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000060",
+  :mount/key "mount_terradon",
+  :mount/name "Terradon",
+  :mount/icon-key "mount_terradon",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000061",
+  :mount/key "mount_terrorgheist",
+  :mount/name "Death Shriek Terrorgheist",
+  :mount/icon-key "mount_terrorgheist",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000062",
+  :mount/key "mount_tuskgor_chariot",
+  :mount/name "Tuskgor Chariot",
+  :mount/icon-key "mount_tuskgor_chariot",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000063",
+  :mount/key "mount_unicorn",
+  :mount/name "Unicorn",
+  :mount/icon-key "mount_unicorn",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000064",
+  :mount/key "mount_urskin",
+  :mount/name "Urskin",
+  :mount/icon-key "mount_urskin",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000065",
+  :mount/key "mount_war_altar_of_sigmar",
+  :mount/name "War Altar of Sigmar",
+  :mount/icon-key "mount_war_altar_of_sigmar",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000066",
+  :mount/key "mount_war_bear",
+  :mount/name "War Bear",
+  :mount/icon-key "mount_war_bear",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000067",
+  :mount/key "mount_war_boar",
+  :mount/name "War Boar",
+  :mount/icon-key "mount_war_boar",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000068",
+  :mount/key "mount_war_boar_chariot",
+  :mount/name "War Boar Chariot",
+  :mount/icon-key "mount_war_boar_chariot",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000069",
+  :mount/key "mount_warhorse",
+  :mount/name "Elven Steed",
+  :mount/icon-key "mount_warhorse",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000006a",
+  :mount/key "mount_warshrine",
+  :mount/name "Chaos Warshrine",
+  :mount/icon-key "mount_warshrine",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000006b",
+  :mount/key "mount_warsphinx",
+  :mount/name "Khemrian Warsphinx",
+  :mount/icon-key "mount_warsphinx",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000006c",
+  :mount/key "mount_white_lion_chariot",
+  :mount/name "White Lion Chariot",
+  :mount/icon-key "mount_white_lion_chariot",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000006d",
+  :mount/key "mount_wolf_chariot",
+  :mount/name "Wolf Chariot",
+  :mount/icon-key "mount_wolf_chariot",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000006e",
+  :mount/key "mount_wu_xing_war_compass",
+  :mount/name "Wu Xing War Compass",
+  :mount/icon-key "mount_wu_xing_war_compass",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-00000000006f",
+  :mount/key "mount_wyvern",
+  :mount/name
+  "{{tr:ancillaries_onscreen_name_wh_main_anc_mount_grn_orc_warboss_wyvern}}",
+  :mount/icon-key "mount_wyvern",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000070",
+  :mount/key "mount_zombie_dragon",
+  :mount/name "Zombie Dragon",
+  :mount/icon-key "mount_zombie_dragon",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:mount/eid #uuid "d2000000-0000-0000-0000-000000000071",
+  :mount/key "placeholder",
+  :mount/name "Placeholder",
+  :mount/icon-key "placeholder",
+  :mount/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}]

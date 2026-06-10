@@ -1,527 +1,525 @@
-[#:lore{:eid #uuid "f1000001-0000-0000-0000-000000000000",
-        :key "wh2_dlc09_lore_nehekhara",
-        :name "Lore of Nehekhara",
-        :description "Spell lore: Lore of Nehekhara",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000002-0000-0000-0000-000000000000",
-        :key "wh2_dlc09_lore_nehekhara_upgraded",
-        :name "Lore of Nehekhara",
-        :description "Spell lore: Lore of Nehekhara",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000003-0000-0000-0000-000000000000",
-        :key "wh2_dlc10_lore_alarielle",
-        :name "Lore of Alarielle",
-        :description "Spell lore: Lore of Alarielle",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000004-0000-0000-0000-000000000000",
-        :key "wh2_dlc11_lore_deep",
-        :name "Lore of Deep",
-        :description "Spell lore: Lore of Deep",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000005-0000-0000-0000-000000000000",
-        :key "wh2_dlc11_lore_deep_upgraded",
-        :name "Lore of Deep",
-        :description "Spell lore: Lore of Deep",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000006-0000-0000-0000-000000000000",
-        :key "wh2_dlc11_lore_noctilus",
-        :name "Lore of Noctilus",
-        :description "Spell lore: Lore of Noctilus",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000007-0000-0000-0000-000000000000",
-        :key "wh2_dlc11_lore_vampire_pirates",
-        :name "Lore of Vampire Pirates",
-        :description "Spell lore: Lore of Vampire Pirates",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000008-0000-0000-0000-000000000000",
-        :key "wh2_dlc11_vmp_lore_lahmian",
-        :name "Lore of Lahmian",
-        :description "Spell lore: Lore of Lahmian",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000009-0000-0000-0000-000000000000",
-        :key "wh2_dlc11_vmp_lore_necrarch",
-        :name "Lore of Necrarch",
-        :description "Spell lore: Lore of Necrarch",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100000a-0000-0000-0000-000000000000",
-        :key "wh2_dlc11_vmp_lore_von_carstein",
-        :name "Lore of Von Carstein",
-        :description "Spell lore: Lore of Von Carstein",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100000b-0000-0000-0000-000000000000",
-        :key "wh2_dlc12_lore_lord_kroak",
-        :name "Lore of Lord Kroak",
-        :description "Spell lore: Lore of Lord Kroak",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100000c-0000-0000-0000-000000000000",
-        :key "wh2_dlc14_lore_stealth",
-        :name "Lore of Stealth",
-        :description "Spell lore: Lore of Stealth",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100000d-0000-0000-0000-000000000000",
-        :key "wh2_dlc14_lore_stealth_upgraded",
-        :name "Lore of Stealth",
-        :description "Spell lore: Lore of Stealth",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100000e-0000-0000-0000-000000000000",
-        :key "wh2_dlc15_lore_beasts_eagle",
-        :name "Lore of Beasts Eagle",
-        :description "Spell lore: Lore of Beasts Eagle",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100000f-0000-0000-0000-000000000000",
-        :key "wh2_dlc16_lore_ariel",
-        :name "Lore of Ariel",
-        :description "Spell lore: Lore of Ariel",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000010-0000-0000-0000-000000000000",
-        :key "wh2_dlc16_lore_coeddil",
-        :name "Lore of Coeddil",
-        :description "Spell lore: Lore of Coeddil",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000011-0000-0000-0000-000000000000",
-        :key "wh2_dlc16_lore_spellweaver_dark",
-        :name "Lore of Spellweaver Dark",
-        :description "Spell lore: Lore of Spellweaver Dark",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000012-0000-0000-0000-000000000000",
-        :key "wh2_dlc16_lore_spellweaver_high",
-        :name "Lore of Spellweaver High",
-        :description "Spell lore: Lore of Spellweaver High",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000013-0000-0000-0000-000000000000",
-        :key "wh2_dlc17_lore_malagor",
-        :name "Lore of Malagor",
-        :description "Spell lore: Lore of Malagor",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000014-0000-0000-0000-000000000000",
-        :key "wh2_dlc17_lore_oracle",
-        :name "Lore of Oracle",
-        :description "Spell lore: Lore of Oracle",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000015-0000-0000-0000-000000000000",
-        :key "wh2_main_lore_dark_magic",
-        :name "Lore of Dark Magic",
-        :description "Spell lore: Lore of Dark Magic",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000016-0000-0000-0000-000000000000",
-        :key "wh2_main_lore_dark_magic_upgraded",
-        :name "Lore of Dark Magic",
-        :description "Spell lore: Lore of Dark Magic",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000017-0000-0000-0000-000000000000",
-        :key "wh2_main_lore_grey_seer_plague",
-        :name "Lore of Grey Seer Plague",
-        :description "Spell lore: Lore of Grey Seer Plague",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000018-0000-0000-0000-000000000000",
-        :key "wh2_main_lore_grey_seer_ruin",
-        :name "Lore of Grey Seer Ruin",
-        :description "Spell lore: Lore of Grey Seer Ruin",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000019-0000-0000-0000-000000000000",
-        :key "wh2_main_lore_high_magic",
-        :name "Lore of High Magic",
-        :description "Spell lore: Lore of High Magic",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100001a-0000-0000-0000-000000000000",
-        :key "wh2_main_lore_high_magic_upgraded",
-        :name "Lore of High Magic",
-        :description "Spell lore: Lore of High Magic",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100001b-0000-0000-0000-000000000000",
-        :key "wh2_main_lore_loremaster",
-        :name "Lore of Loremaster",
-        :description "Spell lore: Lore of Loremaster",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100001c-0000-0000-0000-000000000000",
-        :key "wh2_main_lore_morathi",
-        :name "Lore of Morathi",
-        :description "Spell lore: Lore of Morathi",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100001d-0000-0000-0000-000000000000",
-        :key "wh2_main_lore_plague",
-        :name "Lore of Plague",
-        :description "Spell lore: Lore of Plague",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100001e-0000-0000-0000-000000000000",
-        :key "wh2_main_lore_plague_upgraded",
-        :name "Lore of Plague",
-        :description "Spell lore: Lore of Plague",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100001f-0000-0000-0000-000000000000",
-        :key "wh2_main_lore_ruin",
-        :name "Lore of Ruin",
-        :description "Spell lore: Lore of Ruin",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000020-0000-0000-0000-000000000000",
-        :key "wh2_main_lore_ruin_upgraded",
-        :name "Lore of Ruin",
-        :description "Spell lore: Lore of Ruin",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000021-0000-0000-0000-000000000000",
-        :key "wh2_main_lore_skink_priest_avatar",
-        :name "Lore of Skink Priest Avatar",
-        :description "Spell lore: Lore of Skink Priest Avatar",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000022-0000-0000-0000-000000000000",
-        :key "wh2_main_lore_slann",
-        :name "Lore of Slann",
-        :description "Spell lore: Lore of Slann",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000023-0000-0000-0000-000000000000",
-        :key "wh2_main_lore_slann_generic",
-        :name "Lore of Slann Generic",
-        :description "Spell lore: Lore of Slann Generic",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000024-0000-0000-0000-000000000000",
-        :key "wh2_main_lore_teclis",
-        :name "Lore of Teclis",
-        :description "Spell lore: Lore of Teclis",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000025-0000-0000-0000-000000000000",
-        :key "wh3_dlc20_lore_archaon",
-        :name "Lore of Archaon",
-        :description "Spell lore: Lore of Archaon",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000026-0000-0000-0000-000000000000",
-        :key "wh3_dlc20_lore_daemon_prince_mnur",
-        :name "Lore of Daemon Prince Mnur",
-        :description "Spell lore: Lore of Daemon Prince Mnur",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000027-0000-0000-0000-000000000000",
-        :key "wh3_dlc20_lore_daemon_prince_msla",
-        :name "Lore of Daemon Prince Msla",
-        :description "Spell lore: Lore of Daemon Prince Msla",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000028-0000-0000-0000-000000000000",
-        :key "wh3_dlc20_lore_daemon_prince_mtze",
-        :name "Lore of Daemon Prince Mtze",
-        :description "Spell lore: Lore of Daemon Prince Mtze",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000029-0000-0000-0000-000000000000",
-        :key "wh3_dlc23_lore_astragoth",
-        :name "Lore of Astragoth",
-        :description "Spell lore: Lore of Astragoth",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100002a-0000-0000-0000-000000000000",
-        :key "wh3_dlc23_lore_hashut",
-        :name "Lore of Hashut",
-        :description "Spell lore: Lore of Hashut",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100002b-0000-0000-0000-000000000000",
-        :key "wh3_dlc23_lore_hashut_upgraded",
-        :name "Lore of Hashut",
-        :description "Spell lore: Lore of Hashut",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100002c-0000-0000-0000-000000000000",
-        :key "wh3_dlc24_lore_blue_scribes",
-        :name "Lore of Blue Scribes",
-        :description "Spell lore: Lore of Blue Scribes",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100002d-0000-0000-0000-000000000000",
-        :key "wh3_dlc24_lore_hag",
-        :name "Lore of Hag",
-        :description "Spell lore: Lore of Hag",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100002e-0000-0000-0000-000000000000",
-        :key "wh3_dlc24_lore_hag_upgraded",
-        :name "Lore of Hag",
-        :description "Spell lore: Lore of Hag",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100002f-0000-0000-0000-000000000000",
-        :key "wh3_dlc24_lore_yuan_bo",
-        :name "Lore of Yuan Bo",
-        :description "Spell lore: Lore of Yuan Bo",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000030-0000-0000-0000-000000000000",
-        :key "wh3_dlc27_all_lore_spells",
-        :name "Lore of All Lore Spells",
-        :description "Spell lore: Lore of All Lore Spells",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000031-0000-0000-0000-000000000000",
-        :key "wh3_dlc27_lore_mists",
-        :name "Lore of Mists",
-        :description "Spell lore: Lore of Mists",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000032-0000-0000-0000-000000000000",
-        :key "wh3_dlc27_lore_mists_upgraded",
-        :name "Lore of Mists",
-        :description "Spell lore: Lore of Mists",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000033-0000-0000-0000-000000000000",
-        :key "wh3_dlc27_lore_sayl",
-        :name "Lore of Sayl",
-        :description "Spell lore: Lore of Sayl",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000034-0000-0000-0000-000000000000",
-        :key "wh3_dlc27_lore_shaman_sorcerer_summon_death",
-        :name "Lore of Shaman Sorcerer Summon Death",
-        :description
-        "Spell lore: Lore of Shaman Sorcerer Summon Death",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000035-0000-0000-0000-000000000000",
-        :key "wh3_dlc27_lore_shaman_sorcerer_summon_fire",
-        :name "Lore of Shaman Sorcerer Summon Fire",
-        :description "Spell lore: Lore of Shaman Sorcerer Summon Fire",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000036-0000-0000-0000-000000000000",
-        :key "wh3_dlc27_lore_shaman_sorcerer_summon_metal",
-        :name "Lore of Shaman Sorcerer Summon Metal",
-        :description
-        "Spell lore: Lore of Shaman Sorcerer Summon Metal",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000037-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_daemon_prince",
-        :name "Lore of Daemon Prince",
-        :description "Spell lore: Lore of Daemon Prince",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000038-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_iron_dragon",
-        :name "Lore of Iron Dragon",
-        :description "Spell lore: Lore of Iron Dragon",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000039-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_kairos",
-        :name "Lore of Kairos",
-        :description "Spell lore: Lore of Kairos",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100003a-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_kairos_custom",
-        :name "Lore of Kairos",
-        :description "Spell lore: Lore of Kairos",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100003b-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_mannfred",
-        :name "Lore of Mannfred",
-        :description "Spell lore: Lore of Mannfred",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100003c-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_nurgle",
-        :name "Lore of Nurgle",
-        :description "Spell lore: Lore of Nurgle",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100003d-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_nurgle_upgraded",
-        :name "Lore of Nurgle",
-        :description "Spell lore: Lore of Nurgle",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100003e-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_of_great_maw",
-        :name "Lore of Great Maw",
-        :description "Spell lore: Lore of Great Maw",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100003f-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_of_great_maw_upgraded",
-        :name "Lore of Great Maw",
-        :description "Spell lore: Lore of Great Maw",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000040-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_of_ice",
-        :name "Lore of Ice",
-        :description "Spell lore: Lore of Ice",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000041-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_of_ice_upgraded",
-        :name "Lore of Ice",
-        :description "Spell lore: Lore of Ice",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000042-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_of_tempest",
-        :name "Lore of Tempest",
-        :description "Spell lore: Lore of Tempest",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000043-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_of_tempest_upgraded",
-        :name "Lore of Tempest",
-        :description "Spell lore: Lore of Tempest",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000044-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_of_yang",
-        :name "Lore of Yang",
-        :description "Spell lore: Lore of Yang",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000045-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_of_yang_upgraded",
-        :name "Lore of Yang",
-        :description "Spell lore: Lore of Yang",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000046-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_of_yin",
-        :name "Lore of Yin",
-        :description "Spell lore: Lore of Yin",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000047-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_of_yin_upgraded",
-        :name "Lore of Yin",
-        :description "Spell lore: Lore of Yin",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000048-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_slaanesh",
-        :name "Lore of Slaanesh",
-        :description "Spell lore: Lore of Slaanesh",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000049-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_slaanesh_upgraded",
-        :name "Lore of Slaanesh",
-        :description "Spell lore: Lore of Slaanesh",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100004a-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_storm_dragon",
-        :name "Lore of Storm Dragon",
-        :description "Spell lore: Lore of Storm Dragon",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100004b-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_tzeentch",
-        :name "Lore of Tzeentch",
-        :description "Spell lore: Lore of Tzeentch",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100004c-0000-0000-0000-000000000000",
-        :key "wh3_main_lore_tzeentch_upgraded",
-        :name "Lore of Tzeentch",
-        :description "Spell lore: Lore of Tzeentch",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100004d-0000-0000-0000-000000000000",
-        :key "wh_dlc03_lore_beasts",
-        :name "Lore of Beasts",
-        :description "Spell lore: Lore of Beasts",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100004e-0000-0000-0000-000000000000",
-        :key "wh_dlc03_lore_beasts_upgraded",
-        :name "Lore of Beasts",
-        :description "Spell lore: Lore of Beasts",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100004f-0000-0000-0000-000000000000",
-        :key "wh_dlc03_lore_wild",
-        :name "Lore of Wild",
-        :description "Spell lore: Lore of Wild",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000050-0000-0000-0000-000000000000",
-        :key "wh_dlc03_lore_wild_upgraded",
-        :name "Lore of Wild",
-        :description "Spell lore: Lore of Wild",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000051-0000-0000-0000-000000000000",
-        :key "wh_dlc04_lore_helman_ghorst",
-        :name "Lore of Helman Ghorst",
-        :description "Spell lore: Lore of Helman Ghorst",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000052-0000-0000-0000-000000000000",
-        :key "wh_dlc04_lore_strigoi",
-        :name "Lore of Strigoi",
-        :description "Spell lore: Lore of Strigoi",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000053-0000-0000-0000-000000000000",
-        :key "wh_dlc05_lore_branchwraith",
-        :name "Lore of Branchwraith",
-        :description "Spell lore: Lore of Branchwraith",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000054-0000-0000-0000-000000000000",
-        :key "wh_dlc05_lore_life",
-        :name "Lore of Life",
-        :description "Spell lore: Lore of Life",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000055-0000-0000-0000-000000000000",
-        :key "wh_dlc05_lore_life_upgraded",
-        :name "Lore of Life",
-        :description "Spell lore: Lore of Life",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000056-0000-0000-0000-000000000000",
-        :key "wh_dlc05_lore_shadows",
-        :name "Lore of Shadows",
-        :description "Spell lore: Lore of Shadows",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000057-0000-0000-0000-000000000000",
-        :key "wh_dlc05_lore_shadows_upgraded",
-        :name "Lore of Shadows",
-        :description "Spell lore: Lore of Shadows",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000058-0000-0000-0000-000000000000",
-        :key "wh_dlc08_lore_arzik",
-        :name "Lore of Arzik",
-        :description "Spell lore: Lore of Arzik",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000059-0000-0000-0000-000000000000",
-        :key "wh_dlc08_lore_kihar",
-        :name "Lore of Kihar",
-        :description "Spell lore: Lore of Kihar",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100005a-0000-0000-0000-000000000000",
-        :key "wh_main_lore_big_waaagh",
-        :name "Lore of Big Waaagh",
-        :description "Spell lore: Lore of Big Waaagh",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100005b-0000-0000-0000-000000000000",
-        :key "wh_main_lore_big_waaagh_upgraded",
-        :name "Lore of Big Waaagh",
-        :description "Spell lore: Lore of Big Waaagh",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100005c-0000-0000-0000-000000000000",
-        :key "wh_main_lore_death",
-        :name "Lore of Death",
-        :description "Spell lore: Lore of Death",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100005d-0000-0000-0000-000000000000",
-        :key "wh_main_lore_death_upgraded",
-        :name "Lore of Death",
-        :description "Spell lore: Lore of Death",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100005e-0000-0000-0000-000000000000",
-        :key "wh_main_lore_fire",
-        :name "Lore of Fire",
-        :description "Spell lore: Lore of Fire",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f100005f-0000-0000-0000-000000000000",
-        :key "wh_main_lore_fire_upgraded",
-        :name "Lore of Fire",
-        :description "Spell lore: Lore of Fire",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000060-0000-0000-0000-000000000000",
-        :key "wh_main_lore_heavens",
-        :name "Lore of Heavens",
-        :description "Spell lore: Lore of Heavens",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000061-0000-0000-0000-000000000000",
-        :key "wh_main_lore_heavens_upgraded",
-        :name "Lore of Heavens",
-        :description "Spell lore: Lore of Heavens",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000062-0000-0000-0000-000000000000",
-        :key "wh_main_lore_light",
-        :name "Lore of Light",
-        :description "Spell lore: Lore of Light",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000063-0000-0000-0000-000000000000",
-        :key "wh_main_lore_light_upgraded",
-        :name "Lore of Light",
-        :description "Spell lore: Lore of Light",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000064-0000-0000-0000-000000000000",
-        :key "wh_main_lore_lil_waaagh",
-        :name "Lore of Lil Waaagh",
-        :description "Spell lore: Lore of Lil Waaagh",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000065-0000-0000-0000-000000000000",
-        :key "wh_main_lore_lil_waaagh_upgraded",
-        :name "Lore of Lil Waaagh",
-        :description "Spell lore: Lore of Lil Waaagh",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000066-0000-0000-0000-000000000000",
-        :key "wh_main_lore_metal",
-        :name "Lore of Metal",
-        :description "Spell lore: Lore of Metal",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000067-0000-0000-0000-000000000000",
-        :key "wh_main_lore_metal_upgraded",
-        :name "Lore of Metal",
-        :description "Spell lore: Lore of Metal",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000068-0000-0000-0000-000000000000",
-        :key "wh_main_lore_vampires",
-        :name "Lore of Vampires",
-        :description "Spell lore: Lore of Vampires",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:lore{:eid #uuid "f1000069-0000-0000-0000-000000000000",
-        :key "wh_main_lore_vampires_upgraded",
-        :name "Lore of Vampires",
-        :description "Spell lore: Lore of Vampires",
-        :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}]
+[{:lore/eid #uuid "f1000001-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc09_lore_nehekhara",
+  :lore/name "Lore of Nehekhara",
+  :lore/description "Spell lore: Lore of Nehekhara",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000002-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc09_lore_nehekhara_upgraded",
+  :lore/name "Lore of Nehekhara",
+  :lore/description "Spell lore: Lore of Nehekhara",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000003-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc10_lore_alarielle",
+  :lore/name "Lore of Alarielle",
+  :lore/description "Spell lore: Lore of Alarielle",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000004-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc11_lore_deep",
+  :lore/name "Lore of Deep",
+  :lore/description "Spell lore: Lore of Deep",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000005-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc11_lore_deep_upgraded",
+  :lore/name "Lore of Deep",
+  :lore/description "Spell lore: Lore of Deep",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000006-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc11_lore_noctilus",
+  :lore/name "Lore of Noctilus",
+  :lore/description "Spell lore: Lore of Noctilus",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000007-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc11_lore_vampire_pirates",
+  :lore/name "Lore of Vampire Pirates",
+  :lore/description "Spell lore: Lore of Vampire Pirates",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000008-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc11_vmp_lore_lahmian",
+  :lore/name "Lore of Lahmian",
+  :lore/description "Spell lore: Lore of Lahmian",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000009-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc11_vmp_lore_necrarch",
+  :lore/name "Lore of Necrarch",
+  :lore/description "Spell lore: Lore of Necrarch",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100000a-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc11_vmp_lore_von_carstein",
+  :lore/name "Lore of Von Carstein",
+  :lore/description "Spell lore: Lore of Von Carstein",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100000b-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc12_lore_lord_kroak",
+  :lore/name "Lore of Lord Kroak",
+  :lore/description "Spell lore: Lore of Lord Kroak",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100000c-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc14_lore_stealth",
+  :lore/name "Lore of Stealth",
+  :lore/description "Spell lore: Lore of Stealth",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100000d-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc14_lore_stealth_upgraded",
+  :lore/name "Lore of Stealth",
+  :lore/description "Spell lore: Lore of Stealth",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100000e-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc15_lore_beasts_eagle",
+  :lore/name "Lore of Beasts Eagle",
+  :lore/description "Spell lore: Lore of Beasts Eagle",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100000f-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc16_lore_ariel",
+  :lore/name "Lore of Ariel",
+  :lore/description "Spell lore: Lore of Ariel",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000010-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc16_lore_coeddil",
+  :lore/name "Lore of Coeddil",
+  :lore/description "Spell lore: Lore of Coeddil",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000011-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc16_lore_spellweaver_dark",
+  :lore/name "Lore of Spellweaver Dark",
+  :lore/description "Spell lore: Lore of Spellweaver Dark",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000012-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc16_lore_spellweaver_high",
+  :lore/name "Lore of Spellweaver High",
+  :lore/description "Spell lore: Lore of Spellweaver High",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000013-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc17_lore_malagor",
+  :lore/name "Lore of Malagor",
+  :lore/description "Spell lore: Lore of Malagor",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000014-0000-0000-0000-000000000000",
+  :lore/key "wh2_dlc17_lore_oracle",
+  :lore/name "Lore of Oracle",
+  :lore/description "Spell lore: Lore of Oracle",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000015-0000-0000-0000-000000000000",
+  :lore/key "wh2_main_lore_dark_magic",
+  :lore/name "Lore of Dark Magic",
+  :lore/description "Spell lore: Lore of Dark Magic",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000016-0000-0000-0000-000000000000",
+  :lore/key "wh2_main_lore_dark_magic_upgraded",
+  :lore/name "Lore of Dark Magic",
+  :lore/description "Spell lore: Lore of Dark Magic",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000017-0000-0000-0000-000000000000",
+  :lore/key "wh2_main_lore_grey_seer_plague",
+  :lore/name "Lore of Grey Seer Plague",
+  :lore/description "Spell lore: Lore of Grey Seer Plague",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000018-0000-0000-0000-000000000000",
+  :lore/key "wh2_main_lore_grey_seer_ruin",
+  :lore/name "Lore of Grey Seer Ruin",
+  :lore/description "Spell lore: Lore of Grey Seer Ruin",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000019-0000-0000-0000-000000000000",
+  :lore/key "wh2_main_lore_high_magic",
+  :lore/name "Lore of High Magic",
+  :lore/description "Spell lore: Lore of High Magic",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100001a-0000-0000-0000-000000000000",
+  :lore/key "wh2_main_lore_high_magic_upgraded",
+  :lore/name "Lore of High Magic",
+  :lore/description "Spell lore: Lore of High Magic",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100001b-0000-0000-0000-000000000000",
+  :lore/key "wh2_main_lore_loremaster",
+  :lore/name "Lore of Loremaster",
+  :lore/description "Spell lore: Lore of Loremaster",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100001c-0000-0000-0000-000000000000",
+  :lore/key "wh2_main_lore_morathi",
+  :lore/name "Lore of Morathi",
+  :lore/description "Spell lore: Lore of Morathi",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100001d-0000-0000-0000-000000000000",
+  :lore/key "wh2_main_lore_plague",
+  :lore/name "Lore of Plague",
+  :lore/description "Spell lore: Lore of Plague",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100001e-0000-0000-0000-000000000000",
+  :lore/key "wh2_main_lore_plague_upgraded",
+  :lore/name "Lore of Plague",
+  :lore/description "Spell lore: Lore of Plague",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100001f-0000-0000-0000-000000000000",
+  :lore/key "wh2_main_lore_ruin",
+  :lore/name "Lore of Ruin",
+  :lore/description "Spell lore: Lore of Ruin",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000020-0000-0000-0000-000000000000",
+  :lore/key "wh2_main_lore_ruin_upgraded",
+  :lore/name "Lore of Ruin",
+  :lore/description "Spell lore: Lore of Ruin",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000021-0000-0000-0000-000000000000",
+  :lore/key "wh2_main_lore_skink_priest_avatar",
+  :lore/name "Lore of Skink Priest Avatar",
+  :lore/description "Spell lore: Lore of Skink Priest Avatar",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000022-0000-0000-0000-000000000000",
+  :lore/key "wh2_main_lore_slann",
+  :lore/name "Lore of Slann",
+  :lore/description "Spell lore: Lore of Slann",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000023-0000-0000-0000-000000000000",
+  :lore/key "wh2_main_lore_slann_generic",
+  :lore/name "Lore of Slann Generic",
+  :lore/description "Spell lore: Lore of Slann Generic",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000024-0000-0000-0000-000000000000",
+  :lore/key "wh2_main_lore_teclis",
+  :lore/name "Lore of Teclis",
+  :lore/description "Spell lore: Lore of Teclis",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000025-0000-0000-0000-000000000000",
+  :lore/key "wh3_dlc20_lore_archaon",
+  :lore/name "Lore of Archaon",
+  :lore/description "Spell lore: Lore of Archaon",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000026-0000-0000-0000-000000000000",
+  :lore/key "wh3_dlc20_lore_daemon_prince_mnur",
+  :lore/name "Lore of Daemon Prince Mnur",
+  :lore/description "Spell lore: Lore of Daemon Prince Mnur",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000027-0000-0000-0000-000000000000",
+  :lore/key "wh3_dlc20_lore_daemon_prince_msla",
+  :lore/name "Lore of Daemon Prince Msla",
+  :lore/description "Spell lore: Lore of Daemon Prince Msla",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000028-0000-0000-0000-000000000000",
+  :lore/key "wh3_dlc20_lore_daemon_prince_mtze",
+  :lore/name "Lore of Daemon Prince Mtze",
+  :lore/description "Spell lore: Lore of Daemon Prince Mtze",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000029-0000-0000-0000-000000000000",
+  :lore/key "wh3_dlc23_lore_astragoth",
+  :lore/name "Lore of Astragoth",
+  :lore/description "Spell lore: Lore of Astragoth",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100002a-0000-0000-0000-000000000000",
+  :lore/key "wh3_dlc23_lore_hashut",
+  :lore/name "Lore of Hashut",
+  :lore/description "Spell lore: Lore of Hashut",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100002b-0000-0000-0000-000000000000",
+  :lore/key "wh3_dlc23_lore_hashut_upgraded",
+  :lore/name "Lore of Hashut",
+  :lore/description "Spell lore: Lore of Hashut",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100002c-0000-0000-0000-000000000000",
+  :lore/key "wh3_dlc24_lore_blue_scribes",
+  :lore/name "Lore of Blue Scribes",
+  :lore/description "Spell lore: Lore of Blue Scribes",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100002d-0000-0000-0000-000000000000",
+  :lore/key "wh3_dlc24_lore_hag",
+  :lore/name "Lore of Hag",
+  :lore/description "Spell lore: Lore of Hag",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100002e-0000-0000-0000-000000000000",
+  :lore/key "wh3_dlc24_lore_hag_upgraded",
+  :lore/name "Lore of Hag",
+  :lore/description "Spell lore: Lore of Hag",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100002f-0000-0000-0000-000000000000",
+  :lore/key "wh3_dlc24_lore_yuan_bo",
+  :lore/name "Lore of Yuan Bo",
+  :lore/description "Spell lore: Lore of Yuan Bo",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000030-0000-0000-0000-000000000000",
+  :lore/key "wh3_dlc27_all_lore_spells",
+  :lore/name "Lore of All Lore Spells",
+  :lore/description "Spell lore: Lore of All Lore Spells",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000031-0000-0000-0000-000000000000",
+  :lore/key "wh3_dlc27_lore_mists",
+  :lore/name "Lore of Mists",
+  :lore/description "Spell lore: Lore of Mists",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000032-0000-0000-0000-000000000000",
+  :lore/key "wh3_dlc27_lore_mists_upgraded",
+  :lore/name "Lore of Mists",
+  :lore/description "Spell lore: Lore of Mists",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000033-0000-0000-0000-000000000000",
+  :lore/key "wh3_dlc27_lore_sayl",
+  :lore/name "Lore of Sayl",
+  :lore/description "Spell lore: Lore of Sayl",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000034-0000-0000-0000-000000000000",
+  :lore/key "wh3_dlc27_lore_shaman_sorcerer_summon_death",
+  :lore/name "Lore of Shaman Sorcerer Summon Death",
+  :lore/description "Spell lore: Lore of Shaman Sorcerer Summon Death",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000035-0000-0000-0000-000000000000",
+  :lore/key "wh3_dlc27_lore_shaman_sorcerer_summon_fire",
+  :lore/name "Lore of Shaman Sorcerer Summon Fire",
+  :lore/description "Spell lore: Lore of Shaman Sorcerer Summon Fire",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000036-0000-0000-0000-000000000000",
+  :lore/key "wh3_dlc27_lore_shaman_sorcerer_summon_metal",
+  :lore/name "Lore of Shaman Sorcerer Summon Metal",
+  :lore/description "Spell lore: Lore of Shaman Sorcerer Summon Metal",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000037-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_daemon_prince",
+  :lore/name "Lore of Daemon Prince",
+  :lore/description "Spell lore: Lore of Daemon Prince",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000038-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_iron_dragon",
+  :lore/name "Lore of Iron Dragon",
+  :lore/description "Spell lore: Lore of Iron Dragon",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000039-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_kairos",
+  :lore/name "Lore of Kairos",
+  :lore/description "Spell lore: Lore of Kairos",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100003a-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_kairos_custom",
+  :lore/name "Lore of Kairos",
+  :lore/description "Spell lore: Lore of Kairos",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100003b-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_mannfred",
+  :lore/name "Lore of Mannfred",
+  :lore/description "Spell lore: Lore of Mannfred",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100003c-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_nurgle",
+  :lore/name "Lore of Nurgle",
+  :lore/description "Spell lore: Lore of Nurgle",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100003d-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_nurgle_upgraded",
+  :lore/name "Lore of Nurgle",
+  :lore/description "Spell lore: Lore of Nurgle",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100003e-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_of_great_maw",
+  :lore/name "Lore of Great Maw",
+  :lore/description "Spell lore: Lore of Great Maw",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100003f-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_of_great_maw_upgraded",
+  :lore/name "Lore of Great Maw",
+  :lore/description "Spell lore: Lore of Great Maw",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000040-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_of_ice",
+  :lore/name "Lore of Ice",
+  :lore/description "Spell lore: Lore of Ice",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000041-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_of_ice_upgraded",
+  :lore/name "Lore of Ice",
+  :lore/description "Spell lore: Lore of Ice",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000042-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_of_tempest",
+  :lore/name "Lore of Tempest",
+  :lore/description "Spell lore: Lore of Tempest",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000043-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_of_tempest_upgraded",
+  :lore/name "Lore of Tempest",
+  :lore/description "Spell lore: Lore of Tempest",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000044-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_of_yang",
+  :lore/name "Lore of Yang",
+  :lore/description "Spell lore: Lore of Yang",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000045-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_of_yang_upgraded",
+  :lore/name "Lore of Yang",
+  :lore/description "Spell lore: Lore of Yang",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000046-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_of_yin",
+  :lore/name "Lore of Yin",
+  :lore/description "Spell lore: Lore of Yin",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000047-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_of_yin_upgraded",
+  :lore/name "Lore of Yin",
+  :lore/description "Spell lore: Lore of Yin",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000048-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_slaanesh",
+  :lore/name "Lore of Slaanesh",
+  :lore/description "Spell lore: Lore of Slaanesh",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000049-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_slaanesh_upgraded",
+  :lore/name "Lore of Slaanesh",
+  :lore/description "Spell lore: Lore of Slaanesh",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100004a-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_storm_dragon",
+  :lore/name "Lore of Storm Dragon",
+  :lore/description "Spell lore: Lore of Storm Dragon",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100004b-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_tzeentch",
+  :lore/name "Lore of Tzeentch",
+  :lore/description "Spell lore: Lore of Tzeentch",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100004c-0000-0000-0000-000000000000",
+  :lore/key "wh3_main_lore_tzeentch_upgraded",
+  :lore/name "Lore of Tzeentch",
+  :lore/description "Spell lore: Lore of Tzeentch",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100004d-0000-0000-0000-000000000000",
+  :lore/key "wh_dlc03_lore_beasts",
+  :lore/name "Lore of Beasts",
+  :lore/description "Spell lore: Lore of Beasts",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100004e-0000-0000-0000-000000000000",
+  :lore/key "wh_dlc03_lore_beasts_upgraded",
+  :lore/name "Lore of Beasts",
+  :lore/description "Spell lore: Lore of Beasts",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100004f-0000-0000-0000-000000000000",
+  :lore/key "wh_dlc03_lore_wild",
+  :lore/name "Lore of Wild",
+  :lore/description "Spell lore: Lore of Wild",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000050-0000-0000-0000-000000000000",
+  :lore/key "wh_dlc03_lore_wild_upgraded",
+  :lore/name "Lore of Wild",
+  :lore/description "Spell lore: Lore of Wild",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000051-0000-0000-0000-000000000000",
+  :lore/key "wh_dlc04_lore_helman_ghorst",
+  :lore/name "Lore of Helman Ghorst",
+  :lore/description "Spell lore: Lore of Helman Ghorst",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000052-0000-0000-0000-000000000000",
+  :lore/key "wh_dlc04_lore_strigoi",
+  :lore/name "Lore of Strigoi",
+  :lore/description "Spell lore: Lore of Strigoi",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000053-0000-0000-0000-000000000000",
+  :lore/key "wh_dlc05_lore_branchwraith",
+  :lore/name "Lore of Branchwraith",
+  :lore/description "Spell lore: Lore of Branchwraith",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000054-0000-0000-0000-000000000000",
+  :lore/key "wh_dlc05_lore_life",
+  :lore/name "Lore of Life",
+  :lore/description "Spell lore: Lore of Life",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000055-0000-0000-0000-000000000000",
+  :lore/key "wh_dlc05_lore_life_upgraded",
+  :lore/name "Lore of Life",
+  :lore/description "Spell lore: Lore of Life",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000056-0000-0000-0000-000000000000",
+  :lore/key "wh_dlc05_lore_shadows",
+  :lore/name "Lore of Shadows",
+  :lore/description "Spell lore: Lore of Shadows",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000057-0000-0000-0000-000000000000",
+  :lore/key "wh_dlc05_lore_shadows_upgraded",
+  :lore/name "Lore of Shadows",
+  :lore/description "Spell lore: Lore of Shadows",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000058-0000-0000-0000-000000000000",
+  :lore/key "wh_dlc08_lore_arzik",
+  :lore/name "Lore of Arzik",
+  :lore/description "Spell lore: Lore of Arzik",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000059-0000-0000-0000-000000000000",
+  :lore/key "wh_dlc08_lore_kihar",
+  :lore/name "Lore of Kihar",
+  :lore/description "Spell lore: Lore of Kihar",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100005a-0000-0000-0000-000000000000",
+  :lore/key "wh_main_lore_big_waaagh",
+  :lore/name "Lore of Big Waaagh",
+  :lore/description "Spell lore: Lore of Big Waaagh",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100005b-0000-0000-0000-000000000000",
+  :lore/key "wh_main_lore_big_waaagh_upgraded",
+  :lore/name "Lore of Big Waaagh",
+  :lore/description "Spell lore: Lore of Big Waaagh",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100005c-0000-0000-0000-000000000000",
+  :lore/key "wh_main_lore_death",
+  :lore/name "Lore of Death",
+  :lore/description "Spell lore: Lore of Death",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100005d-0000-0000-0000-000000000000",
+  :lore/key "wh_main_lore_death_upgraded",
+  :lore/name "Lore of Death",
+  :lore/description "Spell lore: Lore of Death",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100005e-0000-0000-0000-000000000000",
+  :lore/key "wh_main_lore_fire",
+  :lore/name "Lore of Fire",
+  :lore/description "Spell lore: Lore of Fire",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f100005f-0000-0000-0000-000000000000",
+  :lore/key "wh_main_lore_fire_upgraded",
+  :lore/name "Lore of Fire",
+  :lore/description "Spell lore: Lore of Fire",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000060-0000-0000-0000-000000000000",
+  :lore/key "wh_main_lore_heavens",
+  :lore/name "Lore of Heavens",
+  :lore/description "Spell lore: Lore of Heavens",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000061-0000-0000-0000-000000000000",
+  :lore/key "wh_main_lore_heavens_upgraded",
+  :lore/name "Lore of Heavens",
+  :lore/description "Spell lore: Lore of Heavens",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000062-0000-0000-0000-000000000000",
+  :lore/key "wh_main_lore_light",
+  :lore/name "Lore of Light",
+  :lore/description "Spell lore: Lore of Light",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000063-0000-0000-0000-000000000000",
+  :lore/key "wh_main_lore_light_upgraded",
+  :lore/name "Lore of Light",
+  :lore/description "Spell lore: Lore of Light",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000064-0000-0000-0000-000000000000",
+  :lore/key "wh_main_lore_lil_waaagh",
+  :lore/name "Lore of Lil Waaagh",
+  :lore/description "Spell lore: Lore of Lil Waaagh",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000065-0000-0000-0000-000000000000",
+  :lore/key "wh_main_lore_lil_waaagh_upgraded",
+  :lore/name "Lore of Lil Waaagh",
+  :lore/description "Spell lore: Lore of Lil Waaagh",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000066-0000-0000-0000-000000000000",
+  :lore/key "wh_main_lore_metal",
+  :lore/name "Lore of Metal",
+  :lore/description "Spell lore: Lore of Metal",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000067-0000-0000-0000-000000000000",
+  :lore/key "wh_main_lore_metal_upgraded",
+  :lore/name "Lore of Metal",
+  :lore/description "Spell lore: Lore of Metal",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000068-0000-0000-0000-000000000000",
+  :lore/key "wh_main_lore_vampires",
+  :lore/name "Lore of Vampires",
+  :lore/description "Spell lore: Lore of Vampires",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:lore/eid #uuid "f1000069-0000-0000-0000-000000000000",
+  :lore/key "wh_main_lore_vampires_upgraded",
+  :lore/name "Lore of Vampires",
+  :lore/description "Spell lore: Lore of Vampires",
+  :lore/game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}]

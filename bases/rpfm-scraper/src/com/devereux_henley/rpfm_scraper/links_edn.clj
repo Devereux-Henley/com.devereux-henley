@@ -1,6 +1,7 @@
 (ns com.devereux-henley.rpfm-scraper.links-edn
-  "Emit items.edn, mounts.edn, unit-items.edn, and unit-mounts.edn for the
-  Datalog seed from RPFM data + the curated authoring identities.
+  "Emit items.edn, item-abilities.edn, mounts.edn, unit-items.edn, and
+  unit-mounts.edn for the Datalog seed from RPFM data + the curated authoring
+  identities.
 
   Items and mounts are fully generated with deterministic eids
   (`e1000000-…`/`d2000000-…` by sorted index). The junctions link unit eids
@@ -22,9 +23,15 @@
 (defn- item-eid [idx] (UUID/fromString (format "e1000000-0000-0000-0000-%012x" idx)))
 (defn- mount-eid [idx] (UUID/fromString (format "d2000000-0000-0000-0000-%012x" idx)))
 
+(defn- item-ability-eid
+  "Stable eid for an item-granted `:ability` row, derived from its engine key."
+  [ability-key]
+  (seed-edn/derived-uuid "item-ability" ability-key))
+
 (defn build-items
   "items.edn rows — MP-category ancillaries, sorted by key, with index-stable
-  eids. Cost is the ancillary `uniqueness_score`."
+  eids. Cost is the ancillary `uniqueness_score`. `:item/abilities` refs the
+  item-granted `:ability` rows (see `build-item-abilities`) by derived eid."
   [data game-eid]
   (let [sorted (->> (:ancillaries-rows data)
                     (filter #(contains? items/mp-item-categories (get % "category")))
@@ -33,15 +40,43 @@
           (map-indexed
            (fn [i r]
              (let [k    (get r "key")
-                   icon (items/icon-stem-for-row r (:ancillary-type-icon-map data))]
+                   icon (items/icon-stem-for-row r (:ancillary-type-icon-map data))
+                   aks  (get (:item-replay-keys-map data) k)]
                (cond-> {:item/eid      (item-eid (inc i))
                         :item/key      k
                         :item/name     (or (get (:ancillary-name-map data) k) k)
                         :item/category (or (get r "category") "")
                         :item/cost     (long (or (get r "uniqueness_score") 0))
                         :item/game     [:game/eid game-eid]}
-                 icon (assoc :item/icon-key icon)))))
+                 icon      (assoc :item/icon-key icon)
+                 (seq aks) (assoc :item/abilities
+                                  (mapv (fn [ak] [:ability/eid (item-ability-eid ak)]) aks))))))
           sorted)))
+
+(defn build-item-abilities
+  "item-abilities.edn rows — one `:ability` per distinct replay ability key
+  granted by an emitted item, with name, description, and ability-type from
+  the `unit_abilities` table + loc where present (the synthesized
+  `_enable`-stripped active forms have no table row). An equipped ancillary
+  surfaces in a parsed replay's UNIT_ABILITIES under these keys
+  (`_item_passive_…` / `_item_ability_…`), which don't match `item.key`; items
+  point back here via the cardinality-many `:item/abilities` ref, so a key
+  granted by several items is one row referenced by each."
+  [data game-eid item-rows]
+  (->> item-rows
+       (mapcat (fn [{ik :item/key}] (get (:item-replay-keys-map data) ik)))
+       distinct
+       sort
+       (mapv (fn [ak]
+               (let [nm   (get (:ability-name-map data) ak)
+                     tip  (get (:ability-tooltip-map data) ak)
+                     type (:type (get (:unit-ability-map data) ak))]
+                 (cond-> {:ability/eid (item-ability-eid ak)
+                          :ability/key ak}
+                   (seq nm)   (assoc :ability/name nm)
+                   (seq tip)  (assoc :ability/description tip)
+                   (seq type) (assoc :ability/ability-type type)
+                   true       (assoc :ability/game [:game/eid game-eid])))))))
 
 (defn build-mounts
   "mounts.edn rows — one per distinct MP mount icon stem, sorted, index-stable."
@@ -139,8 +174,9 @@
          vec)))
 
 (defn emit!
-  "Write items.edn, mounts.edn, unit-items.edn, and unit-mounts.edn to the
-  Datalog seed for `version`. `data` is the loaded RPFM table map."
+  "Write items.edn, item-abilities.edn, mounts.edn, unit-items.edn, and
+  unit-mounts.edn to the Datalog seed for `version`. `data` is the loaded
+  RPFM table map."
   [version data]
   (let [game-eid    (:game/eid (first (seed-edn/read-authoring version "games.edn")))
         n+f->ueid   (seed-edn/unit-name+faction->eid version)
@@ -149,6 +185,7 @@
         item-key->e (into {} (map (juxt :item/key :item/eid)) item-rows)
         stem->meid  (into {} (map (juxt :mount/key :mount/eid)) mount-rows)]
     (seed-edn/write-seed-file! version "items.edn" item-rows)
+    (seed-edn/write-seed-file! version "item-abilities.edn" (build-item-abilities data game-eid item-rows))
     (seed-edn/write-seed-file! version "mounts.edn" mount-rows)
     (seed-edn/write-seed-file! version "unit-items.edn" (build-unit-items data n+f->ueid item-key->e))
     (seed-edn/write-seed-file! version "unit-mounts.edn" (build-unit-mounts data n+f->ueid stem->meid))))

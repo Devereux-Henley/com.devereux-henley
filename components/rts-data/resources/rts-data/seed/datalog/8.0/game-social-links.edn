@@ -1,18 +1,16 @@
-[#:game-social-link{:eid #uuid "cc00f338-89ce-43f0-8536-0b70224915c8",
-                    :url
-                    "https://www.twitch.tv/directory/game/Total%20War:%20Warhammer%20III",
-                    :game
-                    [:game/eid
-                     #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-                    :platform
-                    [:social-media-platform/eid
-                     #uuid "946d4828-2fa1-409b-8c7b-1f84108fcea9"]}
- #:game-social-link{:eid #uuid "4f6275e3-8deb-4736-8a41-8f5e27a939ed",
-                    :url
-                    "https://www.youtube.com/channel/UCuuLj4XVng1E-198OkOjtRw",
-                    :game
-                    [:game/eid
-                     #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-                    :platform
-                    [:social-media-platform/eid
-                     #uuid "41780b82-9fcf-44a4-aa1c-6a57cc835585"]}]
+[{:game-social-link/eid #uuid "cc00f338-89ce-43f0-8536-0b70224915c8",
+  :game-social-link/url
+  "https://www.twitch.tv/directory/game/Total%20War:%20Warhammer%20III",
+  :game-social-link/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :game-social-link/platform
+  [:social-media-platform/eid
+   #uuid "946d4828-2fa1-409b-8c7b-1f84108fcea9"]}
+ {:game-social-link/eid #uuid "4f6275e3-8deb-4736-8a41-8f5e27a939ed",
+  :game-social-link/url
+  "https://www.youtube.com/channel/UCuuLj4XVng1E-198OkOjtRw",
+  :game-social-link/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :game-social-link/platform
+  [:social-media-platform/eid
+   #uuid "41780b82-9fcf-44a4-aa1c-6a57cc835585"]}]
