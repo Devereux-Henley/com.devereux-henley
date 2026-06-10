@@ -398,6 +398,18 @@
          (sort-by :name)
          vec)))
 
+(defn items-by-ability-keys
+  "Resolve a seq of replay ability keys (`_item_passive_…` / `_item_ability_…`,
+  emitted for a unit's equipped ancillaries) into an `{ability-key item}` map.
+  Returns nil for empty input."
+  [conn ability-keys]
+  (when (seq ability-keys)
+    (let [results (dl/q '[:find ?ak (pull ?i pattern)
+                          :in $ pattern [?ak ...]
+                          :where [?i :item/replay-ability-keys ?ak]]
+                        (dl/db conn) item-pattern (vec ability-keys))]
+      (into {} (map (fn [[ak i]] [ak (->item i)])) results))))
+
 (defn spells-by-keys
   "Resolve a seq of spell keys into a `{key spell}` map. Returns nil
   for an empty input."

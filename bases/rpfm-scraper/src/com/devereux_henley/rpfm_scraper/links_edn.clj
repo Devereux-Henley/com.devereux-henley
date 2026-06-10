@@ -32,15 +32,17 @@
     (into []
           (map-indexed
            (fn [i r]
-             (let [k    (get r "key")
-                   icon (items/icon-stem-for-row r (:ancillary-type-icon-map data))]
+             (let [k           (get r "key")
+                   icon        (items/icon-stem-for-row r (:ancillary-type-icon-map data))
+                   replay-keys (get (:item-replay-keys-map data) k)]
                (cond-> {:item/eid      (item-eid (inc i))
                         :item/key      k
                         :item/name     (or (get (:ancillary-name-map data) k) k)
                         :item/category (or (get r "category") "")
                         :item/cost     (long (or (get r "uniqueness_score") 0))
                         :item/game     [:game/eid game-eid]}
-                 icon (assoc :item/icon-key icon)))))
+                 icon               (assoc :item/icon-key icon)
+                 (seq replay-keys)  (assoc :item/replay-ability-keys replay-keys)))))
           sorted)))
 
 (defn build-mounts

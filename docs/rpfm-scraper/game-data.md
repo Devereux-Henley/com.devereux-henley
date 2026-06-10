@@ -50,6 +50,8 @@ Open Claude Code with the RPFM MCP server active, set the game to `warhammer_3` 
 | `ancillaries_tables.json` | `db/ancillaries_tables/data__` |
 | `ancillaries_loc.json` | `text/db/ancillaries__.loc` |
 | `ancillary_types_tables.json` | `db/ancillary_types_tables/data__` |
+| `ancillary_to_effects_tables.json` | `db/ancillary_to_effects_tables/data__` |
+| `effect_bonus_value_unit_ability_junctions_tables.json` | `db/effect_bonus_value_unit_ability_junctions_tables/data__` |
 | `units_custom_battle_mounts_tables.json` | `db/units_custom_battle_mounts_tables/data__` |
 | `mounts_tables.json` | `db/mounts_tables/data__` |
 | `battlefield_engines_tables.json` | `db/battlefield_engines_tables/data__` |
