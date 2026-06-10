@@ -1,104 +1,91 @@
-[#:unit-category{:eid #uuid "a1000000-0000-0000-0000-000000000001",
-                 :name "Lord",
-                 :description
-                 "Powerful leaders that command your army on the battlefield.",
-                 :ordinal 1,
-                 :game
-                 [:game/eid
-                  #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-category{:eid #uuid "a1000000-0000-0000-0000-000000000002",
-                 :name "Hero",
-                 :description
-                 "Elite characters with unique abilities that support your forces.",
-                 :ordinal 2,
-                 :game
-                 [:game/eid
-                  #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-category{:eid #uuid "a1000000-0000-0000-0000-000000000003",
-                 :name "Melee Infantry",
-                 :description
-                 "Ground troops that engage enemies in close combat.",
-                 :ordinal 3,
-                 :game
-                 [:game/eid
-                  #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-category{:eid #uuid "a1000000-0000-0000-0000-000000000004",
-                 :name "Missile Infantry",
-                 :description
-                 "Infantry units that attack enemies from range.",
-                 :ordinal 4,
-                 :game
-                 [:game/eid
-                  #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-category{:eid #uuid "a1000000-0000-0000-0000-000000000005",
-                 :name "Melee Cavalry",
-                 :description
-                 "Mounted warriors that charge and engage enemies in close combat.",
-                 :ordinal 5,
-                 :game
-                 [:game/eid
-                  #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-category{:eid #uuid "a1000000-0000-0000-0000-000000000006",
-                 :name "Missile Cavalry",
-                 :description
-                 "Mounted units that harass enemies with ranged attacks.",
-                 :ordinal 6,
-                 :game
-                 [:game/eid
-                  #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-category{:eid #uuid "a1000000-0000-0000-0000-000000000007",
-                 :name "Chariot",
-                 :description
-                 "Wheeled war vehicles that crash through enemy lines.",
-                 :ordinal 7,
-                 :game
-                 [:game/eid
-                  #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-category{:eid #uuid "a1000000-0000-0000-0000-000000000008",
-                 :name "War Machine",
-                 :description
-                 "Mechanical constructs and devices built for destruction.",
-                 :ordinal 8,
-                 :game
-                 [:game/eid
-                  #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-category{:eid #uuid "a1000000-0000-0000-0000-000000000009",
-                 :name "Artillery",
-                 :description
-                 "Long-range siege weapons that bombard enemy formations.",
-                 :ordinal 9,
-                 :game
-                 [:game/eid
-                  #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-category{:eid #uuid "a1000000-0000-0000-0000-000000000010",
-                 :name "War Beast",
-                 :description
-                 "Tamed creatures of war unleashed upon the enemy.",
-                 :ordinal 10,
-                 :game
-                 [:game/eid
-                  #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-category{:eid #uuid "a1000000-0000-0000-0000-000000000011",
-                 :name "Monstrous Infantry",
-                 :description
-                 "Large humanoid creatures that fight on foot and crush enemy ranks.",
-                 :ordinal 11,
-                 :game
-                 [:game/eid
-                  #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-category{:eid #uuid "a1000000-0000-0000-0000-000000000012",
-                 :name "Monster",
-                 :description
-                 "Enormous creatures that tower over the battlefield and inspire terror.",
-                 :ordinal 12,
-                 :game
-                 [:game/eid
-                  #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:unit-category{:eid #uuid "a1000000-0000-0000-0000-000000000013",
-                 :name "Monstrous Cavalry",
-                 :description
-                 "Monstrous creatures ridden as cavalry that combine powerful charge with formidable bulk.",
-                 :ordinal 13,
-                 :game
-                 [:game/eid
-                  #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}]
+[{:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000001",
+  :unit-category/name "Lord",
+  :unit-category/description
+  "Powerful leaders that command your army on the battlefield.",
+  :unit-category/ordinal 1,
+  :unit-category/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000002",
+  :unit-category/name "Hero",
+  :unit-category/description
+  "Elite characters with unique abilities that support your forces.",
+  :unit-category/ordinal 2,
+  :unit-category/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000003",
+  :unit-category/name "Melee Infantry",
+  :unit-category/description
+  "Ground troops that engage enemies in close combat.",
+  :unit-category/ordinal 3,
+  :unit-category/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000004",
+  :unit-category/name "Missile Infantry",
+  :unit-category/description
+  "Infantry units that attack enemies from range.",
+  :unit-category/ordinal 4,
+  :unit-category/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000005",
+  :unit-category/name "Melee Cavalry",
+  :unit-category/description
+  "Mounted warriors that charge and engage enemies in close combat.",
+  :unit-category/ordinal 5,
+  :unit-category/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000006",
+  :unit-category/name "Missile Cavalry",
+  :unit-category/description
+  "Mounted units that harass enemies with ranged attacks.",
+  :unit-category/ordinal 6,
+  :unit-category/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000007",
+  :unit-category/name "Chariot",
+  :unit-category/description
+  "Wheeled war vehicles that crash through enemy lines.",
+  :unit-category/ordinal 7,
+  :unit-category/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000008",
+  :unit-category/name "War Machine",
+  :unit-category/description
+  "Mechanical constructs and devices built for destruction.",
+  :unit-category/ordinal 8,
+  :unit-category/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000009",
+  :unit-category/name "Artillery",
+  :unit-category/description
+  "Long-range siege weapons that bombard enemy formations.",
+  :unit-category/ordinal 9,
+  :unit-category/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000010",
+  :unit-category/name "War Beast",
+  :unit-category/description
+  "Tamed creatures of war unleashed upon the enemy.",
+  :unit-category/ordinal 10,
+  :unit-category/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000011",
+  :unit-category/name "Monstrous Infantry",
+  :unit-category/description
+  "Large humanoid creatures that fight on foot and crush enemy ranks.",
+  :unit-category/ordinal 11,
+  :unit-category/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000012",
+  :unit-category/name "Monster",
+  :unit-category/description
+  "Enormous creatures that tower over the battlefield and inspire terror.",
+  :unit-category/ordinal 12,
+  :unit-category/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:unit-category/eid #uuid "a1000000-0000-0000-0000-000000000013",
+  :unit-category/name "Monstrous Cavalry",
+  :unit-category/description
+  "Monstrous creatures ridden as cavalry that combine powerful charge with formidable bulk.",
+  :unit-category/ordinal 13,
+  :unit-category/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}]

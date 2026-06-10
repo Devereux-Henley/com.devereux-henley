@@ -1,168 +1,168 @@
-[#:faction{:eid #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb",
-           :name "The Empire",
-           :description
-           "The greatest human realm of the Old World, fielding disciplined soldiers, war machines, and battle wizards of the Colleges of Magic.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "empire"}
- #:faction{:eid #uuid "f0000002-0000-4000-8000-000000000000",
-           :name "Beastmen",
-           :description
-           "Savage mutants of the forests who despise all civilisation, uniting under powerful Bray-Shamans and Doombulls to bring ruin to mortal realms.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "beastmen"}
- #:faction{:eid #uuid "f0000003-0000-4000-8000-000000000000",
-           :name "Bretonnia",
-           :description
-           "A chivalric human kingdom inspired by the Lady of the Lake, whose knights are among the finest cavalry in the Old World.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "bretonnia"}
- #:faction{:eid #uuid "f0000004-0000-4000-8000-000000000000",
-           :name "Chaos Dwarfs",
-           :description
-           "Dark and industrious Dawi Zharr who forge daemonic war machines and enslave countless races to fuel their infernal empire in the Mountains of Mourn.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "chaos-dwarfs"}
- #:faction{:eid #uuid "f0000005-0000-4000-8000-000000000000",
-           :name "Daemons of Chaos",
-           :description
-           "Entities of pure Chaos drawn from the Realm of Chaos, serving all four Dark Gods in one fell warhost of boundless malevolence.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "daemons-of-chaos"}
- #:faction{:eid #uuid "f0000006-0000-4000-8000-000000000000",
-           :name "Dark Elves",
-           :description
-           "Cruel and ruthless Druchii of Naggaroth who raid the world for slaves and glory, wielding cold-blooded cruelty and powerful magic in equal measure.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "dark-elves"}
- #:faction{:eid #uuid "f0000007-0000-4000-8000-000000000000",
-           :name "Dwarfs",
-           :description
-           "The proud and stubborn Dawi of the mountain holds, whose unbreakable resilience, master craftsmanship, and thunderous artillery have held back darkness for millennia.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "dwarfs"}
- #:faction{:eid #uuid "f0000008-0000-4000-8000-000000000000",
-           :name "Grand Cathay",
-           :description
-           "The vast and ancient empire of the East, guarded by the Great Bastion and the harmonious forces of the Celestial Dragon Emperor.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "grand-cathay"}
- #:faction{:eid #uuid "f0000009-0000-4000-8000-000000000000",
-           :name "Greenskins",
-           :description
-           "Ever-warring tribes of Orcs and Goblins whose lust for the Waaagh! drives them to conquer and smash everything in their path.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "greenskins"}
- #:faction{:eid #uuid "f000000a-0000-4000-8000-000000000000",
-           :name "High Elves",
-           :description
-           "The noble Asur of Ulthuan, ancient guardians of civilisation who wield unparalleled magical power and the finest warriors and ships in the world.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "high-elves"}
- #:faction{:eid #uuid "f000000b-0000-4000-8000-000000000000",
-           :name "Khorne",
-           :description
-           "The Bloodbound servants of the Blood God, who reject all sorcery and seek only endless slaughter to fill the skull throne of their wrathful deity.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "khorne"}
- #:faction{:eid #uuid "f000000c-0000-4000-8000-000000000000",
-           :name "Kislev",
-           :description
-           "The northernmost human kingdom, a land of fierce warriors and powerful Ice Magic standing as the first bulwark against the forces of Chaos.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "kislev"}
- #:faction{:eid #uuid "f000000d-0000-4000-8000-000000000000",
-           :name "Lizardmen",
-           :description
-           "The ancient Slann Mage-Priests and their Saurus and Skink servants striving to enact the Great Plan of the Old Ones.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "lizardmen"}
- #:faction{:eid #uuid "f000000e-0000-4000-8000-000000000000",
-           :name "Norsca",
-           :description
-           "Fierce Norse warriors who worship the Chaos Gods and raid the world, hardened by the brutal north and riding mammoths into battle.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "norsca"}
- #:faction{:eid #uuid "f000000f-0000-4000-8000-000000000000",
-           :name "Nurgle",
-           :description
-           "The rotting servants of the Plague God, who spread pestilence and decay across the world with cheerful inevitability and bloated resilience.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "nurgle"}
- #:faction{:eid #uuid "f0000010-0000-4000-8000-000000000000",
-           :name "Ogre Kingdoms",
-           :description
-           "Massive and powerful Ogre mercenaries of the Mountains of Mourn, motivated entirely by their insatiable hunger and love of gold.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "ogre-kingdoms"}
- #:faction{:eid #uuid "f0000011-0000-4000-8000-000000000000",
-           :name "Skaven",
-           :description
-           "The rat-men of the Under-Empire, who plot tirelessly in the shadows and unleash horrible warp-powered war machines and endless plague upon their foes.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "skaven"}
- #:faction{:eid #uuid "f0000012-0000-4000-8000-000000000000",
-           :name "Slaanesh",
-           :description
-           "The devoted of the Prince of Pleasure, who pursue excess and sensation to extremes, moving with supernatural speed and grace to overwhelm their foes.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "slaanesh"}
- #:faction{:eid #uuid "f0000013-0000-4000-8000-000000000000",
-           :name "Tomb Kings",
-           :description
-           "Skeletal rulers of ancient Nehekhara reawakened to reclaim their former glory, commanding vast undead legions and colossal constructs of stone and bone.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "tomb-kings"}
- #:faction{:eid #uuid "f0000014-0000-4000-8000-000000000000",
-           :name "Tzeentch",
-           :description
-           "The ever-changing followers of the Architect of Fate, wielding devastating magic and mutation to reshape reality in service of their inscrutable lord.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "tzeentch"}
- #:faction{:eid #uuid "f0000015-0000-4000-8000-000000000000",
-           :name "Vampire Coast",
-           :description
-           "Undead pirates who haunt the seas of the world, led by Vampire Counts who command zombie crews, sea monsters, and explosive gunpowder weapons.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "vampire-coast"}
- #:faction{:eid #uuid "f0000016-0000-4000-8000-000000000000",
-           :name "Vampire Counts",
-           :description
-           "Ancient undead rulers of Sylvania who raise the dead to fight for them, wielding potent necromancy and the terror of the night.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "vampire-counts"}
- #:faction{:eid #uuid "f0000017-0000-4000-8000-000000000000",
-           :name "Warriors of Chaos",
-           :description
-           "The mortal servants of the Chaos Gods who pour south from the Chaos Wastes, armoured in dark iron and sworn to tear down civilisation in their masters' names.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "warriors-of-chaos"}
- #:faction{:eid #uuid "f0000018-0000-4000-8000-000000000000",
-           :name "Wood Elves",
-           :description
-           "The eternal guardians of Athel Loren, who defend their forest home with unmatched skill in archery, swift cavalry, and the ancient power of the forest spirits.",
-           :game
-           [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
-           :key "wood-elves"}]
+[{:faction/eid #uuid "35dd38fa-2bcc-4492-8f58-a106d0d02cbb",
+  :faction/name "The Empire",
+  :faction/description
+  "The greatest human realm of the Old World, fielding disciplined soldiers, war machines, and battle wizards of the Colleges of Magic.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "empire"}
+ {:faction/eid #uuid "f0000002-0000-4000-8000-000000000000",
+  :faction/name "Beastmen",
+  :faction/description
+  "Savage mutants of the forests who despise all civilisation, uniting under powerful Bray-Shamans and Doombulls to bring ruin to mortal realms.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "beastmen"}
+ {:faction/eid #uuid "f0000003-0000-4000-8000-000000000000",
+  :faction/name "Bretonnia",
+  :faction/description
+  "A chivalric human kingdom inspired by the Lady of the Lake, whose knights are among the finest cavalry in the Old World.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "bretonnia"}
+ {:faction/eid #uuid "f0000004-0000-4000-8000-000000000000",
+  :faction/name "Chaos Dwarfs",
+  :faction/description
+  "Dark and industrious Dawi Zharr who forge daemonic war machines and enslave countless races to fuel their infernal empire in the Mountains of Mourn.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "chaos-dwarfs"}
+ {:faction/eid #uuid "f0000005-0000-4000-8000-000000000000",
+  :faction/name "Daemons of Chaos",
+  :faction/description
+  "Entities of pure Chaos drawn from the Realm of Chaos, serving all four Dark Gods in one fell warhost of boundless malevolence.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "daemons-of-chaos"}
+ {:faction/eid #uuid "f0000006-0000-4000-8000-000000000000",
+  :faction/name "Dark Elves",
+  :faction/description
+  "Cruel and ruthless Druchii of Naggaroth who raid the world for slaves and glory, wielding cold-blooded cruelty and powerful magic in equal measure.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "dark-elves"}
+ {:faction/eid #uuid "f0000007-0000-4000-8000-000000000000",
+  :faction/name "Dwarfs",
+  :faction/description
+  "The proud and stubborn Dawi of the mountain holds, whose unbreakable resilience, master craftsmanship, and thunderous artillery have held back darkness for millennia.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "dwarfs"}
+ {:faction/eid #uuid "f0000008-0000-4000-8000-000000000000",
+  :faction/name "Grand Cathay",
+  :faction/description
+  "The vast and ancient empire of the East, guarded by the Great Bastion and the harmonious forces of the Celestial Dragon Emperor.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "grand-cathay"}
+ {:faction/eid #uuid "f0000009-0000-4000-8000-000000000000",
+  :faction/name "Greenskins",
+  :faction/description
+  "Ever-warring tribes of Orcs and Goblins whose lust for the Waaagh! drives them to conquer and smash everything in their path.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "greenskins"}
+ {:faction/eid #uuid "f000000a-0000-4000-8000-000000000000",
+  :faction/name "High Elves",
+  :faction/description
+  "The noble Asur of Ulthuan, ancient guardians of civilisation who wield unparalleled magical power and the finest warriors and ships in the world.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "high-elves"}
+ {:faction/eid #uuid "f000000b-0000-4000-8000-000000000000",
+  :faction/name "Khorne",
+  :faction/description
+  "The Bloodbound servants of the Blood God, who reject all sorcery and seek only endless slaughter to fill the skull throne of their wrathful deity.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "khorne"}
+ {:faction/eid #uuid "f000000c-0000-4000-8000-000000000000",
+  :faction/name "Kislev",
+  :faction/description
+  "The northernmost human kingdom, a land of fierce warriors and powerful Ice Magic standing as the first bulwark against the forces of Chaos.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "kislev"}
+ {:faction/eid #uuid "f000000d-0000-4000-8000-000000000000",
+  :faction/name "Lizardmen",
+  :faction/description
+  "The ancient Slann Mage-Priests and their Saurus and Skink servants striving to enact the Great Plan of the Old Ones.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "lizardmen"}
+ {:faction/eid #uuid "f000000e-0000-4000-8000-000000000000",
+  :faction/name "Norsca",
+  :faction/description
+  "Fierce Norse warriors who worship the Chaos Gods and raid the world, hardened by the brutal north and riding mammoths into battle.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "norsca"}
+ {:faction/eid #uuid "f000000f-0000-4000-8000-000000000000",
+  :faction/name "Nurgle",
+  :faction/description
+  "The rotting servants of the Plague God, who spread pestilence and decay across the world with cheerful inevitability and bloated resilience.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "nurgle"}
+ {:faction/eid #uuid "f0000010-0000-4000-8000-000000000000",
+  :faction/name "Ogre Kingdoms",
+  :faction/description
+  "Massive and powerful Ogre mercenaries of the Mountains of Mourn, motivated entirely by their insatiable hunger and love of gold.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "ogre-kingdoms"}
+ {:faction/eid #uuid "f0000011-0000-4000-8000-000000000000",
+  :faction/name "Skaven",
+  :faction/description
+  "The rat-men of the Under-Empire, who plot tirelessly in the shadows and unleash horrible warp-powered war machines and endless plague upon their foes.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "skaven"}
+ {:faction/eid #uuid "f0000012-0000-4000-8000-000000000000",
+  :faction/name "Slaanesh",
+  :faction/description
+  "The devoted of the Prince of Pleasure, who pursue excess and sensation to extremes, moving with supernatural speed and grace to overwhelm their foes.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "slaanesh"}
+ {:faction/eid #uuid "f0000013-0000-4000-8000-000000000000",
+  :faction/name "Tomb Kings",
+  :faction/description
+  "Skeletal rulers of ancient Nehekhara reawakened to reclaim their former glory, commanding vast undead legions and colossal constructs of stone and bone.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "tomb-kings"}
+ {:faction/eid #uuid "f0000014-0000-4000-8000-000000000000",
+  :faction/name "Tzeentch",
+  :faction/description
+  "The ever-changing followers of the Architect of Fate, wielding devastating magic and mutation to reshape reality in service of their inscrutable lord.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "tzeentch"}
+ {:faction/eid #uuid "f0000015-0000-4000-8000-000000000000",
+  :faction/name "Vampire Coast",
+  :faction/description
+  "Undead pirates who haunt the seas of the world, led by Vampire Counts who command zombie crews, sea monsters, and explosive gunpowder weapons.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "vampire-coast"}
+ {:faction/eid #uuid "f0000016-0000-4000-8000-000000000000",
+  :faction/name "Vampire Counts",
+  :faction/description
+  "Ancient undead rulers of Sylvania who raise the dead to fight for them, wielding potent necromancy and the terror of the night.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "vampire-counts"}
+ {:faction/eid #uuid "f0000017-0000-4000-8000-000000000000",
+  :faction/name "Warriors of Chaos",
+  :faction/description
+  "The mortal servants of the Chaos Gods who pour south from the Chaos Wastes, armoured in dark iron and sworn to tear down civilisation in their masters' names.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "warriors-of-chaos"}
+ {:faction/eid #uuid "f0000018-0000-4000-8000-000000000000",
+  :faction/name "Wood Elves",
+  :faction/description
+  "The eternal guardians of Athel Loren, who defend their forest home with unmatched skill in archery, swift cavalry, and the ancient power of the forest spirits.",
+  :faction/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
+  :faction/key "wood-elves"}]

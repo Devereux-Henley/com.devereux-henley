@@ -1,20 +1,20 @@
-[#:game-mode{:eid #uuid "a1b2c3d4-0001-4000-8000-000000000001",
-             :name "Land Battle",
-             :description
-             "A standard pitched battle between two armies on open terrain.",
-             :draft-value 12400,
-             :player-count 2,
-             :reinforcement-value 0,
-             :reinforcements-enabled false,
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
- #:game-mode{:eid #uuid "a1b2c3d4-0002-4000-8000-000000000002",
-             :name "Domination",
-             :description
-             "A battle fought over capture points. Armies earn victory points by holding objectives.",
-             :draft-value 9000,
-             :player-count 2,
-             :reinforcement-value 9000,
-             :reinforcements-enabled true,
-             :game
-             [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}]
+[{:game-mode/eid #uuid "a1b2c3d4-0001-4000-8000-000000000001",
+  :game-mode/name "Land Battle",
+  :game-mode/description
+  "A standard pitched battle between two armies on open terrain.",
+  :game-mode/draft-value 12400,
+  :game-mode/player-count 2,
+  :game-mode/reinforcement-value 0,
+  :game-mode/reinforcements-enabled false,
+  :game-mode/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:game-mode/eid #uuid "a1b2c3d4-0002-4000-8000-000000000002",
+  :game-mode/name "Domination",
+  :game-mode/description
+  "A battle fought over capture points. Armies earn victory points by holding objectives.",
+  :game-mode/draft-value 9000,
+  :game-mode/player-count 2,
+  :game-mode/reinforcement-value 9000,
+  :game-mode/reinforcements-enabled true,
+  :game-mode/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}]
