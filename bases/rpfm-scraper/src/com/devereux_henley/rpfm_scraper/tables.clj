@@ -297,7 +297,7 @@
   "Returns [name-map tooltip-map] keyed by ability key."
   [loc]
   (let [name-prefix    "unit_abilities_onscreen_name_"
-        tooltip-prefix "unit_abilities_tooltip_"
+        tooltip-prefix "unit_abilities_tooltip_text_"
         np             (count name-prefix)
         tp             (count tooltip-prefix)]
     (reduce-kv

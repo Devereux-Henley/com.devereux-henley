@@ -109,7 +109,7 @@ generated) · **B**uild metadata.
 | abilities | H | eid, key, ability-type, description, game | **name, cost** | authoring |
 | units | H | eid, name, faction, unit-type, unit-category, description, is-unique, game | **key, mark, lore, family-name** | authoring |
 | unit-level-cost | C | all (level + cost columns) | — | authoring |
-| item-abilities | G | — | key, game (`:ability` rows for the replay ability keys items grant) | `derived-uuid("item-ability", ability-key)` |
+| item-abilities | G | — | key, name, description, ability-type, game (`:ability` rows for the replay ability keys items grant) | `derived-uuid("item-ability", ability-key)` |
 | items | G | — | key, name, category, cost, icon-key, abilities (refs into item-abilities), game | `format e1000000-…-%012x` (sorted index) |
 | mounts | G | — | key, name, icon-key, game | `format d2000000-…-%012x` (sorted index) |
 | subfactions | G | — | key, name, faction (FK from authoring) | UUID v5 (frozen ns + engine key) |

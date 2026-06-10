@@ -55,20 +55,28 @@
 
 (defn build-item-abilities
   "item-abilities.edn rows — one `:ability` per distinct replay ability key
-  granted by an emitted item. An equipped ancillary surfaces in a parsed
-  replay's UNIT_ABILITIES under these keys (`_item_passive_…` /
-  `_item_ability_…`), which don't match `item.key`; items point back here via
-  the cardinality-many `:item/abilities` ref, so a key granted by several
-  items is one row referenced by each."
+  granted by an emitted item, with name, description, and ability-type from
+  the `unit_abilities` table + loc where present (the synthesized
+  `_enable`-stripped active forms have no table row). An equipped ancillary
+  surfaces in a parsed replay's UNIT_ABILITIES under these keys
+  (`_item_passive_…` / `_item_ability_…`), which don't match `item.key`; items
+  point back here via the cardinality-many `:item/abilities` ref, so a key
+  granted by several items is one row referenced by each."
   [data game-eid item-rows]
   (->> item-rows
        (mapcat (fn [{ik :item/key}] (get (:item-replay-keys-map data) ik)))
        distinct
        sort
        (mapv (fn [ak]
-               {:ability/eid  (item-ability-eid ak)
-                :ability/key  ak
-                :ability/game [:game/eid game-eid]}))))
+               (let [nm   (get (:ability-name-map data) ak)
+                     tip  (get (:ability-tooltip-map data) ak)
+                     type (:type (get (:unit-ability-map data) ak))]
+                 (cond-> {:ability/eid (item-ability-eid ak)
+                          :ability/key ak}
+                   (seq nm)   (assoc :ability/name nm)
+                   (seq tip)  (assoc :ability/description tip)
+                   (seq type) (assoc :ability/ability-type type)
+                   true       (assoc :ability/game [:game/eid game-eid])))))))
 
 (defn build-mounts
   "mounts.edn rows — one per distinct MP mount icon stem, sorted, index-stable."

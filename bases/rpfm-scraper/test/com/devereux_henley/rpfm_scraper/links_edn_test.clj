@@ -43,7 +43,10 @@
         data  (data-with
                {:item-replay-keys-map {"alpha_charm" ["x_item_passive_shared" "a_item_ability_charm"]
                                        "zeta_blade"  ["x_item_passive_shared"]
-                                       "not_emitted" ["b_item_ability_dropped"]}})
+                                       "not_emitted" ["b_item_ability_dropped"]}
+                :ability-name-map     {"a_item_ability_charm" "Charm"}
+                :ability-tooltip-map  {"a_item_ability_charm" "A charming aura."}
+                :unit-ability-map     {"a_item_ability_charm" {:icon_name "charm" :type "wh_type_augment"}}})
         rows  (le/build-item-abilities data game-eid items)]
     (is (= ["a_item_ability_charm" "x_item_passive_shared"]
            (mapv :ability/key rows))
@@ -51,6 +54,12 @@
     (is (= (seed-edn/derived-uuid "item-ability" "a_item_ability_charm")
            (:ability/eid (first rows)))
         "eid is derived from the ability key")
+    (is (= ["Charm" "A charming aura." "wh_type_augment"]
+           ((juxt :ability/name :ability/description :ability/ability-type) (first rows)))
+        "name, description, and type come from the unit_abilities table + loc")
+    (is (= #{:ability/eid :ability/key :ability/game}
+           (set (keys (second rows))))
+        "keys with no table/loc entry omit the display fields")
     (is (= [:game/eid game-eid] (:ability/game (first rows))))))
 
 (deftest build-items-refs-granted-abilities
