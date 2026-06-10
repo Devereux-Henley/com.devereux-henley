@@ -400,15 +400,21 @@
 
 (defn items-by-ability-keys
   "Resolve a seq of replay ability keys (`_item_passive_…` / `_item_ability_…`,
-  emitted for a unit's equipped ancillaries) into an `{ability-key item}` map.
+  emitted for a unit's equipped ancillaries) into an `{ability-key item}` map
+  via the `:item/abilities` ref. An ability granted by several items resolves
+  to the one with the lowest `:item/key`, so shared keys map deterministically.
   Returns nil for empty input."
   [conn ability-keys]
   (when (seq ability-keys)
     (let [results (dl/q '[:find ?ak (pull ?i pattern)
                           :in $ pattern [?ak ...]
-                          :where [?i :item/ability-keys ?ak]]
+                          :where
+                          [?a :ability/key ?ak]
+                          [?i :item/abilities ?a]]
                         (dl/db conn) item-pattern (vec ability-keys))]
-      (into {} (map (fn [[ak i]] [ak (->item i)])) results))))
+      (into {}
+            (map (fn [[ak i]] [ak (->item i)]))
+            (sort-by (fn [[_ i]] (:item/key i)) #(compare %2 %1) results)))))
 
 (defn spells-by-keys
   "Resolve a seq of spell keys into a `{key spell}` map. Returns nil

@@ -1,7 +1,8 @@
 (ns com.devereux-henley.rpfm-scraper.links-edn-test
   (:require
    [clojure.test :refer [deftest is]]
-   [com.devereux-henley.rpfm-scraper.links-edn :as le])
+   [com.devereux-henley.rpfm-scraper.links-edn :as le]
+   [com.devereux-henley.rpfm-scraper.seed-edn :as seed-edn])
   (:import
    [java.util UUID]))
 
@@ -32,6 +33,38 @@
     (is (= "blade" (:item/icon-key (second rows))) "icon-key is the type icon stem")
     (is (not (contains? (first rows) :item/icon-key)) "no icon when type has none")
     (is (= [:game/eid game-eid] (:item/game (first rows))))))
+
+;; --- build-item-abilities ---
+
+(deftest build-item-abilities-emits-one-row-per-distinct-key
+  (let [items [{:item/key "alpha_charm"}
+               {:item/key "zeta_blade"}
+               {:item/key "no_abilities"}]
+        data  (data-with
+               {:item-replay-keys-map {"alpha_charm" ["x_item_passive_shared" "a_item_ability_charm"]
+                                       "zeta_blade"  ["x_item_passive_shared"]
+                                       "not_emitted" ["b_item_ability_dropped"]}})
+        rows  (le/build-item-abilities data game-eid items)]
+    (is (= ["a_item_ability_charm" "x_item_passive_shared"]
+           (mapv :ability/key rows))
+        "distinct keys of emitted items only, sorted")
+    (is (= (seed-edn/derived-uuid "item-ability" "a_item_ability_charm")
+           (:ability/eid (first rows)))
+        "eid is derived from the ability key")
+    (is (= [:game/eid game-eid] (:ability/game (first rows))))))
+
+(deftest build-items-refs-granted-abilities
+  (let [data (data-with
+              {:ancillaries-rows     [{"key" "alpha_charm" "category" "talisman"}
+                                      {"key" "zeta_blade" "category" "weapon"}]
+               :item-replay-keys-map {"alpha_charm" ["a_item_ability_charm" "x_item_passive_shared"]}})
+        rows (le/build-items data game-eid)]
+    (is (= [[:ability/eid (seed-edn/derived-uuid "item-ability" "a_item_ability_charm")]
+            [:ability/eid (seed-edn/derived-uuid "item-ability" "x_item_passive_shared")]]
+           (:item/abilities (first rows)))
+        ":item/abilities refs the item-ability rows by derived eid")
+    (is (not (contains? (second rows) :item/abilities))
+        "no :item/abilities when the item grants none")))
 
 ;; --- build-mounts ---
 

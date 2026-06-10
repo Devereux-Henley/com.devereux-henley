@@ -32,6 +32,7 @@
    "spells.edn"
    "abilities.edn"
    "attributes.edn"
+   "item-abilities.edn" ; before items.edn — :item/abilities refs these rows
    "items.edn"
    "mounts.edn"
    ;; Phase 3: refs into phase 2

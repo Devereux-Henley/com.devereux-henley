@@ -1,0 +1,1353 @@
+[{:ability/eid #uuid "c6b8b959-aa70-3b72-9fd6-83515be18bc0",
+  :ability/key "wh2_dlc09_item_abilities_amulet_of_phastah",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "448bec47-a19d-36b9-97ce-c66b922b9e1a",
+  :ability/key "wh2_dlc09_item_abilities_cloak_of_the_dunes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9a001ee7-77ca-3893-8dea-1b090ea70628",
+  :ability/key "wh2_dlc09_item_abilities_elixir_of_might",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "66d2bbae-1dc9-3392-aef1-e1b05d897575",
+  :ability/key "wh2_dlc09_item_abilities_enkhils_kanopi",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "efcde58e-d3ff-3502-a587-75a9109605c0",
+  :ability/key "wh2_dlc09_item_abilities_hieratic_jar",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4f16c1b2-99c3-34a9-8dd2-a7e175ebbaa3",
+  :ability/key
+  "wh2_dlc09_item_abilities_neferras_scrolls_of_mighty_incantations",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "8ca880ce-0c17-3f61-8c48-c2ae6afd11cc",
+  :ability/key "wh2_dlc09_item_abilities_staff_of_nagash",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "838aafbe-0932-360f-b6ba-775336a37636",
+  :ability/key "wh2_dlc09_item_passive_crown_of_nehekhara",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5831558d-bc56-340d-98cb-7d4ac6a645b9",
+  :ability/key "wh2_dlc09_item_passive_lucky_skullhelm",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "40c221fd-f0a9-389d-8cc7-392885ccc5ce",
+  :ability/key "wh2_dlc09_item_passive_scorpion_armour",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "de407176-5171-389b-9435-919b9938793a",
+  :ability/key "wh2_dlc09_item_passive_vambraces_of_the_sun",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "65f83e9f-d073-33bf-b9e9-b98606f9779c",
+  :ability/key "wh2_dlc10_item_abilities_fear_of_aramar",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "115a7e45-1bc4-37aa-9f71-988e6ec02e4a",
+  :ability/key "wh2_dlc10_item_abilities_horn_of_the_ancestors",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9903c900-e97d-3874-a70c-093afa673de8",
+  :ability/key "wh2_dlc10_item_abilities_sceptre_of_stone",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2cdfaa90-9f02-394d-843b-2d23d19a188c",
+  :ability/key "wh2_dlc10_item_abilities_speed_of_lykos",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "bdfe3f74-807b-3206-8dbf-e16f4ebddde9",
+  :ability/key "wh2_dlc10_item_abilities_star_of_avelorn",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ab8fb415-124d-3e7f-a5bd-8d1b604bbb4f",
+  :ability/key "wh2_dlc10_item_abilities_stave_of_avelorn",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "97ab457c-dbfe-3a20-8220-c9c8fd73b024",
+  :ability/key "wh2_dlc10_item_abilities_the_amber_trance",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2ab5b3be-ad01-31f8-afa5-ec14b7e560b6",
+  :ability/key "wh2_dlc10_item_passive_amulet_of_dark_fire",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "73223a92-c1f4-3706-84c6-9a046249265f",
+  :ability/key "wh2_dlc10_item_passive_dragon_slayers_fang",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e047d8c3-f966-38b2-a45f-2461fbd4d910",
+  :ability/key "wh2_dlc10_item_passive_gate_keepers_belt",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a0ee6406-60dd-30e3-94de-6054e1e95098",
+  :ability/key "wh2_dlc10_item_passive_gate_keepers_helm",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b3ab260c-d7e0-3902-a680-dab80be87451",
+  :ability/key "wh2_dlc10_item_passive_ironbeards_bracers",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "96ccc69d-36f4-3f85-9b00-0fe206544c52",
+  :ability/key "wh2_dlc10_item_passive_ironbeards_ring",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "670ab953-3e08-37f1-9f91-d2877f1a3891",
+  :ability/key "wh2_dlc10_item_passive_ironwardens_shield",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f562bdfb-43b1-3f49-975f-f89358d232ce",
+  :ability/key "wh2_dlc10_item_passive_old_guards_tankard",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f694b3f1-3063-3f5e-af2e-9be619166b1e",
+  :ability/key "wh2_dlc10_item_passive_prospectors_spyglass",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5d97fb15-7d6d-3e9d-b517-cedc31dc5eac",
+  :ability/key "wh2_dlc10_item_passive_ring_of_grimnir",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "250bac25-d64e-3929-bb51-aec277d40716",
+  :ability/key "wh2_dlc10_item_passive_shieldstone_of_isha",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4242a76c-1844-36c1-92b3-778c311602d7",
+  :ability/key "wh2_dlc10_item_passive_starmetal_plate",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c45d7fa5-2f06-3ccb-9a93-b2715d219f89",
+  :ability/key "wh2_dlc10_item_passive_stone_of_midnight",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c27f9a80-50e6-320a-980e-d84fa8c64e4e",
+  :ability/key "wh2_dlc10_item_passive_the_shadow_crown",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "760717eb-270b-33f4-af52-bb3e5df56585",
+  :ability/key "wh2_dlc11_item_abilities_captain_roths_moondial",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "10805fc5-894f-3360-bcdd-17737f4f699b",
+  :ability/key "wh2_dlc11_item_abilities_moonshine",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9515a4a4-fbc1-3d0d-a1b1-538b352b20df",
+  :ability/key "wh2_dlc11_item_abilities_slann_gold",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4038ea1a-9739-3fe8-8e67-435fc24c3745",
+  :ability/key "wh2_dlc11_item_passive_helm_of_the_kraken",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5a358ba2-3125-33c1-8720-0fe8fd70e2f5",
+  :ability/key "wh2_dlc11_item_passive_the_bordeleaux_flabellum",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "aee9b96d-6ecc-3f2b-8d50-2a39c4a79adc",
+  :ability/key "wh2_dlc12_item_passive_braid_of_bordeleaux",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a05810eb-eff4-396f-8d74-dccd4e44cab6",
+  :ability/key "wh2_dlc12_item_passive_golden_death_mask",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ebfeca6a-54fd-36ad-b4f4-f469edea474c",
+  :ability/key "wh2_dlc12_item_passive_mask_of_heavens",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "bbd12fd2-cc0c-3209-b11a-56723f0e5da7",
+  :ability/key "wh2_dlc12_item_passive_plaque_of_sotek",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a2ef219a-55e1-369f-bcbc-20c59e9952db",
+  :ability/key "wh2_dlc13_item_abilities_shield_of_aeons",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e04ec2ab-8bc5-3238-9ac4-979b92632997",
+  :ability/key "wh2_dlc13_item_passive_band_of_loyalty",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7052c60b-9e7b-31de-9cfe-00ff5c3ce16d",
+  :ability/key "wh2_dlc13_item_passive_golden_tributes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7e7a2369-14e6-3e4b-b091-38912bdd64e3",
+  :ability/key "wh2_dlc13_item_passive_obsinite_plate",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "83721c60-5216-3e27-b1c0-d6d316dca7d7",
+  :ability/key "wh2_dlc13_item_passive_resilient_spirit",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "efdc0e97-4a95-3693-82ec-b0ae2c4c79cd",
+  :ability/key "wh2_dlc14_item_passive_idol_of_darkness",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "20825489-ec77-356f-bcc3-911550f12695",
+  :ability/key "wh2_dlc14_item_passive_the_cloak_of_shadows",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "fadbe541-594f-35ac-b7f0-a68489de3227",
+  :ability/key "wh2_dlc15_item_abilities_armour_of_caledor",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7e1a19e4-e97b-3ce2-909a-7e255ccc4e4f",
+  :ability/key "wh2_dlc15_item_abilities_azhags_ard_armour",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ce7c26f5-06dc-3ab6-91fa-d05078338b31",
+  :ability/key "wh2_dlc15_item_abilities_blacktoofs_conjuration",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "82cb7b41-af98-3f5d-bdfa-2fc4873dfa09",
+  :ability/key "wh2_dlc15_item_abilities_blood_forged_armour",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "102fa097-941e-302e-b336-493cb47440fe",
+  :ability/key "wh2_dlc15_item_abilities_helm_of_yvresse",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "d493d073-72f1-3158-8daf-845c06e8b8c0",
+  :ability/key "wh2_dlc15_item_abilities_lucky_banner",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "721a3762-b961-3626-bf35-c83b69bc7bce",
+  :ability/key "wh2_dlc15_item_abilities_vine_dragon_scale",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "d16baf52-2116-3f1c-a663-5d228a74c869",
+  :ability/key "wh2_dlc15_item_ability_vine_dragon_scale",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "807be167-cc8f-3327-8ea6-b72c0de0ae64",
+  :ability/key "wh2_dlc16_item_abilities_acorns_of_the_oak_of_ages",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "6a21b6ce-236b-3ad4-9d94-e9c636ba073f",
+  :ability/key "wh2_dlc16_item_abilities_berry_wine",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4f2edc41-4301-3124-947f-afb28220a136",
+  :ability/key "wh2_dlc16_item_abilities_dart_of_doom",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3965bc40-aadb-3474-a018-f0fa67ac4565",
+  :ability/key "wh2_dlc16_item_abilities_dreaming_cloak_i",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4bb80bec-b062-3e1d-b70d-24a4cb61f290",
+  :ability/key "wh2_dlc16_item_abilities_dreaming_cloak_ii",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "360496a8-cba7-3bd3-9bea-3c5a4ef1bba9",
+  :ability/key "wh2_dlc16_item_abilities_dreaming_cloak_iii",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f3a75d7d-53e2-36dd-9a3f-f03d54eef5d6",
+  :ability/key "wh2_dlc16_item_abilities_dreaming_ring_i",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a599f821-7d4b-3aa2-b76e-3dfad68fef4c",
+  :ability/key "wh2_dlc16_item_abilities_dreaming_ring_ii",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e308b370-1111-3c28-9010-3e15f9ed5d44",
+  :ability/key "wh2_dlc16_item_abilities_dreaming_ring_iii",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f63aa49e-2d55-33f8-b021-c47bab7fc202",
+  :ability/key "wh2_dlc16_item_abilities_eagle_quiver",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "20c0c0cc-6ee4-3e30-8c4c-da71f83ec2ee",
+  :ability/key "wh2_dlc16_item_abilities_twilight_horn_i",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "bf09d594-2f80-3622-842a-ea1072843dc5",
+  :ability/key "wh2_dlc16_item_abilities_twilight_horn_ii",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b784c427-d7e2-339e-a57d-8b6b6c6f20ef",
+  :ability/key "wh2_dlc16_item_passive_dragon_mask_i",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ccfd4b34-f402-37be-9fd0-3f639f37cfa1",
+  :ability/key "wh2_dlc16_item_passive_dragon_mask_ii",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "efaa1c60-f4e8-3984-b1ca-02d69e846254",
+  :ability/key "wh2_dlc16_item_passive_dragon_mask_iii",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "27c8b1dd-c091-3a17-8463-c59544c12e96",
+  :ability/key "wh2_dlc16_item_passive_fang_of_taalroth",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e9dde0f6-ded3-35ce-aa0c-8ea4d4ba5fc0",
+  :ability/key "wh2_dlc16_item_passive_twilight_helm",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "95cea390-5994-300c-8b27-8087a53e2c5e",
+  :ability/key "wh2_dlc17_item_passive_thoreks_rune_armour",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "6041d163-ee1c-309b-81cd-9a9f15472b5e",
+  :ability/key "wh2_main_item_abilities_amulet_of_itzl",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b372475a-0e6e-3ebb-ac96-79a7cdfaa23a",
+  :ability/key "wh2_main_item_abilities_armour_of_the_stars",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2457b39b-74ea-3e35-b324-4d6e451ef745",
+  :ability/key "wh2_main_item_abilities_aura_of_quetzl",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "04556ffd-fff2-3403-86a6-a6a72a557e52",
+  :ability/key "wh2_main_item_abilities_black_dragon_egg",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "79a5dac8-1df6-3b96-a734-aee38cd0dfad",
+  :ability/key "wh2_main_item_abilities_blade_of_bel_korhadris",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "57c3c434-457c-370a-95ca-bd84c1e5eb52",
+  :ability/key "wh2_main_item_abilities_blood_statuette_of_spite",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b500cd44-f569-3b9d-8ae0-b50d37a2a230",
+  :ability/key "wh2_main_item_abilities_book_of_hoeth",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e465c231-32d9-32f7-b0fc-bab4a6920ece",
+  :ability/key "wh2_main_item_abilities_cube_of_darkness",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "753bccf0-a42c-3bc7-a3c2-5b050a5c1bfd",
+  :ability/key "wh2_main_item_abilities_dragonhorn",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "82a9a7f7-f1df-3729-a99a-8b0750207766",
+  :ability/key "wh2_main_item_abilities_pearl_of_infinite_bleakness",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3d381e0d-84de-304e-9c41-8c141f445e67",
+  :ability/key "wh2_main_item_abilities_plaque_of_dominion",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ea432720-9286-3d0a-a190-f3b3b8af1ae3",
+  :ability/key "wh2_main_item_abilities_rival_hide_talisman",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4e6f9d3f-efb1-3e3f-919b-c35475365ae1",
+  :ability/key "wh2_main_item_abilities_rod_of_corruption",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "74db5cbd-8da0-3709-8550-46a4755a29b4",
+  :ability/key "wh2_main_item_abilities_scrying_stone",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ce2db0fe-b6a0-3909-9b2a-e042509c78df",
+  :ability/key "wh2_main_item_abilities_skalm",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "1e94e97e-2f1b-3650-8a3c-242f0f2079a3",
+  :ability/key "wh2_main_item_abilities_skavenbrew",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "758a6d70-f4b9-388c-b825-f890af842a33",
+  :ability/key "wh2_main_item_abilities_starwood_staff",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "8288cf6f-2f43-33ae-9f75-b1998e67be13",
+  :ability/key "wh2_main_item_abilities_talisman_of_loec",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ae8832e0-6e72-3595-ba76-22738ca3b7b6",
+  :ability/key "wh2_main_item_abilities_the_bane_shield",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "57369eec-d21f-339b-b30a-a3bb6bac3c88",
+  :ability/key "wh2_main_item_abilities_the_guiding_eye",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "eb1dc8cb-8a68-3e0c-9016-11f5d4ebc0ab",
+  :ability/key "wh2_main_item_abilities_the_horn_of_kygor",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "aeed2db1-2896-3a9b-8211-0133fbc777b0",
+  :ability/key "wh2_main_item_abilities_the_liber_bubonicus",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "fd0dd97b-384d-3d5d-973d-9f967fb87c8e",
+  :ability/key "wh2_main_item_abilities_the_tricksters_pendant",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5a8e3119-0027-39f1-9e4a-cd19ba1c34ab",
+  :ability/key "wh2_main_item_abilities_the_vortex_shard",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "841dcdad-32b3-3d8c-9eee-6ac7b6b32b8d",
+  :ability/key "wh2_main_item_abilities_warpstorm_scroll",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "28fb3e59-5b43-3417-82bf-05691727a03f",
+  :ability/key "wh2_main_item_abilities_worlds_edge_armour",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "1aa01bd5-0231-33bf-b2d7-e74e20dcf96a",
+  :ability/key "wh2_main_item_passive_blessed_tome",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "da017509-1b46-37b7-b051-c01d656d1228",
+  :ability/key "wh2_main_item_passive_circlet_of_iron",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c7f072eb-e3c5-3146-88ca-6fb8ec5696cf",
+  :ability/key "wh2_main_item_passive_curse_charm_of_tepok",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b152c764-c52d-3ea8-b72f-e11f5813290e",
+  :ability/key "wh2_main_item_passive_darkstar_cloak",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "6e0f506a-af2c-39df-9008-37f419f07634",
+  :ability/key "wh2_main_item_passive_diamond_guardian_phoenix",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a16c3f94-d418-309d-8e95-e82be9598975",
+  :ability/key "wh2_main_item_passive_enchanted_spyglass",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "adae682c-c0e6-3951-8445-682553759e64",
+  :ability/key "wh2_main_item_passive_heart_of_averlorn",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "d4116c95-4f48-34e5-b389-ad633fb7e228",
+  :ability/key "wh2_main_item_passive_loremasters_cloak",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e72cb9a7-a50f-3409-9b18-f446f2bf2b03",
+  :ability/key "wh2_main_item_passive_pipes_of_piebald",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "062662c8-24a2-364c-9fa4-b869e6a216ca",
+  :ability/key "wh2_main_item_passive_portents_of_verminous_doom",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "963a3334-ed61-3389-bd60-450a92aa1a9b",
+  :ability/key "wh2_main_item_passive_ring_of_hotek",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c98c26fb-3702-3cc2-bc56-3a33219b122e",
+  :ability/key "wh2_main_item_passive_ruby_guardian_phoenix",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "8b9f209b-59da-3ad0-9fa8-2f99c69d170c",
+  :ability/key "wh2_main_item_passive_sacred_incense",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "67017c69-5724-3c03-b09a-2e7083a22424",
+  :ability/key "wh2_main_item_passive_sapphire_guardian_phoenix",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7c5bdb86-59f6-33ba-b34f-a30328050499",
+  :ability/key "wh2_main_item_passive_scroll_of_hoeth",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2f6485d4-7e5d-35f5-8c4c-b9a95b51fcda",
+  :ability/key "wh2_main_item_passive_shadow_magnet_trinket",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cb92358c-76f4-3b85-b799-5ab27804db0f",
+  :ability/key "wh2_main_item_passive_shield_of_distraction",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "900fc52e-aa19-3d4d-9662-9ff0a0799366",
+  :ability/key "wh2_main_item_passive_shield_of_ghrond",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "bf613f69-cc3b-36fc-ae71-1844a63b8cf8",
+  :ability/key "wh2_main_item_passive_supreme_spellshield",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e74a5fda-4751-3e2f-81ae-7a2c32754365",
+  :ability/key "wh2_main_item_passive_the_book_of_the_phoenix",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "86d402ca-9b5a-31e9-bf35-fc9913edb7a7",
+  :ability/key "wh2_main_item_passive_war_drum_of_xahutec",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cdecabf1-816e-30f7-95bd-1e671622c5ef",
+  :ability/key "wh2_main_item_passive_warp_shard_armour",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5b4d051a-5ad8-388d-9f53-315501b51626",
+  :ability/key "wh2_main_item_passive_warpstone_armour",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "882e8f03-c22b-3d92-b5c3-2cecf8bb2f58",
+  :ability/key "wh2_twa03_item_passive_beast_armour_of_karond_kar",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e9903d3c-f1ef-3156-aa20-fdf575d639ae",
+  :ability/key "wh3_cp1_item_abilities_heavens_gate",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "0d97822c-eea1-3d42-a02e-3ebe4005feda",
+  :ability/key "wh3_cp1_item_passive_arcane_trinket",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "15eb0dcc-c507-321e-a718-b3350785b60c",
+  :ability/key "wh3_dlc20_item_abilities_daemonshield",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "32ab32b1-1421-3cf7-b77a-043dc8a8d5be",
+  :ability/key "wh3_dlc20_item_abilities_pestilent_potions",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "185206cd-a991-3589-8dd8-008449966860",
+  :ability/key "wh3_dlc20_item_abilities_rod_of_torment",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5a863252-4fbd-31a1-a3fc-213f27519df9",
+  :ability/key "wh3_dlc20_item_abilities_the_armour_of_morkar",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "66b1d5e7-055f-3608-afa0-a362f2471421",
+  :ability/key "wh3_dlc20_item_passive_armour_of_damnation",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "0fda2d3d-67ab-3412-9b4c-aae03118b07d",
+  :ability/key "wh3_dlc20_item_passive_blasphemous_amulet",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "373104e3-bde4-30b1-874b-be8a917dd9c4",
+  :ability/key "wh3_dlc20_item_passive_bronze_armour_of_zhrakk",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "272c53ab-a022-30f6-9f84-d383dc575c12",
+  :ability/key "wh3_dlc20_item_passive_crown_of_everlasting_conquest",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7af2ce16-f970-351e-8895-a99f0efbb953",
+  :ability/key "wh3_dlc20_item_passive_doom_totem",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cbc9a0b4-05fd-3c56-ad25-b130fb8c66dd",
+  :ability/key "wh3_dlc20_item_passive_the_beguiling_gem",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a510c48a-141a-350f-9262-007fe739eb1b",
+  :ability/key "wh3_dlc20_item_passive_the_scarlet_armour",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7b2246dc-9674-3188-a67d-daf203e3aa6d",
+  :ability/key "wh3_dlc20_item_passive_vessel_of_chaos",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "37dca4d4-9cb9-3204-afc4-c0a17cebfdd9",
+  :ability/key "wh3_dlc23_item_abilities_ancestral_vengeance",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "6226f68c-9355-37c0-950d-bab47e4d38c5",
+  :ability/key "wh3_dlc23_item_abilities_armour_of_gazrakh",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3dc78afa-5d8e-34fb-851a-fb12e2f56aec",
+  :ability/key "wh3_dlc23_item_abilities_black_gem_of_gnar",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7d18f818-26e3-37f1-a261-1ef3d8733ad8",
+  :ability/key "wh3_dlc23_item_abilities_daemon_flask_of_ashak",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2b846c07-a9db-37af-a674-27d9f1015906",
+  :ability/key "wh3_dlc23_item_abilities_darkened_mist",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9deb11cb-200a-39b8-b86a-61cfa4e308ff",
+  :ability/key "wh3_dlc23_item_abilities_dweomer_leach_orb",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "14b9d3b8-a2af-374e-8e8a-be991c484646",
+  :ability/key "wh3_dlc23_item_abilities_hammer_of_smednir",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e04efe8a-48a6-3f43-942d-553a845e2222",
+  :ability/key "wh3_dlc23_item_abilities_morgrims_eye",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "52cb2fc8-7a03-3585-b705-98ea659da0e5",
+  :ability/key "wh3_dlc23_item_abilities_rune_of_thungni",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "bd5e0547-3f1d-32fa-aa1c-2924ffdd7563",
+  :ability/key "wh3_dlc23_item_abilities_slayer_for_chaos",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e27d8d02-95f5-3775-b986-59ba1b2ca170",
+  :ability/key "wh3_dlc23_item_abilities_the_vial_of_hashut",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c5e3c56e-71b3-3ca8-9a00-18c84ef402eb",
+  :ability/key "wh3_dlc23_item_ability_black_gem_of_gnar",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "97676858-4c7b-3e2d-b840-521209ea1be4",
+  :ability/key "wh3_dlc23_item_ability_breath_of_hatred",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "57fbe3ef-0f11-3046-9ca4-46fd460cacda",
+  :ability/key "wh3_dlc23_item_ability_chalice_of_blood_and_darkness",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "02e39f73-3952-303f-969e-3317d8f994ae",
+  :ability/key "wh3_dlc23_item_ability_daemon_flask_of_ashak",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ce87971e-bb98-3231-a094-029da441ed2c",
+  :ability/key "wh3_dlc23_item_ability_dark_mace",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b7fa9960-fb83-3094-86cb-5e38c97ba03c",
+  :ability/key "wh3_dlc23_item_ability_dweomer_leach_orb",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e589335c-d579-363f-aad1-3a9d0ea6aaa9",
+  :ability/key "wh3_dlc23_item_ability_enable_breath_of_hatred",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cc6ae26d-9443-33c2-95c7-e9dc28c201c4",
+  :ability/key
+  "wh3_dlc23_item_ability_enable_chalice_of_blood_and_darkness",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "0ee010e1-cfa3-3498-99a9-321a7fad993e",
+  :ability/key "wh3_dlc23_item_ability_enable_daemon_flask_of_ashak",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "1333d586-789e-3a46-9a12-908962f3f22a",
+  :ability/key "wh3_dlc23_item_ability_enable_dark_mace",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "d5aeb9bc-26f5-342b-90ab-d11ef32ff971",
+  :ability/key "wh3_dlc23_item_ability_enable_dweomer_leach_orb",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a9726c72-ad3c-3f8f-b1fd-66fdc24bdac9",
+  :ability/key "wh3_dlc23_item_ability_enable_spell_hell_hammer",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "19f927f8-710c-3ae3-8600-77d76f2914c8",
+  :ability/key "wh3_dlc23_item_ability_enable_spell_wrought_sceptre",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cdfa6397-9942-3802-8f7c-3f23ad823192",
+  :ability/key "wh3_dlc23_item_ability_enable_the_vial_of_hashut",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b646b92b-dcda-3a06-a547-4beed04c74a4",
+  :ability/key "wh3_dlc23_item_ability_spell_hell_hammer",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "6ee306e1-2eef-3356-9999-dd55c2a99a15",
+  :ability/key "wh3_dlc23_item_ability_spell_wrought_sceptre",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "34c23ecb-0ac7-348d-af0a-26381f8635f8",
+  :ability/key "wh3_dlc23_item_ability_the_vial_of_hashut",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b29fa2c3-1121-3433-8f7e-b90b61141db5",
+  :ability/key "wh3_dlc23_item_passive_chalice_of_blood_and_darkness",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5a4ba010-681e-332c-9e2a-266d53c20a38",
+  :ability/key "wh3_dlc23_item_passive_chaos_runeshield",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f2118425-ae43-3b3c-973d-6a88af94f77d",
+  :ability/key "wh3_dlc23_item_passive_daemonspite_crucible",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5b21705a-9869-362b-ba64-2bd3c8f27e95",
+  :ability/key "wh3_dlc23_item_passive_embrace_of_skavor",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7913b08d-e66f-379e-bd7c-4b8934dadcf4",
+  :ability/key "wh3_dlc23_item_passive_enable_life_bane_blade",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "242f68f2-8ba8-3be3-9c61-5b4db5b6793e",
+  :ability/key "wh3_dlc23_item_passive_ever_burning_light",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9c2ead67-ea8e-3a72-ba7a-5c8d026277dc",
+  :ability/key "wh3_dlc23_item_passive_hellshard_amulet",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "8cd4a320-685b-3785-b47d-fda78a038d47",
+  :ability/key "wh3_dlc23_item_passive_stone_mantle",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7e7c8c62-a0ab-3f4f-b1fc-5ec201751be2",
+  :ability/key "wh3_dlc23_item_passive_talisman_of_obsidian",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e5efc1d2-9905-383c-9e81-6f4913057b0e",
+  :ability/key "wh3_dlc24_item_abilities_armour_of_the_dragons_gaze",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c62b24c3-50a5-33c9-9176-c9cf31fcf71a",
+  :ability/key "wh3_dlc24_item_abilities_blessed_helm_of_the_oblast",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "dde340c5-9cf6-30de-9c84-5f58345d4ea5",
+  :ability/key "wh3_dlc24_item_abilities_book_of_secrets",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "19816148-01af-33f6-990f-99ff295604c7",
+  :ability/key "wh3_dlc24_item_abilities_mirror_of_knowledge",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f9d36596-e032-34c1-aa5e-4f844caecef5",
+  :ability/key "wh3_dlc24_item_abilities_ritual_of_the_beast",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3db9bc4c-0212-37c4-8f7d-a3b6e5ed7d48",
+  :ability/key "wh3_dlc24_item_abilities_the_golden_eye_of_tzeentch",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "897be139-c586-35f3-9dd7-a5958a448fb9",
+  :ability/key "wh3_dlc24_item_abilities_wind_bow",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ed245ff3-aae8-30f8-8f40-3921f44ed445",
+  :ability/key "wh3_dlc24_item_passive_divining_rod",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b0f6c650-9002-3cbf-8c34-ae08ea8b01e9",
+  :ability/key "wh3_dlc24_item_passive_sentient_stormcloud",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f9e4cc75-0017-3b31-b5e6-cf075cb103fd",
+  :ability/key "wh3_dlc24_item_passive_totem_of_ursus",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "eb715927-0a71-3495-9a0b-cca53dfb06ab",
+  :ability/key "wh3_dlc25_item_abilities_deaths_timekeeper",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4bcd8523-941c-3aef-b680-1b4841a0040a",
+  :ability/key "wh3_dlc25_item_abilities_necrotic_phylactry",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "591597d0-8887-33fb-9a0b-f11d5959faf1",
+  :ability/key "wh3_dlc25_item_abilities_ominous_powder",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5b3c40ac-f351-37af-8e5f-e31d2be8e5c8",
+  :ability/key "wh3_dlc25_item_abilities_stormlance",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "233c229e-5458-3797-9816-fdfa95211ab7",
+  :ability/key "wh3_dlc25_item_abilities_the_gold_standard",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f50673a5-bb99-3fde-9056-0e9a661c98f6",
+  :ability/key "wh3_dlc25_item_passive_armour_of_tarnus",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "d4ad59f5-4a23-3bcb-8e93-db5a50f59a9b",
+  :ability/key "wh3_dlc25_item_passive_baleflame_amulet",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "519c6d33-7c97-3516-958c-91ce77cf46b8",
+  :ability/key "wh3_dlc25_item_passive_cloak_of_anraheir",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3154a552-2d69-30a5-99d7-f535980571a5",
+  :ability/key "wh3_dlc25_item_passive_the_eyes_of_grungni",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "181eb431-2d2a-3cbd-a53b-bcde7a91d752",
+  :ability/key "wh3_dlc26_item_abilities_bugmans_xxxxxx",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "94426019-e4e2-36aa-878d-05c268b19d7d",
+  :ability/key "wh3_dlc26_item_passive_brass_collar_of_khorne",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c252a636-7d84-305a-a2d7-290f2eca4ff9",
+  :ability/key "wh3_dlc27_item_abilities_bear_fang_talisman",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2b8421c0-730b-3c80-98d4-0207225003d9",
+  :ability/key "wh3_dlc27_item_abilities_eagle_feather_torc",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "57ed2196-c024-365d-8eab-b712d5b6422a",
+  :ability/key "wh3_dlc27_item_abilities_elixir_of_damnation",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "01110d83-401b-3876-9c3e-3a18c6f2522e",
+  :ability/key "wh3_dlc27_item_abilities_mask_of_the_merlord",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9692aa68-8995-3f15-83fe-d6728ad7ef44",
+  :ability/key "wh3_dlc27_item_abilities_null_stone",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "7698fe5d-ba39-36e1-95ca-5f94ae18bf75",
+  :ability/key "wh3_dlc27_item_abilities_preyton_horns",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "410a8207-552a-36ef-823a-1b2090b59e75",
+  :ability/key "wh3_dlc27_item_abilities_schalkains_teeth",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "87350fef-066d-3ee8-af32-954fd75841be",
+  :ability/key "wh3_dlc27_item_abilities_spurting_bile_blood",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "dccbf304-61b8-3f6e-bc3e-a957e1707451",
+  :ability/key "wh3_dlc27_item_abilities_staff_of_the_masque",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "fe78ad49-2fa7-324c-a99c-7c0274fbf118",
+  :ability/key "wh3_dlc27_item_passive_annulian_crystal",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "11dd72ac-a93c-3a2d-8faf-60eef5016505",
+  :ability/key "wh3_dlc27_item_passive_armour_of_the_old_gods",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e0effbc4-80c8-30da-9eb9-7cccd1f09420",
+  :ability/key "wh3_dlc27_item_passive_axe_of_the_pale_serpent",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2058f275-1a2a-3e8b-a9cc-c36dedd06842",
+  :ability/key "wh3_dlc27_item_passive_blade_of_the_old_gods",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3673a2f7-f5ff-31a3-8911-7860e499445b",
+  :ability/key "wh3_dlc27_item_passive_carrion_spine",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "140af6c3-cb4b-3154-9837-a36e392ad372",
+  :ability/key "wh3_dlc27_item_passive_charm_of_the_gods",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "084786d0-af71-35a5-b28e-e33557002a80",
+  :ability/key "wh3_dlc27_item_passive_golden_shield",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "576ff82a-263f-30fa-b462-9841dc966dfb",
+  :ability/key "wh3_dlc27_item_passive_icon_of_the_old_gods",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c5141eca-de63-38ea-b2dc-07b37d05382a",
+  :ability/key "wh3_dlc27_item_passive_petrifying_gaze",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "88b566e2-54d2-38da-af5a-160d57a77f8f",
+  :ability/key "wh3_dlc27_item_passive_skinhidden_plate",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c3444f0a-6133-38ba-ad4c-bfcf67eab6e6",
+  :ability/key "wh3_dlc27_item_passive_stone_of_shyish",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b16ade47-e01c-3e25-b6e1-4ceb20227fc1",
+  :ability/key "wh3_dlc27_item_passive_strength_from_flesh",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4e00b61a-b6ba-31df-88bc-eb45dfed7470",
+  :ability/key "wh3_dlc27_item_passive_temakadors_gauntlets",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "50fdeb2f-5497-30e2-a5eb-706c4328cfd8",
+  :ability/key
+  "wh3_main_item_abilities_alchemists_elixir_of_iron_skin",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "46636015-995d-3ab3-8e8a-75f1015463d3",
+  :ability/key
+  "wh3_main_item_abilities_alchemists_elixir_of_puissance",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "96b81fd2-e2c2-3193-b572-050bac5ba107",
+  :ability/key "wh3_main_item_abilities_alchemists_elixir_of_venom",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "052eb6f6-c471-36ae-8a35-f24b972fb180",
+  :ability/key "wh3_main_item_abilities_bangstick",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4d8c65c8-9ce0-3031-a525-82dde4c76673",
+  :ability/key "wh3_main_item_abilities_bloodstone",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e0f880ae-7f4d-37ad-80c9-dd4149712543",
+  :ability/key "wh3_main_item_abilities_crackleblaze",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "895a4cd6-165b-3c0b-819a-b11b8b7b0f22",
+  :ability/key "wh3_main_item_abilities_deaths_head",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a8d4adbb-0707-3091-ae89-60ec06b75d41",
+  :ability/key "wh3_main_item_abilities_fistful_of_laurels",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "00cdb1e2-ab83-3ca1-8253-415b5a12e44f",
+  :ability/key "wh3_main_item_abilities_gastuvas_egg",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "0ad4eaf5-2c4d-3350-8420-93593e7e20f6",
+  :ability/key "wh3_main_item_abilities_gruts_sickle",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "49f4dcde-a15f-36f4-85a6-8f51bd0267b0",
+  :ability/key "wh3_main_item_abilities_hellheart",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "dba98618-68d6-31a2-bee4-b111e33f9004",
+  :ability/key "wh3_main_item_abilities_kovsh_breath",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "81de3586-f09b-3260-aedd-6e25905d788c",
+  :ability/key "wh3_main_item_abilities_maw_shard",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cbdc8a76-66a0-338e-8f43-d7c2276d9d9e",
+  :ability/key "wh3_main_item_abilities_potion_of_farsight",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "0b119f34-339c-3095-a6c9-925d765a4d59",
+  :ability/key "wh3_main_item_abilities_prismatic_amplifier",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "dbb76c6c-f16b-3de8-b0f7-0424c2e81435",
+  :ability/key "wh3_main_item_abilities_saint_annushkas_finger_bone",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "00128de5-e7b1-3c7a-b67e-e231e42f8b00",
+  :ability/key "wh3_main_item_abilities_scales_of_the_celestial_court",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5178aa6e-086d-3dbc-a457-c410a9219af8",
+  :ability/key "wh3_main_item_abilities_snowflake_pendant",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cd6e051d-3c86-3d3e-8591-7a5524db81f0",
+  :ability/key "wh3_main_item_abilities_staff_of_wu_xing",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a7859b50-00ee-31ad-af0e-1765083c4102",
+  :ability/key "wh3_main_item_abilities_steppe_hunters_horn",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "70ca1362-9656-3b35-be13-5cc3626c48d9",
+  :ability/key "wh3_main_item_abilities_the_bloody_shackle",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b6d16b53-c3d0-3b3d-a03b-2c88ef80dc48",
+  :ability/key "wh3_main_item_abilities_the_chromatic_tome",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b21b0657-abec-3416-9be4-b475546d2b0c",
+  :ability/key "wh3_main_item_abilities_the_portalglyph",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ba4e6e2b-e251-3497-a509-4b98b470176c",
+  :ability/key "wh3_main_item_abilities_the_rock_of_inevitability",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b00d5818-3beb-397a-a258-5e22db04f295",
+  :ability/key "wh3_main_item_abilities_void_pendulum",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ddbcb411-2802-36cc-a4af-b1287a913a22",
+  :ability/key "wh3_main_item_abilities_zak_aloooog",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "6636bf0b-cbc6-37d6-9f03-c8f8ce2c8c2a",
+  :ability/key "wh3_main_item_passive_armour_of_ursun",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "6bfb850a-260d-39b2-9d78-1f4cd71a09e3",
+  :ability/key "wh3_main_item_passive_balalaika_of_the_arari",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "eb1b51f9-a685-3f1a-87f7-fce8918a1b65",
+  :ability/key "wh3_main_item_passive_blood_of_the_motherland",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c79863bf-8206-3efa-9d27-c451cfef0002",
+  :ability/key "wh3_main_item_passive_brahmir_statue",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cda12631-bb8a-3f95-998a-65f8d57e67f3",
+  :ability/key "wh3_main_item_passive_catalytic_kiln",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "dd4ea51e-ac0d-3b80-aa46-6432f4298b6a",
+  :ability/key "wh3_main_item_passive_cauldron_of_the_great_maw_ii",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4c2ea345-f9cd-30e8-92ff-81c1df2d9c79",
+  :ability/key "wh3_main_item_passive_celestial_silk_robe",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "12132389-4cca-31ef-8d89-bce0e85d0284",
+  :ability/key "wh3_main_item_passive_cloak_of_po_mei",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3fd8e5f2-26ca-35e9-857d-73b6164eb1fc",
+  :ability/key "wh3_main_item_passive_crystal_cloak",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "d7785aef-b555-3f94-9470-dca2adabfea0",
+  :ability/key "wh3_main_item_passive_crystal_of_kunlan",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b5ba1c9f-0e50-3ba3-a15b-39d0658534f5",
+  :ability/key "wh3_main_item_passive_enthralling_musk",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "50a04829-fac2-3af3-b9fe-5344cbaf7a39",
+  :ability/key "wh3_main_item_passive_ever_full_kovsh",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "02ade98b-1cbc-363c-9046-1f7d6c6436b1",
+  :ability/key "wh3_main_item_passive_fractured_clasp",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "6d79d982-83eb-3c5a-a78b-d7fbda93474c",
+  :ability/key "wh3_main_item_passive_gnoblar_thiefstone",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a07a0050-509e-3b9f-9e05-b2b988a9ad54",
+  :ability/key "wh3_main_item_passive_greedy_fist",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "77928e2d-fbeb-344c-81e8-a69a10e6b3d0",
+  :ability/key "wh3_main_item_passive_gut_maw",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "fe0d7586-42a2-3463-90d4-5bb99de829d1",
+  :ability/key "wh3_main_item_passive_iron_ice_armour",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "db695d91-1afb-33dd-9233-7ca204abbac9",
+  :ability/key "wh3_main_item_passive_jade_amulet",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cd3b1c85-ecc7-38b6-90d0-7de9fff50887",
+  :ability/key "wh3_main_item_passive_jade_lion",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "658c261c-9ccd-377e-8658-f5985d87760d",
+  :ability/key "wh3_main_item_passive_kite_of_the_uttermost_airs",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "472da526-74a8-36aa-b90a-f54e1bc56a51",
+  :ability/key "wh3_main_item_passive_mirror_of_the_ice_queen",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "91e08dfc-e549-36c7-8584-e0834620b637",
+  :ability/key "wh3_main_item_passive_overtyrants_crown",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "936f2e82-804a-3ff3-bb13-196347a1e39b",
+  :ability/key "wh3_main_item_passive_rock_eye",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9e559a90-1f8a-3238-9c72-9471296361bb",
+  :ability/key "wh3_main_item_passive_rod_of_command",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2d47a969-63e8-3062-8713-1562fc9f6e27",
+  :ability/key "wh3_main_item_passive_shield_of_sacrifice",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "97bcd3f7-6f14-3afe-af0b-931dda95c5ae",
+  :ability/key "wh3_main_item_passive_shield_of_the_nan_gau",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f1eda0a8-aa33-3681-bc91-6e45acecca14",
+  :ability/key "wh3_main_item_passive_skullmantle",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f734b8cd-9504-32b6-9da5-8d5787315d75",
+  :ability/key "wh3_pro11_item_passive_bane_shield",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3a5bf588-f370-33b3-ba10-252151026092",
+  :ability/key
+  "wh3_pro12_item_passive_brass_collar_of_bloody_vengeance",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9862edb8-b74c-3bbc-bd4b-ae5b34b19406",
+  :ability/key "wh_dlc01_item_passive_helm_of_many_eyes",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "def9aff8-fae2-3715-8976-d2633d514cd6",
+  :ability/key "wh_dlc01_item_passive_the_crown_of_domination",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e2f71182-88c7-3212-93c8-b83468cfc646",
+  :ability/key "wh_dlc03_item_abilities_chalice_of_dark_rain",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4f260380-e42d-3646-904a-4b58095697df",
+  :ability/key "wh_dlc03_item_abilities_hagtree_fetish",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "03cbfb52-8a1c-3ce5-9f55-f7a736868e32",
+  :ability/key "wh_dlc03_item_abilities_horn_of_the_first_beast",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f04a9277-0b07-39b8-b136-770f779c9cf6",
+  :ability/key "wh_dlc03_item_abilities_jagged_dagger",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5db69c4f-7610-3c47-862c-af31c7fd203d",
+  :ability/key "wh_dlc03_item_abilities_skull_of_rarkos",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cafa55f2-f8cb-3421-9833-a517fda9a3b6",
+  :ability/key "wh_dlc03_item_passive_blackened_plate",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "be99b192-d149-30a6-9982-06aa456bc9c2",
+  :ability/key "wh_dlc03_item_passive_icon_of_vilification",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9445e650-ee3b-36fb-9c89-8e1dd3e42763",
+  :ability/key "wh_dlc03_item_passive_shard_of_the_herdstone",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "546685dd-bd1d-308b-9e0c-3bc000a87476",
+  :ability/key "wh_dlc03_item_passive_the_dark_mail",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "07d75ef8-b8ba-3c91-bc3f-476cbaac37db",
+  :ability/key "wh_dlc03_item_passive_trollhide",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3348f564-5c72-342f-a31a-e15ca64c3d37",
+  :ability/key "wh_dlc04_item_abilities_the_carstein_ring",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ae5cb1cf-cb99-3c17-b28e-48071891f2fe",
+  :ability/key "wh_dlc04_item_abilities_the_liber_noctus",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "cda12700-b642-37e3-8e0f-e8ec5491f29c",
+  :ability/key "wh_dlc04_item_passive_jade_griffon",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "44c2fd5d-091d-3d59-a4a9-a5d365e8f95e",
+  :ability/key "wh_dlc05_item_abilities_hail_of_doom_arrow",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4fc44cc5-d5fb-3931-ae4a-776aebd0a4f3",
+  :ability/key "wh_dlc05_item_abilities_horn_of_the_wild_hunt",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f07a7f2d-a487-39c4-bceb-1b7429cc6ae8",
+  :ability/key "wh_dlc05_item_passive_cloak_of_isha",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2a238169-24c6-31f7-b6fc-b1e134c5c679",
+  :ability/key "wh_dlc06_item_passive_squiggly_beast",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b6c940ea-140e-39d2-80a8-11fdab4826ce",
+  :ability/key "wh_dlc07_item_abilities_chalice_of_potions",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "b829bfc3-bd6c-38c0-ba4b-131a0aa05dff",
+  :ability/key "wh_dlc07_item_abilities_wrath_of_manann",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ecfb1606-51ea-33d8-9bc2-9ea0445dee74",
+  :ability/key "wh_dlc08_item_abilities_ancient_frost_wyrm_scale",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2adbe53f-683e-3358-9c1d-20efea6ed2de",
+  :ability/key "wh_dlc08_item_abilities_arachnarok_eggs",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "201cad8c-5ce2-3529-8106-76b878839ff9",
+  :ability/key "wh_dlc08_item_abilities_great_horn_of_dragon_ogre",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c78647ce-62d1-3f11-903b-c86ceeab5ef8",
+  :ability/key "wh_dlc08_item_abilities_terrorgheist_skull",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "12a1965c-50e1-30aa-a416-af7219ff5d44",
+  :ability/key "wh_dlc08_item_abilities_the_wintertooth_crown",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ef1f8520-e0e1-32c2-bdb0-c72ba24ac0ae",
+  :ability/key "wh_dlc08_item_abilities_vial_of_troll_blood",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "0010f093-72c6-3ec2-875c-7a062463afe8",
+  :ability/key "wh_main_item_abilities_black_periapt",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "038f564f-34c5-3e33-a929-a8c581f6fb76",
+  :ability/key "wh_main_item_abilities_channelling_staff",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "683b11b4-bd06-3ab9-951a-a1ea59bf7a9e",
+  :ability/key "wh_main_item_abilities_cloak_of_mists_and_shadows",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "1c5eb895-94ac-32af-8639-f109026166ca",
+  :ability/key "wh_main_item_abilities_crown_of_command",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "fd55f2e7-385c-32fa-b532-76ee0f960d7a",
+  :ability/key "wh_main_item_abilities_daemonic_strength",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "0d2023a9-653b-3270-91c3-f2eee4a9f847",
+  :ability/key "wh_main_item_abilities_dark_fortune",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "d5da5a98-5139-3a6b-8a99-55d185426bf9",
+  :ability/key "wh_main_item_abilities_earthing_rod",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c58d28c2-21aa-3ab2-b431-8014e690cdf1",
+  :ability/key "wh_main_item_abilities_fiery_ring_of_thori",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "34d6305f-da38-34bc-a40e-6102246e9382",
+  :ability/key "wh_main_item_abilities_forbidden_rod",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "1b648ba9-6ea7-3888-a50d-a4fe570b0567",
+  :ability/key "wh_main_item_abilities_opal_amulet",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "2664868e-6b51-3047-96ec-2fe0b6f171e1",
+  :ability/key "wh_main_item_abilities_pendant_of_slaanesh",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3985af3f-3bb5-3042-a967-b10f3c6a1941",
+  :ability/key "wh_main_item_abilities_potion_of_foolhardiness",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "28db6fed-0d43-3fae-ab51-d4b7ebb2e703",
+  :ability/key "wh_main_item_abilities_potion_of_healing",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "0aaa2536-0b52-3a60-918a-26958964e065",
+  :ability/key "wh_main_item_abilities_potion_of_speed",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "49f01c83-ca0b-3ff2-a3fc-bb7bbb1d6b70",
+  :ability/key "wh_main_item_abilities_potion_of_strength",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "e398a90a-ec61-333e-9e32-e20dab73c8c0",
+  :ability/key "wh_main_item_abilities_potion_of_toughness",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "c8fb7532-a36b-374f-9d11-62c018ca1aaf",
+  :ability/key "wh_main_item_abilities_power_stone",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "1e2bc55a-cd2f-35de-8072-bd84ec7d4776",
+  :ability/key "wh_main_item_abilities_regenerating_flesh",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "96c35fb6-7527-376c-8a2f-184d292c64b8",
+  :ability/key "wh_main_item_abilities_sceptre_of_stability",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "3b89e53f-7607-3559-8ed3-5585318ce2ad",
+  :ability/key "wh_main_item_abilities_scroll_of_leeching",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "9a2afaee-f057-3939-92f4-9b3fb479cf73",
+  :ability/key "wh_main_item_abilities_scroll_of_power",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "5621e9a3-efe9-3d32-bd42-bcdfc0d57620",
+  :ability/key "wh_main_item_abilities_scroll_of_shielding",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "f55a2f3b-77e6-3c64-9245-6ce4f45f910b",
+  :ability/key "wh_main_item_abilities_silver_horn_of_vengeance",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "43e6c146-4d28-3538-ad64-803afbbf65db",
+  :ability/key "wh_main_item_abilities_skull_of_katam",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "fe7462a1-d9e9-3841-9107-018a444fc7ed",
+  :ability/key "wh_main_item_abilities_skull_wand_of_kaloth",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4ba1d610-8c9d-3037-ae96-9a89851021af",
+  :ability/key "wh_main_item_abilities_staff_of_volans",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "889fc772-fd39-3698-b03b-bf12ac043632",
+  :ability/key "wh_main_item_abilities_tricksters_shard",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "0383afdd-eb2b-3f9b-90e6-4b3ca2181659",
+  :ability/key "wh_main_item_abilities_van_horstmanns_speculum",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "1e0f6113-1eb2-351a-bae1-fad294b5e25e",
+  :ability/key "wh_main_item_abilities_wand_of_jet",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "47dab8aa-4f5d-361b-beca-098915ab138e",
+  :ability/key "wh_main_item_passive_featherfoe_torc",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "ba0da9f5-97ce-3451-b1a3-3250fc8e0045",
+  :ability/key "wh_main_item_passive_pidgeon_plucker_pendant",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "4619e3b7-c6b3-3bc9-bbfe-bde6d02631c5",
+  :ability/key "wh_main_item_passive_seed_of_rebirth",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "01f70f44-9e8f-3d34-a078-1c2aebc22e3b",
+  :ability/key "wh_main_item_passive_the_great_book_of_grudges",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "13d226a6-39b3-3b56-8ce7-4c787219d212",
+  :ability/key "wh_main_item_passive_the_other_tricksters_shard",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "463dfc19-8379-3bb5-9aba-14a5da140e47",
+  :ability/key "wh_main_item_passive_the_white_cloak_of_ulric",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "8287e648-b0ec-364b-9338-355dba5d6bd1",
+  :ability/key "wh_pro01_item_passive_rune_helm_of_zhufbar",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}
+ {:ability/eid #uuid "a5a30526-cb61-3b4c-9244-e4fee81ad6e0",
+  :ability/key "wh_pro02_item_abilities_blood_chalice_of_bathori",
+  :ability/game
+  [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"]}]
