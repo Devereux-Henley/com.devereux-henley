@@ -62,6 +62,9 @@
 (def ^:private ability-pattern
   [:ability/eid :ability/key :ability/name :ability/description :ability/cost])
 
+(def ^:private item-with-abilities-pattern
+  (conj item-pattern {:item/abilities ability-pattern}))
+
 (def ^:private unit-level-cost-pattern
   [:unit-level-cost/level :unit-level-cost/fixed-cost
    :unit-level-cost/cost-multiplier :unit-level-cost/fatigue
@@ -191,15 +194,22 @@
        :stats-override       (:unit-mount/stats-override m)
        :granted-ability-keys (when (seq granted) (vec granted))})))
 
+(declare ->ability)
+
 (defn- ->item
   [m]
   (when m
-    {:eid      (:item/eid m)
-     :key      (:item/key m)
-     :name     (:item/name m)
-     :category (:item/category m)
-     :cost     (:item/cost m)
-     :icon-key (:item/icon-key m)}))
+    (cond-> {:eid      (:item/eid m)
+             :key      (:item/key m)
+             :name     (:item/name m)
+             :category (:item/category m)
+             :cost     (:item/cost m)
+             :icon-key (:item/icon-key m)}
+      (seq (:item/abilities m))
+      (assoc :abilities (->> (:item/abilities m)
+                             (keep ->ability)
+                             (sort-by :name)
+                             vec)))))
 
 (defn- ->spell
   [m]
@@ -384,7 +394,8 @@
          vec)))
 
 (defn items-for-unit
-  "Items available to a unit, sorted by name."
+  "Items available to a unit, sorted by name. Each item carries the
+  `:abilities` it grants (name-sorted draft-ability maps) when it has any."
   [conn unit-eid]
   (let [db (dl/db conn)]
     (->> (dl/q '[:find [(pull ?i pattern) ...]
@@ -393,7 +404,7 @@
                  [?u :unit/eid ?unit-eid]
                  [?ui :unit-item/unit ?u]
                  [?ui :unit-item/item ?i]]
-               db item-pattern unit-eid)
+               db item-with-abilities-pattern unit-eid)
          (mapv ->item)
          (sort-by :name)
          vec)))

@@ -468,6 +468,16 @@
                        :description description :cost (or cost 0)})))
             ability-keys))))
 
+(defn- shape-item-abilities
+  "Coerces an item's granted abilities to draft-ability shape: drops the
+  key-only join rows (the synthesized active forms carry no display name)
+  and defaults a missing cost to 0. Items granting nothing displayable
+  lose the :abilities key entirely."
+  [item]
+  (if-let [abilities (seq (filter :name (:abilities item)))]
+    (assoc item :abilities (mapv (fn [a] (update a :cost #(or % 0))) abilities))
+    (dissoc item :abilities)))
+
 (defn hydrate-mount-overrides
   "Parses a mount row's stats_override + granted_ability_keys TEXT columns
   and attaches:
@@ -760,7 +770,7 @@
                                                                                (or (hydrate-spell-keys conn draftable-spells) []))
         passive-spells                                                       (filterv #(= 0 (:cost %)) all-spells)
         draftable-spells-v                                                   (filterv #(pos? (:cost %)) all-spells)
-        items                                                                (db/items-for-unit conn unit-eid)
+        items                                                                (mapv shape-item-abilities (db/items-for-unit conn unit-eid))
         family-variants                                                      (vec (db/family-variants-by-eid conn unit-eid))
         marks-row                                                            (family-marks family-variants (:eid unit) (:mark unit) (:lore unit))
         lores-row                                                            (family-lores family-variants (:mark unit))]
@@ -836,13 +846,27 @@
         (:barrier-override selected)    (assoc :barrier (:barrier-override selected))
         (:attributes-override selected) (assoc :attributes (:attributes-override selected))))))
 
+(defn- item-granted-abilities
+  "Abilities granted by the marked-selected items — deduped by key (two
+  selected items can grant the same ability) and name-sorted."
+  [items]
+  (->> items
+       (filter :selected)
+       (mapcat :abilities)
+       (group-by :key)
+       vals
+       (map first)
+       (sort-by :name)
+       vec))
+
 (defn apply-selections-to-unit
   "Given a hydrated draft-unit resource and a selection map
   ({:mount :items :spells :abilities}), marks :selected on draftable
   options, overlays the chosen mount's stats/health/barrier/attributes,
-  exposes granted abilities as :mount-granted-abilities, surfaces the raw
-  :mount key so the template can pre-check its radio, and assocs
-  :total-cost reflecting base + mount + item + spell + ability costs.
+  exposes granted abilities as :mount-granted-abilities and
+  :item-granted-abilities, surfaces the raw :mount key so the template
+  can pre-check its radio, and assocs :total-cost reflecting base +
+  mount + item + spell + ability costs.
 
   Lore is no longer a selection: each unit row already represents one
   (mark, lore) variant, so its `:draftable-spells` are already the
@@ -857,7 +881,8 @@
                       (apply-mount-overrides $ mount)
                       (update $ :draftable-abilities mark-selected ability-set)
                       (update $ :draftable-spells mark-selected spell-set)
-                      (update $ :items mark-selected item-set))
+                      (update $ :items mark-selected item-set)
+                      (assoc $ :item-granted-abilities (item-granted-abilities (:items $))))
         total       (compute-unit-total-cost overlaid selections conn)]
     (assoc overlaid :total-cost total)))
 

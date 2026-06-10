@@ -516,17 +516,6 @@
     [:damage-types {:optional true} [:sequential :string]]
     [:attack-modifiers {:optional true} [:sequential :string]]]))
 
-(def draft-item
-  (schema.contract/to-schema
-   [:map
-    [:eid :uuid]
-    [:key :string]
-    [:name :string]
-    [:category :string]
-    [:cost :int]
-    [:selected {:optional true} :boolean]
-    [:icon-key {:optional true} [:maybe :string]]]))
-
 (def draft-ability
   (schema.contract/to-schema
    [:map
@@ -536,6 +525,18 @@
     [:description {:optional true} [:maybe :string]]
     [:selected {:optional true} :boolean]
     [:cost :int]]))
+
+(def draft-item
+  (schema.contract/to-schema
+   [:map
+    [:eid :uuid]
+    [:key :string]
+    [:name :string]
+    [:category :string]
+    [:cost :int]
+    [:selected {:optional true} :boolean]
+    [:icon-key {:optional true} [:maybe :string]]
+    [:abilities {:optional true} [:sequential draft-ability]]]))
 
 (def draft-spell
   (schema.contract/to-schema
@@ -630,6 +631,7 @@
      [:passive-abilities {:optional true} [:sequential draft-ability]]
      [:draftable-abilities {:optional true} [:sequential draft-ability]]
      [:mount-granted-abilities {:optional true} [:sequential draft-ability]]
+     [:item-granted-abilities {:optional true} [:sequential draft-ability]]
      [:items {:optional true} [:sequential draft-item]]
      [:mounts {:optional true} [:sequential draft-mount]]
      [:passive-spells {:optional true} [:sequential draft-spell]]
