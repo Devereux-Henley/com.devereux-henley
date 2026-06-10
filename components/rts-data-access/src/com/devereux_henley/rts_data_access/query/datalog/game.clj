@@ -406,7 +406,7 @@
   (when (seq ability-keys)
     (let [results (dl/q '[:find ?ak (pull ?i pattern)
                           :in $ pattern [?ak ...]
-                          :where [?i :item/replay-ability-keys ?ak]]
+                          :where [?i :item/ability-keys ?ak]]
                         (dl/db conn) item-pattern (vec ability-keys))]
       (into {} (map (fn [[ak i]] [ak (->item i)])) results))))
 

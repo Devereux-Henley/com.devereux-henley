@@ -146,7 +146,7 @@
           item-replay-keys-map                   (items-seed/build-item-replay-keys-map
                                                   (:rows (rpfm/parse-rpfm-table (p "ancillary_to_effects_tables.json")))
                                                   (:rows (rpfm/parse-rpfm-table (p "effect_bonus_value_unit_ability_junctions_tables.json"))))
-          _                                      (logf "  item replay-ability keys: %d items" (count item-replay-keys-map))
+          _                                      (logf "  item ability keys: %d items" (count item-replay-keys-map))
 
           land-xp-bonus-file                     (io/file (p "unit_stats_land_experience_bonuses_tables.json"))
           land-xp-bonus-rows                     (when (.exists land-xp-bonus-file)

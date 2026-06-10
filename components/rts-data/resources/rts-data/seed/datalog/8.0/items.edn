@@ -12,7 +12,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc09_item_abilities_enkhils_kanopi"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000003",
         :key
@@ -22,7 +22,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc09_item_abilities_neferras_scrolls_of_mighty_incantations"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000004",
         :key "wh2_dlc09_anc_arcane_item_staff_of_nagash",
@@ -31,7 +31,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc09_item_abilities_staff_of_nagash"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000005",
         :key "wh2_dlc09_anc_arcane_item_the_liche_staff",
@@ -96,7 +96,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc09_item_passive_scorpion_armour"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000000e",
         :key "wh2_dlc09_anc_enchanted_item_brooch_of_the_great_desert",
@@ -112,7 +112,7 @@
         :cost 150,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc09_item_abilities_cloak_of_the_dunes"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000010",
         :key "wh2_dlc09_anc_enchanted_item_death_mask_of_kharnut",
@@ -128,7 +128,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc09_item_abilities_elixir_of_might"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000012",
         :key
@@ -145,7 +145,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh2_dlc09_item_abilities_hieratic_jar"]}
+        :ability-keys ["wh2_dlc09_item_abilities_hieratic_jar"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000014",
         :key "wh2_dlc09_anc_enchanted_item_icon_of_rulership",
         :name "Icon of Rulership",
@@ -160,7 +160,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc09_item_passive_lucky_skullhelm"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000016",
         :key "wh2_dlc09_anc_enchanted_item_ouroboros",
@@ -183,7 +183,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc09_item_passive_crown_of_nehekhara"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000019",
         :key "wh2_dlc09_anc_enchanted_item_vambraces_of_the_sun",
@@ -192,7 +192,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc09_item_passive_vambraces_of_the_sun"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000001a",
         :key "wh2_dlc09_anc_talisman_amulet_of_pha_stah",
@@ -201,7 +201,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc09_item_abilities_amulet_of_phastah"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000001b",
         :key "wh2_dlc09_anc_talisman_collar_of_shakkara",
@@ -365,7 +365,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_abilities_fear_of_aramar"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000032",
         :key "wh2_dlc10_anc_arcane_item_scroll_of_speed_of_lykos",
@@ -374,7 +374,7 @@
         :cost 40,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_abilities_speed_of_lykos"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000033",
         :key "wh2_dlc10_anc_arcane_item_scroll_of_the_amber_trance",
@@ -383,7 +383,7 @@
         :cost 45,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_abilities_the_amber_trance"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000034",
         :key "wh2_dlc10_anc_arcane_item_stave_of_avelorn",
@@ -392,7 +392,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_abilities_stave_of_avelorn"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000035",
         :key "wh2_dlc10_anc_enchanted_item_burning_phoenix_pinion",
@@ -416,7 +416,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_abilities_star_of_avelorn"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000038",
         :key "wh2_dlc10_anc_enchanted_item_the_shadow_crown",
@@ -425,7 +425,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_passive_the_shadow_crown"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000039",
         :key "wh2_dlc10_anc_talisman_amulet_of_dark_fire",
@@ -434,7 +434,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_passive_amulet_of_dark_fire"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000003a",
         :key "wh2_dlc10_anc_talisman_carnosaur_skull",
@@ -457,7 +457,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_passive_shieldstone_of_isha"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000003d",
         :key "wh2_dlc10_anc_talisman_stone_of_midnight",
@@ -466,7 +466,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_passive_stone_of_midnight"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000003e",
         :key "wh2_dlc10_anc_weapon_deathsword_and_the_cursed_blade",
@@ -531,7 +531,7 @@
         :cost 145,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_passive_gate_keepers_helm"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000047",
         :key "wh2_dlc10_dwf_anc_armour_ironbeards_armour",
@@ -547,7 +547,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_passive_ironwardens_shield"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000049",
         :key "wh2_dlc10_dwf_anc_armour_miners_helm",
@@ -591,7 +591,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_passive_starmetal_plate"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000004f",
         :key "wh2_dlc10_dwf_anc_armour_starmetal_plate_caravan",
@@ -601,7 +601,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_passive_starmetal_plate"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000050",
         :key "wh2_dlc10_dwf_anc_armour_troll_slayers_hide",
@@ -631,7 +631,7 @@
         :cost 145,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_passive_gate_keepers_belt"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000054",
         :key "wh2_dlc10_dwf_anc_enchanted_item_horn_of_the_ancestors",
@@ -640,7 +640,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_abilities_horn_of_the_ancestors"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000055",
         :key "wh2_dlc10_dwf_anc_enchanted_item_ironbeards_bracers",
@@ -649,7 +649,7 @@
         :cost 85,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_passive_ironbeards_bracers"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000056",
         :key "wh2_dlc10_dwf_anc_enchanted_item_ironwardens_tankard",
@@ -679,7 +679,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_passive_prospectors_spyglass"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000005a",
         :key "wh2_dlc10_dwf_anc_enchanted_item_rangers_brooch",
@@ -695,7 +695,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_abilities_sceptre_of_stone"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000005c",
         :key "wh2_dlc10_dwf_anc_enchanted_item_slayers_belt",
@@ -726,7 +726,7 @@
         :cost 140,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_passive_dragon_slayers_fang"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000060",
         :key "wh2_dlc10_dwf_anc_talisman_gate_keepers_rat_catcher",
@@ -742,7 +742,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_passive_ironbeards_ring"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000062",
         :key "wh2_dlc10_dwf_anc_talisman_ironwardens_wardstone",
@@ -765,7 +765,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_passive_old_guards_tankard"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000065",
         :key "wh2_dlc10_dwf_anc_talisman_prospectors_charge",
@@ -788,7 +788,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc10_item_passive_ring_of_grimnir"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000068",
         :key "wh2_dlc10_dwf_anc_talisman_slayers_ring",
@@ -923,7 +923,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc11_item_passive_the_bordeleaux_flabellum"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000007b",
         :key "wh2_dlc11_anc_armour_armour_of_the_depth",
@@ -961,7 +961,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc11_item_abilities_captain_roths_moondial"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000080",
         :key "wh2_dlc11_anc_enchanted_item_moonshine",
@@ -970,7 +970,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh2_dlc11_item_abilities_moonshine"]}
+        :ability-keys ["wh2_dlc11_item_abilities_moonshine"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000081",
         :key "wh2_dlc11_anc_enchanted_item_pyrotechnic_compound",
         :name "Pyrotechnic Compound",
@@ -985,7 +985,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh2_dlc11_item_abilities_slann_gold"]}
+        :ability-keys ["wh2_dlc11_item_abilities_slann_gold"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000083",
         :key "wh2_dlc11_anc_talisman_blackpearl_eye",
         :name "Blackpearl False Eye",
@@ -1092,7 +1092,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc12_item_passive_braid_of_bordeleaux"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000092",
         :key "wh2_dlc12_anc_enchanted_item_brt_morgianas_mirror",
@@ -1108,7 +1108,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc12_item_passive_golden_death_mask"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000094",
         :key "wh2_dlc12_anc_enchanted_item_mask_of_heavens",
@@ -1117,7 +1117,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc12_item_passive_mask_of_heavens"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000095",
         :key
@@ -1134,7 +1134,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc12_item_passive_plaque_of_sotek"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000097",
         :key "wh2_dlc12_anc_enchanted_item_warp_lightning_battery",
@@ -1220,7 +1220,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys ["wh2_dlc13_item_passive_obsinite_plate"]}
+        :ability-keys ["wh2_dlc13_item_passive_obsinite_plate"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000a3",
         :key "wh2_dlc13_anc_armour_the_shield_of_aeons",
         :name "The Shield of Aeons",
@@ -1228,7 +1228,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc13_item_abilities_shield_of_aeons"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000a4",
         :key "wh2_dlc13_anc_enchanted_item_golden_tributes",
@@ -1237,7 +1237,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc13_item_passive_golden_tributes"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000a5",
         :key "wh2_dlc13_anc_talisman_monoliths_shard",
@@ -1379,7 +1379,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc14_item_passive_the_cloak_of_shadows"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000b9",
         :key "wh2_dlc14_anc_enchanted_item_fleur_de_lys_banner",
@@ -1416,7 +1416,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc14_item_passive_idol_of_darkness"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000be",
         :key "wh2_dlc14_anc_weapon_malus_blood_warpsword",
@@ -1481,7 +1481,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc15_item_abilities_blacktoofs_conjuration"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000c7",
         :key "wh2_dlc15_anc_armour_armour_of_caledor",
@@ -1490,7 +1490,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc15_item_abilities_armour_of_caledor"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000c8",
         :key "wh2_dlc15_anc_armour_forest_dragon_special",
@@ -1499,7 +1499,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc15_item_abilities_vine_dragon_scale"
          "wh2_dlc15_item_ability_vine_dragon_scale"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000c9",
@@ -1509,7 +1509,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc15_item_abilities_helm_of_yvresse"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000ca",
         :key "wh2_dlc15_anc_enchanted_item_lucky_banner",
@@ -1518,7 +1518,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh2_dlc15_item_abilities_lucky_banner"]}
+        :ability-keys ["wh2_dlc15_item_abilities_lucky_banner"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000cb",
         :key "wh2_dlc15_anc_enchanted_item_star_dragon_special",
         :name "Shooting Star",
@@ -1680,7 +1680,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys ["wh2_dlc16_item_passive_twilight_helm"]}
+        :ability-keys ["wh2_dlc16_item_passive_twilight_helm"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000e2",
         :key "wh2_dlc16_anc_armour_twilight_helm_2",
         :name "Refined Twilight Helm",
@@ -1688,7 +1688,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys ["wh2_dlc16_item_passive_twilight_helm"]}
+        :ability-keys ["wh2_dlc16_item_passive_twilight_helm"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000e3",
         :key "wh2_dlc16_anc_armour_twilight_helm_3",
         :name "Perfected Twilight Helm",
@@ -1696,7 +1696,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys ["wh2_dlc16_item_passive_twilight_helm"]}
+        :ability-keys ["wh2_dlc16_item_passive_twilight_helm"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000e4",
         :key "wh2_dlc16_anc_armour_twilight_helm_4",
         :name "Reforged Twilight Helm",
@@ -1704,7 +1704,7 @@
         :cost 199,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys ["wh2_dlc16_item_passive_twilight_helm"]}
+        :ability-keys ["wh2_dlc16_item_passive_twilight_helm"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000e5",
         :key "wh2_dlc16_anc_enchanted_item_acorns_of_the_oak_of_ages",
         :name "Acorns of the Oak of Ages",
@@ -1712,7 +1712,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc16_item_abilities_acorns_of_the_oak_of_ages"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000e6",
         :key "wh2_dlc16_anc_enchanted_item_ceithin_har_scale",
@@ -1756,7 +1756,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc16_item_abilities_dreaming_cloak_i"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000ec",
         :key "wh2_dlc16_anc_enchanted_item_dreaming_cloak_2",
@@ -1765,7 +1765,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc16_item_abilities_dreaming_cloak_ii"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000ed",
         :key "wh2_dlc16_anc_enchanted_item_dreaming_cloak_3",
@@ -1774,7 +1774,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc16_item_abilities_dreaming_cloak_iii"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000ee",
         :key "wh2_dlc16_anc_enchanted_item_dreaming_cloak_4",
@@ -1783,7 +1783,7 @@
         :cost 199,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc16_item_abilities_dreaming_cloak_iii"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000ef",
         :key "wh2_dlc16_anc_enchanted_item_eagle_quiver_1",
@@ -1799,7 +1799,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh2_dlc16_item_abilities_eagle_quiver"]}
+        :ability-keys ["wh2_dlc16_item_abilities_eagle_quiver"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000f1",
         :key "wh2_dlc16_anc_enchanted_item_eagle_quiver_3",
         :name "Perfected Eagle Quiver",
@@ -1807,7 +1807,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh2_dlc16_item_abilities_eagle_quiver"]}
+        :ability-keys ["wh2_dlc16_item_abilities_eagle_quiver"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000f2",
         :key "wh2_dlc16_anc_enchanted_item_eagle_quiver_4",
         :name "Reforged Eagle Quiver",
@@ -1815,7 +1815,7 @@
         :cost 199,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh2_dlc16_item_abilities_eagle_quiver"]}
+        :ability-keys ["wh2_dlc16_item_abilities_eagle_quiver"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000f3",
         :key "wh2_dlc16_anc_enchanted_item_fang_of_taalroth",
         :name "Fang of Taalroth",
@@ -1823,7 +1823,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc16_item_passive_fang_of_taalroth"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000f4",
         :key "wh2_dlc16_anc_enchanted_item_twilight_standard_1",
@@ -1867,7 +1867,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys ["wh2_dlc16_item_abilities_berry_wine"]}
+        :ability-keys ["wh2_dlc16_item_abilities_berry_wine"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000fa",
         :key "wh2_dlc16_anc_talisman_dragon_mask_1",
         :name "Dragon Mask",
@@ -1875,7 +1875,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys ["wh2_dlc16_item_passive_dragon_mask_i"]}
+        :ability-keys ["wh2_dlc16_item_passive_dragon_mask_i"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000fb",
         :key "wh2_dlc16_anc_talisman_dragon_mask_2",
         :name "Refined Dragon Mask",
@@ -1883,7 +1883,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys ["wh2_dlc16_item_passive_dragon_mask_i"]}
+        :ability-keys ["wh2_dlc16_item_passive_dragon_mask_i"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000fc",
         :key "wh2_dlc16_anc_talisman_dragon_mask_3",
         :name "Perfected Dragon Mask",
@@ -1891,7 +1891,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys ["wh2_dlc16_item_passive_dragon_mask_ii"]}
+        :ability-keys ["wh2_dlc16_item_passive_dragon_mask_ii"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000fd",
         :key "wh2_dlc16_anc_talisman_dragon_mask_4",
         :name "Reforged Dragon Mask",
@@ -1899,7 +1899,7 @@
         :cost 199,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc16_item_passive_dragon_mask_iii"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000fe",
         :key "wh2_dlc16_anc_talisman_dreaming_ring_1",
@@ -1908,7 +1908,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc16_item_abilities_dreaming_ring_i"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000000ff",
         :key "wh2_dlc16_anc_talisman_dreaming_ring_2",
@@ -1917,7 +1917,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc16_item_abilities_dreaming_ring_ii"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000100",
         :key "wh2_dlc16_anc_talisman_dreaming_ring_3",
@@ -1926,7 +1926,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc16_item_abilities_dreaming_ring_iii"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000101",
         :key "wh2_dlc16_anc_talisman_dreaming_ring_4",
@@ -1935,7 +1935,7 @@
         :cost 199,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc16_item_abilities_dreaming_ring_iii"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000102",
         :key "wh2_dlc16_anc_talisman_eagle_mask_1",
@@ -1972,7 +1972,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc16_item_abilities_twilight_horn_i"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000107",
         :key "wh2_dlc16_anc_talisman_twilight_horn_2",
@@ -1981,7 +1981,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc16_item_abilities_twilight_horn_i"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000108",
         :key "wh2_dlc16_anc_talisman_twilight_horn_3",
@@ -1990,7 +1990,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc16_item_abilities_twilight_horn_ii"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000109",
         :key "wh2_dlc16_anc_talisman_twilight_horn_4",
@@ -1999,7 +1999,7 @@
         :cost 199,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc16_item_abilities_twilight_horn_ii"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000010a",
         :key "wh2_dlc16_anc_weapon_creature_killer",
@@ -2015,7 +2015,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_weapon",
-        :replay-ability-keys ["wh2_dlc16_item_abilities_dart_of_doom"]}
+        :ability-keys ["wh2_dlc16_item_abilities_dart_of_doom"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000010c",
         :key "wh2_dlc16_anc_weapon_dragon_spear_1",
         :name "Dragon Spear",
@@ -2156,7 +2156,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc17_item_passive_thoreks_rune_armour"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000120",
         :key "wh2_dlc17_anc_enchanted_item_blind_eye_of_seeing",
@@ -2349,7 +2349,7 @@
         :cost 140,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh2_main_item_abilities_book_of_hoeth"]}
+        :ability-keys ["wh2_main_item_abilities_book_of_hoeth"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000013b",
         :key "wh2_main_anc_arcane_item_circlet_of_iron",
         :name "Circlet of Iron",
@@ -2357,7 +2357,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh2_main_item_passive_circlet_of_iron"]}
+        :ability-keys ["wh2_main_item_passive_circlet_of_iron"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000013c",
         :key "wh2_main_anc_arcane_item_cube_of_darkness",
         :name "Cube of Darkness",
@@ -2365,7 +2365,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_cube_of_darkness"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000013d",
         :key "wh2_main_anc_arcane_item_cupped_hands_of_the_old_ones",
@@ -2381,7 +2381,7 @@
         :cost 40,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh2_main_item_passive_darkstar_cloak"]}
+        :ability-keys ["wh2_main_item_passive_darkstar_cloak"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000013f",
         :key "wh2_main_anc_arcane_item_diadem_of_power",
         :name "Diadem of Power",
@@ -2417,7 +2417,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_plaque_of_dominion"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000144",
         :key "wh2_main_anc_arcane_item_rod_of_the_storm",
@@ -2433,7 +2433,7 @@
         :cost 50,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh2_main_item_abilities_scrying_stone"]}
+        :ability-keys ["wh2_main_item_abilities_scrying_stone"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000146",
         :key "wh2_main_anc_arcane_item_staff_of_solidity",
         :name "Staff of Solidity",
@@ -2448,7 +2448,7 @@
         :cost 85,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_starwood_staff"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000148",
         :key "wh2_main_anc_arcane_item_the_gem_of_sunfire",
@@ -2464,7 +2464,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_the_liber_bubonicus"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000014a",
         :key "wh2_main_anc_arcane_item_the_seerstaff_of_saphery",
@@ -2480,7 +2480,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_the_tricksters_pendant"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000014c",
         :key "wh2_main_anc_arcane_item_the_vortex_shard",
@@ -2489,7 +2489,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_the_vortex_shard"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000014d",
         :key "wh2_main_anc_arcane_item_tome_of_furion",
@@ -2526,7 +2526,7 @@
         :cost 45,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_warpstorm_scroll"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000152",
         :key "wh2_main_anc_armour_armour_of_caledor",
@@ -2570,7 +2570,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_armour_of_the_stars"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000158",
         :key "wh2_main_anc_armour_boots_of_bracchus",
@@ -2642,7 +2642,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc11_item_passive_helm_of_the_kraken"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000162",
         :key "wh2_main_anc_armour_hide_of_the_cold_ones",
@@ -2686,7 +2686,7 @@
         :cost 50,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_passive_shield_of_distraction"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000168",
         :key "wh2_main_anc_armour_shield_of_ghrond",
@@ -2695,7 +2695,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_passive_shield_of_ghrond"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000169",
         :key "wh2_main_anc_armour_shield_of_the_merwyrm",
@@ -2732,7 +2732,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_the_bane_shield"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000016e",
         :key "wh2_main_anc_armour_the_maiming_shield",
@@ -2755,7 +2755,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_passive_warp_shard_armour"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000171",
         :key "wh2_main_anc_armour_warpstone_armour",
@@ -2764,7 +2764,7 @@
         :cost 85,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_passive_warpstone_armour"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000172",
         :key "wh2_main_anc_armour_winged_boots",
@@ -2780,7 +2780,7 @@
         :cost 50,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_worlds_edge_armour"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000174",
         :key "wh2_main_anc_enchanted_item_black_dragon_egg",
@@ -2789,7 +2789,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_black_dragon_egg"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000175",
         :key "wh2_main_anc_enchanted_item_blessed_tome",
@@ -2798,7 +2798,7 @@
         :cost 199,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh2_main_item_passive_blessed_tome"]}
+        :ability-keys ["wh2_main_item_passive_blessed_tome"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000176",
         :key "wh2_main_anc_enchanted_item_blood_statuette_of_spite",
         :name "Blood Statuette of Spite",
@@ -2806,7 +2806,7 @@
         :cost 50,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_blood_statuette_of_spite"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000177",
         :key "wh2_main_anc_enchanted_item_box_of_eerie_noises",
@@ -2857,7 +2857,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_passive_curse_charm_of_tepok"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000017e",
         :key "wh2_main_anc_enchanted_item_divine_plaque_of_protection",
@@ -2880,7 +2880,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh2_main_item_abilities_dragonhorn"]}
+        :ability-keys ["wh2_main_item_abilities_dragonhorn"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000181",
         :key "wh2_main_anc_enchanted_item_enchanted_spyglass",
         :name "Enchanted Spyglass",
@@ -2888,7 +2888,7 @@
         :cost 199,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_passive_enchanted_spyglass"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000182",
         :key "wh2_main_anc_enchanted_item_enriched_warpstone_dust",
@@ -2925,7 +2925,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_passive_heart_of_averlorn"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000187",
         :key "wh2_main_anc_enchanted_item_khaines_ring_of_fury",
@@ -2955,7 +2955,7 @@
         :cost 50,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_passive_pipes_of_piebald"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000018b",
         :key "wh2_main_anc_enchanted_item_portents_of_verminous_doom",
@@ -2964,7 +2964,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_passive_portents_of_verminous_doom"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000018c",
         :key "wh2_main_anc_enchanted_item_radiant_gem_of_hoeth",
@@ -3008,7 +3008,7 @@
         :cost 199,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_potion_of_toughness"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000192",
         :key "wh2_main_anc_enchanted_item_scroll_of_hoeth",
@@ -3017,7 +3017,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh2_main_item_passive_scroll_of_hoeth"]}
+        :ability-keys ["wh2_main_item_passive_scroll_of_hoeth"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000193",
         :key "wh2_main_anc_enchanted_item_skalm",
         :name "Skalm",
@@ -3025,7 +3025,7 @@
         :cost 95,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh2_main_item_abilities_skalm"]}
+        :ability-keys ["wh2_main_item_abilities_skalm"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000194",
         :key "wh2_main_anc_enchanted_item_skavenbrew",
         :name "Skavenbrew",
@@ -3033,7 +3033,7 @@
         :cost 45,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh2_main_item_abilities_skavenbrew"]}
+        :ability-keys ["wh2_main_item_abilities_skavenbrew"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000195",
         :key "wh2_main_anc_enchanted_item_supreme_spellshield",
         :name "Supreme Spellshield",
@@ -3041,7 +3041,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_passive_supreme_spellshield"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000196",
         :key "wh2_main_anc_enchanted_item_talisman_of_loec",
@@ -3050,7 +3050,7 @@
         :cost 50,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_talisman_of_loec"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000197",
         :key "wh2_main_anc_enchanted_item_the_book_of_the_phoenix",
@@ -3059,7 +3059,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_passive_the_book_of_the_phoenix"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000198",
         :key "wh2_main_anc_enchanted_item_the_cloak_of_feathers",
@@ -3075,7 +3075,7 @@
         :cost 50,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_the_guiding_eye"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000019a",
         :key "wh2_main_anc_enchanted_item_the_horn_of_kygor",
@@ -3084,7 +3084,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_the_horn_of_kygor"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000019b",
         :key "wh2_main_anc_enchanted_item_venom_of_the_firefly_frog",
@@ -3100,7 +3100,7 @@
         :cost 50,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_passive_war_drum_of_xahutec"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000019d",
         :key "wh2_main_anc_enchanted_item_whip_of_agony",
@@ -3137,7 +3137,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_amulet_of_itzl"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001a2",
         :key "wh2_main_anc_talisman_aura_of_quetzl",
@@ -3146,7 +3146,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_aura_of_quetzl"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001a3",
         :key "wh2_main_anc_talisman_crown_of_black_iron",
@@ -3169,7 +3169,7 @@
         :cost 199,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_passive_diamond_guardian_phoenix"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001a6",
         :key "wh2_main_anc_talisman_emerald_collar",
@@ -3178,7 +3178,7 @@
         :cost 199,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys ["wh_main_item_passive_seed_of_rebirth"]}
+        :ability-keys ["wh_main_item_passive_seed_of_rebirth"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001a7",
         :key "wh2_main_anc_talisman_foul_pendant",
         :name "Foul Pendant",
@@ -3207,7 +3207,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_passive_loremasters_cloak"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001ab",
         :key "wh2_main_anc_talisman_pearl_of_infinite_blackness",
@@ -3216,7 +3216,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_pearl_of_infinite_bleakness"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001ac",
         :key "wh2_main_anc_talisman_ring_of_darkness",
@@ -3232,7 +3232,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys ["wh2_main_item_passive_ring_of_hotek"]}
+        :ability-keys ["wh2_main_item_passive_ring_of_hotek"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001ae",
         :key "wh2_main_anc_talisman_rival_hide_talisman",
         :name "Rival Hide Talisman",
@@ -3240,7 +3240,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_rival_hide_talisman"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001af",
         :key "wh2_main_anc_talisman_ruby_guardian_phoenix",
@@ -3249,7 +3249,7 @@
         :cost 199,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_passive_ruby_guardian_phoenix"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001b0",
         :key "wh2_main_anc_talisman_sacred_incense",
@@ -3258,7 +3258,7 @@
         :cost 85,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys ["wh2_main_item_passive_sacred_incense"]}
+        :ability-keys ["wh2_main_item_passive_sacred_incense"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001b1",
         :key "wh2_main_anc_talisman_sapphire_guardian_phoenix",
         :name "Sapphire Guardian Phoenix",
@@ -3266,7 +3266,7 @@
         :cost 199,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_passive_sapphire_guardian_phoenix"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001b2",
         :key "wh2_main_anc_talisman_shadow_magnet_trinket",
@@ -3275,7 +3275,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_passive_shadow_magnet_trinket"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001b3",
         :key "wh2_main_anc_talisman_talisman_of_saphery",
@@ -3312,7 +3312,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_weapon",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_blade_of_bel_korhadris"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001b8",
         :key "wh2_main_anc_weapon_blade_of_corruption",
@@ -3517,7 +3517,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_weapon",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_rod_of_corruption"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001d5",
         :key "wh2_main_anc_weapon_scimitar_of_the_sun_resplendent",
@@ -3661,7 +3661,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_twa03_item_passive_beast_armour_of_karond_kar"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001e9",
         :key "wh2_twa03_anc_weapon_whip_of_agony",
@@ -3698,7 +3698,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh3_cp1_item_abilities_heavens_gate"]}
+        :ability-keys ["wh3_cp1_item_abilities_heavens_gate"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001ee",
         :key "wh3_cp1_anc_enchanted_item_hidden",
         :name "",
@@ -3720,7 +3720,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys ["wh3_cp1_item_passive_arcane_trinket"]}
+        :ability-keys ["wh3_cp1_item_passive_arcane_trinket"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001f1",
         :key "wh3_cp1_anc_talisman_cth_celestial_spirit_snare",
         :name "Clawspeaker's Gift",
@@ -3777,7 +3777,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh3_cp1_item_abilities_heavens_gate"]}
+        :ability-keys ["wh3_cp1_item_abilities_heavens_gate"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001f9",
         :key "wh3_dlc20_anc_arcane_item_rod_of_torment",
         :name "Rod of Torment",
@@ -3785,7 +3785,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc20_item_abilities_rod_of_torment"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001fa",
         :key "wh3_dlc20_anc_arcane_item_vessel_of_chaos",
@@ -3794,7 +3794,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc20_item_passive_vessel_of_chaos"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001fb",
         :key "wh3_dlc20_anc_armour_bronze_armour_of_zhrakk",
@@ -3803,7 +3803,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc20_item_passive_bronze_armour_of_zhrakk"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001fc",
         :key "wh3_dlc20_anc_armour_the_scarlet_armour",
@@ -3812,7 +3812,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc20_item_passive_the_scarlet_armour"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001fd",
         :key "wh3_dlc20_anc_enchanted_item_blasphemous_amulet",
@@ -3821,7 +3821,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc20_item_passive_blasphemous_amulet"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001fe",
         :key "wh3_dlc20_anc_enchanted_item_daemonshield",
@@ -3830,7 +3830,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh3_dlc20_item_abilities_daemonshield"]}
+        :ability-keys ["wh3_dlc20_item_abilities_daemonshield"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000001ff",
         :key "wh3_dlc20_anc_enchanted_item_doom_totem",
         :name "Doom Totem",
@@ -3838,7 +3838,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh3_dlc20_item_passive_doom_totem"]}
+        :ability-keys ["wh3_dlc20_item_passive_doom_totem"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000200",
         :key "wh3_dlc20_anc_enchanted_item_pestilent_potions",
         :name "Pestilent Potions",
@@ -3846,7 +3846,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc20_item_abilities_pestilent_potions"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000201",
         :key "wh3_dlc20_anc_enchanted_item_the_beguiling_gem",
@@ -3855,7 +3855,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc20_item_passive_the_beguiling_gem"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000202",
         :key "wh3_dlc20_anc_item_armour_of_damnation",
@@ -3864,7 +3864,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc20_item_passive_armour_of_damnation"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000203",
         :key "wh3_dlc20_anc_item_crown_of_everlasting_conquest",
@@ -3873,7 +3873,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc20_item_passive_crown_of_everlasting_conquest"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000204",
         :key "wh3_dlc20_anc_item_the_festering_shroud",
@@ -3938,7 +3938,7 @@
         :cost 150,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_ability_chalice_of_blood_and_darkness"
          "wh3_dlc23_item_ability_enable_chalice_of_blood_and_darkness"
          "wh3_dlc23_item_passive_chalice_of_blood_and_darkness"]}
@@ -3949,7 +3949,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_passive_daemonspite_crucible"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000020e",
         :key "wh3_dlc23_anc_arcane_item_dweomer_leach_orb",
@@ -3958,7 +3958,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_abilities_dweomer_leach_orb"
          "wh3_dlc23_item_ability_dweomer_leach_orb"
          "wh3_dlc23_item_ability_enable_dweomer_leach_orb"]}
@@ -3969,7 +3969,7 @@
         :cost 50,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_ability_enable_spell_wrought_sceptre"
          "wh3_dlc23_item_ability_spell_wrought_sceptre"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000210",
@@ -4000,7 +4000,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_abilities_armour_of_gazrakh"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000214",
         :key "wh3_dlc23_anc_armour_lesser_relic_of_skavor",
@@ -4009,7 +4009,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_passive_embrace_of_skavor"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000215",
         :key "wh3_dlc23_anc_armour_major_relic_of_grungni",
@@ -4018,7 +4018,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_passive_ever_burning_light"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000216",
         :key "wh3_dlc23_anc_convoy_bones_of_the_maw",
@@ -4090,7 +4090,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_passive_chaos_runeshield"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000220",
         :key "wh3_dlc23_anc_enchanted_item_daemon_flask_of_ashak",
@@ -4099,7 +4099,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_abilities_daemon_flask_of_ashak"
          "wh3_dlc23_item_ability_daemon_flask_of_ashak"
          "wh3_dlc23_item_ability_enable_daemon_flask_of_ashak"]}
@@ -4110,7 +4110,7 @@
         :cost 95,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_ability_enable_spell_hell_hammer"
          "wh3_dlc23_item_ability_spell_hell_hammer"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000222",
@@ -4128,7 +4128,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh3_dlc23_item_abilities_morgrims_eye"]}
+        :ability-keys ["wh3_dlc23_item_abilities_morgrims_eye"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000224",
         :key "wh3_dlc23_anc_enchanted_item_major_relic_of_valaya",
         :name "The Healing Salve of Valaya",
@@ -4136,7 +4136,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_abilities_darkened_mist"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000225",
         :key "wh3_dlc23_anc_enchanted_item_the_mask_of_the_furnace",
@@ -4152,7 +4152,7 @@
         :cost 95,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_abilities_the_vial_of_hashut"
          "wh3_dlc23_item_ability_enable_the_vial_of_hashut"
          "wh3_dlc23_item_ability_the_vial_of_hashut"]}
@@ -4163,7 +4163,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_abilities_black_gem_of_gnar"
          "wh3_dlc23_item_ability_black_gem_of_gnar"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000228",
@@ -4173,7 +4173,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_passive_hellshard_amulet"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000229",
         :key "wh3_dlc23_anc_talisman_lesser_relic_of_thungni",
@@ -4182,7 +4182,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_abilities_rune_of_thungni"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000022a",
         :key "wh3_dlc23_anc_talisman_major_relic_of_grimnir",
@@ -4191,7 +4191,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_abilities_slayer_for_chaos"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000022b",
         :key "wh3_dlc23_anc_talisman_malignant_totem",
@@ -4200,7 +4200,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_ability_breath_of_hatred"
          "wh3_dlc23_item_ability_enable_breath_of_hatred"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000022c",
@@ -4217,7 +4217,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys ["wh3_dlc23_item_passive_stone_mantle"]}
+        :ability-keys ["wh3_dlc23_item_passive_stone_mantle"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000022e",
         :key "wh3_dlc23_anc_talisman_talisman_of_obsidian",
         :name "Talisman of Obsidian",
@@ -4225,7 +4225,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_passive_talisman_of_obsidian"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000022f",
         :key "wh3_dlc23_anc_weapon_black_hammer_of_hashut",
@@ -4255,7 +4255,7 @@
         :cost 85,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_weapon",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_ability_dark_mace"
          "wh3_dlc23_item_ability_enable_dark_mace"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000233",
@@ -4272,7 +4272,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_weapon",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_abilities_ancestral_vengeance"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000235",
         :key "wh3_dlc23_anc_weapon_lesser_relic_of_smednir",
@@ -4281,7 +4281,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_weapon",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_abilities_hammer_of_smednir"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000236",
         :key "wh3_dlc23_anc_weapon_life_bane_blade",
@@ -4290,7 +4290,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_weapon",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_passive_enable_life_bane_blade"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000237",
         :key "wh3_dlc23_anc_weapon_the_graven_sceptre",
@@ -4334,7 +4334,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc24_item_abilities_ritual_of_the_beast"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000023d",
         :key "wh3_dlc24_anc_arcane_item_scrolls_of_sorcery",
@@ -4350,7 +4350,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc24_item_passive_sentient_stormcloud"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000023f",
         :key "wh3_dlc24_anc_arcane_item_the_tricksters_staff",
@@ -4366,7 +4366,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc24_item_abilities_armour_of_the_dragons_gaze"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000241",
         :key "wh3_dlc24_anc_armour_horns_of_shang_yang",
@@ -4404,7 +4404,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc24_item_abilities_blessed_helm_of_the_oblast"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000246",
         :key "wh3_dlc24_anc_enchanted_item_book_of_secrets",
@@ -4413,7 +4413,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc24_item_abilities_book_of_secrets"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000247",
         :key "wh3_dlc24_anc_enchanted_item_cauldron_of_power",
@@ -4429,7 +4429,7 @@
         :cost 40,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc24_item_abilities_mirror_of_knowledge"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000249",
         :key "wh3_dlc24_anc_enchanted_item_the_breath_of_life",
@@ -4453,7 +4453,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh3_dlc24_item_passive_totem_of_ursus"]}
+        :ability-keys ["wh3_dlc24_item_passive_totem_of_ursus"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000024c",
         :key "wh3_dlc24_anc_enchanted_item_vambraces_of_yin",
         :name "Vambraces of Yin",
@@ -4468,7 +4468,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh3_dlc24_item_passive_divining_rod"]}
+        :ability-keys ["wh3_dlc24_item_passive_divining_rod"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000024e",
         :key "wh3_dlc24_anc_talisman_blessing_wafers",
         :name "Golden Wafers",
@@ -4525,7 +4525,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc24_item_abilities_the_golden_eye_of_tzeentch"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000256",
         :key "wh3_dlc24_anc_talisman_tree_sap",
@@ -4585,7 +4585,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_weapon",
-        :replay-ability-keys ["wh3_dlc24_item_abilities_wind_bow"]}
+        :ability-keys ["wh3_dlc24_item_abilities_wind_bow"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000025e",
         :key "wh3_dlc25_anc_arcane_item_the_grey_wand",
         :name "The Grey Wand",
@@ -4600,7 +4600,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc25_item_passive_armour_of_tarnus"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000260",
         :key "wh3_dlc25_anc_armour_cloak_of_anraheir",
@@ -4609,7 +4609,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc25_item_passive_cloak_of_anraheir"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000261",
         :key "wh3_dlc25_anc_armour_prototype_coat",
@@ -4654,7 +4654,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc25_item_abilities_ominous_powder"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000267",
         :key "wh3_dlc25_anc_enchanted_item_stormlance",
@@ -4663,7 +4663,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh3_dlc25_item_abilities_stormlance"]}
+        :ability-keys ["wh3_dlc25_item_abilities_stormlance"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000268",
         :key "wh3_dlc25_anc_enchanted_item_the_eyes_of_grungni",
         :name "The Eyes of Grungni",
@@ -4671,7 +4671,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc25_item_passive_the_eyes_of_grungni"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000269",
         :key "wh3_dlc25_anc_enchanted_item_the_gold_standard",
@@ -4680,7 +4680,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc25_item_abilities_the_gold_standard"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000026a",
         :key "wh3_dlc25_anc_item_necrotic_phylactery",
@@ -4689,7 +4689,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc25_item_abilities_necrotic_phylactry"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000026b",
         :key "wh3_dlc25_anc_rune_personal_rune_of_thungni",
@@ -4698,7 +4698,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "wh3_dlc25_anc_rune_rune_of_thungni",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_abilities_rune_of_thungni"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000026c",
         :key "wh3_dlc25_anc_talisman_astrolobe_of_tomorrows_moon",
@@ -4714,7 +4714,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc25_item_passive_baleflame_amulet"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000026e",
         :key "wh3_dlc25_anc_talisman_crimson_gemstone",
@@ -4737,7 +4737,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc25_item_abilities_deaths_timekeeper"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000271",
         :key "wh3_dlc25_anc_talisman_enhanced_scope",
@@ -4911,7 +4911,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc26_item_abilities_bugmans_xxxxxx"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000289",
         :key "wh3_dlc26_anc_enchanted_item_sting_of_snagla",
@@ -4929,7 +4929,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc26_item_passive_brass_collar_of_khorne"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000028b",
         :key "wh3_dlc26_anc_weapon_bloodstorm_blades",
@@ -5098,7 +5098,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_abilities_alchemists_elixir_of_iron_skin"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000029f",
         :key
@@ -5136,7 +5136,7 @@
         :cost 150,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc09_item_abilities_cloak_of_the_dunes"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002a3",
         :key
@@ -5147,7 +5147,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc23_item_abilities_daemon_flask_of_ashak"
          "wh3_dlc23_item_ability_daemon_flask_of_ashak"
          "wh3_dlc23_item_ability_enable_daemon_flask_of_ashak"]}
@@ -5160,7 +5160,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc09_item_abilities_elixir_of_might"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002a5",
         :key
@@ -5171,7 +5171,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh2_dlc09_item_abilities_hieratic_jar"]}
+        :ability-keys ["wh2_dlc09_item_abilities_hieratic_jar"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002a6",
         :key "wh3_dlc26_golgfag_contract_anc_enchanted_item_holy_icon",
         :name
@@ -5207,7 +5207,7 @@
         :cost 50,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_talisman_of_loec"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002aa",
         :key
@@ -5227,7 +5227,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_abilities_the_horn_of_kygor"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002ac",
         :key
@@ -5238,7 +5238,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc08_item_abilities_vial_of_troll_blood"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002ad",
         :key
@@ -5273,7 +5273,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_passive_blood_of_the_motherland"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002b1",
         :key "wh3_dlc26_golgfag_contract_anc_talisman_foul_pendant",
@@ -5458,7 +5458,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc27_item_passive_annulian_crystal"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002c7",
         :key "wh3_dlc27_anc_arcane_item_azriks_map_star_striding",
@@ -5475,7 +5475,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh3_dlc27_item_abilities_null_stone"]}
+        :ability-keys ["wh3_dlc27_item_abilities_null_stone"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002c9",
         :key "wh3_dlc27_anc_arcane_item_schalkains_teeth",
         :name
@@ -5484,7 +5484,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc27_item_abilities_schalkains_teeth"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002ca",
         :key "wh3_dlc27_anc_arcane_item_stone_of_shyish",
@@ -5493,7 +5493,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc27_item_passive_stone_of_shyish"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002cb",
         :key "wh3_dlc27_anc_armour_armour_of_the_old_gods",
@@ -5502,7 +5502,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc27_item_passive_armour_of_the_old_gods"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002cc",
         :key "wh3_dlc27_anc_armour_golden_shield",
@@ -5512,7 +5512,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys ["wh3_dlc27_item_passive_golden_shield"]}
+        :ability-keys ["wh3_dlc27_item_passive_golden_shield"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002cd",
         :key "wh3_dlc27_anc_armour_perverse_plate",
         :name "Armour of Disdain",
@@ -5591,7 +5591,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_main_item_passive_enchanted_spyglass"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002d8",
         :key "wh3_dlc27_anc_enchanted_item_bale_taurus_head",
@@ -5622,7 +5622,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh3_dlc27_item_passive_carrion_spine"]}
+        :ability-keys ["wh3_dlc27_item_passive_carrion_spine"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002dc",
         :key "wh3_dlc27_anc_enchanted_item_celestial_lion_feathers",
         :name "Celestial Lion Feathers",
@@ -5637,7 +5637,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc27_item_passive_petrifying_gaze"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002de",
         :key "wh3_dlc27_anc_enchanted_item_collar_hounds_headsman",
@@ -5661,7 +5661,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc27_item_abilities_elixir_of_damnation"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002e1",
         :key "wh3_dlc27_anc_enchanted_item_fallen_chieftains_jewel",
@@ -5684,7 +5684,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc27_item_passive_strength_from_flesh"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002e4",
         :key "wh3_dlc27_anc_enchanted_item_jabberslythe_blood",
@@ -5693,7 +5693,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc27_item_abilities_spurting_bile_blood"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002e5",
         :key "wh3_dlc27_anc_enchanted_item_lammasu_head",
@@ -5710,7 +5710,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc27_item_abilities_mask_of_the_merlord"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002e7",
         :key "wh3_dlc27_anc_enchanted_item_preyton_horns",
@@ -5719,7 +5719,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc27_item_abilities_preyton_horns"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002e8",
         :key "wh3_dlc27_anc_enchanted_item_skinhidden_plate",
@@ -5729,7 +5729,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc27_item_passive_skinhidden_plate"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002e9",
         :key "wh3_dlc27_anc_enchanted_item_spikes_chimera",
@@ -5746,7 +5746,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc27_item_abilities_staff_of_the_masque"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002eb",
         :key "wh3_dlc27_anc_enchanted_item_temakadors_gauntlets",
@@ -5756,7 +5756,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc27_item_passive_temakadors_gauntlets"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002ec",
         :key "wh3_dlc27_anc_enchanted_item_toad_dragon_venom_glands",
@@ -5773,7 +5773,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc27_item_abilities_bear_fang_talisman"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002ee",
         :key "wh3_dlc27_anc_talisman_charm_of_the_gods",
@@ -5782,7 +5782,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc27_item_passive_charm_of_the_gods"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002ef",
         :key "wh3_dlc27_anc_talisman_eagle_feather_torc",
@@ -5791,7 +5791,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc27_item_abilities_eagle_feather_torc"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002f0",
         :key "wh3_dlc27_anc_talisman_icon_of_the_old_gods",
@@ -5800,7 +5800,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc27_item_passive_icon_of_the_old_gods"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002f1",
         :key "wh3_dlc27_anc_weapon_axe_of_the_pale_serpent",
@@ -5809,7 +5809,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_weapon",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc27_item_passive_axe_of_the_pale_serpent"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002f2",
         :key "wh3_dlc27_anc_weapon_blade_of_the_old_gods",
@@ -5818,7 +5818,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_weapon",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc27_item_passive_blade_of_the_old_gods"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002f3",
         :key "wh3_dlc27_anc_weapon_caress_of_agony",
@@ -5864,7 +5864,7 @@
         :cost 50,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh3_main_item_abilities_bangstick"]}
+        :ability-keys ["wh3_main_item_abilities_bangstick"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002f9",
         :key "wh3_main_anc_arcane_item_chalice_of_malfleur",
         :name "Chalice of Malfleur",
@@ -5879,7 +5879,7 @@
         :cost 140,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh3_main_item_passive_cloak_of_po_mei"]}
+        :ability-keys ["wh3_main_item_passive_cloak_of_po_mei"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002fb",
         :key "wh3_main_anc_arcane_item_gastuvas_egg",
         :name "Gastuva's Egg",
@@ -5887,7 +5887,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh3_main_item_abilities_gastuvas_egg"]}
+        :ability-keys ["wh3_main_item_abilities_gastuvas_egg"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002fc",
         :key "wh3_main_anc_arcane_item_gruts_sickle",
         :name "Grut's Sickle",
@@ -5895,7 +5895,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh3_main_item_abilities_gruts_sickle"]}
+        :ability-keys ["wh3_main_item_abilities_gruts_sickle"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002fd",
         :key "wh3_main_anc_arcane_item_halfling_cookbook",
         :name "Halfling Cookbook",
@@ -5910,7 +5910,7 @@
         :cost 50,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh3_main_item_abilities_hellheart"]}
+        :ability-keys ["wh3_main_item_abilities_hellheart"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000002ff",
         :key "wh3_main_anc_arcane_item_kairos_beasts",
         :name "Fragment of Ghur",
@@ -5974,7 +5974,7 @@
         :cost 40,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh3_main_item_abilities_maw_shard"]}
+        :ability-keys ["wh3_main_item_abilities_maw_shard"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000308",
         :key "wh3_main_anc_arcane_item_mirror_of_the_ice_queen",
         :name "Mirror of the Ice Queen",
@@ -5982,7 +5982,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_passive_mirror_of_the_ice_queen"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000309",
         :key "wh3_main_anc_arcane_item_prismatic_amplifier",
@@ -5991,7 +5991,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_abilities_prismatic_amplifier"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000030a",
         :key "wh3_main_anc_arcane_item_rod_of_command",
@@ -6000,7 +6000,7 @@
         :cost 40,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh3_main_item_passive_rod_of_command"]}
+        :ability-keys ["wh3_main_item_passive_rod_of_command"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000030b",
         :key "wh3_main_anc_arcane_item_sceptre_of_entropy",
         :name "Sceptre of Entropy",
@@ -6022,7 +6022,7 @@
         :cost 95,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh3_main_item_passive_skullmantle"]}
+        :ability-keys ["wh3_main_item_passive_skullmantle"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000030e",
         :key "wh3_main_anc_arcane_item_snowflake_pendant",
         :name "Snowflake Pendant",
@@ -6030,7 +6030,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_abilities_snowflake_pendant"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000030f",
         :key "wh3_main_anc_arcane_item_staff_of_tomorrow",
@@ -6046,7 +6046,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_abilities_staff_of_wu_xing"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000311",
         :key "wh3_main_anc_arcane_item_void_pendulum",
@@ -6055,7 +6055,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh3_main_item_abilities_void_pendulum"]}
+        :ability-keys ["wh3_main_item_abilities_void_pendulum"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000312",
         :key "wh3_main_anc_arcane_item_wand_of_whimsey",
         :name "Wand of Whimsy",
@@ -6084,7 +6084,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys ["wh3_main_item_passive_armour_of_ursun"]}
+        :ability-keys ["wh3_main_item_passive_armour_of_ursun"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000316",
         :key "wh3_main_anc_armour_ascendant_celestial_armour",
         :name "Ascendant Celestial Armour",
@@ -6155,7 +6155,7 @@
         :cost 85,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys ["wh3_main_item_passive_gut_maw"]}
+        :ability-keys ["wh3_main_item_passive_gut_maw"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000320",
         :key "wh3_main_anc_armour_helm_of_draesca",
         :name "Helm of Draesca",
@@ -6170,7 +6170,7 @@
         :cost 95,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys ["wh3_main_item_passive_iron_ice_armour"]}
+        :ability-keys ["wh3_main_item_passive_iron_ice_armour"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000322",
         :key "wh3_main_anc_armour_laminate_shield",
         :name "Laminate Shield",
@@ -6255,7 +6255,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_abilities_scales_of_the_celestial_court"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000032e",
         :key "wh3_main_anc_armour_scintillating_shield",
@@ -6271,7 +6271,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_passive_shield_of_sacrifice"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000330",
         :key "wh3_main_anc_armour_shield_of_the_nan_gau",
@@ -6280,7 +6280,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_passive_shield_of_the_nan_gau"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000331",
         :key "wh3_main_anc_armour_the_crystal_cloak",
@@ -6289,7 +6289,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys ["wh3_main_item_passive_crystal_cloak"]}
+        :ability-keys ["wh3_main_item_passive_crystal_cloak"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000332",
         :key "wh3_main_anc_armour_void_armour",
         :name "Void Armour",
@@ -6382,7 +6382,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_abilities_alchemists_elixir_of_iron_skin"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000033f",
         :key
@@ -6392,7 +6392,7 @@
         :cost 40,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_abilities_alchemists_elixir_of_puissance"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000340",
         :key "wh3_main_anc_enchanted_item_alchemists_elixir_of_venom",
@@ -6401,7 +6401,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_abilities_alchemists_elixir_of_venom"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000341",
         :key "wh3_main_anc_enchanted_item_alchemists_mask",
@@ -6431,7 +6431,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_passive_balalaika_of_the_arari"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000345",
         :key "wh3_main_anc_enchanted_item_bloodstone",
@@ -6440,7 +6440,7 @@
         :cost 150,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh3_main_item_abilities_bloodstone"]}
+        :ability-keys ["wh3_main_item_abilities_bloodstone"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000346",
         :key "wh3_main_anc_enchanted_item_book_of_khorne",
         :name "The Burning Books of Khorne",
@@ -6523,7 +6523,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh3_main_item_passive_brahmir_statue"]}
+        :ability-keys ["wh3_main_item_passive_brahmir_statue"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000351",
         :key "wh3_main_anc_enchanted_item_catalytic_kiln",
         :name "Catalytic Kiln",
@@ -6531,7 +6531,7 @@
         :cost 150,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh3_main_item_passive_catalytic_kiln"]}
+        :ability-keys ["wh3_main_item_passive_catalytic_kiln"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000352",
         :key "wh3_main_anc_enchanted_item_cauldron_of_the_great_maw",
         :name "Cauldron of the Great Maw",
@@ -6539,7 +6539,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_passive_cauldron_of_the_great_maw_ii"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000353",
         :key "wh3_main_anc_enchanted_item_celestial_silk_robe",
@@ -6548,7 +6548,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_passive_celestial_silk_robe"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000354",
         :key "wh3_main_anc_enchanted_item_cleansing_water",
@@ -6578,7 +6578,7 @@
         :cost 50,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh3_main_item_abilities_crackleblaze"]}
+        :ability-keys ["wh3_main_item_abilities_crackleblaze"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000358",
         :key "wh3_main_anc_enchanted_item_daemon_killer_scars",
         :name "Daemon-Killer Scars",
@@ -6593,7 +6593,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh3_main_item_abilities_deaths_head"]}
+        :ability-keys ["wh3_main_item_abilities_deaths_head"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000035a",
         :key "wh3_main_anc_enchanted_item_dreamwine",
         :name "Jug of Dreamwine",
@@ -6608,7 +6608,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_passive_enthralling_musk"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000035c",
         :key "wh3_main_anc_enchanted_item_ever_full_kovsh",
@@ -6617,7 +6617,7 @@
         :cost 140,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_abilities_kovsh_breath"
          "wh3_main_item_passive_ever_full_kovsh"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000035d",
@@ -6634,7 +6634,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_abilities_fistful_of_laurels"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000035f",
         :key "wh3_main_anc_enchanted_item_greyback_pelt",
@@ -6657,7 +6657,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh3_main_item_abilities_zak_aloooog"]}
+        :ability-keys ["wh3_main_item_abilities_zak_aloooog"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000362",
         :key "wh3_main_anc_enchanted_item_jade_lion",
         :name "Jade Lion",
@@ -6665,7 +6665,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh3_main_item_passive_jade_lion"]}
+        :ability-keys ["wh3_main_item_passive_jade_lion"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000363",
         :key "wh3_main_anc_enchanted_item_jar_of_all_souls",
         :name "Jar of All Souls",
@@ -6680,7 +6680,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_passive_kite_of_the_uttermost_airs"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000365",
         :key "wh3_main_anc_enchanted_item_maads_map",
@@ -6711,7 +6711,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_abilities_potion_of_farsight"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000369",
         :key "wh3_main_anc_enchanted_item_rock_eye",
@@ -6720,7 +6720,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh3_main_item_passive_rock_eye"]}
+        :ability-keys ["wh3_main_item_passive_rock_eye"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000036a",
         :key "wh3_main_anc_enchanted_item_saint_annushkas_finger_bone",
         :name "Saint Annushka's Finger Bone",
@@ -6728,7 +6728,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_abilities_saint_annushkas_finger_bone"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000036b",
         :key "wh3_main_anc_enchanted_item_scrap",
@@ -6765,7 +6765,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_abilities_steppe_hunters_horn"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000370",
         :key "wh3_main_anc_enchanted_item_the_chromatic_tome",
@@ -6774,7 +6774,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_abilities_the_chromatic_tome"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000371",
         :key "wh3_main_anc_enchanted_item_the_portalglyph",
@@ -6783,7 +6783,7 @@
         :cost 150,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_abilities_the_portalglyph"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000372",
         :key "wh3_main_anc_enchanted_item_the_rock_of_inevitability",
@@ -6792,7 +6792,7 @@
         :cost 135,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_abilities_the_rock_of_inevitability"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000373",
         :key "wh3_main_anc_talisman_blizzard_broach",
@@ -6808,7 +6808,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_passive_blood_of_the_motherland"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000375",
         :key "wh3_main_anc_talisman_cathayan_jet",
@@ -6831,7 +6831,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_passive_crystal_of_kunlan"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000378",
         :key "wh3_main_anc_talisman_crystal_pendant",
@@ -6847,7 +6847,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys ["wh3_main_item_passive_fractured_clasp"]}
+        :ability-keys ["wh3_main_item_passive_fractured_clasp"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000037a",
         :key "wh3_main_anc_talisman_gnoblar_thiefstone",
         :name "Gnoblar Thiefstone",
@@ -6855,7 +6855,7 @@
         :cost 90,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_passive_gnoblar_thiefstone"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000037b",
         :key "wh3_main_anc_talisman_greedy_fist",
@@ -6864,7 +6864,7 @@
         :cost 140,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys ["wh3_main_item_passive_greedy_fist"]}
+        :ability-keys ["wh3_main_item_passive_greedy_fist"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000037c",
         :key "wh3_main_anc_talisman_heartwood_branch",
         :name "Deepwood Branch",
@@ -6879,7 +6879,7 @@
         :cost 150,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys ["wh3_main_item_passive_jade_amulet"]}
+        :ability-keys ["wh3_main_item_passive_jade_amulet"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000037e",
         :key "wh3_main_anc_talisman_jade_blood_pendant",
         :name "Jade Blood Pendant",
@@ -6915,7 +6915,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_passive_overtyrants_crown"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000383",
         :key "wh3_main_anc_talisman_pirate_talisman",
@@ -6966,7 +6966,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_abilities_the_bloody_shackle"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000038a",
         :key "wh3_main_anc_talisman_vile_seed",
@@ -7404,7 +7404,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh3_pro11_item_passive_bane_shield"]}
+        :ability-keys ["wh3_pro11_item_passive_bane_shield"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003c8",
         :key "wh3_pro11_anc_weapon_hammer_of_harry",
         :name "The Hammer of Harry",
@@ -7420,7 +7420,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_pro12_item_passive_brass_collar_of_bloody_vengeance"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003ca",
         :key "wh3_prologue_anc_armour_basic",
@@ -7444,7 +7444,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_abilities_saint_annushkas_finger_bone"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003cd",
         :key "wh3_prologue_anc_talisman_blizzard_broach",
@@ -7460,7 +7460,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_main_item_passive_blood_of_the_motherland"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003cf",
         :key "wh3_prologue_anc_talisman_star_iron_ring",
@@ -7490,7 +7490,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc03_item_abilities_hagtree_fetish"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003d3",
         :key "wh_dlc03_anc_arcane_item_jagged_dagger",
@@ -7499,7 +7499,7 @@
         :cost 50,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh_dlc03_item_abilities_jagged_dagger"]}
+        :ability-keys ["wh_dlc03_item_abilities_jagged_dagger"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003d4",
         :key "wh_dlc03_anc_arcane_item_skull_of_rarkos",
         :name "Skull of Rarkos",
@@ -7507,7 +7507,7 @@
         :cost 145,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc03_item_abilities_skull_of_rarkos"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003d5",
         :key "wh_dlc03_anc_arcane_item_staff_of_darkoth",
@@ -7523,7 +7523,7 @@
         :cost 45,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys ["wh_dlc03_item_passive_blackened_plate"]}
+        :ability-keys ["wh_dlc03_item_passive_blackened_plate"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003d7",
         :key "wh_dlc03_anc_armour_pelt_of_the_shadowgave",
         :name "Pelt of the Shadowgave",
@@ -7545,7 +7545,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys ["wh_dlc03_item_passive_the_dark_mail"]}
+        :ability-keys ["wh_dlc03_item_passive_the_dark_mail"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003da",
         :key "wh_dlc03_anc_armour_trollhide",
         :name "Trollhide",
@@ -7553,7 +7553,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys ["wh_dlc03_item_passive_trollhide"]}
+        :ability-keys ["wh_dlc03_item_passive_trollhide"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003db",
         :key "wh_dlc03_anc_enchanted_item_horn_of_the_first_beast",
         :name "Horn of the First Beast",
@@ -7561,7 +7561,7 @@
         :cost 150,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc03_item_abilities_horn_of_the_first_beast"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003dc",
         :key "wh_dlc03_anc_enchanted_item_icons_of_vilification",
@@ -7570,7 +7570,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc03_item_passive_icon_of_vilification"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003dd",
         :key "wh_dlc03_anc_enchanted_item_shard_of_the_herdstone",
@@ -7579,7 +7579,7 @@
         :cost 85,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc03_item_passive_shard_of_the_herdstone"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003de",
         :key "wh_dlc03_anc_talisman_chalice_of_dark_rain",
@@ -7588,7 +7588,7 @@
         :cost 85,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc03_item_abilities_chalice_of_dark_rain"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003df",
         :key "wh_dlc03_anc_weapon_axe_of_men",
@@ -7667,7 +7667,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc04_item_abilities_the_liber_noctus"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003ea",
         :key "wh_dlc04_anc_talisman_jade_griffon",
@@ -7676,7 +7676,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys ["wh_dlc04_item_passive_jade_griffon"]}
+        :ability-keys ["wh_dlc04_item_passive_jade_griffon"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003eb",
         :key "wh_dlc04_anc_talisman_the_carstein_ring",
         :name "The Carstein Ring",
@@ -7684,7 +7684,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc04_item_abilities_the_carstein_ring"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003ec",
         :key "wh_dlc04_anc_weapon_blood_drinker",
@@ -7714,7 +7714,7 @@
         :cost 85,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc05_item_abilities_hail_of_doom_arrow"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003f0",
         :key "wh_dlc05_anc_enchanted_item_horn_of_the_wild_hunt",
@@ -7723,7 +7723,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc05_item_abilities_horn_of_the_wild_hunt"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003f1",
         :key "wh_dlc05_anc_talisman_cloak_of_isha",
@@ -7732,7 +7732,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys ["wh_dlc05_item_passive_cloak_of_isha"]}
+        :ability-keys ["wh_dlc05_item_passive_cloak_of_isha"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003f2",
         :key "wh_dlc05_anc_weapon_daiths_reaper",
         :name "Daith's Reaper",
@@ -7775,7 +7775,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh_dlc06_item_passive_squiggly_beast"]}
+        :ability-keys ["wh_dlc06_item_passive_squiggly_beast"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000003f8",
         :key "wh_dlc06_anc_armour_shield_of_defiance",
         :name "Shield of Defiance",
@@ -7853,7 +7853,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc07_item_abilities_chalice_of_potions"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000403",
         :key "wh_dlc07_anc_armour_armour_of_the_midsummer_sun",
@@ -7946,7 +7946,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_weapon",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc07_item_abilities_wrath_of_manann"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000410",
         :key "wh_dlc08_anc_armour_blood_stained_armour_of_morkar",
@@ -7983,7 +7983,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc08_item_abilities_ancient_frost_wyrm_scale"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000415",
         :key "wh_dlc08_anc_enchanted_item_arachnarok_eggs",
@@ -7992,7 +7992,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc08_item_abilities_arachnarok_eggs"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000416",
         :key "wh_dlc08_anc_enchanted_item_frost_wyrm_scale",
@@ -8008,7 +8008,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc08_item_abilities_great_horn_of_dragon_ogre"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000418",
         :key "wh_dlc08_anc_enchanted_item_manticore_horn",
@@ -8024,7 +8024,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc08_item_abilities_vial_of_troll_blood"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000041a",
         :key "wh_dlc08_anc_enchanted_item_wintertooth_crown",
@@ -8033,7 +8033,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc08_item_abilities_the_wintertooth_crown"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000041b",
         :key "wh_dlc08_anc_talisman_giant_cygor_eyeball",
@@ -8070,7 +8070,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc08_item_abilities_terrorgheist_skull"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000420",
         :key "wh_dlc08_anc_talisman_wolf_teeth_amulet",
@@ -8128,7 +8128,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc13_item_passive_band_of_loyalty"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000428",
         :key "wh_dlc13_anc_enchanted_item_life_amulet",
@@ -8137,7 +8137,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc13_item_passive_resilient_spirit"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000429",
         :key "wh_dlc13_anc_weapon_Stalker",
@@ -8167,7 +8167,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh_main_item_abilities_black_periapt"]}
+        :ability-keys ["wh_main_item_abilities_black_periapt"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000042d",
         :key "wh_main_anc_arcane_item_book_of_arkhan",
         :name "Book of Arkhan",
@@ -8189,7 +8189,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_channelling_staff"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000430",
         :key "wh_main_anc_arcane_item_earthing_rod",
@@ -8198,7 +8198,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh_main_item_abilities_earthing_rod"]}
+        :ability-keys ["wh_main_item_abilities_earthing_rod"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000431",
         :key "wh_main_anc_arcane_item_forbidden_rod",
         :name "Forbidden Rod",
@@ -8206,7 +8206,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh_main_item_abilities_forbidden_rod"]}
+        :ability-keys ["wh_main_item_abilities_forbidden_rod"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000432",
         :key "wh_main_anc_arcane_item_lucky_shrunken_head",
         :name "Lucky Shrunken Head",
@@ -8221,7 +8221,7 @@
         :cost 40,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_scroll_of_power"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000434",
         :key "wh_main_anc_arcane_item_power_stone",
@@ -8230,7 +8230,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh_main_item_abilities_power_stone"]}
+        :ability-keys ["wh_main_item_abilities_power_stone"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000435",
         :key "wh_main_anc_arcane_item_sceptre_of_stability",
         :name "Sceptre of Stability",
@@ -8238,7 +8238,7 @@
         :cost 45,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_sceptre_of_stability"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000436",
         :key "wh_main_anc_arcane_item_scroll_of_leeching",
@@ -8247,7 +8247,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_scroll_of_leeching"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000437",
         :key "wh_main_anc_arcane_item_scroll_of_shielding",
@@ -8256,7 +8256,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_scroll_of_shielding"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000438",
         :key "wh_main_anc_arcane_item_skull_of_katam",
@@ -8265,7 +8265,7 @@
         :cost 50,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh_main_item_abilities_skull_of_katam"]}
+        :ability-keys ["wh_main_item_abilities_skull_of_katam"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000439",
         :key "wh_main_anc_arcane_item_skull_staff",
         :name "Skull Staff",
@@ -8287,7 +8287,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_staff_of_volans"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000043c",
         :key "wh_main_anc_arcane_item_tricksters_shard",
@@ -8296,7 +8296,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_tricksters_shard"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000043d",
         :key "wh_main_anc_arcane_item_wand_of_jet",
@@ -8305,7 +8305,7 @@
         :cost 40,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_arcane",
-        :replay-ability-keys ["wh_main_item_abilities_wand_of_jet"]}
+        :ability-keys ["wh_main_item_abilities_wand_of_jet"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000043e",
         :key "wh_main_anc_armour_armour_of_destiny",
         :name "Armour of Destiny",
@@ -8341,7 +8341,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_regenerating_flesh"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000443",
         :key "wh_main_anc_armour_auric_armour",
@@ -8357,7 +8357,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc15_item_abilities_azhags_ard_armour"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000445",
         :key "wh_main_anc_armour_blood-forged_armour",
@@ -8366,7 +8366,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh2_dlc15_item_abilities_blood_forged_armour"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000446",
         :key "wh_main_anc_armour_charmed_shield",
@@ -8417,7 +8417,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc01_item_passive_helm_of_many_eyes"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000044d",
         :key
@@ -8462,7 +8462,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_armour",
-        :replay-ability-keys
+        :ability-keys
         ["wh3_dlc20_item_abilities_the_armour_of_morkar"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000453",
         :key "wh_main_anc_armour_the_armour_of_skaldour",
@@ -8499,7 +8499,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_daemonic_strength"
          "wh_main_item_abilities_dark_fortune"
          "wh_main_item_abilities_regenerating_flesh"]}
@@ -8510,7 +8510,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_cloak_of_mists_and_shadows"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000459",
         :key "wh_main_anc_enchanted_item_cloak_of_molten_metal",
@@ -8526,7 +8526,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_crown_of_command"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000045b",
         :key "wh_main_anc_enchanted_item_featherfoe_torc",
@@ -8535,7 +8535,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys ["wh_main_item_passive_featherfoe_torc"]}
+        :ability-keys ["wh_main_item_passive_featherfoe_torc"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000045c",
         :key "wh_main_anc_enchanted_item_fiery_ring_of_thori",
         :name "Fiery Ring of Thori",
@@ -8543,7 +8543,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_fiery_ring_of_thori"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000045d",
         :key "wh_main_anc_enchanted_item_healing_potion",
@@ -8552,7 +8552,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_potion_of_healing"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000045e",
         :key "wh_main_anc_enchanted_item_ironcurse_icon",
@@ -8568,7 +8568,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_pendant_of_slaanesh"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000460",
         :key "wh_main_anc_enchanted_item_potion_of_foolhardiness",
@@ -8577,7 +8577,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_potion_of_foolhardiness"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000461",
         :key "wh_main_anc_enchanted_item_potion_of_speed",
@@ -8586,7 +8586,7 @@
         :cost 40,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_potion_of_speed"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000462",
         :key "wh_main_anc_enchanted_item_potion_of_strength",
@@ -8595,7 +8595,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_potion_of_strength"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000463",
         :key "wh_main_anc_enchanted_item_potion_of_toughness",
@@ -8604,7 +8604,7 @@
         :cost 35,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_potion_of_toughness"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000464",
         :key "wh_main_anc_enchanted_item_rod_of_flaming_death",
@@ -8627,7 +8627,7 @@
         :cost 50,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_silver_horn_of_vengeance"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000467",
         :key "wh_main_anc_enchanted_item_skull_wand_of_kaloth",
@@ -8636,7 +8636,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_skull_wand_of_kaloth"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000468",
         :key "wh_main_anc_enchanted_item_the_crown_of_bretonnia",
@@ -8652,7 +8652,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_dlc01_item_passive_the_crown_of_domination"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000046a",
         :key "wh_main_anc_enchanted_item_the_crown_of_sorcery",
@@ -8668,7 +8668,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_passive_the_great_book_of_grudges"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000046c",
         :key "wh_main_anc_enchanted_item_the_other_tricksters_shard",
@@ -8677,7 +8677,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_passive_the_other_tricksters_shard"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000046d",
         :key "wh_main_anc_enchanted_item_the_terrifying_mask_of_eee",
@@ -8693,7 +8693,7 @@
         :cost 80,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_abilities_van_horstmanns_speculum"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000046f",
         :key "wh_main_anc_rune_rune_of_fury",
@@ -8786,7 +8786,7 @@
         :cost 50,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys ["wh_main_item_abilities_opal_amulet"]}
+        :ability-keys ["wh_main_item_abilities_opal_amulet"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000047c",
         :key "wh_main_anc_talisman_pidgeon_plucker_pendant",
         :name "Pigeon Plucker Pendant",
@@ -8794,7 +8794,7 @@
         :cost 50,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_passive_pidgeon_plucker_pendant"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000047d",
         :key "wh_main_anc_talisman_seed_of_rebirth",
@@ -8803,7 +8803,7 @@
         :cost 100,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys ["wh_main_item_passive_seed_of_rebirth"]}
+        :ability-keys ["wh_main_item_passive_seed_of_rebirth"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-00000000047e",
         :key "wh_main_anc_talisman_talisman_of_endurance",
         :name "Talisman of Endurance",
@@ -8853,7 +8853,7 @@
         :cost 130,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_talisman",
-        :replay-ability-keys
+        :ability-keys
         ["wh_main_item_passive_the_white_cloak_of_ulric"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-000000000485",
         :key "wh_main_anc_weapon_axe_of_dargo",
@@ -9149,7 +9149,7 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_pro01_item_passive_rune_helm_of_zhufbar"]}
  #:item{:eid #uuid "e1000000-0000-0000-0000-0000000004af",
         :key "wh_pro01_anc_rune_rune_of_fury",
@@ -9200,5 +9200,5 @@
         :cost 200,
         :game [:game/eid #uuid "eea787d7-1065-45eb-a3f6-e26f32c294a1"],
         :icon-key "equipment_items_enchanted",
-        :replay-ability-keys
+        :ability-keys
         ["wh_pro02_item_abilities_blood_chalice_of_bathori"]}]

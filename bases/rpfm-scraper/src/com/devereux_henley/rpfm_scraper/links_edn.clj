@@ -42,7 +42,7 @@
                         :item/cost     (long (or (get r "uniqueness_score") 0))
                         :item/game     [:game/eid game-eid]}
                  icon               (assoc :item/icon-key icon)
-                 (seq replay-keys)  (assoc :item/replay-ability-keys replay-keys)))))
+                 (seq replay-keys)  (assoc :item/ability-keys replay-keys)))))
           sorted)))
 
 (defn build-mounts
