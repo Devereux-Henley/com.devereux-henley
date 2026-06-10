@@ -1,8 +1,7 @@
 (ns com.devereux-henley.rts-api.datalog
-  "Integrant lifecycle for the Datalevin (LMDB) connection. Coexists with
-   `db/connection` (SQLite) for the duration of the storage migration; the
-   key will become the sole store once all domains are migrated and the
-   SQLite ref is removed."
+  "Integrant lifecycle for the Datalevin (LMDB) connection backing all
+   persistent state. Opens the store at `dir` with the full data-access
+   schema; handlers receive the connection as `:datalog-connection`."
   (:require
    [com.devereux-henley.rts-data-access.contract :as rts-data-access]
    [datalevin.core :as datalevin]

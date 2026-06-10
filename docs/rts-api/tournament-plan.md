@@ -1,5 +1,7 @@
 # Tournament Feature Implementation Plan
 
+> **Historical plan.** Written when storage was SQLite — the migration numbers, `.sql` files, and `db/` namespaces below describe the original implementation, not the current code. Tournament storage has since moved to Datalevin (see [database.md](../database.md)); kept as a design record of the feature.
+
 ## Context
 
 The platform needs tournaments to organize competitive play. A tournament groups matches, supports phased formats (e.g. Swiss rounds followed by single elimination), and manages player registration with a configurable open/close window. Tournaments are scoped to a game via FK.

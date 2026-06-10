@@ -49,7 +49,7 @@ full RPFM data refresh workflow.
 
 **REPL (primary dev workflow):** Jack-in from the repo root with `M-x cider-jack-in`. The `:dev` alias (configured in `.dir-locals.el`) puts all components and bases on the classpath.
 
-**Claude's dev workspace:** `development/src/claude_workspace.clj` — Claude Code's own scratch namespace with system lifecycle helpers (`go!`, `halt!`, `restart!`), SQLite helpers (`migrate!`, `rollback!`, `reset-db!`, `seed-sqlite!`), and Datalog helpers (`reset-datalog!`, `seed-datalog!`). Keep dev helpers here rather than polluting `workspace.clj`.
+**Claude's dev workspace:** `development/src/claude_workspace.clj` — Claude Code's own scratch namespace with system lifecycle helpers (`go!`, `halt!`, `restart!`) and Datalog helpers (`reset-datalog!`, `seed-datalog!`). Keep dev helpers here rather than polluting `workspace.clj`.
 
 **Claude's REPL workflow (preferred over starting the dev server script):**
 
@@ -61,14 +61,14 @@ full RPFM data refresh workflow.
 
 2. Drive the running system through the clojure-mcp tools:
    - `(require 'claude-workspace :reload)`
-   - `(claude-workspace/go!)` — migrations + Jetty on :3001
-   - `(claude-workspace/seed-sqlite!)` — seed SQLite with game data
+   - `(claude-workspace/go!)` — opens the Datalevin store + Jetty on :3001
+   - `(claude-workspace/seed-datalog!)` — seed the store with game data
    - `(claude-workspace/restart!)` — reload + restart after code changes
    - `(claude-workspace/halt!)` — stop the system
 
 This is faster than `clojure -M:dev -i start_dev_server.clj` because it supports incremental reloading (`restart!`) without a full JVM restart, and gives Claude a REPL for debugging.
 
-**When to kill the nREPL process:** Only kill and restart the nREPL when ending a Claude session, switching branches, or after changing migrations/seed data. For normal code changes, `(claude-workspace/restart!)` is sufficient — it reloads all namespaces without a JVM restart.
+**When to kill the nREPL process:** Only kill and restart the nREPL when ending a Claude session, switching branches, or after changing the Datalog schema or seed data. For normal code changes, `(claude-workspace/restart!)` is sufficient — it reloads all namespaces without a JVM restart.
 
 **Running a specific test namespace:**
 
@@ -91,15 +91,15 @@ This is a **Polylith monorepo** for an RTS tournament platform. Polylith enforce
 
 ```
 rts-web → rts-domain → rts-data-access
-                    ↘ rts-data (migrations)
-rts-web, rts-domain, rts-data-access → http, jdbc, schema, content-negotiation
+                    ↘ rts-data (Datalog seed)
+rts-web, rts-domain, rts-data-access → http, datalog, schema, content-negotiation
 ```
 
 ### Request lifecycle (rts-api base)
 
 1. **Reitit** routes the request, coerces path/query/body via Malli schemas
 2. **Muuntaja** negotiates content type (`application/json`, `application/hal+json`, `text/html`, `application/htmx+html`)
-3. **Integrant**-managed handler (`init-key`) receives injected `{:db … :router …}`
+3. **Integrant**-managed handler (`init-key`) receives injected `{:datalog-connection … :router …}`
 4. Handler calls domain functions. Domain signals errors in two ways:
    - **Logic/validation errors** (budget exceeded, duplicate lord, etc.) — returned as a typed map `{:type :draft/add-error :message "…"}`; web handlers dispatch on `:type` to choose the HTTP status and body. **No try/catch in web handlers.**
    - **Infrastructure/missing-resource errors** — thrown as `ex-info` with `:error/kind` (`:error/missing`, `:error/invalid`, `:error/conflict`). These propagate through the stack and are caught by the Reitit exception middleware in `web.clj` (`exception-handlers`), which maps them to the appropriate HTTP status and renders an error page or JSON body.
@@ -114,7 +114,7 @@ Prefer docstrings over `;;` comments for all `defn` and `defn-` forms. Use `;;` 
 
 **HATEOAS everywhere.** Every resource carries `_links`. Foreign-key fields are annotated with `[:field {:model/link :route/name} :uuid]`; the transformer resolves the named route to a URL automatically.
 
-**Schema separation.** *Entity schemas* (in `rts-data-access`) mirror DB columns. *Resource schemas* (in `rts-domain`) are what the API returns. Handlers map entity → resource (add `:type`, shape links, etc.).
+**Schema separation.** *Entity schemas* (in `rts-data-access`) mirror the stored Datalog attributes. *Resource schemas* (in `rts-domain`) are what the API returns. Handlers map entity → resource (add `:type`, shape links, etc.).
 
 ### Resource schema conventions
 
@@ -138,20 +138,17 @@ Every resource schema follows the same shape so that `handle-fetch-response` / `
 
 **Integrant DI.** Each handler is an `integrant.core/init-key` method. System wiring lives in `configuration.clj`. Add a new handler by adding an `init-key` method, a `halt-key!` if needed, and a `ref` in the system map.
 
-**SQL in resources.** Queries live in `.sql` files under `resources/<base>/sql/` and are loaded by `next.jdbc`. The `jdbc` component provides thin wrappers (`query-for-entity`, `insert!`, etc.) that apply camel-snake-kebab column mapping and the `sqlite-transformer`.
+**Datalog reads and writes.** Storage is a Datalevin (LMDB) store. Per-domain pull patterns and query/mutation functions live in `rts-data-access` under `query/datalog/<domain>.clj`; attribute schemas live under `schema/datalog/<domain>.clj` and are merged into the contract's `datalog-schema`. See `docs/database.md`.
 
-**IMPORTANT — data-access layer must never call `execute!` or `execute-one!` directly for reading data.** Always use the higher-level `jdbc.contract` wrappers:
-- `query-for-entities` / `query-for-entity` — for SELECT queries; applies `sqlite-transformer` (converts string UUIDs → `java.util.UUID`, etc.)
-- `insert!` — for INSERT statements
-- `execute!` / `execute-one!` — only acceptable for write operations (UPSERT/UPDATE/DELETE) where the result is not read back
-- `entity-by-eid` — shorthand for fetching a single row by eid column
-
-Bypassing these wrappers omits the `sqlite-transformer`, which silently returns raw strings instead of typed values and causes Malli coercion failures at the response boundary.
+**IMPORTANT — domain and web code must never require `datalevin.core` directly.** Everything goes through the data-access layer, which itself uses only the `datalog.contract` wrappers (`q`, `db`, `pull`, `entity`, `lookup-ref`, `transact!`); the only namespaces touching `datalevin.core` are the `datalog` component and the rts-api base's connection key. Conventions:
+- Snapshot the db once at the top of a read fn with `datalog.contract/db` and run every query in that fn against the snapshot, so multi-step reads see a consistent view
+- Read fns flatten pull results into the flat `*-eid` shape handlers expect (ref sub-maps become `:game-eid`, `:faction-eid`, …)
+- `:db.type/instant` attributes require `java.util.Date`, not `java.time.Instant` — coerce at the data-access boundary in every mutation fn
 
 ## Adding a new resource (checklist)
 
 1. Entity + resource Malli schemas in `domain/<resource>.clj` — merge from `base-resource`; annotate FK fields with `:model/link`
-2. SQL files in `resources/<base>/sql/` + `db/<resource>.clj`
+2. Attribute schema in `rts-data-access` `schema/datalog/<resource>.clj` + pull patterns and query/mutation fns in `query/datalog/<resource>.clj`, re-exported through the contract
 3. Handler functions in `handlers/<resource>.clj`: fetch fns return nil for missing; validation errors return a typed map `{:type :<resource>/error :message "…"}`; infrastructure failures throw and propagate to the Reitit exception middleware
 4. Web fetch fns in `web/<resource>.clj` return `{:type :missing/resource :name "<resource>" :id eid}` when domain returns nil — no throwing
 5. Route definitions in `web/<resource>.clj` with `:name`, `:parameters`, `:responses`, `:produces`, and an Integrant `ref` for the handler; web handlers dispatch on `:type` of the return value — **no try/catch**
@@ -196,7 +193,7 @@ Target: **WCAG 2.1 AA**. See `docs/frontend.md` for full patterns with examples.
 **Unit tests** are stubbed at the database boundary — no live DB, no HTTP layer, no Integrant system. See `docs/backend-testing.md`.
 
 - **Domain schema tests:** call `malli.core/validate` directly on schemas
-- **Handler tests:** stub db namespaces with `with-redefs`; pass `{:connection nil}` as deps; assert `:type` assignment, field preservation, nil/empty edge cases
+- **Handler tests:** stub db namespaces with `with-redefs`; pass `{:datalog-connection nil}` as deps; assert `:type` assignment, field preservation, nil/empty edge cases
 - Test files live under `components/<component>/test/` mirroring the source layout
 
 **E2E tests** use Playwright against a running dev server. They cover routes, middleware, templates, HTMX interactions, and the HAL+JSON API. See `docs/rts-api/e2e-testing.md`.
@@ -266,16 +263,13 @@ Reference in PR bodies as: `![alt](https://raw.githubusercontent.com/Devereux-He
 | `RTS_API_HOSTNAME` | `http://localhost:3001` | Base URL for link generation |
 | `AUTH_HOSTNAME` | `http://localhost:4000` | Ory auth service base URL |
 | `AUTH_SLUG` | — | Ory tenant slug |
+| `DATALEVIN_DB_DIR` | `db/datalevin/` | Datalevin store directory |
 
-Development SQLite database: `db/database.db` (gitignored). Migrations apply automatically on `(go!)`.
+Development Datalevin store: `db/datalevin/` (gitignored). The Datalog schema merges into the store when the connection opens on `(go!)`; seed game data with `(seed-datalog!)`.
 
 ## Lessons learned (tournament feature implementation retrospective)
 
 ### Findings and gotchas
-
-**SQLite table name conflicts.** Migration 000001 creates a `game` table (the Total War game entity). A later migration for match games initially used `CREATE TABLE IF NOT EXISTS game` — the `IF NOT EXISTS` silently skipped because the table already existed. Renamed to `match_game`. Always check existing table names before creating new ones.
-
-**SQLite UUID handling.** The `query-for-entity` / `query-for-entities` wrappers apply `sqlite-transformer` which converts UUID strings to `java.util.UUID`. But `execute-one!` (used for writes) does not — UUIDs passed as query parameters must be explicitly stringified with `(str uuid)` or the WHERE clause won't match.
 
 **Selmer template limitations.**
 - No `ifnotequal` tag — only `ifequal`/`endifequal`. Work around by restructuring conditionals or duplicating blocks per value.
@@ -319,11 +313,11 @@ Development SQLite database: `db/database.db` (gitignored). Migrations apply aut
 
 **Commit response schemas alongside handlers.** Several routes were initially missing `:responses` declarations. Adding them later revealed coercion mismatches (e.g. _links on non-HATEOAS responses). Write the response schema when writing the handler.
 
-**Kill nREPL between branch switches.** The nREPL session accumulates stale state across code changes. When switching branches or after migration/seed changes, kill and restart — `restart!` alone isn't sufficient for schema changes in SQL or migration ordering.
+**Kill nREPL between branch switches.** The nREPL session accumulates stale state across code changes. When switching branches or after Datalog schema/seed changes, kill and restart — `restart!` alone isn't sufficient for storage schema changes.
 
 **Use 127.0.0.1 in all e2e tests from the start.** The IPv4/IPv6 issue wasted a debugging cycle. Standardize on `127.0.0.1` for all test base URLs.
 
-**Test the full flow before committing.** Several commits required follow-up fixes (Selmer syntax, UUID stringification, table name conflicts). Running one full API+UI flow via curl and Playwright before committing catches these issues earlier.
+**Test the full flow before committing.** Several commits required follow-up fixes for issues a single end-to-end pass would have caught. Running one full API+UI flow via curl and Playwright before committing catches these issues earlier.
 
 **Separate PR screenshots from flow doc images.** PR screenshots go in a per-PR folder (frozen), flow doc screenshots go in `flows/rts-api/` (living). Established this pattern mid-session — should be the default from the start.
 

@@ -42,7 +42,7 @@ If either check fails:
 # One-time setup
 cd components/e2e && npm install && npx playwright install chromium && cd ../..
 
-# Start the dev server (migrations + seed + Jetty on :3001)
+# Start the dev server (opens the Datalevin store + Jetty on :3001)
 mkdir -p db
 clojure -M:dev -i components/e2e/resources/e2e/start_dev_server.clj &
 until curl -sf http://localhost:3001/status > /dev/null 2>&1; do sleep 2; done

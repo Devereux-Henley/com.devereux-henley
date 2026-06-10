@@ -2,84 +2,41 @@
 
 ## Overview
 
-The database layer is split across two Polylith units: the `rts-data` component, which owns migrations and seed data, and the `rts-data-deploy` base, which is a standalone CLI tool for running migrations independent of the application.
+Persistent state lives in a [Datalevin](https://github.com/juji-io/datalevin) store — an embedded, LMDB-backed Datalog database. There is no SQL layer and no migration framework: the Datalog schema merges into the store when the connection opens, and game data arrives as committed EDN seed files.
 
-Application startup runs migrations automatically via Integrant. The deploy base exists so migrations can also be applied in CI pipelines without starting the full application.
+The database layer is split across three Polylith units:
 
----
+| Unit | Role |
+|---|---|
+| `components/datalog` | Thin wrapper over `datalevin.core`: connection lifecycle (`get-conn`, `close`), reads (`q`, `db`, `pull`, `entity`, `lookup-ref`), writes (`transact!`), and `update-schema`. The seam through which all domain and web code touches Datalevin — apart from the rts-api base's connection key, no other namespace requires `datalevin.core`. |
+| `components/rts-data-access` | Per-domain pull patterns and query/mutation functions under `query/datalog/<domain>.clj`, plus the attribute schema under `schema/datalog/<domain>.clj`, merged into the full `datalog-schema` exposed by the contract. |
+| `components/rts-data` | Per-patch EDN seed files under `resources/rts-data/seed/datalog/<patch-version>/` and the loaders that read them into tx-data. Deliberately has no Datalevin dependency — callers pass the tx-data to `datalog.contract/transact!` themselves. |
 
-## Component and base structure
-
-```
-components/
-└── rts-data/
-    ├── deps.edn
-    ├── src/.../migrations.clj        Integrant ::migrate key
-    └── resources/rts-data/migrations/ Numbered Migratus SQL files
-
-bases/
-└── rts-data-deploy/
-    ├── src/.../core.clj              CLI entry point
-    └── test/.../migrations_test.clj  Migration up/down tests
-```
-
-### `rts-data` (component)
-
-Owns the migration SQL files and the Integrant key that runs them. Any base that needs a database depends on `mono/rts-data`. The component has no knowledge of the application — it provides only the migration mechanism and the seed data.
-
-### `rts-data-deploy` (base)
-
-A runnable CLI tool for applying or rolling back migrations. See [docs/rts-data-deploy.md](rts-data-deploy.md).
+The `rts-api` base owns the Integrant connection key (`::datalog/connection` in `bases/rts-api/src/.../datalog.clj`). On `init-key` it opens the store at `db/datalevin/` (override with `DATALEVIN_DB_DIR`) with the full data-access schema; handlers receive the connection as `:datalog-connection` in their dependency map.
 
 ---
 
-## Migration tool
+## Schema
 
-Migrations use [Migratus](https://github.com/yogthos/migratus) with the `:database` store. Migratus tracks applied migrations in a `schema_migrations` table that it creates automatically on first run. Calling `migratus/migrate` is safe to repeat — it is a no-op when all migrations have already been applied.
+The attribute schema lives in `components/rts-data-access/src/.../schema/datalog/`, one namespace per domain, merged in `schema/datalog.clj`. `datalevin/get-conn` merges the schema into any pre-existing store, so **additive** changes (new attributes, new entity types) apply on the next restart with no migration step.
 
-### File naming
-
-Migration files live at `components/rts-data/resources/rts-data/migrations/` and follow this pattern:
-
-```
-{id}-{description}.up.sql
-{id}-{description}.down.sql
-```
-
-IDs are zero-padded integers (6 digits). Migratus parses the numeric prefix as a `Long` and applies migrations in ascending ID order.
-
-### Migration ordering
-
-Migrations are ordered to satisfy foreign key dependencies. Tables with no foreign keys are created first; tables that reference them follow.
-
----
-
-## Running migrations
-
-### In the application (Integrant)
-
-Bases that use the database declare the migration component before the connection in their Integrant configuration. The `::db/connection` key takes an `integrant.core/ref` to `::rts-data/migrate`, ensuring migrations complete before any handler can use the database.
-
-```clojure
-{::migrations/migrate {:db-spec       db/db-spec
-                        :migration-dir "rts-data/migrations"}
- ::db/connection       {:migrations (integrant.core/ref ::migrations/migrate)}}
-```
-
-The `::db/connection` init-key ignores the `:migrations` value; the ref exists only to enforce initialisation order.
-
-### In CI
-
-See [docs/rts-data-deploy.md](rts-data-deploy.md).
+**Non-additive** changes (renaming or retracting an attribute, changing a value type) have no upgrade path — wipe the store and rebuild. The project is not deployed, so there is no production data to preserve; a fresh store seeded from EDN is always the target state. From the REPL, `(claude-workspace/reset-datalog!)` halts the system, deletes the LMDB directory, and restarts against an empty store.
 
 ---
 
 ## Seed data
 
-Seed scripts are kept separate from migrations and live in `components/rts-data/resources/rts-data/sql/seed/`. They are not run automatically. To seed a local development database, call `(seed-db!)` from the REPL after the system has started and migrations have been applied.
+Game data (units, factions, abilities, items, mounts, statlines, …) is committed as per-patch EDN under `components/rts-data/resources/rts-data/seed/datalog/<patch-version>/`, one file per entity type. The files are produced by the `rpfm-scraper` base, which merges curated authoring EDN (`seed/authoring/<patch-version>/`) with RPFM-decoded game tables — see [docs/rpfm-scraper/edn-seed-pipeline.md](rpfm-scraper/edn-seed-pipeline.md).
+
+`rts-data.contract/load-datalog-seed` returns `[file-name tx-data]` pairs in dependency order (independent entities first, junction rows and per-patch statlines last, so lookup-ref targets always exist). Seeding is not automatic: run `(claude-workspace/seed-datalog!)` from the REPL after `(go!)`. Every seeded entity carries a `:db.unique/identity` attribute, so re-running the seed upserts in place.
+
+For a store populated with demo tournaments (brackets in interesting states, not just game data), run the `rts-demo` base instead — it wipes and rebuilds the store from scratch.
 
 ---
 
-## Classpath note
+## Conventions
 
-Migratus 0.9.0 discovers migration files using `clojure.java.classpath/classpath-directories`. The default transitive version of that library (`0.2.3`) cannot read the AppClassLoader in Java 9+ and returns an empty sequence, causing Migratus to find no migrations. `rts-data/deps.edn` pins `org.clojure/java.classpath` to `0.3.0`, which falls back to the `java.class.path` system property and resolves correctly under the Clojure CLI on any supported JVM.
+- **Snapshot once per read.** Call `datalog.contract/db` once at the top of a read function and run every query in that function against the snapshot, so multi-step reads see a consistent view.
+- **Flatten pull results.** Read functions in `rts-data-access` flatten pull maps into the flat `*-eid` shape handlers consume (ref sub-maps become `:game-eid`, `:faction-eid`, …); handlers never see raw pull structure.
+- **`:db.type/instant` requires `java.util.Date`.** Datalevin rejects `java.time.Instant` for instant attributes. Coerce `Instant` → `Date` at the data-access boundary in every mutation function.
+- **`:db.type/idoc` caution.** Document-typed attributes (e.g. `:replay/parsed-data`) work, but certain integer-heavy documents have corrupted the idoc index on store reopen (`MDB_BAD_VALSIZE` — see bead `rts-tku`). When that bites, store the map as an EDN/transit string instead.

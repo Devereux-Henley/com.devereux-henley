@@ -1,7 +1,10 @@
 # RPFM → Datalog EDN seed pipeline
 
-Status: design (epic `rts-2lg`). This document is the contract every phase of the
-migration builds against.
+Status: **implemented** (epic `rts-2lg`, closed). The target pipeline below is what
+runs today; the "current pipeline (two hops)" section and the SQLite caveats are the
+historical design context. Runtime SQLite has since been fully decommissioned (epic
+`rts-sld`), so the gated `seed-*.sql` deletion described under "out of scope" has
+also landed — no SQL seed or migrations remain in the repo.
 
 ## Goal
 

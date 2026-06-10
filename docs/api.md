@@ -241,20 +241,15 @@ Unhandled exceptions propagate to the Reitit exception middleware. See per-base 
 
 ## Data access
 
-Database queries are written in SQL and stored as resources under `resources/<component>/sql/`. They are loaded and executed via `next.jdbc`.
+Persistent state lives in an embedded Datalevin (Datalog) store. Per-domain pull patterns and query/mutation functions live in the `rts-data-access` component under `query/datalog/<domain>.clj`, built on the `datalog` component's contract wrappers. See [database.md](database.md).
 
 ### Transformers
 
-Two Malli transformers handle type conversion across the data boundary:
-
-| Transformer | Direction | Purpose |
-|---|---|---|
-| `sqlite-transformer` | DB → Clojure | Parses UUIDs, instants, and other types from SQLite strings |
-| `model-transformer` | Clojure → Response | Resolves `:model/link` annotations into `_links` URLs using the reitit router |
+The `model-transformer` (Clojure → Response) walks a resource against its Malli schema and resolves `:model/link` annotations into `_links` URLs using the reitit router.
 
 ### Entity schema convention
 
-Database entities mirror their table columns with Malli schemas. Entity schemas are separate from resource schemas — the handler is responsible for mapping an entity to a resource (adding `:type`, computing links, etc.).
+Database entities mirror their stored Datalog attributes with Malli schemas. Entity schemas are separate from resource schemas — the handler is responsible for mapping an entity to a resource (adding `:type`, computing links, etc.).
 
 ---
 
@@ -267,7 +262,7 @@ System components are wired with **Integrant**. The system map is defined in eac
 ## Adding a new resource
 
 1. **Define entity and resource schemas.** Merge from `base-resource` or `base-collection-resource`. Annotate foreign-key fields with `:model/link`.
-2. **Write SQL queries** and expose them through a data-access namespace.
+2. **Write Datalog pull patterns and query functions** and expose them through a data-access namespace.
 3. **Implement domain functions:** fetch functions return the entity or `nil`; validation failures return a typed error map; infrastructure failures throw.
 4. **Expose endpoints** in a web handler namespace. Declare `:name`, `:parameters`, `:responses`, and `:produces` on each route. Web handlers dispatch on `:type` — **no try/catch**.
 5. **Register routes** and **register handler init-keys** in configuration.

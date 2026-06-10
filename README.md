@@ -106,6 +106,7 @@ For a populated tournament UI, run the `rts-demo` base to rebuild the store with
 |---|---|
 | [`docs/api.md`](docs/api.md) | API design: HATEOAS patterns, route structure, handler pipeline, content negotiation, error shapes. |
 | [`docs/backend-testing.md`](docs/backend-testing.md) | Testing philosophy: unit tests with stubbed database boundary, domain schema validation, handler transformation tests. |
+| [`docs/database.md`](docs/database.md) | Database layer: the Datalevin store, schema merging, EDN seed data, and Datalog conventions. |
 | [`docs/frontend.md`](docs/frontend.md) | Frontend patterns: WCAG 2.1 AA accessibility, HTMX conventions, Selmer template structure. |
 | [`docs/skins.md`](docs/skins.md) | Per-game visual skins: how a skin is dispatched and how new skins layer palette and component CSS over the default system. |
 | [`docs/rts-api/e2e-testing.md`](docs/rts-api/e2e-testing.md) | E2E testing strategy: Playwright architecture, local and CI usage, dev-only endpoints, test categories, adding new specs. |
