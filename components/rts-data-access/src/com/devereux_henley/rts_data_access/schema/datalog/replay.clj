@@ -9,8 +9,7 @@
    :replay/played-at                     {:db/valueType :db.type/string}
    :replay/victory-condition             {:db/valueType :db.type/string}
    :replay/parser-format                 {:db/valueType :db.type/string}
-   :replay/parsed-data                   {:db/valueType  :db.type/idoc
-                                          :db/idocFormat :json}
+   :replay/parsed-data                   {:db/valueType :db.type/string}
    :replay/uploader-local-alliance-index {:db/valueType :db.type/long}
    :replay/uploaded-by-sub               {:db/valueType :db.type/string}
    :replay/created-at                    {:db/valueType :db.type/instant}
