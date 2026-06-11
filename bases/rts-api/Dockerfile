@@ -9,11 +9,9 @@ WORKDIR /app
 COPY projects/api/deps.edn                           projects/api/deps.edn
 COPY projects/api/build.clj                          projects/api/build.clj
 COPY bases/rts-api/deps.edn                          bases/rts-api/deps.edn
-COPY bases/rts-data-deploy/deps.edn                  bases/rts-data-deploy/deps.edn
 COPY components/content-negotiation/deps.edn         components/content-negotiation/deps.edn
 COPY components/e2e/deps.edn                         components/e2e/deps.edn
 COPY components/http/deps.edn                        components/http/deps.edn
-COPY components/jdbc/deps.edn                        components/jdbc/deps.edn
 COPY components/datalog/deps.edn                     components/datalog/deps.edn
 COPY components/resourcekit/deps.edn                 components/resourcekit/deps.edn
 COPY components/rts-data/deps.edn                    components/rts-data/deps.edn
@@ -45,7 +43,6 @@ COPY --from=builder --chown=app:app /app/projects/api/target/rts-api.jar /app/rt
 USER app
 
 ENV RTS_API_PORT=3001 \
-    RTS_DB_CONNECTION_URI=jdbc:sqlite:/data/database.db \
     DATALEVIN_DB_DIR=/data/datalevin
 
 EXPOSE 3001

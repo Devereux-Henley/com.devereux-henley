@@ -103,8 +103,8 @@
 
 (defn max-ordinal-for-league
   "Returns `{:max-ordinal n}` with `n=0` when the league has no
-  seasons — matches the SQLite-era shape so the handler doesn't have
-  to special-case the empty result."
+  seasons, so the handler doesn't have to special-case the empty
+  result."
   [conn league-eid]
   (let [m (dl/q '[:find (max ?o) .
                   :in $ ?league-eid

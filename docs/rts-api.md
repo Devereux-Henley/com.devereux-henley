@@ -5,7 +5,6 @@ The primary API base for the RTS tournament platform. Serves the HAL+JSON API an
 ## Sub-documents
 
 - [E2E Testing](rts-api/e2e-testing.md) — Playwright test setup, CI integration, test categories
-- [Tournament Plan](rts-api/tournament-plan.md) — MVP implementation plan for the tournament feature
 - [Content Negotiation & HATEOAS](rts-api/content-negotiation-hateoas.md) — rts-api-specific view-by-type dispatch, template routing, and error rendering
 
 ## Flows

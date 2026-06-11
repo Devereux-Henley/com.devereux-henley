@@ -192,7 +192,7 @@
 
 (def bracket-type-enum [:enum "winners" "losers" "grand-final"])
 
-;; ─── Stats entities (SQLite) ─────────────────────────────────────────────────
+;; ─── Stats entities ──────────────────────────────────────────────────────────
 
 (def faction-standings-row-entity
   (schema.contract/to-schema

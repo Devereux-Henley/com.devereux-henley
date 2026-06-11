@@ -61,7 +61,7 @@ Components are shared units of behaviour consumed by one or more bases.
 
 ### Toolbox
 
-[`dev-env/`](dev-env) packages a [Fedora Toolbx](https://containertoolbx.org/) image with the full development toolchain (Emacs, JDK 21, Clojure CLI, clj-kondo, cljfmt, gh, sqlite, Node/npm + Playwright deps, Claude Code, [clojure-mcp](https://github.com/bhauman/clojure-mcp)). From `dev-env/`:
+[`dev-env/`](dev-env) packages a [Fedora Toolbx](https://containertoolbx.org/) image with the full development toolchain (Emacs, JDK 21, Clojure CLI, clj-kondo, cljfmt, gh, Node/npm + Playwright deps, Claude Code, [clojure-mcp](https://github.com/bhauman/clojure-mcp)). From `dev-env/`:
 
 ```
 make build && make create && make enter

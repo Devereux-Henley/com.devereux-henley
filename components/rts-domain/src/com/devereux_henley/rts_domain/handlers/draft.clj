@@ -444,10 +444,10 @@
 
 (defn- parse-granted-ability-keys
   "Parses granted-ability-keys into a vector of key strings. Accepts a
-  JSON array string (SQLite era) or a pre-decoded collection (Datalevin
-  cardinality-many string set/vector). Returns nil when the input is
-  empty; invalid JSON propagates as an exception since that would mean
-  the seed pipeline wrote garbage."
+  JSON array string or a pre-decoded collection (cardinality-many
+  string set/vector). Returns nil when the input is empty; invalid
+  JSON propagates as an exception since that would mean the seed
+  pipeline wrote garbage."
   [raw]
   (when (and raw (seq raw))
     (cond

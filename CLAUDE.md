@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Toolbox dev environment
 
-`dev-env/` packages a self-contained [Fedora Toolbx](https://containertoolbx.org/) image with everything needed to work in this repo: Emacs, JDK 21, Clojure CLI, clj-kondo, cljfmt, gh, sqlite, Node/npm + Playwright system deps, beads, Claude Code, and clojure-mcp. From `dev-env/`:
+`dev-env/` packages a self-contained [Fedora Toolbx](https://containertoolbx.org/) image with everything needed to work in this repo: Emacs, JDK 21, Clojure CLI, clj-kondo, cljfmt, gh, Node/npm + Playwright system deps, beads, Claude Code, and clojure-mcp. From `dev-env/`:
 
 ```bash
 make build        # podman build the image
