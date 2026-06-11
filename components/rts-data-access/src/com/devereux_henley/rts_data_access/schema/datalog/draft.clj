@@ -2,13 +2,12 @@
   "Datalevin attributes for the `:draft` entity — a player's army-composition
   build for a specific `:game-mode` and `:faction`.
 
-  Drafts are user-mutated, so the SQLite-era audit columns
+  Drafts are user-mutated, so they carry the audit attributes
   (`:draft/created-by-sub`, `:draft/version`, `:draft/created-at`,
-  `:draft/updated-at`) survive the migration; the seed-loader pattern that
-  lets game/faction/unit drop those doesn't apply here.
+  `:draft/updated-at`) that seed-loaded entities like game/faction/unit
+  omit.
 
-  Army entries are decomposed out of the SQLite `draft_state` JSON blob
-  into `:draft-entry` entities, owned via the cardinality-many
+  Army entries are `:draft-entry` entities, owned via the cardinality-many
   `:draft/entries` ref. To list a draft's entries:
 
     (datalog/q '[:find (pull ?e […])
@@ -19,8 +18,9 @@
                db draft-eid)
 
   Entries carry `:draft-entry/section` (`:main` vs `:reinforcements`) and
-  `:draft-entry/ordinal`, so the JSON-era `{:main [...], :reinforcements
-  [...]}` shape is rebuilt by grouping + sorting at the query layer.")
+  `:draft-entry/ordinal`, so the `{:main [...], :reinforcements [...]}`
+  shape handlers consume is rebuilt by grouping + sorting at the query
+  layer.")
 
 (def schema
   {:draft/eid            {:db/valueType :db.type/uuid

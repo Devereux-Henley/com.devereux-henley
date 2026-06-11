@@ -24,8 +24,8 @@
 ;;; ─── Result builders ──────────────────────────────────────────────────────
 
 (defn- ->draft
-  "Flatten a draft pull result into the unqualified-key shape the
-  SQLite-era handlers expect: ref sub-maps become flat `*-eid` fields.
+  "Flatten a draft pull result into the unqualified-key shape handlers
+  expect: ref sub-maps become flat `*-eid` fields.
   Dates stay as canonical `java.util.Date` values — formatting belongs
   to the web layer (Selmer `:date` filter on the template)."
   [m]

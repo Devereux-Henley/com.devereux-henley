@@ -29,8 +29,8 @@
     (instance? Date x)     (.toInstant ^Date x)))
 
 (defn- ->league
-  "Flatten a league pull result into the SQLite-era handler-facing
-  shape. The `:game` ref sub-map becomes a flat `:game-eid`; the
+  "Flatten a league pull result into the flat handler-facing shape.
+  The `:game` ref sub-map becomes a flat `:game-eid`; the
   `:game/name` join only exists to give `leagues` a sort key and is
   dropped from the output."
   [m]

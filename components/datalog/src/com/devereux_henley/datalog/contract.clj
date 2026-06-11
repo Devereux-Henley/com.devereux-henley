@@ -1,7 +1,6 @@
 (ns com.devereux-henley.datalog.contract
   "Thin wrapper around Datalevin to provide a single seam for schema decode/encode
-  and to enforce the rule that domain namespaces never call `datalevin.core` directly.
-  Mirrors the role that `com.devereux-henley.jdbc.contract` plays for SQLite."
+  and to enforce the rule that domain namespaces never call `datalevin.core` directly."
   (:require
    [datalevin.core :as datalevin]))
 

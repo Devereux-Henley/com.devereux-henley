@@ -1,15 +1,14 @@
 (ns com.devereux-henley.rts-data-access.schema.datalog.draft-entry
   "Datalevin attributes for the `:draft-entry` entity — one army slot in a
-  draft. Decomposed out of the SQLite `draft_state.state` JSON blob, where
-  each entry was a map under `:main` / `:reinforcements`.
+  draft.
 
-  `:draft-entry/section` is a keyword enum `#{:main :reinforcements}`
-  (mirrors `:unit/mark`'s SQLite-CHECK-becomes-domain-invariant pattern).
-  `:draft-entry/ordinal` preserves the JSON-array order within a section
-  so rendering stays stable across edits — sets in datalog are unordered,
-  so a per-section `(:draft-entry/ordinal)` sort restores the prior shape.
+  `:draft-entry/section` is a keyword enum `#{:main :reinforcements}`,
+  enforced as a domain-side invariant (the same pattern as `:unit/mark`).
+  `:draft-entry/ordinal` preserves entry order within a section so
+  rendering stays stable across edits — sets in datalog are unordered,
+  so a per-section `(:draft-entry/ordinal)` sort restores the order.
 
-  `:draft-entry/abilities`, `…/spells`, `…/items` stay as cardinality-many
+  `:draft-entry/abilities`, `…/spells`, `…/items` are cardinality-many
   string keys (engine keys), matching how `:unit-mount/granted-ability-keys`
   and `:unit/lore` handle key references — joins against `:ability/key`,
   `:spell/key`, `:item/key` happen at the query layer when full resources

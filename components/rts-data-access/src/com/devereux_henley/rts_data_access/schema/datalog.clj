@@ -13,18 +13,16 @@
     `:db.unique/identity`. Routes, templates, and `match-by-name!` keep
     working unchanged because `[:<entity>/eid uuid]` is the lookup ref
     everywhere.
-  - References (SQLite integer FKs) become `:db.type/ref`. Set
+  - References between entities are `:db.type/ref`. Set
     `:db/cardinality :db.cardinality/many` when the parent owns a
     collection.
-  - Junction tables stay as their own entities (`:unit-item`,
-    `:spell-lore`, `:unit-mount`) rather than collapsing into
-    cardinality-many refs. This preserves the existing query surface and
-    leaves room for per-membership attributes to land without reshaping
-    the pull patterns.
-  - Audit columns (`created-by-sub`, `version`, `deleted-at`) from the
-    SQLite era are intentionally dropped where the data is regenerated
-    from an upstream source (per-game seed loaders) rather than mutated.
-    Domains that accept user mutations keep them.
+  - Junctions are their own entities (`:unit-item`, `:spell-lore`,
+    `:unit-mount`) rather than cardinality-many refs on the parent.
+    This keeps the query surface explicit and leaves room for
+    per-membership attributes without reshaping the pull patterns.
+  - Audit attributes (`created-by-sub`, `version`, `deleted-at`) exist
+    only on domains that accept user mutations; entities regenerated
+    from an upstream source (per-game seed loaders) omit them.
   - Datalevin is additive at runtime: opening a conn with a superset
     schema only adds the new attributes. Use
     `datalog.contract/update-schema` at the REPL to apply a change

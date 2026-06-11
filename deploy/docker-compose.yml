@@ -9,7 +9,6 @@ services:
       RTS_API_HOSTNAME: ${RTS_API_HOSTNAME:?set RTS_API_HOSTNAME in .env}
       AUTH_HOSTNAME:    ${AUTH_HOSTNAME:?set AUTH_HOSTNAME in .env}
       AUTH_SLUG:        ${AUTH_SLUG:?set AUTH_SLUG in .env}
-      RTS_DB_CONNECTION_URI: jdbc:sqlite:/data/database.db
     volumes:
       - ${DATA_DIR:-./data}:/data
     expose:

@@ -2,13 +2,11 @@
   "Datalevin attributes for the `:unit` entity.
 
   `:unit/mark` is a `:db.type/keyword` enum
-  `#{:khorne :nurgle :slaanesh :tzeentch :undivided}` rather than a string
-  with a CHECK constraint — marks have no rows of their own, so the SQLite
-  enum becomes a domain-side invariant.
+  `#{:khorne :nurgle :slaanesh :tzeentch :undivided}` — marks have no
+  entities of their own, so the allowed set is a domain-side invariant.
 
-  `:unit/lore` stays a plain engine-key string (not a ref to `:lore`) because
-  the SQLite era stored only the key and the views resolve lores by key
-  separately.
+  `:unit/lore` is a plain engine-key string (not a ref to `:lore`); the
+  views resolve lores by key separately.
 
   Per-patch statlines hang off `:unit` via the reverse of
   `:unit-statistics/unit` — pull `{:unit-statistics/_unit [...]}` to get

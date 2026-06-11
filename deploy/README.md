@@ -1,7 +1,7 @@
 # DigitalOcean deployment
 
 Target: a single DigitalOcean Droplet running `docker compose`, fronted by Caddy for
-TLS, with SQLite persisted on an attached DO Block Storage volume.
+TLS, with the Datalevin store persisted on an attached DO Block Storage volume.
 
 ## Layout
 
@@ -10,8 +10,9 @@ TLS, with SQLite persisted on an attached DO Block Storage volume.
   `.github/workflows/publish-image.yml` on every push to `main` and every
   `stable-*` tag.
 - `deploy/docker-compose.yml` — two services: `app` (the API container) and
-  `caddy` (TLS-terminating reverse proxy). SQLite is persisted in a host
-  directory mounted at `/data`.
+  `caddy` (TLS-terminating reverse proxy). The Datalevin store is persisted
+  in a host directory mounted at `/data` (the image sets
+  `DATALEVIN_DB_DIR=/data/datalevin`).
 - `deploy/Caddyfile` — reverse-proxies `${APP_DOMAIN}` to the `app` container
   and handles Let's Encrypt automatically.
 - `deploy/.env.example` — the full list of env vars the deploy needs. Copy to
@@ -66,8 +67,8 @@ TLS, with SQLite persisted on an attached DO Block Storage volume.
    docker compose up -d
    docker compose logs -f app
    ```
-   Migrations run automatically on startup (see `::rts-data/migrate` in
-   `configuration.clj`). `GET /status` should return `{"status":"ok"}`.
+   The Datalog schema merges into the store when the connection opens, so
+   there is no migration step. `GET /status` should return `{"status":"ok"}`.
 
 ## Subsequent deploys
 
@@ -95,14 +96,18 @@ Not a code change but easy to forget. In the Ory project dashboard:
 
 ## Backups
 
-SQLite on a volume survives container restarts but not data corruption. Set up
-a nightly cron on the Droplet:
+A store on a volume survives container restarts but not data corruption. Set
+up a nightly cron on the Droplet:
 
 ```cron
-0 3 * * * sqlite3 /mnt/rts-data/database.db ".backup /tmp/backup.db" \
-  && s3cmd put /tmp/backup.db s3://rts-backups/$(date -u +\%Y-\%m-\%d).db \
-  && rm /tmp/backup.db
+0 3 * * * tar -czf /tmp/backup.tgz -C /mnt/rts-data datalevin \
+  && s3cmd put /tmp/backup.tgz s3://rts-backups/$(date -u +\%Y-\%m-\%d).tgz \
+  && rm /tmp/backup.tgz
 ```
+
+A hot tar of the LMDB directory can catch a write mid-flight; for a
+guaranteed-consistent snapshot, briefly stop the app around the tar
+(`docker compose stop app` / `docker compose start app`).
 
 DO Spaces is S3-compatible and cheap (~$5/mo). Configure `s3cmd` with the
 Spaces access key. Keep 30 days of backups via a lifecycle rule.

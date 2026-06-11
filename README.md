@@ -18,10 +18,9 @@ clojure -M:poly test
 |---|---|
 | [Polylith](https://polylith.gitbook.io/polylith) | Workspace structure, dependency validation, incremental testing |
 | [Integrant](https://github.com/weavejester/integrant) | Component lifecycle and dependency injection at runtime |
-| [Migratus](https://github.com/yogthos/migratus) | SQL database migrations with versioned up/down files |
+| [Datalevin](https://github.com/juji-io/datalevin) | Embedded LMDB-backed Datalog database for all persistent state |
 | [Reitit](https://github.com/metosin/reitit) | HTTP routing with schema coercion and content negotiation |
 | [Malli](https://github.com/metosin/malli) | Data schema, validation, and transformation |
-| [next.jdbc](https://github.com/seancorfield/next-jdbc) | Database access |
 | [Selmer](https://github.com/yogthos/Selmer) | HTML templating |
 | [Playwright](https://playwright.dev/) | Browser-based e2e testing against the running dev server |
 
@@ -33,9 +32,9 @@ Bases are runnable entry points. Each base wires together components and library
 
 | Base | Description |
 |---|---|
-| [`rts-api`](bases/rts-api) | HTTP API and server-rendered UI for the RTS tournament application. Serves JSON, HAL+JSON, and htmx-powered HTML via content negotiation. Runs on Jetty with Reitit routing and Integrant lifecycle management. Applies database migrations on startup. |
-| [`rts-data-deploy`](bases/rts-data-deploy) | CLI tool for running RTS database migrations in CI, independent of the application. Accepts `migrate` or `rollback` as a command-line argument. |
-| [`rpfm-scraper`](bases/rpfm-scraper) | Scrapes game data (units, factions, abilities, items, mounts) from RPFM and generates seed SQL files. See [`docs/game-data.md`](docs/game-data.md). |
+| [`rts-api`](bases/rts-api) | HTTP API and server-rendered UI for the RTS tournament application. Serves JSON, HAL+JSON, and htmx-powered HTML via content negotiation. Runs on Jetty with Reitit routing and Integrant lifecycle management; opens its Datalevin connection at startup. |
+| [`rpfm-scraper`](bases/rpfm-scraper) | Scrapes game data (units, factions, abilities, items, mounts) from RPFM and merges it with the curated authoring EDN into the Datalog seed under `components/rts-data/resources`. See [`docs/rpfm-scraper/game-data.md`](docs/rpfm-scraper/game-data.md) and [`docs/rpfm-scraper/edn-seed-pipeline.md`](docs/rpfm-scraper/edn-seed-pipeline.md). |
+| [`rts-demo`](bases/rts-demo) | Bootstraps a fresh Datalevin store with demo tournaments (single-elimination, double-elimination, Swiss) advanced to interesting bracket states, so the tournament viewer always has non-trivial data to render. |
 
 ---
 
@@ -47,14 +46,14 @@ Components are shared units of behaviour consumed by one or more bases.
 |---|---|
 | [`rts-web`](components/rts-web) | RTS web layer. Reitit route definitions, Integrant-managed request handlers for API endpoints and server-rendered views, and HTML templates and static assets. |
 | [`rts-domain`](components/rts-domain) | RTS domain layer. Handler-level functions that retrieve typed domain models (with `:type` keys) from the data access layer, and Malli schemas for all API resources and request specifications. |
-| [`rts-data-access`](components/rts-data-access) | RTS data access layer. SQL query functions backed by named `.sql` files, JDBC entity schemas, and all database read/write operations. |
-| [`rts-data`](components/rts-data) | RTS database schema. Owns the numbered Migratus migration SQL files and the Integrant `::migrate` key that applies them. |
+| [`rts-data-access`](components/rts-data-access) | RTS data access layer. Datalog query and mutation functions over the Datalevin store, plus the entity schemas that describe stored data. |
+| [`rts-data`](components/rts-data) | RTS Datalog seed. Owns the per-patch EDN seed files under `resources/rts-data/seed/` (produced by `rpfm-scraper`) and the loaders that transact them into the store. |
 | [`http`](components/http) | HTTP response helpers used by web handlers: `Either`-based fetch and create pipelines, standard response shaping for collections, single resources, and embedded sub-resources. |
-| [`jdbc`](components/jdbc) | JDBC query helpers: camel-snake-kebab column mapping, `query-for-entity`, `query-for-entities`, `entity-by-eid`, `insert!`, and `execute-one!` wrappers over `next.jdbc`. |
+| [`datalog`](components/datalog) | Thin wrapper around Datalevin: connection lifecycle, query and transact helpers. The single seam through which all other units touch the database — domain code never calls `datalevin.core` directly. |
 | [`schema`](components/schema) | Shared Malli schema primitives: custom types (`:instant`, `:local-date`, `:url`), base resource and collection schemas, and the model transformer that resolves `:model/link` annotations into HATEOAS `_links` URLs. |
 | [`content-negotiation`](components/content-negotiation) | Muuntaja format definitions for `text/html` and `application/htmx+html`. Shared by any base that serves server-rendered HTML alongside JSON. |
 | [`resourcekit`](components/resourcekit) | Static CSS assets (reset, tokens, layout, and UI component styles) served by bases that render HTML. |
-| [`e2e`](components/e2e) | Playwright e2e tests. Clojure test runner shells out to `npx playwright test`; JavaScript specs cover page navigation, draft UI operations, and HAL+JSON API. See [`docs/e2e-testing.md`](docs/e2e-testing.md). |
+| [`e2e`](components/e2e) | Playwright e2e tests. Clojure test runner shells out to `npx playwright test`; JavaScript specs cover page navigation, draft UI operations, and HAL+JSON API. See [`docs/rts-api/e2e-testing.md`](docs/rts-api/e2e-testing.md). |
 
 ---
 
@@ -62,7 +61,7 @@ Components are shared units of behaviour consumed by one or more bases.
 
 ### Toolbox
 
-[`dev-env/`](dev-env) packages a [Fedora Toolbx](https://containertoolbx.org/) image with the full development toolchain (Emacs, JDK 21, Clojure CLI, clj-kondo, cljfmt, gh, sqlite, Node/npm + Playwright deps, Claude Code, [clojure-mcp](https://github.com/bhauman/clojure-mcp)). From `dev-env/`:
+[`dev-env/`](dev-env) packages a [Fedora Toolbx](https://containertoolbx.org/) image with the full development toolchain (Emacs, JDK 21, Clojure CLI, clj-kondo, cljfmt, gh, Node/npm + Playwright deps, Claude Code, [clojure-mcp](https://github.com/bhauman/clojure-mcp)). From `dev-env/`:
 
 ```
 make build && make create && make enter
@@ -86,14 +85,18 @@ Approve the `eval` form prompt once (or add `(setq enable-local-eval t)` to your
 
 ### Database
 
-The SQLite development database lives at `db/database.db` (relative to the repository root, excluded from version control). Migrations run automatically on `(go!)`. To apply migrations independently:
+The development Datalevin store lives at `db/datalevin/` (relative to the repository root, excluded from version control; override with `DATALEVIN_DB_DIR`). The Datalog schema merges into the store when the connection opens, so additive schema changes apply on restart without a migration step.
 
 ```clojure
-;; From the REPL
-(go!)      ; start system (runs migrations, starts Jetty)
-(halt!)    ; stop system
-(restart!) ; halt then go!
+;; From the REPL (helpers in development/src/claude_workspace.clj)
+(go!)            ; start system (opens the store, starts Jetty)
+(halt!)          ; stop system
+(restart!)       ; halt then go!
+(seed-datalog!)  ; transact the game-data seed for the default patch (system must be up)
+(reset-datalog!) ; halt, wipe the store, and restart against an empty store
 ```
+
+For a populated tournament UI, run the `rts-demo` base to rebuild the store with demo tournaments.
 
 ---
 
@@ -103,9 +106,11 @@ The SQLite development database lives at `db/database.db` (relative to the repos
 |---|---|
 | [`docs/api.md`](docs/api.md) | API design: HATEOAS patterns, route structure, handler pipeline, content negotiation, error shapes. |
 | [`docs/backend-testing.md`](docs/backend-testing.md) | Testing philosophy: unit tests with stubbed database boundary, domain schema validation, handler transformation tests. |
-| [`docs/database.md`](docs/database.md) | Database migration strategy: Migratus setup, migration ordering, how migrations run in the application and in CI, and the migration test approach. |
-| [`docs/e2e-testing.md`](docs/e2e-testing.md) | E2E testing strategy: Playwright architecture, local and CI usage, dev-only endpoints, test categories, adding new specs. |
+| [`docs/database.md`](docs/database.md) | Database layer: the Datalevin store, schema merging, EDN seed data, and Datalog conventions. |
 | [`docs/frontend.md`](docs/frontend.md) | Frontend patterns: WCAG 2.1 AA accessibility, HTMX conventions, Selmer template structure. |
-| [`docs/game-data.md`](docs/game-data.md) | RPFM data refresh workflow: scraping game data after a patch and regenerating seed SQL files. |
+| [`docs/skins.md`](docs/skins.md) | Per-game visual skins: how a skin is dispatched and how new skins layer palette and component CSS over the default system. |
+| [`docs/rts-api/e2e-testing.md`](docs/rts-api/e2e-testing.md) | E2E testing strategy: Playwright architecture, local and CI usage, dev-only endpoints, test categories, adding new specs. |
+| [`docs/rpfm-scraper/game-data.md`](docs/rpfm-scraper/game-data.md) | RPFM data refresh workflow: scraping game data after a patch and regenerating the Datalog seed. |
+| [`docs/rpfm-scraper/edn-seed-pipeline.md`](docs/rpfm-scraper/edn-seed-pipeline.md) | Seed pipeline: how the curated authoring EDN merges with RPFM output into the per-patch Datalog seed. |
 
 External references: [Polylith documentation](https://polylith.gitbook.io/polylith) · [Polylith tool](https://github.com/polyfy/polylith)

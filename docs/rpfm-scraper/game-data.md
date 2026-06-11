@@ -2,26 +2,26 @@
 
 ## Overview
 
-Unit statistics, spell costs, and related seed data are sourced directly from the WH3 game files using [RPFM](https://github.com/Frodo45127/rpfm) (Rusted PackFile Manager). After each game patch, the seed SQL files must be refreshed to reflect the latest balance changes.
+Unit statistics, spell costs, and related seed data are sourced directly from the WH3 game files using [RPFM](https://github.com/Frodo45127/rpfm) (Rusted PackFile Manager). After each game patch, the Datalog EDN seed must be refreshed to reflect the latest balance changes.
 
-The update tool is the `rpfm-scraper` base (`bases/rpfm-scraper`), invoked from the repo root. It reads RPFM-decoded game tables from `bases/rpfm-scraper/data/` and rewrites the `unit_statistics` JSON blob for every unit in every faction seed file, and updates spell gold costs in `seed-spells.sql`.
+The update tool is the `rpfm-scraper` base (`bases/rpfm-scraper`), invoked from the repo root. It reads RPFM-decoded game tables from `bases/rpfm-scraper/data/`, merges them with the curated authoring EDN under `components/rts-data/resources/rts-data/seed/authoring/<patch>/`, and rewrites the generated portions of the merged seed under `components/rts-data/resources/rts-data/seed/datalog/<patch>/`. See [edn-seed-pipeline.md](edn-seed-pipeline.md) for the merge contract.
 
-Non-numeric fields (`abilities`, `draftable-spells`, `mounts`) are preserved from the existing seed and are not overwritten.
+Curated fields (unit identities, ability/spell assignments, draftable spells, hand-maintained overrides) come from the authoring EDN and are never overwritten by the scraper.
 
 ---
 
 ## What gets updated
 
-| Seed file(s) | Fields updated |
+| Seed file(s) (under `seed/datalog/<patch>/`) | Fields updated |
 |---|---|
-| `seed-<faction>-units.sql` | `cost`, `is_large`, `unit_size`, `health`, `barrier`, `armor`, `leadership`, `speed`, `melee_attack`, `melee_attack_types`, `melee_defence`, `weapon_strength`, `weapon_damage`, `weapon_ap_damage`, `charge_bonus`, `ammunition`, `range`, `missile_damage`, `missile_base_damage`, `missile_ap_damage`, `missile_damage_types`, `equipment` (lords/heroes only) |
-| `seed-spells.sql` | `cost` |
-| `seed-abilities.sql` | `name`, `description`, `cost` (`additional_melee_cp + additional_missile_cp` from `unit_special_abilities_tables`) |
-| `seed-items.sql` | fully regenerated: all MP ancillaries with `key`, `name`, `category`, `cost`, `icon_key` (dedupe stem) |
-| `seed-unit-items.sql` | fully regenerated: unit → item links for legendary lords/heroes with pre-assigned gear |
-| `seed-mounts.sql` | fully regenerated from `units_custom_battle_mounts_tables`: one row per distinct MP mount, keyed on icon stem (e.g. `mount_barded_warhorse`) |
-| `seed-unit-mounts.sql` | fully regenerated: unit → mount links with cost = `main_units_tables.multiplayer_cost` diff (mounted variant − base) |
-| `seed-unit-level-cost.sql` | fully regenerated from `unit_stats_land_experience_bonuses_tables`: one row per veteran rank (0-9) with `fixed_cost`, `cost_multiplier`, fatigue, and combat-potential deltas. Engine formula: `adjusted_cost = round(base_cost * cost_multiplier) + fixed_cost` |
+| `unit-statistics.edn` | per-patch statline snapshot for every unit: `cost`, `is-large`, `unit-size`, `health`, `barrier`, `armor`, `leadership`, `speed`, `melee-attack`, `melee-attack-types`, `melee-defence`, `weapon-strength`, `weapon-damage`, `weapon-ap-damage`, `charge-bonus`, `ammunition`, `range`, `missile-damage`, `missile-base-damage`, `missile-ap-damage`, `missile-damage-types` |
+| `spells.edn` | `cost` |
+| `abilities.edn` | `name`, `description`, `cost` (`additional_melee_cp + additional_missile_cp` from `unit_special_abilities_tables`) |
+| `items.edn` | fully regenerated: all MP ancillaries with `key`, `name`, `category`, `cost`, `icon-key` (dedupe stem) |
+| `unit-items.edn` | fully regenerated: unit → item links for legendary lords/heroes with pre-assigned gear |
+| `mounts.edn` | fully regenerated from `units_custom_battle_mounts_tables`: one row per distinct MP mount, keyed on icon stem (e.g. `mount_barded_warhorse`) |
+| `unit-mounts.edn` | fully regenerated: unit → mount links with cost = `main_units_tables.multiplayer_cost` diff (mounted variant − base) |
+| `unit-level-cost.edn` | fully regenerated from `unit_stats_land_experience_bonuses_tables`: one row per veteran rank (0-9) with `fixed_cost`, `cost_multiplier`, fatigue, and combat-potential deltas. Engine formula: `adjusted_cost = round(base_cost * cost_multiplier) + fixed_cost` |
 | `asset/icon/ability/*.png` | spell + item-ability icons copied alongside ability icons when `--icons-dir` is given (spells are abilities in WH3; icons keyed by spell / derived item-ability eid) |
 | `asset/icon/item/*.png` | item icons copied when `--item-icons-dir` is given (one file per distinct `ancillary_types_tables.ui_icon` stem) |
 | `asset/icon/mount/*.png` | mount icons copied when `--mount-icons-dir` is given (one file per distinct mount icon stem, matching `mount.icon_key`) |
@@ -82,13 +82,14 @@ Each decoded file must be in the RPFM MCP output format: a JSON array with a sin
 ### 2. Run the update tool
 
 ```bash
-clojure -M:dev -m com.devereux-henley.rpfm-scraper.core --data-dir bases/rpfm-scraper/data
+clojure -M:dev -m com.devereux-henley.rpfm-scraper.core \
+  --data-dir bases/rpfm-scraper/data --patch-version 8.0
 ```
 
 Or, after building the uber JAR with `clojure -M:build -A rpfm-scraper uber`:
 
 ```bash
-java -jar target/rpfm-scraper.jar --data-dir bases/rpfm-scraper/data
+java -jar target/rpfm-scraper.jar --data-dir bases/rpfm-scraper/data --patch-version 8.0
 ```
 
 The tool prints a per-faction summary. Any units whose display name could not be matched to a game key are listed as warnings and left unchanged.
@@ -106,7 +107,7 @@ Every run (strict or not) writes a coverage manifest to `target/scraper-coverage
 }
 ```
 
-`missing-keys` and `missing-icons` are sorted, deduplicated unit display names. `stale-pngs` is the list of `<eid>` filenames in `asset/card/unit/` whose `eid` is no longer in any seed file (the bidirectional check that catches PNGs left over from a deleted/renamed unit). The `placeholder.png` filename is exempt.
+`missing-keys` and `missing-icons` are sorted, deduplicated unit display names. `stale-pngs` is the list of `<eid>` filenames in `asset/card/unit/` whose `eid` is no longer in the unit seed (the bidirectional check that catches PNGs left over from a deleted/renamed unit). The `placeholder.png` filename is exempt.
 
 When a `--strict` run fails, the manifest is the input list for extending `bases/rpfm-scraper/src/.../overrides.clj` — add a `display-name → icon-stem` entry for each `missing-keys`/`missing-icons` name the heuristic could not resolve, then re-run.
 
@@ -136,12 +137,12 @@ Each flag is independent — omit any you don't have extracted. Copied PNGs are 
 
 Spell icons are sourced from the same `--icons-dir` as abilities (WH3 stores spells as abilities internally). Spell icons are written alongside ability icons in `asset/icon/ability/` since templates resolve both via the `/icon/ability/` path.
 
-Mount icons are keyed by icon stem (e.g. `mount_barded_warhorse.png`), matching the `mount.icon_key` column populated in `seed-mounts.sql`. Templates resolve them via `mount.icon-key`.
+Mount icons are keyed by icon stem (e.g. `mount_barded_warhorse.png`), matching the `:mount/icon-key` attribute populated in `mounts.edn`. Templates resolve them via `mount.icon-key`.
 
 ### 3. Review and commit
 
 ```bash
-git diff components/rts-data/resources/rts-data/sql/seed/
+git diff components/rts-data/resources/rts-data/seed/datalog/
 ```
 
 Verify that the stat changes look plausible (costs, armor, weapon strength, etc. matching the patch notes), then commit.
@@ -150,11 +151,11 @@ Verify that the stat changes look plausible (costs, armor, weapon strength, etc.
 
 ## Known limitations
 
-- **4 Lizardmen Slann variants** (`Slann Mage-Priest (Beasts/Death/Metal/Shadows)`) share the same display name in-game and are not matched by the loc heuristic; the `display-name-unit-key-overrides` map in `overrides.clj` now pins each variant to its engine key so they no longer appear in `scraper-coverage.json` `missing-keys`, but stat-blob updates for these four still depend on the override pointing at a current `main_units_tables` row.
-- `abilities` and `draftable-spells` are not sourced from game data — they must be maintained manually when CA adds or renames abilities for a unit. (Mounts **are** sourced from game data via `units_custom_battle_mounts_tables` as of the 000021 / 000022 migrations.)
-- `equipment` is populated only for legendary lords/heroes with character-specific items in `ancillaries_included_agent_subtypes_tables`. Generic lords/heroes (non-legendary) have no `equipment` field — their item pools are defined by the game's faction/category system and are not stored per-unit.
-- `seed-spells.sql` `mana_cost` and spell descriptions are not updated by this script.
-- **Missing MP-mount units (13)** — some units that appear as mounted variants in `units_custom_battle_mounts_tables` (e.g. Amethyst Wizard, pre-DLC Kislev heroes, Vampire Fleet Admiral loadout variants) aren't in our faction seed files and therefore get no `unit_mount` rows. See `todo/missing-mp-mount-units.md` for the list and resolution notes.
+- **4 Lizardmen Slann variants** (`Slann Mage-Priest (Beasts/Death/Metal/Shadows)`) share the same display name in-game and are not matched by the loc heuristic; the `display-name-unit-key-overrides` map in `overrides.clj` now pins each variant to its engine key so they no longer appear in `scraper-coverage.json` `missing-keys`, but statline updates for these four still depend on the override pointing at a current `main_units_tables` row.
+- Unit ability and draftable-spell assignments are not sourced from game data — they are maintained manually in the authoring EDN when CA adds or renames abilities for a unit. (Mounts **are** sourced from game data via `units_custom_battle_mounts_tables`.)
+- Pre-assigned gear is populated only for legendary lords/heroes with character-specific items in `ancillaries_included_agent_subtypes_tables`. Generic lords/heroes (non-legendary) get no `unit-items.edn` rows — their item pools are defined by the game's faction/category system and are not stored per-unit.
+- Spell mana costs and spell descriptions are not updated by this script.
+- **Missing MP-mount units (13)** — some units that appear as mounted variants in `units_custom_battle_mounts_tables` (e.g. Amethyst Wizard, pre-DLC Kislev heroes, Vampire Fleet Admiral loadout variants) aren't in our unit seed and therefore get no unit → mount rows. See `todo/missing-mp-mount-units.md` for the list and resolution notes.
 
 ---
 
@@ -162,7 +163,7 @@ Verify that the stat changes look plausible (costs, armor, weapon strength, etc.
 
 ### What we tried
 
-We investigated whether the per-unit item pool shown in the WH3 in-game MP army builder could be derived from RPFM game data. The goal was to auto-populate `seed-unit-items.sql` for generic lords and heroes (e.g. Empire Captain) whose items are not pre-assigned via `ancillaries_included_agent_subtypes_tables`.
+We investigated whether the per-unit item pool shown in the WH3 in-game MP army builder could be derived from RPFM game data. The goal was to auto-populate the unit → item seed (`unit-items.edn`) for generic lords and heroes (e.g. Empire Captain) whose items are not pre-assigned via `ancillaries_included_agent_subtypes_tables`.
 
 Every ancillary-related DB table was searched:
 
@@ -185,9 +186,9 @@ A raw byte search of `data_script.pack`, `boot.pack`, and `data.pack` confirmed 
 
 ### Approach going forward
 
-The `unit_item` table supports manual curation: for each unit that has a defined item pool in the in-game MP builder, add rows to the relevant `seed-<faction>-units.sql` or a dedicated seed file associating the unit's DB id with the item DB ids from `seed-items.sql`.
+The unit → item seed supports manual curation: for each unit that has a defined item pool in the in-game MP builder, add the association to the curated authoring EDN so the merge carries it into `unit-items.edn`.
 
-The item keys and costs are available in `seed-items.sql` (regenerated by `update_from_rpfm.py` after each patch). Item DB ids are assigned by sorted key order and are stable across runs as long as CA does not rename or remove an item.
+The item keys and costs are available in `items.edn` (regenerated by the scraper after each patch). Item identities are stable across runs as long as CA does not rename or remove an item.
 
 ---
 
