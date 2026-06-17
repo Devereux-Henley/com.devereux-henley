@@ -1,6 +1,7 @@
 (ns com.devereux-henley.rts-data-access.contract
   (:require
    [com.devereux-henley.datalog.contract :as dl]
+   [com.devereux-henley.rts-data-access.query.datalog.dispute :as query.datalog.dispute]
    [com.devereux-henley.rts-data-access.query.datalog.draft :as query.datalog.draft]
    [com.devereux-henley.rts-data-access.query.datalog.game :as query.datalog.game]
    [com.devereux-henley.rts-data-access.query.datalog.league :as query.datalog.league]
@@ -11,6 +12,7 @@
    [com.devereux-henley.rts-data-access.query.datalog.stats :as query.datalog.stats]
    [com.devereux-henley.rts-data-access.schema :as schema]
    [com.devereux-henley.rts-data-access.schema.datalog :as schema.datalog]
+   [com.devereux-henley.rts-data-access.schema.dispute :as schema.dispute]
    [com.devereux-henley.rts-data-access.schema.draft :as schema.draft]
    [com.devereux-henley.rts-data-access.schema.game :as schema.game]
    [com.devereux-henley.rts-data-access.schema.league :as schema.league]
@@ -117,6 +119,10 @@
 (def bracket-type-enum schema/bracket-type-enum)
 (def mark-enum schema/mark-enum)
 
+(def dispute-kind-enum schema/dispute-kind-enum)
+(def dispute-priority-enum schema/dispute-priority-enum)
+(def dispute-status-enum schema/dispute-status-enum)
+
 ;;; ─── Tournament Datalog queries + mutations ────────────────────────────────
 
 (def tournament-by-eid               query.datalog.tournament/tournament-by-eid)
@@ -176,6 +182,15 @@
 
 (def replay-by-eid  query.datalog.replay/replay-by-eid)
 (def create-replay! query.datalog.replay/create-replay!)
+
+;;; ─── Dispute Datalog queries + mutations ───────────────────────────────────
+
+(def dispute-by-eid                   query.datalog.dispute/dispute-by-eid)
+(def open-disputes-for-tournament     query.datalog.dispute/open-disputes-for-tournament)
+(def open-dispute-count-for-tournament query.datalog.dispute/open-dispute-count-for-tournament)
+(def create-dispute!                  query.datalog.dispute/create-dispute!)
+(def resolve-dispute!                 query.datalog.dispute/resolve-dispute!)
+(def dismiss-dispute!                 query.datalog.dispute/dismiss-dispute!)
 
 ;;; ─── Function schemas ─────────────────────────────────────────────────────
 ;;;
@@ -391,3 +406,29 @@
 (schema.contract/=>* create-replay! query.datalog.replay/create-replay!
                      [:=> [:cat dl/conn-schema schema.replay/create-spec-schema]
                       schema.replay/replay-result-schema])
+
+;; Dispute datalog
+
+(schema.contract/=>* dispute-by-eid query.datalog.dispute/dispute-by-eid
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:maybe schema.dispute/dispute-result-schema]])
+
+(schema.contract/=>* open-disputes-for-tournament query.datalog.dispute/open-disputes-for-tournament
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:sequential schema.dispute/dispute-result-schema]])
+
+(schema.contract/=>* open-dispute-count-for-tournament query.datalog.dispute/open-dispute-count-for-tournament
+                     [:=> [:cat dl/conn-schema :uuid]
+                      [:int {:min 0}]])
+
+(schema.contract/=>* create-dispute! query.datalog.dispute/create-dispute!
+                     [:=> [:cat dl/conn-schema schema.dispute/open-spec-schema]
+                      schema.dispute/dispute-result-schema])
+
+(schema.contract/=>* resolve-dispute! query.datalog.dispute/resolve-dispute!
+                     [:=> [:cat dl/conn-schema :uuid]
+                      schema.dispute/dispute-result-schema])
+
+(schema.contract/=>* dismiss-dispute! query.datalog.dispute/dismiss-dispute!
+                     [:=> [:cat dl/conn-schema :uuid]
+                      schema.dispute/dispute-result-schema])

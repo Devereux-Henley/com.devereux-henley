@@ -192,6 +192,16 @@
 
 (def bracket-type-enum [:enum "winners" "losers" "grand-final"])
 
+;; ─── Dispute enums ──────────────────────────────────────────────────────────
+;; Closed value sets for the dispute model, shared with the domain layer.
+
+(def dispute-kind-enum
+  [:enum "conflicting-result" "missing-replay" "connection-loss" "other"])
+
+(def dispute-priority-enum [:enum "urgent" "normal" "low"])
+
+(def dispute-status-enum [:enum "open" "resolved" "dismissed"])
+
 ;; ─── Stats entities ──────────────────────────────────────────────────────────
 
 (def faction-standings-row-entity
