@@ -152,4 +152,38 @@ test.describe('Organizer Console', () => {
     });
     expect(res.status()).toBe(404);
   });
+
+  // Disputes can only be opened programmatically until the player-side
+  // open-dispute path (rts-6vy) lands, so these cover the empty queue and the
+  // resolve/dismiss action wiring; the populated queue + happy-path
+  // resolve/dismiss are verified manually (see the PR screenshots).
+  test('disputes tab shows the empty state when there are none', async ({ page, request }) => {
+    const eid = await createTournament(request);
+    await page.goto(`/view/game/${GAME_EID}/tournament/${eid}/organizer.html`);
+
+    await page.locator('#org-tab-disputes').click();
+    await expect(
+      page.locator('#org-panel-disputes .org-empty-state-title', { hasText: 'No open disputes' }),
+    ).toBeVisible();
+    // No queue badge when the open-dispute count is zero.
+    await expect(page.locator('#org-tab-disputes .tourney-tab-sub')).toHaveCount(0);
+  });
+
+  test('resolving an unknown dispute returns a 422 error fragment', async ({ request }) => {
+    const eid = await createTournament(request);
+    const res = await request.post(
+      `${BASE}/actions/tournament/${eid}/dispute/${crypto.randomUUID()}/resolve`,
+      { headers: actionHeaders('dev-admin') },
+    );
+    expect(res.status()).toBe(422);
+  });
+
+  test('dismissing an unknown dispute returns a 422 error fragment', async ({ request }) => {
+    const eid = await createTournament(request);
+    const res = await request.post(
+      `${BASE}/actions/tournament/${eid}/dispute/${crypto.randomUUID()}/dismiss`,
+      { headers: actionHeaders('dev-admin') },
+    );
+    expect(res.status()).toBe(422);
+  });
 });

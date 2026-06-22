@@ -2,6 +2,7 @@
   (:require
    [com.devereux-henley.rts-web.orchestration]
    [com.devereux-henley.rts-web.render :as render]
+   [com.devereux-henley.rts-web.web.actions.dispute]
    [com.devereux-henley.rts-web.web.actions.draft]
    [com.devereux-henley.rts-web.web.actions.league]
    [com.devereux-henley.rts-web.web.actions.season]

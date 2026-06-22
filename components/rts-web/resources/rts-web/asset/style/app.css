@@ -1786,6 +1786,16 @@ h3.draft-category-header {
   color: color-mix(in srgb, var(--color-primary-700) 75%, var(--color-text-muted));
 }
 
+.tourney-tab-sub--alert {
+  color: var(--color-danger-400);
+  border: 1px solid color-mix(in srgb, var(--color-danger-500) 50%, transparent);
+  padding: 0 var(--space-2);
+  margin-left: var(--space-1);
+}
+.tourney-tab[aria-selected="true"] .tourney-tab-sub--alert {
+  color: var(--color-danger-400);
+}
+
 .tourney-tab-panel {
   display: flex;
   flex-direction: column;
@@ -4493,6 +4503,74 @@ table.standings-table tbody tr td.col-num::before {
   font-size: 0.95rem;
   color: var(--color-text-strong);
   margin: 0 0 var(--space-1);
+}
+
+/* --- Disputes queue (organizer console) -------------------------------- */
+
+.dispute-queue {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.dispute-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-3) var(--space-2);
+  border-bottom: 1px dashed color-mix(in srgb, var(--color-border) 70%, transparent);
+  border-left: 3px solid transparent;
+}
+.dispute-row:last-child { border-bottom: none; }
+.dispute-row--urgent { border-left-color: var(--color-danger-400); }
+.dispute-row--normal { border-left-color: var(--color-warning-500); }
+.dispute-row--low { border-left-color: var(--color-border); }
+.dispute-row-main { min-width: 0; }
+.dispute-row-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.dispute-priority {
+  font-family: var(--font-family-heading);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 2px var(--space-2);
+  border: 1px solid currentColor;
+  white-space: nowrap;
+}
+.dispute-priority--urgent { color: var(--color-danger-400); }
+.dispute-priority--normal { color: var(--color-warning-600); }
+.dispute-priority--low { color: var(--color-text-muted); }
+.dispute-kind {
+  font-family: var(--font-family-heading);
+  font-size: 0.95rem;
+  color: var(--color-text-strong);
+}
+.dispute-age {
+  font-family: var(--font-family-mono);
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+.dispute-detail {
+  margin: var(--space-1) 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text);
+}
+.dispute-meta {
+  margin: var(--space-1) 0 0;
+  font-size: 0.74rem;
+  color: var(--color-text-muted);
+}
+.dispute-reporter { font-family: var(--font-family-mono); }
+.dispute-row-actions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
 }
 .org-settings-grid {
   display: grid;

@@ -105,6 +105,37 @@
                                                                (-> request :parameters :path :eid)
                                                                (-> request :ory-session :identity :id)))))
 
+(def ^:private dispute-kind-labels
+  "Human labels for the `:dispute/kind` enum, shown as each queue row's title."
+  {"conflicting-result" "Conflicting result"
+   "missing-replay"     "Missing replay"
+   "connection-loss"    "Connection loss"
+   "other"              "Other"})
+
+(defn- humanize-age
+  "Coarse relative age (e.g. \"3h ago\") for a dispute's opened-at instant,
+   measured against `now-ms`. Returns nil when no timestamp is present."
+  [^java.util.Date opened-at now-ms]
+  (when opened-at
+    (let [mins (quot (max 0 (- now-ms (.getTime opened-at))) 60000)
+          hrs  (quot mins 60)
+          days (quot hrs 24)]
+      (cond
+        (< mins 1)  "just now"
+        (< mins 60) (str mins "m ago")
+        (< hrs 24)  (str hrs "h ago")
+        :else       (str days "d ago")))))
+
+(defn- decorate-dispute
+  "Adds template-facing display fields to a dispute: a human kind label, a
+   priority label + css token, and a coarse age string."
+  [now-ms {:keys [kind priority opened-at] :as dispute}]
+  (assoc dispute
+         :kind-label     (get dispute-kind-labels kind kind)
+         :priority-label (when priority (str/capitalize priority))
+         :priority-class priority
+         :age            (humanize-age opened-at now-ms)))
+
 (defmethod integrant.core/init-key ::organizer-view
   [_init-key dependencies]
   (fn [request]
@@ -112,12 +143,24 @@
           model (domain/organizer-view-model dependencies
                                              eid
                                              (-> request :ory-session :identity :id))]
-      ;; Non-organizers never see the console — respond as if the
-      ;; tournament were absent rather than leaking its existence.
-      (if (and (not= :missing/resource (:type model))
-               (not (:is-organizer model)))
+      (cond
+        ;; Render the missing-resource template rather than leaking existence.
+        (= :missing/resource (:type model))
+        (web.view/render-entity-view request "organizer-index.html" model)
+
+        ;; Non-organizers never see the console — respond as if the
+        ;; tournament were absent.
+        (not (:is-organizer model))
         {:status 404 :body {:type :missing/resource :name "tournament" :id eid}}
-        (web.view/render-entity-view request "organizer-index.html" model)))))
+
+        :else
+        (let [now-ms   (System/currentTimeMillis)
+              disputes (mapv (partial decorate-dispute now-ms)
+                             (domain/get-open-disputes-for-tournament dependencies eid))]
+          (web.view/render-entity-view request "organizer-index.html"
+                                       (assoc model
+                                              :disputes           disputes
+                                              :open-dispute-count (count disputes))))))))
 
 ;; ─── Player console (check-in + series) ─────────────────────────────────────
 ;;
