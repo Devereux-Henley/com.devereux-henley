@@ -32,6 +32,7 @@
    [com.devereux-henley.rts-data-access.schema.datalog.attribute :as schema.datalog.attribute]
    [com.devereux-henley.rts-data-access.schema.datalog.draft :as schema.datalog.draft]
    [com.devereux-henley.rts-data-access.schema.datalog.draft-entry :as schema.datalog.draft-entry]
+   [com.devereux-henley.rts-data-access.schema.datalog.dispute :as schema.datalog.dispute]
    [com.devereux-henley.rts-data-access.schema.datalog.faction :as schema.datalog.faction]
    [com.devereux-henley.rts-data-access.schema.datalog.game :as schema.datalog.game]
    [com.devereux-henley.rts-data-access.schema.datalog.game-mode :as schema.datalog.game-mode]
@@ -68,6 +69,7 @@
    schema.datalog.attribute/schema
    schema.datalog.draft/schema
    schema.datalog.draft-entry/schema
+   schema.datalog.dispute/schema
    schema.datalog.faction/schema
    schema.datalog.game/schema
    schema.datalog.game-mode/schema

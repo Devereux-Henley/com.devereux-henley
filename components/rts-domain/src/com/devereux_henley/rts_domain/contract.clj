@@ -1,5 +1,6 @@
 (ns com.devereux-henley.rts-domain.contract
   (:require
+   [com.devereux-henley.rts-domain.handlers.dispute :as handlers.dispute]
    [com.devereux-henley.rts-domain.handlers.draft :as handlers.draft]
    [com.devereux-henley.rts-domain.handlers.game :as handlers.game]
    [com.devereux-henley.rts-domain.handlers.league :as handlers.league]
@@ -194,6 +195,15 @@
 (def get-game-faction-standings                   handlers.stats/get-game-faction-standings)
 (def get-league-faction-standings                 handlers.stats/get-league-faction-standings)
 (def get-season-faction-standings                 handlers.stats/get-season-faction-standings)
+
+;;; ─── Dispute handler functions ─────────────────────────────────────────────
+
+(def get-dispute-by-eid                         handlers.dispute/get-dispute-by-eid)
+(def get-open-disputes-for-tournament           handlers.dispute/get-open-disputes-for-tournament)
+(def get-open-dispute-count-for-tournament      handlers.dispute/get-open-dispute-count-for-tournament)
+(def open-dispute                               handlers.dispute/open-dispute)
+(def resolve-dispute                            handlers.dispute/resolve-dispute)
+(def dismiss-dispute                            handlers.dispute/dismiss-dispute)
 
 ;;; ─── Social Media handler functions ────────────────────────────────────────
 
