@@ -97,6 +97,17 @@ body,
   min-width: 28rem;
 }
 
+/* Push the page links to the right edge so they sit alongside the
+   socials/account cluster, mirroring the brand-cluster divider on the left. */
+.navbar-pages {
+  margin-left: auto;
+}
+
+.navbar-end {
+  padding-left: var(--space-4);
+  border-left: var(--rule-hairline);
+}
+
 /* Game-scope pill — promoted from a small dim label so it reads as a
    control. The dot + caret signal "this opens a switcher"; the click
    currently navigates to the game-selector page. */
@@ -239,7 +250,7 @@ body,
   color: var(--color-accent-fg);
   border-color: var(--color-accent);
 }
-.btn-primary:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
+.btn-primary:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); color: var(--color-accent-fg); }
 
 .btn-secondary {
   background: transparent;
@@ -278,6 +289,9 @@ body,
 .app-content {
   overflow-y: auto;
   min-height: 0;
+  /* Reserve the scrollbar gutter on the single shell-level scroll container so
+     navigating between short and tall pages never shifts content sideways. */
+  scrollbar-gutter: stable;
 }
 
 .resource { padding: var(--space-8); max-width: 72rem; margin: 0 auto; }
@@ -1004,7 +1018,14 @@ h3.draft-category-header {
 .unit-panel-table tbody tr:last-child td { border-bottom: none; }
 
 .unit-panel-table th:not(:first-child),
-.unit-panel-table td:not(:first-child) { text-align: right; white-space: nowrap; }
+.unit-panel-table td:not(:first-child) { text-align: left; white-space: nowrap; }
+
+/* Numeric badges (cost / mana) share a fixed footprint so they stack into a
+   tidy column regardless of digit count, with their value centred inside. */
+.unit-panel-table td .badge {
+  justify-content: center;
+  min-width: 3.5rem;
+}
 
 .unit-row-with-icon {
   display: inline-flex;
@@ -1687,8 +1708,6 @@ h3.draft-category-header {
 }
 
 .tournament-create-page {
-  height: calc(100vh - 3.5rem);
-  overflow-y: auto;
   padding: var(--space-6) var(--space-8) var(--space-12);
 }
 

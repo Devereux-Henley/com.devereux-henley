@@ -1,0 +1,11 @@
+{% extends "rts-web/template/entrypoint.html" %}
+
+{% block title %}Leagues | {{game.name}} | RTS-UI{% endblock %}
+
+{% block content %}
+<div class="competitive-page">
+    <section aria-labelledby="leagues-heading">
+        {% include "rts-web/components/league-list-section.html" %}
+    </section>
+</div>
+{% endblock %}
