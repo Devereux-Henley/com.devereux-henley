@@ -5,6 +5,24 @@
    [com.devereux-henley.rts-web.web.view :as web.view]
    [integrant.core]))
 
+(defmethod integrant.core/init-key ::leagues-view
+  [_init-key dependencies]
+  (fn [request]
+    (let [game-eid         (:game-eid (:game-context request))
+          tournaments      (domain/get-tournaments-for-game dependencies game-eid)
+          leagues          (domain/get-leagues-for-game dependencies game-eid)
+          enriched-leagues (mapv (fn [l]
+                                   (let [current-season (domain/get-current-season-for-league dependencies (:eid l))
+                                         tcount         (count (filter #(= (:eid l) (:league-eid %)) tournaments))]
+                                     (assoc l
+                                            :current-season current-season
+                                            :tournament-count tcount)))
+                                 leagues)]
+      {:status 200
+       :body   (render/render-view "leagues.html"
+                                   (assoc (web.view/base-context request)
+                                          :leagues enriched-leagues))})))
+
 (defmethod integrant.core/init-key ::create-league-view
   [_init-key _dependencies]
   (fn [request]

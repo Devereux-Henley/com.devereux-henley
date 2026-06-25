@@ -408,7 +408,7 @@ a:hover:has(img) {
 
 .unit-panel-table thead th:last-child,
 .unit-panel-table td:last-child {
-  text-align: right;
+  text-align: left;
 }
 
 .unit-row-with-icon {
@@ -1785,6 +1785,7 @@ a:hover:has(img) {
 .tournament-create-page {
   padding: var(--space-6) var(--space-8);
   max-width: 48rem;
+  margin-inline: auto;
 }
 
 .tournament-form {
@@ -2331,112 +2332,7 @@ a:hover:has(img) {
 .season-index-page {
   padding: var(--space-6) var(--space-8);
   max-width: 64rem;
-}
-
-/* ─── Tablist on the Competitive landing ─────────────────────────────── */
-
-.competitive-tabs {
-  display: flex;
-  align-items: stretch;
-  gap: 0;
-  margin-bottom: var(--space-6);
-  border-bottom: 1px solid color-mix(in srgb, var(--color-primary-500) 24%, var(--color-border));
-  position: relative;
-}
-
-/* Hairline gold underline below the tablist edge — restates the
-   "ruled parchment" feel of the section dividers in the rest of the app. */
-.competitive-tabs::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -3px;
-  height: 1px;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    color-mix(in srgb, var(--color-primary-500) 35%, transparent) 12%,
-    color-mix(in srgb, var(--color-primary-500) 35%, transparent) 88%,
-    transparent 100%);
-  pointer-events: none;
-}
-
-.competitive-tab {
-  position: relative;
-  background: transparent;
-  border: 0;
-  padding: var(--space-3) var(--space-6);
-  cursor: pointer;
-  font-family: var(--font-family-heading);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--color-neutral-700) 55%, transparent);
-  transition: color var(--transition-fast);
-}
-
-.competitive-tab:hover,
-.competitive-tab:focus-visible {
-  color: var(--color-primary-700);
-}
-
-.competitive-tab[aria-selected="true"] {
-  color: var(--color-primary-800);
-}
-
-/* Gold underline glyph for the selected tab — wider than the text so it
-   reads as a banner rule rather than a generic underline. */
-.competitive-tab[aria-selected="true"]::after {
-  content: "";
-  position: absolute;
-  left: var(--space-3);
-  right: var(--space-3);
-  bottom: -1px;
-  height: 2px;
-  background: linear-gradient(90deg,
-    transparent,
-    var(--color-primary-600) 20%,
-    var(--color-accent) 50%,
-    var(--color-primary-600) 80%,
-    transparent);
-  z-index: 1;
-}
-
-/* Hairline diamond between tabs — heraldic flourish, decorative only. */
-.competitive-tab + .competitive-tab::before {
-  content: "◆";
-  position: absolute;
-  left: -0.4em;
-  top: 50%;
-  transform: translateY(-50%);
-  color: color-mix(in srgb, var(--color-primary-500) 35%, transparent);
-  font-size: 0.5rem;
-  pointer-events: none;
-}
-
-.competitive-tab-panel {
-  outline: none;
-}
-
-/* Per-tab count chip — small tabular-nums badge nestled to the right of
-   the label so the user can see how many tournaments / leagues each tab
-   holds before clicking through. */
-.competitive-tab .count {
-  font-family: var(--font-family-heading);
-  font-variant-numeric: tabular-nums;
-  font-size: var(--font-size-xs);
-  margin-left: var(--space-2);
-  padding: 0.125rem 0.4rem;
-  background: color-mix(in srgb, var(--color-primary-600) 18%, transparent);
-  color: var(--color-primary-700);
-  border-radius: 1px;
-  letter-spacing: 0.04em;
-}
-
-.competitive-tab[aria-selected="false"] .count {
-  background: var(--color-neutral-200);
-  color: var(--color-text-muted);
+  margin-inline: auto;
 }
 
 /* ─── League cards — heraldic standards ──────────────────────────────── */
@@ -2936,11 +2832,3 @@ a:hover:has(img) {
   gap: var(--space-6);
 }
 
-/* ─── Subtle scroll containment on the new pages ─────────────────────── */
-
-.competitive-page,
-.league-index-page,
-.season-index-page {
-  height: calc(100vh - 3.25rem);
-  overflow-y: auto;
-}

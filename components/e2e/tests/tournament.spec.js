@@ -103,12 +103,30 @@ test.describe('Tournament UI', () => {
     ]);
   });
 
-  test('competitive landing replaces the old tournament list', async ({ page }) => {
-    await page.goto(`/view/game/${GAME_EID}/competitive/index.html`);
-    await expect(page).toHaveTitle(/Competitive/);
+  test('competitive tournaments page lists tournaments', async ({ page }) => {
+    await page.goto(`/view/game/${GAME_EID}/competitive/tournaments.html`);
+    await expect(page).toHaveTitle(/Tournaments/);
     await expect(page.locator('main#content')).toBeVisible();
-    await expect(page.locator('[role="tab"]', { hasText: 'Tournaments' })).toBeVisible();
-    await expect(page.locator('[role="tab"]', { hasText: 'Leagues' })).toBeVisible();
+    await expect(page.locator('h2', { hasText: 'Tournaments' })).toBeVisible();
+    await expect(page.locator('a.btn-primary', { hasText: 'Create Tournament' })).toBeVisible();
+  });
+
+  test('competitive leagues page lists leagues', async ({ page }) => {
+    await page.goto(`/view/game/${GAME_EID}/competitive/leagues.html`);
+    await expect(page).toHaveTitle(/Leagues/);
+    await expect(page.locator('h2', { hasText: 'Leagues' })).toBeVisible();
+    await expect(page.locator('a.btn-primary', { hasText: 'Create League' })).toBeVisible();
+  });
+
+  test('competitive nav dropdown links to the tournament and league pages', async ({ page }) => {
+    await page.goto(`/view/game/${GAME_EID}/competitive/tournaments.html`);
+    await expect(page.locator('#competitive-dropdown-btn')).toBeVisible();
+    await expect(
+      page.locator(`#competitive-menu a[href="/view/game/${GAME_EID}/competitive/tournaments.html"]`)
+    ).toHaveCount(1);
+    await expect(
+      page.locator(`#competitive-menu a[href="/view/game/${GAME_EID}/competitive/leagues.html"]`)
+    ).toHaveCount(1);
   });
 
   test('create tournament page loads with form', async ({ page }) => {

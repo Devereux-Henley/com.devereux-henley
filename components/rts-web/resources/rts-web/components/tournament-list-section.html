@@ -1,7 +1,7 @@
 <div class="tournament-list-header">
-    <div class="cluster cluster-2" style="justify-content: space-between; align-items: baseline;">
+    <div class="cluster cluster-2" style="justify-content: space-between; align-items: center;">
         <h2 id="tournaments-heading">Tournaments</h2>
-        <a class="btn btn-primary btn-sm" href="/view/game/{{game-eid}}/tournament/create.html">Create Tournament</a>
+        <a class="btn btn-primary" href="/view/game/{{game-eid}}/tournament/create.html">Create Tournament</a>
     </div>
 </div>
 
@@ -37,7 +37,6 @@
     {% else %}
     <div class="tournament-list-empty">
         <p>No tournaments found for this game.</p>
-        <a class="btn btn-primary" href="/view/game/{{game-eid}}/tournament/create.html">Create the first tournament</a>
     </div>
     {% endif %}
 </div>

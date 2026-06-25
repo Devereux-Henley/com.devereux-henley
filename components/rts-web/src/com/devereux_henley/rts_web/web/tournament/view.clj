@@ -29,7 +29,7 @@
     (:league-eid tournament) (assoc :league-name (get-in eid->league [(:league-eid tournament) :name]))
     (:season-eid tournament) (assoc :season-display-name (get-in eid->season [(:season-eid tournament) :display-name]))))
 
-(defmethod integrant.core/init-key ::competitive-view
+(defmethod integrant.core/init-key ::tournaments-view
   [_init-key dependencies]
   (fn [request]
     (let [game-eid             (:game-eid (:game-context request))
@@ -51,19 +51,11 @@
                                                      :status      (:status state)
                                                      :entry-count (count entries))
                                               (enrich-tournament-with-league eid->league eid->season))))
-                                     tournaments)
-          enriched-leagues     (mapv (fn [l]
-                                       (let [current-season (domain/get-current-season-for-league dependencies (:eid l))
-                                             tcount         (count (filter #(= (:eid l) (:league-eid %)) tournaments))]
-                                         (assoc l
-                                                :current-season current-season
-                                                :tournament-count tcount)))
-                                     leagues)]
+                                     tournaments)]
       {:status 200
-       :body   (render/render-view "competitive.html"
+       :body   (render/render-view "tournaments.html"
                                    (assoc (web.view/base-context request)
-                                          :tournaments enriched-tournaments
-                                          :leagues enriched-leagues))})))
+                                          :tournaments enriched-tournaments))})))
 
 (defmethod integrant.core/init-key ::create-tournament-view
   [_init-key dependencies]

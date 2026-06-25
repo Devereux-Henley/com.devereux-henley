@@ -34,7 +34,7 @@
                 </a>
                 {% endif %}
             </div>
-            <div class="cluster cluster-2">
+            <div class="cluster navbar-pages">
                 <div id="game-nav" class="cluster cluster-2">
                     {% block game-nav %}
                     {% if factions %}
@@ -45,7 +45,7 @@
                                 aria-expanded="false"
                                 aria-controls="atlas-menu"
                                 _="on click toggle @hidden on #atlas-menu
-                                   then if #atlas-menu does not match [hidden]
+                                   then if #atlas-menu does not match '[hidden]'
                                      set my @aria-expanded to 'true'
                                    else
                                      set my @aria-expanded to 'false'
@@ -67,19 +67,47 @@
                     {% endif %}
                     {% endblock %}
                 </div>
+                <div id="game-competitive-link">
+                    {% if game-eid %}
+                    <div class="dropdown">
+                        <button class="nav-item game-nav-item nav-item-with-icon{% ifequal active-nav "competitive" %} active{% endifequal %}"
+                                id="competitive-dropdown-btn"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                aria-controls="competitive-menu"
+                                _="on click toggle @hidden on #competitive-menu
+                                   then if #competitive-menu does not match '[hidden]'
+                                     set my @aria-expanded to 'true'
+                                   else
+                                     set my @aria-expanded to 'false'
+                                   end
+                                   on click elsewhere add @hidden to #competitive-menu
+                                   then set my @aria-expanded to 'false'">
+                            {% include "rts-web/components/icon/tournaments.html" %}
+                            Competitive
+                        </button>
+                        <div class="dropdown-menu" id="competitive-menu" role="menu" hidden>
+                            <a class="dropdown-item dropdown-item-with-icon"
+                               role="menuitem"
+                               href="/view/game/{{game-eid}}/competitive/tournaments.html">
+                                {% include "rts-web/components/icon/tournaments.html" %}
+                                Tournaments
+                            </a>
+                            <a class="dropdown-item dropdown-item-with-icon"
+                               role="menuitem"
+                               href="/view/game/{{game-eid}}/competitive/leagues.html">
+                                {% include "rts-web/components/icon/book.html" %}
+                                Leagues
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
                 <div id="game-drafts-link">
                     {% if all session game-eid %}
                     <a class="nav-item nav-item-with-icon{% ifequal active-nav "drafts" %} active{% endifequal %}" href="/view/game/{{game-eid}}/draft/me.html">
                         {% include "rts-web/components/icon/drafts.html" %}
                         My Drafts
-                    </a>
-                    {% endif %}
-                </div>
-                <div id="game-competitive-link">
-                    {% if game-eid %}
-                    <a class="nav-item nav-item-with-icon{% ifequal active-nav "competitive" %} active{% endifequal %}" href="/view/game/{{game-eid}}/competitive/index.html">
-                        {% include "rts-web/components/icon/tournaments.html" %}
-                        Competitive
                     </a>
                     {% endif %}
                 </div>
@@ -103,7 +131,7 @@
                             aria-controls="profile-menu"
                             aria-label="Account menu for {{session.identity.traits.first_name}} {{session.identity.traits.last_name}}"
                             _="on click toggle @hidden on #profile-menu
-                               then if #profile-menu does not match [hidden]
+                               then if #profile-menu does not match '[hidden]'
                                  set my @aria-expanded to 'true'
                                else
                                  set my @aria-expanded to 'false'

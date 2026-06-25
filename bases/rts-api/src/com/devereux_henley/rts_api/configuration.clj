@@ -142,7 +142,8 @@
             :com.devereux-henley.rts-web.web.season.api/get-season
             :com.devereux-henley.rts-web.web.season.api/get-seasons
             :com.devereux-henley.rts-web.web.season.api/create-season
-            :com.devereux-henley.rts-web.web.tournament.view/competitive-view
+            :com.devereux-henley.rts-web.web.tournament.view/tournaments-view
+            :com.devereux-henley.rts-web.web.league.view/leagues-view
             :com.devereux-henley.rts-web.web.season.view/season-options-fragment-view
             :com.devereux-henley.rts-web.web.league.view/create-league-view
             :com.devereux-henley.rts-web.web.league.view/league-view

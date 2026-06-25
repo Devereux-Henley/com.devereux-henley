@@ -144,10 +144,14 @@
                                     [:step {:optional true} [:maybe :string]]])}
               :handler    (integrant.core/ref ::web.tournament.view/player-series-view)}}]]]
     ["/competitive"
-     ["/index.html"
+     ["/tournaments.html"
       {:get {:produces   ["application/htmx+html"]
              :parameters {:path schema.contract/game-id-path-parameter}
-             :handler    (integrant.core/ref ::web.tournament.view/competitive-view)}}]
+             :handler    (integrant.core/ref ::web.tournament.view/tournaments-view)}}]
+     ["/leagues.html"
+      {:get {:produces   ["application/htmx+html"]
+             :parameters {:path schema.contract/game-id-path-parameter}
+             :handler    (integrant.core/ref ::web.league.view/leagues-view)}}]
      ["/season-options.html"
       {:get {:produces   ["application/htmx+html"]
              :parameters {:path  schema.contract/game-id-path-parameter
