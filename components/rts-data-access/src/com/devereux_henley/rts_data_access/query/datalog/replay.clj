@@ -1,7 +1,6 @@
 (ns com.devereux-henley.rts-data-access.query.datalog.replay
   "Datalevin reads + mutations for the replay domain."
   (:require
-   [clojure.edn :as edn]
    [com.devereux-henley.datalog.contract :as dl])
   (:import
    [java.time Instant]
@@ -28,7 +27,7 @@
      :played-at                     (:replay/played-at m)
      :victory-condition             (:replay/victory-condition m)
      :parser-format                 (:replay/parser-format m)
-     :parsed-data                   (some-> (:replay/parsed-data m) edn/read-string)
+     :parsed-data                   (:replay/parsed-data m)
      :uploader-local-alliance-index (:replay/uploader-local-alliance-index m)
      :uploaded-by-sub               (:replay/uploaded-by-sub m)
      :created-at                    (->instant (:replay/created-at m))
@@ -42,8 +41,8 @@
 (defn create-replay!
   "Transact a new replay row. Audit columns (`:created-at`,
   `:updated-at`) are stamped here so the handler stays thin. The
-  caller passes `:parsed-data` as a Clojure map; it is stored as an
-  EDN string and read back as a map by `replay-by-eid`."
+  caller has already converted `:parsed-data` from the parser-emitted
+  JSON to a Clojure map; Datalevin stores it as `:db.type/idoc`."
   [conn {:keys [eid match-id-external played-at victory-condition parser-format
                 parsed-data uploader-local-alliance-index uploaded-by-sub]}]
   (let [now (Date.)
@@ -51,7 +50,7 @@
                      :replay/match-id-external match-id-external
                      :replay/played-at         played-at
                      :replay/parser-format     parser-format
-                     :replay/parsed-data       (pr-str parsed-data)
+                     :replay/parsed-data       parsed-data
                      :replay/uploaded-by-sub   uploaded-by-sub
                      :replay/created-at        now
                      :replay/updated-at        now}
