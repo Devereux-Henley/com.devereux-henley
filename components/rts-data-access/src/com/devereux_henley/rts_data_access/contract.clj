@@ -426,7 +426,7 @@
                       schema.dispute/dispute-result-schema])
 
 (schema.contract/=>* resolve-dispute! query.datalog.dispute/resolve-dispute!
-                     [:=> [:cat dl/conn-schema :uuid]
+                     [:=> [:cat dl/conn-schema :uuid schema.dispute/resolve-spec-schema]
                       schema.dispute/dispute-result-schema])
 
 (schema.contract/=>* dismiss-dispute! query.datalog.dispute/dismiss-dispute!

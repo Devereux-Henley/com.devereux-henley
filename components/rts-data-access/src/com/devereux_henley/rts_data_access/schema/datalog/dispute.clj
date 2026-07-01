@@ -8,18 +8,28 @@
   (`#{:urgent :normal :low}`) drives organizer-queue ordering;
   `:dispute/status` (`#{:open :resolved :dismissed}`) tracks the lifecycle.
   `:dispute/opened-at` stamps creation and `:dispute/resolved-at` stamps the
-  transition out of `:open` (set on both resolve and dismiss).")
+  transition out of `:open` (set on both resolve and dismiss).
+
+  Resolving records the corrected match result the organizer declared:
+  `:dispute/resolution-winner-sub` plus the per-side
+  `:dispute/resolution-player-one-score` / `:dispute/resolution-player-two-score`
+  and an optional `:dispute/resolution-note`. Dismissed disputes carry none of
+  these — dismissal is the no-action path.")
 
 (def schema
-  {:dispute/eid          {:db/valueType :db.type/uuid
-                          :db/unique    :db.unique/identity}
-   :dispute/tournament   {:db/valueType :db.type/ref}
-   :dispute/match        {:db/valueType :db.type/ref}
-   :dispute/match-game   {:db/valueType :db.type/ref}
-   :dispute/kind         {:db/valueType :db.type/keyword}
-   :dispute/priority     {:db/valueType :db.type/keyword}
-   :dispute/status       {:db/valueType :db.type/keyword}
-   :dispute/reporter-sub {:db/valueType :db.type/string}
-   :dispute/detail       {:db/valueType :db.type/string}
-   :dispute/opened-at    {:db/valueType :db.type/instant}
-   :dispute/resolved-at  {:db/valueType :db.type/instant}})
+  {:dispute/eid                         {:db/valueType :db.type/uuid
+                                         :db/unique    :db.unique/identity}
+   :dispute/tournament                  {:db/valueType :db.type/ref}
+   :dispute/match                       {:db/valueType :db.type/ref}
+   :dispute/match-game                  {:db/valueType :db.type/ref}
+   :dispute/kind                        {:db/valueType :db.type/keyword}
+   :dispute/priority                    {:db/valueType :db.type/keyword}
+   :dispute/status                      {:db/valueType :db.type/keyword}
+   :dispute/reporter-sub                {:db/valueType :db.type/string}
+   :dispute/detail                      {:db/valueType :db.type/string}
+   :dispute/opened-at                   {:db/valueType :db.type/instant}
+   :dispute/resolved-at                 {:db/valueType :db.type/instant}
+   :dispute/resolution-winner-sub       {:db/valueType :db.type/string}
+   :dispute/resolution-player-one-score {:db/valueType :db.type/long}
+   :dispute/resolution-player-two-score {:db/valueType :db.type/long}
+   :dispute/resolution-note             {:db/valueType :db.type/string}})

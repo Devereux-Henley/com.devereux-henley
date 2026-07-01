@@ -173,7 +173,10 @@ test.describe('Organizer Console', () => {
     const eid = await createTournament(request);
     const res = await request.post(
       `${BASE}/actions/tournament/${eid}/dispute/${crypto.randomUUID()}/resolve`,
-      { headers: actionHeaders('dev-admin') },
+      {
+        headers: actionHeaders('dev-admin'),
+        data: { 'player-one-score': '2', 'player-two-score': '1' },
+      },
     );
     expect(res.status()).toBe(422);
   });

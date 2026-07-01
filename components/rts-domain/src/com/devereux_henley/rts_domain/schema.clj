@@ -277,6 +277,18 @@
    [:map
     [:winner-sub :string]]))
 
+(def resolve-dispute-specification
+  "Organizer-supplied resolution for the dispute queue: the per-side game-win
+   scores and an optional ruling note. Scores arrive as strings from the
+   `json-enc` form and are parsed to ints in the web handler, so they are
+   validated here as 1-2 digit numeric strings; the handler checks them against
+   the match's best-of format and derives the winner — no winner is declared."
+  (schema.contract/to-schema
+   [:map
+    [:player-one-score [:re #"^\d{1,2}$"]]
+    [:player-two-score [:re #"^\d{1,2}$"]]
+    [:note             {:optional true} [:maybe :string]]]))
+
 (def record-game-submission-spec
   "Player-console per-game replay submission. `:parsed` is the kebab-case
    replay map produced by `parse-replay-file`; `:winner-sub` is the

@@ -399,7 +399,8 @@
             :parameters {:path (schema.contract/to-schema
                                 [:map
                                  [:tournament-eid :uuid]
-                                 [:eid :uuid]])}
+                                 [:eid :uuid]])
+                         :body domain/resolve-dispute-specification}
             :handler    (integrant.core/ref ::web.actions.dispute/resolve-dispute)}}]
    ["/tournament/:tournament-eid/dispute/:eid/dismiss"
     {:post {:produces   ["application/htmx+html"]

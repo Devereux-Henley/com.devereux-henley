@@ -128,13 +128,15 @@
 
 (defn- decorate-dispute
   "Adds template-facing display fields to a dispute: a human kind label, a
-   priority label + css token, and a coarse age string."
-  [now-ms {:keys [kind priority opened-at] :as dispute}]
+   priority label + css token, a coarse age string, and the best-of win
+   threshold the resolve form needs to label its score inputs."
+  [now-ms {:keys [kind priority opened-at match-format] :as dispute}]
   (assoc dispute
          :kind-label     (get dispute-kind-labels kind kind)
          :priority-label (when priority (str/capitalize priority))
          :priority-class priority
-         :age            (humanize-age opened-at now-ms)))
+         :age            (humanize-age opened-at now-ms)
+         :win-threshold  (some-> match-format domain/match-win-threshold)))
 
 (defmethod integrant.core/init-key ::organizer-view
   [_init-key dependencies]

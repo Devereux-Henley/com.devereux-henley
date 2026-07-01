@@ -17,11 +17,18 @@
 
 (defmethod integrant.core/init-key ::resolve-dispute
   [_init-key dependencies]
-  (fn [{{{:keys [eid]} :path} :parameters
-        :as                   _request}]
-    (let [result (domain/resolve-dispute dependencies eid)]
+  (fn [{{{:keys [eid]}                                    :path
+         {:keys [player-one-score player-two-score note]} :body} :parameters
+        :as                                                      _request}]
+    (let [result (domain/resolve-dispute
+                  dependencies eid
+                  {:player-one-score (parse-long player-one-score)
+                   :player-two-score (parse-long player-two-score)
+                   :note             (not-empty note)})]
       (if (= :dispute/error (:type result))
-        (common/error-fragment 422 (:message result))
+        (common/error-oob 422 {:type    :dispute/resolve-error
+                               :eid     eid
+                               :message (:message result)})
         (common/trigger-response "dispute-resolved" result)))))
 
 (defmethod integrant.core/init-key ::dismiss-dispute
