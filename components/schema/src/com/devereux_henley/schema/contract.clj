@@ -121,6 +121,28 @@
                       :error/message       {:en "Should be a valid IANA timezone (e.g. US/Eastern, Europe/London)."}}
     :pred            (partial instance? ZoneId)}))
 
+(defn- coerce-optional-uuid
+  "Coerce a form-supplied value to a UUID, nil, or the untouched value.
+   Blank strings (what an unselected optional `<select>` submits) become
+   nil; a well-formed uuid string parses to a UUID; anything else passes
+   through so validation reports a coercion error rather than throwing."
+  [value]
+  (cond
+    (uuid? value)                                          value
+    (and (string? value) (not (clojure.string/blank? value)))
+    (try (java.util.UUID/fromString value) (catch Exception _ value))
+    :else                                                  nil))
+
+(def optional-uuid
+  (malli.core/-simple-schema
+   {:type            :optional-uuid
+    :type-properties {:decode/json        coerce-optional-uuid
+                      :decode/string      coerce-optional-uuid
+                      :json-schema/type   "string"
+                      :json-schema/format "uuid"
+                      :error/message      {:en "Should be a valid UUID or blank."}}
+    :pred            (fn [value] (or (nil? value) (uuid? value)))}))
+
 (def registry
   (merge
    (malli.core/default-schemas)
@@ -128,6 +150,7 @@
     :local-date     local-date
     :local-datetime local-datetime
     :timezone-id    timezone-id
+    :optional-uuid  optional-uuid
     :instant        instant
     :instance       instance
     :neg-int        (malli.core/-simple-schema

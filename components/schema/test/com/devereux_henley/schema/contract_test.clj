@@ -3,6 +3,7 @@
    [clojure.test :refer [deftest is]]
    [com.devereux-henley.schema.contract :as schema.contract]
    [malli.core :as m]
+   [malli.transform :as mt]
    [malli.util]
    [reitit.core :as reitit]))
 
@@ -69,3 +70,35 @@
            (get-in result [:_links :league])))
     (is (= (str "http://localhost:3001/api/season/" season-eid)
            (get-in result [:_links :season])))))
+
+(def ^:private optional-uuid-spec
+  (schema.contract/to-schema
+   [:map [:league-eid {:optional true} :optional-uuid]]))
+
+(defn- decode-league-eid
+  [value]
+  (:league-eid
+   (m/decode optional-uuid-spec {:league-eid value} (mt/transformer mt/json-transformer))))
+
+(deftest optional-uuid-coerces-blank-to-nil
+  (is (nil? (decode-league-eid ""))
+      "an empty string (unselected optional <select>) coerces to nil")
+  (is (nil? (decode-league-eid "   "))
+      "a whitespace-only string coerces to nil")
+  (is (m/validate optional-uuid-spec
+                  (m/decode optional-uuid-spec {:league-eid ""}
+                            (mt/transformer mt/json-transformer)))
+      "a blank optional-uuid passes validation after decoding")
+  (is (m/validate optional-uuid-spec {})
+      "an absent optional-uuid key is valid"))
+
+(deftest optional-uuid-parses-and-rejects
+  (let [uuid #uuid "22222222-2222-2222-2222-222222222222"]
+    (is (= uuid (decode-league-eid (str uuid)))
+        "a well-formed uuid string parses to a UUID")
+    (is (= uuid (decode-league-eid uuid))
+        "an already-parsed UUID is left intact"))
+  (is (not (m/validate optional-uuid-spec
+                       (m/decode optional-uuid-spec {:league-eid "not-a-uuid"}
+                                 (mt/transformer mt/json-transformer))))
+      "a malformed uuid string fails validation rather than coercing to nil"))
