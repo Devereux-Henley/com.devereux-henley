@@ -139,6 +139,17 @@
                      (->instant (get-in state [:registration :opens-at]))
                      (->instant (get-in state [:registration :closes-at])))))
 
+(defn registration-not-yet-open?
+  "Returns true when the tournament is still in registration and hasn't been
+   closed early, but its registration window has not opened yet (`now`
+   precedes `opens-at`). Lets the UI distinguish a not-yet-open window from a
+   closed one."
+  [state ^Instant now]
+  (and (= "registration" (:status state))
+       (not (get-in state [:registration :closed-early]))
+       (when-let [opens-at (->instant (get-in state [:registration :opens-at]))]
+         (.isBefore now opens-at))))
+
 (defn create-entry
   "Creates a tournament entry for a player. Returns the entry or an error map."
   [dependencies tournament-eid player-sub]
@@ -1039,25 +1050,27 @@
           decorated-phases     (mapv decorate-bracket-phase matches-by-phase)
           current-phase-config (get phases (:current-phase state))
           phase-count          (count phases)
-          schedule             (pending-matches-schedule matches-by-phase)]
-      {:data                tournament
-       :tournament-state    (update state :standings decorate-standings (:qualifier-count state))
-       :entries             entries
-       :matches-by-phase    decorated-phases
-       :schedule            schedule
-       :current-phase-label (or (phase-type-labels (:phase-type current-phase-config))
-                                (:phase-type current-phase-config))
-       :current-round-label (current-round-label decorated-phases (:eid (first schedule)))
-       :hero-format         (format-label (count entries) phases)
-       :phase-count         phase-count
-       :single-phase?       (= 1 phase-count)
-       :league              (when (:league-eid tournament)
-                              (db/league-by-eid conn (:league-eid tournament)))
-       :season              (when (:season-eid tournament)
-                              (handlers.season/get-season-by-eid dependencies (:season-eid tournament)))
-       :has-entry           (boolean (some #(= viewer-sub (:player-sub %)) entries))
-       :registration-open   (is-registration-open? state (Instant/now))
-       :is-organizer        (= viewer-sub (:created-by-sub tournament))})
+          schedule             (pending-matches-schedule matches-by-phase)
+          now                  (Instant/now)]
+      {:data                      tournament
+       :tournament-state          (update state :standings decorate-standings (:qualifier-count state))
+       :entries                   entries
+       :matches-by-phase          decorated-phases
+       :schedule                  schedule
+       :current-phase-label       (or (phase-type-labels (:phase-type current-phase-config))
+                                      (:phase-type current-phase-config))
+       :current-round-label       (current-round-label decorated-phases (:eid (first schedule)))
+       :hero-format               (format-label (count entries) phases)
+       :phase-count               phase-count
+       :single-phase?             (= 1 phase-count)
+       :league                    (when (:league-eid tournament)
+                                    (db/league-by-eid conn (:league-eid tournament)))
+       :season                    (when (:season-eid tournament)
+                                    (handlers.season/get-season-by-eid dependencies (:season-eid tournament)))
+       :has-entry                 (boolean (some #(= viewer-sub (:player-sub %)) entries))
+       :registration-open         (is-registration-open? state now)
+       :registration-not-yet-open (registration-not-yet-open? state now)
+       :is-organizer              (= viewer-sub (:created-by-sub tournament))})
     {:type :missing/resource :name "tournament" :id eid}))
 
 (defn- current-round-progress

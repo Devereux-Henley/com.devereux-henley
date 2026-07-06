@@ -217,7 +217,7 @@
             <header class="section-header">
                 <h3 class="section-header-title" id="entry-heading">Your Entry</h3>
                 <span class="section-header-subtitle">
-                    {% if tournament-state.registration.closes-at %}Closes {{tournament-state.registration.closes-at}}{% endif %}
+                    {% if registration-not-yet-open %}{% if tournament-state.registration.opens-at %}Opens {{tournament-state.registration.opens-at}}{% endif %}{% elif tournament-state.registration.closes-at %}Closes {{tournament-state.registration.closes-at}}{% endif %}
                 </span>
             </header>
             <div class="viewer-action-card">
@@ -231,6 +231,8 @@
                 <form hx-post="/actions/tournament/{{data.eid}}/entry/me" hx-swap="none">
                     <button type="submit" class="btn btn-primary">Enter Tournament</button>
                 </form>
+                {% elif registration-not-yet-open %}
+                <div class="viewer-action-card-text muted">Registration has not opened yet.{% if tournament-state.registration.opens-at %} Opens {{tournament-state.registration.opens-at}}.{% endif %}</div>
                 {% else %}
                 <div class="viewer-action-card-text muted">Registration is closed.</div>
                 {% endif %}
