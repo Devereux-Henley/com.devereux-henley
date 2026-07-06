@@ -5,7 +5,7 @@
 {% block content %}
 <div id="organizer-stage" class="viewer-page organizer-page"
      hx-get="/view/game/{{game-eid}}/tournament/{{data.eid}}/organizer.html"
-     hx-trigger="{{ triggers.tournament-stage }}"
+     hx-trigger="{{ triggers.tournament-stage }}, {{ triggers.dispute-queue }}"
      hx-target="this"
      hx-swap="outerHTML"
      hx-select="#organizer-stage">
@@ -200,7 +200,7 @@
                            then remove @hidden from #org-panel-disputes
                            then set @aria-selected of <[role=tab]/> in my parentElement to 'false'
                            then set my @aria-selected to 'true'">
-                    Disputes
+                    Disputes{% if open-dispute-count %}{% if disputes|not-empty? %}<span class="tourney-tab-sub tourney-tab-sub--alert">{{open-dispute-count}}</span>{% endif %}{% endif %}
                 </button>
                 <button type="button" role="tab" id="org-tab-settings"
                         aria-selected="false" aria-controls="org-panel-settings"
@@ -301,10 +301,81 @@
             <!-- ─── Disputes (rts-j11) ─── -->
             <section id="org-panel-disputes" role="tabpanel" aria-labelledby="org-tab-disputes"
                      class="tourney-tab-panel" hidden>
+                {% if disputes|not-empty? %}
+                <ul class="dispute-queue">
+                    {% for d in disputes %}
+                    <li class="dispute-row dispute-row--{{d.priority-class}}">
+                        <div class="dispute-row-main">
+                            <div class="dispute-row-head">
+                                <span class="dispute-priority dispute-priority--{{d.priority-class}}">{{d.priority-label}}</span>
+                                <span class="dispute-kind">{{d.kind-label}}</span>
+                                {% if d.age %}<span class="dispute-age">{{d.age}}</span>{% endif %}
+                            </div>
+                            {% if d.detail %}<p class="dispute-detail">{{d.detail}}</p>{% endif %}
+                            <p class="dispute-meta">Reported by <span class="dispute-reporter">{{d.reporter-sub}}</span></p>
+                        </div>
+                        <div class="dispute-row-actions" role="group" aria-label="Dispute actions">
+                            <button type="button" class="btn btn-primary btn-sm"
+                                    id="resolve-toggle-{{d.eid}}"
+                                    aria-haspopup="true" aria-expanded="false"
+                                    aria-controls="resolve-form-{{d.eid}}"
+                                    _="on click
+                                       if my @aria-expanded == 'true'
+                                         add @hidden to #resolve-form-{{d.eid}}
+                                         then set my @aria-expanded to 'false'
+                                       else
+                                         remove @hidden from #resolve-form-{{d.eid}}
+                                         then set my @aria-expanded to 'true'
+                                       end">
+                                Resolve
+                            </button>
+                            <form hx-post="/actions/tournament/{{data.eid}}/dispute/{{d.eid}}/dismiss" hx-swap="none"
+                                  hx-confirm="Dismiss this dispute without action?">
+                                <button type="submit" class="btn btn-secondary btn-sm">Dismiss</button>
+                            </form>
+                        </div>
+                        <form id="resolve-form-{{d.eid}}" class="dispute-resolve-form" hidden
+                              hx-post="/actions/tournament/{{data.eid}}/dispute/{{d.eid}}/resolve"
+                              hx-swap="none" hx-ext="json-enc"
+                              aria-label="Resolve dispute by recording the corrected match result">
+                            <fieldset class="dispute-resolve-fieldset">
+                                <legend>Correct result for this best-of-{{d.match-format}} match</legend>
+                                <p class="dispute-resolve-hint">Enter the game-win score; the winner is whoever reaches {{d.win-threshold}} wins.</p>
+                                <div class="dispute-resolve-scores">
+                                    <div class="dispute-resolve-score">
+                                        <label for="p1-score-{{d.eid}}">{{d.match-player-one-sub}} games won</label>
+                                        <input id="p1-score-{{d.eid}}" name="player-one-score" type="number"
+                                               min="0" max="{{d.match-format}}" value="0" required aria-required="true" class="input"/>
+                                    </div>
+                                    <div class="dispute-resolve-score">
+                                        <label for="p2-score-{{d.eid}}">{{d.match-player-two-sub}} games won</label>
+                                        <input id="p2-score-{{d.eid}}" name="player-two-score" type="number"
+                                               min="0" max="{{d.match-format}}" value="0" required aria-required="true" class="input"/>
+                                    </div>
+                                </div>
+                                <label for="note-{{d.eid}}" class="dispute-resolve-note-label">Resolution note (optional)</label>
+                                <textarea id="note-{{d.eid}}" name="note" rows="2" class="input"
+                                          placeholder="What you reviewed and decided"></textarea>
+                            </fieldset>
+                            <div class="dispute-resolve-actions">
+                                <button type="submit" class="btn btn-primary btn-sm">Record result &amp; resolve</button>
+                                <button type="button" class="btn btn-secondary btn-sm"
+                                        _="on click add @hidden to #resolve-form-{{d.eid}}
+                                           then set @aria-expanded of #resolve-toggle-{{d.eid}} to 'false'">
+                                    Cancel
+                                </button>
+                            </div>
+                            <div id="resolve-error-{{d.eid}}" class="dispute-resolve-error" role="alert" aria-live="assertive"></div>
+                        </form>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
                 <div class="org-empty-state">
-                    <p class="org-empty-state-title">No disputes</p>
-                    <p class="muted">Reported-result disputes will appear here for resolution.</p>
+                    <p class="org-empty-state-title">No open disputes</p>
+                    <p class="muted">Conflicting results, missing replays, and connection-loss claims appear here for resolution.</p>
                 </div>
+                {% endif %}
             </section>
 
             <!-- ─── Settings ─── -->

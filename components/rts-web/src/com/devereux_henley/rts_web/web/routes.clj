@@ -2,6 +2,7 @@
   (:require
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.orchestration :as orchestration]
+   [com.devereux-henley.rts-web.web.actions.dispute :as web.actions.dispute]
    [com.devereux-henley.rts-web.web.actions.draft :as web.actions.draft]
    [com.devereux-henley.rts-web.web.api :as web.api]
    [com.devereux-henley.rts-web.web.actions.league :as web.actions.league]
@@ -393,6 +394,21 @@
                                  [:tournament-eid :uuid]
                                  [:match-eid :uuid]])}
             :handler    (integrant.core/ref ::web.tournament.view/player-replay-submit-fragment)}}]
+   ["/tournament/:tournament-eid/dispute/:eid/resolve"
+    {:post {:produces   ["application/htmx+html"]
+            :parameters {:path (schema.contract/to-schema
+                                [:map
+                                 [:tournament-eid :uuid]
+                                 [:eid :uuid]])
+                         :body domain/resolve-dispute-specification}
+            :handler    (integrant.core/ref ::web.actions.dispute/resolve-dispute)}}]
+   ["/tournament/:tournament-eid/dispute/:eid/dismiss"
+    {:post {:produces   ["application/htmx+html"]
+            :parameters {:path (schema.contract/to-schema
+                                [:map
+                                 [:tournament-eid :uuid]
+                                 [:eid :uuid]])}
+            :handler    (integrant.core/ref ::web.actions.dispute/dismiss-dispute)}}]
    ["/league/:eid"
     {:put {:produces   ["application/htmx+html"]
            :parameters {:path  schema.contract/id-path-parameter

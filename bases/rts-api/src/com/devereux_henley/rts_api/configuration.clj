@@ -117,6 +117,8 @@
             :com.devereux-henley.rts-web.web.actions.tournament/record-game
             :com.devereux-henley.rts-web.web.actions.tournament/check-in
             :com.devereux-henley.rts-web.web.actions.tournament/open-check-in
+            :com.devereux-henley.rts-web.web.actions.dispute/resolve-dispute
+            :com.devereux-henley.rts-web.web.actions.dispute/dismiss-dispute
             :com.devereux-henley.rts-web.web.actions.league/create-league
             :com.devereux-henley.rts-web.web.actions.season/create-season))
 
@@ -132,6 +134,7 @@
    when this configuration is loaded."
   {:com.devereux-henley.rts-web.web.actions.draft/web-triggers      {}
    :com.devereux-henley.rts-web.web.actions.tournament/web-triggers {}
+   :com.devereux-henley.rts-web.web.actions.dispute/web-triggers    {}
    :com.devereux-henley.rts-web.orchestration/registry              {:sources (integrant.core/refset :com.devereux-henley.rts-web.orchestration/web-trigger-source)}
    :com.devereux-henley.rts-web.orchestration/middleware            {:registry (integrant.core/ref :com.devereux-henley.rts-web.orchestration/registry)}})
 

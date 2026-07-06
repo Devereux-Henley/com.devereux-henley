@@ -29,24 +29,34 @@
   [:dispute/eid :dispute/kind :dispute/priority :dispute/status
    :dispute/reporter-sub :dispute/detail
    :dispute/opened-at :dispute/resolved-at
+   :dispute/resolution-winner-sub
+   :dispute/resolution-player-one-score :dispute/resolution-player-two-score
+   :dispute/resolution-note
    {:dispute/tournament [:tournament/eid]}
-   {:dispute/match [:match/eid]}
+   {:dispute/match [:match/eid :match/player-one-sub :match/player-two-sub :match/format]}
    {:dispute/match-game [:match-game/eid]}])
 
 (defn- ->dispute
   [m]
   (when m
-    {:eid            (:dispute/eid m)
-     :tournament-eid (some-> m :dispute/tournament :tournament/eid)
-     :match-eid      (some-> m :dispute/match :match/eid)
-     :match-game-eid (some-> m :dispute/match-game :match-game/eid)
-     :kind           (kw->str (:dispute/kind m))
-     :priority       (kw->str (:dispute/priority m))
-     :status         (kw->str (:dispute/status m))
-     :reporter-sub   (:dispute/reporter-sub m)
-     :detail         (:dispute/detail m)
-     :opened-at      (:dispute/opened-at m)
-     :resolved-at    (:dispute/resolved-at m)}))
+    {:eid                         (:dispute/eid m)
+     :tournament-eid              (some-> m :dispute/tournament :tournament/eid)
+     :match-eid                   (some-> m :dispute/match :match/eid)
+     :match-player-one-sub        (some-> m :dispute/match :match/player-one-sub)
+     :match-player-two-sub        (some-> m :dispute/match :match/player-two-sub)
+     :match-format                (some-> m :dispute/match :match/format)
+     :match-game-eid              (some-> m :dispute/match-game :match-game/eid)
+     :kind                        (kw->str (:dispute/kind m))
+     :priority                    (kw->str (:dispute/priority m))
+     :status                      (kw->str (:dispute/status m))
+     :reporter-sub                (:dispute/reporter-sub m)
+     :detail                      (:dispute/detail m)
+     :opened-at                   (:dispute/opened-at m)
+     :resolved-at                 (:dispute/resolved-at m)
+     :resolution-winner-sub       (:dispute/resolution-winner-sub m)
+     :resolution-player-one-score (:dispute/resolution-player-one-score m)
+     :resolution-player-two-score (:dispute/resolution-player-two-score m)
+     :resolution-note             (:dispute/resolution-note m)}))
 
 ;;; ─── Reads ─────────────────────────────────────────────────────────────────
 
@@ -110,14 +120,20 @@
     (dispute-by-eid conn dispute-eid)))
 
 (defn resolve-dispute!
-  "Mark a dispute `:resolved`, stamping `resolved-at`. Returns the updated
-  dispute."
-  [conn eid]
+  "Mark a dispute `:resolved`, stamping `resolved-at` and recording the
+  corrected match result the organizer declared: `:winner-sub`, the per-side
+  `:player-one-score` / `:player-two-score`, and an optional `:note`. Returns
+  the updated dispute."
+  [conn eid {:keys [winner-sub player-one-score player-two-score note]}]
   (dl/transact!
    conn
-   [{:dispute/eid         eid
-     :dispute/status      :resolved
-     :dispute/resolved-at (Date.)}])
+   [(cond-> {:dispute/eid                         eid
+             :dispute/status                      :resolved
+             :dispute/resolved-at                 (Date.)
+             :dispute/resolution-winner-sub       winner-sub
+             :dispute/resolution-player-one-score player-one-score
+             :dispute/resolution-player-two-score player-two-score}
+      note (assoc :dispute/resolution-note note))])
   (dispute-by-eid conn eid))
 
 (defn dismiss-dispute!

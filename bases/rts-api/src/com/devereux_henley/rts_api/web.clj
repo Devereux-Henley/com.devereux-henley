@@ -75,6 +75,7 @@
    :draft/remove-success   "rts-web/actions/draft-remove-success.html"
    :draft/locked           "rts-web/actions/draft-add-error.html"
    :tournament/entry-error "rts-web/actions/tournament-entry-error.html"
+   :dispute/resolve-error  "rts-web/actions/dispute-resolve-error.html"
    :missing/resource       "rts-web/resource/missing.html"
    "exception"             "rts-web/resource/error.html"})
 
