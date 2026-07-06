@@ -215,8 +215,8 @@
   (schema.contract/to-schema
    [:map
     [:game-eid :uuid]
-    [:league-eid {:optional true} [:maybe :uuid]]
-    [:season-eid {:optional true} [:maybe :uuid]]
+    [:league-eid {:optional true} :optional-uuid]
+    [:season-eid {:optional true} :optional-uuid]
     [:name {:min 1} :string]
     [:description {:min 1} :string]
     [:timezone :timezone-id]
