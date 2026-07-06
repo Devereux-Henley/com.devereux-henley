@@ -135,6 +135,46 @@
         now   (Instant/parse "2025-06-01T00:00:00Z")]
     (is (true? (handlers.tournament/is-registration-open? state now)))))
 
+;; ─── registration-not-yet-open? ─────────────────────────────────────────────
+
+(deftest registration-not-yet-open-true-before-opens-at
+  (let [state {:status       "registration"
+               :registration {:opens-at     (Instant/parse "2026-01-01T00:00:00Z")
+                              :closes-at    (Instant/parse "2030-01-01T00:00:00Z")
+                              :closed-early false}}
+        now   (Instant/parse "2025-06-01T00:00:00Z")]
+    (is (true? (boolean (handlers.tournament/registration-not-yet-open? state now))))))
+
+(deftest registration-not-yet-open-false-within-window
+  (let [state {:status       "registration"
+               :registration {:opens-at     (Instant/parse "2020-01-01T00:00:00Z")
+                              :closes-at    (Instant/parse "2030-01-01T00:00:00Z")
+                              :closed-early false}}
+        now   (Instant/parse "2025-06-01T00:00:00Z")]
+    (is (false? (boolean (handlers.tournament/registration-not-yet-open? state now))))))
+
+(deftest registration-not-yet-open-false-after-close
+  (let [state {:status       "registration"
+               :registration {:opens-at     (Instant/parse "2020-01-01T00:00:00Z")
+                              :closes-at    (Instant/parse "2025-01-01T00:00:00Z")
+                              :closed-early false}}
+        now   (Instant/parse "2025-06-01T00:00:00Z")]
+    (is (false? (boolean (handlers.tournament/registration-not-yet-open? state now))))))
+
+(deftest registration-not-yet-open-false-when-closed-early
+  (let [state {:status       "registration"
+               :registration {:opens-at     (Instant/parse "2026-01-01T00:00:00Z")
+                              :closes-at    (Instant/parse "2030-01-01T00:00:00Z")
+                              :closed-early true}}
+        now   (Instant/parse "2025-06-01T00:00:00Z")]
+    (is (false? (boolean (handlers.tournament/registration-not-yet-open? state now))))))
+
+(deftest registration-not-yet-open-false-when-no-opens-at
+  (let [state {:status       "registration"
+               :registration {:opens-at nil :closes-at nil :closed-early false}}
+        now   (Instant/parse "2025-06-01T00:00:00Z")]
+    (is (false? (boolean (handlers.tournament/registration-not-yet-open? state now))))))
+
 ;; ─── create-entry ────────────────────────────────────────────────────────────
 
 (deftest create-entry-returns-entry-when-open
