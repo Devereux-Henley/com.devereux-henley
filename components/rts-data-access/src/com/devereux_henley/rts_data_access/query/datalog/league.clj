@@ -3,7 +3,7 @@
   builders flatten `:league/*` pull results into the unqualified-key
   shape the existing rts-domain handlers + resource schemas expect."
   (:require
-   [com.devereux-henley.datalog.contract :as dl])
+   [datalevin.core :as d])
   (:import
    [java.time Instant]
    [java.util Date]))
@@ -49,16 +49,16 @@
 (defn league-by-eid
   "Fetch a league by eid. Returns nil when not found."
   [conn eid]
-  (->league (dl/pull (dl/db conn) league-pattern (dl/lookup-ref :league/eid eid))))
+  (->league (d/pull (d/db conn) league-pattern [:league/eid eid])))
 
 (defn leagues
   "All leagues, sorted by game name then league name — matches the
   legacy SQL ordering so the collection page renders identically."
   [conn]
-  (->> (dl/q '[:find [(pull ?l pattern) ...]
-               :in $ pattern
-               :where [?l :league/eid _]]
-             (dl/db conn) league-pattern)
+  (->> (d/q '[:find [(pull ?l pattern) ...]
+              :in $ pattern
+              :where [?l :league/eid _]]
+            (d/db conn) league-pattern)
        (sort-by (juxt (fn [m] (some-> m :league/game :game/name))
                       :league/name))
        (mapv ->league)))
@@ -66,12 +66,12 @@
 (defn leagues-for-game
   "Leagues belonging to a game, sorted by name."
   [conn game-eid]
-  (->> (dl/q '[:find [(pull ?l pattern) ...]
-               :in $ pattern ?game-eid
-               :where
-               [?g :game/eid ?game-eid]
-               [?l :league/game ?g]]
-             (dl/db conn) league-pattern game-eid)
+  (->> (d/q '[:find [(pull ?l pattern) ...]
+              :in $ pattern ?game-eid
+              :where
+              [?g :game/eid ?game-eid]
+              [?l :league/game ?g]]
+            (d/db conn) league-pattern game-eid)
        (sort-by :league/name)
        (mapv ->league)))
 
@@ -84,14 +84,15 @@
   `:updated-at`) are filled here so the handler stays thin."
   [conn {:keys [eid game-eid name description created-by-sub]}]
   (let [now (now-date)]
-    (dl/transact!
-     conn
-     [{:league/eid            eid
-       :league/game           [:game/eid game-eid]
-       :league/name           name
-       :league/description    description
-       :league/created-by-sub created-by-sub
-       :league/version        1
-       :league/created-at     now
-       :league/updated-at     now}])
-    (league-by-eid conn eid)))
+    (d/with-transaction [tx-conn conn]
+      (d/transact!
+       tx-conn
+       [{:league/eid            eid
+         :league/game           [:game/eid game-eid]
+         :league/name           name
+         :league/description    description
+         :league/created-by-sub created-by-sub
+         :league/version        1
+         :league/created-at     now
+         :league/updated-at     now}])
+      (league-by-eid tx-conn eid))))

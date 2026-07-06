@@ -1,7 +1,7 @@
 (ns com.devereux-henley.rts-data-access.query.datalog.replay
   "Datalevin reads + mutations for the replay domain."
   (:require
-   [com.devereux-henley.datalog.contract :as dl])
+   [datalevin.core :as d])
   (:import
    [java.time Instant]
    [java.util Date]))
@@ -36,7 +36,7 @@
 (defn replay-by-eid
   "Fetch a replay by eid. Returns nil when not found."
   [conn eid]
-  (->replay (dl/pull (dl/db conn) replay-pattern (dl/lookup-ref :replay/eid eid))))
+  (->replay (d/pull (d/db conn) replay-pattern [:replay/eid eid])))
 
 (defn create-replay!
   "Transact a new replay row. Audit columns (`:created-at`,
@@ -57,5 +57,4 @@
               victory-condition             (assoc :replay/victory-condition victory-condition)
               (some? uploader-local-alliance-index)
               (assoc :replay/uploader-local-alliance-index uploader-local-alliance-index))]
-    (dl/transact! conn [tx])
-    (replay-by-eid conn eid)))
+    (d/with-transaction [tx-conn conn] (d/transact! tx-conn [tx]) (replay-by-eid tx-conn eid))))

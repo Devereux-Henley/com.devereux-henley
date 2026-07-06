@@ -8,7 +8,7 @@
   and instants are `java.util.Date`. Mutations stamp `opened-at` /
   `resolved-at` server-side as `java.util.Date`."
   (:require
-   [com.devereux-henley.datalog.contract :as dl])
+   [datalevin.core :as d])
   (:import
    [java.util Date]))
 
@@ -63,20 +63,20 @@
 (defn dispute-by-eid
   "Fetch a dispute by eid. Returns nil when not found."
   [conn eid]
-  (->dispute (dl/pull (dl/db conn) dispute-pattern (dl/lookup-ref :dispute/eid eid))))
+  (->dispute (d/pull (d/db conn) dispute-pattern [:dispute/eid eid])))
 
 (defn open-disputes-for-tournament
   "All `:open` disputes for a tournament, most urgent first then oldest first
   (priority rank asc, opened-at asc)."
   [conn tournament-eid]
-  (let [db (dl/db conn)]
-    (->> (dl/q '[:find [(pull ?d pattern) ...]
-                 :in $ pattern ?tour-eid
-                 :where
-                 [?d :dispute/tournament ?t]
-                 [?t :tournament/eid ?tour-eid]
-                 [?d :dispute/status :open]]
-               db dispute-pattern tournament-eid)
+  (let [db (d/db conn)]
+    (->> (d/q '[:find [(pull ?d pattern) ...]
+                :in $ pattern ?tour-eid
+                :where
+                [?d :dispute/tournament ?t]
+                [?t :tournament/eid ?tour-eid]
+                [?d :dispute/status :open]]
+              db dispute-pattern tournament-eid)
          (mapv ->dispute)
          (sort-by (juxt #(get priority-rank (keyword (:priority %)) 1)
                         (comp (fnil #(.getTime ^Date %) (Date. 0)) :opened-at)
@@ -86,13 +86,13 @@
 (defn open-dispute-count-for-tournament
   "Count of `:open` disputes for a tournament — backs the queue-tab badge."
   [conn tournament-eid]
-  (or (dl/q '[:find (count ?d) .
-              :in $ ?tour-eid
-              :where
-              [?d :dispute/tournament ?t]
-              [?t :tournament/eid ?tour-eid]
-              [?d :dispute/status :open]]
-            (dl/db conn) tournament-eid)
+  (or (d/q '[:find (count ?d) .
+             :in $ ?tour-eid
+             :where
+             [?d :dispute/tournament ?t]
+             [?t :tournament/eid ?tour-eid]
+             [?d :dispute/status :open]]
+           (d/db conn) tournament-eid)
       0))
 
 ;;; ─── Mutations ─────────────────────────────────────────────────────────────
@@ -105,19 +105,20 @@
   [conn {:keys [eid tournament-eid match-eid match-game-eid kind priority
                 reporter-sub detail]}]
   (let [dispute-eid (or eid (random-uuid))]
-    (dl/transact!
-     conn
-     [(cond-> {:dispute/eid          dispute-eid
-               :dispute/tournament   [:tournament/eid tournament-eid]
-               :dispute/match        [:match/eid match-eid]
-               :dispute/kind         (keyword kind)
-               :dispute/priority     (keyword (or priority "normal"))
-               :dispute/status       :open
-               :dispute/reporter-sub reporter-sub
-               :dispute/opened-at    (Date.)}
-        match-game-eid (assoc :dispute/match-game [:match-game/eid match-game-eid])
-        detail         (assoc :dispute/detail detail))])
-    (dispute-by-eid conn dispute-eid)))
+    (d/with-transaction [tx-conn conn]
+      (d/transact!
+       tx-conn
+       [(cond-> {:dispute/eid          dispute-eid
+                 :dispute/tournament   [:tournament/eid tournament-eid]
+                 :dispute/match        [:match/eid match-eid]
+                 :dispute/kind         (keyword kind)
+                 :dispute/priority     (keyword (or priority "normal"))
+                 :dispute/status       :open
+                 :dispute/reporter-sub reporter-sub
+                 :dispute/opened-at    (Date.)}
+          match-game-eid (assoc :dispute/match-game [:match-game/eid match-game-eid])
+          detail         (assoc :dispute/detail detail))])
+      (dispute-by-eid tx-conn dispute-eid))))
 
 (defn resolve-dispute!
   "Mark a dispute `:resolved`, stamping `resolved-at` and recording the
@@ -125,24 +126,26 @@
   `:player-one-score` / `:player-two-score`, and an optional `:note`. Returns
   the updated dispute."
   [conn eid {:keys [winner-sub player-one-score player-two-score note]}]
-  (dl/transact!
-   conn
-   [(cond-> {:dispute/eid                         eid
-             :dispute/status                      :resolved
-             :dispute/resolved-at                 (Date.)
-             :dispute/resolution-winner-sub       winner-sub
-             :dispute/resolution-player-one-score player-one-score
-             :dispute/resolution-player-two-score player-two-score}
-      note (assoc :dispute/resolution-note note))])
-  (dispute-by-eid conn eid))
+  (d/with-transaction [tx-conn conn]
+    (d/transact!
+     tx-conn
+     [(cond-> {:dispute/eid                         eid
+               :dispute/status                      :resolved
+               :dispute/resolved-at                 (Date.)
+               :dispute/resolution-winner-sub       winner-sub
+               :dispute/resolution-player-one-score player-one-score
+               :dispute/resolution-player-two-score player-two-score}
+        note (assoc :dispute/resolution-note note))])
+    (dispute-by-eid tx-conn eid)))
 
 (defn dismiss-dispute!
   "Mark a dispute `:dismissed`, stamping `resolved-at`. Returns the updated
   dispute."
   [conn eid]
-  (dl/transact!
-   conn
-   [{:dispute/eid         eid
-     :dispute/status      :dismissed
-     :dispute/resolved-at (Date.)}])
-  (dispute-by-eid conn eid))
+  (d/with-transaction [tx-conn conn]
+    (d/transact!
+     tx-conn
+     [{:dispute/eid         eid
+       :dispute/status      :dismissed
+       :dispute/resolved-at (Date.)}])
+    (dispute-by-eid tx-conn eid)))

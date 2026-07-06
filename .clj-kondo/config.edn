@@ -1,2 +1,4 @@
 {:config-in-ns {build {:linters {:redefined-var {:level :off}}}}
- :linters {:unresolved-symbol {:exclude [(odoyle.rules/ruleset)]}}}
+ :lint-as {datalevin.core/with-transaction clojure.core/let}
+ :linters {:unresolved-symbol {:exclude [(odoyle.rules/ruleset)]}
+           :unresolved-var {:exclude [datalevin.core/with-transaction]}}}

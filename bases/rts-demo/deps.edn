@@ -1,3 +1,4 @@
 {:paths ["src"]
- :deps {}
+ :deps {org.datalevin/datalevin-embedded            {:mvn/version "0.10.16"}
+        org.clojars.huahaiy/dtlvnative-linux-x86_64 {:mvn/version "0.18.7"}}
  :aliases {:run {:main-opts ["-m" "com.devereux-henley.rts-demo.core"]}}}

@@ -9,7 +9,7 @@
   `clojure -M:dev:claude -m com.devereux-henley.rts-demo.core`."
   (:require
    [clojure.java.io :as io]
-   [com.devereux-henley.datalog.contract :as datalog]
+   [datalevin.core :as d]
    [com.devereux-henley.rts-data-access.contract :as data-access]
    [com.devereux-henley.rts-data.contract :as rts-data]
    [com.devereux-henley.rts-domain.contract :as domain])
@@ -46,7 +46,7 @@
   [conn]
   (rts-data/ensure-datalog-patch seed-patch-version)
   (doseq [[_ tx-data] (rts-data/load-datalog-seed seed-patch-version)]
-    (datalog/transact! conn tx-data)))
+    (d/transact! conn tx-data)))
 
 (defn- create-tournament!
   "Create a demo tournament in registration status with a 14-day window."
@@ -257,14 +257,14 @@
   vector of summary maps describing each tournament."
   []
   (wipe-datalog-dir!)
-  (let [conn (datalog/get-conn datalog-dir data-access/datalog-schema)
+  (let [conn (d/get-conn datalog-dir data-access/datalog-schema)
         deps {:datalog-connection conn}]
     (try
       (seed-datalog! conn)
       (into (mapv #(build-tournament! deps %) tournament-specs)
             (mapv #(build-registration-tournament! deps %) registration-tournament-specs))
       (finally
-        (datalog/close conn)))))
+        (d/close conn)))))
 
 (defn -main [& _args]
   (let [tournaments (setup!)]

@@ -9,7 +9,7 @@
   tournament entity; standings are derived (not read) by the handler from
   entries + completed matches."
   (:require
-   [com.devereux-henley.datalog.contract :as dl])
+   [datalevin.core :as d])
   (:import
    [java.time Instant]
    [java.util Date]))
@@ -160,18 +160,18 @@
 (defn tournament-by-eid
   "Fetch a tournament by eid. Returns nil when not found."
   [conn eid]
-  (->tournament (dl/pull (dl/db conn) tournament-pattern (dl/lookup-ref :tournament/eid eid))))
+  (->tournament (d/pull (d/db conn) tournament-pattern [:tournament/eid eid])))
 
 (defn tournaments-for-game
   "All tournaments scoped to a game, newest first (created-at desc)."
   [conn game-eid]
-  (let [db (dl/db conn)]
-    (->> (dl/q '[:find [(pull ?t pattern) ...]
-                 :in $ pattern ?game-eid
-                 :where
-                 [?t :tournament/game ?g]
-                 [?g :game/eid ?game-eid]]
-               db tournament-pattern game-eid)
+  (let [db (d/db conn)]
+    (->> (d/q '[:find [(pull ?t pattern) ...]
+                :in $ pattern ?game-eid
+                :where
+                [?t :tournament/game ?g]
+                [?g :game/eid ?game-eid]]
+              db tournament-pattern game-eid)
          (mapv ->tournament)
          (sort-by (juxt (comp - (fnil #(.getTime ^Date %) (Date. 0)) :created-at) :eid))
          vec)))
@@ -179,10 +179,10 @@
 (defn tournaments
   "Every tournament in the system."
   [conn]
-  (->> (dl/q '[:find [(pull ?t pattern) ...]
-               :in $ pattern
-               :where [?t :tournament/eid]]
-             (dl/db conn) tournament-pattern)
+  (->> (d/q '[:find [(pull ?t pattern) ...]
+              :in $ pattern
+              :where [?t :tournament/eid]]
+            (d/db conn) tournament-pattern)
        (mapv ->tournament)
        vec))
 
@@ -190,20 +190,20 @@
   "The `[{:phase-type … :rounds […]}]` phase configuration for a tournament,
   reconstructed from its phase/round entities."
   [conn eid]
-  (->phases (dl/pull (dl/db conn) phases-pattern (dl/lookup-ref :tournament/eid eid))))
+  (->phases (d/pull (d/db conn) phases-pattern [:tournament/eid eid])))
 
 ;;; ─── Entry reads ───────────────────────────────────────────────────────────
 
 (defn entries-for-tournament
   "All entries for a tournament, oldest first (created-at asc)."
   [conn eid]
-  (let [db (dl/db conn)]
-    (->> (dl/q '[:find [(pull ?e pattern) ...]
-                 :in $ pattern ?tour-eid
-                 :where
-                 [?e :tournament-entry/tournament ?t]
-                 [?t :tournament/eid ?tour-eid]]
-               db entry-pattern eid)
+  (let [db (d/db conn)]
+    (->> (d/q '[:find [(pull ?e pattern) ...]
+                :in $ pattern ?tour-eid
+                :where
+                [?e :tournament-entry/tournament ?t]
+                [?t :tournament/eid ?tour-eid]]
+              db entry-pattern eid)
          (mapv ->entry)
          (sort-by (juxt (comp (fnil #(.getTime ^Date %) (Date. 0)) :created-at) :eid))
          vec)))
@@ -211,14 +211,14 @@
 (defn entry-by-tournament-and-player
   "The entry a player holds in a tournament, or nil."
   [conn eid player-sub]
-  (let [db (dl/db conn)]
-    (some-> (dl/q '[:find (pull ?e pattern) .
-                    :in $ pattern ?tour-eid ?player-sub
-                    :where
-                    [?e :tournament-entry/tournament ?t]
-                    [?t :tournament/eid ?tour-eid]
-                    [?e :tournament-entry/player-sub ?player-sub]]
-                  db entry-pattern eid player-sub)
+  (let [db (d/db conn)]
+    (some-> (d/q '[:find (pull ?e pattern) .
+                   :in $ pattern ?tour-eid ?player-sub
+                   :where
+                   [?e :tournament-entry/tournament ?t]
+                   [?t :tournament/eid ?tour-eid]
+                   [?e :tournament-entry/player-sub ?player-sub]]
+                 db entry-pattern eid player-sub)
             ->entry)))
 
 ;;; ─── Match reads ───────────────────────────────────────────────────────────
@@ -226,18 +226,18 @@
 (defn match-by-eid
   "Fetch a match by eid. Returns nil when not found."
   [conn eid]
-  (->match (dl/pull (dl/db conn) match-pattern (dl/lookup-ref :match/eid eid))))
+  (->match (d/pull (d/db conn) match-pattern [:match/eid eid])))
 
 (defn matches-for-tournament
   "All matches in a tournament, ordered by (phase-index, round-index)."
   [conn eid]
-  (let [db (dl/db conn)]
-    (->> (dl/q '[:find [(pull ?m pattern) ...]
-                 :in $ pattern ?tour-eid
-                 :where
-                 [?m :match/tournament ?t]
-                 [?t :tournament/eid ?tour-eid]]
-               db match-pattern eid)
+  (let [db (d/db conn)]
+    (->> (d/q '[:find [(pull ?m pattern) ...]
+                :in $ pattern ?tour-eid
+                :where
+                [?m :match/tournament ?t]
+                [?t :tournament/eid ?tour-eid]]
+              db match-pattern eid)
          (mapv ->match)
          (sort-by (juxt :phase-index :round-index :eid))
          vec)))
@@ -245,25 +245,25 @@
 (defn matches
   "Every match in the system."
   [conn]
-  (->> (dl/q '[:find [(pull ?m pattern) ...]
-               :in $ pattern
-               :where [?m :match/eid]]
-             (dl/db conn) match-pattern)
+  (->> (d/q '[:find [(pull ?m pattern) ...]
+              :in $ pattern
+              :where [?m :match/eid]]
+            (d/db conn) match-pattern)
        (mapv ->match)
        vec))
 
 (defn matches-for-round
   "Matches in a tournament's specific phase + round."
   [conn eid phase-index round-index]
-  (let [db (dl/db conn)]
-    (->> (dl/q '[:find [(pull ?m pattern) ...]
-                 :in $ pattern ?tour-eid ?phase ?round
-                 :where
-                 [?m :match/tournament ?t]
-                 [?t :tournament/eid ?tour-eid]
-                 [?m :match/phase-index ?phase]
-                 [?m :match/round-index ?round]]
-               db match-pattern eid phase-index round-index)
+  (let [db (d/db conn)]
+    (->> (d/q '[:find [(pull ?m pattern) ...]
+                :in $ pattern ?tour-eid ?phase ?round
+                :where
+                [?m :match/tournament ?t]
+                [?t :tournament/eid ?tour-eid]
+                [?m :match/phase-index ?phase]
+                [?m :match/round-index ?round]]
+              db match-pattern eid phase-index round-index)
          (mapv ->match)
          (sort-by :eid)
          vec)))
@@ -271,13 +271,13 @@
 (defn games-for-match
   "All games recorded for a match, ordered by game-index."
   [conn match-eid]
-  (let [db (dl/db conn)]
-    (->> (dl/q '[:find [(pull ?g pattern) ...]
-                 :in $ pattern ?match-eid
-                 :where
-                 [?m :match/eid ?match-eid]
-                 [?m :match/games ?g]]
-               db match-game-pattern match-eid)
+  (let [db (d/db conn)]
+    (->> (d/q '[:find [(pull ?g pattern) ...]
+                :in $ pattern ?match-eid
+                :where
+                [?m :match/eid ?match-eid]
+                [?m :match/games ?g]]
+              db match-game-pattern match-eid)
          (mapv ->game)
          (sort-by :game-index)
          vec)))
@@ -291,24 +291,25 @@
   [conn {:keys [eid name description game-eid league-eid season-eid created-by-sub
                 version created-at updated-at registration-opens-at
                 registration-closes-at timezone]}]
-  (dl/transact!
-   conn
-   [(cond-> {:tournament/eid                       eid
-             :tournament/name                      name
-             :tournament/description               description
-             :tournament/game                      [:game/eid game-eid]
-             :tournament/created-by-sub            created-by-sub
-             :tournament/version                   (or version 1)
-             :tournament/created-at                (->date created-at)
-             :tournament/updated-at                (->date updated-at)
-             :tournament/status                    :registration
-             :tournament/registration-closed-early false}
-      league-eid             (assoc :tournament/league [:league/eid league-eid])
-      season-eid             (assoc :tournament/season [:season/eid season-eid])
-      timezone               (assoc :tournament/timezone timezone)
-      registration-opens-at  (assoc :tournament/registration-opens-at (->date registration-opens-at))
-      registration-closes-at (assoc :tournament/registration-closes-at (->date registration-closes-at)))])
-  (tournament-by-eid conn eid))
+  (d/with-transaction [tx-conn conn]
+    (d/transact!
+     tx-conn
+     [(cond-> {:tournament/eid                       eid
+               :tournament/name                      name
+               :tournament/description               description
+               :tournament/game                      [:game/eid game-eid]
+               :tournament/created-by-sub            created-by-sub
+               :tournament/version                   (or version 1)
+               :tournament/created-at                (->date created-at)
+               :tournament/updated-at                (->date updated-at)
+               :tournament/status                    :registration
+               :tournament/registration-closed-early false}
+        league-eid             (assoc :tournament/league [:league/eid league-eid])
+        season-eid             (assoc :tournament/season [:season/eid season-eid])
+        timezone               (assoc :tournament/timezone timezone)
+        registration-opens-at  (assoc :tournament/registration-opens-at (->date registration-opens-at))
+        registration-closes-at (assoc :tournament/registration-closes-at (->date registration-closes-at)))])
+    (tournament-by-eid tx-conn eid)))
 
 (defn update-tournament!
   "Patch mutable tournament fields, always touching `updated-at`. Accepts
@@ -317,16 +318,17 @@
   display string). Nil-valued keys are skipped so partial updates only write
   what they mean to."
   [conn eid {:keys [status current-phase-index qualifier-count registration-closed-early patch]}]
-  (dl/transact!
-   conn
-   [(cond-> {:tournament/eid        eid
-             :tournament/updated-at (Date.)}
-      status                            (assoc :tournament/status (keyword status))
-      (some? current-phase-index)       (assoc :tournament/current-phase-index current-phase-index)
-      (some? qualifier-count)           (assoc :tournament/qualifier-count qualifier-count)
-      (some? registration-closed-early) (assoc :tournament/registration-closed-early registration-closed-early)
-      (some? patch)                     (assoc :tournament/patch patch))])
-  (tournament-by-eid conn eid))
+  (d/with-transaction [tx-conn conn]
+    (d/transact!
+     tx-conn
+     [(cond-> {:tournament/eid        eid
+               :tournament/updated-at (Date.)}
+        status                            (assoc :tournament/status (keyword status))
+        (some? current-phase-index)       (assoc :tournament/current-phase-index current-phase-index)
+        (some? qualifier-count)           (assoc :tournament/qualifier-count qualifier-count)
+        (some? registration-closed-early) (assoc :tournament/registration-closed-early registration-closed-early)
+        (some? patch)                     (assoc :tournament/patch patch))])
+    (tournament-by-eid tx-conn eid)))
 
 (defn set-phases!
   "Replace a tournament's phase configuration. Retracts the existing
@@ -334,16 +336,14 @@
   vector of `{:phase-type … :rounds [{:round-index … :format …}]}`. The
   phase's position in the vector becomes its `:tournament-phase/ordinal`."
   [conn eid phases]
-  (let [db          (dl/db conn)
-        existing    (dl/pull db [{:tournament/phases [:tournament-phase/eid
-                                                      {:tournament-phase/rounds [:tournament-round/eid]}]}]
-                             (dl/lookup-ref :tournament/eid eid))
+  (let [db          (d/db conn)
+        existing    (d/pull db [{:tournament/phases [:tournament-phase/eid
+                                                     {:tournament-phase/rounds [:tournament-round/eid]}]}]
+                            [:tournament/eid eid])
         retract-ops (mapcat (fn [phase]
-                              (cons [:db/retractEntity (dl/lookup-ref :tournament-phase/eid
-                                                                      (:tournament-phase/eid phase))]
+                              (cons [:db/retractEntity [:tournament-phase/eid (:tournament-phase/eid phase)]]
                                     (map (fn [r]
-                                           [:db/retractEntity (dl/lookup-ref :tournament-round/eid
-                                                                             (:tournament-round/eid r))])
+                                           [:db/retractEntity [:tournament-round/eid (:tournament-round/eid r)]])
                                          (:tournament-phase/rounds phase))))
                             (:tournament/phases existing))
         phase-maps  (map-indexed
@@ -358,7 +358,7 @@
                                  :tournament-round/format      (or (:format r) 1)})
                               (:rounds phase))})
                      phases)]
-    (dl/transact!
+    (d/transact!
      conn
      (concat retract-ops
              [{:tournament/eid        eid
@@ -373,7 +373,7 @@
   [conn eid player-sub]
   (when-not (entry-by-tournament-and-player conn eid player-sub)
     (let [entry-eid (random-uuid)]
-      (dl/transact!
+      (d/transact!
        conn
        [{:tournament-entry/eid        entry-eid
          :tournament-entry/tournament [:tournament/eid eid]
@@ -385,7 +385,7 @@
   "Remove a player's entry from a tournament."
   [conn eid player-sub]
   (when-let [entry (entry-by-tournament-and-player conn eid player-sub)]
-    (dl/transact! conn [[:db/retractEntity (dl/lookup-ref :tournament-entry/eid (:eid entry))]])))
+    (d/transact! conn [[:db/retractEntity [:tournament-entry/eid (:eid entry)]]])))
 
 ;;; ─── Match mutations ───────────────────────────────────────────────────────
 
@@ -396,31 +396,33 @@
   [conn eid match-spec]
   (let [match-eid (random-uuid)
         now       (Date.)]
-    (dl/transact!
-     conn
-     [{:match/eid            match-eid
-       :match/tournament     [:tournament/eid eid]
-       :match/phase-index    (:phase-index match-spec)
-       :match/round-index    (:round-index match-spec)
-       :match/bracket-type   (keyword (or (:bracket-type match-spec) "winners"))
-       :match/player-one-sub (:player-one-sub match-spec)
-       :match/player-two-sub (:player-two-sub match-spec)
-       :match/status         :pending
-       :match/format         (or (:format match-spec) 1)
-       :match/created-at     now
-       :match/updated-at     now}])
-    (match-by-eid conn match-eid)))
+    (d/with-transaction [tx-conn conn]
+      (d/transact!
+       tx-conn
+       [{:match/eid            match-eid
+         :match/tournament     [:tournament/eid eid]
+         :match/phase-index    (:phase-index match-spec)
+         :match/round-index    (:round-index match-spec)
+         :match/bracket-type   (keyword (or (:bracket-type match-spec) "winners"))
+         :match/player-one-sub (:player-one-sub match-spec)
+         :match/player-two-sub (:player-two-sub match-spec)
+         :match/status         :pending
+         :match/format         (or (:format match-spec) 1)
+         :match/created-at     now
+         :match/updated-at     now}])
+      (match-by-eid tx-conn match-eid))))
 
 (defn update-match-result!
   "Mark a match complete with a winner."
   [conn match-eid winner-sub]
-  (dl/transact!
-   conn
-   [{:match/eid        match-eid
-     :match/winner-sub winner-sub
-     :match/status     :complete
-     :match/updated-at (Date.)}])
-  (match-by-eid conn match-eid))
+  (d/with-transaction [tx-conn conn]
+    (d/transact!
+     tx-conn
+     [{:match/eid        match-eid
+       :match/winner-sub winner-sub
+       :match/status     :complete
+       :match/updated-at (Date.)}])
+    (match-by-eid tx-conn match-eid)))
 
 ;;; ─── Check-in mutations ────────────────────────────────────────────────────
 
@@ -431,7 +433,7 @@
   Returns the transaction report; the caller synthesizes the post-write match
   from the pre-write entity it already holds rather than re-reading."
   [conn match-eid {:keys [opens-at closes-at]}]
-  (dl/transact!
+  (d/transact!
    conn
    [{:match/eid                match-eid
      :match/check-in-opens-at  (->date opens-at)
@@ -447,7 +449,7 @@
   (let [attr (case side
                :player-one :match/player-one-checked-at
                :player-two :match/player-two-checked-at)]
-    (dl/transact!
+    (d/transact!
      conn
      [{:match/eid        match-eid
        attr              (->date checked-at)
@@ -459,7 +461,7 @@
   the caller synthesizes the post-write match from the pre-write entity it
   already holds rather than re-reading."
   [conn match-eid lobby-code]
-  (dl/transact!
+  (d/transact!
    conn
    [{:match/eid        match-eid
      :match/lobby-code lobby-code
@@ -487,7 +489,7 @@
                                                                  uploader-local-alliance-index)
                     player-one-draft-eid                (assoc :match-game/player-one-draft [:draft/eid player-one-draft-eid])
                     player-two-draft-eid                (assoc :match-game/player-two-draft [:draft/eid player-two-draft-eid]))]
-     (dl/transact!
+     (d/transact!
       conn
       [{:match/eid match-eid :match/games [game]}])
      {:eid                           game-eid

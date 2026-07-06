@@ -25,7 +25,7 @@
     from an upstream source (per-game seed loaders) omit them.
   - Datalevin is additive at runtime: opening a conn with a superset
     schema only adds the new attributes. Use
-    `datalog.contract/update-schema` at the REPL to apply a change
+    `datalevin.core/update-schema` at the REPL to apply a change
     without restarting the JVM."
   (:require
    [com.devereux-henley.rts-data-access.schema.datalog.ability :as schema.datalog.ability]

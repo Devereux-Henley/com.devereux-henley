@@ -7,7 +7,6 @@
   (:require
    [clojure.test :refer [deftest is testing]]
    [com.devereux-henley.content-negotiation.contract]
-   [com.devereux-henley.datalog.contract]
    [com.devereux-henley.e2e.contract :as e2e]
    [com.devereux-henley.http.contract]
    [com.devereux-henley.resourcekit.contract]

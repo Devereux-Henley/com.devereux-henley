@@ -1,4 +1,4 @@
-(require '[com.devereux-henley.datalog.contract :as datalog])
+(require '[datalevin.core :as d])
 (require '[com.devereux-henley.rts-api.configuration :as config])
 (require '[com.devereux-henley.rts-data.contract :as rts-data])
 (require '[integrant.core :as ig])
@@ -12,7 +12,7 @@
   (let [conn (get system :com.devereux-henley.rts-api.datalog/connection)]
     (rts-data/ensure-datalog-patch datalog-patch-version)
     (doseq [[_ tx-data] (rts-data/load-datalog-seed datalog-patch-version)]
-      (datalog/transact! conn tx-data))
+      (d/transact! conn tx-data))
     (println "Datalevin seeded from patch" datalog-patch-version))
   (println "Dev server started on port 3001")
   (.addShutdownHook (Runtime/getRuntime) (Thread. #(ig/halt! system)))

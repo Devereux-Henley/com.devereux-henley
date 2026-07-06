@@ -1,7 +1,7 @@
 (ns com.devereux-henley.rts-data-access.query.datalog.game
   "Datalevin reads for the game domain."
   (:require
-   [com.devereux-henley.datalog.contract :as dl]
+   [datalevin.core :as d]
    [com.devereux-henley.rts-data-access.schema.datalog.unit-statistics :as schema.us]))
 
 ;;; ─── Pull patterns ─────────────────────────────────────────────────────────
@@ -256,11 +256,11 @@
 (defn games
   "All games, sorted by name."
   [conn]
-  (let [db (dl/db conn)]
-    (->> (dl/q '[:find [(pull ?g pattern) ...]
-                 :in $ pattern
-                 :where [?g :game/eid]]
-               db game-pattern)
+  (let [db (d/db conn)]
+    (->> (d/q '[:find [(pull ?g pattern) ...]
+                :in $ pattern
+                :where [?g :game/eid]]
+              db game-pattern)
          (mapv ->game)
          (sort-by :name)
          vec)))
@@ -268,18 +268,18 @@
 (defn game-by-eid
   "Fetch a game by eid. Returns nil when not found."
   [conn eid]
-  (->game (dl/pull (dl/db conn) game-pattern (dl/lookup-ref :game/eid eid))))
+  (->game (d/pull (d/db conn) game-pattern [:game/eid eid])))
 
 (defn factions-for-game
   "Factions for a game, sorted by name."
   [conn game-eid]
-  (let [db (dl/db conn)]
-    (->> (dl/q '[:find [(pull ?f pattern) ...]
-                 :in $ pattern ?game-eid
-                 :where
-                 [?g :game/eid ?game-eid]
-                 [?f :faction/game ?g]]
-               db faction-pattern game-eid)
+  (let [db (d/db conn)]
+    (->> (d/q '[:find [(pull ?f pattern) ...]
+                :in $ pattern ?game-eid
+                :where
+                [?g :game/eid ?game-eid]
+                [?f :faction/game ?g]]
+              db faction-pattern game-eid)
          (mapv ->faction)
          (sort-by :name)
          vec)))
@@ -287,11 +287,11 @@
 (defn factions
   "Every faction, sorted by name."
   [conn]
-  (let [db (dl/db conn)]
-    (->> (dl/q '[:find [(pull ?f pattern) ...]
-                 :in $ pattern
-                 :where [?f :faction/eid]]
-               db faction-pattern)
+  (let [db (d/db conn)]
+    (->> (d/q '[:find [(pull ?f pattern) ...]
+                :in $ pattern
+                :where [?f :faction/eid]]
+              db faction-pattern)
          (mapv ->faction)
          (sort-by :name)
          vec)))
@@ -299,18 +299,18 @@
 (defn faction-by-eid
   "Fetch a faction by eid. Returns nil when not found."
   [conn eid]
-  (->faction (dl/pull (dl/db conn) faction-pattern (dl/lookup-ref :faction/eid eid))))
+  (->faction (d/pull (d/db conn) faction-pattern [:faction/eid eid])))
 
 (defn units-for-faction
   "Unit summaries for a faction, sorted by `(unit-category-ordinal, name)`."
   [conn faction-eid]
-  (let [db (dl/db conn)]
-    (->> (dl/q '[:find [(pull ?u pattern) ...]
-                 :in $ pattern ?faction-eid
-                 :where
-                 [?f :faction/eid ?faction-eid]
-                 [?u :unit/faction ?f]]
-               db unit-summary-pattern faction-eid)
+  (let [db (d/db conn)]
+    (->> (d/q '[:find [(pull ?u pattern) ...]
+                :in $ pattern ?faction-eid
+                :where
+                [?f :faction/eid ?faction-eid]
+                [?u :unit/faction ?f]]
+              db unit-summary-pattern faction-eid)
          (mapv ->unit-summary)
          (sort-by (juxt :unit-category-ordinal :name))
          vec)))
@@ -318,13 +318,13 @@
 (defn units-for-game
   "Unit summaries for a game."
   [conn game-eid]
-  (let [db (dl/db conn)]
-    (->> (dl/q '[:find [(pull ?u pattern) ...]
-                 :in $ pattern ?game-eid
-                 :where
-                 [?g :game/eid ?game-eid]
-                 [?u :unit/game ?g]]
-               db unit-summary-pattern game-eid)
+  (let [db (d/db conn)]
+    (->> (d/q '[:find [(pull ?u pattern) ...]
+                :in $ pattern ?game-eid
+                :where
+                [?g :game/eid ?game-eid]
+                [?u :unit/game ?g]]
+              db unit-summary-pattern game-eid)
          (mapv ->unit-summary)
          (sort-by (juxt :unit-category-ordinal :name))
          vec)))
@@ -332,11 +332,11 @@
 (defn units
   "Every unit summary in the system."
   [conn]
-  (let [db (dl/db conn)]
-    (->> (dl/q '[:find [(pull ?u pattern) ...]
-                 :in $ pattern
-                 :where [?u :unit/eid]]
-               db unit-summary-pattern)
+  (let [db (d/db conn)]
+    (->> (d/q '[:find [(pull ?u pattern) ...]
+                :in $ pattern
+                :where [?u :unit/eid]]
+              db unit-summary-pattern)
          (mapv ->unit-summary)
          (sort-by (juxt :unit-category-ordinal :name))
          vec)))
@@ -344,23 +344,23 @@
 (defn unit-by-eid
   "Full unit including the decoded `:unit-statistics` document."
   [conn eid]
-  (->unit-detail (dl/pull (dl/db conn) unit-detail-pattern (dl/lookup-ref :unit/eid eid))))
+  (->unit-detail (d/pull (d/db conn) unit-detail-pattern [:unit/eid eid])))
 
 (defn game-mode-by-eid
   "Fetch a game-mode by eid. Returns nil when not found."
   [conn eid]
-  (->game-mode (dl/pull (dl/db conn) game-mode-pattern (dl/lookup-ref :game-mode/eid eid))))
+  (->game-mode (d/pull (d/db conn) game-mode-pattern [:game-mode/eid eid])))
 
 (defn game-modes-for-game
   "Game-modes for a game, sorted by name."
   [conn game-eid]
-  (let [db (dl/db conn)]
-    (->> (dl/q '[:find [(pull ?gm pattern) ...]
-                 :in $ pattern ?game-eid
-                 :where
-                 [?g :game/eid ?game-eid]
-                 [?gm :game-mode/game ?g]]
-               db game-mode-pattern game-eid)
+  (let [db (d/db conn)]
+    (->> (d/q '[:find [(pull ?gm pattern) ...]
+                :in $ pattern ?game-eid
+                :where
+                [?g :game/eid ?game-eid]
+                [?gm :game-mode/game ?g]]
+              db game-mode-pattern game-eid)
          (mapv ->game-mode)
          (sort-by :name)
          vec)))
@@ -368,13 +368,13 @@
 (defn socials-for-game
   "Game social links, sorted by platform name."
   [conn game-eid]
-  (let [db (dl/db conn)]
-    (->> (dl/q '[:find [(pull ?s pattern) ...]
-                 :in $ pattern ?game-eid
-                 :where
-                 [?g :game/eid ?game-eid]
-                 [?s :game-social-link/game ?g]]
-               db social-link-pattern game-eid)
+  (let [db (d/db conn)]
+    (->> (d/q '[:find [(pull ?s pattern) ...]
+                :in $ pattern ?game-eid
+                :where
+                [?g :game/eid ?game-eid]
+                [?s :game-social-link/game ?g]]
+              db social-link-pattern game-eid)
          (mapv ->social)
          (sort-by :platform-name)
          vec)))
@@ -382,13 +382,13 @@
 (defn mounts-for-unit
   "Mounts available to a unit, sorted by name."
   [conn unit-eid]
-  (let [db (dl/db conn)]
-    (->> (dl/q '[:find [(pull ?um pattern) ...]
-                 :in $ pattern ?unit-eid
-                 :where
-                 [?u :unit/eid ?unit-eid]
-                 [?um :unit-mount/unit ?u]]
-               db mount-pattern unit-eid)
+  (let [db (d/db conn)]
+    (->> (d/q '[:find [(pull ?um pattern) ...]
+                :in $ pattern ?unit-eid
+                :where
+                [?u :unit/eid ?unit-eid]
+                [?um :unit-mount/unit ?u]]
+              db mount-pattern unit-eid)
          (mapv ->mount)
          (sort-by :name)
          vec)))
@@ -397,14 +397,14 @@
   "Items available to a unit, sorted by name. Each item carries the
   `:abilities` it grants (name-sorted draft-ability maps) when it has any."
   [conn unit-eid]
-  (let [db (dl/db conn)]
-    (->> (dl/q '[:find [(pull ?i pattern) ...]
-                 :in $ pattern ?unit-eid
-                 :where
-                 [?u :unit/eid ?unit-eid]
-                 [?ui :unit-item/unit ?u]
-                 [?ui :unit-item/item ?i]]
-               db item-with-abilities-pattern unit-eid)
+  (let [db (d/db conn)]
+    (->> (d/q '[:find [(pull ?i pattern) ...]
+                :in $ pattern ?unit-eid
+                :where
+                [?u :unit/eid ?unit-eid]
+                [?ui :unit-item/unit ?u]
+                [?ui :unit-item/item ?i]]
+              db item-with-abilities-pattern unit-eid)
          (mapv ->item)
          (sort-by :name)
          vec)))
@@ -417,12 +417,12 @@
   Returns nil for empty input."
   [conn ability-keys]
   (when (seq ability-keys)
-    (let [results (dl/q '[:find ?ak (pull ?i pattern)
-                          :in $ pattern [?ak ...]
-                          :where
-                          [?a :ability/key ?ak]
-                          [?i :item/abilities ?a]]
-                        (dl/db conn) item-pattern (vec ability-keys))]
+    (let [results (d/q '[:find ?ak (pull ?i pattern)
+                         :in $ pattern [?ak ...]
+                         :where
+                         [?a :ability/key ?ak]
+                         [?i :item/abilities ?a]]
+                       (d/db conn) item-pattern (vec ability-keys))]
       (into {}
             (map (fn [[ak i]] [ak (->item i)]))
             (sort-by (fn [[_ i]] (:item/key i)) #(compare %2 %1) results)))))
@@ -432,23 +432,23 @@
   for an empty input."
   [conn spell-keys]
   (when (seq spell-keys)
-    (let [results (dl/q '[:find [(pull ?s pattern) ...]
-                          :in $ pattern [?key ...]
-                          :where [?s :spell/key ?key]]
-                        (dl/db conn) spell-pattern (vec spell-keys))]
+    (let [results (d/q '[:find [(pull ?s pattern) ...]
+                         :in $ pattern [?key ...]
+                         :where [?s :spell/key ?key]]
+                       (d/db conn) spell-pattern (vec spell-keys))]
       (into {} (map (fn [m] [(:spell/key m) (->spell m)])) results))))
 
 (defn spells-for-lore
   "All spells assigned to a lore (resolved via spell-lore), sorted by name."
   [conn lore-key]
-  (let [db (dl/db conn)]
-    (->> (dl/q '[:find [(pull ?s pattern) ...]
-                 :in $ pattern ?lore-key
-                 :where
-                 [?l :lore/key ?lore-key]
-                 [?sl :spell-lore/lore ?l]
-                 [?sl :spell-lore/spell ?s]]
-               db spell-pattern lore-key)
+  (let [db (d/db conn)]
+    (->> (d/q '[:find [(pull ?s pattern) ...]
+                :in $ pattern ?lore-key
+                :where
+                [?l :lore/key ?lore-key]
+                [?sl :spell-lore/lore ?l]
+                [?sl :spell-lore/spell ?s]]
+              db spell-pattern lore-key)
          (mapv ->spell)
          (sort-by :name)
          vec)))
@@ -458,10 +458,10 @@
   for an empty input."
   [conn ability-keys]
   (when (seq ability-keys)
-    (let [results (dl/q '[:find [(pull ?a pattern) ...]
-                          :in $ pattern [?key ...]
-                          :where [?a :ability/key ?key]]
-                        (dl/db conn) ability-pattern (vec ability-keys))]
+    (let [results (d/q '[:find [(pull ?a pattern) ...]
+                         :in $ pattern [?key ...]
+                         :where [?a :ability/key ?key]]
+                       (d/db conn) ability-pattern (vec ability-keys))]
       (into {} (map (fn [m] [(:ability/key m) (->ability m)])) results))))
 
 (defn unit-level-costs
@@ -469,10 +469,10 @@
   [conn]
   (into (sorted-map)
         (map (juxt :level identity))
-        (->> (dl/q '[:find [(pull ?c pattern) ...]
-                     :in $ pattern
-                     :where [?c :unit-level-cost/level]]
-                   (dl/db conn) unit-level-cost-pattern)
+        (->> (d/q '[:find [(pull ?c pattern) ...]
+                    :in $ pattern
+                    :where [?c :unit-level-cost/level]]
+                  (d/db conn) unit-level-cost-pattern)
              (map ->unit-level-cost))))
 
 (def ^:private unit-resolution-pattern
@@ -514,11 +514,11 @@
   (let [keys-vec (vec (distinct (filter some? unit-keys)))]
     (if (empty? keys-vec)
       []
-      (let [db           (dl/db conn)
-            pulled       (dl/q '[:find [(pull ?u pattern) ...]
-                                 :in $ pattern [?key ...]
-                                 :where [?u :unit/key ?key]]
-                               db unit-resolution-pattern keys-vec)
+      (let [db           (d/db conn)
+            pulled       (d/q '[:find [(pull ?u pattern) ...]
+                                :in $ pattern [?key ...]
+                                :where [?u :unit/key ?key]]
+                              db unit-resolution-pattern keys-vec)
             base-rows    (mapv ->unit-resolution-row pulled)
             family-pairs (->> base-rows
                               (keep (fn [r] (when (and (:family-name r) (::faction-id r))
@@ -526,12 +526,12 @@
                               distinct
                               vec)
             counts       (when (seq family-pairs)
-                           (dl/q '[:find ?fn ?fid (count ?u)
-                                   :in $ [[?fn ?fid] ...]
-                                   :where
-                                   [?u :unit/family-name ?fn]
-                                   [?u :unit/faction ?fid]]
-                                 db family-pairs))
+                           (d/q '[:find ?fn ?fid (count ?u)
+                                  :in $ [[?fn ?fid] ...]
+                                  :where
+                                  [?u :unit/family-name ?fn]
+                                  [?u :unit/faction ?fid]]
+                                db family-pairs))
             count-map    (into {} (map (fn [[fn fid c]] [[fn fid] c])) counts)]
         (mapv (fn [r]
                 (-> r
@@ -565,11 +565,11 @@
   (let [keys-vec (vec (distinct (filter some? subfaction-keys)))]
     (if (empty? keys-vec)
       []
-      (let [db (dl/db conn)]
-        (->> (dl/q '[:find [(pull ?s pattern) ...]
-                     :in $ pattern [?key ...]
-                     :where [?s :subfaction/key ?key]]
-                   db subfaction-resolution-pattern keys-vec)
+      (let [db (d/db conn)]
+        (->> (d/q '[:find [(pull ?s pattern) ...]
+                    :in $ pattern [?key ...]
+                    :where [?s :subfaction/key ?key]]
+                  db subfaction-resolution-pattern keys-vec)
              (mapv ->subfaction-resolution-row))))))
 
 (defn family-variants-by-eid
@@ -577,28 +577,28 @@
   Single-variant families return one row; the draft unit panel uses
   the count to decide whether to render the mark/lore selectors."
   [conn unit-eid]
-  (let [db          (dl/db conn)
-        seed        (dl/pull db
-                             '[:unit/family-name
-                               {:unit/faction [:db/id]}]
-                             (dl/lookup-ref :unit/eid unit-eid))
+  (let [db          (d/db conn)
+        seed        (d/pull db
+                            '[:unit/family-name
+                              {:unit/faction [:db/id]}]
+                            [:unit/eid unit-eid])
         family-name (:unit/family-name seed)
         faction-id  (some-> seed :unit/faction :db/id)]
     (when (and family-name faction-id)
-      (let [variants  (dl/q '[:find [(pull ?u pattern) ...]
-                              :in $ pattern ?family-name ?faction-id
-                              :where
-                              [?u :unit/family-name ?family-name]
-                              [?u :unit/faction ?faction-id]]
-                            db family-variant-pattern family-name faction-id)
+      (let [variants  (d/q '[:find [(pull ?u pattern) ...]
+                             :in $ pattern ?family-name ?faction-id
+                             :where
+                             [?u :unit/family-name ?family-name]
+                             [?u :unit/faction ?faction-id]]
+                           db family-variant-pattern family-name faction-id)
             lore-keys (->> variants (keep :unit/lore) set)
             lore-rows (when (seq lore-keys)
-                        (dl/q '[:find ?key ?name
-                                :in $ [?key ...]
-                                :where
-                                [?l :lore/key ?key]
-                                [?l :lore/name ?name]]
-                              db (vec lore-keys)))
+                        (d/q '[:find ?key ?name
+                               :in $ [?key ...]
+                               :where
+                               [?l :lore/key ?key]
+                               [?l :lore/name ?name]]
+                             db (vec lore-keys)))
             key->name (into {} lore-rows)]
         (->> variants
              (mapv #(->family-variant % key->name))

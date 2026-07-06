@@ -4,7 +4,7 @@
   side per player whose draft has a faction; a win is when the match-game's
   `winner-sub` matches that side's match player-sub."
   (:require
-   [com.devereux-henley.datalog.contract :as dl]))
+   [datalevin.core :as d]))
 
 (def ^:private standings-pattern
   [:match-game/winner-sub
@@ -49,13 +49,13 @@
   the in-scope scored match-games against the `?scope-eid` input)."
   [conn scope-eid scope-clauses]
   (->standings
-   (dl/q (into '[:find [(pull ?mg pattern) ...]
-                 :in $ pattern ?scope-eid
-                 :where [?mg :match-game/winner-sub _]
-                 [?m :match/games ?mg]
-                 [?m :match/tournament ?t]]
-               scope-clauses)
-         (dl/db conn) standings-pattern scope-eid)))
+   (d/q (into '[:find [(pull ?mg pattern) ...]
+                :in $ pattern ?scope-eid
+                :where [?mg :match-game/winner-sub _]
+                [?m :match/games ?mg]
+                [?m :match/tournament ?t]]
+              scope-clauses)
+        (d/db conn) standings-pattern scope-eid)))
 
 (defn faction-standings-for-game
   "Faction standings across every scored match-game in the game's tournaments."
