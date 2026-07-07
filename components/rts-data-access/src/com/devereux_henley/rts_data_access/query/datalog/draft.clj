@@ -2,7 +2,7 @@
   "Datalevin reads and mutations for the draft domain."
   (:require
    [clojure.set :as set]
-   [com.devereux-henley.datalog.contract :as dl])
+   [datalevin.core :as d])
   (:import
    [java.util Date]))
 
@@ -77,16 +77,16 @@
 (defn draft-by-eid
   "Fetch a draft by eid. Returns nil when not found."
   [conn eid]
-  (->draft (dl/pull (dl/db conn) draft-pattern (dl/lookup-ref :draft/eid eid))))
+  (->draft (d/pull (d/db conn) draft-pattern [:draft/eid eid])))
 
 (defn drafts-for-player
   "All drafts a player owns, sorted updated-at desc (eid tiebreak)."
   [conn player-sub]
-  (let [db (dl/db conn)]
-    (->> (dl/q '[:find [(pull ?d pattern) ...]
-                 :in $ pattern ?player-sub
-                 :where [?d :draft/player-sub ?player-sub]]
-               db draft-pattern player-sub)
+  (let [db (d/db conn)]
+    (->> (d/q '[:find [(pull ?d pattern) ...]
+                :in $ pattern ?player-sub
+                :where [?d :draft/player-sub ?player-sub]]
+              db draft-pattern player-sub)
          (mapv ->draft)
          (sort-by (juxt (comp - (fnil #(.getTime ^Date %) (Date. 0)) :updated-at) :eid))
          vec)))
@@ -95,15 +95,15 @@
   "Drafts a player owns, scoped through the game-mode's parent game ref.
   Sorted updated-at desc."
   [conn player-sub game-eid]
-  (let [db (dl/db conn)]
-    (->> (dl/q '[:find [(pull ?d pattern) ...]
-                 :in $ pattern ?player-sub ?game-eid
-                 :where
-                 [?d :draft/player-sub ?player-sub]
-                 [?d :draft/game-mode ?gm]
-                 [?gm :game-mode/game ?g]
-                 [?g :game/eid ?game-eid]]
-               db draft-pattern player-sub game-eid)
+  (let [db (d/db conn)]
+    (->> (d/q '[:find [(pull ?d pattern) ...]
+                :in $ pattern ?player-sub ?game-eid
+                :where
+                [?d :draft/player-sub ?player-sub]
+                [?d :draft/game-mode ?gm]
+                [?gm :game-mode/game ?g]
+                [?g :game/eid ?game-eid]]
+              db draft-pattern player-sub game-eid)
          (mapv ->draft)
          (sort-by (juxt (comp - (fnil #(.getTime ^Date %) (Date. 0)) :updated-at) :eid))
          vec)))
@@ -111,28 +111,28 @@
 (defn draft-state-by-eid
   "Sectioned army state for a draft."
   [conn draft-eid]
-  (let [pulled (dl/pull (dl/db conn)
-                        '[{:draft/entries [:draft-entry/eid :draft-entry/section
-                                           :draft-entry/ordinal :draft-entry/mount
-                                           :draft-entry/lore :draft-entry/level
-                                           :draft-entry/abilities :draft-entry/spells
-                                           :draft-entry/items :draft-entry/total-cost
-                                           :draft-entry/engine-cost
-                                           {:draft-entry/unit [:unit/eid]}]}]
-                        (dl/lookup-ref :draft/eid draft-eid))]
+  (let [pulled (d/pull (d/db conn)
+                       '[{:draft/entries [:draft-entry/eid :draft-entry/section
+                                          :draft-entry/ordinal :draft-entry/mount
+                                          :draft-entry/lore :draft-entry/level
+                                          :draft-entry/abilities :draft-entry/spells
+                                          :draft-entry/items :draft-entry/total-cost
+                                          :draft-entry/engine-cost
+                                          {:draft-entry/unit [:unit/eid]}]}]
+                       [:draft/eid draft-eid])]
     (entries->state (mapv ->entry (:draft/entries pulled)))))
 
 (defn draft-entry-by-eid
   "Fetch a single entry by eid, or nil when not found."
   [conn entry-eid]
-  (->entry (dl/pull (dl/db conn) entry-pattern (dl/lookup-ref :draft-entry/eid entry-eid))))
+  (->entry (d/pull (d/db conn) entry-pattern [:draft-entry/eid entry-eid])))
 
 (defn draft-entry-section-and-ordinal
   "Where an entry sits — its section + ordinal. Avoids re-reading the
   full draft state when validation only needs the placement."
   [conn entry-eid]
-  (let [m (dl/pull (dl/db conn) [:draft-entry/section :draft-entry/ordinal]
-                   (dl/lookup-ref :draft-entry/eid entry-eid))]
+  (let [m (d/pull (d/db conn) [:draft-entry/section :draft-entry/ordinal]
+                  [:draft-entry/eid entry-eid])]
     (when (:draft-entry/section m)
       {:section (:draft-entry/section m)
        :ordinal (:draft-entry/ordinal m)})))
@@ -150,13 +150,13 @@
   any `:match-game/player-one-draft` / `:match-game/player-two-draft` ref makes
   the draft read-only."
   [conn draft-eid]
-  (let [results (dl/q '[:find [(pull ?mg pattern) ...]
-                        :in $ pattern ?draft-eid
-                        :where
-                        [?d :draft/eid ?draft-eid]
-                        (or [?mg :match-game/player-one-draft ?d]
-                            [?mg :match-game/player-two-draft ?d])]
-                      (dl/db conn) lock-info-pattern draft-eid)]
+  (let [results (d/q '[:find [(pull ?mg pattern) ...]
+                       :in $ pattern ?draft-eid
+                       :where
+                       [?d :draft/eid ?draft-eid]
+                       (or [?mg :match-game/player-one-draft ?d]
+                           [?mg :match-game/player-two-draft ?d])]
+                     (d/db conn) lock-info-pattern draft-eid)]
     (when-let [mg (first (sort-by :match-game/created-at results))]
       (let [match      (first (:match/_games mg))
             tournament (:match/tournament match)]
@@ -173,27 +173,28 @@
   when the caller doesn't differentiate."
   [conn {:keys [eid name player-sub game-mode-eid faction-eid created-by-sub]}]
   (let [created-at (now-date)]
-    (dl/transact!
-     conn
-     [(cond-> {:draft/eid            eid
-               :draft/player-sub     player-sub
-               :draft/game-mode      [:game-mode/eid game-mode-eid]
-               :draft/faction        [:faction/eid faction-eid]
-               :draft/version        1
-               :draft/created-by-sub (or created-by-sub player-sub)
-               :draft/created-at     created-at
-               :draft/updated-at     created-at}
-        name (assoc :draft/name name))])
-    (draft-by-eid conn eid)))
+    (d/with-transaction [tx-conn conn]
+      (d/transact!
+       tx-conn
+       [(cond-> {:draft/eid            eid
+                 :draft/player-sub     player-sub
+                 :draft/game-mode      [:game-mode/eid game-mode-eid]
+                 :draft/faction        [:faction/eid faction-eid]
+                 :draft/version        1
+                 :draft/created-by-sub (or created-by-sub player-sub)
+                 :draft/created-at     created-at
+                 :draft/updated-at     created-at}
+          name (assoc :draft/name name))])
+      (draft-by-eid tx-conn eid))))
 
 (defn update-draft-name!
   "Update a draft's mutable name, bumping version + updated-at. Passing
   `nil` retracts the stored name so the faction+date default renders
   again."
   [conn draft-eid name]
-  (let [db            (dl/db conn)
-        current       (dl/pull db [:draft/version :draft/name]
-                               (dl/lookup-ref :draft/eid draft-eid))
+  (let [db            (d/db conn)
+        current       (d/pull db [:draft/version :draft/name]
+                              [:draft/eid draft-eid])
         next-version  (inc (or (:draft/version current) 1))
         existing-name (:draft/name current)
         retract-ops   (when (and existing-name (nil? name))
@@ -202,20 +203,19 @@
                                :draft/version    next-version
                                :draft/updated-at (now-date)}
                         name (assoc :draft/name name))]
-    (dl/transact! conn (cons upsert retract-ops))
-    (draft-by-eid conn draft-eid)))
+    (d/with-transaction [tx-conn conn] (d/transact! tx-conn (cons upsert retract-ops)) (draft-by-eid tx-conn draft-eid))))
 
 (defn- next-ordinal
   "Compute the next ordinal for a section, defaulting to 0 when empty."
   [conn draft-eid section]
-  (let [max-o (dl/q '[:find (max ?o) .
-                      :in $ ?draft-eid ?section
-                      :where
-                      [?d :draft/eid ?draft-eid]
-                      [?d :draft/entries ?e]
-                      [?e :draft-entry/section ?section]
-                      [?e :draft-entry/ordinal ?o]]
-                    (dl/db conn) draft-eid section)]
+  (let [max-o (d/q '[:find (max ?o) .
+                     :in $ ?draft-eid ?section
+                     :where
+                     [?d :draft/eid ?draft-eid]
+                     [?d :draft/entries ?e]
+                     [?e :draft-entry/section ?section]
+                     [?e :draft-entry/ordinal ?o]]
+                   (d/db conn) draft-eid section)]
     (if max-o (inc max-o) 0)))
 
 (defn- entry-tx
@@ -244,14 +244,14 @@
   [conn draft-eid {:keys [section] :as entry-spec}]
   (let [ordinal (next-ordinal conn draft-eid section)
         entry   (entry-tx (assoc entry-spec :ordinal ordinal))]
-    (dl/transact!
+    (d/transact!
      conn
      [{:draft/eid        draft-eid
        :draft/entries    [entry]
        :draft/updated-at (now-date)
        :draft/version    (inc (or (:draft/version
-                                   (dl/pull (dl/db conn) [:draft/version]
-                                            (dl/lookup-ref :draft/eid draft-eid)))
+                                   (d/pull (d/db conn) [:draft/version]
+                                           [:draft/eid draft-eid]))
                                   1))}])))
 
 (defn add-entries!
@@ -262,28 +262,28 @@
   caller, one version bump, one updated-at touch."
   [conn draft-eid entries]
   (when (seq entries)
-    (dl/transact!
+    (d/transact!
      conn
      [{:draft/eid        draft-eid
        :draft/entries    (mapv entry-tx entries)
        :draft/updated-at (now-date)
        :draft/version    (inc (or (:draft/version
-                                   (dl/pull (dl/db conn) [:draft/version]
-                                            (dl/lookup-ref :draft/eid draft-eid)))
+                                   (d/pull (d/db conn) [:draft/version]
+                                           [:draft/eid draft-eid]))
                                   1))}])))
 
 (defn remove-entry!
   "Retract an entry by eid. The cardinality-many link from the parent's
   `:draft/entries` drops out as a side effect of `:db/retractEntity`."
   [conn draft-eid entry-eid]
-  (dl/transact!
+  (d/transact!
    conn
-   [[:db/retractEntity (dl/lookup-ref :draft-entry/eid entry-eid)]
+   [[:db/retractEntity [:draft-entry/eid entry-eid]]
     {:draft/eid        draft-eid
      :draft/updated-at (now-date)
      :draft/version    (inc (or (:draft/version
-                                 (dl/pull (dl/db conn) [:draft/version]
-                                          (dl/lookup-ref :draft/eid draft-eid)))
+                                 (d/pull (d/db conn) [:draft/version]
+                                         [:draft/eid draft-eid]))
                                 1))}]))
 
 (defn- cardinality-many-diff-ops
@@ -306,12 +306,12 @@
   pass; cardinality-one upserts auto-replace; `:section`/`:ordinal`
   can be re-pinned to move the entry between sections."
   [conn draft-eid entry-eid new-attrs]
-  (let [db          (dl/db conn)
-        current     (dl/pull db
-                             [:draft-entry/abilities :draft-entry/spells :draft-entry/items
-                              :draft-entry/mount :draft-entry/lore]
-                             (dl/lookup-ref :draft-entry/eid entry-eid))
-        ref         (dl/lookup-ref :draft-entry/eid entry-eid)
+  (let [db          (d/db conn)
+        current     (d/pull db
+                            [:draft-entry/abilities :draft-entry/spells :draft-entry/items
+                             :draft-entry/mount :draft-entry/lore]
+                            [:draft-entry/eid entry-eid])
+        ref         [:draft-entry/eid entry-eid]
         cm-ops      (concat
                      (cardinality-many-diff-ops ref :draft-entry/abilities
                                                 (:draft-entry/abilities current)
@@ -331,13 +331,13 @@
                        [[:db/retract ref :draft-entry/lore (:draft-entry/lore current)]]))
         upsert      (entry-tx (merge (dissoc new-attrs :abilities :spells :items)
                                      {:entry-eid entry-eid}))]
-    (dl/transact!
+    (d/transact!
      conn
      (concat cm-ops co-retracts
              [upsert
               {:draft/eid        draft-eid
                :draft/updated-at (now-date)
                :draft/version    (inc (or (:draft/version
-                                           (dl/pull db [:draft/version]
-                                                    (dl/lookup-ref :draft/eid draft-eid)))
+                                           (d/pull db [:draft/version]
+                                                   [:draft/eid draft-eid]))
                                           1))}]))))

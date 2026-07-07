@@ -3,7 +3,7 @@
   `:season/*` pull results into the unqualified-key shape the
   rts-domain handlers + resource schemas expect."
   (:require
-   [com.devereux-henley.datalog.contract :as dl])
+   [datalevin.core :as d])
   (:import
    [java.time Instant]
    [java.util Date]))
@@ -55,16 +55,16 @@
 (defn season-by-eid
   "Fetch a season by eid. Returns nil when not found."
   [conn eid]
-  (->season (dl/pull (dl/db conn) season-pattern (dl/lookup-ref :season/eid eid))))
+  (->season (d/pull (d/db conn) season-pattern [:season/eid eid])))
 
 (defn seasons
   "All seasons, sorted by league name then ordinal — matches the legacy
   SQL ordering."
   [conn]
-  (->> (dl/q '[:find [(pull ?s pattern) ...]
-               :in $ pattern
-               :where [?s :season/eid _]]
-             (dl/db conn) season-pattern)
+  (->> (d/q '[:find [(pull ?s pattern) ...]
+              :in $ pattern
+              :where [?s :season/eid _]]
+            (d/db conn) season-pattern)
        (sort-by (juxt (fn [m] (some-> m :season/league :league/name))
                       :season/ordinal))
        (mapv ->season)))
@@ -72,12 +72,12 @@
 (defn seasons-for-league
   "Seasons belonging to a league, sorted by ordinal."
   [conn league-eid]
-  (->> (dl/q '[:find [(pull ?s pattern) ...]
-               :in $ pattern ?league-eid
-               :where
-               [?l :league/eid ?league-eid]
-               [?s :season/league ?l]]
-             (dl/db conn) season-pattern league-eid)
+  (->> (d/q '[:find [(pull ?s pattern) ...]
+              :in $ pattern ?league-eid
+              :where
+              [?l :league/eid ?league-eid]
+              [?s :season/league ?l]]
+            (d/db conn) season-pattern league-eid)
        (sort-by :season/ordinal)
        (mapv ->season)))
 
@@ -89,12 +89,12 @@
   between transacted UTC instants and a query-time `now`."
   [conn league-eid]
   (let [now-ms (System/currentTimeMillis)]
-    (->> (dl/q '[:find [(pull ?s pattern) ...]
-                 :in $ pattern ?league-eid
-                 :where
-                 [?l :league/eid ?league-eid]
-                 [?s :season/league ?l]]
-               (dl/db conn) season-pattern league-eid)
+    (->> (d/q '[:find [(pull ?s pattern) ...]
+                :in $ pattern ?league-eid
+                :where
+                [?l :league/eid ?league-eid]
+                [?s :season/league ?l]]
+              (d/db conn) season-pattern league-eid)
          (filter (fn [m] (when-let [end (:season/end-at m)]
                            (>= (epoch-ms end) now-ms))))
          (sort-by (comp - :season/ordinal))
@@ -106,13 +106,13 @@
   seasons, so the handler doesn't have to special-case the empty
   result."
   [conn league-eid]
-  (let [m (dl/q '[:find (max ?o) .
-                  :in $ ?league-eid
-                  :where
-                  [?l :league/eid ?league-eid]
-                  [?s :season/league ?l]
-                  [?s :season/ordinal ?o]]
-                (dl/db conn) league-eid)]
+  (let [m (d/q '[:find (max ?o) .
+                 :in $ ?league-eid
+                 :where
+                 [?l :league/eid ?league-eid]
+                 [?s :season/league ?l]
+                 [?s :season/ordinal ?o]]
+               (d/db conn) league-eid)]
     {:max-ordinal (or m 0)}))
 
 ;;; ─── Mutations ────────────────────────────────────────────────────────────
@@ -143,5 +143,4 @@
                      :season/created-at now
                      :season/updated-at now}
               name (assoc :season/name name))]
-    (dl/transact! conn [tx])
-    (season-by-eid conn eid)))
+    (d/with-transaction [tx-conn conn] (d/transact! tx-conn [tx]) (season-by-eid tx-conn eid))))

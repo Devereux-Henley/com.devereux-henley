@@ -1,7 +1,7 @@
 (ns com.devereux-henley.rts-data-access.query.datalog.social-media
   "Datalevin reads for the social-media domain."
   (:require
-   [com.devereux-henley.datalog.contract :as dl]))
+   [datalevin.core :as d]))
 
 (def ^:private platform-pattern
   [:social-media-platform/eid
@@ -20,4 +20,4 @@
 (defn platform-by-eid
   "Fetch a social-media platform by eid. Returns nil when not found."
   [conn eid]
-  (->platform (dl/pull (dl/db conn) platform-pattern (dl/lookup-ref :social-media-platform/eid eid))))
+  (->platform (d/pull (d/db conn) platform-pattern [:social-media-platform/eid eid])))

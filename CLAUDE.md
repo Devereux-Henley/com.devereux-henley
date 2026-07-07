@@ -140,10 +140,12 @@ Every resource schema follows the same shape so that `handle-fetch-response` / `
 
 **Datalog reads and writes.** Storage is a Datalevin (LMDB) store. Per-domain pull patterns and query/mutation functions live in `rts-data-access` under `query/datalog/<domain>.clj`; attribute schemas live under `schema/datalog/<domain>.clj` and are merged into the contract's `datalog-schema`. See `docs/database.md`.
 
-**IMPORTANT — domain and web code must never require `datalevin.core` directly.** Everything goes through the data-access layer, which itself uses only the `datalog.contract` wrappers (`q`, `db`, `pull`, `entity`, `lookup-ref`, `transact!`); the only namespaces touching `datalevin.core` are the `datalog` component and the rts-api base's connection key. Conventions:
-- Snapshot the db once at the top of a read fn with `datalog.contract/db` and run every query in that fn against the snapshot, so multi-step reads see a consistent view
+**IMPORTANT — Datalevin access is confined to the data-access layer.** Domain and web code call `rts-data-access.contract`, never Datalevin. Inside `rts-data-access` (and the rts-api base's connection key / dev seed scripts), `datalevin.core` is used directly, aliased as `d`. Conventions:
+- Snapshot the db once at the top of a read fn with `(d/db conn)` and run every query in that fn against the snapshot, so multi-step reads see a consistent view
+- A lookup ref is the literal vector `[:<domain>/eid uuid]` (every domain has a `:db.unique/identity` eid attribute)
 - Read fns flatten pull results into the flat `*-eid` shape handlers expect (ref sub-maps become `:game-eid`, `:faction-eid`, …)
 - `:db.type/instant` attributes require `java.util.Date`, not `java.time.Instant` — coerce at the data-access boundary in every mutation fn
+- A mutation that reads back its own write must wrap the `transact!` and the read in one `(d/with-transaction [tx-conn conn] …)` — pull-by-lookup-ref immediately after a write otherwise races concurrent writers and throws from Datalevin's `entid` resolution
 
 ## Adding a new resource (checklist)
 

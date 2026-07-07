@@ -5,7 +5,7 @@
   authoring EDN ⊕ RPFM data) and committed.
 
   This namespace deliberately knows nothing about Datalevin — callers
-  pass the returned tx-data to `datalog.contract/transact!` themselves.
+  pass the returned tx-data to `datalevin.core/transact!` themselves.
   That keeps `rts-data` free of a Datalevin runtime dependency for
   builds that don't use it."
   (:require
