@@ -6,7 +6,7 @@
    [com.devereux-henley.rts-domain.handlers.replay :as handlers.replay]
    [jsonista.core :as jsonista])
   (:import
-   [java.util UUID]))
+   [java.util Date UUID]))
 
 ;; The submit flow auto-creates one draft per side per game from the parsed
 ;; replay; the data-access fns it pulls in are defaulted here to safe
@@ -203,7 +203,7 @@
         (is (= 2962 (:engine-cost main-entry))
             ":engine-cost preserves the parser-emitted true cost for audit")))))
 
-(deftest record-game-persists-and-completes-bo1
+(deftest record-game-persists-pending-without-advancing
   (let [stored-replays  (atom [])
         stored-games    (atom [])
         stored-drafts   (atom [])
@@ -216,12 +216,16 @@
                                                               (swap! stored-replays conj spec)
                                                               spec)
                   data-access.contract/create-game!         (fn [_ _meid game-index winner-sub opts]
-                                                              (let [g (merge {:game-index game-index
+                                                              (let [g (merge {:eid        (UUID/randomUUID)
+                                                                              :game-index game-index
                                                                               :winner-sub winner-sub
+                                                                              :status     :pending-confirmation
                                                                               :replay-eid (:replay-eid opts)}
                                                                              (select-keys opts
                                                                                           [:player-one-draft-eid
-                                                                                           :player-two-draft-eid]))]
+                                                                                           :player-two-draft-eid
+                                                                                           :submitted-by-sub
+                                                                                           :confirm-deadline]))]
                                                                 (swap! stored-games conj g)
                                                                 g))
                   data-access.contract/update-match-result! (fn [_ _ winner] (reset! match-completed winner))
@@ -244,13 +248,19 @@
         (testing "one replay row persisted"
           (is (= 1 (count @stored-replays)))
           (is (= "sigmar_42" (-> @stored-replays first :uploaded-by-sub))))
-        (testing "one match_game row persisted"
+        (testing "one match_game row persisted as pending-confirmation"
           (is (= 1 (count @stored-games)))
-          (is (uuid? (-> @stored-games first :replay-eid))))
-        (testing "Bo1 winner crowned immediately"
-          (is (= "sigmar_42" @match-completed))
+          (is (uuid? (-> @stored-games first :replay-eid)))
+          (is (= :pending-confirmation (-> @stored-games first :status)))
+          (is (= "sigmar_42" (-> @stored-games first :submitted-by-sub)))
+          (is (some? (-> @stored-games first :confirm-deadline))))
+        (testing "match does NOT advance on submit — it awaits confirmation"
+          (is (nil? @match-completed) "no match completion on submit")
           (is (= "sigmar_42" (:winner-sub result)))
-          (is (true? (:match-complete? result))))
+          (is (true? (:awaiting-confirmation? result)))
+          (is (some? (:confirm-deadline result)))
+          (is (uuid? (:game-eid result)))
+          (is (not (contains? result :match-complete?))))
         (testing "auto-creates one draft per side"
           (is (= 2 (count @stored-drafts))
               "Bo1 with 1 game → 2 drafts (one per side)")
@@ -260,3 +270,114 @@
           (is (= {emp-faction-eid 1 chd-faction-eid 1}
                  (frequencies (map :faction-eid @stored-drafts)))
               "factions resolved from parsed faction_key per alliance"))))))
+
+;; ─── confirm-game / dispute-game / auto-settle ─────────────────────────────
+
+(def ^:private bo3-match (assoc bo1-match :format 3))
+
+(def ^:private game-eid (UUID/fromString "00000000-0000-4000-8000-0000000000aa"))
+
+(defn- pending-game
+  "A submitted-but-unconfirmed game: winner sigmar_42 uploaded it, so runemaster
+  is the participant who must confirm or dispute."
+  [& {:as overrides}]
+  (merge {:eid              game-eid
+          :match-eid        match-eid
+          :game-index       0
+          :status           :pending-confirmation
+          :winner-sub       "sigmar_42"
+          :submitted-by-sub "sigmar_42"}
+         overrides))
+
+(deftest confirm-game-completes-bo1-on-loser-confirm
+  (let [confirmed (atom nil)
+        completed (atom nil)]
+    (with-redefs [data-access.contract/match-by-eid         (fn [_ _] bo1-match)
+                  data-access.contract/match-game-by-eid    (fn [_ _] (pending-game))
+                  data-access.contract/confirm-game!        (fn [_ geid sub _at]
+                                                              (reset! confirmed [geid sub])
+                                                              (pending-game :status :confirmed :confirmed-by-sub sub))
+                  data-access.contract/games-for-match      (fn [_ _] [(pending-game :status :confirmed)])
+                  data-access.contract/update-match-result! (fn [_ _ w] (reset! completed w))]
+      (let [r (handlers.replay/confirm-game deps match-eid game-eid "runemaster")]
+        (is (= :match-game/confirmed (:type r)))
+        (is (= [game-eid "runemaster"] @confirmed))
+        (is (true? (:match-complete? r)))
+        (is (= "sigmar_42" (:match-winner r)))
+        (is (= "sigmar_42" @completed) "match completed with the clinching winner")))))
+
+(deftest confirm-game-rejects-submitter-self-confirm
+  (with-redefs [data-access.contract/match-by-eid      (fn [_ _] bo1-match)
+                data-access.contract/match-game-by-eid (fn [_ _] (pending-game))]
+    (let [r (handlers.replay/confirm-game deps match-eid game-eid "sigmar_42")]
+      (is (= :match-record/error (:type r)))
+      (is (re-find #"submitted a game cannot" (:message r))))))
+
+(deftest confirm-game-rejects-non-participant
+  (with-redefs [data-access.contract/match-by-eid      (fn [_ _] bo1-match)
+                data-access.contract/match-game-by-eid (fn [_ _] (pending-game))]
+    (let [r (handlers.replay/confirm-game deps match-eid game-eid "stranger")]
+      (is (= :match-record/error (:type r)))
+      (is (re-find #"match participant" (:message r))))))
+
+(deftest confirm-game-rejects-already-settled
+  (with-redefs [data-access.contract/match-by-eid      (fn [_ _] bo1-match)
+                data-access.contract/match-game-by-eid (fn [_ _] (pending-game :status :confirmed))]
+    (let [r (handlers.replay/confirm-game deps match-eid game-eid "runemaster")]
+      (is (= :match-record/error (:type r)))
+      (is (re-find #"not awaiting confirmation" (:message r))))))
+
+(deftest confirm-game-does-not-complete-when-not-clinched
+  (let [completed (atom nil)]
+    (with-redefs [data-access.contract/match-by-eid         (fn [_ _] bo3-match)
+                  data-access.contract/match-game-by-eid    (fn [_ _] (pending-game))
+                  data-access.contract/confirm-game!        (fn [_ _ _ _] (pending-game :status :confirmed))
+                  data-access.contract/games-for-match      (fn [_ _] [(pending-game :status :confirmed)])
+                  data-access.contract/update-match-result! (fn [_ _ w] (reset! completed w))]
+      (let [r (handlers.replay/confirm-game deps match-eid game-eid "runemaster")]
+        (is (= :match-game/confirmed (:type r)))
+        (is (false? (:match-complete? r)))
+        (is (nil? @completed) "one win in a Bo3 does not clinch")))))
+
+(deftest dispute-game-opens-ticket-and-pauses-series
+  (let [disputed    (atom nil)
+        completed   (atom nil)
+        dispute-eid (UUID/randomUUID)]
+    (with-redefs [data-access.contract/match-by-eid         (fn [_ _] bo3-match)
+                  data-access.contract/match-game-by-eid    (fn [_ _] (pending-game))
+                  data-access.contract/games-for-match      (fn [_ _] [(pending-game)])
+                  data-access.contract/create-dispute!      (fn [_ spec]
+                                                              {:eid          dispute-eid
+                                                               :status       "open"
+                                                               :kind         (:kind spec)
+                                                               :reporter-sub (:reporter-sub spec)})
+                  data-access.contract/dispute-game!        (fn [_ geid]
+                                                              (reset! disputed geid)
+                                                              (pending-game :status :disputed))
+                  data-access.contract/update-match-result! (fn [_ _ w] (reset! completed w))]
+      (let [r (handlers.replay/dispute-game
+               deps {:match-eid    match-eid    :game-eid game-eid
+                     :reporter-sub "runemaster" :detail   "wrong winner detected"})]
+        (is (= :match-game/disputed (:type r)))
+        (is (= dispute-eid (:dispute-eid r)))
+        (is (= game-eid @disputed) "the game is marked disputed")
+        (is (nil? @completed) "disputing does not advance the series")))))
+
+(deftest settle-expired-confirmations-settles-only-lapsed
+  (let [confirms  (atom [])
+        now-ms    (System/currentTimeMillis)
+        g-expired (UUID/randomUUID)
+        g-fresh   (UUID/randomUUID)]
+    (with-redefs [data-access.contract/match-by-eid         (fn [_ _] bo3-match)
+                  data-access.contract/games-for-match      (fn [_ _]
+                                                              [{:eid              g-expired                :match-eid  match-eid
+                                                                :status           :pending-confirmation    :winner-sub "sigmar_42"
+                                                                :confirm-deadline (Date. (- now-ms 60000))}
+                                                               {:eid              g-fresh                   :match-eid  match-eid
+                                                                :status           :pending-confirmation     :winner-sub "sigmar_42"
+                                                                :confirm-deadline (Date. (+ now-ms 600000))}])
+                  data-access.contract/confirm-game!        (fn [_ geid sub _at] (swap! confirms conj [geid sub]) nil)
+                  data-access.contract/update-match-result! (fn [_ _ _] nil)]
+      (let [n (handlers.replay/settle-expired-confirmations! deps match-eid)]
+        (is (= 1 n) "only the lapsed game auto-settles")
+        (is (= [[g-expired "auto"]] @confirms) "auto-confirmed on behalf of \"auto\"")))))

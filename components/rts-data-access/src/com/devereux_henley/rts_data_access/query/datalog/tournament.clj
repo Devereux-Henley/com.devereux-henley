@@ -68,6 +68,9 @@
 (def ^:private match-game-pattern
   [:match-game/eid :match-game/game-index :match-game/winner-sub
    :match-game/uploader-local-alliance-index :match-game/created-at
+   :match-game/status :match-game/submitted-by-sub
+   :match-game/confirmed-by-sub :match-game/confirmed-at
+   :match-game/confirm-deadline
    {:match-game/replay [:replay/eid]}
    {:match-game/player-one-draft [:draft/eid]}
    {:match-game/player-two-draft [:draft/eid]}
@@ -153,7 +156,12 @@
      :replay-eid                    (some-> m :match-game/replay :replay/eid)
      :player-one-draft-eid          (some-> m :match-game/player-one-draft :draft/eid)
      :player-two-draft-eid          (some-> m :match-game/player-two-draft :draft/eid)
-     :created-at                    (:match-game/created-at m)}))
+     :created-at                    (:match-game/created-at m)
+     :status                        (:match-game/status m)
+     :submitted-by-sub              (:match-game/submitted-by-sub m)
+     :confirmed-by-sub              (:match-game/confirmed-by-sub m)
+     :confirmed-at                  (:match-game/confirmed-at m)
+     :confirm-deadline              (:match-game/confirm-deadline m)}))
 
 ;;; ─── Tournament reads ──────────────────────────────────────────────────────
 
@@ -469,26 +477,38 @@
 
 ;;; ─── Game mutations ────────────────────────────────────────────────────────
 
+(defn match-game-by-eid
+  "Fetch a single match-game by eid, flattened. Returns nil when not found."
+  [conn game-eid]
+  (let [db (d/db conn)]
+    (->game (d/pull db match-game-pattern [:match-game/eid game-eid]))))
+
 (defn create-game!
-  "Record a per-game result for a match, owned via `:match/games`. `opts`
-  may carry `:replay-eid`, `:uploader-local-alliance-index`,
-  `:player-one-draft-eid`, `:player-two-draft-eid`, which become refs to
-  the `:replay` and per-side `:draft` entities."
+  "Record a per-game result for a match, owned via `:match/games`, in
+  `:pending-confirmation` status. `opts` may carry `:replay-eid`,
+  `:uploader-local-alliance-index`, `:player-one-draft-eid`,
+  `:player-two-draft-eid` (which become refs to the `:replay` and per-side
+  `:draft` entities), plus `:submitted-by-sub` (the uploader) and
+  `:confirm-deadline` (an `Instant`/`Date` after which the game auto-settles)."
   ([conn match-eid game-index winner-sub]
    (create-game! conn match-eid game-index winner-sub {}))
   ([conn match-eid game-index winner-sub
     {:keys [replay-eid uploader-local-alliance-index
-            player-one-draft-eid player-two-draft-eid]}]
+            player-one-draft-eid player-two-draft-eid
+            submitted-by-sub confirm-deadline]}]
    (let [game-eid (random-uuid)
          game     (cond-> {:match-game/eid        game-eid
                            :match-game/game-index game-index
                            :match-game/winner-sub winner-sub
+                           :match-game/status     :pending-confirmation
                            :match-game/created-at (Date.)}
                     replay-eid                          (assoc :match-game/replay [:replay/eid replay-eid])
                     (some? uploader-local-alliance-index) (assoc :match-game/uploader-local-alliance-index
                                                                  uploader-local-alliance-index)
                     player-one-draft-eid                (assoc :match-game/player-one-draft [:draft/eid player-one-draft-eid])
-                    player-two-draft-eid                (assoc :match-game/player-two-draft [:draft/eid player-two-draft-eid]))]
+                    player-two-draft-eid                (assoc :match-game/player-two-draft [:draft/eid player-two-draft-eid])
+                    submitted-by-sub                    (assoc :match-game/submitted-by-sub submitted-by-sub)
+                    confirm-deadline                    (assoc :match-game/confirm-deadline (->date confirm-deadline)))]
      (d/transact!
       conn
       [{:match/eid match-eid :match/games [game]}])
@@ -496,7 +516,35 @@
       :match-eid                     match-eid
       :game-index                    game-index
       :winner-sub                    winner-sub
+      :status                        :pending-confirmation
+      :submitted-by-sub              submitted-by-sub
+      :confirm-deadline              confirm-deadline
       :replay-eid                    replay-eid
       :uploader-local-alliance-index uploader-local-alliance-index
       :player-one-draft-eid          player-one-draft-eid
       :player-two-draft-eid          player-two-draft-eid})))
+
+(defn confirm-game!
+  "Mark a pending game `:confirmed`, stamping `:confirmed-by-sub` (the literal
+  `\"auto\"` when settled by lapse) and `:confirmed-at`. Returns the flattened
+  game."
+  [conn game-eid confirming-sub confirmed-at]
+  (d/with-transaction [tx-conn conn]
+    (d/transact!
+     tx-conn
+     [{:match-game/eid              game-eid
+       :match-game/status           :confirmed
+       :match-game/confirmed-by-sub confirming-sub
+       :match-game/confirmed-at     (->date confirmed-at)}])
+    (match-game-by-eid tx-conn game-eid)))
+
+(defn dispute-game!
+  "Mark a pending game `:disputed`. The dispute row itself is created
+  separately via `create-dispute!`. Returns the flattened game."
+  [conn game-eid]
+  (d/with-transaction [tx-conn conn]
+    (d/transact!
+     tx-conn
+     [{:match-game/eid    game-eid
+       :match-game/status :disputed}])
+    (match-game-by-eid tx-conn game-eid)))

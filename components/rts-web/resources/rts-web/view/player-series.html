@@ -21,6 +21,21 @@
             </header>
             <div class="panel-body">
 
+                {% if real-step %}
+                {# A real submitted game on the current match takes over from the
+                   demo walkthrough: the uploader waits, the opponent confirms or
+                   disputes, and a disputed game shows the paused state. #}
+                {% ifequal real-step "awaiting" %}
+                {% include "rts-web/components/tournament/player-step-awaiting.html" %}
+                {% endifequal %}
+                {% ifequal real-step "confirm" %}
+                {% include "rts-web/components/tournament/player-step-confirm.html" %}
+                {% endifequal %}
+                {% ifequal real-step "disputed" %}
+                {% include "rts-web/components/tournament/player-step-disputed.html" %}
+                {% endifequal %}
+                {% else %}
+
                 {% if step-live? %}
                 {% include "rts-web/components/tournament/player-step-live.html" %}
                 {% endif %}
@@ -42,6 +57,8 @@
 
                 {% if step-opp-uploading? %}
                 {% include "rts-web/components/tournament/player-step-await.html" %}
+                {% endif %}
+
                 {% endif %}
 
             </div>

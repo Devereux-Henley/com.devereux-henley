@@ -177,11 +177,32 @@ test.describe('Replay submission (Datalevin)', () => {
     );
     expect(submitRes.status()).toBe(200);
     // Mutations signal success via HX-Trigger, never a structured body.
-    expect(submitRes.headers()['hx-trigger-after-settle']).toContain('match-game-recorded');
+    expect(submitRes.headers()['hx-trigger']).toContain('game-submitted');
     const submitHtml = await submitRes.text();
     expect(submitHtml.toLowerCase()).toContain('game 1 submitted');
 
-    // The recorded game + its replay persist and render on the match detail page.
+    // The game is recorded pending confirmation — submitting does NOT complete
+    // the match. The non-uploader (dev-player-two) sees the confirm panel on the
+    // series page, whose confirm button carries the pending game's eid.
+    const seriesRes = await request.get(
+      `${BASE}/view/game/${GAME_EID}/tournament/${eid}/player/series.html`,
+      { headers: { Accept: 'application/htmx+html', Cookie: 'dev_impersonation=dev-player-two' } },
+    );
+    expect(seriesRes.status()).toBe(200);
+    const seriesHtml = await seriesRes.text();
+    const gm = seriesHtml.match(/match\/[0-9a-f-]{36}\/game\/([0-9a-f-]{36})\/confirm/);
+    expect(gm, 'the confirm panel should expose the pending game eid').not.toBeNull();
+    const gameEid = gm[1];
+
+    // Confirming a Bo1 game clinches the match.
+    const confirmRes = await request.post(
+      `${BASE}/actions/tournament/${eid}/match/${matchEid}/game/${gameEid}/confirm`,
+      { headers: actionHeaders('dev-player-two') },
+    );
+    expect(confirmRes.status()).toBe(200);
+    expect(confirmRes.headers()['hx-trigger']).toContain('game-confirmed');
+
+    // Now the recorded game + its replay persist and the match reads complete.
     const matchRes = await request.get(`${BASE}/api/match/${matchEid}`, {
       headers: htmlHeaders('dev-admin'),
     });
