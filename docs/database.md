@@ -39,4 +39,4 @@ For a store populated with demo tournaments (brackets in interesting states, not
 - **Snapshot once per read.** Call `datalog.contract/db` once at the top of a read function and run every query in that function against the snapshot, so multi-step reads see a consistent view.
 - **Flatten pull results.** Read functions in `rts-data-access` flatten pull maps into the flat `*-eid` shape handlers consume (ref sub-maps become `:game-eid`, `:faction-eid`, …); handlers never see raw pull structure.
 - **`:db.type/instant` requires `java.util.Date`.** Datalevin rejects `java.time.Instant` for instant attributes. Coerce `Instant` → `Date` at the data-access boundary in every mutation function.
-- **`:db.type/idoc` caution.** Document-typed attributes (e.g. `:replay/parsed-data`) work, but certain integer-heavy documents have corrupted the idoc index on store reopen (`MDB_BAD_VALSIZE` — see bead `rts-tku`). When that bites, store the map as an EDN/transit string instead.
+- **`:db.type/idoc` for document values.** Store nested Clojure maps directly under a document-typed attribute (e.g. `:replay/parsed-data`); Datalevin round-trips them as maps across store reopen.

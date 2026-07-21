@@ -8,8 +8,7 @@
         selmer/selmer {:mvn/version "1.12.55"}
         clj-http/clj-http {:mvn/version "3.12.3"}
         camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}
-        org.datalevin/datalevin-embedded {:mvn/version "0.10.16"}
-        org.clojars.huahaiy/dtlvnative-linux-x86_64 {:mvn/version "0.18.7"}}
+        org.datalevin/datalevin-embedded {:mvn/version "1.0.0"}}
  :aliases {:build {:main-opts ["-m" "com.devereux-henley.rts-api.core"]}
            :dev {:extra-paths ["dev"]}
            :test {:extra-paths ["test"]
