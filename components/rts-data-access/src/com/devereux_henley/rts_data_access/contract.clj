@@ -146,6 +146,9 @@
 (def set-match-lobby-code!           query.datalog.tournament/set-match-lobby-code!)
 (def create-game!                    query.datalog.tournament/create-game!)
 (def games-for-match                 query.datalog.tournament/games-for-match)
+(def match-game-by-eid               query.datalog.tournament/match-game-by-eid)
+(def confirm-game!                   query.datalog.tournament/confirm-game!)
+(def dispute-game!                   query.datalog.tournament/dispute-game!)
 
 ;;; ─── Stats DB entities ─────────────────────────────────────────────────────
 

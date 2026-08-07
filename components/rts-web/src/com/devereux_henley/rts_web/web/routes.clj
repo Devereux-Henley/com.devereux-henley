@@ -3,6 +3,7 @@
    [com.devereux-henley.rts-domain.contract :as domain]
    [com.devereux-henley.rts-web.orchestration :as orchestration]
    [com.devereux-henley.rts-web.web.actions.dispute :as web.actions.dispute]
+   [com.devereux-henley.rts-web.web.actions.match-game :as web.actions.match-game]
    [com.devereux-henley.rts-web.web.actions.draft :as web.actions.draft]
    [com.devereux-henley.rts-web.web.api :as web.api]
    [com.devereux-henley.rts-web.web.actions.league :as web.actions.league]
@@ -394,6 +395,22 @@
                                  [:tournament-eid :uuid]
                                  [:match-eid :uuid]])}
             :handler    (integrant.core/ref ::web.tournament.view/player-replay-submit-fragment)}}]
+   ["/tournament/:tournament-eid/match/:match-eid/game/:game-eid/confirm"
+    {:post {:produces   ["application/htmx+html"]
+            :parameters {:path (schema.contract/to-schema
+                                [:map
+                                 [:tournament-eid :uuid]
+                                 [:match-eid :uuid]
+                                 [:game-eid :uuid]])}
+            :handler    (integrant.core/ref ::web.actions.match-game/confirm-game)}}]
+   ["/tournament/:tournament-eid/match/:match-eid/game/:game-eid/dispute"
+    {:post {:produces   ["application/htmx+html"]
+            :parameters {:path (schema.contract/to-schema
+                                [:map
+                                 [:tournament-eid :uuid]
+                                 [:match-eid :uuid]
+                                 [:game-eid :uuid]])}
+            :handler    (integrant.core/ref ::web.actions.match-game/dispute-game)}}]
    ["/tournament/:tournament-eid/dispute/:eid/resolve"
     {:post {:produces   ["application/htmx+html"]
             :parameters {:path (schema.contract/to-schema

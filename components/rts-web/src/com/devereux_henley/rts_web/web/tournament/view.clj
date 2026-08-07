@@ -344,7 +344,23 @@
          (let [step          (or (get-in request [:parameters :query :step]) "live")
                step          (if (#{"live" "declare" "submitting" "opp_uploading"} step) step "live")
                user-sub      (get-in request [:ory-session :identity :id])
-               current-match (find-current-player-match dependencies (:eid tournament) user-sub)]
+               current-match (find-current-player-match dependencies (:eid tournament) user-sub)
+               ;; Lazily settle any lapsed confirm windows so a missed
+               ;; confirmation advances the series without a scheduler.
+               _             (when current-match
+                               (domain/settle-expired-confirmations! dependencies (:eid current-match)))
+               ;; The latest not-yet-confirmed game on the real match drives the
+               ;; verification panel, overriding the demo `?step` walkthrough.
+               active-game   (when current-match
+                               (->> (db/games-for-match (:datalog-connection dependencies) (:eid current-match))
+                                    (remove #(= :confirmed (:status %)))
+                                    (sort-by :game-index)
+                                    last))
+               real-step     (when active-game
+                               (cond
+                                 (= :disputed (:status active-game))          "disputed"
+                                 (= user-sub (:submitted-by-sub active-game)) "awaiting"
+                                 :else                                        "confirm"))]
            (cond-> (assoc (series-view-model step)
                           :data                tournament
                           :parse-log-rows      (single-game-parse-log)
@@ -354,7 +370,13 @@
                           ;; mid-animation rather than after it.
                           :parse-swap-delay-ms (* 2 parse-log-stagger-ms))
              current-match (assoc :current-match current-match
-                                  :match-eid (:eid current-match)))))))))
+                                  :match-eid (:eid current-match))
+             real-step     (assoc :real-step real-step
+                                  :pending-game {:eid                 (:eid active-game)
+                                                 :winner-sub          (:winner-sub active-game)
+                                                 :submitted-by-sub    (:submitted-by-sub active-game)
+                                                 :game-index          (:game-index active-game)
+                                                 :confirm-deadline-ms (some-> (:confirm-deadline active-game) inst-ms)}))))))))
 
 ;; ─── Post-match modal helpers ───────────────────────────────────────────────
 
@@ -888,8 +910,8 @@
                   fresh-match (-> (db/match-by-eid (:datalog-connection dependencies) match-eid)
                                   (assoc :game-eid (:game-eid tournament)))]
               {:status  200
-               :headers {"Content-Type"            "text/html; charset=utf-8"
-                         "HX-Trigger-After-Settle" "match-game-recorded"}
+               :headers {"Content-Type" "text/html; charset=utf-8"
+                         "HX-Trigger"   "game-submitted"}
                :body    (render/render-component
                          "player-replay-submitted-fragment.html"
                          {:match           fresh-match
@@ -900,8 +922,9 @@
                           :opponent-sub    (if (= uploader (:player-one-sub fresh-match))
                                              (:player-two-sub fresh-match)
                                              (:player-one-sub fresh-match))
-                          :match-complete? (:match-complete? result)
-                          :match-winner    (:match-winner result)})})
+                          ;; Submitting never clinches now — the game awaits the
+                          ;; opponent's confirmation before the series advances.
+                          :match-complete? false})})
 
             :match-record/error
             (error-fragment (:message result))))))))

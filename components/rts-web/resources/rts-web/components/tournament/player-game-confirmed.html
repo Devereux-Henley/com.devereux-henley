@@ -1,0 +1,25 @@
+{# Returned by the confirm /actions handler after the non-uploading player
+   accepts a submitted game. Reports the confirmation and, if the game clinched
+   the series, that the match is decided. #}
+<div class="replay-submitted{% if match-complete? %} replay-submitted--match-complete{% endif %}"
+     role="status"
+     aria-live="polite">
+    <div class="replay-submitted-mark" aria-hidden="true">✓</div>
+    <div class="replay-submitted-body">
+        <div class="eyebrow">Result confirmed</div>
+        <h3 class="replay-submitted-headline">You confirmed the game</h3>
+        <p class="replay-submitted-sub">
+            {% if match-complete? %}
+            That clinches the series — <strong>{{match-winner}}</strong> takes the match.
+            The bracket advances from here.
+            {% else %}
+            The result is recorded and the series continues. Play the next game and
+            submit its replay when it's done.
+            {% endif %}
+        </p>
+        <div class="replay-submitted-actions">
+            <a class="btn btn-ghost btn-sm"
+               href="/view/game/{{game-eid}}/tournament/{{data.eid}}/player/series.html">Back to series</a>
+        </div>
+    </div>
+</div>

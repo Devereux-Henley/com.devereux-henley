@@ -215,4 +215,7 @@
 
 (def parse-replay-file              handlers.replay/parse-replay-file)
 (def record-game-from-parsed        handlers.replay/record-game-from-parsed)
+(def confirm-game                   handlers.replay/confirm-game)
+(def dispute-game                   handlers.replay/dispute-game)
+(def settle-expired-confirmations!  handlers.replay/settle-expired-confirmations!)
 (def pick-game-mode                 handlers.replay/pick-game-mode)

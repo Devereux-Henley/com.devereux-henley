@@ -1,0 +1,46 @@
+{# The uploading player waits for the opponent to confirm the submitted game.
+   A live countdown ticks down to the confirm deadline; the result auto-settles
+   as confirmed if the window lapses. #}
+<div class="await-view" role="status" aria-live="polite">
+    <div class="await-view-spinner" aria-hidden="true">
+        <span class="await-view-spinner-ring await-view-spinner-ring--progress"></span>
+        <span class="await-view-spinner-label mono js-confirm-countdown"
+              data-confirm-deadline="{{pending-game.confirm-deadline-ms}}">—:—</span>
+    </div>
+    <div class="await-view-info">
+        <div class="eyebrow">Awaiting confirmation</div>
+        <h3 class="await-view-headline">
+            Waiting for your opponent to confirm Game {{pending-game.game-index|add:1}}
+        </h3>
+        <p class="await-view-sub">
+            You submitted the replay · {{pending-game.winner-sub}} won. Your opponent can
+            confirm or dispute it. If they don't respond before the window closes, the
+            result confirms automatically.
+        </p>
+        <ul class="await-view-checklist">
+            <li><span class="await-view-pip await-view-pip--done" aria-hidden="true">✓</span> Replay submitted</li>
+            <li><span class="await-view-pip await-view-pip--live" aria-hidden="true">●</span> Opponent to confirm or dispute</li>
+            <li><span class="await-view-pip await-view-pip--pending" aria-hidden="true">·</span> Series advances on confirm</li>
+        </ul>
+    </div>
+    <div class="await-view-actions">
+        <a class="btn btn-ghost btn-sm"
+           href="/view/game/{{game-eid}}/tournament/{{data.eid}}/player/series.html">Refresh</a>
+    </div>
+</div>
+<script>
+ (function () {
+   var el = document.querySelector('.js-confirm-countdown[data-confirm-deadline]');
+   if (!el) return;
+   var deadline = parseInt(el.getAttribute('data-confirm-deadline'), 10);
+   if (isNaN(deadline)) { el.textContent = '—:—'; return; }
+   function tick() {
+     var ms = deadline - Date.now();
+     if (ms <= 0) { el.textContent = '0:00'; return; }
+     var s = Math.floor(ms / 1000);
+     el.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+   }
+   tick();
+   setInterval(tick, 1000);
+ })();
+</script>

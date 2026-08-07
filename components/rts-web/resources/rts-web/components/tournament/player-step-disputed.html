@@ -1,0 +1,19 @@
+{# Shown once a game has been disputed: the series is paused while an organizer
+   reviews the ticket. Rendered inline by the series view and returned by the
+   dispute /actions handler after the losing player raises a dispute. #}
+<div class="disputed-view" role="status" aria-live="polite">
+    <div class="disputed-view-mark" aria-hidden="true">⚑</div>
+    <div class="disputed-view-info">
+        <div class="eyebrow">Result disputed</div>
+        <h3 class="disputed-view-headline">This game is under review</h3>
+        <p class="disputed-view-sub">
+            A dispute has been opened and the series is paused. An organizer will review
+            the replay and settle the result — you'll be able to continue once it's
+            resolved.
+        </p>
+    </div>
+    <div class="disputed-view-actions">
+        <a class="btn btn-ghost btn-sm"
+           href="/view/game/{{game-eid}}/tournament/{{data.eid}}/player/series.html">Refresh</a>
+    </div>
+</div>

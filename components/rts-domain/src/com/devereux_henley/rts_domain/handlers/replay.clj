@@ -5,6 +5,7 @@
    [clojure.java.shell :as shell]
    [clojure.string :as string]
    [com.devereux-henley.rts-data-access.contract :as db]
+   [com.devereux-henley.rts-domain.handlers.dispute :as handlers.dispute]
    [com.devereux-henley.rts-domain.handlers.draft :as handlers.draft]
    [com.devereux-henley.rts-domain.handlers.tournament :as handlers.tournament]
    [com.devereux-henley.rts-domain.rules.tournament :as rules.tournament]
@@ -13,7 +14,13 @@
    [jsonista.core :as jsonista]
    [malli.core :as m])
   (:import
-   [java.time Instant]))
+   [java.time Duration Instant]
+   [java.util Date]))
+
+(def confirm-window
+  "How long the non-uploading player has to confirm a submitted game before it
+  auto-settles as confirmed on the next read."
+  (Duration/ofMinutes 10))
 
 (def ^:private json-mapper
   ;; The Rust binary emits snake_case JSON keys; we want Clojure-idiomatic
@@ -360,23 +367,131 @@
                     :game-modes      game-modes
                     :uploaded-by-sub uploaded-by-sub
                     :now             now})
+                  deadline   (.plus now confirm-window)
                   stored     (db/create-game!
                               conn match-eid game-index winner-sub
                               {:replay-eid                    (:eid replay)
                                :uploader-local-alliance-index (:uploader-local-alliance-index replay)
                                :player-one-draft-eid          player-one-draft-eid
-                               :player-two-draft-eid          player-two-draft-eid})
-                  all-games  (conj (mapv #(select-keys % [:winner-sub]) existing-games)
-                                   {:winner-sub winner-sub})
-                  clincher   (rules.tournament/check-match-complete all-games (:format match))]
-              (when clincher
-              ;; Route through the domain function so standings recalculate
-              ;; and the tournament-complete check fires.
-                (handlers.tournament/update-match-result dependencies match-eid clincher))
-              (cond-> {:type            :match-record/game-recorded
-                       :match-eid       match-eid
-                       :game            stored
-                       :game-index      game-index
-                       :winner-sub      winner-sub
-                       :match-complete? (boolean clincher)}
-                clincher (assoc :match-winner clincher)))))))))
+                               :player-two-draft-eid          player-two-draft-eid
+                               :submitted-by-sub              uploaded-by-sub
+                               :confirm-deadline              deadline})]
+              ;; The game is recorded `:pending-confirmation`; the match does
+              ;; not advance until the non-uploading player confirms (or the
+              ;; confirm window lapses). See `confirm-game` / `dispute-game`.
+              {:type                   :match-record/game-recorded
+               :match-eid              match-eid
+               :game                   stored
+               :game-eid               (:eid stored)
+               :game-index             game-index
+               :winner-sub             winner-sub
+               :awaiting-confirmation? true
+               :confirm-deadline       deadline})))))))
+
+;; ─── Per-game confirmation gate ──────────────────────────────────────────────
+
+(defn- load-pending-game-for-actor
+  "Loads a match-game and validates it awaits confirmation, belongs to `match-eid`,
+  and that `actor-sub` is the participant who did NOT submit it. Returns
+  `[:ok {:match m :game g}]` or `[:error {:type :match-record/error …}]`."
+  [dependencies match-eid game-eid actor-sub]
+  (let [conn  (:datalog-connection dependencies)
+        match (db/match-by-eid conn match-eid)
+        game  (db/match-game-by-eid conn game-eid)]
+    (cond
+      (nil? match)
+      [:error (short-circuit-error "Match not found.")]
+
+      (nil? game)
+      [:error (short-circuit-error "Game not found.")]
+
+      (not= match-eid (:match-eid game))
+      [:error (short-circuit-error "Game does not belong to this match.")]
+
+      (not= :pending-confirmation (:status game))
+      [:error (short-circuit-error "Game is not awaiting confirmation.")]
+
+      (not (valid-winner? match actor-sub))
+      [:error (short-circuit-error "Only a match participant can act on this game.")]
+
+      (= actor-sub (:submitted-by-sub game))
+      [:error (short-circuit-error "The player who submitted a game cannot confirm or dispute it.")]
+
+      :else
+      [:ok {:match match :game game}])))
+
+(defn- finalize-confirmation!
+  "Marks `game-eid` confirmed by `confirming-sub` and, when the series is now
+  clinched over confirmed games, completes the match (recalculating standings).
+  Returns `{:match-complete? bool :match-winner sub?}`."
+  [dependencies match-eid game-eid confirming-sub]
+  (let [conn      (:datalog-connection dependencies)
+        match     (db/match-by-eid conn match-eid)
+        _         (db/confirm-game! conn game-eid confirming-sub (Instant/now))
+        confirmed (filter #(= :confirmed (:status %)) (db/games-for-match conn match-eid))
+        clincher  (rules.tournament/check-match-complete confirmed (:format match))]
+    (when clincher
+      ;; Route through the domain function so standings recalculate and the
+      ;; tournament-complete check fires.
+      (handlers.tournament/update-match-result dependencies match-eid clincher))
+    (cond-> {:match-complete? (boolean clincher)}
+      clincher (assoc :match-winner clincher))))
+
+(defn confirm-game
+  "The non-uploading participant accepts a submitted game's result. Marks the
+  game `:confirmed` and, if the series is now clinched, completes the match.
+  Returns `:type :match-game/confirmed` (with `:match-complete?` / `:match-winner`)
+  or a typed `:match-record/error`."
+  [dependencies match-eid game-eid confirming-sub]
+  (let [[status v] (load-pending-game-for-actor dependencies match-eid game-eid confirming-sub)]
+    (if (= :error status)
+      v
+      (merge {:type      :match-game/confirmed
+              :match-eid match-eid
+              :game-eid  game-eid}
+             (finalize-confirmation! dependencies match-eid game-eid confirming-sub)))))
+
+(defn dispute-game
+  "The non-uploading participant contests a submitted game's result. Opens a
+  dispute ticket (defaulting to the `\"conflicting-result\"` kind) and marks the
+  game `:disputed`; the series pauses (no advancement) until an organizer resolves it.
+  Returns `:type :match-game/disputed` with the dispute eid, or a typed
+  `:match-record/error`."
+  [dependencies {:keys [match-eid game-eid reporter-sub kind detail]}]
+  (let [[status v] (load-pending-game-for-actor dependencies match-eid game-eid reporter-sub)]
+    (if (= :error status)
+      v
+      (let [conn    (:datalog-connection dependencies)
+            match   (:match v)
+            dispute (handlers.dispute/open-dispute
+                     dependencies
+                     {:tournament-eid (:tournament-eid match)
+                      :match-eid      match-eid
+                      :match-game-eid game-eid
+                      :kind           (or kind "conflicting-result")
+                      :reporter-sub   reporter-sub
+                      :detail         detail})]
+        (if (= :dispute/error (:type dispute))
+          (short-circuit-error (:message dispute))
+          (do
+            (db/dispute-game! conn game-eid)
+            {:type        :match-game/disputed
+             :match-eid   match-eid
+             :game-eid    game-eid
+             :dispute-eid (:eid dispute)}))))))
+
+(defn settle-expired-confirmations!
+  "Auto-settles every `:pending-confirmation` game on the match whose
+  `:confirm-deadline` has lapsed, confirming it on behalf of `\"auto\"` (which
+  advances the series if it clinches). Called lazily on read so a missed confirm
+  window resolves without a scheduler. Idempotent; returns the count settled."
+  [dependencies match-eid]
+  (let [conn    (:datalog-connection dependencies)
+        now     (Instant/now)
+        expired (->> (db/games-for-match conn match-eid)
+                     (filter #(= :pending-confirmation (:status %)))
+                     (filter #(when-let [^Date d (:confirm-deadline %)]
+                                (.isBefore (.toInstant d) now))))]
+    (doseq [g expired]
+      (finalize-confirmation! dependencies match-eid (:eid g) "auto"))
+    (count expired)))
